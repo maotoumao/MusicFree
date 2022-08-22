@@ -17,7 +17,9 @@ const DefaultTheme = {
   colors: {
     ..._DefaultTheme.colors,
     text: '#333333',
-    background: '#66ccff',
+    placeholder: '#666666',
+    background: 'rgba(128,128,128,0.1)',
+    primary: '#cdd1d3'
   }
 }
 
@@ -32,10 +34,7 @@ const CustomTheme = {
     surface: '#ffffff44',
     backdrop: 'rgba(0,0,0,0.2)',
     primary: "#2b333e",
-    accent: '#66ccff',
-    disabled: '#66ccff',
-    onSurface: '#66ccff',
-    notification: '#66ccff'
+    accent: '#cdd1d3',
   },
 };
 

@@ -21,7 +21,7 @@ interface IDrawerProps {}
 
 export default function HomeDrawer(props: IDrawerProps) {
   const navigation = useNavigation<any>();
-  const background = useConfig('setting.background');
+  const background = useConfig('setting.theme.background');
   function navigateToSetting(settingType: string) {
     navigation.navigate(ROUTE_PATH.SETTING, {
       type: settingType,

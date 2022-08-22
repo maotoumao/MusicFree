@@ -17,12 +17,12 @@ export default function SeekBar(props: ISeekBarProps) {
 
   return (
     <View style={style.wrapper}>
-      <ThemeText type='secondary' style={style.text}>{timeformat(tmpProgress ?? progress.position)}</ThemeText>
+      <Text  style={style.text}>{timeformat(tmpProgress ?? progress.position)}</Text>
       <Slider
         style={style.slider}
-        minimumTrackTintColor={textColor}
-        maximumTrackTintColor={Color(textColor).alpha(0.7).toString()}
-        thumbTintColor={textColor}
+        minimumTrackTintColor={'#cccccc'}
+        maximumTrackTintColor={'#999999'}
+        thumbTintColor={'#dddddd'}
         minimumValue={0}
         maximumValue={progress.duration}
         onValueChange={(val)=>{
@@ -33,7 +33,7 @@ export default function SeekBar(props: ISeekBarProps) {
             MusicQueue.seekTo(val);
         }}
         value={progress.position}></Slider>
-      <ThemeText type='secondary' style={style.text}>{timeformat(progress.duration)}</ThemeText>
+      <Text style={style.text}>{timeformat(progress.duration)}</Text>
     </View>
   );
 }
@@ -53,5 +53,6 @@ const style = StyleSheet.create({
   text: {
     fontSize: fontSizeConst.smaller,
     includeFontPadding: false,
+    color: '#cccccc'
   }
 });

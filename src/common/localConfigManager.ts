@@ -37,7 +37,10 @@ type KeyPathsObj<
 
 interface IConfig {
   setting?: {
-    background?: string;
+    theme?: {
+      mode?: 'light' | 'dark'
+      background?: string;
+    }
   };
 }
 

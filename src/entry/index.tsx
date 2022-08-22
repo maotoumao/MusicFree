@@ -22,13 +22,13 @@ bootstrap();
 const Stack = createNativeStackNavigator();
 
 export default function Pages() {
-  const background = useConfig('setting.background');
-  console.log('updated', background);
+  const background = useConfig('setting.theme.background');
+  const theme = useConfig('setting.theme.mode') ?? 'dark';
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <PaperProvider theme={CustomTheme}>
-        <NavigationContainer theme={CustomTheme}>
+      <PaperProvider theme={theme === 'dark'? CustomTheme : DefaultTheme}>
+        <NavigationContainer theme={theme === 'dark'? CustomTheme : DefaultTheme}>
           <Image
             style={style.blur}
             blurRadius={15}
