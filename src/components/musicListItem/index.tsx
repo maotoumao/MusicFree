@@ -49,6 +49,6 @@ const style = StyleSheet.create({
   title: {
     fontSize: fontSizeConst.normal,
     includeFontPadding: false,
-    maxWidth: rpx(480)
+    maxWidth: rpx(420)
   }
 });

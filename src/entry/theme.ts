@@ -19,7 +19,8 @@ const DefaultTheme = {
     text: '#333333',
     placeholder: '#666666',
     background: 'rgba(128,128,128,0.1)',
-    primary: '#cdd1d3'
+    primary: '#cdd1d3',
+    surface: '#cdd1d3',
   }
 }
 
@@ -31,7 +32,7 @@ const CustomTheme = {
     text: '#dddddd',
     placeholder: '#cccccc',
     background: 'rgba(128,128,128,0.1)',
-    surface: '#ffffff44',
+    surface: '#2b333e',
     backdrop: 'rgba(0,0,0,0.2)',
     primary: "#2b333e",
     accent: '#cdd1d3',

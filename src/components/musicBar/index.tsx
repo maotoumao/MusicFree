@@ -31,7 +31,7 @@ export default function (props: IProps) {
         <Pressable
           style={[
             style.wrapper,
-            {backgroundColor: Color(colors.primary).alpha(0.66).toString()},
+            {backgroundColor: Color(colors.surface).alpha(0.66).toString()},
           ]}
           onPress={() => {
             navigation.navigate(ROUTE_PATH.MUSIC_DETAIL);
