@@ -15,21 +15,25 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
+import { useConfig } from '@/common/localConfigManager';
 
 interface IDrawerProps {}
 
 export default function HomeDrawer(props: IDrawerProps) {
   const navigation = useNavigation<any>();
+  const background = useConfig('setting.background');
   function navigateToSetting(settingType: string) {
     navigation.navigate(ROUTE_PATH.SETTING, {
       type: settingType,
     });
   }
-
   return (
     <ImageBackground
       blurRadius={20}
-      source={require('@/assets/imgs/background.jpg')}
+      source={background
+        ? {
+            uri: background,
+          }: require('@/assets/imgs/background.jpg')}
       style={style.wrapper}>
       <DrawerContentScrollView {...props} style={style.scrollWrapper}>
         <View style={style.header}>

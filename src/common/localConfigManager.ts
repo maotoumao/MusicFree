@@ -108,7 +108,7 @@ function getPathValue(obj: Record<string, any>, path: string) {
   const keys = path.split('.');
   let tmp = obj;
   for (let i = 0; i < keys.length; ++i) {
-    tmp = obj?.[keys[i]];
+    tmp = tmp?.[keys[i]]; 
   }
   return tmp;
 }
@@ -125,7 +125,7 @@ export function useConfig<T extends IConfigPaths>(key: T): IConfigPathsObj[T];
 export function useConfig(key?: string) {
   const [_cfg, _setCfg] = useState<IConfig | null>(config);
   function setCfg() {
-    console.log('configis', config);
+    
     _setCfg(config);
   }
   useEffect(() => {

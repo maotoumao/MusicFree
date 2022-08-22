@@ -5,15 +5,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import bootstrap from './bootstrap';
 import {routes} from './router';
-import {useAtomValue} from 'jotai';
-import {loadableThemeStateAtom} from '@/store/themeState';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Dialogs from '@/components/dialogs';
 import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
 import {CustomTheme, DarkTheme, DefaultTheme} from './theme';
-import { useConfig } from '@/common/localConfigManager';
+import {useConfig} from '@/common/localConfigManager';
 
 // todo: load config
 /**
@@ -24,25 +22,23 @@ bootstrap();
 const Stack = createNativeStackNavigator();
 
 export default function Pages() {
-  const config = useConfig();
-  console.log('updated');
+  const background = useConfig('setting.background');
+  console.log('updated', background);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <PaperProvider theme={CustomTheme}>
         <NavigationContainer theme={CustomTheme}>
-          {config && (
-            <Image
-              style={style.blur}
-              blurRadius={15}
-              source={
-                config?.setting?.background
-                  ? {
-                      uri: config.setting.background,
-                    }
-                  : require('@/assets/imgs/background.jpg')
-              }></Image>
-          )}
+          <Image
+            style={style.blur}
+            blurRadius={15}
+            source={
+              background
+                ? {
+                    uri: background,
+                  }
+                : require('@/assets/imgs/background.jpg')
+            }></Image>
 
           <Stack.Navigator
             initialRouteName={routes[0].path}
