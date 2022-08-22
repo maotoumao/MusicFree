@@ -1,5 +1,6 @@
 import BasicSetting from "./basicSetting";
 import PluginSetting from "./pluginSetting";
+import ThemeSetting from "./themeSetting";
 
 const settingTypes: Record<string, {
     title: string;
@@ -12,6 +13,10 @@ const settingTypes: Record<string, {
     plugin: {
         title: '插件设置',
         component: PluginSetting
+    },
+    theme: {
+        title: '主题设置',
+        component: ThemeSetting
     }
 }
 

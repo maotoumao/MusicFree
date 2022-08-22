@@ -13,9 +13,9 @@ import MusicQueue from '@/common/musicQueue';
 import ListItem from '@/components/listItem';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
-import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
+import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
-import { useConfig } from '@/common/localConfigManager';
+import {useConfig} from '@/common/localConfigManager';
 
 interface IDrawerProps {}
 
@@ -30,21 +30,24 @@ export default function HomeDrawer(props: IDrawerProps) {
   return (
     <ImageBackground
       blurRadius={20}
-      source={background
-        ? {
-            uri: background,
-          }: require('@/assets/imgs/background.jpg')}
+      source={
+        background
+          ? {
+              uri: background,
+            }
+          : require('@/assets/imgs/background.jpg')
+      }
       style={style.wrapper}>
       <DrawerContentScrollView {...props} style={style.scrollWrapper}>
         <View style={style.header}>
           <ThemeText style={style.title}>Music Free</ThemeText>
-          <IconButton
-            icon={'qrcode-scan'}
-            size={rpx(36)}></IconButton>
+          <IconButton icon={'qrcode-scan'} size={rpx(36)}></IconButton>
         </View>
         <Card style={style.card}>
           <Card.Title
-            title={<ThemeText style={style.cardTitle}>设置</ThemeText>}></Card.Title>
+            title={
+              <ThemeText style={style.cardTitle}>设置</ThemeText>
+            }></Card.Title>
           <Card.Content>
             <ListItem
               icon="cog-outline"
@@ -58,7 +61,12 @@ export default function HomeDrawer(props: IDrawerProps) {
               onPress={() => {
                 navigateToSetting('plugin');
               }}></ListItem>
-            <ListItem icon="tshirt-v-outline" title="主题设置"></ListItem>
+            <ListItem
+              icon="tshirt-v-outline"
+              title="主题设置"
+              onPress={() => {
+                navigateToSetting('theme');
+              }}></ListItem>
             <ListItem icon="backup-restore" title="备份与恢复"></ListItem>
           </Card.Content>
         </Card>
@@ -96,7 +104,7 @@ const style = StyleSheet.create({
   title: {
     fontSize: fontSizeConst.bigger,
     includeFontPadding: false,
-    fontWeight: fontWeightConst.bold
+    fontWeight: fontWeightConst.bold,
   },
   cardTitle: {
     fontSize: fontSizeConst.small,
