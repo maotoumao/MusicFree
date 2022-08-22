@@ -6,6 +6,7 @@ import {pluginManager} from '../common/pluginManager';
 import 'react-native-get-random-values';
 import {ToastAndroid} from 'react-native';
 import { loadConfig } from '@/common/localConfigManager';
+import RNBootSplash from "react-native-bootsplash";
 
 /** app加载前执行 */
 export default async function () {
@@ -59,5 +60,6 @@ export default async function () {
   await MusicSheet.initMusicSheet();
 
   ErrorUtils.setGlobalHandler(error => ToastAndroid.show(`error: ${error?.message}`, ToastAndroid.LONG));
+  RNBootSplash.hide({fade: true});
   // 隐藏开屏动画
 }
