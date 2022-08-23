@@ -33,6 +33,7 @@ export default async function () {
     await pluginManager.initPlugins(),
     await TrackPlayer.setupPlayer(),
     await TrackPlayer.updateOptions({
+      progressUpdateEventInterval: 2,
       stopWithApp: false,
       alwaysPauseOnInterruption: true,
       capabilities: [
@@ -55,11 +56,10 @@ export default async function () {
       ]
     })
   ]);
-  // musicController.initMusicControl();
   await MusicQueue.setupMusicQueue();
   await MusicSheet.initMusicSheet();
 
   ErrorUtils.setGlobalHandler(error => ToastAndroid.show(`error: ${error?.message}`, ToastAndroid.LONG));
+   // 隐藏开屏动画
   RNBootSplash.hide({fade: true});
-  // 隐藏开屏动画
 }

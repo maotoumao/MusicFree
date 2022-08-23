@@ -10,10 +10,8 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import {pluginManager} from './pluginManager';
 import shuffle from 'lodash.shuffle';
-// import musicController from './musicController';
 import musicIsPaused from '@/utils/musicIsPaused';
-
-console.log(TrackPlayer);
+import {getConfig, setConfig} from './localConfigManager';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -37,7 +35,26 @@ const setupMusicQueue = async () => {
   // 需要hook一下播放，所以采用这种方式
   await TrackPlayer.reset();
   await TrackPlayer.setRepeatMode(RepeatMode.Off);
+
   musicQueue.length = 0;
+  /** 状态恢复 */
+  try {
+    const config = await getConfig('status.music');
+    if (config?.musicQueue && Array.isArray(config?.musicQueue)) {
+      addAll(config.musicQueue, undefined, true);
+    }
+    if (config?.track) {
+      currentIndex = findMusicIndex(config.track);
+      const track = await getMusicTrack(config.track);
+      await TrackPlayer.add([track, {url: ''}]);
+    }
+    if (config?.repeatMode) {
+      repeatMode = config.repeatMode as MusicRepeatMode;
+    }
+    if(config?.progress) {
+      await TrackPlayer.seekTo(config.progress);
+    }
+  } catch {}
   // 不要依赖playbackchanged，不稳定,
   // 一首歌结束了
   TrackPlayer.addEventListener(Event.PlaybackQueueEnded, async () => {
@@ -51,6 +68,7 @@ const setupMusicQueue = async () => {
   TrackPlayer.addEventListener(Event.PlaybackError, async () => {
     await skipToNext();
   });
+
   TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
     // 是track里的，不是playlist里的
     if (!(await TrackPlayer.getTrack(evt.nextTrack))?.url) {
@@ -61,6 +79,7 @@ const setupMusicQueue = async () => {
       }
     }
   });
+  notifyState(['currentIndex', 'repeatMode']);
 };
 
 type NotifyCallBacksKey = 'musicQueue' | 'repeatMode' | 'currentIndex';
@@ -137,6 +156,8 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
   }
   currentIndex = findMusicIndex(currentMusicItem);
   repeatMode = mode;
+  // 记录
+  setConfig('status.music.repeatMode', mode);
   notifyState(['repeatMode', 'currentIndex', 'musicQueue']);
 };
 
@@ -153,6 +174,7 @@ const findMusicIndex = (musicItem?: IMusic.IMusicItem) =>
 const addAll = (
   musicItems: Array<IMusic.IMusicItem> = [],
   beforeIndex?: number,
+  notCache?: boolean,
 ) => {
   const _musicItems = musicItems
     .map(item =>
@@ -169,6 +191,9 @@ const addAll = (
     musicQueue = produce(musicQueue, draft => {
       draft.splice(beforeIndex, 0, ..._musicItems);
     });
+  }
+  if (!notCache) {
+    setConfig('status.music.musicQueue', musicQueue);
   }
   notifyState('musicQueue');
 };
@@ -211,7 +236,42 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
       draft.splice(_ind, 1);
     });
   }
+  setConfig('status.music.musicQueue', musicQueue);
   notifyState(['musicQueue', 'currentIndex']);
+};
+
+const getMusicTrack = async (musicItem: IMusic.IMusicItem) => {
+  let track: Track;
+
+  // 本地播放
+  if (musicItem?._internalData?.localPath) {
+    track = produce(musicItem, draft => {
+      draft.url = draft._internalData!.localPath;
+    }) as Track;
+  } else {
+    // 插件播放
+    const plugin = pluginManager.getPlugin(musicItem.platform);
+    if (plugin && plugin.instance.playMusic) {
+      try {
+        const {url, headers} =
+          (await plugin.instance.playMusic(musicItem)) ?? {};
+        if (!url) {
+          throw new Error();
+        }
+        track = produce(musicItem, draft => {
+          draft.url = url;
+          draft.headers = headers;
+          draft.userAgent = headers?.['user-agent'];
+        }) as Track;
+      } catch (e) {
+        console.log(e);
+        track = musicItem as Track;
+      }
+    } else {
+      track = musicItem as Track;
+    }
+  }
+  return track;
 };
 
 /** 播放音乐 */
@@ -245,36 +305,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     }
   }
   const _musicItem = musicQueue[currentIndex];
-  let track: Track;
-
-  // 本地播放
-  if (_musicItem?._internalData?.localPath) {
-    track = produce(_musicItem, draft => {
-      draft.url = draft._internalData!.localPath;
-    }) as Track;
-  } else {
-    // 插件播放
-    const plugin = pluginManager.getPlugin(_musicItem.platform);
-    if (plugin && plugin.instance.playMusic) {
-      try {
-        const {url, headers} =
-          (await plugin.instance.playMusic(_musicItem)) ?? {};
-        if (!url) {
-          throw new Error();
-        }
-        track = produce(_musicItem, draft => {
-          draft.url = url;
-          draft.headers = headers;
-          draft.userAgent = headers?.['user-agent'];
-        }) as Track;
-      } catch (e) {
-        console.log(e);
-        track = _musicItem as Track;
-      }
-    } else {
-      track = _musicItem as Track;
-    }
-  }
+  const track = await getMusicTrack(_musicItem);
   musicQueue[currentIndex] = track as IMusic.IMusicItem;
   notifyState('currentIndex');
   try {
@@ -289,6 +320,7 @@ const _playTrack = async (track: Track) => {
   await TrackPlayer.reset();
   await TrackPlayer.add([track, {url: ''}]);
   await TrackPlayer.play();
+  setConfig('status.music.track', track as IMusic.IMusicItem);
 };
 
 const playWithReplaceQueue = async (
@@ -347,7 +379,6 @@ function useCurrentMusicItem() {
   return _currentMusicItem;
 }
 
-
 async function stop() {
   await TrackPlayer.stop();
   await TrackPlayer.destroy();
@@ -374,7 +405,7 @@ const MusicQueue = {
   useProgress,
   seekTo: TrackPlayer.seekTo,
   stop,
-  currentIndex
+  currentIndex,
 };
 
 export default MusicQueue;
