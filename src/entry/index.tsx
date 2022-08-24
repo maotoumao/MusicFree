@@ -12,6 +12,7 @@ import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
 import {CustomTheme, DarkTheme, DefaultTheme} from './theme';
 import {useConfig} from '@/common/localConfigManager';
+import Share from '@/components/share';
 
 // todo: load config
 /**
@@ -59,6 +60,7 @@ export default function Pages() {
 
           <Panels></Panels>
           <Dialogs></Dialogs>
+          <Share></Share>
           <Toast></Toast>
         </NavigationContainer>
       </PaperProvider>

@@ -30,6 +30,7 @@
     "jotai": "^1.7.4",
     "lodash.shuffle": "^4.2.0",
     "nanoid": "^4.0.0",
+    "qrcode-generator": "^1.4.4",
     "react": "18.0.0",
     "react-native": "0.69.1",
     "react-native-bootsplash": "^4.3.2",
@@ -52,7 +53,10 @@
     "react-native-tab-view": "^3.1.1",
     "react-native-toast-message": "^2.1.5",
     "react-native-track-player": "2.2.0-rc4",
-    "react-native-vector-icons": "^9.2.0"
+    "react-native-vector-icons": "^9.2.0",
+    "react-native-view-shot": "^3.4.0",
+    "react-native-webview": "^11.23.0",
+    "react-qr-code": "^2.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

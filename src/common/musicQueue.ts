@@ -240,7 +240,7 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
   notifyState(['musicQueue', 'currentIndex']);
 };
 
-const getMusicTrack = async (musicItem: IMusic.IMusicItem) => {
+const getMusicTrack = async (musicItem: IMusic.IMusicItem): Promise<Track> => {
   let track: Track;
 
   // 本地播放
@@ -285,8 +285,8 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
       _playTrack(currentTrack);
       return;
     }
-    const state = await TrackPlayer.getState();
     if (currentTrack) {
+      const state = await TrackPlayer.getState();
       if (musicIsPaused(state)) {
         await TrackPlayer.play();
         return;

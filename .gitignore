@@ -66,3 +66,4 @@ keystore.properties
 .VSCodeCounter/
 
 .vscode/
+tmp/

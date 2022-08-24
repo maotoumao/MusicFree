@@ -5,12 +5,14 @@ import {IconButton} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import {useNavigation} from '@react-navigation/native';
 import Tag from '@/components/tag';
-import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
+import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import useShare from '@/components/share/useShare';
 
 interface INavBarProps {}
 export default function NavBar(props: INavBarProps) {
   const navigation = useNavigation();
   const musicItem = MusicQueue.useCurrentMusicItem();
+  const {showShare} = useShare();
 
   return (
     <View style={style.wrapper}>
@@ -30,7 +32,23 @@ export default function NavBar(props: INavBarProps) {
           <Tag tagName={musicItem?.platform ?? ''}></Tag>
         </View>
       </View>
-      <IconButton icon="share" color="white" size={rpx(48)}></IconButton>
+      <IconButton
+        icon="share"
+        color="white"
+        size={rpx(48)}
+        onPress={() => {
+          showShare({
+            content: {
+              type: 'ShareMusic',
+              track: {
+                id: musicItem?.id,
+                platform: musicItem?.platform
+              },
+            },
+            title: musicItem?.title,
+            desc: musicItem?.artist,
+          });
+        }}></IconButton>
     </View>
   );
 }
