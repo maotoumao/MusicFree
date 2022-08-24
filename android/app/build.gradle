@@ -303,6 +303,7 @@ dependencies {
     }
 
     implementation project(':react-native-fs')
+    implementation 'com.facebook.fresco:animated-gif:2.5.0'
 }
 
 if (isNewArchitectureEnabled()) {
