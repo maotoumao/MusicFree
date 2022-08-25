@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Image, StyleSheet} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
@@ -14,6 +14,7 @@ import {CustomTheme, DarkTheme, DefaultTheme} from './theme';
 import {useConfig} from '@/common/localConfigManager';
 import Share from '@/components/share';
 import PageBackground from '@/components/pageBackground';
+import RNBootSplash from "react-native-bootsplash";
 
 // todo: load config
 /**
@@ -25,6 +26,11 @@ const Stack = createNativeStackNavigator();
 
 export default function Pages() {
   const theme = useConfig('setting.theme.mode') ?? 'dark';
+  useEffect(() => {
+    if(__DEV__) {
+      RNBootSplash.hide({fade: true});
+    }
+  }, []);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>

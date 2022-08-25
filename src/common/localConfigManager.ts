@@ -1,6 +1,7 @@
 import {getStorage, setStorage} from '@/utils/storageUtil';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
+import {exists} from 'react-native-fs';
 
 type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
 interface IConfig {
@@ -77,13 +78,26 @@ let config: PartialConfig = null;
 /** 初始化config */
 export async function loadConfig() {
   config = (await getStorage('local-config')) ?? {};
+  await checkValidPath(['setting.theme.background']);
   notify();
+}
+
+/** 检测合法路径 */
+async function checkValidPath(paths: Array<IConfigPaths> = []) {
+  return Promise.all(
+    paths.map(async _ => {
+      if (!(await exists(getPathValue(config ?? {}, _) as unknown as string))) {
+        await setConfig(_, undefined);
+      }
+    }),
+  );
 }
 
 /** 设置config */
 export async function setConfig<T extends IConfigPaths>(
   key: T,
   value: IConfigPathsObj[T],
+  shouldNotify = true,
 ) {
   if (config === null) {
     return;
@@ -105,7 +119,9 @@ export async function setConfig<T extends IConfigPaths>(
 
   setStorage('local-config', result);
   config = result;
-  notify();
+  if (shouldNotify) {
+    notify();
+  }
 }
 
 /** 获取config */

@@ -158,7 +158,7 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
   currentIndex = findMusicIndex(currentMusicItem);
   repeatMode = mode;
   // 记录
-  setConfig('status.music.repeatMode', mode);
+  setConfig('status.music.repeatMode', mode, false);
   notifyState(['repeatMode', 'currentIndex', 'musicQueue']);
 };
 
@@ -194,7 +194,7 @@ const addAll = (
     });
   }
   if (!notCache) {
-    setConfig('status.music.musicQueue', musicQueue);
+    setConfig('status.music.musicQueue', musicQueue, false);
   }
   notifyState('musicQueue');
 };
@@ -237,7 +237,7 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
       draft.splice(_ind, 1);
     });
   }
-  setConfig('status.music.musicQueue', musicQueue);
+  setConfig('status.music.musicQueue', musicQueue, false);
   notifyState(['musicQueue', 'currentIndex']);
 };
 
@@ -296,7 +296,6 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
       return;
     }
   }
-  console.log('gohere!!!', musicItem, forcePlay);
   currentIndex = _currentIndex;
 
   if (currentIndex === -1) {
@@ -323,7 +322,8 @@ const _playTrack = async (track: Track) => {
   await TrackPlayer.reset();
   await TrackPlayer.add([track, {url: ''}]);
   await TrackPlayer.play();
-  setConfig('status.music.track', track as IMusic.IMusicItem);
+  setConfig('status.music.track', track as IMusic.IMusicItem, false);
+  setConfig('status.music.progress', 0, false);
 };
 
 const playWithReplaceQueue = async (
