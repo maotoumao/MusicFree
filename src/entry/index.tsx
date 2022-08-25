@@ -13,6 +13,7 @@ import Panels from '@/components/panels';
 import {CustomTheme, DarkTheme, DefaultTheme} from './theme';
 import {useConfig} from '@/common/localConfigManager';
 import Share from '@/components/share';
+import PageBackground from '@/components/pageBackground';
 
 // todo: load config
 /**
@@ -23,24 +24,13 @@ bootstrap();
 const Stack = createNativeStackNavigator();
 
 export default function Pages() {
-  const background = useConfig('setting.theme.background');
   const theme = useConfig('setting.theme.mode') ?? 'dark';
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <PaperProvider theme={theme === 'dark'? CustomTheme : DefaultTheme}>
         <NavigationContainer theme={theme === 'dark'? CustomTheme : DefaultTheme}>
-          <Image
-            style={style.blur}
-            blurRadius={15}
-            source={
-              background
-                ? {
-                    uri: background,
-                  }
-                : require('@/assets/imgs/background.jpg')
-            }></Image>
-
+          <PageBackground></PageBackground>
           <Stack.Navigator
             initialRouteName={routes[0].path}
             screenOptions={{
