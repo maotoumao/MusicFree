@@ -9,6 +9,14 @@ interface IConfig {
     theme: {
       mode: 'light' | 'dark';
       background: string;
+      colors: {
+        primary: string;
+        placeholder: string;
+        surface: string;
+        text: string;
+        accent: string;
+        background: string;
+      };
     };
   };
   status: {
@@ -78,7 +86,7 @@ let config: PartialConfig = null;
 /** 初始化config */
 export async function loadConfig() {
   config = (await getStorage('local-config')) ?? {};
-  await checkValidPath(['setting.theme.background']);
+  // await checkValidPath(['setting.theme.background']);
   notify();
 }
 

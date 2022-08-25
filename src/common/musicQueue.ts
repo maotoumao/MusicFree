@@ -12,6 +12,7 @@ import {pluginManager} from './pluginManager';
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import {getConfig, setConfig} from './localConfigManager';
+import logManager from './logManager';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -51,10 +52,12 @@ const setupMusicQueue = async () => {
     if (config?.repeatMode) {
       repeatMode = config.repeatMode as MusicRepeatMode;
     }
-    if(config?.progress) {
+    if (config?.progress) {
       await TrackPlayer.seekTo(config.progress);
     }
-  } catch {}
+  } catch(e) {
+    // logManager.error('状态恢复失败', e);
+  }
   // 不要依赖playbackchanged，不稳定,
   // 一首歌结束了
   TrackPlayer.addEventListener(Event.PlaybackQueueEnded, async () => {
@@ -62,7 +65,6 @@ const setupMusicQueue = async () => {
       await play(undefined, true);
     } else {
       await skipToNext();
-      console.log('playbackerrorend');
     }
   });
 
@@ -70,9 +72,12 @@ const setupMusicQueue = async () => {
     await skipToNext();
   });
 
-  TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async (evt) => {
+  TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
     // 是track里的，不是playlist里的
-    if (evt.nextTrack === 1 && !(await TrackPlayer.getTrack(evt.nextTrack))?.url) {
+    if (
+      evt.nextTrack === 1 &&
+      !(await TrackPlayer.getTrack(evt.nextTrack))?.url
+    ) {
       if (repeatMode === MusicRepeatMode.SINGLE) {
         await play(undefined, true);
       } else {
@@ -278,43 +283,44 @@ const getMusicTrack = async (musicItem: IMusic.IMusicItem): Promise<Track> => {
 
 /** 播放音乐 */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
-  const _currentIndex = findMusicIndex(musicItem);
+  try {
+    const _currentIndex = findMusicIndex(musicItem);
 
-  if (_currentIndex === currentIndex) {
-    // 如果暂停就继续播放，否则
-    const currentTrack = await TrackPlayer.getTrack(0);
-    if (forcePlay && currentTrack) {
-      _playTrack(currentTrack);
-      return;
-    }
-    if (currentTrack) {
-      const state = await TrackPlayer.getState();
-      if (musicIsPaused(state)) {
-        await TrackPlayer.play();
+    if (_currentIndex === currentIndex) {
+      // 如果暂停就继续播放，否则
+      const currentTrack = await TrackPlayer.getTrack(0);
+      if (forcePlay && currentTrack) {
+        _playTrack(currentTrack);
         return;
       }
-      return;
+      if (currentTrack) {
+        const state = await TrackPlayer.getState();
+        if (musicIsPaused(state)) {
+          await TrackPlayer.play();
+          return;
+        }
+        return;
+      }
     }
-  }
-  currentIndex = _currentIndex;
+    currentIndex = _currentIndex;
 
-  if (currentIndex === -1) {
-    if (musicItem) {
-      add(musicItem);
-      currentIndex = musicQueue.length - 1;
-    } else {
-      return;
+    if (currentIndex === -1) {
+      if (musicItem) {
+        add(musicItem);
+        currentIndex = musicQueue.length - 1;
+      } else {
+        return;
+      }
     }
-  }
-  const _musicItem = musicQueue[currentIndex];
-  const track = await getMusicTrack(_musicItem);
-  musicQueue[currentIndex] = track as IMusic.IMusicItem;
-  notifyState('currentIndex');
-  try {
+    const _musicItem = musicQueue[currentIndex];
+    const track = await getMusicTrack(_musicItem);
+    musicQueue[currentIndex] = track as IMusic.IMusicItem;
+    notifyState('currentIndex');
+  
     await _playTrack(track);
   } catch (e) {
     await TrackPlayer.setupPlayer();
-    await _playTrack(track);
+    console.log(e);
   }
 };
 

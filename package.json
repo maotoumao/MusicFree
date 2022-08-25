@@ -40,6 +40,7 @@
     "react-native-gesture-handler": "^2.5.0",
     "react-native-get-random-values": "^1.8.0",
     "react-native-image-colors": "^1.5.1",
+    "react-native-image-picker": "^4.10.0",
     "react-native-linear-gradient": "^2.6.2",
     "react-native-logs": "^5.0.1",
     "react-native-music-control": "^1.4.1",

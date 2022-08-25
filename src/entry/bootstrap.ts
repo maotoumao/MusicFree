@@ -1,12 +1,13 @@
 import MusicQueue from '@/common/musicQueue';
 import MusicSheet from '@/common/musicSheet';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
-import TrackPlayer, { Capability } from 'react-native-track-player';
+import TrackPlayer, {Capability} from 'react-native-track-player';
 import {pluginManager} from '../common/pluginManager';
 import 'react-native-get-random-values';
 import {ToastAndroid} from 'react-native';
-import { loadConfig } from '@/common/localConfigManager';
-import RNBootSplash from "react-native-bootsplash";
+import {loadConfig} from '@/common/localConfigManager';
+import RNBootSplash from 'react-native-bootsplash';
+import { setupLog } from '@/common/logManager';
 
 /** app加载前执行 */
 export default async function () {
@@ -30,36 +31,39 @@ export default async function () {
   // 加载插件
 
   Promise.all([
-    await pluginManager.initPlugins(),
+    await pluginManager.setupPlugins(),
     await TrackPlayer.setupPlayer(),
-    await TrackPlayer.updateOptions({
-      progressUpdateEventInterval: 2,
-      stopWithApp: false,
-      alwaysPauseOnInterruption: true,
-      capabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.SkipToNext,
-        Capability.SkipToPrevious,
-      ],
-      compactCapabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.SkipToNext,
-        Capability.SkipToPrevious,
-      ],
-      notificationCapabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.SkipToNext,
-        Capability.SkipToPrevious,
-      ]
-    })
   ]);
+  await TrackPlayer.updateOptions({
+    progressUpdateEventInterval: 2,
+    stopWithApp: false,
+    alwaysPauseOnInterruption: true,
+    capabilities: [
+      Capability.Play,
+      Capability.Pause,
+      Capability.SkipToNext,
+      Capability.SkipToPrevious,
+    ],
+    compactCapabilities: [
+      Capability.Play,
+      Capability.Pause,
+      Capability.SkipToNext,
+      Capability.SkipToPrevious,
+    ],
+    notificationCapabilities: [
+      Capability.Play,
+      Capability.Pause,
+      Capability.SkipToNext,
+      Capability.SkipToPrevious,
+    ],
+  });
   await MusicQueue.setupMusicQueue();
-  await MusicSheet.initMusicSheet();
+  await MusicSheet.setupMusicSheet();
+  await setupLog();
 
-  ErrorUtils.setGlobalHandler(error => ToastAndroid.show(`error: ${error?.message}`, ToastAndroid.LONG));
-   // 隐藏开屏动画
+  ErrorUtils.setGlobalHandler(error =>
+    ToastAndroid.show(`error: ${error?.message}`, ToastAndroid.LONG),
+  );
+  // 隐藏开屏动画
   RNBootSplash.hide({fade: true});
 }

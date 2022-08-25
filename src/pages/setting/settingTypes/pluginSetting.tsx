@@ -50,7 +50,7 @@ export default function PluginSetting(props: IPluginSettingProps) {
                   : Promise.resolve();
               }),
             );
-            await pluginManager.initPlugins();
+            await pluginManager.setupPlugins();
             setPlugins(pluginManager.getPlugins());
           } catch (e) {
             console.log(e, '寄了');

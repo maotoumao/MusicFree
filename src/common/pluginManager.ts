@@ -105,7 +105,7 @@ class PluginManager {
     );
   }
 
-  async initPlugins() {
+  async setupPlugins() {
     this.loading = true;
     this.plugins = [];
     try {

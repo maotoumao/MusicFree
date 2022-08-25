@@ -179,7 +179,7 @@ function useUserSheets(): IMusic.IMusicSheet {
 }
 
 const MusicSheet = {
-  initMusicSheet,
+  setupMusicSheet: initMusicSheet,
   addSheet,
   updateSheet,
   addMusic,

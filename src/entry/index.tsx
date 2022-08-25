@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {Image, StyleSheet} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
@@ -14,9 +14,9 @@ import {CustomTheme, DarkTheme, DefaultTheme} from './theme';
 import {useConfig} from '@/common/localConfigManager';
 import Share from '@/components/share';
 import PageBackground from '@/components/pageBackground';
-import RNBootSplash from "react-native-bootsplash";
+import RNBootSplash from 'react-native-bootsplash';
+import logManager from '@/common/logManager';
 
-// todo: load config
 /**
  * 字体颜色
  */
@@ -25,17 +25,27 @@ bootstrap();
 const Stack = createNativeStackNavigator();
 
 export default function Pages() {
-  const theme = useConfig('setting.theme.mode') ?? 'dark';
+  const themeName = useConfig('setting.theme.mode') ?? 'dark';
+  const themeColors = useConfig('setting.theme.colors') ?? {};
+  const theme = themeName === 'dark' ? CustomTheme : DefaultTheme;
+  const mergedTheme = {
+    ...theme,
+    colors: {
+      ...theme.colors,
+      ...themeColors,
+    },
+  };
   useEffect(() => {
-    if(__DEV__) {
+    if (__DEV__) {
       RNBootSplash.hide({fade: true});
+      logManager.error('TEST');
     }
   }, []);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <PaperProvider theme={theme === 'dark'? CustomTheme : DefaultTheme}>
-        <NavigationContainer theme={theme === 'dark'? CustomTheme : DefaultTheme}>
+      <PaperProvider theme={mergedTheme}>
+        <NavigationContainer theme={mergedTheme}>
           <PageBackground></PageBackground>
           <Stack.Navigator
             initialRouteName={routes[0].path}
