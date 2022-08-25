@@ -16,6 +16,7 @@ interface IHeaderProps {
 }
 export default function Header(props: IHeaderProps) {
   const {albumItem, musicList} = props;
+  console.log(albumItem);
   const {showPanel} = usePanelShow();
   const {colors} = useTheme();
 
@@ -26,9 +27,9 @@ export default function Header(props: IHeaderProps) {
           <Image
             style={style.coverImg}
             source={
-              albumItem?.coverImg
+              albumItem?.artwork
                 ? {
-                    uri: albumItem.coverImg,
+                    uri: albumItem.artwork,
                   }
                 : require('@/assets/imgs/album-default.jpg')
             }></Image>
