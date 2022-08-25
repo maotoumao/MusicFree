@@ -109,7 +109,8 @@ export default function useSearch() {
         //       }),
         //     );
         //   });
-      } catch {
+      } catch(e) {
+        console.log('SEARCH ERROR', e);
         setSearchResults(
           produce(draft => {
             const prev = draft[_hash] ?? {};

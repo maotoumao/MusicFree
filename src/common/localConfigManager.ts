@@ -1,9 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getStorage, setStorage} from '@/utils/storageUtil';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
 
-
-type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[] ;
+type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
 interface IConfig {
   setting: {
     theme: {
@@ -24,9 +23,6 @@ interface IConfig {
     };
   };
 }
-
-
-
 
 type FilterType<T, R = never> = T extends Record<string | number, any>
   ? {
@@ -80,15 +76,7 @@ type IConfigPathsObj = KeyPathsObj<DeepPartial<IConfig>, IConfigPaths>;
 let config: PartialConfig = null;
 /** 初始化config */
 export async function loadConfig() {
-  try {
-    const _ = await AsyncStorage.getItem('local-config');
-    if (!_) {
-      throw new Error();
-    }
-    config = JSON.parse(_);
-  } catch {
-    config = {};
-  }
+  config = (await getStorage('local-config')) ?? {};
   notify();
 }
 
@@ -115,11 +103,9 @@ export async function setConfig<T extends IConfigPaths>(
     return draft;
   });
 
-  try {
-    await AsyncStorage.setItem('local-config', JSON.stringify(result));
-    config = result;
-    notify();
-  } catch {}
+  setStorage('local-config', result);
+  config = result;
+  notify();
 }
 
 /** 获取config */
