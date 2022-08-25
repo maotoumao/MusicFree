@@ -62,6 +62,7 @@ const setupMusicQueue = async () => {
       await play(undefined, true);
     } else {
       await skipToNext();
+      console.log('playbackerrorend');
     }
   });
 
@@ -69,9 +70,9 @@ const setupMusicQueue = async () => {
     await skipToNext();
   });
 
-  TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
+  TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async (evt) => {
     // 是track里的，不是playlist里的
-    if (!(await TrackPlayer.getTrack(evt.nextTrack))?.url) {
+    if (evt.nextTrack === 1 && !(await TrackPlayer.getTrack(evt.nextTrack))?.url) {
       if (repeatMode === MusicRepeatMode.SINGLE) {
         await play(undefined, true);
       } else {
@@ -240,6 +241,7 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
   notifyState(['musicQueue', 'currentIndex']);
 };
 
+/** 获取真实的url */
 const getMusicTrack = async (musicItem: IMusic.IMusicItem): Promise<Track> => {
   let track: Track;
 
@@ -294,6 +296,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
       return;
     }
   }
+  console.log('gohere!!!', musicItem, forcePlay);
   currentIndex = _currentIndex;
 
   if (currentIndex === -1) {
@@ -339,6 +342,7 @@ const pause = async () => {
 };
 
 const skipToNext = async () => {
+  console.log('skip');
   if (musicQueue.length === 0) {
     currentIndex = -1;
     return;
