@@ -4,10 +4,10 @@ import {check, PERMISSIONS, request} from 'react-native-permissions';
 import TrackPlayer, {Capability} from 'react-native-track-player';
 import {pluginManager} from '../common/pluginManager';
 import 'react-native-get-random-values';
-import {ToastAndroid} from 'react-native';
+import {Platform, ToastAndroid} from 'react-native';
 import {loadConfig} from '@/common/localConfigManager';
 import RNBootSplash from 'react-native-bootsplash';
-import { setupLog } from '@/common/logManager';
+import RNFS, { exists, mkdir } from 'react-native-fs';
 
 /** app加载前执行 */
 export default async function () {
@@ -59,11 +59,29 @@ export default async function () {
   });
   await MusicQueue.setupMusicQueue();
   await MusicSheet.setupMusicSheet();
-  await setupLog();
+  await setupFolder();
 
   ErrorUtils.setGlobalHandler(error =>
     ToastAndroid.show(`error: ${error?.message}`, ToastAndroid.LONG),
   );
   // 隐藏开屏动画
   RNBootSplash.hide({fade: true});
+}
+
+
+const basePath =
+  (Platform.OS === 'android'
+    ? RNFS.ExternalDirectoryPath
+    : RNFS.DocumentDirectoryPath);
+
+  async function checkAndCreate(path: string) {
+    const filePath = basePath + path;
+    if(!(await exists(filePath))) {
+      await mkdir(filePath);
+    }
+  }
+  /** 初始化 */
+async function setupFolder(){
+  await Promise.all([checkAndCreate('/data/')])
+
 }

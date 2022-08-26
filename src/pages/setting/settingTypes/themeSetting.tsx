@@ -10,6 +10,8 @@ import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ImageColors from 'react-native-image-colors';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Color from 'color';
+import {copyFile} from 'react-native-fs';
+import pathConst from '@/constants/pathConst';
 
 interface IThemeSettingProps {}
 export default function ThemeSetting(props: IThemeSettingProps) {
@@ -60,7 +62,12 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               if (!uri) {
                 return;
               }
-              setConfig('setting.theme.background', uri);
+
+              const bgPath = `${pathConst.dataPath}background${uri.substring(
+                uri.lastIndexOf('.'),
+              )}`;
+              await copyFile(uri, bgPath);
+              setConfig('setting.theme.background', `file://${bgPath}#${Date.now()}`);
 
               const colorsResult = await ImageColors.getColors(uri, {
                 fallback: '#ffffff',
@@ -87,13 +94,20 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               };
               // const isDark = Color(colors.average).isDark();
               const primaryColor = Color(colors.primary).darken(0.3).toString();
-              const textColor = Color(primaryColor).negate().lighten(0.3).toString();
+              const textColor = Color(primaryColor)
+                .negate()
+                .lighten(0.3)
+                .toString();
               setConfig('setting.theme.colors', {
                 primary: primaryColor,
                 text: textColor,
                 placeholder: Color(textColor).lighten(0.1).toString(),
                 surface: Color(colors.average).darken(0.2).toString(),
-                background: Color('#7f7f7f').mix(Color(primaryColor), 0.3).darken(0.15).alpha(0.15).toString(),
+                background: Color('#7f7f7f')
+                  .mix(Color(primaryColor), 0.3)
+                  .darken(0.15)
+                  .alpha(0.15)
+                  .toString(),
               });
             } catch (e) {
               console.log(e);

@@ -19,7 +19,6 @@ const config = {
 
 const log = logger.createLogger(config);
 
-export async function setupLog() {}
 
 export default {
   error(reason: string, errMsg?: any) {

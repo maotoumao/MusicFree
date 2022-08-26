@@ -3,12 +3,10 @@ import CryptoJs from 'crypto-js';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
-import {Platform, ToastAndroid} from 'react-native';
+import {ToastAndroid} from 'react-native';
+import pathConst from '@/constants/pathConst';
 
-const pluginPath =
-  (Platform.OS === 'android'
-    ? RNFS.ExternalDirectoryPath
-    : RNFS.DocumentDirectoryPath) + '/plugins/';
+const pluginPath = pathConst.pluginPath;
 const sha256 = CryptoJs.SHA256;
 
 class Plugin {
@@ -100,9 +98,7 @@ class PluginManager {
   }
 
   getPluginByHash(hash: string) {
-    return this.plugins.find(
-      _ => _.hash === hash,
-    );
+    return this.plugins.find(_ => _.hash === hash);
   }
 
   async setupPlugins() {
