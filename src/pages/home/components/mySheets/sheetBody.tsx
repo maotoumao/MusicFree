@@ -1,12 +1,11 @@
 import React from 'react';
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
-import rpx from '@/utils/rpx';
+import {FlatList, StyleSheet} from 'react-native';
 import MusicSheet from '@/common/musicSheet';
-import {List} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
-import MusicSheetItem from '@/components/musicSheetListItem';
 import useDialog from '@/components/dialogs/useDialog';
+import ListItem from '@/components/listItem';
+import IconButton from '@/components/iconButton';
 
 interface ISheetBodyProps {}
 export default function SheetBody(props: ISheetBodyProps) {
@@ -15,30 +14,40 @@ export default function SheetBody(props: ISheetBodyProps) {
   const {showDialog} = useDialog();
 
   return (
-    <ScrollView style={style.wrapper}>
-      {musicSheets?.map(sheet => (
-        <MusicSheetItem
+    <FlatList
+      style={style.wrapper}
+      data={musicSheets ?? []}
+      keyExtractor={sheet => sheet.id}
+      renderItem={({item: sheet}) => (
+        <ListItem
           key={`${sheet.id}`}
           title={sheet.title}
-          coverImg={sheet.coverImg}
-          desc={`${sheet.musicList.length ?? '-'}首`}
+          itemPaddingHorizontal={0}
+          left={{
+            artwork: sheet.coverImg,
+            fallback: require('@/assets/imgs/album-default.jpg'),
+          }}
           onPress={() => {
             navigation.navigate(ROUTE_PATH.SHEET_DETAIL, {
               id: sheet.id,
             });
           }}
-          rightIconName='trash-can-outline'
-          onRightIconPress={() => {
-            showDialog('simple-dialog', {
-              title: '删除歌单',
-              content: `确认删除歌单 ${sheet.title} 吗?`,
-              onOk:()=>{
-                MusicSheet.removeSheet(sheet.id);
-              }
-            })
-          }}></MusicSheetItem>
-      ))}
-    </ScrollView>
+          right={() => (
+            <IconButton
+              name="dots-vertical"
+              onPress={() => {
+                showDialog('simple-dialog', {
+                  title: '删除歌单',
+                  content: `确定删除歌单${sheet.title}吗?`,
+                  onOk: () => {
+                    MusicSheet.removeSheet(sheet.id);
+                  },
+                });
+              }}
+              fontColor='primary'></IconButton>
+          )}
+          desc={`${sheet.musicList.length ?? '-'}首`}></ListItem>
+      )}></FlatList>
   );
 }
 

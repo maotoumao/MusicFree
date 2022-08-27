@@ -4,9 +4,9 @@ import rpx from '@/utils/rpx';
 import Color from 'color';
 import useTextColor from '@/hooks/useTextColor';
 import {useTheme} from 'react-native-paper';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import {ColorKey, colorMap, fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 
-type ColorKey = 'primary' | 'normal' | 'secondary' | 'highlight';
+
 
 type IThemeTextProps = TextProps & {
   fontColor?: ColorKey;
@@ -14,12 +14,6 @@ type IThemeTextProps = TextProps & {
   fontWeight?: keyof typeof fontWeightConst;
 };
 
-const colorMap: Record<ColorKey, keyof ReactNativePaper.ThemeColors> = {
-  primary: 'textPrimary',
-  normal: 'text',
-  secondary: 'textSecondary',
-  highlight: 'textHighlight',
-} as const;
 
 export default function ThemeText(props: IThemeTextProps) {
   const theme = useTheme();
@@ -28,7 +22,8 @@ export default function ThemeText(props: IThemeTextProps) {
   const themeStyle = {
     color: theme.colors[colorMap[fontColor]],
     fontSize: fontSizeConst[fontSize],
-    fontWeight: fontWeightConst[fontWeight]
+    fontWeight: fontWeightConst[fontWeight],
+    includeFontPadding: false,
   };
 
   const _style = Array.isArray(style)

@@ -31,6 +31,7 @@ const CustomTheme = {
     ..._CustomTheme.colors,
     /** 文字 */
     text: '#eeeeee',
+    textSecondary: '#aaaaaa',
     placeholder: '#cccccc',
     background: 'transparent',
     pageBackground: '#100000',

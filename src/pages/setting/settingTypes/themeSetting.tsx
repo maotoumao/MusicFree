@@ -1,10 +1,8 @@
 import React from 'react';
 import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import ListItem from '@/components/listItem';
 import {setConfig, useConfig} from '@/common/localConfigManager';
-import DocumentPicker from 'react-native-document-picker';
-import {Button, List, Switch} from 'react-native-paper';
+import {List, Switch} from 'react-native-paper';
 import ThemeText from '@/components/themeText';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ImageColors from 'react-native-image-colors';

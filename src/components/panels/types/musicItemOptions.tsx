@@ -1,12 +1,11 @@
-import React, {useState} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {Image, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetFlatList,
-  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
-import {Avatar, Button, Divider, List} from 'react-native-paper';
+import {Divider} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import MusicSheet from '@/common/musicSheet';
 import {_usePanelShow} from '../usePanelShow';
@@ -93,14 +92,20 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
         style={style.listWrapper}
         keyExtractor={_ => _.title}
         renderItem={({item}) =>
-          (item.show !== false ) ? (
+          item.show !== false ? (
             <ListItem
-              icon={item.icon}
+              left={{
+                icon: {
+                  name: item.icon,
+                  size: 'small',
+                  fontColor: 'normal',
+                },
+                width: rpx(48)
+              }}
+              itemPaddingHorizontal={0}
+              itemHeight={rpx(96)}
               title={item.title}
-              onPress={item.onPress}
-              theme={{
-                fontSize: fontSizeConst.small,
-              }}></ListItem>
+              onPress={item.onPress}></ListItem>
           ) : (
             <></>
           )
@@ -144,3 +149,11 @@ const style = StyleSheet.create({
     fontSize: fontSizeConst.small,
   },
 });
+
+// <ListItem
+//               icon={item.icon}
+//               title={item.title}
+//               onPress={item.onPress}
+//               theme={{
+//                 fontSize: fontSizeConst.small,
+//               }}></ListItem>

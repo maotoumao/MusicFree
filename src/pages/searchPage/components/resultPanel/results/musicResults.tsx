@@ -1,7 +1,7 @@
 import React from 'react';
 import {FlatList} from 'react-native';
 import MusicQueue from '@/common/musicQueue';
-import MusicListItem from '@/components/musicListItem';
+import ListItem from '@/components/listItem';
 
 interface IMusicResultsProps {
   platform: string;
@@ -14,13 +14,15 @@ export default function MusicResults(props: IMusicResultsProps) {
   return (
     <FlatList
       data={data ?? []}
+      keyExtractor={_ => `${platform}-${_.id}`}
       renderItem={({item: musicItem}) => (
-        <MusicListItem
-          key={`${platform}-${musicItem.id}`}
+        <ListItem
+          title={musicItem.title}
+          tag={musicItem.platform}
+          desc={`${musicItem.artist} - ${musicItem.album}`}
           onPress={() => {
             MusicQueue.play(musicItem);
-          }}
-          musicItem={musicItem}></MusicListItem>
+          }}></ListItem>
       )}></FlatList>
   );
 }

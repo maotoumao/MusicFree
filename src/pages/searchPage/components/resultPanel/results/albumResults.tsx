@@ -1,12 +1,10 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useAtomValue} from 'jotai';
-import {searchResultsAtom} from '@/pages/searchPage/store/atoms';
-import AlbumListItem from '@/components/albumListItem';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 import {FlatList} from 'react-native-gesture-handler';
+import ListItem from '@/components/listItem';
 
 interface IAlbumResultsProps {
   platform: string;
@@ -16,19 +14,24 @@ export default function AlbumResults(props: IAlbumResultsProps) {
   const {data, platform} = props;
   const navigation = useNavigation<any>();
 
-
   return (
     <FlatList
       data={data ?? []}
+      keyExtractor={_ => `${platform}-${_.id}`}
       renderItem={({item: albumItem}) => (
-        <AlbumListItem
-          key={`${platform}-${albumItem.id}`}
+        <ListItem
+          left={{
+            artwork: albumItem.artwork,
+            fallback: require('@/assets/imgs/album-default.jpg'),
+          }}
+          title={albumItem.title}
+          desc={`${albumItem.artist}    ${albumItem.date}`}
+          tag={albumItem.platform}
           onPress={() => {
             navigation.navigate(ROUTE_PATH.ALBUM_DETAIL, {
               albumItem: albumItem,
             });
-          }}
-          albumItem={albumItem}></AlbumListItem>
+          }}></ListItem>
       )}></FlatList>
   );
 }

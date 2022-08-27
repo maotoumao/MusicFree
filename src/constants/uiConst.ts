@@ -16,6 +16,8 @@ const fontSizeConst = {
   /** 40 */
   biggest: rpx(40),
 
+  /** 标签 */
+  tag: rpx(20),
   /** 描述文本等字体 */
   description: rpx(22),
   /** 正文字体 */
@@ -35,4 +37,20 @@ const fontWeightConst = {
 
 } as const;
 
-export {fontSizeConst, fontWeightConst};
+const iconSizeConst = {
+  small: rpx(28),
+  normal: rpx(40),
+  big: rpx(64)
+}
+
+type ColorKey = 'primary' | 'normal' | 'secondary' | 'highlight';
+const colorMap: Record<ColorKey, keyof ReactNativePaper.ThemeColors> = {
+  primary: 'textPrimary',
+  normal: 'text',
+  secondary: 'textSecondary',
+  highlight: 'textHighlight',
+} as const;
+
+
+export {fontSizeConst, fontWeightConst, iconSizeConst, colorMap};
+export type {ColorKey};

@@ -1,16 +1,14 @@
-import React, {useState} from 'react';
-import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {FlatList, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
 
-import MusicListItem from '@/components/musicListItem';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {IconButton} from 'react-native-paper';
 import Loading from '@/components/loading';
 import usePanelShow from '@/components/panels/usePanelShow';
 import Header from './header';
-import { fontSizeConst } from '@/constants/uiConst';
-import ThemeText from '@/components/themeText';
+import {fontSizeConst} from '@/constants/uiConst';
+import ListItem from '@/components/listItem';
+import IconButton from '@/components/iconButton';
 
 interface IMusicListProps {
   albumItem: IAlbum.IAlbumItem | null;
@@ -27,22 +25,27 @@ export default function MusicList(props: IMusicListProps) {
       ) : (
         <FlatList
           data={musicList ?? []}
-          ListHeaderComponent={<Header albumItem={albumItem} musicList={musicList}></Header>}
+          ListHeaderComponent={
+            <Header albumItem={albumItem} musicList={musicList}></Header>
+          }
+          keyExtractor={_ => `${_.id}${_.platform}`}
           renderItem={({index, item: musicItem}) => (
-            <MusicListItem
-              key={`${musicItem.id}${musicItem.platform}`}
-              musicItem={musicItem}
-              left={props => (
-                <ThemeText fontColor="secondary" {...props} style={style.musicIndex}>
-                  {index + 1}
-                </ThemeText>
-              )}
-              onPress={() => {
-                MusicQueue.play(musicItem);
+            <ListItem
+              left={{
+                index: index + 1,
+                width: rpx(64),
               }}
-              onRightPress={() => {
-                showPanel('MusicItemOptions', {musicItem});
-              }}></MusicListItem>
+              title={musicItem.title}
+              desc={`${musicItem.artist} - ${musicItem.album}`}
+              tag={musicItem.platform}
+              onPress={() => MusicQueue.play(musicItem)}
+              right={() => (
+                <IconButton
+                  name="dots-vertical"
+                  onPress={() =>
+                    showPanel('MusicItemOptions', {musicItem})
+                  }></IconButton>
+              )}></ListItem>
           )}></FlatList>
       )}
     </View>

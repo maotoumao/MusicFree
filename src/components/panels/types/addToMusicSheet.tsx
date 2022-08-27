@@ -1,21 +1,20 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetScrollView,
+  BottomSheetFlatList,
 } from '@gorhom/bottom-sheet';
 import MusicSheet from '@/common/musicSheet';
 import Toast from 'react-native-toast-message';
-import MusicSheetItem from '@/components/musicSheetListItem';
-import { _usePanelShow } from '../usePanelShow';
-import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
+import {_usePanelShow} from '../usePanelShow';
+import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
-import Color from 'color';
-import { useTheme } from 'react-native-paper';
+import {useTheme} from 'react-native-paper';
+import ListItem from '@/components/listItem';
 
 interface IAddToMusicSheetProps {
-  musicItem: IMusic.IMusicItem | IMusic.IMusicItem[]
+  musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
 }
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
@@ -44,31 +43,35 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
       <View style={style.header}>
         <ThemeText style={style.headerText}>添加到歌单</ThemeText>
       </View>
-      <BottomSheetScrollView style={style.scrollWrapper}>
-        {sheets.map(sheet => (
-          <MusicSheetItem
+      <BottomSheetFlatList
+        data={sheets ?? []}
+        keyExtractor={sheet => sheet.id}
+        renderItem={({item: sheet}) => (
+          <ListItem
             key={`${sheet.id}`}
             title={sheet.title}
-            coverImg={sheet.coverImg}
-            desc={`${sheet.musicList.length ?? '-'}首`}
+            left={{
+              artwork:sheet.coverImg,
+              fallback: require('@/assets/imgs/album-default.jpg')
+            }}
             onPress={async () => {
               try {
                 await MusicSheet.addMusic(sheet.id, musicItem);
                 closePanel();
                 Toast.show({
                   text1: '添加到歌单成功',
-                  position: 'bottom'
-                })
+                  position: 'bottom',
+                });
               } catch {
                 Toast.show({
                   type: 'error',
                   text1: '添加到歌单失败',
-                  position: 'bottom'
-                })
+                  position: 'bottom',
+                });
               }
-            }}></MusicSheetItem>
-        ))}
-      </BottomSheetScrollView>
+            }}
+            desc={`${sheet.musicList.length ?? '-'}首`}></ListItem>
+        )}></BottomSheetFlatList>
     </BottomSheet>
   );
 }
@@ -80,6 +83,7 @@ const style = StyleSheet.create({
   header: {
     paddingHorizontal: rpx(24),
     marginTop: rpx(24),
+    marginBottom: rpx(36),
   },
   headerText: {
     fontSize: fontSizeConst.normal,

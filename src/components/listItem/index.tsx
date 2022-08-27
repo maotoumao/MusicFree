@@ -1,43 +1,166 @@
-import {fontSizeConst} from '@/constants/uiConst';
-import rpx from '@/utils/rpx';
 import React from 'react';
-import {GestureResponderEvent, Pressable, StyleSheet, Text} from 'react-native';
-import { useTheme } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {StyleSheet, Text, View} from 'react-native';
+import rpx from '@/utils/rpx';
+import {List, useTheme} from 'react-native-paper';
+import Tag from '../tag';
+import {fontSizeConst} from '@/constants/uiConst';
+import ThemeText from '../themeText';
+import Image from '../image';
+import IconButton from '../iconButton';
 
-interface IListItemProps {
-  icon: string;
-  title: string;
-  onPress?: (evt: GestureResponderEvent) => void;
-  theme?: {
-    color?: string;
-    fontSize?: number;
-  };
+interface ILeftProps {
+  /** 序号 */
+  index?: number | string;
+  /** 封面图 */
+  artwork?: string;
+  /** 封面图的兜底 */
+  fallback?: any;
+  /** icon */
+  icon?: Parameters<typeof IconButton>[0];
+  /** 宽度 */
+  width?: number;
+  /** 组件 */
+  component?: () => JSX.Element;
 }
-export default function ListItem(props: IListItemProps) {
-  const {icon, title, onPress, theme} = props;
-  const {colors} = useTheme();
 
-  return (
-    <Pressable style={listItemStyle.wrapper} onPress={onPress}>
-      <Icon
-        name={icon}
-        size={theme?.fontSize ?? fontSizeConst.normal}
-        color={theme?.color ?? colors.text}></Icon>
-      <Text style={[listItemStyle.title, {color: theme?.color ?? colors.text, fontSize: theme?.fontSize}]}>{title}</Text>
-    </Pressable>
+function Left(props?: ILeftProps) {
+  const {
+    index,
+    artwork,
+    fallback,
+    icon,
+    width = rpx(100),
+    component: Component,
+  } = props ?? {};
+
+  return props && Object.keys(props).length ? (
+    Component ? (
+      <Component></Component>
+    ) : (
+      <View style={[leftStyle.artworkWrapper, {width}]}>
+        {index !== undefined ? (
+          <ThemeText fontColor="secondary" style={{fontStyle: 'italic'}}>
+            {index}
+          </ThemeText>
+        ) : icon !== undefined ? (
+          <IconButton {...icon}></IconButton>
+        ) : (
+          <Image
+            style={leftStyle.artwork}
+            uri={artwork}
+            fallback={fallback}></Image>
+        )}
+      </View>
+    )
+  ) : (
+    <></>
   );
 }
 
-const listItemStyle = StyleSheet.create({
-  wrapper: {
-    height: rpx(100),
-    width: '100%',
-    flexDirection: 'row',
+const leftStyle = StyleSheet.create({
+  artworkWrapper: {
+    justifyContent: 'center',
     alignItems: 'center',
   },
+  artwork: {
+    width: rpx(76),
+    height: rpx(76),
+    borderRadius: rpx(16),
+  },
+});
+
+/** 歌单item */
+interface IListItemProps {
+  /** 标题 */
+  title: string;
+  /** 描述 */
+  desc?: string;
+  /** 标签 */
+  tag?: string;
+  left?: ILeftProps;
+  /** 右侧按钮 */
+  right?: () => JSX.Element;
+  itemPaddingHorizontal?: number;
+  itemHeight?: number;
+  onPress: () => void;
+}
+
+export default function ListItem(props: IListItemProps) {
+  const {
+    title,
+    desc,
+    tag,
+    right,
+    itemHeight,
+    onPress,
+    left,
+    itemPaddingHorizontal = rpx(24),
+  } = props;
+  return (
+    <List.Item
+      left={() => <Left {...(left ?? {})}></Left>}
+      style={[
+        style.wrapper,
+        {
+          paddingHorizontal: itemPaddingHorizontal,
+          height: itemHeight ?? rpx(120),
+        },
+      ]}
+      title={() => (
+        <View
+          style={{
+            alignItems: 'stretch',
+            justifyContent: 'space-around',
+            height: '100%',
+            marginRight: right ? rpx(18) : 0,
+          }}>
+          <View style={style.titleWrapper}>
+            <ThemeText numberOfLines={1} style={style.title} fontSize="normal">
+              {title}
+            </ThemeText>
+            {tag ? <Tag tagName={tag}></Tag> : <></>}
+          </View>
+          {desc ? (
+            <ThemeText fontColor="secondary" fontSize="description">
+              {desc}
+            </ThemeText>
+          ) : (
+            <></>
+          )}
+        </View>
+      )}
+      titleStyle={{
+        paddingVertical: 0,
+        marginLeft: 0,
+      }}
+      right={right ? right : () => <></>}
+      onPress={onPress}></List.Item>
+  );
+}
+const style = StyleSheet.create({
+  wrapper: {
+    justifyContent: 'center',
+  },
+  titleWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   title: {
-    marginLeft: rpx(28),
     fontSize: fontSizeConst.normal,
+    includeFontPadding: false,
+    maxWidth: rpx(460),
+  },
+  artworkWrapper: {
+    width: rpx(76),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: rpx(12),
+  },
+  artwork: {
+    width: rpx(76),
+    height: rpx(76),
+    borderRadius: rpx(16),
   },
 });

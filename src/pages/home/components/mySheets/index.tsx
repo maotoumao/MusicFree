@@ -1,11 +1,6 @@
 import React from 'react';
 import {
-  Button,
-  Image,
-  Platform,
-  ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import rpx from '@/utils/rpx';

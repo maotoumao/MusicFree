@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   BackHandler,
+  FlatList,
   ImageBackground,
   StyleSheet,
   Text,
@@ -26,6 +27,36 @@ export default function HomeDrawer(props: IDrawerProps) {
       type: settingType,
     });
   }
+
+  const basicSetting = [
+    {
+      icon: 'cog-outline',
+      title: '基本设置',
+      onPress: () => {
+        navigateToSetting('basic');
+      },
+    },
+    {
+      icon: 'language-javascript',
+      title: '插件设置',
+      onPress: () => {
+        navigateToSetting('plugin');
+      },
+    },
+    {
+      icon: 'tshirt-v-outline',
+      title: '主题设置',
+      onPress: () => {
+        navigateToSetting('theme');
+      },
+    },
+    {
+      icon: 'backup-restore',
+      title: '备份与恢复',
+      onPress: () => {},
+    },
+  ] as const;
+
   return (
     <>
       <PageBackground></PageBackground>
@@ -40,25 +71,21 @@ export default function HomeDrawer(props: IDrawerProps) {
               <ThemeText style={style.cardTitle}>设置</ThemeText>
             }></Card.Title>
           <Card.Content>
-            <ListItem
-              icon="cog-outline"
-              title="基本设置"
-              onPress={() => {
-                navigateToSetting('basic');
-              }}></ListItem>
-            <ListItem
-              icon="language-javascript"
-              title="插件设置"
-              onPress={() => {
-                navigateToSetting('plugin');
-              }}></ListItem>
-            <ListItem
-              icon="tshirt-v-outline"
-              title="主题设置"
-              onPress={() => {
-                navigateToSetting('theme');
-              }}></ListItem>
-            <ListItem icon="backup-restore" title="备份与恢复"></ListItem>
+            {basicSetting.map(item => (
+              <ListItem
+                key={item.title}
+                itemPaddingHorizontal={0}
+                left={{
+                  icon: {
+                    name: item.icon,
+                    size: 'normal',
+                    fontColor: 'normal',
+                  },
+                  width: rpx(48),
+                }}
+                title={item.title}
+                onPress={item.onPress}></ListItem>
+            ))}
           </Card.Content>
         </Card>
         <View style={style.bottom}>
