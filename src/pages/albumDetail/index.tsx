@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, ToastAndroid, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import NavBar from './components/navBar';
-import Header from './components/header';
 import MusicBar from '@/components/musicBar';
 import MusicList from './components/musicList';
-import getStatusBarHeight from '@/utils/getStatusBarHeight';
 import useAlbumMusicList from './hooks/useAlbumMusicList';
 
 interface IAlbumDetailProps {}

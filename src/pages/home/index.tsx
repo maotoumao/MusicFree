@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import {StatusBar, StyleSheet, View} from 'react-native';
+import { StatusBar, StyleSheet, View} from 'react-native';
 
 import NavBar from './components/navBar';
 import Operations from './components/operations';
@@ -18,19 +18,19 @@ import MusicBar from '@/components/musicBar';
 import {Divider} from 'react-native-paper';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import HomeDrawer from './components/drawer';
-import getStatusBarHeight from '@/utils/getStatusBarHeight';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import rpx from '@/utils/rpx';
 
 function Home() {
   return (
-    <View style={styles.appWrapper}>
+    <SafeAreaView style={styles.appWrapper}>
       <StatusBar></StatusBar>
       <NavBar></NavBar>
       <Divider></Divider>
       <Operations></Operations>
       <MySheets></MySheets>
       <MusicBar></MusicBar>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -54,7 +54,6 @@ export default function App() {
 const styles = StyleSheet.create({
   appWrapper: {
     flexDirection: 'column',
-    height: '100%',
-    paddingTop: getStatusBarHeight(),
+    height: '100%'
   },
 });

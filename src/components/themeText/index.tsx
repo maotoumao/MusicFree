@@ -3,13 +3,23 @@ import {StyleSheet, Text, TextProps} from 'react-native';
 import rpx from '@/utils/rpx';;
 import Color from 'color';
 import useTextColor from '@/hooks/useTextColor';
+import { useTheme } from 'react-native-paper';
 
 type IThemeTextProps = TextProps & {
   type?: 'primary' | 'secondary';
+  fontWeight?: 'regular'| 'semibold' | 'bold'
 };
+
+const colorMap = {
+  primary: 'textPrimary',
+  normal: 'textNormal',
+  secondary: 'textSecondary',
+  highlight: 'textHighlight'
+}
 
 export default function ThemeText(props: IThemeTextProps) {
   const _textColor = useTextColor();
+  const theme = useTheme();
   const {style, children, type} = props;
 
   const textColor =

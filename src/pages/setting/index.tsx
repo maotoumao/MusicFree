@@ -1,13 +1,12 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StatusBar, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {Appbar} from 'react-native-paper';
-import getStatusBarHeight from '@/utils/getStatusBarHeight';
 import settingTypes from './settingTypes';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
-import useTextColor from '@/hooks/useTextColor';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface ISettingProps {}
 export default function Setting(props: ISettingProps) {
@@ -19,9 +18,9 @@ export default function Setting(props: ISettingProps) {
   const {colors} = useTheme();
 
   return (
-    <>
-      <View style={style.wrapper}>
-        <Appbar style={[style.appbar, {backgroundColor: colors.primary}]}>
+    <SafeAreaView style={style.wrapper}>
+      <StatusBar></StatusBar>
+      <Appbar style={[style.appbar, {backgroundColor: colors.primary}]}>
           <Appbar.BackAction
             color={colors.text}
             onPress={() => {
@@ -31,20 +30,19 @@ export default function Setting(props: ISettingProps) {
             <ThemeText style={style.header}>{settingItem?.title}</ThemeText>
           </Appbar.Header>
         </Appbar>
-      </View>
       <settingItem.component></settingItem.component>
-    </>
+    </SafeAreaView>
   );
 }
 
 const style = StyleSheet.create({
   wrapper: {
     width: rpx(750),
-    backgroundColor: '#2b333eaa',
-    paddingTop: getStatusBarHeight(),
+    flex: 1
   },
   appbar: {
     shadowColor: 'transparent',
+    backgroundColor: '#2b333eaa'
   },
   header: {
     backgroundColor: 'transparent',

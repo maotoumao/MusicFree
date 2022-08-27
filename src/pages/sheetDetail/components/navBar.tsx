@@ -1,9 +1,8 @@
 import React from 'react';
 import {Appbar} from 'react-native-paper';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation} from '@react-navigation/native';
-import getStatusBarHeight from '@/utils/getStatusBarHeight';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 
 interface IProps {}
@@ -12,7 +11,7 @@ export default function (props: IProps) {
   const primaryColor = usePrimaryColor();
 
   return (
-    <View style={[style.wrapper, {backgroundColor: primaryColor}]}>
+    <View style={[{backgroundColor: primaryColor}]}>
       <Appbar.Header style={[style.appbar, {backgroundColor: primaryColor}]}>
         <Appbar.BackAction
           onPress={() => {
@@ -28,9 +27,6 @@ export default function (props: IProps) {
 }
 
 const style = StyleSheet.create({
-  wrapper: {
-    paddingTop: getStatusBarHeight(),
-  },
   appbar: {
     shadowColor: 'transparent',
     flexDirection: 'row',

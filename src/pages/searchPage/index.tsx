@@ -8,6 +8,7 @@ import HistoryPanel from './components/historyPanel';
 import ResultPanel from './components/resultPanel';
 import MusicBar from '@/components/musicBar';
 import Loading from '@/components/loading';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface IProps {}
 export default function (props: IProps) {
@@ -27,7 +28,7 @@ export default function (props: IProps) {
   }, [pageStatus]);
 
   return (
-    <View style={style.wrapper}>
+    <SafeAreaView style={style.wrapper}>
       <NavBar></NavBar>
       <View style={{flex: 1}}>
         {pageStatus === PageStatus.EDITING && <HistoryPanel></HistoryPanel>}
@@ -35,7 +36,7 @@ export default function (props: IProps) {
         {pageStatus === PageStatus.RESULT && <ResultPanel></ResultPanel>}
       </View>
       <MusicBar></MusicBar>
-    </View>
+    </SafeAreaView>
   );
 }
 

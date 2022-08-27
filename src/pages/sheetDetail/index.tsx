@@ -1,10 +1,11 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ImageBackground, StatusBar, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
 import MusicList from './components/musicList';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface ISheetDetailProps {}
 export default function SheetDetail(props: ISheetDetailProps) {
@@ -12,11 +13,12 @@ export default function SheetDetail(props: ISheetDetailProps) {
   const id = route.params?.id ?? 'favorite';
 
   return (
-    <View style={style.wrapper}>
+    <SafeAreaView style={style.wrapper}>
+      <StatusBar></StatusBar>
       <NavBar></NavBar>
       <MusicList></MusicList>
       <MusicBar></MusicBar>
-    </View>
+    </SafeAreaView>
   );
 }
 

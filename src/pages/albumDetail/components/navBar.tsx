@@ -1,16 +1,16 @@
 import React from 'react';
 import {Appbar} from 'react-native-paper';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation} from '@react-navigation/native';
-import getStatusBarHeight from '@/utils/getStatusBarHeight';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface IProps {}
 export default function (props: IProps) {
   const navigation = useNavigation();
 
   return (
-    <View style={style.wrapper}>
+    <SafeAreaView style={style.wrapper}>
       <Appbar.Header style={style.appbar}>
         <Appbar.BackAction
           onPress={() => {
@@ -21,13 +21,12 @@ export default function (props: IProps) {
         <Appbar.Action icon="magnify" onPress={() => {}} />
         <Appbar.Action icon={'dots-vertical'} onPress={() => {}} />
       </Appbar.Header>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const style = StyleSheet.create({
   wrapper: {
-    paddingTop: getStatusBarHeight(),
     backgroundColor: '#2b333eaa',
   },
   appbar: {

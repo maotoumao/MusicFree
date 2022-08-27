@@ -1,12 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {} from 'react';
 import {
   Keyboard,
-  StatusBar,
   StyleSheet,
-  Text,
-  TextInput,
-  ToastAndroid,
-  View,
 } from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation, useTheme} from '@react-navigation/native';
@@ -14,7 +9,6 @@ import {useAtom, useSetAtom} from 'jotai';
 import {pageStatusAtom, PageStatus, queryAtom} from '../store/atoms';
 import useSearch from '../hooks/useSearch';
 import {Appbar, Button, Searchbar} from 'react-native-paper';
-import getStatusBarHeight from '@/utils/getStatusBarHeight';
 import { addHistory } from '../common/historySearch';
 import { fontSizeConst } from '@/constants/uiConst';
 import useTextColor from '@/hooks/useTextColor';
@@ -40,7 +34,6 @@ export default function NavBar(props: INavBarProps) {
   };
 
   return (
-    <View style={[style.wrapper, {backgroundColor: colors.primary}]}>
       <Appbar style={[style.appbar, {backgroundColor: colors.primary}]}>
         <Appbar.BackAction
           onPress={() => {
@@ -63,14 +56,10 @@ export default function NavBar(props: INavBarProps) {
           搜索
         </Button>
       </Appbar>
-    </View>
   );
 }
 
 const style = StyleSheet.create({
-  wrapper: {
-    paddingTop: getStatusBarHeight(),
-  },
   appbar: {
     shadowColor: 'transparent',
   },

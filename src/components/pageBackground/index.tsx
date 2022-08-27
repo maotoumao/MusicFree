@@ -1,33 +1,42 @@
-import React, {} from 'react';
-import {Image, StyleSheet} from 'react-native';
+import React from 'react';
+import {Image, StyleSheet, View} from 'react-native';
 import {useConfig} from '@/common/localConfigManager';
+import { useTheme } from 'react-native-paper';
 
-interface IPageBackgroundProps {}
-export default function PageBackground(props: IPageBackgroundProps) {
-  const background = useConfig('setting.theme.background');
+export default function PageBackground() {
+  const themeConfig = useConfig('setting.theme');
+  const theme = useTheme();
 
   return (
-    <Image
-      style={style.blur}
-      blurRadius={15}
-      source={
-        background
-          ? {
-              uri: background,
-            }
-          : require('@/assets/imgs/background.jpg')
-      }></Image>
+    <>
+      <View style={[style.wrapper, {backgroundColor: theme.colors?.pageBackground ?? theme.colors.background}]}></View>
+      <Image
+        source={
+          themeConfig?.background
+            ? {
+                uri: themeConfig.background,
+              }
+            : require('@/assets/imgs/background.jpg')
+        }
+        style={[
+          style.wrapper,
+          {
+            opacity: themeConfig?.backgroundOpacity ?? 0.7,
+          },
+        ]}
+        blurRadius={themeConfig?.backgroundBlur ?? 20}></Image>
+    </>
   );
 }
 
 const style = StyleSheet.create({
-  blur: {
-    width: '100%',
-    height: '100%',
+  wrapper: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
+    width: '100%',
+    height: '100%',
   },
 });

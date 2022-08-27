@@ -94,14 +94,9 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               };
               // const isDark = Color(colors.average).isDark();
               const primaryColor = Color(colors.primary).darken(0.3).toString();
-              const textColor = Color(primaryColor)
-                .negate()
-                .lighten(0.3)
-                .toString();
+
               setConfig('setting.theme.colors', {
                 primary: primaryColor,
-                text: textColor,
-                placeholder: Color(textColor).lighten(0.1).toString(),
                 surface: Color(colors.average).darken(0.2).toString(),
                 background: Color('#7f7f7f')
                   .mix(Color(primaryColor), 0.3)

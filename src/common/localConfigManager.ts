@@ -9,6 +9,8 @@ interface IConfig {
     theme: {
       mode: 'light' | 'dark';
       background: string;
+      backgroundOpacity: number;
+      backgroundBlur: number;
       colors: {
         primary: string;
         placeholder: string;

@@ -13,9 +13,10 @@ import Panels from '@/components/panels';
 import {CustomTheme, DarkTheme, DefaultTheme} from './theme';
 import {useConfig} from '@/common/localConfigManager';
 import Share from '@/components/share';
-import PageBackground from '@/components/pageBackground';
 import RNBootSplash from 'react-native-bootsplash';
 import logManager from '@/common/logManager';
+import PageBackground from '@/components/pageBackground';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 /**
  * 字体颜色
@@ -45,30 +46,32 @@ export default function Pages() {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <PaperProvider theme={mergedTheme}>
-        <NavigationContainer theme={mergedTheme}>
-          <PageBackground></PageBackground>
-          <Stack.Navigator
-            initialRouteName={routes[0].path}
-            screenOptions={{
-              statusBarColor: 'transparent',
-              statusBarTranslucent: true,
-              headerShown: false,
-              animation: 'slide_from_right',
-              animationDuration: 200,
-            }}>
-            {routes.map(route => (
-              <Stack.Screen
-                key={route.path}
-                name={route.path}
-                component={route.component}></Stack.Screen>
-            ))}
-          </Stack.Navigator>
+        <SafeAreaProvider>
+          <NavigationContainer theme={mergedTheme}>
+            <PageBackground></PageBackground>
+            <Stack.Navigator
+              initialRouteName={routes[0].path}
+              screenOptions={{
+                statusBarColor: 'transparent',
+                statusBarTranslucent: true,
+                headerShown: false,
+                animation: 'slide_from_right',
+                animationDuration: 200,
+              }}>
+              {routes.map(route => (
+                <Stack.Screen
+                  key={route.path}
+                  name={route.path}
+                  component={route.component}></Stack.Screen>
+              ))}
+            </Stack.Navigator>
 
-          <Panels></Panels>
-          <Dialogs></Dialogs>
-          <Share></Share>
-          <Toast></Toast>
-        </NavigationContainer>
+            <Panels></Panels>
+            <Dialogs></Dialogs>
+            <Share></Share>
+            <Toast></Toast>
+          </NavigationContainer>
+        </SafeAreaProvider>
       </PaperProvider>
     </GestureHandlerRootView>
   );
