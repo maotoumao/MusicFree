@@ -32,7 +32,6 @@ const CustomTheme = {
     /** 文字 */
     primary: "#2b333e",
     secondary: '#cdd1d3',
-    textPrimary: '#eeeeee',
     text: '#eeeeee',
     textSecondary: '#aaaaaa',
     textHighlight: '#eba0b3',
@@ -58,7 +57,6 @@ export {DarkTheme, DefaultTheme, CustomTheme};
  * 所有的颜色:
  * primary: appbar背景色
  * secondary: musicbar的颜色
- * textPrimary: appbar文字
  * text: 文字
  * textSecondary: 二级文字色
  * textHighlight: 文字选中色

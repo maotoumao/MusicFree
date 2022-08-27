@@ -100,13 +100,12 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               const secondaryColor = Color(colors.average)
                 .darken(0.3)
                 .toString();
-              const textPrimary =  Color(colors.primary).negate().lighten(0.2).toString()
+              const textHighlight =  Color(colors.primary).negate().lighten(0.2).toString()
 
               setConfig('setting.theme.colors', {
                 primary: primaryColor,
                 secondary: secondaryColor,
-                textPrimary:textPrimary,
-                textHighlight: Color(textPrimary).apple().toString()
+                textHighlight: textHighlight
               });
             } catch (e) {
               console.log(e);

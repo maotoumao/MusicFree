@@ -1,7 +1,5 @@
 declare module ReactNativePaper {
     interface ThemeColors {
-        /** appbar文字颜色 */
-        textPrimary?: string,
         /** 普通文字 */
         text: string;
         /** 副标题文字颜色 */

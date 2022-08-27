@@ -14,7 +14,6 @@ interface IConfig {
       colors: {
         primary: string,
         secondary: string,
-        textPrimary: string,
         textHighlight: string,
         pageBackground: string
       };
