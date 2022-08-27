@@ -35,7 +35,7 @@ export default function MusicSheetItem(props: IMusicSheetItemProps) {
       style={style.itemStyle}
       descriptionEllipsizeMode="tail"
       descriptionNumberOfLines={1}
-      description={<ThemeText type='secondary'>{desc as string}</ThemeText>}
+      description={<ThemeText fontColor="secondary">{desc as string}</ThemeText>}
       right={props =>
         onRightIconPress ? (
           <IconButton

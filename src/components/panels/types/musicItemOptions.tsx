@@ -82,7 +82,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
           <ThemeText numberOfLines={2} style={style.title}>
             {musicItem?.title}
           </ThemeText>
-          <ThemeText type='secondary' style={style.desc}>
+          <ThemeText fontColor="secondary" style={style.desc}>
             {musicItem?.artist} - {musicItem?.album}
           </ThemeText>
         </View>

@@ -33,7 +33,7 @@ export default function MusicList(props: IMusicListProps) {
               key={`${musicItem.id}${musicItem.platform}`}
               musicItem={musicItem}
               left={props => (
-                <ThemeText type='secondary' {...props} style={style.musicIndex}>
+                <ThemeText fontColor="secondary" {...props} style={style.musicIndex}>
                   {index + 1}
                 </ThemeText>
               )}

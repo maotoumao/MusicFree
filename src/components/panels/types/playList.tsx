@@ -63,7 +63,7 @@ export default function PlayList(props: IPlayListProps) {
       <View style={style.wrapper}>
         <ThemeText style={style.headerText}>
           播放列表
-          <ThemeText type="secondary" style={style.headerDescText}>
+          <ThemeText fontColor="secondary" style={style.headerDescText}>
             {' '}
             ({musicQueue.length}首)
           </ThemeText>

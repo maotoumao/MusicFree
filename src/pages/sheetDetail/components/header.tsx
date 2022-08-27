@@ -35,7 +35,7 @@ export default function Header(props: IHeaderProps) {
           }></Image>
         <View style={style.details}>
           <ThemeText style={style.title}>{sheet?.title}</ThemeText>
-          <ThemeText type="secondary" style={style.desc}>
+          <ThemeText fontColor="secondary" style={style.desc}>
             共{sheet?.musicList.length ?? 0}首
           </ThemeText>
         </View>

@@ -1,35 +1,39 @@
 import React from 'react';
 import {StyleSheet, Text, TextProps} from 'react-native';
-import rpx from '@/utils/rpx';;
+import rpx from '@/utils/rpx';
 import Color from 'color';
 import useTextColor from '@/hooks/useTextColor';
-import { useTheme } from 'react-native-paper';
+import {useTheme} from 'react-native-paper';
+import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+
+type ColorKey = 'primary' | 'normal' | 'secondary' | 'highlight';
 
 type IThemeTextProps = TextProps & {
-  type?: 'primary' | 'secondary';
-  fontWeight?: 'regular'| 'semibold' | 'bold'
+  fontColor?: ColorKey;
+  fontSize?: keyof typeof fontSizeConst;
+  fontWeight?: keyof typeof fontWeightConst;
 };
 
-const colorMap = {
+const colorMap: Record<ColorKey, keyof ReactNativePaper.ThemeColors> = {
   primary: 'textPrimary',
-  normal: 'textNormal',
+  normal: 'text',
   secondary: 'textSecondary',
-  highlight: 'textHighlight'
-}
+  highlight: 'textHighlight',
+} as const;
 
 export default function ThemeText(props: IThemeTextProps) {
-  const _textColor = useTextColor();
   const theme = useTheme();
-  const {style, children, type} = props;
+  const {style, children, fontSize = 'content', fontColor = 'normal', fontWeight='regular'} = props;
 
-  const textColor =
-    type === 'secondary'
-      ? Color(_textColor).alpha(0.7).toString()
-      : _textColor;
+  const themeStyle = {
+    color: theme.colors[colorMap[fontColor]],
+    fontSize: fontSizeConst[fontSize],
+    fontWeight: fontWeightConst[fontWeight]
+  };
 
   const _style = Array.isArray(style)
-    ? [{color: textColor}, ...style]
-    : [{color: textColor}, style];
+    ? [themeStyle, ...style]
+    : [themeStyle, style];
 
   return (
     <Text {...props} style={_style}>

@@ -49,7 +49,7 @@ export default function (props: IProps) {
             numberOfLines={1}>
             <ThemeText style={style.title}>{musicItem.title}</ThemeText>
             {musicItem?.artist && (
-              <ThemeText type="secondary"> -{musicItem.artist}</ThemeText>
+              <ThemeText fontColor="secondary"> -{musicItem.artist}</ThemeText>
             )}
           </Text>
           <View style={style.actionGroup}>
