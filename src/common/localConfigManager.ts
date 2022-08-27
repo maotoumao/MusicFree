@@ -7,17 +7,16 @@ type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
 interface IConfig {
   setting: {
     theme: {
-      mode: 'light' | 'dark';
+      mode: 'light' | 'dark' | 'custom';
       background: string;
       backgroundOpacity: number;
       backgroundBlur: number;
       colors: {
-        primary: string;
-        placeholder: string;
-        surface: string;
-        text: string;
-        accent: string;
-        background: string;
+        primary: string,
+        secondary: string,
+        textPrimary: string,
+        textHighlight: string,
+        pageBackground: string
       };
     };
   };

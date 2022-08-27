@@ -46,7 +46,7 @@ export default function NavBar() {
           size={rpx(28)}
           color={colors.placeholder}
           style={style.searchIcon}></Icon>
-        <ThemeText fontSize='subTitle' style={[style.text, {color: colors.placeholder}]}>
+        <ThemeText fontSize='subTitle' style={[style.text, {color: colors.textPlaceholder}]}>
           点击这里开始搜索
         </ThemeText>
       </Pressable>

@@ -16,7 +16,9 @@ export default function ThemeSetting(props: IThemeSettingProps) {
   const mode = useConfig('setting.theme.mode') ?? 'dark';
   return (
     <View style={style.wrapper}>
-      <ThemeText fontSize='title' style={style.header}>显示样式</ThemeText>
+      <ThemeText fontSize="title" style={style.header}>
+        显示样式
+      </ThemeText>
       <View style={style.sectionWrapper}>
         <List.Item
           title={<ThemeText>深色模式</ThemeText>}
@@ -28,7 +30,9 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               }}></Switch>
           )}></List.Item>
       </View>
-      <ThemeText fontSize='title' style={style.header}>背景设置</ThemeText>
+      <ThemeText fontSize="title" style={style.header}>
+        背景设置
+      </ThemeText>
       <View
         style={[
           style.sectionWrapper,
@@ -64,7 +68,10 @@ export default function ThemeSetting(props: IThemeSettingProps) {
                 uri.lastIndexOf('.'),
               )}`;
               await copyFile(uri, bgPath);
-              setConfig('setting.theme.background', `file://${bgPath}#${Date.now()}`);
+              setConfig(
+                'setting.theme.background',
+                `file://${bgPath}#${Date.now()}`,
+              );
 
               const colorsResult = await ImageColors.getColors(uri, {
                 fallback: '#ffffff',
@@ -89,17 +96,17 @@ export default function ThemeSetting(props: IThemeSettingProps) {
                     ? colorsResult.secondary
                     : colorsResult.vibrant,
               };
-              // const isDark = Color(colors.average).isDark();
               const primaryColor = Color(colors.primary).darken(0.3).toString();
+              const secondaryColor = Color(colors.average)
+                .darken(0.3)
+                .toString();
+              const textPrimary =  Color(colors.primary).negate().lighten(0.2).toString()
 
               setConfig('setting.theme.colors', {
                 primary: primaryColor,
-                surface: Color(colors.average).darken(0.2).toString(),
-                background: Color('#7f7f7f')
-                  .mix(Color(primaryColor), 0.3)
-                  .darken(0.15)
-                  .alpha(0.15)
-                  .toString(),
+                secondary: secondaryColor,
+                textPrimary:textPrimary,
+                textHighlight: Color(textPrimary).apple().toString()
               });
             } catch (e) {
               console.log(e);

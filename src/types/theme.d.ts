@@ -10,6 +10,8 @@ declare module ReactNativePaper {
         textHighlight?: string;
         /** 背景高亮颜色 */
         backgroundHighlight?: string;
+        /** 提示文本 */
+        textPlaceholder?: string;
         /** 页面背景 */
         pageBackground?: string;
 
