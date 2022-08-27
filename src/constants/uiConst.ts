@@ -32,7 +32,7 @@ const fontWeightConst = {
   regular: '400',
   medium: '500',
   semibold: '600',
-  bold: '700',
+  bold: '600',
   bolder: '800',
 
 } as const;

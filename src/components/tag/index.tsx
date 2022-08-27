@@ -21,7 +21,7 @@ return (<View style={[style.tag, {backgroundColor: Color(colors.text).negate().t
 
 const style = StyleSheet.create({
   tag: {
-    height: rpx(26),
+    height: rpx(30),
     marginLeft: rpx(12),
     paddingHorizontal: rpx(12),
     paddingVertical: rpx(4),

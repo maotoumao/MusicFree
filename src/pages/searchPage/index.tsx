@@ -9,7 +9,7 @@ import ResultPanel from './components/resultPanel';
 import MusicBar from '@/components/musicBar';
 import Loading from '@/components/loading';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import StatusBar from '@/components/statusBar';
 interface IProps {}
 export default function (props: IProps) {
   const [pageStatus, setPageStatus] = useAtom(pageStatusAtom);
@@ -29,6 +29,7 @@ export default function (props: IProps) {
 
   return (
     <SafeAreaView style={style.wrapper}>
+      <StatusBar></StatusBar>
       <NavBar></NavBar>
       <View style={{flex: 1}}>
         {pageStatus === PageStatus.EDITING && <HistoryPanel></HistoryPanel>}

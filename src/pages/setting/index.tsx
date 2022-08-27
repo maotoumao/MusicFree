@@ -1,5 +1,5 @@
 import React from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
+import { StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {Appbar} from 'react-native-paper';
@@ -7,6 +7,7 @@ import settingTypes from './settingTypes';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import StatusBar from '@/components/statusBar';
 
 interface ISettingProps {}
 export default function Setting(props: ISettingProps) {

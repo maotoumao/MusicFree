@@ -6,6 +6,8 @@ import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
 import MusicList from './components/musicList';
 import useAlbumMusicList from './hooks/useAlbumMusicList';
+import StatusBar from '@/components/statusBar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface IAlbumDetailProps {}
 export default function AlbumDetail(props: IAlbumDetailProps) {
@@ -16,11 +18,12 @@ export default function AlbumDetail(props: IAlbumDetailProps) {
   useEffect(() => {}, []);
 
   return (
-    <View style={style.wrapper}>
+    <SafeAreaView style={style.wrapper}>
+      <StatusBar></StatusBar>
       <NavBar></NavBar>
       <MusicList albumItem={albumItem} musicList={musicList}></MusicList>
       <MusicBar></MusicBar>
-    </View>
+    </SafeAreaView>
   );
 }
 

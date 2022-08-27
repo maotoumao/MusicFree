@@ -104,14 +104,15 @@ export default function ListItem(props: IListItemProps) {
         {
           paddingHorizontal: itemPaddingHorizontal,
           height: itemHeight ?? rpx(120),
+          paddingVertical: 0,
         },
       ]}
       title={() => (
         <View
           style={{
             alignItems: 'stretch',
-            justifyContent: 'space-around',
-            height: '100%',
+            justifyContent: 'center',
+            height: itemHeight ?? rpx(120),
             marginRight: right ? rpx(18) : 0,
           }}>
           <View style={style.titleWrapper}>
@@ -121,7 +122,10 @@ export default function ListItem(props: IListItemProps) {
             {tag ? <Tag tagName={tag}></Tag> : <></>}
           </View>
           {desc ? (
-            <ThemeText fontColor="secondary" fontSize="description">
+            <ThemeText
+              fontColor="secondary"
+              fontSize="description"
+              style={{marginTop: rpx(18)}}>
               {desc}
             </ThemeText>
           ) : (
@@ -132,6 +136,7 @@ export default function ListItem(props: IListItemProps) {
       titleStyle={{
         paddingVertical: 0,
         marginLeft: 0,
+        marginVertical: 0,
       }}
       right={right ? right : () => <></>}
       onPress={onPress}></List.Item>
@@ -142,7 +147,6 @@ const style = StyleSheet.create({
     justifyContent: 'center',
   },
   titleWrapper: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

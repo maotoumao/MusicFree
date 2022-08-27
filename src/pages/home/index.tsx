@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import { StatusBar, StyleSheet, View} from 'react-native';
+import { StyleSheet, View} from 'react-native';
 
 import NavBar from './components/navBar';
 import Operations from './components/operations';
@@ -20,6 +20,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import HomeDrawer from './components/drawer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import rpx from '@/utils/rpx';
+import StatusBar from '@/components/statusBar';
 
 function Home() {
   return (
