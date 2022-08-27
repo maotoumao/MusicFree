@@ -52,7 +52,7 @@ export default function Pages() {
             <Stack.Navigator
               initialRouteName={routes[0].path}
               screenOptions={{
-                statusBarColor: 'transparent',
+                statusBarColor:'transparent',
                 statusBarTranslucent: true,
                 headerShown: false,
                 animation: 'slide_from_right',

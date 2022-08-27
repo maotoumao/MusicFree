@@ -1,11 +1,22 @@
-import React from 'react';
-import {StatusBar, StatusBarProps, StyleSheet, Text, View} from 'react-native';
+import React, {} from 'react';
+import {StatusBar, StatusBarProps, View} from 'react-native';
+import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
-import {useTheme} from 'react-native-paper';
 
 interface IStatusBarProps extends StatusBarProps {}
 
 export default function (props: IStatusBarProps) {
-  const theme = useTheme();
-  return <StatusBar backgroundColor={props.backgroundColor ?? theme.colors.primary}></StatusBar>;
+  const colors = useColors();
+  const {backgroundColor} = props;
+
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        backgroundColor: backgroundColor ?? colors.primary,
+        width: rpx(750),
+        height: StatusBar.currentHeight,
+      }}></View>
+  );
 }
