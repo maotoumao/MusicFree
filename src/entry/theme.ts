@@ -30,15 +30,18 @@ const CustomTheme = {
   colors: {
     ..._CustomTheme.colors,
     /** 文字 */
+    primary: "#2b333e",
+    secondary: '#cdd1d3',
+    textPrimary: '#eeeeee',
     text: '#eeeeee',
     textSecondary: '#aaaaaa',
-    placeholder: '#cccccc',
+    textHighlight: '#eba0b3',
+    textPlaceholder: '#4f4f4f',
+    placeholder: '#424242',
     background: 'transparent',
     pageBackground: '#100000',
-    surface: '#2b333e',
     backdrop: 'rgba(0,0,0,0.2)',
-    primary: "#2b333e",
-    accent: '#cdd1d3',
+    
   },
 };
 

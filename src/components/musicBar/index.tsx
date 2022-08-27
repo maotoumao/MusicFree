@@ -11,7 +11,6 @@ import {ROUTE_PATH} from '@/entry/router';
 
 import musicIsPaused from '@/utils/musicIsPaused';
 import usePanelShow from '../panels/usePanelShow';
-import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import ThemeText from '../themeText';
 
@@ -47,9 +46,9 @@ export default function (props: IProps) {
             ellipsizeMode="tail"
             style={style.textWrapper}
             numberOfLines={1}>
-            <ThemeText style={style.title}>{musicItem.title}</ThemeText>
+            <ThemeText fontSize='content'>{musicItem.title}</ThemeText>
             {musicItem?.artist && (
-              <ThemeText fontColor="secondary"> -{musicItem.artist}</ThemeText>
+              <ThemeText fontSize='description' fontColor="secondary"> -{musicItem.artist}</ThemeText>
             )}
           </Text>
           <View style={style.actionGroup}>
@@ -114,12 +113,6 @@ const style = StyleSheet.create({
   textWrapper: {
     flexGrow: 1,
     maxWidth: rpx(382),
-  },
-  title: {
-    fontSize: fontSizeConst.normal,
-  },
-  author: {
-    fontSize: fontSizeConst.smaller,
   },
   actionGroup: {
     width: rpx(200),

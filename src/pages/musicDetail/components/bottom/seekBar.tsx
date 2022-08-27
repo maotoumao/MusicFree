@@ -51,7 +51,7 @@ const style = StyleSheet.create({
     height: rpx(40),
   },
   text: {
-    fontSize: fontSizeConst.smaller,
+    fontSize: fontSizeConst.description,
     includeFontPadding: false,
     color: '#cccccc'
   }

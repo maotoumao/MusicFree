@@ -70,8 +70,8 @@ const style = StyleSheet.create({
   },
   headerTitleText: {
     color: 'white',
-    fontWeight: fontWeightConst.bold,
-    fontSize: fontSizeConst.big,
+    fontWeight: fontWeightConst.semibold,
+    fontSize: fontSizeConst.title,
     marginBottom: rpx(12),
     includeFontPadding: false,
   },
@@ -82,7 +82,7 @@ const style = StyleSheet.create({
   },
   headerArtistText: {
     color: 'white',
-    fontSize: fontSizeConst.small,
+    fontSize: fontSizeConst.subTitle,
     includeFontPadding: false,
   },
 });

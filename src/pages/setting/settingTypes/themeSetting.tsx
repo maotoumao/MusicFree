@@ -4,7 +4,6 @@ import rpx from '@/utils/rpx';
 import {setConfig, useConfig} from '@/common/localConfigManager';
 import {List, Switch} from 'react-native-paper';
 import ThemeText from '@/components/themeText';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ImageColors from 'react-native-image-colors';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Color from 'color';
@@ -17,7 +16,7 @@ export default function ThemeSetting(props: IThemeSettingProps) {
   const mode = useConfig('setting.theme.mode') ?? 'dark';
   return (
     <View style={style.wrapper}>
-      <ThemeText style={style.header}>显示样式</ThemeText>
+      <ThemeText fontSize='title' style={style.header}>显示样式</ThemeText>
       <View style={style.sectionWrapper}>
         <List.Item
           title={<ThemeText>深色模式</ThemeText>}
@@ -29,7 +28,7 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               }}></Switch>
           )}></List.Item>
       </View>
-      <ThemeText style={style.header}>背景设置</ThemeText>
+      <ThemeText fontSize='title' style={style.header}>背景设置</ThemeText>
       <View
         style={[
           style.sectionWrapper,
@@ -117,8 +116,6 @@ const style = StyleSheet.create({
     padding: rpx(24),
   },
   header: {
-    fontWeight: fontWeightConst.bold,
-    fontSize: fontSizeConst.big,
     marginTop: rpx(36),
   },
   sectionWrapper: {

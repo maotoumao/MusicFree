@@ -1,9 +1,8 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {SvgUri, SvgXml} from 'react-native-svg';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
+import { fontWeightConst } from '@/constants/uiConst';
 import ThemeText from '../themeText';
 
 
@@ -14,7 +13,7 @@ export default function Loading(props: ILoadingProps) {
   return (
     <View style={style.wrapper}>
       <ActivityIndicator animating color={colors.text}></ActivityIndicator>
-      <ThemeText style={style.text}>加载中...</ThemeText>
+      <ThemeText fontSize='title' style={style.text}>加载中...</ThemeText>
     </View>
   );
 }
@@ -32,7 +31,6 @@ const style = StyleSheet.create({
   },
   text: {
     fontWeight: fontWeightConst.bold,
-    fontSize: fontSizeConst.big,
     marginTop: rpx(48),
   },
 });

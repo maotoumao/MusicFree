@@ -8,7 +8,6 @@ import BottomSheet, {
 import MusicSheet from '@/common/musicSheet';
 import Toast from 'react-native-toast-message';
 import {_usePanelShow} from '../usePanelShow';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import {useTheme} from 'react-native-paper';
 import ListItem from '@/components/listItem';
@@ -41,7 +40,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
       enableOverDrag={false}
       onClose={closePanel}>
       <View style={style.header}>
-        <ThemeText style={style.headerText}>添加到歌单</ThemeText>
+        <ThemeText fontSize='title' fontWeight='semibold'>添加到歌单</ThemeText>
       </View>
       <BottomSheetFlatList
         data={sheets ?? []}
@@ -84,10 +83,6 @@ const style = StyleSheet.create({
     paddingHorizontal: rpx(24),
     marginTop: rpx(24),
     marginBottom: rpx(36),
-  },
-  headerText: {
-    fontSize: fontSizeConst.normal,
-    fontWeight: fontWeightConst.bold,
   },
   scrollWrapper: {
     paddingHorizontal: rpx(24),

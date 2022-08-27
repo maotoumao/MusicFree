@@ -6,7 +6,6 @@ import {Button, List, useTheme} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Loading from '@/components/loading';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 
 interface IPluginSettingProps {}
@@ -18,7 +17,7 @@ export default function PluginSetting(props: IPluginSettingProps) {
   useEffect(() => {});
   return (
     <View style={style.wrapper}>
-      <ThemeText style={style.header}>插件列表</ThemeText>
+      <ThemeText fontSize='subTitle' style={style.header}>插件列表</ThemeText>
       {loading ? (
         <Loading></Loading>
       ) : (
@@ -69,8 +68,6 @@ const style = StyleSheet.create({
     padding: rpx(24),
   },
   header: {
-    fontSize: fontSizeConst.big,
-    fontWeight: fontWeightConst.bold,
     marginBottom: rpx(24),
   },
 });

@@ -10,7 +10,6 @@ import MusicQueue from '@/common/musicQueue';
 import MusicSheet from '@/common/musicSheet';
 import {_usePanelShow} from '../usePanelShow';
 import ListItem from '@/components/listItem';
-import {fontSizeConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 
@@ -81,7 +80,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
           <ThemeText numberOfLines={2} style={style.title}>
             {musicItem?.title}
           </ThemeText>
-          <ThemeText fontColor="secondary" style={style.desc}>
+          <ThemeText fontColor="secondary" fontSize='description'>
             {musicItem?.artist} - {musicItem?.album}
           </ThemeText>
         </View>
@@ -121,10 +120,9 @@ const style = StyleSheet.create({
   },
   header: {
     width: rpx(750),
-    height: rpx(176),
+    height: rpx(200),
     flexDirection: 'row',
-    paddingHorizontal: rpx(24),
-    paddingTop: rpx(24),
+    padding: rpx(24),
   },
   listWrapper: {
     paddingHorizontal: rpx(24),
@@ -142,18 +140,6 @@ const style = StyleSheet.create({
     justifyContent: 'space-around',
   },
   title: {
-    fontSize: fontSizeConst.normal,
     paddingRight: rpx(24),
   },
-  desc: {
-    fontSize: fontSizeConst.small,
-  },
 });
-
-// <ListItem
-//               icon={item.icon}
-//               title={item.title}
-//               onPress={item.onPress}
-//               theme={{
-//                 fontSize: fontSizeConst.small,
-//               }}></ListItem>

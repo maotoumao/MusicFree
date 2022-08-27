@@ -5,24 +5,25 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
-import {Button, Divider} from 'react-native-paper';
+import {Divider} from 'react-native-paper';
 import MusicSheet from '@/common/musicSheet';
 import {_usePanelShow} from '../usePanelShow';
 import {fontSizeConst} from '@/constants/uiConst';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 import useTextColor from '@/hooks/useTextColor';
 import Color from 'color';
+import Button from '@/components/button';
+import useColors from '@/hooks/useColors';
 
 interface INewMusicSheetProps {}
 export default function NewMusicSheet(props: INewMusicSheetProps) {
   const {show, closePanel} = _usePanelShow();
   const [input, setInput] = useState('');
-  const primaryColor = usePrimaryColor();
-  const textColor = useTextColor();
+  const colors = useColors();
 
   return (
     <BottomSheet
-      backgroundStyle={{backgroundColor: primaryColor}}
+      backgroundStyle={{backgroundColor: colors.primary}}
       backdropComponent={props => {
         return (
           <BottomSheetBackdrop
@@ -40,14 +41,12 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
       onClose={closePanel}>
       <View style={style.opeartions}>
         <Button
-          color={textColor}
           onPress={() => {
             closePanel();
           }}>
           取消
         </Button>
         <Button
-          color={textColor}
           onPress={async () => {
             if (input) {
               MusicSheet.addSheet(input);
@@ -66,8 +65,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
         style={[
           style.input,
           {
-            color: textColor,
-            backgroundColor: Color(textColor).alpha(0.2).toString(),
+            backgroundColor: colors.placeholder
           },
         ]}
         placeholder={'新建歌单'}
@@ -93,8 +91,8 @@ const style = StyleSheet.create({
     marginTop: rpx(12),
     marginBottom: rpx(12),
     borderRadius: rpx(12),
-    fontSize: fontSizeConst.normal,
-    lineHeight: fontSizeConst.normal * 1.5,
+    fontSize: fontSizeConst.content,
+    lineHeight: fontSizeConst.content * 1.5,
     padding: rpx(12),
   },
 });

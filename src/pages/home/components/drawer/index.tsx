@@ -62,13 +62,13 @@ export default function HomeDrawer(props: IDrawerProps) {
       <PageBackground></PageBackground>
       <DrawerContentScrollView {...props} style={style.scrollWrapper}>
         <View style={style.header}>
-          <ThemeText style={style.title}>Music Free</ThemeText>
+          <ThemeText fontSize='appbar' fontWeight='bold'>Music Free</ThemeText>
           <IconButton icon={'qrcode-scan'} size={rpx(36)}></IconButton>
         </View>
         <Card style={style.card}>
           <Card.Title
             title={
-              <ThemeText style={style.cardTitle}>设置</ThemeText>
+              <ThemeText fontSize='description'>设置</ThemeText>
             }></Card.Title>
           <Card.Content>
             {basicSetting.map(item => (
@@ -118,14 +118,6 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  title: {
-    fontSize: fontSizeConst.bigger,
-    includeFontPadding: false,
-    fontWeight: fontWeightConst.bold,
-  },
-  cardTitle: {
-    fontSize: fontSizeConst.small,
   },
   card: {
     backgroundColor: '#eeeeee22',

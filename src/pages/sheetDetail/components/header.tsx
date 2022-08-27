@@ -4,7 +4,6 @@ import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import MusicSheet from '@/common/musicSheet';
 import LinearGradient from 'react-native-linear-gradient';
-import {fontSizeConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import Color from 'color';
 import {useTheme} from 'react-native-paper';
@@ -34,8 +33,8 @@ export default function Header(props: IHeaderProps) {
               : require('@/assets/imgs/album-default.jpg')
           }></Image>
         <View style={style.details}>
-          <ThemeText style={style.title}>{sheet?.title}</ThemeText>
-          <ThemeText fontColor="secondary" style={style.desc}>
+          <ThemeText>{sheet?.title}</ThemeText>
+          <ThemeText fontColor="secondary" fontSize="description">
             共{sheet?.musicList.length ?? 0}首
           </ThemeText>
         </View>
@@ -63,15 +62,9 @@ const style = StyleSheet.create({
     height: rpx(210),
     borderRadius: rpx(24),
   },
-  title: {
-    fontSize: fontSizeConst.normal,
-  },
   details: {
     width: rpx(456),
     height: rpx(140),
     justifyContent: 'space-between',
-  },
-  desc: {
-    fontSize: fontSizeConst.small,
   },
 });

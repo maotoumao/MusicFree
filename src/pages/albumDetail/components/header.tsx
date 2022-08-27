@@ -34,15 +34,15 @@ export default function Header(props: IHeaderProps) {
                 : require('@/assets/imgs/album-default.jpg')
             }></Image>
           <View style={style.details}>
-            <ThemeText style={style.title}>{albumItem?.title}</ThemeText>
-            <ThemeText fontColor="secondary" style={style.desc}>
+            <ThemeText>{albumItem?.title}</ThemeText>
+            <ThemeText fontColor="secondary" fontSize='description'>
               共{musicList ? musicList.length ?? 0 : '-'}首{' '}
               {albumItem?.date ?? ''}
             </ThemeText>
           </View>
         </View>
         <Divider></Divider>
-        <ThemeText fontColor="secondary" style={style.albumDesc}>
+        <ThemeText fontColor="secondary"  fontSize='description'>
           专辑信息: {albumItem?.description ?? ''}
         </ThemeText>
       </LinearGradient>
@@ -57,9 +57,9 @@ export default function Header(props: IHeaderProps) {
           <Icon
             name="play-circle-outline"
             style={style.playAllIcon}
-            size={fontSizeConst.normal}
+            size={fontSizeConst.content}
             color={colors.text}></Icon>
-          <ThemeText style={style.playAllText}>播放全部</ThemeText>
+          <ThemeText fontWeight='bold'>播放全部</ThemeText>
         </Pressable>
         <IconButton
           icon={'plus-box-multiple-outline'}
@@ -92,21 +92,15 @@ const style = StyleSheet.create({
     height: rpx(210),
     borderRadius: rpx(24),
   },
-  title: {
-    fontSize: fontSizeConst.normal
-  },
   details: {
     width: rpx(456),
     height: rpx(140),
     justifyContent: 'space-between',
   },
-  desc: {
-    fontSize: fontSizeConst.small
-  },
+
   albumDesc: {
     marginTop: rpx(24),
     width: rpx(702),
-    fontSize: fontSizeConst.small
   },
   /** playall */
   topWrapper: {
@@ -122,9 +116,5 @@ const style = StyleSheet.create({
   },
   playAllIcon: {
     marginRight: rpx(12),
-  },
-  playAllText: {
-    fontSize: fontSizeConst.normal,
-    fontWeight: fontWeightConst.bold,
   },
 });

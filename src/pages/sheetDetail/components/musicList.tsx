@@ -7,7 +7,6 @@ import MusicQueue from '@/common/musicQueue';
 import usePanelShow from '@/components/panels/usePanelShow';
 import {FlatList} from 'react-native-gesture-handler';
 import Header from './header';
-import {fontSizeConst} from '@/constants/uiConst';
 import ListItem from '@/components/listItem';
 import IconButton from '@/components/iconButton';
 

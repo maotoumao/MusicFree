@@ -4,7 +4,6 @@ import rpx from '@/utils/rpx';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {Appbar} from 'react-native-paper';
 import settingTypes from './settingTypes';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StatusBar from '@/components/statusBar';
@@ -28,7 +27,7 @@ export default function Setting(props: ISettingProps) {
               navigation.goBack();
             }}></Appbar.BackAction>
           <Appbar.Header style={style.header}>
-            <ThemeText style={style.header}>{settingItem?.title}</ThemeText>
+            <ThemeText style={style.header} fontSize='title' fontWeight='semibold'>{settingItem?.title}</ThemeText>
           </Appbar.Header>
         </Appbar>
       <settingItem.component></settingItem.component>
@@ -48,7 +47,5 @@ const style = StyleSheet.create({
   header: {
     backgroundColor: 'transparent',
     shadowColor: 'transparent',
-    fontSize: fontSizeConst.big,
-    fontWeight: fontWeightConst.bold,
   },
 });

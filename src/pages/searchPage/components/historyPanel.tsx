@@ -12,7 +12,7 @@ import {
   queryAtom,
   searchResultsAtom,
 } from '../store/atoms';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import ThemeText from '@/components/themeText';
 
 interface IProps {}
 export default function (props: IProps) {
@@ -22,7 +22,6 @@ export default function (props: IProps) {
   const setQuery = useSetAtom(queryAtom);
   const setPageStatus = useSetAtom(pageStatusAtom);
   const setSearchResultsState = useSetAtom(searchResultsAtom);
-  const {colors} = useTheme();
 
   useEffect(() => {
     getHistory().then(setHistory);
@@ -34,7 +33,7 @@ export default function (props: IProps) {
         <Loading></Loading>
       ) : (
         <>
-          <Text style={[style.title, {color: colors.text}]}>历史记录</Text>
+          <ThemeText fontSize='title' fontWeight='semibold' style={style.title}>历史记录</ThemeText>
           {history.map(_ => (
             <Chip
               key={`search-history-${_}`}
@@ -69,9 +68,7 @@ const style = StyleSheet.create({
   },
   title: {
     width: '100%',
-    marginBottom: rpx(28),
-    fontSize: fontSizeConst.normal,
-    fontWeight: fontWeightConst.bold,
+    marginVertical: rpx(28),
   },
   chip: {
     flexGrow: 0,

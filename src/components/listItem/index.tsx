@@ -1,9 +1,8 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {List, useTheme} from 'react-native-paper';
+import {List} from 'react-native-paper';
 import Tag from '../tag';
-import {fontSizeConst} from '@/constants/uiConst';
 import ThemeText from '../themeText';
 import Image from '../image';
 import IconButton from '../iconButton';
@@ -152,7 +151,6 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: fontSizeConst.normal,
     includeFontPadding: false,
     maxWidth: rpx(460),
   },

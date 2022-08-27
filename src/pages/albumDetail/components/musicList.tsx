@@ -6,7 +6,6 @@ import MusicQueue from '@/common/musicQueue';
 import Loading from '@/components/loading';
 import usePanelShow from '@/components/panels/usePanelShow';
 import Header from './header';
-import {fontSizeConst} from '@/constants/uiConst';
 import ListItem from '@/components/listItem';
 import IconButton from '@/components/iconButton';
 
@@ -60,13 +59,5 @@ const style = StyleSheet.create({
   topBtn: {
     width: rpx(750),
     height: rpx(80),
-  },
-  musicIndex: {
-    fontSize: fontSizeConst.bigger,
-    fontStyle: 'italic',
-    width: rpx(64),
-    height: '100%',
-    textAlignVertical: 'center',
-    textAlign: 'center',
   },
 });

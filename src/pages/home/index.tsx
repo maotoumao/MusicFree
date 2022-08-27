@@ -25,7 +25,7 @@ import StatusBar from '@/components/statusBar';
 function Home() {
   return (
     <SafeAreaView style={styles.appWrapper}>
-      <StatusBar></StatusBar>
+      <StatusBar backgroundColor='transparent'></StatusBar>
       <NavBar></NavBar>
       <Divider></Divider>
       <Operations></Operations>

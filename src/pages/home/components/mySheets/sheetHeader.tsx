@@ -6,7 +6,8 @@ import useTextColor from '@/hooks/useTextColor';
 import MusicSheet from '@/common/musicSheet';
 import usePanelShow from '@/components/panels/usePanelShow';
 import { useTheme } from 'react-native-paper';
-import { fontSizeConst } from '@/constants/uiConst';
+import IconButton from '@/components/iconButton';
+import ThemeText from '@/components/themeText';
 
 interface IProps {}
 export default function (props: IProps) {
@@ -17,25 +18,22 @@ export default function (props: IProps) {
 
   return (
     <View style={style.header}>
-      <Text style={{color: colors.text}}>
+      <ThemeText fontSize='subTitle'>
         我的歌单({musicSheets.length ?? '-'}个)
-      </Text>
+      </ThemeText>
       <View style={style.more}>
-        <Icon
+        <IconButton
           name="plus"
-          color={colors.text}
-          size={fontSizeConst.bigger}
+          size='normal'
           onPress={() => {
             showPanel('NewMusicSheet');
-          }}></Icon>
-        <Icon
+          }}></IconButton>
+        <IconButton
           style={style.headerAction}
-          color={colors.text}
           name="dots-vertical"
-          size={fontSizeConst.bigger}
           onPress={() => {
             console.log('more歌单');
-          }}></Icon>
+          }}></IconButton>
       </View>
     </View>
   );

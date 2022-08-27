@@ -1,11 +1,10 @@
 import ThemeText from '@/components/themeText';
-import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
+import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import rpx from '@/utils/rpx';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {TouchableRipple, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-
 
 interface IActionButtonProps {
   iconName: string;
@@ -17,7 +16,7 @@ interface IActionButtonProps {
 export default function ActionButton(props: IActionButtonProps) {
   const {iconName, iconColor, title, action} = props;
   const {colors} = useTheme();
-  
+
   return (
     <TouchableRipple onPress={action} rippleColor="rgba(0, 0, 0, .32)">
       <View style={style.wrapper}>
@@ -25,8 +24,7 @@ export default function ActionButton(props: IActionButtonProps) {
           name={iconName}
           color={iconColor ?? colors.text}
           size={fontSizeConst.biggest}></Icon>
-        <ThemeText
-          style={style.text}>
+        <ThemeText fontSize="subTitle" fontWeight="semibold" style={style.text}>
           {title}
         </ThemeText>
       </View>
@@ -44,7 +42,5 @@ const style = StyleSheet.create({
   },
   text: {
     marginTop: rpx(12),
-    fontSize: fontSizeConst.small,
-    fontWeight: fontWeightConst.bold
   },
 });

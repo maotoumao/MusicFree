@@ -20,6 +20,8 @@ const fontSizeConst = {
   tag: rpx(20),
   /** 描述文本等字体 */
   description: rpx(22),
+  /** 副标题 */
+  subTitle: rpx(26),
   /** 正文字体 */
   content: rpx(28),
   /** 标题字体 */
@@ -32,14 +34,14 @@ const fontWeightConst = {
   regular: '400',
   medium: '500',
   semibold: '600',
-  bold: '600',
+  bold: '700',
   bolder: '800',
 
 } as const;
 
 const iconSizeConst = {
-  small: rpx(28),
-  normal: rpx(40),
+  small: rpx(32),
+  normal: rpx(48),
   big: rpx(64)
 }
 

@@ -7,14 +7,16 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
-import {Button, Chip, Divider, IconButton, useTheme} from 'react-native-paper';
+import {Button, Chip, Divider, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import repeatModeConst from '@/constants/repeatModeConst';
 import Tag from '@/components/tag';
 import {_usePanelShow} from '../usePanelShow';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import {fontSizeConst,} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
+import IconButton from '@/components/iconButton';
+import isSameMusicItem from '@/utils/isSameMusicItem';
 
 interface IPlayListProps {}
 
@@ -61,12 +63,9 @@ export default function PlayList(props: IPlayListProps) {
       enableOverDrag={false}
       onClose={closePanel}>
       <View style={style.wrapper}>
-        <ThemeText style={style.headerText}>
+        <ThemeText style={style.headerText} fontSize="title" fontWeight='bold'>
           播放列表
-          <ThemeText fontColor="secondary" style={style.headerDescText}>
-            {' '}
-            ({musicQueue.length}首)
-          </ThemeText>
+          <ThemeText fontColor="secondary"> ({musicQueue.length}首)</ThemeText>
         </ThemeText>
         <Button
           color={colors.text}
@@ -97,25 +96,32 @@ export default function PlayList(props: IPlayListProps) {
               MusicQueue.play(_.item);
             }}
             style={style.musicItem}>
-            {currentMusicItem?.id === _.item.id &&
-              currentMusicItem.platform === _.item.platform && (
-                <Icon
-                  name="music"
-                  color={colors.text}
-                  size={fontSizeConst.normal}
-                  style={style.currentPlaying}></Icon>
-              )}
+            {isSameMusicItem(currentMusicItem, _.item) && (
+              <Icon
+                name="music"
+                color={colors.textHighlight}
+                size={fontSizeConst.content}
+                style={style.currentPlaying}></Icon>
+            )}
             <ThemeText
-              style={style.musicItemTitle}
+              style={[
+                style.musicItemTitle,
+                {
+                  color: isSameMusicItem(currentMusicItem, _.item)
+                    ? colors.textHighlight
+                    : colors.text,
+                },
+              ]}
               ellipsizeMode="tail"
               numberOfLines={1}>
               {_.item.title}
-              <Text style={style.musicItemDesc}> - {_.item.artist}</Text>
+              <Text style={{fontSize: fontSizeConst.description}}> - {_.item.artist}</Text>
             </ThemeText>
             <Tag tagName={_.item.platform}></Tag>
             <IconButton
-              icon="close"
-              size={rpx(28)}
+              style={{marginLeft: rpx(14)}}
+              name="close"
+              size="small"
               onPress={() => {
                 MusicQueue.remove(_.item);
               }}></IconButton>
@@ -135,12 +141,7 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headerText: {
-    fontSize: fontSizeConst.big,
-    fontWeight: fontWeightConst.bolder,
     flex: 1,
-  },
-  headerDescText: {
-    fontSize: fontSizeConst.normal,
   },
   playList: {
     paddingHorizontal: rpx(24),
@@ -154,10 +155,6 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   musicItemTitle: {
-    fontSize: fontSizeConst.normal,
     flex: 1,
-  },
-  musicItemDesc: {
-    fontSize: fontSizeConst.smaller,
   },
 });
