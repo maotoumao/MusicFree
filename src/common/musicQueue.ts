@@ -16,6 +16,7 @@ import logManager from './logManager';
 import {internalKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import DownloadManager from './downloadManager';
+import delay from '@/utils/delay';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -252,6 +253,7 @@ const getMusicTrack = async (
         }) as Track;
       } catch (e) {
         if (retryCount > 0) {
+          await delay(150);
           return getMusicTrack(musicItem, --retryCount);
         }
         track = musicItem as Track;
