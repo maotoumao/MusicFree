@@ -1,5 +1,5 @@
 import MusicQueue from '@/common/musicQueue';
-import MusicSheet from '@/common/musicSheet';
+import MusicSheet from '@/common/musicSheetManager';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import TrackPlayer, {Capability} from 'react-native-track-player';
 import {pluginManager} from '../common/pluginManager';

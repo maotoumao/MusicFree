@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
-import MusicSheet from '@/common/musicSheet';
+import MusicSheet from '@/common/musicSheetManager';
 import LinearGradient from 'react-native-linear-gradient';
 import ThemeText from '@/components/themeText';
 import Color from 'color';
@@ -26,7 +26,7 @@ export default function Header(props: IHeaderProps) {
       <View style={style.content}>
         <Image
           style={style.coverImg}
-          uri={sheet.coverImg}
+          uri={sheet?.coverImg}
           fallback={require('@/assets/imgs/album-default.jpg')}></Image>
         <View style={style.details}>
           <ThemeText fontSize='title'>{sheet?.title}</ThemeText>

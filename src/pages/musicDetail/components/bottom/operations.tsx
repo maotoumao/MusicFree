@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicSheet from '@/common/musicSheet';
+import MusicSheet from '@/common/musicSheetManager';
 import MusicQueue from '@/common/musicQueue';
 import isSameMusicItem from '@/utils/isSameMusicItem';
 import usePanel from '@/components/panels/usePanelShow';

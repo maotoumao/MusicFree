@@ -7,7 +7,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
-import MusicSheet from '@/common/musicSheet';
+import MusicSheet from '@/common/musicSheetManager';
 import {_usePanel} from '../usePanelShow';
 import ListItem from '@/components/listItem';
 import ThemeText from '@/components/themeText';

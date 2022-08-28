@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
-import MusicSheet from '@/common/musicSheet';
+import MusicSheet from '@/common/musicSheetManager';
 import MusicQueue from '@/common/musicQueue';
 import usePanel from '@/components/panels/usePanelShow';
 import {FlatList} from 'react-native-gesture-handler';

@@ -6,7 +6,7 @@ import BottomSheet, {
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
-import MusicSheet from '@/common/musicSheet';
+import MusicSheet from '@/common/musicSheetManager';
 import {_usePanel} from '../usePanelShow';
 import {fontSizeConst} from '@/constants/uiConst';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
