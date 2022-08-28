@@ -100,12 +100,17 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               const secondaryColor = Color(colors.average)
                 .darken(0.3)
                 .toString();
-              const textHighlight =  Color(0xffffff - Color(primaryColor).rgbNumber(), 'rgb').saturate(0.5).toString();
-
+              const textHighlight = Color(
+                0xffffff - Color(primaryColor).rgbNumber(),
+                'rgb',
+              )
+                .saturate(0.5)
+                .toString();
+              setConfig('setting.theme.mode', 'custom-dark');
               setConfig('setting.theme.colors', {
                 primary: primaryColor,
                 secondary: secondaryColor,
-                textHighlight: textHighlight
+                textHighlight: textHighlight,
               });
             } catch (e) {
               console.log(e);

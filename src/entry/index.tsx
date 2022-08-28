@@ -28,14 +28,17 @@ const Stack = createNativeStackNavigator();
 export default function Pages() {
   const themeName = useConfig('setting.theme.mode') ?? 'dark';
   const themeColors = useConfig('setting.theme.colors') ?? {};
-  const theme = themeName === 'dark' ? CustomTheme : DefaultTheme;
-  const mergedTheme = {
-    ...theme,
-    colors: {
-      ...theme.colors,
-      ...themeColors,
-    },
-  };
+  const theme = themeName.includes('dark') ? CustomTheme : DefaultTheme;
+  const isCustom = themeName.includes('custom') ? true : false;
+  const mergedTheme = isCustom
+    ? {
+        ...theme,
+        colors: {
+          ...theme.colors,
+          ...themeColors,
+        },
+      }
+    : theme;
   useEffect(() => {
     if (__DEV__) {
       RNBootSplash.hide({fade: true});
@@ -52,7 +55,7 @@ export default function Pages() {
             <Stack.Navigator
               initialRouteName={routes[0].path}
               screenOptions={{
-                statusBarColor:'transparent',
+                statusBarColor: 'transparent',
                 statusBarTranslucent: true,
                 headerShown: false,
                 animation: 'slide_from_right',

@@ -16,7 +16,9 @@ declare namespace IPlugin {
   export interface IPluginInstance {
     /** 来源名 */
     platform: string;
-    playMusic?: (musicItem: MusicItemBase) => Promise<IPlayResult | null>;
+    /** 匹配的版本号 */
+    appVersion?: string;
+    getMusicTrack?: (musicItem: MusicItemBase) => Promise<IPlayResult | null>;
     search?: (keyword: string, page?: number) => Promise<ISearchResult>;
     getAlbumInfo?: (albumItem: IAlbum.IAlbumItem) => Promise<IMusic.IMusicItem[] | null>;
   }

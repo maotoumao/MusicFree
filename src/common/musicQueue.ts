@@ -258,10 +258,10 @@ const getMusicTrack = async (musicItem: IMusic.IMusicItem): Promise<Track> => {
   } else {
     // 插件播放
     const plugin = pluginManager.getPlugin(musicItem.platform);
-    if (plugin && plugin.instance.playMusic) {
+    if (plugin && plugin.instance.getMusicTrack) {
       try {
         const {url, headers} =
-          (await plugin.instance.playMusic(musicItem)) ?? {};
+          (await plugin.instance.getMusicTrack(musicItem)) ?? {};
         if (!url) {
           throw new Error();
         }

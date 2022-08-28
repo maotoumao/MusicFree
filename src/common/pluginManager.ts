@@ -5,6 +5,8 @@ import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {ToastAndroid} from 'react-native';
 import pathConst from '@/constants/pathConst';
+import {satisfies} from 'compare-versions';
+import DeviceInfo from 'react-native-device-info';
 
 const pluginPath = pathConst.pluginPath;
 const sha256 = CryptoJs.SHA256;
@@ -33,7 +35,8 @@ class Plugin {
       this.state = 'error';
       _instance = {
         platform: '',
-        async playMusic() {
+        appVersion: '',
+        async getMusicTrack() {
           return null;
         },
         async search() {
@@ -57,9 +60,16 @@ class Plugin {
     const keys: Array<keyof IPlugin.IPluginInstance> = [
       'getAlbumInfo',
       'search',
-      'playMusic',
+      'getMusicTrack',
     ];
     if (keys.every(k => !_instance[k])) {
+      return false;
+    }
+    /** 版本号校验 */
+    if (
+      _instance.appVersion &&
+      !satisfies(DeviceInfo.getVersion(), _instance.appVersion)
+    ) {
       return false;
     }
     return true;

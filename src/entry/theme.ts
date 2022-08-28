@@ -17,39 +17,36 @@ const DefaultTheme = {
   colors: {
     ..._DefaultTheme.colors,
     text: '#333333',
-  
+
     placeholder: '#666666',
     background: 'rgba(128,128,128,0.1)',
     primary: '#cdd1d3',
     surface: '#cdd1d3',
-  }
-}
+  },
+};
 
 const CustomTheme = {
   ..._CustomTheme,
   colors: {
     ..._CustomTheme.colors,
     /** 文字 */
-    primary: "#2b333e",
+    primary: '#2b333e',
     secondary: '#cdd1d3',
     text: '#eeeeee',
     textSecondary: '#aaaaaa',
     textHighlight: '#eba0b3',
-    textPlaceholder: '#4f4f4f',
-    placeholder: '#424242',
+    textPlaceholder: '#424242',
+    placeholder: '#4f4f4f',
     background: 'transparent',
     pageBackground: '#100000',
     backdrop: 'rgba(0,0,0,0.2)',
-    
   },
 };
 
 const LightTheme = {
   ...DefaultTheme,
-  colors: {
-    
-  }
-}
+  colors: {},
+};
 
 export {DarkTheme, DefaultTheme, CustomTheme};
 
@@ -64,6 +61,6 @@ export {DarkTheme, DefaultTheme, CustomTheme};
  * placeholder: placeholder颜色
  * background: 页面背景色
  * backdrop: 列表背景色
- * 
- * 
+ *
+ *
  */

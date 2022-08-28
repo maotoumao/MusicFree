@@ -7,7 +7,7 @@ type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
 interface IConfig {
   setting: {
     theme: {
-      mode: 'light' | 'dark' | 'custom';
+      mode: 'light' | 'dark' | 'custom-light' | 'custom-dark';
       background: string;
       backgroundOpacity: number;
       backgroundBlur: number;

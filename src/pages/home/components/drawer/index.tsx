@@ -17,6 +17,7 @@ import {ROUTE_PATH} from '@/entry/router';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import PageBackground from '@/components/pageBackground';
+import DeviceInfo from 'react-native-device-info';
 
 interface IDrawerProps {}
 
@@ -62,7 +63,7 @@ export default function HomeDrawer(props: IDrawerProps) {
       <PageBackground></PageBackground>
       <DrawerContentScrollView {...props} style={style.scrollWrapper}>
         <View style={style.header}>
-          <ThemeText fontSize='appbar' fontWeight='bold'>Music Free</ThemeText>
+          <ThemeText fontSize='appbar' fontWeight='bold'>{DeviceInfo.getApplicationName()}</ThemeText>
           <IconButton icon={'qrcode-scan'} size={rpx(36)}></IconButton>
         </View>
         <Card style={style.card}>
