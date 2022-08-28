@@ -7,15 +7,18 @@ import MusicQueue from '@/common/musicQueue';
 import isSameMusicItem from '@/utils/isSameMusicItem';
 import usePanel from '@/components/panels/usePanelShow';
 import RNFS from 'react-native-fs';
-import { pluginManager } from '@/common/pluginManager';
+import {pluginManager} from '@/common/pluginManager';
+import DownloadManager from '@/common/downloadManager';
 
 interface IOpertionsProps {}
 export default function Opertions(props: IOpertionsProps) {
   //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
   const favoriteMusicSheet = MusicSheet.useSheets('favorite');
   const musicItem = MusicQueue.useCurrentMusicItem();
+  const isDownloaded = DownloadManager.useIsDownloaded(musicItem);
   const {showPanel} = usePanel();
 
+  console.log('track', musicItem);
   const musicIndexInFav =
     favoriteMusicSheet?.musicList.findIndex(_ =>
       isSameMusicItem(_, musicItem),
@@ -42,20 +45,17 @@ export default function Opertions(props: IOpertionsProps) {
             }
           }}></Icon>
       )}
-      <Icon name="download-circle-outline" size={rpx(48)} color="white" onPress={() => {
-        if(musicItem) {
-          console.log(musicItem.url, 'a阿');
-          const {promise} = RNFS.downloadFile({
-            fromUrl: musicItem.url as string,
-            toFile: pluginManager.pluginPath+'test.mp3',
-            headers: musicItem.headers,
-            background: true,
-
-          })
-          console.log('download');
-          promise.then((e) => {console.log('ctmd', e)}).catch((e) => {console.log('mlgb', e)})
+      <Icon
+        name={
+          isDownloaded ? 'briefcase-check-outline' : 'download-circle-outline'
         }
-      }}></Icon>
+        size={rpx(48)}
+        color="white"
+        onPress={() => {
+          if (musicItem && !isDownloaded) {
+            DownloadManager.downloadMusic(musicItem);
+          }
+        }}></Icon>
       <Icon
         name="dots-vertical"
         size={rpx(48)}

@@ -8,6 +8,7 @@ import {Platform, ToastAndroid} from 'react-native';
 import {loadConfig} from '@/common/localConfigManager';
 import RNBootSplash from 'react-native-bootsplash';
 import RNFS, { exists, mkdir } from 'react-native-fs';
+import DownloadManager from '@/common/downloadManager';
 
 /** app加载前执行 */
 export default async function () {
@@ -60,6 +61,7 @@ export default async function () {
   await MusicQueue.setupMusicQueue();
   await MusicSheet.setupMusicSheet();
   await setupFolder();
+  await DownloadManager.setupDownload();
 
   ErrorUtils.setGlobalHandler(error =>
     ToastAndroid.show(`error: ${error?.message}`, ToastAndroid.LONG),

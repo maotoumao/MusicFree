@@ -11,11 +11,12 @@ interface IAlbumResultsProps {
   platform: string;
   data: IPlugin.ISearchResult['album'];
 }
+/** todo 很多rerender，需要避免掉 */
 export default function AlbumResults(props: IAlbumResultsProps) {
   const {data, platform} = props;
   const navigation = useNavigation<any>();
   const search = useSearch();
-
+  console.log('rerender');
   return (
     <FlatList
       data={data ?? []}

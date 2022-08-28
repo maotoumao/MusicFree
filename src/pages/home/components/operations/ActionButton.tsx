@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {TouchableRipple, useTheme} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface IActionButtonProps {
   iconName: string;

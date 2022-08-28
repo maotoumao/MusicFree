@@ -12,6 +12,7 @@ import {_usePanel} from '../usePanelShow';
 import ListItem from '@/components/listItem';
 import ThemeText from '@/components/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
+import DownloadManager from '@/common/downloadManager';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -50,6 +51,14 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
         closePanel();
       },
     },
+    {
+      icon: 'download-circle-outline',
+      title: '下载',
+      onPress: async () => {
+        await DownloadManager.downloadMusic(musicItem);
+        closePanel();
+      },
+    },
   ];
 
   return (
@@ -80,7 +89,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
           <ThemeText numberOfLines={2} style={style.title}>
             {musicItem?.title}
           </ThemeText>
-          <ThemeText fontColor="secondary" fontSize='description'>
+          <ThemeText fontColor="secondary" fontSize="description">
             {musicItem?.artist} - {musicItem?.album}
           </ThemeText>
         </View>
@@ -99,7 +108,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                   size: 'small',
                   fontColor: 'normal',
                 },
-                width: rpx(48)
+                width: rpx(48),
               }}
               itemPaddingHorizontal={0}
               itemHeight={rpx(96)}

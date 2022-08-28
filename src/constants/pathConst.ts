@@ -5,8 +5,11 @@ export const basePath = Platform.OS === 'android'
   ? RNFS.ExternalDirectoryPath
   : RNFS.DocumentDirectoryPath
 
+const rootPath = RNFS.ExternalStorageDirectoryPath;
+
 
 export default {
     pluginPath: `${basePath}/plugins/`,
-    dataPath: `${basePath}/data/`
+    dataPath: `${basePath}/data/`,
+    downloadPath: `${rootPath}/musicfree/`
 }

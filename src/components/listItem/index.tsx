@@ -115,7 +115,7 @@ export default function ListItem(props: IListItemProps) {
             marginRight: right ? rpx(18) : 0,
           }}>
           <View style={style.titleWrapper}>
-            <ThemeText numberOfLines={1} style={style.title}>
+            <ThemeText numberOfLines={1} style={style.textWidth}>
               {title}
             </ThemeText>
             {tag ? <Tag tagName={tag}></Tag> : <></>}
@@ -124,7 +124,8 @@ export default function ListItem(props: IListItemProps) {
             <ThemeText
               fontColor="secondary"
               fontSize="description"
-              style={{marginTop: rpx(18)}}>
+              numberOfLines={1}
+              style={[style.textWidth, {marginTop: rpx(18)}]}>
               {desc}
             </ThemeText>
           ) : (
@@ -150,8 +151,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  title: {
-    includeFontPadding: false,
+  textWidth: {
     maxWidth: rpx(460),
   },
   artworkWrapper: {

@@ -13,7 +13,8 @@ import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import {getConfig, setConfig} from './localConfigManager';
 import logManager from './logManager';
-import { internalKey } from '@/constants/commonConst';
+import {internalKey} from '@/constants/commonConst';
+import StateMapper from '@/utils/stateMapper';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -28,6 +29,10 @@ enum MusicRepeatMode {
 let currentIndex: number = -1;
 let musicQueue: Array<IMusic.IMusicItem> = [];
 let repeatMode: MusicRepeatMode = MusicRepeatMode.QUEUE;
+
+const currentMusicStateMapper = new StateMapper(() => musicQueue[currentIndex]);
+const musicQueueStateMapper = new StateMapper(() => musicQueue);
+const repeatModeStateMapper = new StateMapper(() => repeatMode);
 
 /** 内部使用的排序id */
 let globalId: number = 0; // 记录加入队列的次序
@@ -56,7 +61,7 @@ const setupMusicQueue = async () => {
     if (config?.progress) {
       await TrackPlayer.seekTo(config.progress);
     }
-  } catch(e) {
+  } catch (e) {
     // logManager.error('状态恢复失败', e);
   }
   // 不要依赖playbackchanged，不稳定,
@@ -86,61 +91,11 @@ const setupMusicQueue = async () => {
       }
     }
   });
-  notifyState(['currentIndex', 'repeatMode']);
+  currentMusicStateMapper.notify();
+  repeatModeStateMapper.notify();
 };
-
-type NotifyCallBacksKey = 'musicQueue' | 'repeatMode' | 'currentIndex';
-/** 对应属性更新后，同步更新状态 */
-const notifyCallBacks: Record<NotifyCallBacksKey, Set<Function>> = {
-  musicQueue: new Set([]),
-  repeatMode: new Set([]),
-  currentIndex: new Set([]),
-};
-
-const notifyState = (key: NotifyCallBacksKey | Array<NotifyCallBacksKey>) => {
-  if (!Array.isArray(key)) {
-    key = [key];
-  }
-  const _cbs = key.map(k => notifyCallBacks[k]);
-  let cbs = _cbs.reduce((prev, curr) => new Set([...prev, ...curr]));
-  cbs.forEach(cb => cb());
-};
-
-/** 队列相关 */
-const getMusicQueue = () => musicQueue;
-
-function useMusicQueue() {
-  const [_musicQueueState, _setMusicQueueState] = useState(musicQueue);
-  const updateMusicQueue = () => {
-    _setMusicQueueState(musicQueue);
-  };
-
-  useEffect(() => {
-    notifyCallBacks.musicQueue.add(updateMusicQueue);
-    return () => {
-      notifyCallBacks.musicQueue.delete(updateMusicQueue);
-    };
-  }, []);
-
-  return _musicQueueState;
-}
 
 /** 播放模式相关 */
-function useRepeatMode() {
-  const [_repeatMode, _setRepeatMode] = useState(repeatMode);
-  const updateRepeatMode = () => {
-    _setRepeatMode(repeatMode);
-  };
-
-  useEffect(() => {
-    notifyCallBacks.repeatMode.add(updateRepeatMode);
-    return () => {
-      notifyCallBacks.repeatMode.delete(updateRepeatMode);
-    };
-  }, []);
-  return _repeatMode;
-}
-
 const _toggleRepeatMapping = {
   [MusicRepeatMode.SHUFFLE]: MusicRepeatMode.SINGLE,
   [MusicRepeatMode.SINGLE]: MusicRepeatMode.QUEUE,
@@ -165,7 +120,9 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
   repeatMode = mode;
   // 记录
   setConfig('status.music.repeatMode', mode, false);
-  notifyState(['repeatMode', 'currentIndex', 'musicQueue']);
+  repeatModeStateMapper.notify();
+  currentMusicStateMapper.notify();
+  musicQueueStateMapper.notify();
 };
 
 // 获取目标item下标
@@ -186,9 +143,13 @@ const addAll = (
   const _musicItems = musicItems
     .map(item =>
       produce(item, draft => {
-        draft[internalKey] = {
-          globalId: ++globalId,
-        };
+        if (draft[internalKey]) {
+          draft[internalKey].globalId = ++globalId;
+        } else {
+          draft[internalKey] = {
+            globalId: ++globalId,
+          };
+        }
       }),
     )
     .filter(_ => findMusicIndex(_) === -1);
@@ -202,7 +163,7 @@ const addAll = (
   if (!notCache) {
     setConfig('status.music.musicQueue', musicQueue, false);
   }
-  notifyState('musicQueue');
+  musicQueueStateMapper.notify();
 };
 
 /** 追加到队尾 */
@@ -244,7 +205,8 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
     });
   }
   setConfig('status.music.musicQueue', musicQueue, false);
-  notifyState(['musicQueue', 'currentIndex']);
+  musicQueueStateMapper.notify();
+  currentMusicStateMapper.notify();
 };
 
 /** 获取真实的url */
@@ -316,9 +278,8 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     const _musicItem = musicQueue[currentIndex];
     const track = await getMusicTrack(_musicItem);
     musicQueue[currentIndex] = track as IMusic.IMusicItem;
-    notifyState('currentIndex');
-  
     await _playTrack(track);
+    currentMusicStateMapper.notify();
   } catch (e) {
     await TrackPlayer.setupPlayer();
     console.log(e);
@@ -371,32 +332,13 @@ const skipToPrevious = async () => {
   );
 };
 
-function useCurrentMusicItem() {
-  const [_currentMusicItem, _setCurrentMusicItem] =
-    useState<IMusic.IMusicItem | null>(musicQueue[currentIndex] ?? null);
-  const updateCurrentMusicItem = () => {
-    _setCurrentMusicItem(musicQueue[currentIndex] ?? null);
-  };
-
-  useEffect(() => {
-    notifyCallBacks.musicQueue.add(updateCurrentMusicItem);
-    notifyCallBacks.currentIndex.add(updateCurrentMusicItem);
-    return () => {
-      notifyCallBacks.musicQueue.delete(updateCurrentMusicItem);
-      notifyCallBacks.currentIndex.delete(updateCurrentMusicItem);
-    };
-  }, []);
-  return _currentMusicItem;
-}
-
 async function stop() {
   await TrackPlayer.stop();
   await TrackPlayer.destroy();
 }
 const MusicQueue = {
   setupMusicQueue,
-  getMusicQueue,
-  useMusicQueue,
+  useMusicQueue: musicQueueStateMapper.useMappedState,
   addAll,
   add,
   addNext,
@@ -406,8 +348,8 @@ const MusicQueue = {
   playWithReplaceQueue,
   pause,
   remove,
-  useCurrentMusicItem,
-  useRepeatMode,
+  useCurrentMusicItem: currentMusicStateMapper.useMappedState,
+  useRepeatMode: repeatModeStateMapper.useMappedState,
   toggleRepeatMode,
   MusicRepeatMode,
   usePlaybackState,

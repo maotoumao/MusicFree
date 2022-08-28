@@ -23,7 +23,7 @@ export default function Operations() {
       },
     },
     {
-      iconName: 'ios-file-tray-sharp',
+      iconName: 'folder-music-outline',
       title: '本地音乐',
       action() {
         console.log('本地音乐');
@@ -37,8 +37,8 @@ export default function Operations() {
     //   }
     // },
     {
-      iconName: 'ios-cloud-download',
-      title: '下载队列',
+      iconName: 'download-circle-outline',
+      title: '下载列表',
       action() {
         console.log('下载');
       },
