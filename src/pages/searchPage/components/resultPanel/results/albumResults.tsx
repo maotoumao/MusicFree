@@ -16,11 +16,11 @@ export default function AlbumResults(props: IAlbumResultsProps) {
   const {data, platform} = props;
   const navigation = useNavigation<any>();
   const search = useSearch();
-  console.log('rerender');
+
   return (
     <FlatList
       data={data ?? []}
-      keyExtractor={_ => `${platform}-${_.id}`}
+      keyExtractor={_ => `album${platform}-${_.id}`}
       onEndReached={() => {
         search(undefined, platform);
       }}

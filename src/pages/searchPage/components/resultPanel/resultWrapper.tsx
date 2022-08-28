@@ -11,13 +11,11 @@ interface IResultWrapperProps {
 export default function ResultWrapper(props: IResultWrapperProps) {
   const {tab, platform} = props;
   const searchResults = useAtomValue(searchResultsAtom);
-
-  const data = getMediaItems<IPlugin.ISearchResult[typeof tab]>(
+  const data = getMediaItems(
     searchResults,
     platform,
     tab,
   );
-
   const ResultComponent = renderMap[tab]!;
   return <ResultComponent platform={platform} data={data}></ResultComponent>;
 }

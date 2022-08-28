@@ -4,7 +4,7 @@ export interface ISearchResultState {
   currentPage?: number;
   query?: string;
   state: 'pending' | 'resolved' | 'done'; // 搜索中 返回请求 搜索结束
-  result: Array<IPlugin.ISearchResult>;
+  result: IPlugin.ISearchResult;
 }
 const searchResults: Record<string, ISearchResultState> = {};
 const searchResultsAtom = atom(searchResults);

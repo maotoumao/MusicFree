@@ -4,22 +4,6 @@ import {useAtom, useSetAtom} from 'jotai';
 import {useCallback} from 'react';
 import {PageStatus, pageStatusAtom, searchResultsAtom} from '../store/atoms';
 
-const mergeData = (
-  target: IPlugin.ISearchResult,
-  original: IPlugin.ISearchResult,
-  key: IPlugin.ISearchResultType,
-  platform: string,
-) => {
-  // @ts-ignore
-  target[key] = (target[key] ?? [])?.concat(
-    (original[key] ?? [])?.map(_ => {
-      _.platform = platform;
-      return _;
-    }),
-  );
-  return target;
-};
-
 export default function useSearch() {
   const setPageStatus = useSetAtom(pageStatusAtom);
   const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
@@ -31,6 +15,7 @@ export default function useSearch() {
   ) {
     // 如果没有搜索结果缓存，那就是没有搜过
     const installedPlugins = pluginManager.getValidPlugins();
+    console.log('HASH', platformHash);
     const plugins =
       platformHash === 'all'
         ? installedPlugins
@@ -47,14 +32,19 @@ export default function useSearch() {
       if (_prevResult.state === 'pending' || _prevResult.state === 'done') {
         return;
       }
+
       const newSearch =
         query || _prevResult?.currentPage === undefined || queryPage === 1;
       query = query ?? _prevResult?.query ?? '';
       const page =
         queryPage ?? newSearch ? 1 : (_prevResult.currentPage ?? 0) + 1;
+
+      const rand = Math.random();
+      console.log('RANDOM', rand);
+
       try {
-        setSearchResults(
-          produce(draft => {
+        setSearchResults(prevState =>
+          produce(prevState, draft => {
             const prev = draft[_hash] ?? {};
             prev.query = query;
             prev.state = 'pending';
@@ -70,17 +60,22 @@ export default function useSearch() {
         setSearchResults(
           produce(draft => {
             const prev = draft[_hash] ?? {};
-            prev.query = query!;
-            prev.currentPage = page;
+            console.log('SAVED PAGE', page, prev, rand);
             if (result._isEnd === false) {
               prev.state = 'resolved';
             } else {
               prev.state = 'done';
             }
             prev.result = newSearch
-              ? [result]
-              : [...(prev?.result ?? []), result];
-            draft[_hash] = prev;
+              ? mergeResult(result, {}, _platform)
+              : mergeResult(prev.result ?? {}, result ?? {}, _platform);
+            draft[_hash] = {
+              state: prev.state,
+              result: prev.result,
+              query: query,
+              currentPage: page,
+            };
+            return draft;
           }),
         );
       } catch (e) {
@@ -98,6 +93,31 @@ export default function useSearch() {
   []);
 
   return search;
+}
+
+const resultKeys: (keyof IPlugin.ISearchResult)[] = ['album', 'music'];
+function mergeResult(
+  obj1: Record<string, any>,
+  obj2: Record<string, any>,
+  platform: string,
+): IPlugin.ISearchResult {
+  const result: Record<string, any> = {};
+  for (let k of resultKeys) {
+    result[k] = (obj1[k] ?? [])
+      .map((_: any) =>
+        produce(_, (_: any) => {
+          _.platform = platform;
+        }),
+      )
+      .concat(
+        (obj2[k] ?? []).map((_: any) =>
+          produce(_, (_: any) => {
+            _.platform = platform;
+          }),
+        ),
+      );
+  }
+  return result;
 }
 
 // export default function useSearch() {

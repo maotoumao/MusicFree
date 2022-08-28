@@ -23,10 +23,6 @@ export default function (props: IProps) {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(pageStatus);
-  }, [pageStatus]);
-
   return (
     <SafeAreaView style={style.wrapper}>
       <StatusBar></StatusBar>

@@ -1,37 +1,24 @@
-import { pluginManager } from '@/common/pluginManager';
 import {ISearchResultState} from '../store/atoms';
 
-function getMediaItem<T extends any>(
+function getMediaItem(
   state: Record<string, ISearchResultState>,
   platformHash: string,
   mediaType: IPlugin.ISearchResultType,
-): T[] {
-  let mediaItems: T[] = [];
-  const _result = state[platformHash]?.result ?? [];
-  for (let i = 0; i < _result.length; ++i) {
-    mediaItems = mediaItems.concat(
-      ((_result[i] ?? {})[mediaType] ?? []) as T[],
-    );
-  }
-  const platformName = pluginManager.getPluginByHash(platformHash)?.instance.platform;
-  return mediaItems?.map((m: any) => ({
-    ...m,
-    platform: platformName,
-  }));
+) {
+  const _result = state[platformHash]?.result ?? {};
+  return _result[mediaType] ?? [];
 }
 
-export default function getMediaItems<T extends any>(
+export default function getMediaItems(
   state: Record<string, ISearchResultState>,
   platformHash: string,
   mediaType: IPlugin.ISearchResultType,
-): T[] {
+) {
   if (platformHash === 'all') {
-    let mediaItems: T[] = [];
+    let mediaItems: any[] = [];
     const hashes = Object.keys(state);
     for (let i = 0; i < hashes.length; ++i) {
-      mediaItems = mediaItems.concat(
-        getMediaItem(state, hashes[i], mediaType),
-      );
+      mediaItems = mediaItems.concat(getMediaItem(state, hashes[i], mediaType));
     }
     return mediaItems;
   } else {
