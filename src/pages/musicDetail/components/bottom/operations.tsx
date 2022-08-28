@@ -18,7 +18,6 @@ export default function Opertions(props: IOpertionsProps) {
   const isDownloaded = DownloadManager.useIsDownloaded(musicItem);
   const {showPanel} = usePanel();
 
-  console.log('track', musicItem);
   const musicIndexInFav =
     favoriteMusicSheet?.musicList.findIndex(_ =>
       isSameMusicItem(_, musicItem),
