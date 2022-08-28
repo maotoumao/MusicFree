@@ -63,6 +63,11 @@ export default function PluginSetting(props: IPluginSettingProps) {
         color={colors.text}
         onPress={async () => {
           try {
+
+            await pluginManager.setupPlugins();
+            setPlugins(pluginManager.getPlugins());
+            return;
+
             const result = await DocumentPicker.pickMultiple();
             setLoading(true);
             await Promise.all(
