@@ -48,17 +48,23 @@ const setupMusicQueue = async () => {
   /** 状态恢复 */
   try {
     const config = await getConfig('status.music');
+    if (config?.repeatMode) {
+      repeatMode = config.repeatMode as MusicRepeatMode;
+    }
     if (config?.musicQueue && Array.isArray(config?.musicQueue)) {
-      addAll(config.musicQueue, undefined, true);
+      addAll(
+        config.musicQueue,
+        undefined,
+        true,
+        repeatMode === MusicRepeatMode.SHUFFLE,
+      );
     }
     if (config?.track) {
       currentIndex = findMusicIndex(config.track);
       const track = await getMusicTrack(config.track);
       await TrackPlayer.add([track, {url: ''}]);
     }
-    if (config?.repeatMode) {
-      repeatMode = config.repeatMode as MusicRepeatMode;
-    }
+
     if (config?.progress) {
       await TrackPlayer.seekTo(config.progress);
     }
@@ -140,6 +146,7 @@ const addAll = (
   musicItems: Array<IMusic.IMusicItem> = [],
   beforeIndex?: number,
   notCache?: boolean,
+  shouldShuffle?: boolean,
 ) => {
   const _musicItems = musicItems
     .map(item =>
@@ -161,9 +168,13 @@ const addAll = (
       draft.splice(beforeIndex, 0, ..._musicItems);
     });
   }
+  if (shouldShuffle) {
+    musicQueue = shuffle(musicQueue);
+  }
   if (!notCache) {
     setConfig('status.music.musicQueue', musicQueue, false);
   }
+
   musicQueueStateMapper.notify();
 };
 
@@ -211,14 +222,18 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
 };
 
 /** 获取真实的url */
-const getMusicTrack = async (musicItem: IMusic.IMusicItem): Promise<Track> => {
+const getMusicTrack = async (
+  musicItem: IMusic.IMusicItem,
+  retryCount = 1,
+): Promise<Track> => {
   let track: Track;
-  // 
-  const downloaded = DownloadManager.getDownloaded(musicItem)
+  //
+  const downloaded = DownloadManager.getDownloaded(musicItem);
   // 本地播放
-  if ( musicItem?.[internalKey]?.localPath || downloaded ) {
+  if (musicItem?.[internalKey]?.localPath || downloaded) {
     track = produce(musicItem, draft => {
-      draft.url = draft[internalKey]?.localPath ?? downloaded?.[internalKey]?.localPath;
+      draft.url =
+        draft[internalKey]?.localPath ?? downloaded?.[internalKey]?.localPath;
     }) as Track;
   } else {
     // 插件播放
@@ -236,7 +251,9 @@ const getMusicTrack = async (musicItem: IMusic.IMusicItem): Promise<Track> => {
           draft.userAgent = headers?.['user-agent'];
         }) as Track;
       } catch (e) {
-        console.log(e);
+        if (retryCount > 0) {
+          return getMusicTrack(musicItem, --retryCount);
+        }
         track = musicItem as Track;
       }
     } else {
@@ -302,7 +319,12 @@ const playWithReplaceQueue = async (
 ) => {
   if (newQueue.length !== 0) {
     musicQueue = [];
-    addAll(newQueue);
+    addAll(
+      newQueue,
+      undefined,
+      undefined,
+      repeatMode === MusicRepeatMode.SHUFFLE,
+    );
     await play(musicItem, true);
   }
 };
