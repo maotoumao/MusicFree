@@ -27,7 +27,7 @@ export default function MusicList(props: IMusicListProps) {
           ListHeaderComponent={
             <Header albumItem={albumItem} musicList={musicList}></Header>
           }
-          keyExtractor={_ => `${_.id}${_.platform}`}
+          keyExtractor={_ => `albummusic${_.id}${_.platform}`}
           renderItem={({index, item: musicItem}) => (
             <ListItem
               left={{

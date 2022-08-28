@@ -20,8 +20,11 @@ export default function SimpleDialog(props: ISimpleDialogProps) {
         <Paragraph>{payload?.content}</Paragraph>
       </Dialog.Content>
       <Dialog.Actions>
-        <Button onPress={hideDialog}>取消</Button>
+        <Button color={colors.text} onPress={hideDialog}>
+          取消
+        </Button>
         <Button
+          color={colors.text}
           onPress={() => {
             payload?.onOk?.();
             hideDialog();

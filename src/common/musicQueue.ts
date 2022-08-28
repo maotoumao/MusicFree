@@ -15,6 +15,7 @@ import {getConfig, setConfig} from './localConfigManager';
 import logManager from './logManager';
 import {internalKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
+import DownloadManager from './downloadManager';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -212,11 +213,12 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
 /** 获取真实的url */
 const getMusicTrack = async (musicItem: IMusic.IMusicItem): Promise<Track> => {
   let track: Track;
-
+  // 
+  const downloaded = DownloadManager.getDownloaded(musicItem)
   // 本地播放
-  if (musicItem?.[internalKey]?.localPath) {
+  if ( musicItem?.[internalKey]?.localPath || downloaded ) {
     track = produce(musicItem, draft => {
-      draft.url = draft[internalKey]!.localPath;
+      draft.url = draft[internalKey]?.localPath ?? downloaded?.[internalKey]?.localPath;
     }) as Track;
   } else {
     // 插件播放

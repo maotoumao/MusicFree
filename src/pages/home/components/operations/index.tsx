@@ -26,7 +26,7 @@ export default function Operations() {
       iconName: 'folder-music-outline',
       title: '本地音乐',
       action() {
-        console.log('本地音乐');
+        navigation.navigate(ROUTE_PATH.LOCAL);
       },
     },
     // {

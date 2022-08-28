@@ -7,7 +7,7 @@ import produce from 'immer';
 import {useEffect, useState} from 'react';
 import {exists, mkdir, downloadFile, readDir} from 'react-native-fs';
 import Toast from 'react-native-toast-message';
-import {pluginManager} from '../pluginManager';
+import {pluginManager} from './pluginManager';
 
 interface IDownloadMusicOptions {
   musicItem: IMusic.IMusicItem;
@@ -27,8 +27,9 @@ let downloadedData: Record<string, IMusic.IMusicItem> = {};
 
 const downloadedStateMapper = new StateMapper(() => downloadedMusic);
 
+/** 根据文件名解析 */
 function parseFilename(fn: string): IMusic.IMusicItemBase | null {
-  const data = fn.split('@');
+  const data = fn.slice(0, fn.lastIndexOf('.')).split('@');
   const [platform, id, title, artist] = data;
   if (!platform || !id) {
     return null;
@@ -41,6 +42,7 @@ function parseFilename(fn: string): IMusic.IMusicItemBase | null {
   };
 }
 
+/** 生成下载文件名 */
 function generateFilename(musicItem: IMusic.IMusicItem) {
   return (
     `${musicItem.platform}@${musicItem.id}@${musicItem.title}@${musicItem.artist}`.slice(
@@ -50,6 +52,7 @@ function generateFilename(musicItem: IMusic.IMusicItem) {
   );
 }
 
+/** 初始化 */
 async function setupDownload() {
   if (!(await exists(pathConst.downloadPath))) {
     await mkdir(pathConst.downloadPath);
@@ -140,6 +143,7 @@ async function downloadNext() {
   downloadNext();
 }
 
+/** 下载音乐 */
 function downloadMusic(musicItem: IMusic.IMusicItem) {
   // 如果已经在下载中
   const pendingInd = pendingMusic.findIndex(_ =>
@@ -157,12 +161,19 @@ function downloadMusic(musicItem: IMusic.IMusicItem) {
   }
 }
 
+/** 是否下载 */
 function isDownloaded(mi: IMusic.IMusicItem | null) {
   return mi
     ? downloadedMusic.findIndex(_ => isSameMusicItem(_, mi)) !== -1
     : false;
 }
 
+/** 获取下载的音乐 */
+function getDownloaded(mi: IMusic.IMusicItem | null) {
+  return mi ? downloadedMusic.find(_ => isSameMusicItem(_, mi)) : null;
+}
+
+/** 某个音乐是否被下载-状态 */
 function useIsDownloaded(mi: IMusic.IMusicItem | null) {
   if (!mi) {
     return false;
@@ -183,6 +194,7 @@ const DownloadManager = {
   useDownloadedMusic: downloadedStateMapper.useMappedState,
   isDownloaded,
   useIsDownloaded,
+  getDownloaded,
 };
 
 export default DownloadManager;
