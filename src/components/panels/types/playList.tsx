@@ -12,11 +12,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import repeatModeConst from '@/constants/repeatModeConst';
 import Tag from '@/components/tag';
-import {_usePanelShow} from '../usePanelShow';
+import {_usePanel} from '../usePanelShow';
 import {fontSizeConst,} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import IconButton from '@/components/iconButton';
 import isSameMusicItem from '@/utils/isSameMusicItem';
+import { internalKey } from '@/constants/commonConst';
 
 interface IPlayListProps {}
 
@@ -24,7 +25,7 @@ export default function PlayList(props: IPlayListProps) {
   const musicQueue = MusicQueue.useMusicQueue();
   const currentMusicItem = MusicQueue.useCurrentMusicItem();
   const repeatMode = MusicQueue.useRepeatMode();
-  const {show, closePanel} = _usePanelShow();
+  const {show, closePanel} = _usePanel();
   const {colors} = useTheme();
   // const listRef = useRef<BottomSheetFlatListMethods | null>();
 
@@ -88,7 +89,7 @@ export default function PlayList(props: IPlayListProps) {
         style={style.playList}
         data={musicQueue}
         keyExtractor={_ =>
-          _._internalData?.globalKey ?? `${_.id}-${_.platform}`
+          _[internalKey]?.globalKey ?? `${_.id}-${_.platform}`
         }
         renderItem={_ => (
           <Pressable

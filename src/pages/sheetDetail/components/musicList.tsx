@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import MusicSheet from '@/common/musicSheet';
 import MusicQueue from '@/common/musicQueue';
-import usePanelShow from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanelShow';
 import {FlatList} from 'react-native-gesture-handler';
 import Header from './header';
 import ListItem from '@/components/listItem';
@@ -15,7 +15,7 @@ export default function MusicList(props: IMusicListProps) {
   const route = useRoute<any>();
   const id = route.params?.id ?? 'favorite';
   const musicSheet = MusicSheet.useSheets(id);
-  const {showPanel} = usePanelShow();
+  const {showPanel} = usePanel();
 
   return (
     <FlatList

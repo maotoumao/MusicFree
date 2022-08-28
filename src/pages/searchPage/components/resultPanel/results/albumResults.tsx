@@ -5,6 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 import {FlatList} from 'react-native-gesture-handler';
 import ListItem from '@/components/listItem';
+import useSearch from '@/pages/searchPage/hooks/useSearch';
 
 interface IAlbumResultsProps {
   platform: string;
@@ -13,11 +14,15 @@ interface IAlbumResultsProps {
 export default function AlbumResults(props: IAlbumResultsProps) {
   const {data, platform} = props;
   const navigation = useNavigation<any>();
+  const search = useSearch();
 
   return (
     <FlatList
       data={data ?? []}
       keyExtractor={_ => `${platform}-${_.id}`}
+      onEndReached={() => {
+        search(undefined, platform);
+      }}
       renderItem={({item: albumItem}) => (
         <ListItem
           left={{

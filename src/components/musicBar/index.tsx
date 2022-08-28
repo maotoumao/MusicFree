@@ -10,7 +10,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 
 import musicIsPaused from '@/utils/musicIsPaused';
-import usePanelShow from '../panels/usePanelShow';
+import usePanel from '../panels/usePanelShow';
 import Color from 'color';
 import ThemeText from '../themeText';
 
@@ -19,7 +19,7 @@ export default function (props: IProps) {
   // const currentMusicState = useAtomValue(loadableCurrentMusicStateAtom);
   const musicItem = MusicQueue.useCurrentMusicItem();
   const musicState = MusicQueue.usePlaybackState();
-  const {showPanel} = usePanelShow();
+  const {showPanel} = usePanel();
   const navigation = useNavigation<any>();
   const progress = MusicQueue.useProgress();
   const {colors} = useTheme();
@@ -30,7 +30,7 @@ export default function (props: IProps) {
         <Pressable
           style={[
             style.wrapper,
-            {backgroundColor: Color(colors.surface).alpha(0.66).toString()},
+            {backgroundColor: Color(colors.primary).alpha(0.66).toString()},
           ]}
           onPress={() => {
             navigation.navigate(ROUTE_PATH.MUSIC_DETAIL);

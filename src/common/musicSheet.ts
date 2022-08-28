@@ -92,7 +92,6 @@ async function addMusic(
   sheetId: string,
   musicItem: IMusic.IMusicItem | Array<IMusic.IMusicItem>,
 ) {
-  console.log('mmm', musicItem);
   const sheetIndex = musicSheets.findIndex(sheet => sheet.id === sheetId);
   if (sheetIndex === -1) return;
   if (!Array.isArray(musicItem)) {

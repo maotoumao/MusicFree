@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useTextColor from '@/hooks/useTextColor';
 import MusicSheet from '@/common/musicSheet';
-import usePanelShow from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanelShow';
 import { useTheme } from 'react-native-paper';
 import IconButton from '@/components/iconButton';
 import ThemeText from '@/components/themeText';
@@ -14,7 +14,7 @@ export default function (props: IProps) {
   const musicSheets = MusicSheet.useUserSheets();
   const {colors} = useTheme()
 
-  const {showPanel} = usePanelShow();
+  const {showPanel} = usePanel();
 
   return (
     <View style={style.header}>

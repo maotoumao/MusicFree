@@ -5,7 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Divider, IconButton, useTheme} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import usePanelShow from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanelShow';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import Color from 'color';
 import ThemeText from '@/components/themeText';
@@ -17,7 +17,7 @@ interface IHeaderProps {
 export default function Header(props: IHeaderProps) {
   const {albumItem, musicList} = props;
   console.log(albumItem);
-  const {showPanel} = usePanelShow();
+  const {showPanel} = usePanel();
   const {colors} = useTheme();
 
   return (

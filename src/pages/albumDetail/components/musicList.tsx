@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
 
 import Loading from '@/components/loading';
-import usePanelShow from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanelShow';
 import Header from './header';
 import ListItem from '@/components/listItem';
 import IconButton from '@/components/iconButton';
@@ -15,7 +15,7 @@ interface IMusicListProps {
 }
 export default function MusicList(props: IMusicListProps) {
   const {albumItem, musicList} = props;
-  const {showPanel} = usePanelShow();
+  const {showPanel} = usePanel();
 
   return (
     <View style={style.wrapper}>

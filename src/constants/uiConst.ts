@@ -1,21 +1,6 @@
 import rpx from '@/utils/rpx';
 
 const fontSizeConst = {
-  /** 16 */
-  smallest: rpx(16),
-  /** 20 */
-  smaller: rpx(20),
-  /** 24 */
-  small: rpx(24),
-  /** 28 */
-  normal: rpx(28),
-  /** 32 */
-  big: rpx(32),
-  /** 36 */
-  bigger: rpx(36),
-  /** 40 */
-  biggest: rpx(40),
-
   /** 标签 */
   tag: rpx(20),
   /** 描述文本等字体 */

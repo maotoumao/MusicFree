@@ -97,9 +97,9 @@ export default function ThemeSetting(props: IThemeSettingProps) {
                     : colorsResult.vibrant,
               };
               const primaryColor = Color(colors.primary).darken(0.3).toString();
-              const secondaryColor = Color(colors.average)
-                .darken(0.3)
-                .toString();
+              // const secondaryColor = Color(colors.average)
+              //   .darken(0.3)
+              //   .toString();
               const textHighlight = Color(
                 0xffffff - Color(primaryColor).rgbNumber(),
                 'rgb',
@@ -109,7 +109,6 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               setConfig('setting.theme.mode', 'custom-dark');
               setConfig('setting.theme.colors', {
                 primary: primaryColor,
-                secondary: secondaryColor,
                 textHighlight: textHighlight,
               });
             } catch (e) {

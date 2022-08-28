@@ -12,6 +12,7 @@ import {iconSizeConst} from '@/constants/uiConst';
 import color from 'color';
 import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/themeText';
+import Color from 'color';
 
 // todo icon: = musicFree(引入自定义字体 居中) search
 export default function NavBar() {
@@ -31,11 +32,7 @@ export default function NavBar() {
         style={[
           style.searchBar,
           {
-            backgroundColor: color(colors.placeholder)
-              .negate()
-              .mix(color('#999999'))
-              .alpha(0.7)
-              .toString(),
+            backgroundColor: Color(colors.primary).alpha(0.7).toString(),
           },
         ]}
         onPress={() => {
@@ -44,9 +41,9 @@ export default function NavBar() {
         <Icon
           name="magnify"
           size={rpx(28)}
-          color={colors.placeholder}
+          color={Color(colors.textSecondary).alpha(0.8).toString()}
           style={style.searchIcon}></Icon>
-        <ThemeText fontSize='subTitle' style={[style.text, {color: colors.textPlaceholder}]}>
+        <ThemeText fontSize='subTitle' style={[style.text, {color: Color(colors.textSecondary).alpha(0.8).toString()}]}>
           点击这里开始搜索
         </ThemeText>
       </Pressable>
@@ -66,7 +63,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    height: rpx(72),
+    height: rpx(64),
     borderRadius: rpx(36),
     paddingHorizontal: rpx(28),
   },

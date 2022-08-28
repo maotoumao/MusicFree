@@ -7,7 +7,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
 import MusicSheet from '@/common/musicSheet';
-import {_usePanelShow} from '../usePanelShow';
+import {_usePanel} from '../usePanelShow';
 import {fontSizeConst} from '@/constants/uiConst';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 import useTextColor from '@/hooks/useTextColor';
@@ -17,7 +17,7 @@ import useColors from '@/hooks/useColors';
 
 interface INewMusicSheetProps {}
 export default function NewMusicSheet(props: INewMusicSheetProps) {
-  const {show, closePanel} = _usePanelShow();
+  const {show, closePanel} = _usePanel();
   const [input, setInput] = useState('');
   const colors = useColors();
 
@@ -65,7 +65,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
         style={[
           style.input,
           {
-            backgroundColor: colors.placeholder
+            backgroundColor: Color(colors.primary).lighten(0.7).toString()
           },
         ]}
         placeholder={'新建歌单'}

@@ -7,7 +7,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import MusicSheet from '@/common/musicSheet';
 import Toast from 'react-native-toast-message';
-import {_usePanelShow} from '../usePanelShow';
+import {_usePanel} from '../usePanelShow';
 import ThemeText from '@/components/themeText';
 import {useTheme} from 'react-native-paper';
 import ListItem from '@/components/listItem';
@@ -18,7 +18,7 @@ interface IAddToMusicSheetProps {
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
   const sheets = MusicSheet.useSheets();
-  const {show, closePanel} = _usePanelShow();
+  const {show, closePanel} = _usePanel();
   const {musicItem = []} = props ?? {};
   const {colors} = useTheme();
 

@@ -44,7 +44,7 @@ export default function SheetBody(props: ISheetBodyProps) {
                   },
                 });
               }}
-              fontColor='primary'></IconButton>
+              fontColor='secondary'></IconButton>
           )}
           desc={`${sheet.musicList.length ?? '-'}首`}></ListItem>
       )}></FlatList>

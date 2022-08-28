@@ -81,7 +81,7 @@ interface IListItemProps {
   right?: () => JSX.Element;
   itemPaddingHorizontal?: number;
   itemHeight?: number;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 export default function ListItem(props: IListItemProps) {
@@ -115,7 +115,7 @@ export default function ListItem(props: IListItemProps) {
             marginRight: right ? rpx(18) : 0,
           }}>
           <View style={style.titleWrapper}>
-            <ThemeText numberOfLines={1} style={style.title} fontSize="normal">
+            <ThemeText numberOfLines={1} style={style.title}>
               {title}
             </ThemeText>
             {tag ? <Tag tagName={tag}></Tag> : <></>}

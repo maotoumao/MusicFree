@@ -43,8 +43,8 @@ export default function useSearch() {
         setPageStatus(PageStatus.RESULT);
         return;
       }
-      const _prevResult = searchResults[_hash];
-      if (_prevResult?.pending) {
+      const _prevResult = searchResults[_hash] ?? {};
+      if (_prevResult.state === 'pending' || _prevResult.state === 'done') {
         return;
       }
       const newSearch =
@@ -57,11 +57,11 @@ export default function useSearch() {
           produce(draft => {
             const prev = draft[_hash] ?? {};
             prev.query = query;
-            prev.pending = true;
+            prev.state = 'pending';
             draft[_hash] = prev;
           }),
         );
-        // !! jscore的promise有问题，改成hermes就好了，可能和JIT有关，不知道。
+        // !! jscore的promise有问题，改成hermes就好了，可能和JIT
         const result = await plugin?.instance?.search?.(query, page);
         setPageStatus(PageStatus.RESULT);
         if (!result) {
@@ -72,49 +72,23 @@ export default function useSearch() {
             const prev = draft[_hash] ?? {};
             prev.query = query!;
             prev.currentPage = page;
-            prev.pending = false;
+            if (result._isEnd === false) {
+              prev.state = 'resolved';
+            } else {
+              prev.state = 'done';
+            }
             prev.result = newSearch
               ? [result]
               : [...(prev?.result ?? []), result];
             draft[_hash] = prev;
           }),
         );
-        // plugin?.instance
-        //   ?.search?.(query, page)
-        //   ?.then(result => {
-        //     // 任何一个加载出来就可以出现结果页了
-        //     setPageStatus(PageStatus.RESULT);
-        //     if (!result) {
-        //       throw new Error();
-        //     }
-        //     setSearchResults(
-        //       produce(draft => {
-        //         const prev = draft[_platform] ?? {};
-        //         prev.query = query!;
-        //         prev.currentPage = page;
-        //         prev.pending = false;
-        //         prev.result = newSearch
-        //           ? [result]
-        //           : [...(prev?.result ?? []), result];
-        //         draft[_platform] = prev;
-        //       }),
-        //     );
-        //   })
-        //   ?.catch(() => {
-        //     setSearchResults(
-        //       produce(draft => {
-        //         const prev = draft[_platform] ?? {};
-        //         prev.pending = false;
-        //         draft[_platform] = prev;
-        //       }),
-        //     );
-        //   });
-      } catch(e) {
+      } catch (e) {
         console.log('SEARCH ERROR', e);
         setSearchResults(
           produce(draft => {
             const prev = draft[_hash] ?? {};
-            prev.pending = false;
+            prev.state = 'resolved';
             draft[_hash] = prev;
           }),
         );

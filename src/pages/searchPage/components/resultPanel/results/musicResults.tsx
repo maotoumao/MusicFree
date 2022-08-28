@@ -2,6 +2,8 @@ import React from 'react';
 import {FlatList} from 'react-native';
 import MusicQueue from '@/common/musicQueue';
 import ListItem from '@/components/listItem';
+import IconButton from '@/components/iconButton';
+import usePanel from '@/components/panels/usePanelShow';
 
 interface IMusicResultsProps {
   platform: string;
@@ -10,6 +12,7 @@ interface IMusicResultsProps {
 
 export default function MusicResults(props: IMusicResultsProps) {
   const {platform, data} = props;
+  const {showPanel} = usePanel();
 
   return (
     <FlatList
@@ -22,7 +25,14 @@ export default function MusicResults(props: IMusicResultsProps) {
           desc={`${musicItem.artist} - ${musicItem.album}`}
           onPress={() => {
             MusicQueue.play(musicItem);
-          }}></ListItem>
+          }}
+          right={() => (
+            <IconButton
+              name="dots-vertical"
+              onPress={() =>
+                showPanel('MusicItemOptions', {musicItem})
+              }></IconButton>
+          )}></ListItem>
       )}></FlatList>
   );
 }

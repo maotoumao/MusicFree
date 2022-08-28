@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicSheet from '@/common/musicSheet';
 import MusicQueue from '@/common/musicQueue';
 import isSameMusicItem from '@/utils/isSameMusicItem';
-import usePanelShow from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanelShow';
 import RNFS from 'react-native-fs';
 import { pluginManager } from '@/common/pluginManager';
 
@@ -14,7 +14,7 @@ export default function Opertions(props: IOpertionsProps) {
   //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
   const favoriteMusicSheet = MusicSheet.useSheets('favorite');
   const musicItem = MusicQueue.useCurrentMusicItem();
-  const {showPanel} = usePanelShow();
+  const {showPanel} = usePanel();
 
   const musicIndexInFav =
     favoriteMusicSheet?.musicList.findIndex(_ =>

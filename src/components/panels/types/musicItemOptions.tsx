@@ -8,7 +8,7 @@ import BottomSheet, {
 import {Divider} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import MusicSheet from '@/common/musicSheet';
-import {_usePanelShow} from '../usePanelShow';
+import {_usePanel} from '../usePanelShow';
 import ListItem from '@/components/listItem';
 import ThemeText from '@/components/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
@@ -20,7 +20,7 @@ interface IMusicItemOptionsProps {
   musicSheet?: IMusic.IMusicSheetItem;
 }
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
-  const {show, closePanel, showPanel} = _usePanelShow();
+  const {show, closePanel, showPanel} = _usePanel();
   const primaryColor = usePrimaryColor();
 
   const {musicItem, musicSheet} = props ?? {};

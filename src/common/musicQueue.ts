@@ -13,6 +13,7 @@ import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import {getConfig, setConfig} from './localConfigManager';
 import logManager from './logManager';
+import { internalKey } from '@/constants/commonConst';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -156,7 +157,7 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
   } else {
     musicQueue = produce(musicQueue, draft => {
       return draft.sort(
-        (a, b) => a?._internalData?.globalId - b?._internalData?.globalId ?? 0,
+        (a, b) => a?.[internalKey]?.globalId - b?.[internalKey]?.globalId ?? 0,
       );
     });
   }
@@ -185,7 +186,7 @@ const addAll = (
   const _musicItems = musicItems
     .map(item =>
       produce(item, draft => {
-        draft._internalData = {
+        draft[internalKey] = {
           globalId: ++globalId,
         };
       }),
@@ -251,9 +252,9 @@ const getMusicTrack = async (musicItem: IMusic.IMusicItem): Promise<Track> => {
   let track: Track;
 
   // 本地播放
-  if (musicItem?._internalData?.localPath) {
+  if (musicItem?.[internalKey]?.localPath) {
     track = produce(musicItem, draft => {
-      draft.url = draft._internalData!.localPath;
+      draft.url = draft[internalKey]!.localPath;
     }) as Track;
   } else {
     // 插件播放
@@ -348,7 +349,6 @@ const pause = async () => {
 };
 
 const skipToNext = async () => {
-  console.log('skip');
   if (musicQueue.length === 0) {
     currentIndex = -1;
     return;

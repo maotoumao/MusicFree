@@ -8,7 +8,7 @@ const showAtom = atom(-1);
 const panelNameAtom = atom<IPanelkeys | null>(null);
 const payloadAtom = atom<any>(null);
 
-export function _usePanelShow() {
+export function _usePanel() {
   const [show, setShow] = useAtom(showAtom);
   const [panelName, setPanelName] = useAtom(panelNameAtom);
   const [payload, setPayload] = useAtom(payloadAtom);
@@ -32,7 +32,7 @@ export function _usePanelShow() {
   return {payload, show, sheetName: panelName, showPanel, closePanel};
 }
 
-export default function usePanelShow() {
-  const {showPanel, closePanel} = _usePanelShow();
+export default function usePanel() {
+  const {showPanel, closePanel} = _usePanel();
   return {showPanel, closePanel};
 }

@@ -16,26 +16,27 @@ interface IActionButtonProps {
 export default function ActionButton(props: IActionButtonProps) {
   const {iconName, iconColor, title, action} = props;
   const {colors} = useTheme();
-
+  // rippleColor="rgba(0, 0, 0, .32)"
   return (
-    <TouchableRipple onPress={action} rippleColor="rgba(0, 0, 0, .32)">
-      <View style={style.wrapper}>
-        <Icon
-          name={iconName}
-          color={iconColor ?? colors.text}
-          size={fontSizeConst.biggest}></Icon>
-        <ThemeText fontSize="subTitle" fontWeight="semibold" style={style.text}>
-          {title}
-        </ThemeText>
-      </View>
+    <TouchableRipple onPress={action} style={style.wrapper}>
+      <>
+      <Icon
+        name={iconName}
+        color={iconColor ?? colors.text}
+        size={rpx(48)}></Icon>
+      <ThemeText fontSize="subTitle" fontWeight="semibold" style={style.text}>
+        {title}
+      </ThemeText>
+      </>
     </TouchableRipple>
   );
 }
 
 const style = StyleSheet.create({
   wrapper: {
-    width: rpx(128),
-    height: rpx(128),
+    maxWidth: rpx(218),
+    height: '100%',
+    flexGrow: 1,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',

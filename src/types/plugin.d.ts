@@ -5,6 +5,7 @@ declare namespace IPlugin {
   }
 
   export interface ISearchResult {
+    _isEnd?: boolean;
     // 可能还有歌手页等等
     // artist?: Artist
     music?: Array<IMusic.IMusicItem>;
@@ -14,6 +15,8 @@ declare namespace IPlugin {
   export type ISearchResultType = ICommon.SupportMediaType;
 
   export interface IPluginInstance {
+    /** 插件路径 */
+    _path: string;
     /** 来源名 */
     platform: string;
     /** 匹配的版本号 */

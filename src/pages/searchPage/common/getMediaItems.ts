@@ -13,11 +13,7 @@ function getMediaItem<T extends any>(
       ((_result[i] ?? {})[mediaType] ?? []) as T[],
     );
   }
-  return mediaItems?.map((m: any) => ({
-    ...m,
-    platform: pluginManager.getPluginByHash(platformHash)?.instance.platform,
-    _internalData: {},
-  }));
+  return mediaItems;
 }
 
 export default function getMediaItems<T extends any>(

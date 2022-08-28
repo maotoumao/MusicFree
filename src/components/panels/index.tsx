@@ -2,11 +2,11 @@ import React, {useEffect, useRef} from 'react';
 import {BackHandler, NativeEventSubscription} from 'react-native';
 import {Portal} from 'react-native-paper';
 import panels from './types';
-import {_usePanelShow} from './usePanelShow';
+import {_usePanel} from './usePanelShow';
 
 interface IProps {}
 export default function (props: IProps) {
-  const {sheetName, payload, closePanel} = _usePanelShow();
+  const {sheetName, payload, closePanel} = _usePanel();
   const Component = sheetName ? panels[sheetName] : null;
 
   const backHandlerRef = useRef<NativeEventSubscription>();

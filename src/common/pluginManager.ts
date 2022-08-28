@@ -16,7 +16,7 @@ class Plugin {
   public state: 'enabled' | 'disabled' | 'error';
   public instance: IPlugin.IPluginInstance;
 
-  constructor(funcCode: string) {
+  constructor(funcCode: string, pluginPath: string) {
     this.state = 'enabled';
     let _instance: IPlugin.IPluginInstance;
     try {
@@ -34,6 +34,7 @@ class Plugin {
     } catch (e: any) {
       this.state = 'error';
       _instance = {
+        _path: '',
         platform: '',
         appVersion: '',
         async getMusicTrack() {
@@ -48,6 +49,7 @@ class Plugin {
       };
     }
     this.instance = _instance;
+    this.instance._path = pluginPath;
     if (this.instance.platform === '') {
       this.hash = '';
     } else {
@@ -83,8 +85,8 @@ class PluginManager {
   pluginPath: string = pluginPath;
   constructor() {}
 
-  private loadPlugin(funcCode: string) {
-    const plugin = new Plugin(funcCode);
+  private loadPlugin(funcCode: string, pluginPath: string) {
+    const plugin = new Plugin(funcCode, pluginPath);
     const _pluginIndex = this.plugins.findIndex(p => p.hash === plugin.hash);
     if (_pluginIndex !== -1) {
       // 有重复的了，直接忽略
@@ -129,7 +131,7 @@ class PluginManager {
 
         if (_plugin.isFile() && _plugin.name.endsWith('.js')) {
           const funcCode = await RNFS.readFile(_plugin.path, 'utf8');
-          this.loadPlugin(funcCode);
+          this.loadPlugin(funcCode, _plugin.path);
         }
       }
       this.loading = false;

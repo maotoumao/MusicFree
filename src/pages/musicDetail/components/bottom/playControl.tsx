@@ -5,13 +5,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicQueue from '@/common/musicQueue';
 import repeatModeConst from '@/constants/repeatModeConst';
 import musicIsPaused from '@/utils/musicIsPaused';
-import usePanelShow from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanelShow';
 
 interface IProps {}
 export default function (props: IProps) {
   const repeatMode = MusicQueue.useRepeatMode();
   const musicState = MusicQueue.usePlaybackState();
-  const {showPanel} = usePanelShow();
+  const {showPanel} = usePanel();
 
   return (
     <>

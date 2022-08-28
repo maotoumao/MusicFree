@@ -3,7 +3,7 @@ import {atom} from 'jotai';
 export interface ISearchResultState {
   currentPage?: number;
   query?: string;
-  pending: boolean;
+  state: 'pending' | 'resolved' | 'done'; // 搜索中 返回请求 搜索结束
   result: Array<IPlugin.ISearchResult>;
 }
 const searchResults: Record<string, ISearchResultState> = {};

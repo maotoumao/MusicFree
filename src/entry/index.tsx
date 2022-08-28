@@ -10,7 +10,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Dialogs from '@/components/dialogs';
 import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
-import {CustomTheme, DarkTheme, DefaultTheme} from './theme';
+import {CustomTheme, DefaultTheme} from './theme';
 import {useConfig} from '@/common/localConfigManager';
 import Share from '@/components/share';
 import RNBootSplash from 'react-native-bootsplash';

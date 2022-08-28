@@ -14,7 +14,6 @@ import MusicQueue from '@/common/musicQueue';
 import ListItem from '@/components/listItem';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import PageBackground from '@/components/pageBackground';
 import DeviceInfo from 'react-native-device-info';

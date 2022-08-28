@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import MusicSheet from '@/common/musicSheet';
@@ -7,6 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ThemeText from '@/components/themeText';
 import Color from 'color';
 import {useTheme} from 'react-native-paper';
+import Image from '@/components/image';
 
 interface IHeaderProps {}
 export default function Header(props: IHeaderProps) {
@@ -25,16 +26,11 @@ export default function Header(props: IHeaderProps) {
       <View style={style.content}>
         <Image
           style={style.coverImg}
-          source={
-            sheet?.coverImg
-              ? {
-                  uri: sheet.coverImg,
-                }
-              : require('@/assets/imgs/album-default.jpg')
-          }></Image>
+          uri={sheet.coverImg}
+          fallback={require('@/assets/imgs/album-default.jpg')}></Image>
         <View style={style.details}>
-          <ThemeText>{sheet?.title}</ThemeText>
-          <ThemeText fontColor="secondary" fontSize="description">
+          <ThemeText fontSize='title'>{sheet?.title}</ThemeText>
+          <ThemeText fontColor="secondary" fontSize="subTitle">
             共{sheet?.musicList.length ?? 0}首
           </ThemeText>
         </View>
