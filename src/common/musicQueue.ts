@@ -18,6 +18,7 @@ import StateMapper from '@/utils/stateMapper';
 import DownloadManager from './downloadManager';
 import delay from '@/utils/delay';
 import {exists} from 'react-native-fs';
+import isSameMusicItem from '@/utils/isSameMusicItem';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -259,7 +260,6 @@ const getMusicTrack = async (
           return getMusicTrack(musicItem, --retryCount);
         } else {
           // 播放失败,可以用配置
-          await skipToNext();
           throw new Error('TRACK FAIL');
         }
       }
@@ -306,6 +306,14 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     try {
       track = (await getMusicTrack(_musicItem)) as IMusic.IMusicItem;
     } catch {
+      // 播放失败
+      if(!isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
+        skipToNext();
+      }
+      return;
+    }
+    /** 可能点了很多次。。。 */
+    if(!isSameMusicItem(_musicItem, musicQueue[currentIndex])){
       return;
     }
     musicQueue[currentIndex] = track;
