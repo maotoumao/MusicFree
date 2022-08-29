@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import { Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import LinearGradient from 'react-native-linear-gradient';
 import {Divider, IconButton, useTheme} from 'react-native-paper';
@@ -9,6 +9,8 @@ import usePanel from '@/components/panels/usePanelShow';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import Color from 'color';
 import ThemeText from '@/components/themeText';
+import Image from '@/components/image';
+import { ImgAsset } from '@/constants/assetsConst';
 
 interface IHeaderProps {
   albumItem: IAlbum.IAlbumItem | null;
@@ -26,13 +28,9 @@ export default function Header(props: IHeaderProps) {
         <View style={style.content}>
           <Image
             style={style.coverImg}
-            source={
-              albumItem?.artwork
-                ? {
-                    uri: albumItem.artwork,
-                  }
-                : require('@/assets/imgs/album-default.jpg')
-            }></Image>
+            uri={albumItem?.artwork}
+            fallback={ImgAsset.albumDefault}
+            ></Image>
           <View style={style.details}>
             <ThemeText>{albumItem?.title}</ThemeText>
             <ThemeText fontColor="secondary" fontSize='description'>

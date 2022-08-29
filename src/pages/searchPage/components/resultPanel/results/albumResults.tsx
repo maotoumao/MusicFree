@@ -7,6 +7,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import ListItem from '@/components/listItem';
 import useSearch from '@/pages/searchPage/hooks/useSearch';
 import Loading from '@/components/loading';
+import { ImgAsset } from '@/constants/assetsConst';
 
 interface IAlbumResultsProps {
   pendingState: 'pending' | 'resolved' | 'done';
@@ -31,7 +32,7 @@ export default function AlbumResults(props: IAlbumResultsProps) {
         <ListItem
           left={{
             artwork: albumItem.artwork,
-            fallback: require('@/assets/imgs/album-default.jpg'),
+            fallback: ImgAsset.albumDefault,
           }}
           title={albumItem.title}
           desc={`${albumItem.artist}    ${albumItem.date}`}

@@ -11,6 +11,7 @@ import ThemeText from '@/components/themeText';
 import {useTheme} from 'react-native-paper';
 import ListItem from '@/components/listItem';
 import MusicSheet from '@/common/musicSheetManager';
+import { ImgAsset } from '@/constants/assetsConst';
 
 interface IAddToMusicSheetProps {
   musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -51,7 +52,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
             title={sheet.title}
             left={{
               artwork:sheet.coverImg,
-              fallback: require('@/assets/imgs/album-default.jpg')
+              fallback: ImgAsset.albumDefault
             }}
             onPress={async () => {
               try {

@@ -13,6 +13,7 @@ import musicIsPaused from '@/utils/musicIsPaused';
 import usePanel from '../panels/usePanelShow';
 import Color from 'color';
 import ThemeText from '../themeText';
+import {ImgAsset} from '@/constants/assetsConst';
 
 interface IProps {}
 export default function (props: IProps) {
@@ -38,17 +39,24 @@ export default function (props: IProps) {
           <View style={style.artworkWrapper}>
             <Avatar.Image
               size={rpx(96)}
-              source={{
-                uri: musicItem.artwork,
-              }}></Avatar.Image>
+              source={
+                musicItem.artwork
+                  ? {
+                      uri: musicItem.artwork,
+                    }
+                  : ImgAsset.albumDefault
+              }></Avatar.Image>
           </View>
           <Text
             ellipsizeMode="tail"
             style={style.textWrapper}
             numberOfLines={1}>
-            <ThemeText fontSize='content'>{musicItem.title}</ThemeText>
+            <ThemeText fontSize="content">{musicItem.title}</ThemeText>
             {musicItem?.artist && (
-              <ThemeText fontSize='description' fontColor="secondary"> -{musicItem.artist}</ThemeText>
+              <ThemeText fontSize="description" fontColor="secondary">
+                {' '}
+                -{musicItem.artist}
+              </ThemeText>
             )}
           </Text>
           <View style={style.actionGroup}>

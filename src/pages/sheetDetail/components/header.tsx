@@ -8,6 +8,7 @@ import ThemeText from '@/components/themeText';
 import Color from 'color';
 import {useTheme} from 'react-native-paper';
 import Image from '@/components/image';
+import { ImgAsset } from '@/constants/assetsConst';
 
 interface IHeaderProps {}
 export default function Header(props: IHeaderProps) {
@@ -27,7 +28,7 @@ export default function Header(props: IHeaderProps) {
         <Image
           style={style.coverImg}
           uri={sheet?.coverImg}
-          fallback={require('@/assets/imgs/album-default.jpg')}></Image>
+          fallback={ImgAsset.albumDefault}></Image>
         <View style={style.details}>
           <ThemeText fontSize='title'>{sheet?.title}</ThemeText>
           <ThemeText fontColor="secondary" fontSize="subTitle">

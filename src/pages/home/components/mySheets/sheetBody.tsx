@@ -6,6 +6,7 @@ import {ROUTE_PATH} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
 import ListItem from '@/components/listItem';
 import IconButton from '@/components/iconButton';
+import { ImgAsset } from '@/constants/assetsConst';
 
 interface ISheetBodyProps {}
 export default function SheetBody(props: ISheetBodyProps) {
@@ -25,7 +26,7 @@ export default function SheetBody(props: ISheetBodyProps) {
           itemPaddingHorizontal={0}
           left={{
             artwork: sheet.coverImg,
-            fallback: require('@/assets/imgs/album-default.jpg'),
+            fallback: ImgAsset.albumDefault,
           }}
           onPress={() => {
             navigation.navigate(ROUTE_PATH.SHEET_DETAIL, {

@@ -9,12 +9,12 @@ import usePanel from '@/components/panels/usePanelShow';
 
 interface IMusicListProps {}
 export default function MusicList(props: IMusicListProps) {
-  const downloaded = DownloadManager.useDownloadedMusic();
+  const downloadedMusic = DownloadManager.useDownloadedMusic();
   const {showPanel} = usePanel();
   return (
     <FlatList
         style={style.wrapper}
-      data={downloaded ?? []}
+      data={downloadedMusic ?? []}
       keyExtractor={_ => `localmusic${_.platform}${_.id}`}
       renderItem={({item: musicItem, index}) => (
         <ListItem
@@ -25,7 +25,7 @@ export default function MusicList(props: IMusicListProps) {
           title={musicItem.title}
           desc={`${musicItem.artist} - ${musicItem.album}`}
           tag={musicItem.platform}
-          onPress={() => MusicQueue.play(musicItem)}
+          onPress={() => MusicQueue.playWithReplaceQueue(musicItem, downloadedMusic)}
           right={() => (
             <IconButton
               name="dots-vertical"

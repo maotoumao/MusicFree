@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {useConfig} from '@/common/localConfigManager';
 import { useTheme } from 'react-native-paper';
+import { ImgAsset } from '@/constants/assetsConst';
 
 export default function PageBackground() {
   const themeConfig = useConfig('setting.theme');
@@ -16,7 +17,7 @@ export default function PageBackground() {
             ? {
                 uri: themeConfig.background,
               }
-            : require('@/assets/imgs/background.jpg')
+            : ImgAsset.backgroundDefault
         }
         style={[
           style.wrapper,

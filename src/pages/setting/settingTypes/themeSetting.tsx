@@ -9,6 +9,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import Color from 'color';
 import {copyFile} from 'react-native-fs';
 import pathConst from '@/constants/pathConst';
+import { ImgAsset } from '@/constants/assetsConst';
 
 interface IThemeSettingProps {}
 export default function ThemeSetting(props: IThemeSettingProps) {
@@ -41,7 +42,7 @@ export default function ThemeSetting(props: IThemeSettingProps) {
           },
         ]}>
         <ImageCard
-          source={require('@/assets/imgs/background.jpg')}
+          source={ImgAsset.backgroundDefault}
           onPress={() => {
             setConfig('setting.theme.background', undefined);
             setConfig('setting.theme.colors', undefined);
@@ -52,7 +53,7 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               ? {
                   uri: background,
                 }
-              : require('@/assets/imgs/add-image.png')
+              : ImgAsset.addBackground
           }
           onPress={async () => {
             try {
