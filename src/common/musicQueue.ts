@@ -17,6 +17,7 @@ import {internalKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import DownloadManager from './downloadManager';
 import delay from '@/utils/delay';
+import {exists} from 'react-native-fs';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -227,13 +228,14 @@ const getMusicTrack = async (
   retryCount = 1,
 ): Promise<Track> => {
   let track: Track;
-  //
-  const downloaded = DownloadManager.getDownloaded(musicItem);
-  // 本地播放
-  if (musicItem?.[internalKey]?.localPath || downloaded) {
+
+  const localPath =
+    musicItem?.[internalKey]?.localPath ??
+    DownloadManager.getDownloaded(musicItem)?.[internalKey]?.localPath;
+
+  if (localPath && (await exists(localPath))) {
     track = produce(musicItem, draft => {
-      draft.url =
-        draft[internalKey]?.localPath ?? downloaded?.[internalKey]?.localPath;
+      draft.url = localPath;
     }) as Track;
   } else {
     // 插件播放
@@ -257,7 +259,6 @@ const getMusicTrack = async (
         } else {
           // 播放失败,可以用配置
           skipToNext();
-
         }
         track = musicItem as Track;
       }

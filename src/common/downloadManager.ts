@@ -122,7 +122,12 @@ async function downloadNext() {
       if (
         downloadedMusic.findIndex(_ => isSameMusicItem(musicItem, _)) === -1
       ) {
-        _.push(musicItem);
+        _.push({
+          ...musicItem,
+          [internalKey]: {
+            localPath: pathConst.downloadPath + nextItem.filename,
+          },
+        });
       }
       return _;
     });
