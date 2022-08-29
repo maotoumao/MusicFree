@@ -84,6 +84,7 @@ const setupMusicQueue = async () => {
   });
 
   TrackPlayer.addEventListener(Event.PlaybackError, async () => {
+    // todo 需要判断是否是当前正在播放的
     await skipToNext();
   });
 
@@ -258,9 +259,9 @@ const getMusicTrack = async (
           return getMusicTrack(musicItem, --retryCount);
         } else {
           // 播放失败,可以用配置
-          skipToNext();
+          await skipToNext();
+          throw new Error('TRACK FAIL');
         }
-        track = musicItem as Track;
       }
     } else {
       track = musicItem as Track;
@@ -301,9 +302,14 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
       }
     }
     const _musicItem = musicQueue[currentIndex];
-    const track = await getMusicTrack(_musicItem);
-    musicQueue[currentIndex] = track as IMusic.IMusicItem;
-    await _playTrack(track);
+    let track: IMusic.IMusicItem;
+    try {
+      track = (await getMusicTrack(_musicItem)) as IMusic.IMusicItem;
+    } catch {
+      return;
+    }
+    musicQueue[currentIndex] = track;
+    await _playTrack(track as Track);
     currentMusicStateMapper.notify();
   } catch (e) {
     await TrackPlayer.setupPlayer();
