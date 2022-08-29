@@ -45,6 +45,7 @@ export default function useSearch() {
               const prev = draft[_hash] ?? {};
               prev.query = query;
               prev.state = 'pending';
+              prev.result = newSearch ? {} : prev.result
               draft[_hash] = prev;
             }),
           );
