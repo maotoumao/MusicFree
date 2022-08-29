@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -9,20 +9,22 @@ import {Divider} from 'react-native-paper';
 import MusicSheet from '@/common/musicSheetManager';
 import {_usePanel} from '../usePanelShow';
 import {fontSizeConst} from '@/constants/uiConst';
-import usePrimaryColor from '@/hooks/usePrimaryColor';
-import useTextColor from '@/hooks/useTextColor';
 import Color from 'color';
 import Button from '@/components/button';
 import useColors from '@/hooks/useColors';
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface INewMusicSheetProps {}
 export default function NewMusicSheet(props: INewMusicSheetProps) {
-  const {show, closePanel} = _usePanel();
+  const sheetRef = useRef<BottomSheetMethods | null>();
+  const {unmountPanel} = _usePanel(sheetRef);
   const [input, setInput] = useState('');
   const colors = useColors();
+  const snap = useRef(['30%']);
 
   return (
     <BottomSheet
+    ref={_ => sheetRef.current = _}
       backgroundStyle={{backgroundColor: colors.primary}}
       backdropComponent={props => {
         return (
@@ -34,15 +36,15 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
         );
       }}
       handleComponent={null}
-      index={show}
-      snapPoints={['30%']}
+      index={0}
+      snapPoints={snap.current}
       enablePanDownToClose
       enableOverDrag={false}
-      onClose={closePanel}>
+      onClose={unmountPanel}>
       <View style={style.opeartions}>
         <Button
           onPress={() => {
-            closePanel();
+            unmountPanel();
           }}>
           取消
         </Button>
@@ -50,7 +52,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
           onPress={async () => {
             if (input) {
               MusicSheet.addSheet(input);
-              closePanel();
+              unmountPanel();
             }
           }}>
           确认
@@ -65,7 +67,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
         style={[
           style.input,
           {
-            backgroundColor: Color(colors.primary).lighten(0.7).toString()
+            backgroundColor: Color(colors.primary).lighten(0.7).toString(),
           },
         ]}
         placeholder={'新建歌单'}

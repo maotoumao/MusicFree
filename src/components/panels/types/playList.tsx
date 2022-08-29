@@ -3,7 +3,6 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetFlatList,
-  BottomSheetFlatListMethods,
 } from '@gorhom/bottom-sheet';
 import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
@@ -13,11 +12,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import repeatModeConst from '@/constants/repeatModeConst';
 import Tag from '@/components/tag';
 import {_usePanel} from '../usePanelShow';
-import {fontSizeConst,} from '@/constants/uiConst';
+import {fontSizeConst} from '@/constants/uiConst';
 import ThemeText from '@/components/themeText';
 import IconButton from '@/components/iconButton';
 import isSameMusicItem from '@/utils/isSameMusicItem';
-import { internalKey } from '@/constants/commonConst';
+import {internalKey} from '@/constants/commonConst';
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface IPlayListProps {}
 
@@ -25,28 +25,14 @@ export default function PlayList(props: IPlayListProps) {
   const musicQueue = MusicQueue.useMusicQueue();
   const currentMusicItem = MusicQueue.useCurrentMusicItem();
   const repeatMode = MusicQueue.useRepeatMode();
-  const {show, closePanel} = _usePanel();
+  const sheetRef = useRef<BottomSheetMethods | null>();
+  const {unmountPanel} = _usePanel(sheetRef);
   const {colors} = useTheme();
-  // const listRef = useRef<BottomSheetFlatListMethods | null>();
 
-  useEffect(() => {
-    return () => {
-      closePanel();
-    };
-  }, []);
-
-  // useEffect(() => {
-  //   if(MusicQueue.currentIndex > -1) {
-  //     console.log(MusicQueue.currentIndex);
-  //     listRef.current?.scrollToIndex({
-  //       animated: false,
-  //       index: MusicQueue.currentIndex
-  //     })
-  //   }
-  // }, [musicQueue])
 
   return (
     <BottomSheet
+      ref={_ => sheetRef.current = _}
       backdropComponent={props => {
         return (
           <BottomSheetBackdrop
@@ -58,13 +44,13 @@ export default function PlayList(props: IPlayListProps) {
       }}
       backgroundStyle={{backgroundColor: colors.primary}}
       handleComponent={null}
-      index={show}
+      index={0}
       snapPoints={['60%']}
       enablePanDownToClose
       enableOverDrag={false}
-      onClose={closePanel}>
+      onClose={unmountPanel}>
       <View style={style.wrapper}>
-        <ThemeText style={style.headerText} fontSize="title" fontWeight='bold'>
+        <ThemeText style={style.headerText} fontSize="title" fontWeight="bold">
           播放列表
           <ThemeText fontColor="secondary"> ({musicQueue.length}首)</ThemeText>
         </ThemeText>
@@ -85,12 +71,9 @@ export default function PlayList(props: IPlayListProps) {
       </View>
       <Divider></Divider>
       <BottomSheetFlatList
-        // ref={ref => (listRef.current = ref)}
         style={style.playList}
         data={musicQueue}
-        keyExtractor={_ =>
-          _[internalKey]?.globalKey ?? `${_.id}-${_.platform}`
-        }
+        keyExtractor={_ => _[internalKey]?.globalKey ?? `${_.id}-${_.platform}`}
         renderItem={_ => (
           <Pressable
             onPress={() => {
@@ -116,7 +99,10 @@ export default function PlayList(props: IPlayListProps) {
               ellipsizeMode="tail"
               numberOfLines={1}>
               {_.item.title}
-              <Text style={{fontSize: fontSizeConst.description}}> - {_.item.artist}</Text>
+              <Text style={{fontSize: fontSizeConst.description}}>
+                {' '}
+                - {_.item.artist}
+              </Text>
             </ThemeText>
             <Tag tagName={_.item.platform}></Tag>
             <IconButton

@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View} from 'react-native';
+import React, {useRef} from 'react';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -14,7 +14,8 @@ import ThemeText from '@/components/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 import DownloadManager from '@/common/downloadManager';
 import Image from '@/components/image';
-import { ImgAsset } from '@/constants/assetsConst';
+import {ImgAsset} from '@/constants/assetsConst';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -23,12 +24,17 @@ interface IMusicItemOptionsProps {
   musicSheet?: IMusic.IMusicSheetItem;
 }
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
-  const {show, closePanel, showPanel} = _usePanel();
+  const sheetRef = useRef<BottomSheetMethods | null>();
+  const {showPanel, unmountPanel} = _usePanel(sheetRef);
   const primaryColor = usePrimaryColor();
 
   const {musicItem, musicSheet} = props ?? {};
 
   const downloaded = DownloadManager.isDownloaded(musicItem);
+  function closePanel() {
+    sheetRef.current?.close();
+  }
+  const ref = useRef<any>();
 
   const options = [
     {
@@ -82,6 +88,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
 
   return (
     <BottomSheet
+      ref={_ => (sheetRef.current = _)}
       backdropComponent={props => {
         return (
           <BottomSheetBackdrop
@@ -93,17 +100,16 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       }}
       backgroundStyle={{backgroundColor: primaryColor}}
       handleComponent={null}
-      index={show}
+      index={0}
       snapPoints={['60%']}
       enablePanDownToClose
       enableOverDrag={false}
-      onClose={closePanel}>
+      onClose={unmountPanel}>
       <View style={style.header}>
         <Image
           style={style.artwork}
           uri={musicItem?.artwork}
-          fallback={ImgAsset.albumDefault}
-          ></Image>
+          fallback={ImgAsset.albumDefault}></Image>
         <View style={style.content}>
           <ThemeText numberOfLines={2} style={style.title}>
             {musicItem?.title}

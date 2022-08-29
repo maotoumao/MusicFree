@@ -6,8 +6,8 @@ import {_usePanel} from './usePanelShow';
 
 interface IProps {}
 export default function (props: IProps) {
-  const {sheetName, payload, closePanel} = _usePanel();
-  const Component = sheetName ? panels[sheetName] : null;
+  const {panelName, payload, unmountPanel} = _usePanel();
+  const Component = panelName ? panels[panelName] : null;
 
   const backHandlerRef = useRef<NativeEventSubscription>();
 
@@ -16,11 +16,11 @@ export default function (props: IProps) {
       backHandlerRef.current?.remove();
       backHandlerRef.current = undefined;
     }
-    if (sheetName) {
+    if (panelName) {
       backHandlerRef.current = BackHandler.addEventListener(
         'hardwareBackPress',
         () => {
-          closePanel();
+          unmountPanel();
           return true;
         },
       );
@@ -31,7 +31,7 @@ export default function (props: IProps) {
         backHandlerRef.current = undefined;
       }
     };
-  }, [sheetName]);
+  }, [panelName]);
 
   return (
     <Portal>

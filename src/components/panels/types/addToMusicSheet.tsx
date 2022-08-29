@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {
@@ -12,19 +12,22 @@ import {useTheme} from 'react-native-paper';
 import ListItem from '@/components/listItem';
 import MusicSheet from '@/common/musicSheetManager';
 import { ImgAsset } from '@/constants/assetsConst';
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface IAddToMusicSheetProps {
   musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
 }
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
+  const sheetRef = useRef<BottomSheetMethods | null>();
   const sheets = MusicSheet.useSheets();
-  const {show, closePanel} = _usePanel();
+  const {unmountPanel} = _usePanel(sheetRef);
   const {musicItem = []} = props ?? {};
   const {colors} = useTheme();
 
   return (
     <BottomSheet
+    ref={_ => sheetRef.current = _}
       backdropComponent={props => {
         return (
           <BottomSheetBackdrop
@@ -35,11 +38,11 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
         );
       }}
       backgroundStyle={{backgroundColor: colors.primary}}
-      index={show}
+      index={0}
       snapPoints={['60%', '80%']}
       enablePanDownToClose
       enableOverDrag={false}
-      onClose={closePanel}>
+      onClose={unmountPanel}>
       <View style={style.header}>
         <ThemeText fontSize='title' fontWeight='semibold'>添加到歌单</ThemeText>
       </View>
@@ -57,7 +60,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
             onPress={async () => {
               try {
                 await MusicSheet.addMusic(sheet.id, musicItem);
-                closePanel();
+                unmountPanel();
                 Toast.show({
                   text1: '添加到歌单成功',
                   position: 'bottom',
