@@ -50,15 +50,17 @@ export default function useSearch() {
         const page =
           queryPage ?? newSearch ? 1 : (_prevResult.currentPage ?? 0) + 1;
 
-
         try {
-          setSearchResults(prevState =>
-            produce(prevState, draft => {
+          setSearchResults(
+            produce(draft => {
               const prev = draft[_hash] ?? {};
-              prev.query = query;
-              prev.state = 'pending';
-              prev.result = newSearch ? {} : prev.result;
-              draft[_hash] = prev;
+              draft[_hash] = {
+                state: 'pending',
+                result: newSearch ? {} : prev.result,
+                query: query,
+                currentPage: page,
+              };
+              return draft;
             }),
           );
           // !! jscore的promise有问题，改成hermes就好了，可能和JIT有关，不知道。

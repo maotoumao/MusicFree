@@ -4,18 +4,22 @@ import MusicQueue from '@/common/musicQueue';
 import ListItem from '@/components/listItem';
 import IconButton from '@/components/iconButton';
 import usePanel from '@/components/panels/usePanelShow';
+import Loading from '@/components/loading';
 
 interface IMusicResultsProps {
+  pendingState: 'pending' | 'resolved' | 'done'
   platform: string;
   data: IPlugin.ISearchResult['music'];
 }
 
 export default function MusicResults(props: IMusicResultsProps) {
-  const {platform, data} = props;
+  const {platform, data, pendingState} = props;
   const {showPanel} = usePanel();
 
   return (
-    <FlatList
+    (!data || !data?.length) && pendingState === 'pending' ? (
+      <Loading></Loading>
+    ) : <FlatList
       data={data ?? []}
       keyExtractor={_ => `${platform}-${_.id}`}
       renderItem={({item: musicItem}) => (

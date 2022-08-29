@@ -6,18 +6,21 @@ import {ROUTE_PATH} from '@/entry/router';
 import {FlatList} from 'react-native-gesture-handler';
 import ListItem from '@/components/listItem';
 import useSearch from '@/pages/searchPage/hooks/useSearch';
+import Loading from '@/components/loading';
 
 interface IAlbumResultsProps {
+  pendingState: 'pending' | 'resolved' | 'done';
   platform: string;
   data: IPlugin.ISearchResult['album'];
 }
 /** todo 很多rerender，需要避免掉 */
 export default function AlbumResults(props: IAlbumResultsProps) {
-  const {data, platform} = props;
+  const {data, platform, pendingState} = props;
   const navigation = useNavigation<any>();
   const search = useSearch();
-
-  return (
+  return (!data || !data?.length) && pendingState === 'pending' ? (
+    <Loading></Loading>
+  ) : (
     <FlatList
       data={data ?? []}
       keyExtractor={_ => `album${platform}-${_.id}`}

@@ -46,7 +46,6 @@ export default function (props: IProps) {
                 search(_, 'all');
                 addHistory(_);
                 setPageStatus(PageStatus.SEARCHING);
-                setSearchResultsState({});
                 setQuery(_);
               }}>
               {_}
