@@ -5,7 +5,7 @@ import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storageUtil';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
-import {exists, mkdir, downloadFile, readDir} from 'react-native-fs';
+import {exists, unlink, mkdir, downloadFile, readDir} from 'react-native-fs';
 import Toast from 'react-native-toast-message';
 import {pluginManager} from './pluginManager';
 
@@ -181,6 +181,15 @@ function getDownloaded(mi: IMusic.IMusicItem | null) {
   return mi ? downloadedMusic.find(_ => isSameMusicItem(_, mi)) : null;
 }
 
+async function removeDownloaded(mi: IMusic.IMusicItem) {
+  const localPath = getDownloaded(mi)?.[internalKey]?.localPath;
+  if (localPath) {
+    await unlink(localPath);
+    downloadedMusic = downloadedMusic.filter(_ => !isSameMusicItem(_, mi));
+    downloadedStateMapper.notify();
+  }
+}
+
 /** 某个音乐是否被下载-状态 */
 function useIsDownloaded(mi: IMusic.IMusicItem | null) {
   if (!mi) {
@@ -203,6 +212,7 @@ const DownloadManager = {
   isDownloaded,
   useIsDownloaded,
   getDownloaded,
+  removeDownloaded
 };
 
 export default DownloadManager;

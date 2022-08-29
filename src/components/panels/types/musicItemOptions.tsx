@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import { StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -13,6 +13,8 @@ import ListItem from '@/components/listItem';
 import ThemeText from '@/components/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 import DownloadManager from '@/common/downloadManager';
+import Image from '@/components/image';
+import { ImgAsset } from '@/constants/assetsConst';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -25,6 +27,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
   const primaryColor = usePrimaryColor();
 
   const {musicItem, musicSheet} = props ?? {};
+
+  const downloaded = DownloadManager.isDownloaded(musicItem);
 
   const options = [
     {
@@ -43,6 +47,20 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       },
     },
     {
+      icon: 'download-circle-outline',
+      title: '下载',
+      show: !downloaded,
+      onPress: async () => {
+        await DownloadManager.downloadMusic(musicItem);
+        closePanel();
+      },
+    },
+    {
+      icon: 'check-circle-outline',
+      title: '已下载',
+      show: downloaded,
+    },
+    {
       icon: 'trash-can-outline',
       title: '删除',
       show: !!musicSheet,
@@ -52,10 +70,11 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       },
     },
     {
-      icon: 'download-circle-outline',
-      title: '下载',
+      icon: 'delete-forever-outline',
+      title: '删除本地下载',
+      show: downloaded,
       onPress: async () => {
-        await DownloadManager.downloadMusic(musicItem);
+        await DownloadManager.removeDownloaded(musicItem);
         closePanel();
       },
     },
@@ -82,9 +101,9 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       <View style={style.header}>
         <Image
           style={style.artwork}
-          source={{
-            uri: musicItem?.artwork,
-          }}></Image>
+          uri={musicItem?.artwork}
+          fallback={ImgAsset.albumDefault}
+          ></Image>
         <View style={style.content}>
           <ThemeText numberOfLines={2} style={style.title}>
             {musicItem?.title}
