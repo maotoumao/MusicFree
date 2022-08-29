@@ -169,13 +169,12 @@ const addAll = (
       draft.splice(beforeIndex, 0, ..._musicItems);
     });
   }
-  if (shouldShuffle) {
-    musicQueue = shuffle(musicQueue);
-  }
   if (!notCache) {
     setConfig('status.music.musicQueue', musicQueue, false);
   }
-
+  if (shouldShuffle) {
+    musicQueue = shuffle(musicQueue);
+  }
   musicQueueStateMapper.notify();
 };
 
