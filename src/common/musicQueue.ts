@@ -254,6 +254,10 @@ const getMusicTrack = async (
         if (retryCount > 0) {
           await delay(150);
           return getMusicTrack(musicItem, --retryCount);
+        } else {
+          // 播放失败,可以用配置
+          skipToNext();
+
         }
         track = musicItem as Track;
       }
