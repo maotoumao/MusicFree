@@ -46,7 +46,7 @@ export default function Opertions(props: IOpertionsProps) {
       )}
       <Icon
         name={
-          isDownloaded ? 'briefcase-check-outline' : 'download-circle-outline'
+          isDownloaded ? 'check-circle-outline' : 'download-circle-outline'
         }
         size={rpx(48)}
         color="white"

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import MusicSheet from '@/common/musicSheetManager';
@@ -9,6 +9,8 @@ import {FlatList} from 'react-native-gesture-handler';
 import Header from './header';
 import ListItem from '@/components/listItem';
 import IconButton from '@/components/iconButton';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DownloadManager from '@/common/downloadManager';
 
 interface IMusicListProps {}
 export default function MusicList(props: IMusicListProps) {
@@ -28,7 +30,19 @@ export default function MusicList(props: IMusicListProps) {
           <ListItem
             left={{index: index + 1, width: rpx(56)}}
             title={musicItem.title}
-            desc={`${musicItem.artist} - ${musicItem.album}`}
+            desc={
+              <>
+                {DownloadManager.isDownloaded(musicItem) && (
+                  <Icon
+                    color="#11659a"
+                    name="check-circle"
+                    size={rpx(22)}></Icon>
+                )}
+                <Text>
+                   {musicItem.artist} - {musicItem.album}
+                </Text>
+              </>
+            }
             tag={musicItem.platform}
             onPress={() =>
               MusicQueue.playWithReplaceQueue(musicItem, musicSheet.musicList)
@@ -37,7 +51,7 @@ export default function MusicList(props: IMusicListProps) {
               <IconButton
                 name="dots-vertical"
                 size="normal"
-                fontColor='normal'
+                fontColor="normal"
                 onPress={() => {
                   showPanel('MusicItemOptions', {musicItem, musicSheet});
                 }}></IconButton>

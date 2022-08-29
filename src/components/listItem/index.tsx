@@ -73,7 +73,7 @@ interface IListItemProps {
   /** 标题 */
   title: string;
   /** 描述 */
-  desc?: string;
+  desc?: string | JSX.Element;
   /** 标签 */
   tag?: string;
   left?: ILeftProps;
