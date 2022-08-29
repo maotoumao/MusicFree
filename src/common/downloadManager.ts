@@ -95,6 +95,13 @@ async function downloadNext() {
       } catch {}
     }
   }
+  pendingMusic = produce(pendingMusic, draft =>
+    draft.filter(_ => _.filename !== nextItem.filename),
+  );
+  downloadingMusic = produce(downloadingMusic, draft => {
+    draft.push(nextItem);
+  });
+  downloadNext();
   const {promise, jobId} = downloadFile({
     fromUrl: url ?? '',
     toFile: pathConst.downloadPath + nextItem.filename,
@@ -112,7 +119,11 @@ async function downloadNext() {
     await promise;
     // 下载完成
     downloadedMusic = produce(downloadedMusic, _ => {
-      _.push(musicItem);
+      if (
+        downloadedMusic.findIndex(_ => isSameMusicItem(musicItem, _)) === -1
+      ) {
+        _.push(musicItem);
+      }
       return _;
     });
     downloadingMusic = produce(downloadingMusic, _ =>
@@ -133,14 +144,6 @@ async function downloadNext() {
       _.filter(item => !isSameMusicItem(item.musicItem, musicItem)),
     );
   }
-
-  pendingMusic = produce(pendingMusic, draft =>
-    draft.filter(_ => _.filename !== nextItem.filename),
-  );
-  downloadingMusic = produce(downloadingMusic, draft => {
-    draft.push(nextItem);
-  });
-  downloadNext();
 }
 
 /** 下载音乐 */
