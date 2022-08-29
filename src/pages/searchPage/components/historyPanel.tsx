@@ -24,9 +24,7 @@ export default function (props: IProps) {
   const setSearchResultsState = useSetAtom(searchResultsAtom);
 
   useEffect(() => {
-    getHistory().then(setHistory).catch(e => {
-      setHistory([]);
-    });
+    getHistory().then(setHistory);
   }, []);
 
   return (

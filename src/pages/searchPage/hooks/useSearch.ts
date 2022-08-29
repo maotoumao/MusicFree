@@ -1,12 +1,15 @@
 import {pluginManager, usePlugins} from '@/common/pluginManager';
 import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
-import {useCallback} from 'react';
+import {useCallback, useRef} from 'react';
 import {PageStatus, pageStatusAtom, searchResultsAtom} from '../store/atoms';
 
 export default function useSearch() {
   const setPageStatus = useSetAtom(pageStatusAtom);
   const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
+
+  // 当前正在搜索
+  const currentQueryRef = useRef<string>('');
 
   const search = useCallback(
     async function (
@@ -14,12 +17,12 @@ export default function useSearch() {
       platformHash = 'all',
       queryPage = undefined,
     ) {
-      // 如果没有搜索结果缓存，那就是没有搜过
       const installedPlugins = pluginManager.getValidPlugins();
       const plugins =
         platformHash === 'all'
           ? installedPlugins
           : [installedPlugins.find(_ => _.hash === platformHash)];
+      // 使用选中插件搜素
       plugins.forEach(async plugin => {
         const _platform = plugin?.instance.platform;
         const _hash = plugin?.hash;
@@ -29,15 +32,24 @@ export default function useSearch() {
           return;
         }
         const _prevResult = searchResults[_hash] ?? {};
-        if (_prevResult.state === 'pending' || _prevResult.state === 'done') {
+        if (
+          (_prevResult.state === 'pending' || _prevResult.state === 'done') &&
+          undefined === query
+        ) {
           return;
         }
 
+        // 是否是一次新的搜索
         const newSearch =
           query || _prevResult?.currentPage === undefined || queryPage === 1;
-        query = query ?? _prevResult?.query ?? '';
+
+        // 搜索关键词
+        currentQueryRef.current = query = query ?? _prevResult?.query ?? '';
+
+        /** 搜索的页码 */
         const page =
           queryPage ?? newSearch ? 1 : (_prevResult.currentPage ?? 0) + 1;
+
 
         try {
           setSearchResults(prevState =>
@@ -45,12 +57,15 @@ export default function useSearch() {
               const prev = draft[_hash] ?? {};
               prev.query = query;
               prev.state = 'pending';
-              prev.result = newSearch ? {} : prev.result
+              prev.result = newSearch ? {} : prev.result;
               draft[_hash] = prev;
             }),
           );
           // !! jscore的promise有问题，改成hermes就好了，可能和JIT有关，不知道。
           const result = await plugin?.instance?.search?.(query, page);
+          if (currentQueryRef.current !== query) {
+            return;
+          }
           setPageStatus(PageStatus.RESULT);
           if (!result) {
             throw new Error();

@@ -25,7 +25,7 @@ class Plugin {
       try {
         return ${funcCode};
       } catch(e) {
-        return {};
+        return null;
       }
     `)()({CryptoJs, axios, dayjs});
       if (!this.checkValid(_instance)) {

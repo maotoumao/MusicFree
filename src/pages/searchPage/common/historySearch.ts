@@ -1,7 +1,7 @@
 import {getStorage, setStorage} from '@/utils/storageUtil';
 
 export async function getHistory() {
-  return getStorage('history-search') ?? [];
+  return await getStorage('history-search') ?? [];
 }
 
 export async function addHistory(query: string) {
