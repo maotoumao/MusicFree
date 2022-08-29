@@ -59,19 +59,25 @@ async function setupDownload() {
     return;
   }
   downloadedData = (await getStorage('download-music')) ?? {};
+  const newDownloadedData: Record<string, IMusic.IMusicItem> = {};
   const downloads = await readDir(pathConst.downloadPath);
   downloadedMusic = [];
+
   for (let i = 0; i < downloads.length; ++i) {
     const data = parseFilename(downloads[i].name);
     if (data) {
-      const mi = downloadedData[`${data.platform}${data.id}`] ?? {...data};
+      const key = `${data.platform}${data.id}`;
+      const mi = downloadedData[key] ?? {...data};
       mi[internalKey] = {
         localPath: downloads[i].path,
       };
-      mi && downloadedMusic.push(mi);
+      downloadedMusic.push(mi);
+      newDownloadedData[key] = mi;
     }
   }
   downloadedStateMapper.notify();
+  // 去掉冗余数据
+  setStorage('download-music', newDownloadedData);
 }
 
 /** 从队列取出下一个要下载的 */
@@ -212,7 +218,7 @@ const DownloadManager = {
   isDownloaded,
   useIsDownloaded,
   getDownloaded,
-  removeDownloaded
+  removeDownloaded,
 };
 
 export default DownloadManager;
