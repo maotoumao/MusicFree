@@ -4,8 +4,8 @@ import MusicSheet from '@/common/musicSheetManager';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
-import ListItem from '@/components/listItem';
-import IconButton from '@/components/iconButton';
+import ListItem from '@/components/base/listItem';
+import IconButton from '@/components/base/iconButton';
 import { ImgAsset } from '@/constants/assetsConst';
 
 interface ISheetBodyProps {}

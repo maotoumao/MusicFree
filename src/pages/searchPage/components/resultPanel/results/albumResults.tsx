@@ -4,9 +4,9 @@ import rpx from '@/utils/rpx';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 import {FlatList} from 'react-native-gesture-handler';
-import ListItem from '@/components/listItem';
+import ListItem from '@/components/base/listItem';
 import useSearch from '@/pages/searchPage/hooks/useSearch';
-import Loading from '@/components/loading';
+import Loading from '@/components/base/loading';
 import { ImgAsset } from '@/constants/assetsConst';
 
 interface IAlbumResultsProps {

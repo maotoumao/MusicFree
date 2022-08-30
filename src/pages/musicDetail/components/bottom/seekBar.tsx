@@ -5,7 +5,7 @@ import Slider from '@react-native-community/slider';
 import MusicQueue from '@/common/musicQueue';
 import timeformat from '@/utils/timeformat';
 import { fontSizeConst } from '@/constants/uiConst';
-import ThemeText from '@/components/themeText';
+import ThemeText from '@/components/base/themeText';
 import useTextColor from '@/hooks/useTextColor';
 import Color from 'color';
 

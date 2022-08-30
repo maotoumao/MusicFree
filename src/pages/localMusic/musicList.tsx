@@ -2,9 +2,9 @@ import React from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import DownloadManager from '@/common/downloadManager';
-import ListItem from '@/components/listItem';
+import ListItem from '@/components/base/listItem';
 import MusicQueue from '@/common/musicQueue';
-import IconButton from '@/components/iconButton';
+import IconButton from '@/components/base/iconButton';
 import usePanel from '@/components/panels/usePanelShow';
 
 interface IMusicListProps {}

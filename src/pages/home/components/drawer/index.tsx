@@ -11,11 +11,11 @@ import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import {Button, Card, IconButton} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
-import ListItem from '@/components/listItem';
+import ListItem from '@/components/base/listItem';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
-import ThemeText from '@/components/themeText';
-import PageBackground from '@/components/pageBackground';
+import ThemeText from '@/components/base/themeText';
+import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';
 
 interface IDrawerProps {}

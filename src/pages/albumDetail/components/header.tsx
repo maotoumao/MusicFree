@@ -8,8 +8,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import usePanel from '@/components/panels/usePanelShow';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import Color from 'color';
-import ThemeText from '@/components/themeText';
-import Image from '@/components/image';
+import ThemeText from '@/components/base/themeText';
+import Image from '@/components/base/image';
 import { ImgAsset } from '@/constants/assetsConst';
 
 interface IHeaderProps {

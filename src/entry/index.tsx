@@ -15,7 +15,7 @@ import {useConfig} from '@/common/localConfigManager';
 import Share from '@/components/share';
 import RNBootSplash from 'react-native-bootsplash';
 import logManager from '@/common/logManager';
-import PageBackground from '@/components/pageBackground';
+import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 /**

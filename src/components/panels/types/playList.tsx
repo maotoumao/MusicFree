@@ -10,11 +10,11 @@ import {Button, Chip, Divider, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import repeatModeConst from '@/constants/repeatModeConst';
-import Tag from '@/components/tag';
+import Tag from '@/components/base/tag';
 import {_usePanel} from '../usePanelShow';
 import {fontSizeConst} from '@/constants/uiConst';
-import ThemeText from '@/components/themeText';
-import IconButton from '@/components/iconButton';
+import ThemeText from '@/components/base/themeText';
+import IconButton from '@/components/base/iconButton';
 import isSameMusicItem from '@/utils/isSameMusicItem';
 import {internalKey} from '@/constants/commonConst';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';

@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {Button} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
-import ThemeText from '../themeText';
+import ThemeText from './themeText';
 
 interface IButtonProps {
   children: string;

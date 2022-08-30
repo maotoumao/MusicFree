@@ -1,10 +1,10 @@
 import React from 'react';
 import {FlatList} from 'react-native';
 import MusicQueue from '@/common/musicQueue';
-import ListItem from '@/components/listItem';
-import IconButton from '@/components/iconButton';
+import ListItem from '@/components/base/listItem';
+import IconButton from '@/components/base/iconButton';
 import usePanel from '@/components/panels/usePanelShow';
-import Loading from '@/components/loading';
+import Loading from '@/components/base/loading';
 
 interface IMusicResultsProps {
   pendingState: 'pending' | 'resolved' | 'done'

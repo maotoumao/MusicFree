@@ -1,8 +1,9 @@
 import React from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useConfig} from '@/common/localConfigManager';
-import { useTheme } from 'react-native-paper';
-import { ImgAsset } from '@/constants/assetsConst';
+import {useTheme} from 'react-native-paper';
+import {ImgAsset} from '@/constants/assetsConst';
+import Image from './image';
 
 export default function PageBackground() {
   const themeConfig = useConfig('setting.theme');
@@ -10,15 +11,17 @@ export default function PageBackground() {
 
   return (
     <>
-      <View style={[style.wrapper, {backgroundColor: theme.colors?.pageBackground ?? theme.colors.background}]}></View>
+      <View
+        style={[
+          style.wrapper,
+          {
+            backgroundColor:
+              theme.colors?.pageBackground ?? theme.colors.background,
+          },
+        ]}></View>
       <Image
-        source={
-          themeConfig?.background
-            ? {
-                uri: themeConfig.background,
-              }
-            : ImgAsset.backgroundDefault
-        }
+        uri={themeConfig?.background}
+        fallback={ImgAsset.backgroundDefault}
         style={[
           style.wrapper,
           {

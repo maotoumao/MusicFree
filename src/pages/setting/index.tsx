@@ -4,9 +4,9 @@ import rpx from '@/utils/rpx';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {Appbar} from 'react-native-paper';
 import settingTypes from './settingTypes';
-import ThemeText from '@/components/themeText';
+import ThemeText from '@/components/base/themeText';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import StatusBar from '@/components/statusBar';
+import StatusBar from '@/components/base/statusBar';
 
 interface ISettingProps {}
 export default function Setting(props: ISettingProps) {

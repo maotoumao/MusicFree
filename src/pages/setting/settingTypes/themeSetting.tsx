@@ -3,7 +3,7 @@ import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {setConfig, useConfig} from '@/common/localConfigManager';
 import {List, Switch} from 'react-native-paper';
-import ThemeText from '@/components/themeText';
+import ThemeText from '@/components/base/themeText';
 import ImageColors from 'react-native-image-colors';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Color from 'color';

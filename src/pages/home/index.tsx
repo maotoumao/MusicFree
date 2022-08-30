@@ -20,7 +20,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import HomeDrawer from './components/drawer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import rpx from '@/utils/rpx';
-import StatusBar from '@/components/statusBar';
+import StatusBar from '@/components/base/statusBar';
 
 function Home() {
   return (

@@ -4,10 +4,10 @@ import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import MusicSheet from '@/common/musicSheetManager';
 import LinearGradient from 'react-native-linear-gradient';
-import ThemeText from '@/components/themeText';
+import ThemeText from '@/components/base/themeText';
 import Color from 'color';
 import {useTheme} from 'react-native-paper';
-import Image from '@/components/image';
+import Image from '@/components/base/image';
 import { ImgAsset } from '@/constants/assetsConst';
 
 interface IHeaderProps {}

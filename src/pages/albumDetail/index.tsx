@@ -6,7 +6,7 @@ import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
 import MusicList from './components/musicList';
 import useAlbumMusicList from './hooks/useAlbumMusicList';
-import StatusBar from '@/components/statusBar';
+import StatusBar from '@/components/base/statusBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface IAlbumDetailProps {}

@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { fontWeightConst } from '@/constants/uiConst';
-import ThemeText from '../themeText';
+import ThemeText from './themeText';
 
 
 interface ILoadingProps {}

@@ -7,8 +7,8 @@ import MusicQueue from '@/common/musicQueue';
 import usePanel from '@/components/panels/usePanelShow';
 import {FlatList} from 'react-native-gesture-handler';
 import Header from './header';
-import ListItem from '@/components/listItem';
-import IconButton from '@/components/iconButton';
+import ListItem from '@/components/base/listItem';
+import IconButton from '@/components/base/iconButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DownloadManager from '@/common/downloadManager';
 

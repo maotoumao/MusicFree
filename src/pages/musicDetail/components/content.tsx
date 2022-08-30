@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
-import Image from '@/components/image';
+import Image from '@/components/base/image';
 import { ImgAsset } from '@/constants/assetsConst';
 
 interface IContentProps {}

@@ -11,7 +11,7 @@ import {Appbar} from 'react-native-paper';
 import {iconSizeConst} from '@/constants/uiConst';
 import color from 'color';
 import useColors from '@/hooks/useColors';
-import ThemeText from '@/components/themeText';
+import ThemeText from '@/components/base/themeText';
 import Color from 'color';
 
 // todo icon: = musicFree(引入自定义字体 居中) search

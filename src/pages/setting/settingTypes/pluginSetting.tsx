@@ -5,10 +5,10 @@ import {pluginManager} from '@/common/pluginManager';
 import {Button, List, useTheme} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
-import Loading from '@/components/loading';
-import ThemeText from '@/components/themeText';
-import ListItem from '@/components/listItem';
-import IconButton from '@/components/iconButton';
+import Loading from '@/components/base/loading';
+import ThemeText from '@/components/base/themeText';
+import ListItem from '@/components/base/listItem';
+import IconButton from '@/components/base/iconButton';
 import useDialog from '@/components/dialogs/useDialog';
 
 interface IPluginSettingProps {}

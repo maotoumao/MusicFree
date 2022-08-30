@@ -1,6 +1,6 @@
 import MusicQueue from '@/common/musicQueue';
 import MusicBar from '@/components/musicBar';
-import StatusBar from '@/components/statusBar';
+import StatusBar from '@/components/base/statusBar';
 import rpx from '@/utils/rpx';
 import {useAtom} from 'jotai';
 import React, {useEffect} from 'react';

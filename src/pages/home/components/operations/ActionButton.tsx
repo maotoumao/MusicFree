@@ -1,4 +1,4 @@
-import ThemeText from '@/components/themeText';
+import ThemeText from '@/components/base/themeText';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import rpx from '@/utils/rpx';
 import React from 'react';

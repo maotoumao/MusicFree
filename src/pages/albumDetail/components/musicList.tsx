@@ -3,11 +3,11 @@ import {FlatList, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
 
-import Loading from '@/components/loading';
+import Loading from '@/components/base/loading';
 import usePanel from '@/components/panels/usePanelShow';
 import Header from './header';
-import ListItem from '@/components/listItem';
-import IconButton from '@/components/iconButton';
+import ListItem from '@/components/base/listItem';
+import IconButton from '@/components/base/iconButton';
 
 interface IMusicListProps {
   albumItem: IAlbum.IAlbumItem | null;

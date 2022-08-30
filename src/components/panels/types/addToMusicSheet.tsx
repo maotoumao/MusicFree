@@ -7,9 +7,9 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import Toast from 'react-native-toast-message';
 import {_usePanel} from '../usePanelShow';
-import ThemeText from '@/components/themeText';
+import ThemeText from '@/components/base/themeText';
 import {useTheme} from 'react-native-paper';
-import ListItem from '@/components/listItem';
+import ListItem from '@/components/base/listItem';
 import MusicSheet from '@/common/musicSheetManager';
 import { ImgAsset } from '@/constants/assetsConst';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';

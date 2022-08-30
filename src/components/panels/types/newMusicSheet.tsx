@@ -10,7 +10,7 @@ import MusicSheet from '@/common/musicSheetManager';
 import {_usePanel} from '../usePanelShow';
 import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
-import Button from '@/components/button';
+import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -67,9 +67,11 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
         style={[
           style.input,
           {
+            color: colors.text,
             backgroundColor: Color(colors.primary).lighten(0.7).toString(),
           },
         ]}
+        placeholderTextColor={colors.textSecondary}
         placeholder={'新建歌单'}
         maxLength={12}
       />

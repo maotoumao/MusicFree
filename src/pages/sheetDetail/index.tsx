@@ -6,7 +6,7 @@ import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
 import MusicList from './components/musicList';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import StatusBar from '@/components/statusBar';
+import StatusBar from '@/components/base/statusBar';
 interface ISheetDetailProps {}
 export default function SheetDetail(props: ISheetDetailProps) {
   const route = useRoute<any>();

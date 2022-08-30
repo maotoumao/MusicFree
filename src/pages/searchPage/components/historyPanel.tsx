@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Loading from '@/components/loading';
+import Loading from '@/components/base/loading';
 import {Chip, useTheme} from 'react-native-paper';
 import useSearch from '../hooks/useSearch';
 import {addHistory, getHistory, removeHistory} from '../common/historySearch';
@@ -12,7 +12,7 @@ import {
   queryAtom,
   searchResultsAtom,
 } from '../store/atoms';
-import ThemeText from '@/components/themeText';
+import ThemeText from '@/components/base/themeText';
 
 interface IProps {}
 export default function (props: IProps) {

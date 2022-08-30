@@ -5,7 +5,7 @@ import {useAtomValue} from 'jotai';
 import useShare, {shareInfoAtom, showShareAtom} from './useShare';
 import {Button} from 'react-native-paper';
 import QRCode from 'qrcode-generator';
-import ThemeText from '../themeText';
+import ThemeText from '../base/themeText';
 import ViewShot from 'react-native-view-shot';
 import { saveToGallery } from '@/utils/fileUtils';
 

@@ -6,8 +6,8 @@ import useTextColor from '@/hooks/useTextColor';
 import MusicSheet from '@/common/musicSheetManager';
 import usePanel from '@/components/panels/usePanelShow';
 import { useTheme } from 'react-native-paper';
-import IconButton from '@/components/iconButton';
-import ThemeText from '@/components/themeText';
+import IconButton from '@/components/base/iconButton';
+import ThemeText from '@/components/base/themeText';
 
 interface IProps {}
 export default function (props: IProps) {

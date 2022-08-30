@@ -7,9 +7,9 @@ import {PageStatus, pageStatusAtom, queryAtom, searchResultsAtom} from './store/
 import HistoryPanel from './components/historyPanel';
 import ResultPanel from './components/resultPanel';
 import MusicBar from '@/components/musicBar';
-import Loading from '@/components/loading';
+import Loading from '@/components/base/loading';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import StatusBar from '@/components/statusBar';
+import StatusBar from '@/components/base/statusBar';
 interface IProps {}
 export default function (props: IProps) {
   const [pageStatus, setPageStatus] = useAtom(pageStatusAtom);

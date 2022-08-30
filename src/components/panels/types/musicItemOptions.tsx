@@ -9,11 +9,11 @@ import {Divider} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import MusicSheet from '@/common/musicSheetManager';
 import {_usePanel} from '../usePanelShow';
-import ListItem from '@/components/listItem';
-import ThemeText from '@/components/themeText';
+import ListItem from '@/components/base/listItem';
+import ThemeText from '@/components/base/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 import DownloadManager from '@/common/downloadManager';
-import Image from '@/components/image';
+import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 

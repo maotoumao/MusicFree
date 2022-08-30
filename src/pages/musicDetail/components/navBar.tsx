@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import {IconButton} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import {useNavigation} from '@react-navigation/native';
-import Tag from '@/components/tag';
+import Tag from '@/components/base/tag';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import useShare from '@/components/share/useShare';
 

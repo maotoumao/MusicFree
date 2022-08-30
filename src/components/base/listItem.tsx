@@ -2,10 +2,10 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {List} from 'react-native-paper';
-import Tag from '../tag';
-import ThemeText from '../themeText';
-import Image from '../image';
-import IconButton from '../iconButton';
+import Tag from './tag';
+import ThemeText from './themeText';
+import Image from './image';
+import IconButton from './iconButton';
 
 interface ILeftProps {
   /** 序号 */
