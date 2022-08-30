@@ -24,3 +24,11 @@ export async function saveToGallery(src: string) {
     await RNFS.writeFile(fileName, src);
   }
 }
+
+export function sizeFormatter(bytes: number) {
+  if (bytes === 0) return '0B';
+  let k = 1024,
+    sizes = ['B', 'KB', 'MB', 'GB'],
+    i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(1) + sizes[i];
+}

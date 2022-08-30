@@ -13,8 +13,6 @@ interface IDownloadMusicOptions {
   musicItem: IMusic.IMusicItem;
   filename: string;
   jobId?: number;
-  progress?: number;
-  size?: number;
 }
 /** 已下载 */
 let downloadedMusic: IMusic.IMusicItem[] = [];
@@ -25,10 +23,7 @@ let pendingMusic: IDownloadMusicOptions[] = [];
 /** meta */
 let downloadedData: Record<string, IMusic.IMusicItem> = {};
 /** 进度 */
-let downloadingProgress: Record<
-  string,
-  {progress: number; size: number}
-> = {};
+let downloadingProgress: Record<string, {progress: number; size: number}> = {};
 
 const downloadedStateMapper = new StateMapper(() => downloadedMusic);
 const downloadingStateMapper = new StateMapper(() => downloadingMusic);
@@ -36,6 +31,26 @@ const pendingMusicStateMapper = new StateMapper(() => pendingMusic);
 const downloadingProgressStateMapper = new StateMapper(
   () => downloadingProgress,
 );
+
+/** 防止高频同步 */
+let progressNotifyTimer: any = null;
+function startNotifyProgress() {
+  if (progressNotifyTimer) {
+    return;
+  }
+
+  progressNotifyTimer = setInterval(() => {
+    console.log('notify')
+    downloadingProgressStateMapper.notify();
+  }, 1000);
+}
+
+function stopNotifyProgress(){
+  if(progressNotifyTimer) {
+    clearInterval(progressNotifyTimer);
+  }
+  progressNotifyTimer = null;
+}
 
 /** 根据文件名解析 */
 function parseFilename(fn: string): IMusic.IMusicItemBase | null {
@@ -92,8 +107,8 @@ async function setupDownload() {
 
 /** 从队列取出下一个要下载的 */
 async function downloadNext() {
-  // 最大同时下载5个
-  if (downloadingMusic.length >= 5 || pendingMusic.length === 0) {
+  // todo 最大同时下载3个，可设置
+  if (downloadingMusic.length >= 3 || pendingMusic.length === 0) {
     return;
   }
   const nextItem = pendingMusic[0];
@@ -116,7 +131,6 @@ async function downloadNext() {
         );
         pendingMusicStateMapper.notify();
         return;
-        
       }
     }
   }
@@ -141,15 +155,15 @@ async function downloadNext() {
           size: res.contentLength,
         };
       });
-      downloadingProgressStateMapper.notify();
+      startNotifyProgress();
     },
     progress(res) {
-      downloadingProgress = produce(downloadingProgress, _ => {_[nextItem.filename] = {
-        progress: res.bytesWritten,
-        size: res.contentLength,
-      };
+      downloadingProgress = produce(downloadingProgress, _ => {
+        _[nextItem.filename] = {
+          progress: res.bytesWritten,
+          size: res.contentLength,
+        };
       });
-      nextItem.progress = res.bytesWritten;
     },
   });
   nextItem.jobId = jobId;
@@ -175,6 +189,7 @@ async function downloadNext() {
     downloadedData[`${musicItem.platform}${musicItem.id}`] = musicItem;
     setStorage('download-music', downloadedData);
     if (pendingMusic.length === 0) {
+      stopNotifyProgress()
       Toast.show({
         text1: '下载完成',
         position: 'bottom',

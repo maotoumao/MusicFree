@@ -3,24 +3,29 @@ import {FlatList, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import DownloadManager from '@/common/downloadManager';
 import ListItem from '@/components/base/listItem';
+import {sizeFormatter} from '@/utils/fileUtils';
 
 interface IDownloadingListProps {}
 export default function DownloadingList(props: IDownloadingListProps) {
   const downloading = DownloadManager.useDownloadingMusic();
   const pending = DownloadManager.usePendingMusic();
-  const progress = DownloadManager.useDownloadingProgress();
+  const progress = DownloadManager.useDownloadingProgress(); // progress没有更新同步
   return (
     <View style={style.wrapper}>
       <FlatList
+        style={style.downloading}
         data={downloading}
         keyExtractor={_ => `dl${_.filename}`}
-        renderItem={({item}) => (
-          <ListItem
-            title={item.musicItem.title}
-            desc={`${progress[item.filename]?.progress ?? 0} / ${
-              progress[item.filename]?.size
-            }`}></ListItem>
-        )}></FlatList>
+        renderItem={({item}) => {
+          const prog = progress[item.filename];
+          return (
+            <ListItem
+              title={item.musicItem.title}
+              desc={`${prog?.progress ? sizeFormatter(prog.progress) : '-'} / ${
+                prog?.size ? sizeFormatter(prog.size) : '-'
+              }`}></ListItem>
+          );
+        }}></FlatList>
       <FlatList
         data={pending}
         keyExtractor={_ => `pd${_.filename}`}
@@ -35,5 +40,8 @@ const style = StyleSheet.create({
   wrapper: {
     width: rpx(750),
     flex: 1,
+  },
+  downloading: {
+    flexGrow: 0,
   },
 });
