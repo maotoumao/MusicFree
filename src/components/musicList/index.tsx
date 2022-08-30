@@ -21,9 +21,11 @@ interface IMusicListProps {
   musicSheet?: IMusic.IMusicSheetItem;
   /** 是否展示序号 */
   showIndex?: boolean;
+  /** 点击 */
+  onItemPress?: (musicItem: IMusic.IMusicItem) => void;
 }
 export default function MusicList(props: IMusicListProps) {
-  const {Header, musicList, musicSheet, showIndex} = props;
+  const {Header, musicList, musicSheet, showIndex, onItemPress} = props;
   const {showPanel} = usePanel();
 
   return (
@@ -51,9 +53,13 @@ export default function MusicList(props: IMusicListProps) {
               </>
             }
             tag={musicItem.platform}
-            onPress={() =>
-              MusicQueue.playWithReplaceQueue(musicItem, musicList ?? [])
-            }
+            onPress={() => {
+              if (onItemPress) {
+                onItemPress(musicItem);
+              } else {
+                MusicQueue.playWithReplaceQueue(musicItem, musicList ?? []);
+              }
+            }}
             right={() => (
               <IconButton
                 name="dots-vertical"
