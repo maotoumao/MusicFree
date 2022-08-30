@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useTextColor from '@/hooks/useTextColor';
 import MusicSheet from '@/common/musicSheetManager';
-import usePanel from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanel';
 import { useTheme } from 'react-native-paper';
 import IconButton from '@/components/base/iconButton';
 import ThemeText from '@/components/base/themeText';

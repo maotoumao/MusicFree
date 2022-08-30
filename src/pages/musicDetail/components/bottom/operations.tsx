@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicSheet from '@/common/musicSheetManager';
 import MusicQueue from '@/common/musicQueue';
 import isSameMusicItem from '@/utils/isSameMusicItem';
-import usePanel from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanel';
 import RNFS from 'react-native-fs';
 import {pluginManager} from '@/common/pluginManager';
 import DownloadManager from '@/common/downloadManager';

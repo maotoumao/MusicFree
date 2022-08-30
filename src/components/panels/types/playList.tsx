@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import repeatModeConst from '@/constants/repeatModeConst';
 import Tag from '@/components/base/tag';
-import {_usePanel} from '../usePanelShow';
+import {_usePanel} from '../usePanel';
 import {fontSizeConst} from '@/constants/uiConst';
 import ThemeText from '@/components/base/themeText';
 import IconButton from '@/components/base/iconButton';

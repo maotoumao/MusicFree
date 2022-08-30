@@ -10,7 +10,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 
 import musicIsPaused from '@/utils/musicIsPaused';
-import usePanel from '../panels/usePanelShow';
+import usePanel from '../panels/usePanel';
 import Color from 'color';
 import ThemeText from '../base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';

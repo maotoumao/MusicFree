@@ -8,7 +8,7 @@ import BottomSheet, {
 import {Divider} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import MusicSheet from '@/common/musicSheetManager';
-import {_usePanel} from '../usePanelShow';
+import {_usePanel} from '../usePanel';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';

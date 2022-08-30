@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
-import MusicList from './components/musicList';
+import AlbumMusicList from './components/albumusicList';
 import useAlbumMusicList from './hooks/useAlbumMusicList';
 import StatusBar from '@/components/base/statusBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,7 +21,7 @@ export default function AlbumDetail(props: IAlbumDetailProps) {
     <SafeAreaView style={style.wrapper}>
       <StatusBar></StatusBar>
       <NavBar></NavBar>
-      <MusicList albumItem={albumItem} musicList={musicList}></MusicList>
+      <AlbumMusicList albumItem={albumItem} musicList={musicList}></AlbumMusicList>
       <MusicBar></MusicBar>
     </SafeAreaView>
   );

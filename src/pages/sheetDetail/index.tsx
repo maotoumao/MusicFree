@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
-import MusicList from './components/musicList';
+import SheetMusicList from './components/sheetMusicList';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 interface ISheetDetailProps {}
@@ -16,7 +16,7 @@ export default function SheetDetail(props: ISheetDetailProps) {
     <SafeAreaView style={style.wrapper}>
       <StatusBar></StatusBar>
       <NavBar></NavBar>
-      <MusicList></MusicList>
+      <SheetMusicList></SheetMusicList>
       <MusicBar></MusicBar>
     </SafeAreaView>
   );

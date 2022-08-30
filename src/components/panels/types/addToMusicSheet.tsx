@@ -6,7 +6,7 @@ import BottomSheet, {
   BottomSheetFlatList,
 } from '@gorhom/bottom-sheet';
 import Toast from 'react-native-toast-message';
-import {_usePanel} from '../usePanelShow';
+import {_usePanel} from '../usePanel';
 import ThemeText from '@/components/base/themeText';
 import {useTheme} from 'react-native-paper';
 import ListItem from '@/components/base/listItem';

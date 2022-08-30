@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {BackHandler, NativeEventSubscription} from 'react-native';
 import {Portal} from 'react-native-paper';
 import panels from './types';
-import {_usePanel} from './usePanelShow';
+import {_usePanel} from './usePanel';
 
 interface IProps {}
 export default function (props: IProps) {

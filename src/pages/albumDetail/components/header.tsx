@@ -5,7 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Divider, IconButton, useTheme} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import usePanel from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanel';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import Color from 'color';
 import ThemeText from '@/components/base/themeText';

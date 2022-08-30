@@ -3,7 +3,7 @@ import {FlatList} from 'react-native';
 import MusicQueue from '@/common/musicQueue';
 import ListItem from '@/components/base/listItem';
 import IconButton from '@/components/base/iconButton';
-import usePanel from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanel';
 import Loading from '@/components/base/loading';
 
 interface IMusicResultsProps {

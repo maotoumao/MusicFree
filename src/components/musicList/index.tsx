@@ -1,34 +1,41 @@
 import React from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {FlatListProps, StyleSheet, Text} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import MusicSheet from '@/common/musicSheetManager';
 import MusicQueue from '@/common/musicQueue';
-import usePanel from '@/components/panels/usePanelShow';
+import usePanel from '@/components/panels/usePanel';
 import {FlatList} from 'react-native-gesture-handler';
-import Header from './header';
+
 import ListItem from '@/components/base/listItem';
 import IconButton from '@/components/base/iconButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DownloadManager from '@/common/downloadManager';
 
-interface IMusicListProps {}
+interface IMusicListProps {
+  /** 顶部 */
+  Header?: FlatListProps<IMusic.IMusicItem>['ListHeaderComponent'];
+  /** 音乐列表 */
+  musicList?: IMusic.IMusicItem[];
+  /** 所在歌单 */
+  musicSheet?: IMusic.IMusicSheetItem;
+  /** 是否展示序号 */
+  showIndex?: boolean;
+}
 export default function MusicList(props: IMusicListProps) {
-  const route = useRoute<any>();
-  const id = route.params?.id ?? 'favorite';
-  const musicSheet = MusicSheet.useSheets(id);
+  const {Header, musicList, musicSheet, showIndex} = props;
   const {showPanel} = usePanel();
 
   return (
     <FlatList
       style={style.wrapper}
-      ListHeaderComponent={<Header></Header>}
-      data={musicSheet?.musicList ?? []}
-      keyExtractor={musicItem => `${musicItem.id}${musicItem.platform}`}
+      ListHeaderComponent={Header}
+      data={musicList ?? []}
+      keyExtractor={musicItem => `ml-${musicItem.id}${musicItem.platform}`}
       renderItem={({index, item: musicItem}) => {
         return (
           <ListItem
-            left={{index: index + 1, width: rpx(56)}}
+            left={showIndex ? {index: index + 1, width: rpx(56)} : undefined}
             title={musicItem.title}
             desc={
               <>
@@ -39,13 +46,13 @@ export default function MusicList(props: IMusicListProps) {
                     size={rpx(22)}></Icon>
                 )}
                 <Text>
-                   {musicItem.artist} - {musicItem.album}
+                  {musicItem.artist} - {musicItem.album}
                 </Text>
               </>
             }
             tag={musicItem.platform}
             onPress={() =>
-              MusicQueue.playWithReplaceQueue(musicItem, musicSheet.musicList)
+              MusicQueue.playWithReplaceQueue(musicItem, musicList ?? [])
             }
             right={() => (
               <IconButton
@@ -65,23 +72,4 @@ const style = StyleSheet.create({
   wrapper: {
     width: rpx(750),
   },
-  topBtn: {
-    width: rpx(750),
-    height: rpx(80),
-  },
 });
-
-// <MusicListItem
-// key={`${musicItem.id}${musicItem.platform}`}
-// musicItem={musicItem}
-// left={props => (
-//   <ThemeText fontColor="secondary" {...props} style={style.musicIndex}>
-//     {index + 1}
-//   </ThemeText>
-// )}
-// onPress={() => {
-//   MusicQueue.playWithReplaceQueue(musicItem, musicSheet.musicList);
-// }}
-// onRightPress={() => {
-//   showPanel('MusicItemOptions', {musicItem, musicSheet});
-// }}></MusicListItem>

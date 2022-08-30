@@ -6,7 +6,7 @@ import {Appbar} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
-import MusicList from './musicList';
+import LocalMusicList from './localMusicList';
 import MusicBar from '@/components/musicBar';
 
 interface ILocalMusicProps {}
@@ -35,7 +35,7 @@ export default function LocalMusic(props: ILocalMusicProps) {
           </ThemeText>
         </Appbar.Header>
       </Appbar>
-      <MusicList></MusicList>
+      <LocalMusicList></LocalMusicList>
       <MusicBar></MusicBar>
     </SafeAreaView>
   );
