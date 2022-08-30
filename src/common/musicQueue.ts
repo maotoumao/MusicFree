@@ -65,7 +65,7 @@ const setupMusicQueue = async () => {
     if (config?.track) {
       currentIndex = findMusicIndex(config.track);
       const track = await getMusicTrack(config.track);
-      await TrackPlayer.add([track, {url: ''}]);
+      await TrackPlayer.add([track, getFakeNextTrack()]);
     }
 
     if (config?.progress) {
@@ -85,10 +85,10 @@ const setupMusicQueue = async () => {
   });
 
   TrackPlayer.addEventListener(Event.PlaybackError, async () => {
-    // todo 需要判断是否是当前正在播放的
-    await skipToNext();
+    await _playFail();
   });
 
+  /** 播放下一个 */
   TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
     // 是track里的，不是playlist里的
     if (
@@ -223,6 +223,26 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
   musicQueueStateMapper.notify();
   currentMusicStateMapper.notify();
 };
+/**
+ * 获取自动播放的下一个track
+ */
+const getFakeNextTrack = () => {
+  let track: Track | undefined;
+  if (repeatMode === MusicRepeatMode.SINGLE) {
+    track = musicQueue[currentIndex] as Track;
+  }
+  track =
+    musicQueue.length !== 0
+      ? (musicQueue[(currentIndex + 1) % musicQueue.length] as Track)
+      : undefined;
+  if (track) {
+    return produce(track, _ => {
+      _.url = '';
+    });
+  } else {
+    return {url: ''};
+  }
+};
 
 /** 获取真实的url */
 const getMusicTrack = async (
@@ -307,13 +327,13 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
       track = (await getMusicTrack(_musicItem)) as IMusic.IMusicItem;
     } catch {
       // 播放失败
-      if(!isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
-        skipToNext();
+      if (isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
+        await _playFail();
       }
       return;
     }
     /** 可能点了很多次。。。 */
-    if(!isSameMusicItem(_musicItem, musicQueue[currentIndex])){
+    if (!isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
       return;
     }
     musicQueue[currentIndex] = track;
@@ -327,10 +347,20 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
 
 const _playTrack = async (track: Track) => {
   await TrackPlayer.reset();
-  await TrackPlayer.add([track, {url: ''}]);
+  await TrackPlayer.add([track, getFakeNextTrack()]);
   await TrackPlayer.play();
   setConfig('status.music.track', track as IMusic.IMusicItem, false);
   setConfig('status.music.progress', 0, false);
+};
+
+const _playFail = async () => {
+  await TrackPlayer.reset();
+  await TrackPlayer.add([
+    (musicQueue[currentIndex] ?? {url: ''}) as Track,
+    getFakeNextTrack(),
+  ]);
+  await delay(100);
+  await skipToNext();
 };
 
 const playWithReplaceQueue = async (
