@@ -7,6 +7,8 @@ type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
 interface IConfig {
   setting: {
     basic: {
+      /** 最大同时下载 */
+      maxDownload: boolean;
       /** 插件合并结果 */
       mergePluginResult: boolean;
     },

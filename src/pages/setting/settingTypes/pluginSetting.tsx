@@ -70,7 +70,7 @@ export default function PluginSetting(props: IPluginSettingProps) {
                 const name =
                   _.name ?? _.uri.substring(_.uri.lastIndexOf('/') + 1);
                 return name.endsWith('.js')
-                  ? RNFS.copyFile(_.uri, pluginManager.pluginPath + name)
+                  ? RNFS.copyFile(_.uri, pluginManager.pluginPath + `${Date.now()}${name}`)
                   : Promise.resolve();
               }),
             );
