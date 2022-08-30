@@ -11,9 +11,24 @@ import DeviceInfo from 'react-native-device-info';
 const pluginPath = pathConst.pluginPath;
 const sha256 = CryptoJs.SHA256;
 
+enum PluginStateCode {
+  /** 版本不匹配 */
+  VersionNotMatch,
+  /** 插件不完整 */
+  NotComplete,
+  /** 无法解析 */
+  CannotParse,
+}
 class Plugin {
+  /** 插件名 */
+  public name: string;
+  /** 插件的hash，作为唯一id */
   public hash: string;
+  /** 插件状态：激活、关闭、错误 */
   public state: 'enabled' | 'disabled' | 'error';
+  /** 插件状态信息 */
+  public stateCode?: PluginStateCode;
+  /** 插件的实例 */
   public instance: IPlugin.IPluginInstance;
 
   constructor(funcCode: string, pluginPath: string) {
@@ -28,12 +43,15 @@ class Plugin {
         return null;
       }
     `)()({CryptoJs, axios, dayjs});
-      if (!this.checkValid(_instance)) {
-        this.state = 'error';
-      }
+
+      this.checkValid(_instance);
     } catch (e: any) {
       this.state = 'error';
-      _instance = {
+      this.stateCode = PluginStateCode.CannotParse;
+      if (e?.stateCode) {
+        this.stateCode = e.stateCode;
+      }
+      _instance = e?.instance ?? {
         _path: '',
         platform: '',
         appVersion: '',
@@ -50,6 +68,7 @@ class Plugin {
     }
     this.instance = _instance;
     this.instance._path = pluginPath;
+    this.name = _instance.platform;
     if (this.instance.platform === '') {
       this.hash = '';
     } else {
@@ -65,14 +84,20 @@ class Plugin {
       'getMusicTrack',
     ];
     if (keys.every(k => !_instance[k])) {
-      return false;
+      throw {
+        instance: _instance,
+        stateCode: PluginStateCode.NotComplete,
+      };
     }
     /** 版本号校验 */
     if (
       _instance.appVersion &&
       !satisfies(DeviceInfo.getVersion(), _instance.appVersion)
     ) {
-      return false;
+      throw {
+        instance: _instance,
+        stateCode: PluginStateCode.VersionNotMatch,
+      };
     }
     return true;
   }
