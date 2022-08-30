@@ -15,10 +15,10 @@ interface IResultSubPanelProps {
 }
 
 // 展示结果的视图
-function getResultComponent(tab: ICommon.SupportMediaType, subTab: string) {
+function getResultComponent(tab: ICommon.SupportMediaType, pluginHash: string, pluginName: string) {
   return tab in renderMap
     ? memo(
-        () => <ResultWrapper tab={tab} platform={subTab}></ResultWrapper>,
+        () => <ResultWrapper tab={tab} pluginHash={pluginHash} pluginName={pluginName}></ResultWrapper>,
         () => true,
       )
     : () => <DefaultResults></DefaultResults>;
@@ -31,13 +31,14 @@ function getSubRouterScene(
 ) {
   const scene: Record<string, React.FC> = {};
   routes.forEach(r => {
-    scene[r.key] = getResultComponent(tab, r.key);
+    scene[r.key] = getResultComponent(tab, r.key, r.title);
   });
   return SceneMap(scene);
 }
 
 function ResultSubPanel(props: IResultSubPanelProps) {
   const [index, setIndex] = useState(0);
+  // todo 是否聚合结果，如果是的话
   const routes = [
     {
       key: 'all',
@@ -46,7 +47,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
   ].concat(
     pluginManager.getPlugins().map(_ => ({
       key: _.hash,
-      title: _.instance.platform,
+      title: _.name,
     })),
   );
 

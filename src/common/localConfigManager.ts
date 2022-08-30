@@ -6,6 +6,11 @@ import {exists} from 'react-native-fs';
 type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
 interface IConfig {
   setting: {
+    basic: {
+      /** 插件合并结果 */
+      mergePluginResult: boolean;
+    },
+    /** 主题 */
     theme: {
       mode: 'light' | 'dark' | 'custom-light' | 'custom-dark';
       background: string;

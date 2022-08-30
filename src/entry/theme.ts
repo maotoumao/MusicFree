@@ -34,7 +34,7 @@ const CustomTheme = {
     textSecondary: '#aaaaaa',
     textHighlight: '#11659a',
     background: 'transparent',
-    pageBackground: '#100000',
+    pageBackground: '#080000',
     backdrop: 'rgba(0,0,0,0.2)',
   },
 };

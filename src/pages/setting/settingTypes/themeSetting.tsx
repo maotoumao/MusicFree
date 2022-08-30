@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {setConfig, useConfig} from '@/common/localConfigManager';
-import {List, Switch} from 'react-native-paper';
+import {List, ProgressBar, Switch} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 import ImageColors from 'react-native-image-colors';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -13,7 +13,8 @@ import { ImgAsset } from '@/constants/assetsConst';
 
 interface IThemeSettingProps {}
 export default function ThemeSetting(props: IThemeSettingProps) {
-  const background = useConfig('setting.theme.background');
+  const theme = useConfig('setting.theme')
+
   const mode = useConfig('setting.theme.mode') ?? 'dark';
   return (
     <View style={style.wrapper}>
@@ -49,9 +50,9 @@ export default function ThemeSetting(props: IThemeSettingProps) {
           }}></ImageCard>
         <ImageCard
           source={
-            background
+            theme?.background
               ? {
-                  uri: background,
+                  uri: theme.background,
                 }
               : ImgAsset.addBackground
           }
@@ -117,6 +118,15 @@ export default function ThemeSetting(props: IThemeSettingProps) {
             }
           }}></ImageCard>
       </View>
+      {/* <View>
+        <View style={style.sectionWrapper}>
+          <ThemeText>模糊</ThemeText>
+          <ProgressBar ></ProgressBar>
+        </View>
+        <View style={style.sectionWrapper}>
+          <ThemeText>透明度</ThemeText>
+        </View>
+      </View> */}
     </View>
   );
 }

@@ -6,6 +6,7 @@ export interface ISearchResultState {
   state: 'pending' | 'resolved' | 'done'; // 搜索中 返回请求 搜索结束
   result: IPlugin.ISearchResult;
 }
+/** key: pluginhash value: searchResult */
 const searchResults: Record<string, ISearchResultState> = {};
 const searchResultsAtom = atom(searchResults);
 

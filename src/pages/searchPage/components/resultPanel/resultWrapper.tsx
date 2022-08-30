@@ -6,27 +6,28 @@ import {renderMap} from './results';
 
 interface IResultWrapperProps {
   tab: ICommon.SupportMediaType;
-  platform: string;
+  pluginHash: string;
+  pluginName: string
 }
 export default function ResultWrapper(props: IResultWrapperProps) {
-  const {tab, platform} = props;
+  const {tab, pluginHash} = props;
   const searchResults = useAtomValue(searchResultsAtom);
   const [pendingState, setPendingState] = useState<string>('pending');
-  const data = getMediaItems(searchResults, platform, tab);
+  const data = getMediaItems(searchResults, pluginHash, tab);
   const ResultComponent = renderMap[tab]!;
 
   useEffect(() => {
     setPendingState(
-      platform === 'all'
+      pluginHash === 'all'
         ? Object.values(searchResults).every(_ => _.state !== 'pending')
           ? 'resolved'
           : 'pending'
-        : searchResults[platform]?.state ?? 'pending',
+        : searchResults[pluginHash]?.state ?? 'pending',
     );
   }, [searchResults]);
   return (
     <ResultComponent
-      platform={platform}
+      platform={pluginHash}
       data={data}
       pendingState={pendingState}></ResultComponent>
   );
