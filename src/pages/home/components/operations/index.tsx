@@ -2,7 +2,6 @@ import {produce} from 'immer';
 import {useSetAtom} from 'jotai';
 import React, {type PropsWithChildren} from 'react';
 import {Button, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {themeStateAtom} from '@/store/themeState';
 import rpx from '@/utils/rpx';
 import ActionButton from './ActionButton';
 import {useNavigation} from '@react-navigation/native';
@@ -40,7 +39,7 @@ export default function Operations() {
       iconName: 'download-circle-outline',
       title: '下载列表',
       action() {
-        console.log('下载');
+        navigation.navigate(ROUTE_PATH.DOWNLOADING);
       },
     },
   ];

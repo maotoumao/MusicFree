@@ -16,6 +16,7 @@ import DownloadManager from '@/common/downloadManager';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -34,9 +35,22 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
   function closePanel() {
     sheetRef.current?.close();
   }
-  const ref = useRef<any>();
 
   const options = [
+    {
+      icon: 'account-music-outline',
+      title: `作者: ${musicItem.artist}`,
+      onPress: () => {
+        Clipboard.setString(musicItem.artist);
+      }
+    },
+    {
+      icon: 'album',
+      title: `专辑: ${musicItem.album}`,
+      onPress: () => {
+        Clipboard.setString(musicItem.album);
+      }
+    },
     {
       icon: 'motion-play-outline',
       title: '下一首播放',

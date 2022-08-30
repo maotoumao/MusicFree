@@ -24,8 +24,18 @@ let downloadingMusic: IDownloadMusicOptions[] = [];
 let pendingMusic: IDownloadMusicOptions[] = [];
 /** meta */
 let downloadedData: Record<string, IMusic.IMusicItem> = {};
+/** 进度 */
+let downloadingProgress: Record<
+  string,
+  {progress: number; size: number}
+> = {};
 
 const downloadedStateMapper = new StateMapper(() => downloadedMusic);
+const downloadingStateMapper = new StateMapper(() => downloadingMusic);
+const pendingMusicStateMapper = new StateMapper(() => pendingMusic);
+const downloadingProgressStateMapper = new StateMapper(
+  () => downloadingProgress,
+);
 
 /** 根据文件名解析 */
 function parseFilename(fn: string): IMusic.IMusicItemBase | null {
@@ -95,10 +105,19 @@ async function downloadNext() {
     const plugin = pluginManager.getPlugin(musicItem.platform);
     if (plugin && plugin.instance.getMusicTrack) {
       try {
+        // todo: 重试
         const data = await plugin.instance.getMusicTrack(musicItem);
         url = data?.url;
         headers = data?.headers;
-      } catch {}
+      } catch {
+        /** 无法下载，跳过 */
+        pendingMusic = produce(pendingMusic, draft =>
+          draft.filter(_ => _.filename !== nextItem.filename),
+        );
+        pendingMusicStateMapper.notify();
+        return;
+        
+      }
     }
   }
   pendingMusic = produce(pendingMusic, draft =>
@@ -107,6 +126,8 @@ async function downloadNext() {
   downloadingMusic = produce(downloadingMusic, draft => {
     draft.push(nextItem);
   });
+  pendingMusicStateMapper.notify();
+  downloadingStateMapper.notify();
   downloadNext();
   const {promise, jobId} = downloadFile({
     fromUrl: url ?? '',
@@ -114,9 +135,20 @@ async function downloadNext() {
     headers: headers,
     background: true,
     begin(res) {
-      nextItem.size = res.contentLength;
+      downloadingProgress = produce(downloadingProgress, _ => {
+        _[nextItem.filename] = {
+          progress: 0,
+          size: res.contentLength,
+        };
+      });
+      downloadingProgressStateMapper.notify();
     },
     progress(res) {
+      downloadingProgress = produce(downloadingProgress, _ => {_[nextItem.filename] = {
+        progress: res.bytesWritten,
+        size: res.contentLength,
+      };
+      });
       nextItem.progress = res.bytesWritten;
     },
   });
@@ -148,6 +180,8 @@ async function downloadNext() {
         position: 'bottom',
       });
     }
+    delete downloadingProgress[nextItem.filename];
+    downloadingStateMapper.notify();
     downloadedStateMapper.notify();
     downloadNext();
   } catch {
@@ -158,19 +192,26 @@ async function downloadNext() {
 }
 
 /** 下载音乐 */
-function downloadMusic(musicItem: IMusic.IMusicItem) {
+function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
   // 如果已经在下载中
-  const pendingInd = pendingMusic.findIndex(_ =>
-    isSameMusicItem(_.musicItem, musicItem),
+  if (!Array.isArray(musicItems)) {
+    musicItems = [musicItems];
+  }
+  musicItems = musicItems.filter(
+    musicItem =>
+      pendingMusic.findIndex(_ => isSameMusicItem(_.musicItem, musicItem)) ===
+        -1 &&
+      downloadingMusic.findIndex(_ =>
+        isSameMusicItem(_.musicItem, musicItem),
+      ) === -1,
   );
-  const downloadingInd = downloadingMusic.findIndex(_ =>
-    isSameMusicItem(_.musicItem, musicItem),
-  );
-  if (pendingInd === -1 && downloadingInd === -1) {
-    pendingMusic.push({
-      musicItem,
-      filename: generateFilename(musicItem),
-    });
+  const enqueueData = musicItems.map(_ => ({
+    musicItem: _,
+    filename: generateFilename(_),
+  }));
+  if (enqueueData.length) {
+    pendingMusic = pendingMusic.concat(enqueueData);
+    pendingMusicStateMapper.notify();
     downloadNext();
   }
 }
@@ -187,6 +228,7 @@ function getDownloaded(mi: IMusic.IMusicItem | null) {
   return mi ? downloadedMusic.find(_ => isSameMusicItem(_, mi)) : null;
 }
 
+/** 移除下载的文件 */
 async function removeDownloaded(mi: IMusic.IMusicItem) {
   const localPath = getDownloaded(mi)?.[internalKey]?.localPath;
   if (localPath) {
@@ -215,6 +257,9 @@ const DownloadManager = {
   downloadMusic,
   setupDownload,
   useDownloadedMusic: downloadedStateMapper.useMappedState,
+  useDownloadingMusic: downloadingStateMapper.useMappedState,
+  usePendingMusic: pendingMusicStateMapper.useMappedState,
+  useDownloadingProgress: downloadingProgressStateMapper.useMappedState,
   isDownloaded,
   useIsDownloaded,
   getDownloaded,

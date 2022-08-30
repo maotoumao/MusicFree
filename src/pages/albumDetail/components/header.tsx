@@ -11,6 +11,8 @@ import Color from 'color';
 import ThemeText from '@/components/base/themeText';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
+import useDialog from '@/components/dialogs/useDialog';
+import DownloadManager from '@/common/downloadManager';
 
 interface IHeaderProps {
   albumItem: IAlbum.IAlbumItem | null;
@@ -18,8 +20,8 @@ interface IHeaderProps {
 }
 export default function Header(props: IHeaderProps) {
   const {albumItem, musicList} = props;
-  console.log(albumItem);
   const {showPanel} = usePanel();
+  const {showDialog} = useDialog();
   const {colors} = useTheme();
 
   return (
@@ -76,6 +78,18 @@ export default function Header(props: IHeaderProps) {
             showPanel('AddToMusicSheet', {
               musicItem: musicList ?? [],
             });
+          }}></IconButton>
+        <IconButton
+          icon='download-circle-outline'
+          size={rpx(48)}
+          onPress={async () => {
+            showDialog('simple-dialog', {
+              title: '下载专辑',
+              content: `确定下载${musicList?.length}首歌吗?`,
+              onOk(){
+                musicList && DownloadManager.downloadMusic(musicList);
+              }
+            })
           }}></IconButton>
       </View>
     </>

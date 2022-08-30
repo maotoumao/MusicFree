@@ -1,35 +1,23 @@
 import React from 'react';
 import { StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
-import {Appbar} from 'react-native-paper';
+import {useRoute} from '@react-navigation/native';
 import settingTypes from './settingTypes';
-import ThemeText from '@/components/base/themeText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
+import SimpleAppBar from '@/components/base/simpleAppBar';
 
 interface ISettingProps {}
 export default function Setting(props: ISettingProps) {
   const route = useRoute<any>();
-  const navigation = useNavigation();
   const type: string = route.params?.type;
   const settingItem = settingTypes[type];
 
-  const {colors} = useTheme();
 
   return (
     <SafeAreaView style={style.wrapper}>
       <StatusBar></StatusBar>
-      <Appbar style={[style.appbar, {backgroundColor: colors.primary}]}>
-          <Appbar.BackAction
-            color={colors.text}
-            onPress={() => {
-              navigation.goBack();
-            }}></Appbar.BackAction>
-          <Appbar.Header style={style.header}>
-            <ThemeText style={style.header} fontSize='title' fontWeight='semibold'>{settingItem?.title}</ThemeText>
-          </Appbar.Header>
-        </Appbar>
+      <SimpleAppBar title={settingItem?.title}></SimpleAppBar>
       <settingItem.component></settingItem.component>
     </SafeAreaView>
   );

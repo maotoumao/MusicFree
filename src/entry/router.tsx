@@ -1,3 +1,4 @@
+import Downloading from '@/pages/downloading';
 import LocalMusic from '@/pages/localMusic';
 import AlbumDetail from '../pages/albumDetail';
 import Home from '../pages/home';
@@ -21,7 +22,9 @@ const ROUTE_PATH = {
   /** 设置页 */
   SETTING: 'setting',
   /** 本地下载 */
-  LOCAL: 'local'
+  LOCAL: 'local',
+  /** 正在下载 */
+  DOWNLOADING: 'downloading'
 };
 
 type IRoutes = {
@@ -57,6 +60,10 @@ const routes: Array<IRoutes> = [
   {
     path: ROUTE_PATH.LOCAL,
     component: LocalMusic
+  },
+  {
+    path: ROUTE_PATH.DOWNLOADING,
+    component: Downloading
   }
 ];
 
