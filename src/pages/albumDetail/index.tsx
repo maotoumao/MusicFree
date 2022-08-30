@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import {useRoute} from '@react-navigation/native';
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
-import AlbumMusicList from './components/albumusicList';
+import AlbumMusicList from './components/albumMusicList';
 import useAlbumMusicList from './hooks/useAlbumMusicList';
 import StatusBar from '@/components/base/statusBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,7 +15,6 @@ export default function AlbumDetail(props: IAlbumDetailProps) {
   const albumItem = route.params?.albumItem ?? null;
   const musicList = useAlbumMusicList(albumItem);
 
-  useEffect(() => {}, []);
 
   return (
     <SafeAreaView style={style.wrapper}>

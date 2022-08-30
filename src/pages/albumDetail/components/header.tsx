@@ -1,16 +1,16 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import LinearGradient from 'react-native-linear-gradient';
 import {Divider, IconButton, useTheme} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import usePanel from '@/components/panels/usePanel';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import {fontSizeConst, fontWeightConst, iconSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import ThemeText from '@/components/base/themeText';
 import Image from '@/components/base/image';
-import { ImgAsset } from '@/constants/assetsConst';
+import {ImgAsset} from '@/constants/assetsConst';
 
 interface IHeaderProps {
   albumItem: IAlbum.IAlbumItem | null;
@@ -24,27 +24,37 @@ export default function Header(props: IHeaderProps) {
 
   return (
     <>
-      <LinearGradient colors={[Color(colors.primary).alpha(0.8).toString(), Color(colors.primary).alpha(0.15).toString()]} style={style.wrapper}>
+      <LinearGradient
+        colors={[
+          Color(colors.primary).alpha(0.8).toString(),
+          Color(colors.primary).alpha(0.15).toString(),
+        ]}
+        style={style.wrapper}>
         <View style={style.content}>
           <Image
             style={style.coverImg}
             uri={albumItem?.artwork}
-            fallback={ImgAsset.albumDefault}
-            ></Image>
+            fallback={ImgAsset.albumDefault}></Image>
           <View style={style.details}>
             <ThemeText>{albumItem?.title}</ThemeText>
-            <ThemeText fontColor="secondary" fontSize='description'>
+            <ThemeText fontColor="secondary" fontSize="description">
               共{musicList ? musicList.length ?? 0 : '-'}首{' '}
               {albumItem?.date ?? ''}
             </ThemeText>
           </View>
         </View>
-        <Divider></Divider>
-        <ThemeText fontColor="secondary"  fontSize='description'>
-          专辑信息: {albumItem?.description ?? ''}
-        </ThemeText>
+        <Divider style={style.divider}></Divider>
+        <View style={style.albumDesc}>
+          <ThemeText fontColor="secondary" fontSize="description">
+            专辑信息: {albumItem?.description ?? ''}
+          </ThemeText>
+        </View>
       </LinearGradient>
-      <View style={[style.topWrapper, {backgroundColor: Color(colors.primary).alpha(0.15).toString()}]}>
+      <View
+        style={[
+          style.topWrapper,
+          {backgroundColor: Color(colors.primary).alpha(0.15).toString()},
+        ]}>
         <Pressable
           style={style.playAll}
           onPress={() => {
@@ -55,9 +65,9 @@ export default function Header(props: IHeaderProps) {
           <Icon
             name="play-circle-outline"
             style={style.playAllIcon}
-            size={fontSizeConst.content}
+            size={iconSizeConst.normal}
             color={colors.text}></Icon>
-          <ThemeText fontWeight='bold'>播放全部</ThemeText>
+          <ThemeText fontWeight="bold">播放全部</ThemeText>
         </Pressable>
         <IconButton
           icon={'plus-box-multiple-outline'}
@@ -95,9 +105,11 @@ const style = StyleSheet.create({
     height: rpx(140),
     justifyContent: 'space-between',
   },
+  divider: {
+    marginVertical: rpx(18),
+  },
 
   albumDesc: {
-    marginTop: rpx(24),
     width: rpx(702),
   },
   /** playall */
