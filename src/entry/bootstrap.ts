@@ -7,8 +7,9 @@ import 'react-native-get-random-values';
 import {Platform, ToastAndroid} from 'react-native';
 import {loadConfig} from '@/common/localConfigManager';
 import RNBootSplash from 'react-native-bootsplash';
-import RNFS, { exists, mkdir } from 'react-native-fs';
+import RNFS, {exists, mkdir} from 'react-native-fs';
 import DownloadManager from '@/common/downloadManager';
+import pathConst from '@/constants/pathConst';
 
 /** app加载前执行 */
 export default async function () {
@@ -27,6 +28,8 @@ export default async function () {
     await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
   }
 
+  /** 初始化路径 */
+  await setupFolder();
   // 加载配置
   await loadConfig();
   // 加载插件
@@ -60,7 +63,6 @@ export default async function () {
   });
   await MusicQueue.setupMusicQueue();
   await MusicSheet.setupMusicSheet();
-  await setupFolder();
   await DownloadManager.setupDownload();
 
   ErrorUtils.setGlobalHandler(error =>
@@ -70,20 +72,17 @@ export default async function () {
   RNBootSplash.hide({fade: true});
 }
 
-
-const basePath =
-  (Platform.OS === 'android'
-    ? RNFS.ExternalDirectoryPath
-    : RNFS.DocumentDirectoryPath);
-
-  async function checkAndCreate(path: string) {
-    const filePath = basePath + path;
-    if(!(await exists(filePath))) {
-      await mkdir(filePath);
-    }
+async function checkAndCreate(path: string) {
+  const filePath = path;
+  if (!(await exists(filePath))) {
+    await mkdir(filePath);
   }
-  /** 初始化 */
-async function setupFolder(){
-  await Promise.all([checkAndCreate('/data/')])
-
+}
+/** 初始化 */
+async function setupFolder() {
+  await Promise.all([
+    checkAndCreate(pathConst.dataPath),
+    checkAndCreate(pathConst.storagePath),
+    checkAndCreate(pathConst.pluginPath)
+  ]);
 }

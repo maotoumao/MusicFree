@@ -7,8 +7,8 @@ import {ToastAndroid} from 'react-native';
 import pathConst from '@/constants/pathConst';
 import {satisfies} from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
+import StateMapper from '@/utils/stateMapper';
 
-const pluginPath = pathConst.pluginPath;
 const sha256 = CryptoJs.SHA256;
 
 enum PluginStateCode {
@@ -107,7 +107,7 @@ class PluginManager {
   private plugins: Array<Plugin> = [];
   loading: boolean = true;
   /** 插件安装位置 */
-  pluginPath: string = pluginPath;
+  pluginPath: string = pathConst.pluginPath;
   constructor() {}
 
   private loadPlugin(funcCode: string, pluginPath: string) {
@@ -134,6 +134,10 @@ class PluginManager {
     );
   }
 
+  getPluginByPlatform(platform: string) {
+    return this.plugins.filter(_ => _.name === platform);
+  }
+
   getPluginByHash(hash: string) {
     return this.plugins.find(_ => _.hash === hash);
   }
@@ -142,15 +146,9 @@ class PluginManager {
     this.loading = true;
     this.plugins = [];
     try {
-      const pathExist = await RNFS.exists(pluginPath);
-      if (!pathExist) {
-        await RNFS.mkdir(pluginPath);
-        // 插件为空
-        this.loading = false;
-        return;
-      }
+      this.loading = false;
       // 加载插件
-      const pluginsPaths = await RNFS.readDir(pluginPath);
+      const pluginsPaths = await RNFS.readDir(pathConst.pluginPath);
       for (let i = 0; i < pluginsPaths.length; ++i) {
         const _plugin = pluginsPaths[i];
 
