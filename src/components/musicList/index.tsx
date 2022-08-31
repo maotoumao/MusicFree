@@ -11,6 +11,7 @@ import ListItem from '@/components/base/listItem';
 import IconButton from '@/components/base/iconButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DownloadManager from '@/common/downloadManager';
+import MusicItem from './musicItem';
 
 interface IMusicListProps {
   /** 顶部 */
@@ -27,7 +28,6 @@ interface IMusicListProps {
 const ITEM_HEIGHT = rpx(120);
 export default function MusicList(props: IMusicListProps) {
   const {Header, musicList, musicSheet, showIndex, onItemPress} = props;
-  const {showPanel} = usePanel();
 
   return (
     <FlatList
@@ -42,40 +42,17 @@ export default function MusicList(props: IMusicListProps) {
       })}
       renderItem={({index, item: musicItem}) => {
         return (
-          <ListItem
-            itemHeight={ITEM_HEIGHT}
-            left={showIndex ? {index: index + 1, width: rpx(56)} : undefined}
-            title={musicItem.title}
-            desc={
-              <>
-                {DownloadManager.isDownloaded(musicItem) && (
-                  <Icon
-                    color="#11659a"
-                    name="check-circle"
-                    size={rpx(22)}></Icon>
-                )}
-                <Text>
-                  {musicItem.artist} - {musicItem.album}
-                </Text>
-              </>
-            }
-            tag={musicItem.platform}
-            onPress={() => {
+          <MusicItem
+            musicItem={musicItem}
+            index={showIndex ? index + 1 : undefined}
+            onItemPress={() => {
               if (onItemPress) {
                 onItemPress(musicItem);
               } else {
                 MusicQueue.playWithReplaceQueue(musicItem, musicList ?? []);
               }
             }}
-            right={() => (
-              <IconButton
-                name="dots-vertical"
-                size="normal"
-                fontColor="normal"
-                onPress={() => {
-                  showPanel('MusicItemOptions', {musicItem, musicSheet});
-                }}></IconButton>
-            )}></ListItem>
+            musicSheet={musicSheet}></MusicItem>
         );
       }}></FlatList>
   );

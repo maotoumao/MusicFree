@@ -3,8 +3,6 @@ import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {pluginManager, usePlugins} from '@/common/pluginManager';
-import MusicResults from './results/musicResults';
-import AlbumResults from './results/albumResults';
 import DefaultResults from './results/defaultResults';
 import {renderMap} from './results';
 import ResultWrapper from './resultWrapper';

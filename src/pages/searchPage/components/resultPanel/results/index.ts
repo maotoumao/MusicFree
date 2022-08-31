@@ -1,5 +1,6 @@
 import React from 'react';
 import AlbumResults from './albumResults';
+import ArtistResults from './artistResults';
 import MusicResults from './musicResults';
 
 const results: Array<{
@@ -17,6 +18,11 @@ const results: Array<{
     title: '专辑',
     component: AlbumResults,
   },
+  {
+    key: 'artist',
+    title: '创作者',
+    component: ArtistResults
+  }
 ];
 
 const renderMap: Partial<Record<ICommon.SupportMediaType, React.FC<any>>> = {};

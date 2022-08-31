@@ -65,6 +65,7 @@ export default function useSearch() {
           );
           // !! jscore的promise有问题，改成hermes就好了，可能和JIT有关，不知道。
           const result = await plugin?.instance?.search?.(query, page);
+          console.log('RESULT', result);
           if (currentQueryRef.current !== query) {
             return;
           }
@@ -111,7 +112,7 @@ export default function useSearch() {
 }
 
 // todo: 去重
-const resultKeys: (keyof IPlugin.ISearchResult)[] = ['album', 'music'];
+const resultKeys: (keyof IPlugin.ISearchResult)[] = ['album', 'music', 'artist'];
 function mergeResult(
   obj1: Record<string, any>,
   obj2: Record<string, any>,

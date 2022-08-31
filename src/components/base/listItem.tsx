@@ -7,7 +7,7 @@ import ThemeText from './themeText';
 import Image from './image';
 import IconButton from './iconButton';
 
-interface ILeftProps {
+export interface ILeftProps {
   /** 序号 */
   index?: number | string;
   /** 封面图 */
@@ -46,7 +46,7 @@ function Left(props?: ILeftProps) {
         ) : (
           <Image
             style={leftStyle.artwork}
-            uri={artwork}
+            uri={artwork?.startsWith('//') ? `https:${artwork}` : artwork}
             fallback={fallback}></Image>
         )}
       </View>

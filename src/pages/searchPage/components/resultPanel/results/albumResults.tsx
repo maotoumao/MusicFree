@@ -7,47 +7,30 @@ import {FlatList} from 'react-native-gesture-handler';
 import ListItem from '@/components/base/listItem';
 import useSearch from '@/pages/searchPage/hooks/useSearch';
 import Loading from '@/components/base/loading';
-import { ImgAsset } from '@/constants/assetsConst';
+import {ImgAsset} from '@/constants/assetsConst';
 
 interface IAlbumResultsProps {
-  pendingState: 'pending' | 'resolved' | 'done';
-  platform: string;
-  data: IPlugin.ISearchResult['album'];
+  item: IAlbum.IAlbumItem;
+  index: number;
 }
 /** todo 很多rerender，需要避免掉 */
 export default function AlbumResults(props: IAlbumResultsProps) {
-  const {data, platform, pendingState} = props;
+  const {item: albumItem, index} = props;
   const navigation = useNavigation<any>();
-  const search = useSearch();
-  return (!data || !data?.length) && pendingState === 'pending' ? (
-    <Loading></Loading>
-  ) : (
-    <FlatList
-      data={data ?? []}
-      keyExtractor={_ => `album${platform}-${_.id}`}
-      onEndReached={() => {
-        search(undefined, platform);
+
+  return (
+    <ListItem
+      left={{
+        artwork: albumItem.artwork,
+        fallback: ImgAsset.albumDefault,
       }}
-      renderItem={({item: albumItem}) => (
-        <ListItem
-          left={{
-            artwork: albumItem.artwork,
-            fallback: ImgAsset.albumDefault,
-          }}
-          title={albumItem.title}
-          desc={`${albumItem.artist}    ${albumItem.date}`}
-          tag={albumItem.platform}
-          onPress={() => {
-            navigation.navigate(ROUTE_PATH.ALBUM_DETAIL, {
-              albumItem: albumItem,
-            });
-          }}></ListItem>
-      )}></FlatList>
+      title={albumItem.title}
+      desc={`${albumItem.artist}    ${albumItem.date}`}
+      tag={albumItem.platform}
+      onPress={() => {
+        navigation.navigate(ROUTE_PATH.ALBUM_DETAIL, {
+          albumItem: albumItem,
+        });
+      }}></ListItem>
   );
 }
-
-const style = StyleSheet.create({
-  wrapper: {
-    width: rpx(750),
-  },
-});

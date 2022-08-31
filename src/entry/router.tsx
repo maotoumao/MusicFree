@@ -19,6 +19,8 @@ const ROUTE_PATH = {
   SHEET_DETAIL: 'sheet-detail',
   /** 专辑页 */
   ALBUM_DETAIL: 'album-detail',
+  /** 歌手页 */
+  ARTIST_DETAIL: 'artist-detail',
   /** 设置页 */
   SETTING: 'setting',
   /** 本地下载 */
