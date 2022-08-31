@@ -10,28 +10,30 @@ export default function DownloadingList(props: IDownloadingListProps) {
   const downloading = DownloadManager.useDownloadingMusic();
   const pending = DownloadManager.usePendingMusic();
   const progress = DownloadManager.useDownloadingProgress(); // progress没有更新同步
+
   return (
     <View style={style.wrapper}>
       <FlatList
         style={style.downloading}
-        data={downloading}
+        data={downloading.concat(pending)}
         keyExtractor={_ => `dl${_.filename}`}
-        renderItem={({item}) => {
-          const prog = progress[item.filename];
-          return (
-            <ListItem
-              title={item.musicItem.title}
-              desc={`${prog?.progress ? sizeFormatter(prog.progress) : '-'} / ${
-                prog?.size ? sizeFormatter(prog.size) : '-'
-              }`}></ListItem>
-          );
+        extraData={progress}
+        renderItem={({item, index}) => {
+          if (index < downloading.length) {
+            const prog = progress[item.filename];
+            return (
+              <ListItem
+                title={item.musicItem.title}
+                desc={`${
+                  prog?.progress ? sizeFormatter(prog.progress) : '-'
+                } / ${prog?.size ? sizeFormatter(prog.size) : '-'}`}></ListItem>
+            );
+          } else {
+            return (
+              <ListItem title={item.musicItem.title} desc="等待下载"></ListItem>
+            );
+          }
         }}></FlatList>
-      <FlatList
-        data={pending}
-        keyExtractor={_ => `pd${_.filename}`}
-        renderItem={({item}) => (
-          <ListItem title={item.musicItem.title} desc="等待下载"></ListItem>
-        )}></FlatList>
     </View>
   );
 }

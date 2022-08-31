@@ -10,6 +10,7 @@ import RNBootSplash from 'react-native-bootsplash';
 import RNFS, {exists, mkdir} from 'react-native-fs';
 import DownloadManager from '@/common/downloadManager';
 import pathConst from '@/constants/pathConst';
+import { checkAndCreateDir } from '@/utils/fileUtils';
 
 /** app加载前执行 */
 export default async function () {
@@ -72,17 +73,12 @@ export default async function () {
   RNBootSplash.hide({fade: true});
 }
 
-async function checkAndCreate(path: string) {
-  const filePath = path;
-  if (!(await exists(filePath))) {
-    await mkdir(filePath);
-  }
-}
+
 /** 初始化 */
 async function setupFolder() {
   await Promise.all([
-    checkAndCreate(pathConst.dataPath),
-    checkAndCreate(pathConst.storagePath),
-    checkAndCreate(pathConst.pluginPath)
+    checkAndCreateDir(pathConst.dataPath),
+    checkAndCreateDir(pathConst.storagePath),
+    checkAndCreateDir(pathConst.pluginPath)
   ]);
 }

@@ -1,11 +1,21 @@
 import {internalKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
+import {checkAndCreateDir} from '@/utils/fileUtils';
 import isSameMusicItem from '@/utils/isSameMusicItem';
 import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storageUtil';
+import deepmerge from 'deepmerge';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
-import {exists, unlink, mkdir, downloadFile, readDir} from 'react-native-fs';
+import {
+  exists,
+  unlink,
+  mkdir,
+  downloadFile,
+  readDir,
+  read,
+  readFile,
+} from 'react-native-fs';
 import Toast from 'react-native-toast-message';
 import {pluginManager} from './pluginManager';
 
@@ -17,20 +27,38 @@ interface IDownloadMusicOptions {
 /** 已下载 */
 let downloadedMusic: IMusic.IMusicItem[] = [];
 /** 下载中 */
-let downloadingMusic: IDownloadMusicOptions[] = [];
+let downloadingMusicQueue: IDownloadMusicOptions[] = [];
 /** 队列中 */
-let pendingMusic: IDownloadMusicOptions[] = [];
+let pendingMusicQueue: IDownloadMusicOptions[] = [];
 /** meta */
 let downloadedData: Record<string, IMusic.IMusicItem> = {};
 /** 进度 */
 let downloadingProgress: Record<string, {progress: number; size: number}> = {};
 
 const downloadedStateMapper = new StateMapper(() => downloadedMusic);
-const downloadingStateMapper = new StateMapper(() => downloadingMusic);
-const pendingMusicStateMapper = new StateMapper(() => pendingMusic);
+const downloadingQueueStateMapper = new StateMapper(
+  () => downloadingMusicQueue,
+);
+const pendingMusicQueueStateMapper = new StateMapper(() => pendingMusicQueue);
 const downloadingProgressStateMapper = new StateMapper(
   () => downloadingProgress,
 );
+
+/** 从待下载中移除 */
+function removeFromPendingQueue(item: IDownloadMusicOptions) {
+  pendingMusicQueue = pendingMusicQueue.filter(
+    _ => !isSameMusicItem(_.musicItem, item.musicItem),
+  );
+  pendingMusicQueueStateMapper.notify();
+}
+
+/** 从下载中队列移除 */
+function removeFromDownloadingQueue(item: IDownloadMusicOptions) {
+  downloadingMusicQueue = downloadingMusicQueue.filter(
+    _ => !isSameMusicItem(_.musicItem, item.musicItem),
+  );
+  downloadingQueueStateMapper.notify();
+}
 
 /** 防止高频同步 */
 let progressNotifyTimer: any = null;
@@ -39,14 +67,16 @@ function startNotifyProgress() {
     return;
   }
 
-  progressNotifyTimer = setInterval(() => {
-    console.log('notify')
+  progressNotifyTimer = setTimeout(() => {
+    console.log('notify');
+    progressNotifyTimer = null;
     downloadingProgressStateMapper.notify();
-  }, 1000);
+    startNotifyProgress();
+  }, 400);
 }
 
-function stopNotifyProgress(){
-  if(progressNotifyTimer) {
+function stopNotifyProgress() {
+  if (progressNotifyTimer) {
     clearInterval(progressNotifyTimer);
   }
   progressNotifyTimer = null;
@@ -77,13 +107,28 @@ function generateFilename(musicItem: IMusic.IMusicItem) {
   );
 }
 
+/** 可以配置一个说明文件 */
+async function loadLocalJson(dirBase: string) {
+  const jsonPath = dirBase + 'data.json';
+  if (await exists(jsonPath)) {
+    try {
+      const result = await readFile(jsonPath, 'utf8');
+      return JSON.parse(result);
+    } catch {
+      return {};
+    }
+  }
+  return {};
+}
+
 /** 初始化 */
 async function setupDownload() {
-  if (!(await exists(pathConst.downloadPath))) {
-    await mkdir(pathConst.downloadPath);
-    return;
-  }
-  downloadedData = (await getStorage('download-music')) ?? {};
+  await checkAndCreateDir(pathConst.downloadPath);
+  const jsonData = await loadLocalJson(pathConst.downloadPath);
+  downloadedData = deepmerge(
+    (await getStorage('download-music')) ?? {},
+    jsonData,
+  );
   const newDownloadedData: Record<string, IMusic.IMusicItem> = {};
   const downloads = await readDir(pathConst.downloadPath);
   downloadedMusic = [];
@@ -108,13 +153,18 @@ async function setupDownload() {
 /** 从队列取出下一个要下载的 */
 async function downloadNext() {
   // todo 最大同时下载3个，可设置
-  if (downloadingMusic.length >= 3 || pendingMusic.length === 0) {
+  if (downloadingMusicQueue.length >= 3 || pendingMusicQueue.length === 0) {
     return;
   }
-  const nextItem = pendingMusic[0];
+  const nextItem = pendingMusicQueue[0];
   const musicItem = nextItem.musicItem;
   let url = musicItem.url;
   let headers = musicItem.headers;
+  removeFromPendingQueue(nextItem);
+  downloadingMusicQueue = produce(downloadingMusicQueue, draft => {
+    draft.push(nextItem);
+  });
+  downloadingQueueStateMapper.notify();
   if (!url || !url?.startsWith('http')) {
     // 插件播放
     const plugin = pluginManager.getPlugin(musicItem.platform);
@@ -126,22 +176,12 @@ async function downloadNext() {
         headers = data?.headers;
       } catch {
         /** 无法下载，跳过 */
-        pendingMusic = produce(pendingMusic, draft =>
-          draft.filter(_ => _.filename !== nextItem.filename),
-        );
-        pendingMusicStateMapper.notify();
+        removeFromDownloadingQueue(nextItem);
         return;
       }
     }
   }
-  pendingMusic = produce(pendingMusic, draft =>
-    draft.filter(_ => _.filename !== nextItem.filename),
-  );
-  downloadingMusic = produce(downloadingMusic, draft => {
-    draft.push(nextItem);
-  });
-  pendingMusicStateMapper.notify();
-  downloadingStateMapper.notify();
+
   downloadNext();
   const {promise, jobId} = downloadFile({
     fromUrl: url ?? '',
@@ -183,24 +223,25 @@ async function downloadNext() {
       }
       return _;
     });
-    downloadingMusic = produce(downloadingMusic, _ =>
-      _.filter(item => !isSameMusicItem(item.musicItem, musicItem)),
-    );
+    removeFromDownloadingQueue(nextItem);
     downloadedData[`${musicItem.platform}${musicItem.id}`] = musicItem;
     setStorage('download-music', downloadedData);
-    if (pendingMusic.length === 0) {
-      stopNotifyProgress()
+    if (downloadingMusicQueue.length === 0) {
+      stopNotifyProgress();
       Toast.show({
         text1: '下载完成',
         position: 'bottom',
       });
+      downloadingMusicQueue = [];
+      pendingMusicQueue = [];
+      downloadingQueueStateMapper.notify();
+      pendingMusicQueueStateMapper.notify();
     }
     delete downloadingProgress[nextItem.filename];
-    downloadingStateMapper.notify();
     downloadedStateMapper.notify();
     downloadNext();
   } catch {
-    downloadingMusic = produce(downloadingMusic, _ =>
+    downloadingMusicQueue = produce(downloadingMusicQueue, _ =>
       _.filter(item => !isSameMusicItem(item.musicItem, musicItem)),
     );
   }
@@ -214,9 +255,10 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
   }
   musicItems = musicItems.filter(
     musicItem =>
-      pendingMusic.findIndex(_ => isSameMusicItem(_.musicItem, musicItem)) ===
-        -1 &&
-      downloadingMusic.findIndex(_ =>
+      pendingMusicQueue.findIndex(_ =>
+        isSameMusicItem(_.musicItem, musicItem),
+      ) === -1 &&
+      downloadingMusicQueue.findIndex(_ =>
         isSameMusicItem(_.musicItem, musicItem),
       ) === -1,
   );
@@ -225,8 +267,8 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
     filename: generateFilename(_),
   }));
   if (enqueueData.length) {
-    pendingMusic = pendingMusic.concat(enqueueData);
-    pendingMusicStateMapper.notify();
+    pendingMusicQueue = pendingMusicQueue.concat(enqueueData);
+    pendingMusicQueueStateMapper.notify();
     downloadNext();
   }
 }
@@ -272,8 +314,8 @@ const DownloadManager = {
   downloadMusic,
   setupDownload,
   useDownloadedMusic: downloadedStateMapper.useMappedState,
-  useDownloadingMusic: downloadingStateMapper.useMappedState,
-  usePendingMusic: pendingMusicStateMapper.useMappedState,
+  useDownloadingMusic: downloadingQueueStateMapper.useMappedState,
+  usePendingMusic: pendingMusicQueueStateMapper.useMappedState,
   useDownloadingProgress: downloadingProgressStateMapper.useMappedState,
   isDownloaded,
   useIsDownloaded,

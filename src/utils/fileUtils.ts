@@ -1,4 +1,4 @@
-import RNFS from 'react-native-fs';
+import RNFS, { exists, mkdir } from 'react-native-fs';
 
 const basePath = `${RNFS.PicturesDirectoryPath}/MusicFree/`;
 export async function saveToGallery(src: string) {
@@ -31,4 +31,11 @@ export function sizeFormatter(bytes: number) {
     sizes = ['B', 'KB', 'MB', 'GB'],
     i = Math.floor(Math.log(bytes) / Math.log(k));
   return (bytes / Math.pow(k, i)).toFixed(1) + sizes[i];
+}
+
+export async function checkAndCreateDir(path: string) {
+  const filePath = path;
+  if (!(await exists(filePath))) {
+    await mkdir(filePath);
+  }
 }
