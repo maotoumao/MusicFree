@@ -20,7 +20,7 @@ import {internalKey} from '@/constants/commonConst';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface IPlayListProps {}
-
+const ITEM_HEIGHT = rpx(96);
 export default function PlayList(props: IPlayListProps) {
   const musicQueue = MusicQueue.useMusicQueue();
   const currentMusicItem = MusicQueue.useCurrentMusicItem();
@@ -28,7 +28,6 @@ export default function PlayList(props: IPlayListProps) {
   const sheetRef = useRef<BottomSheetMethods | null>();
   const {unmountPanel} = _usePanel(sheetRef);
   const {colors} = useTheme();
-
 
   return (
     <BottomSheet
@@ -74,6 +73,11 @@ export default function PlayList(props: IPlayListProps) {
         style={style.playList}
         data={musicQueue}
         keyExtractor={_ => _[internalKey]?.globalKey ?? `${_.id}-${_.platform}`}
+        getItemLayout={(_, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index,
+        })}
         renderItem={_ => (
           <Pressable
             onPress={() => {

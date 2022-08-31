@@ -24,6 +24,8 @@ interface IMusicItemOptionsProps {
   /** 歌曲所在歌单 */
   musicSheet?: IMusic.IMusicSheetItem;
 }
+
+const ITEM_HEIGHT = rpx(96);
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
   const sheetRef = useRef<BottomSheetMethods | null>();
   const {showPanel, unmountPanel} = _usePanel(sheetRef);
@@ -42,14 +44,14 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       title: `作者: ${musicItem.artist}`,
       onPress: () => {
         Clipboard.setString(musicItem.artist);
-      }
+      },
     },
     {
       icon: 'album',
       title: `专辑: ${musicItem.album}`,
       onPress: () => {
         Clipboard.setString(musicItem.album);
-      }
+      },
     },
     {
       icon: 'motion-play-outline',
@@ -136,6 +138,11 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       <Divider></Divider>
       <BottomSheetFlatList
         data={options}
+        getItemLayout={(_, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index,
+        })}
         style={style.listWrapper}
         keyExtractor={_ => _.title}
         renderItem={({item}) =>
@@ -150,7 +157,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 width: rpx(48),
               }}
               itemPaddingHorizontal={0}
-              itemHeight={rpx(96)}
+              itemHeight={ITEM_HEIGHT}
               title={item.title}
               onPress={item.onPress}></ListItem>
           ) : (

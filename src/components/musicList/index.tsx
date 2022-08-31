@@ -24,6 +24,7 @@ interface IMusicListProps {
   /** 点击 */
   onItemPress?: (musicItem: IMusic.IMusicItem) => void;
 }
+const ITEM_HEIGHT = rpx(120);
 export default function MusicList(props: IMusicListProps) {
   const {Header, musicList, musicSheet, showIndex, onItemPress} = props;
   const {showPanel} = usePanel();
@@ -34,9 +35,15 @@ export default function MusicList(props: IMusicListProps) {
       ListHeaderComponent={Header}
       data={musicList ?? []}
       keyExtractor={musicItem => `ml-${musicItem.id}${musicItem.platform}`}
+      getItemLayout={(_, index) => ({
+        length: ITEM_HEIGHT,
+        offset: ITEM_HEIGHT * index,
+        index,
+      })}
       renderItem={({index, item: musicItem}) => {
         return (
           <ListItem
+            itemHeight={ITEM_HEIGHT}
             left={showIndex ? {index: index + 1, width: rpx(56)} : undefined}
             title={musicItem.title}
             desc={

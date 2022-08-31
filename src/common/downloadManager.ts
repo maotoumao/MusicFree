@@ -68,7 +68,6 @@ function startNotifyProgress() {
   }
 
   progressNotifyTimer = setTimeout(() => {
-    console.log('notify');
     progressNotifyTimer = null;
     downloadingProgressStateMapper.notify();
     startNotifyProgress();
