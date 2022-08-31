@@ -12,7 +12,7 @@ interface IArtistResultsProps {
   item: IArtist.IArtistItem;
   index: number;
 }
-export default function ArtistResults(props: IArtistResultsProps) {
+export default function ArtistResultItem(props: IArtistResultsProps) {
   const {item: artistItem} = props;
   const navigation = useNavigation<any>();
   return (

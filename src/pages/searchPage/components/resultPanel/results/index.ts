@@ -1,7 +1,7 @@
 import React from 'react';
-import AlbumResults from './albumResults';
-import ArtistResults from './artistResults';
-import MusicResults from './musicResults';
+import AlbumResultItem from './albumResultItem';
+import ArtistResultItem from './artistResultItem';
+import MusicResultItem from './musicResultItem';
 
 const results: Array<{
     key: ICommon.SupportMediaType,
@@ -11,17 +11,17 @@ const results: Array<{
   {
     key: 'music',
     title: '单曲',
-    component: MusicResults,
+    component: MusicResultItem,
   },
   {
     key: 'album',
     title: '专辑',
-    component: AlbumResults,
+    component: AlbumResultItem,
   },
   {
     key: 'artist',
     title: '创作者',
-    component: ArtistResults
+    component: ArtistResultItem
   }
 ];
 

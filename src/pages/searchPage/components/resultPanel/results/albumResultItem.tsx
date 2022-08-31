@@ -14,7 +14,7 @@ interface IAlbumResultsProps {
   index: number;
 }
 /** todo 很多rerender，需要避免掉 */
-export default function AlbumResults(props: IAlbumResultsProps) {
+export default function AlbumResultItem(props: IAlbumResultsProps) {
   const {item: albumItem, index} = props;
   const navigation = useNavigation<any>();
 

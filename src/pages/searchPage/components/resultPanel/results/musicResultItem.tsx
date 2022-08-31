@@ -1,7 +1,4 @@
 import React from 'react';
-import MusicQueue from '@/common/musicQueue';
-import Loading from '@/components/base/loading';
-import MusicList from '@/components/musicList';
 import MusicItem from '@/components/musicList/musicItem';
 
 interface IMusicResultsProps {
@@ -9,8 +6,8 @@ interface IMusicResultsProps {
   index: number;
 }
 
-export default function MusicResults(props: IMusicResultsProps) {
+export default function MusicResultItem(props: IMusicResultsProps) {
   const {item: musicItem} = props;
-  
+
   return <MusicItem musicItem={musicItem}></MusicItem>;
 }
