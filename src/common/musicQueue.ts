@@ -129,6 +129,7 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
   }
   currentIndex = findMusicIndex(currentMusicItem);
   repeatMode = mode;
+  TrackPlayer.updateMetadataForTrack(1, getFakeNextTrack());
   // 记录
   setConfig('status.music.repeatMode', mode, false);
   repeatModeStateMapper.notify();
@@ -230,11 +231,13 @@ const getFakeNextTrack = () => {
   let track: Track | undefined;
   if (repeatMode === MusicRepeatMode.SINGLE) {
     track = musicQueue[currentIndex] as Track;
+  } else {
+    track =
+      musicQueue.length !== 0
+        ? (musicQueue[(currentIndex + 1) % musicQueue.length] as Track)
+        : undefined;
   }
-  track =
-    musicQueue.length !== 0
-      ? (musicQueue[(currentIndex + 1) % musicQueue.length] as Track)
-      : undefined;
+
   if (track) {
     return produce(track, _ => {
       _.url = '';
