@@ -17,6 +17,7 @@ import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Clipboard from '@react-native-clipboard/clipboard';
+import FastImage from 'react-native-fast-image';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -122,10 +123,12 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       enableOverDrag={false}
       onClose={unmountPanel}>
       <View style={style.header}>
-        <Image
+        <FastImage
           style={style.artwork}
-          uri={musicItem?.artwork}
-          fallback={ImgAsset.albumDefault}></Image>
+          source={{
+            uri: musicItem?.artwork,
+          }}
+          defaultSource={ImgAsset.albumDefault}></FastImage>
         <View style={style.content}>
           <ThemeText numberOfLines={2} style={style.title}>
             {musicItem?.title}

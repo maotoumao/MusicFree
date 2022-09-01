@@ -6,6 +6,7 @@ import Tag from './tag';
 import ThemeText from './themeText';
 import Image from './image';
 import IconButton from './iconButton';
+import FastImage from 'react-native-fast-image';
 
 export interface ILeftProps {
   /** 序号 */
@@ -44,10 +45,12 @@ function Left(props?: ILeftProps) {
         ) : icon !== undefined ? (
           <IconButton {...icon}></IconButton>
         ) : (
-          <Image
+          <FastImage
             style={leftStyle.artwork}
-            uri={artwork?.startsWith('//') ? `https:${artwork}` : artwork}
-            fallback={fallback}></Image>
+            source={{
+              uri: artwork?.startsWith('//') ? `https:${artwork}` : artwork,
+            }}
+            defaultSource={fallback}></FastImage>
         )}
       </View>
     )

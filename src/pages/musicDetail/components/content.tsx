@@ -4,16 +4,19 @@ import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
 import Image from '@/components/base/image';
 import { ImgAsset } from '@/constants/assetsConst';
+import FastImage from 'react-native-fast-image';
 
 interface IContentProps {}
 export default function Content(props: IContentProps) {
   const musicItem = MusicQueue.useCurrentMusicItem();
   return (
     <View style={style.wrapper}>
-      <Image
+      <FastImage
         style={style.artwork}
-        uri={musicItem?.artwork}
-        fallback={ImgAsset.albumDefault}></Image>
+        source={{
+          uri: musicItem?.artwork
+        }}
+        defaultSource={ImgAsset.albumDefault}></FastImage>
     </View>
   );
 }

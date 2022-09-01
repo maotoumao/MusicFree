@@ -6,13 +6,18 @@ import {Divider, IconButton, useTheme} from 'react-native-paper';
 import MusicQueue from '@/common/musicQueue';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import usePanel from '@/components/panels/usePanel';
-import {fontSizeConst, fontWeightConst, iconSizeConst} from '@/constants/uiConst';
+import {
+  fontSizeConst,
+  fontWeightConst,
+  iconSizeConst,
+} from '@/constants/uiConst';
 import Color from 'color';
 import ThemeText from '@/components/base/themeText';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import useDialog from '@/components/dialogs/useDialog';
 import DownloadManager from '@/common/downloadManager';
+import FastImage from 'react-native-fast-image';
 
 interface IHeaderProps {
   albumItem: IAlbum.IAlbumItem | null;
@@ -33,10 +38,12 @@ export default function Header(props: IHeaderProps) {
         ]}
         style={style.wrapper}>
         <View style={style.content}>
-          <Image
+          <FastImage
             style={style.coverImg}
-            uri={albumItem?.artwork}
-            fallback={ImgAsset.albumDefault}></Image>
+            source={{
+              uri: albumItem?.artwork,
+            }}
+            defaultSource={ImgAsset.albumDefault}></FastImage>
           <View style={style.details}>
             <ThemeText>{albumItem?.title}</ThemeText>
             <ThemeText fontColor="secondary" fontSize="description">
@@ -80,16 +87,16 @@ export default function Header(props: IHeaderProps) {
             });
           }}></IconButton>
         <IconButton
-          icon='download-circle-outline'
+          icon="download-circle-outline"
           size={rpx(48)}
           onPress={async () => {
             showDialog('simple-dialog', {
               title: '下载专辑',
               content: `确定下载${musicList?.length}首歌吗?`,
-              onOk(){
+              onOk() {
                 musicList && DownloadManager.downloadMusic(musicList);
-              }
-            })
+              },
+            });
           }}></IconButton>
       </View>
     </>
