@@ -21,8 +21,10 @@ declare namespace IPlugin {
     platform: string;
     /** 匹配的版本号 */
     appVersion?: string;
+    /** 默认搜索类型 */
+    defaultSearchType?: 'music' | 'album' | 'artist' | 'lyric';
     /** 搜索 */
-    search?: (keyword: string, page?: number) => Promise<ISearchResult>;
+    search?: (keyword: string, page?: number, type?: 'music' | 'album' | 'artist' | 'lyric') => Promise<ISearchResult>;
     /** 获取根据音乐信息获取url */
     getMusicTrack?: (
       musicItem: IMusic.IMusicItemBase,

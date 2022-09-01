@@ -3,6 +3,7 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetFlatList,
+  BottomSheetFlatListMethods,
 } from '@gorhom/bottom-sheet';
 import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
@@ -18,6 +19,7 @@ import IconButton from '@/components/base/iconButton';
 import isSameMusicItem from '@/utils/isSameMusicItem';
 import {internalKey} from '@/constants/commonConst';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import useOnceEffect from '@/hooks/useOnceEffect';
 
 interface IPlayListProps {}
 const ITEM_HEIGHT = rpx(96);
@@ -26,8 +28,11 @@ export default function PlayList(props: IPlayListProps) {
   const currentMusicItem = MusicQueue.useCurrentMusicItem();
   const repeatMode = MusicQueue.useRepeatMode();
   const sheetRef = useRef<BottomSheetMethods | null>();
+  const listRef = useRef<BottomSheetFlatListMethods | null>();
   const {unmountPanel} = _usePanel(sheetRef);
   const {colors} = useTheme();
+
+
 
   return (
     <BottomSheet
@@ -71,6 +76,7 @@ export default function PlayList(props: IPlayListProps) {
       <Divider></Divider>
       <BottomSheetFlatList
         style={style.playList}
+        ref={_ => {listRef.current = _}}
         data={musicQueue}
         keyExtractor={_ => _[internalKey]?.globalKey ?? `${_.id}-${_.platform}`}
         getItemLayout={(_, index) => ({

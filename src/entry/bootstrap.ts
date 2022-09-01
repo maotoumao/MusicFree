@@ -78,6 +78,8 @@ export default async function () {
 async function setupFolder() {
   await Promise.all([
     checkAndCreateDir(pathConst.dataPath),
+    checkAndCreateDir(pathConst.logPath),
+    checkAndCreateDir(pathConst.cachePath),
     checkAndCreateDir(pathConst.storagePath),
     checkAndCreateDir(pathConst.pluginPath)
   ]);
