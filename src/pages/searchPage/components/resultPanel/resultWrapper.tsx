@@ -24,12 +24,16 @@ export default function ResultWrapper(props: IResultWrapperProps) {
 
   useEffect(() => {
     if (pluginHash === 'all') {
-      const code = Object.values(searchResults).reduce(
-        (prev, curr) => prev & curr.state,
-        7,
-      );
-      if (code === SearchStateCode.IDLE) {
+      const allCode = Object.values(searchResults).map(_ => _.state);
+
+      const code = allCode.reduce((prev, curr) => prev & curr);
+      if (
+        code === SearchStateCode.IDLE ||
+        (!data?.length && allCode.includes(SearchStateCode.PENDING))
+      ) {
         setSearchState(SearchStateCode.PENDING);
+      } else {
+        setSearchState(code);
       }
     } else {
       setSearchState(
