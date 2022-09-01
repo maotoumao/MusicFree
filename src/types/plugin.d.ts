@@ -27,6 +27,8 @@ declare namespace IPlugin {
     getMusicTrack?: (
       musicItem: IMusic.IMusicItemBase,
     ) => Promise<IMusicTrackResult | null>;
+    /** 获取歌词 */
+    getLyric?: (musicItem: IMusic.IMusicItemBase) => Promise<string>
     /** 获取专辑信息 */
     getAlbumInfo?: (
       albumItem: IAlbum.IAlbumItem,
