@@ -25,8 +25,8 @@ export default function ArtistResultItem(props: IArtistResultsProps) {
       desc={`${artistItem.worksNum}个作品    ${artistItem.description ?? ''}`}
       tag={artistItem.platform}
       onPress={() => {
-        navigation.navigate(ROUTE_PATH.ALBUM_DETAIL, {
-          albumItem: artistItem,
+        navigation.navigate(ROUTE_PATH.ARTIST_DETAIL, {
+          artistItem: artistItem,
         });
       }}></ListItem>
   );

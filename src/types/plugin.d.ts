@@ -14,7 +14,6 @@ declare namespace IPlugin {
 
   export type ISearchResultType = ICommon.SupportMediaType;
 
-
   export interface IPluginInstance {
     /** 插件路径 */
     _path: string;
@@ -25,10 +24,21 @@ declare namespace IPlugin {
     /** 搜索 */
     search?: (keyword: string, page?: number) => Promise<ISearchResult>;
     /** 获取根据音乐信息获取url */
-    getMusicTrack?: (musicItem: IMusic.IMusicItemBase) => Promise<IMusicTrackResult | null>;
+    getMusicTrack?: (
+      musicItem: IMusic.IMusicItemBase,
+    ) => Promise<IMusicTrackResult | null>;
     /** 获取专辑信息 */
-    getAlbumInfo?: (albumItem: IAlbum.IAlbumItem) => Promise<IMusic.IMusicItem[] | null>;
+    getAlbumInfo?: (
+      albumItem: IAlbum.IAlbumItem,
+    ) => Promise<IMusic.IMusicItem[] | null>;
     /** 获取作者信息 */
-    getArtistInfo?: (artistItem: IArtist.IArtistItem) => Promise<Omit<ISearchResult, 'artist'>>
+    getArtistInfo?: (
+      artistItem: IArtist.IArtistItem,
+    ) => Promise<Omit<ISearchResult, 'artist'>>;
+  }
+
+  type R = Required<IPluginInstance>
+  export type IPluginInstanceMethods = {
+    [K in keyof R as R[K] extends (...args: any) => any ? K : never]: R[K]
   }
 }

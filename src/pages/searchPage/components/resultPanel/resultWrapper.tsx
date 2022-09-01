@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useAtomValue} from 'jotai';
-import {searchResultsAtom} from '../../store/atoms';
+import {searchResultsAtom, SearchStateCode} from '../../store/atoms';
 import getMediaItems from '../../common/getMediaItems';
 import {renderMap} from './results';
 import useSearch from '../../hooks/useSearch';
@@ -16,31 +16,43 @@ export default function ResultWrapper(props: IResultWrapperProps) {
   const {tab, pluginHash} = props;
   const search = useSearch();
   const searchResults = useAtomValue(searchResultsAtom);
-  const [pendingState, setPendingState] = useState<string>('pending');
+  const [searchState, setSearchState] = useState<SearchStateCode>(
+    SearchStateCode.PENDING,
+  );
   const data = getMediaItems(searchResults, pluginHash, tab);
   const ResultComponent = renderMap[tab]!;
 
   useEffect(() => {
-    setPendingState(
-      pluginHash === 'all'
-        ? Object.values(searchResults).every(_ => _.state !== 'pending')
-          ? 'resolved'
-          : 'pending'
-        : searchResults[pluginHash]?.state ?? 'pending',
-    );
+    if (pluginHash === 'all') {
+      const code = Object.values(searchResults).reduce(
+        (prev, curr) => prev & curr.state,
+        7,
+      );
+      if (code === SearchStateCode.IDLE) {
+        setSearchState(SearchStateCode.PENDING);
+      }
+    } else {
+      setSearchState(
+        searchResults[pluginHash]?.state ?? SearchStateCode.PENDING,
+      );
+    }
   }, [searchResults]);
 
-  return (!data || !data?.length) && pendingState === 'pending' ? (
+  const renderItem = ({item, index}: any) => (
+    <ResultComponent item={item} index={index}></ResultComponent>
+  );
+
+  return (!data || !data?.length) && searchState === SearchStateCode.PENDING ? (
     <Loading></Loading>
   ) : (
     <FlatList
       data={data ?? []}
-      contentContainerStyle={{flex: 1}}
       onEndReached={() => {
-        pendingState === 'resolved' && search(undefined, pluginHash);
+        // todo 修改
+        data.length > 10 &&
+          searchState === SearchStateCode.PARTLY_DONE &&
+          search(undefined, pluginHash);
       }}
-      renderItem={({item, index}) => (
-        <ResultComponent item={item} index={index}></ResultComponent>
-      )}></FlatList>
+      renderItem={renderItem}></FlatList>
   );
 }

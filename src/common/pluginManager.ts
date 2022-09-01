@@ -103,6 +103,83 @@ class Plugin {
   }
 }
 
+let plugins: Array<Plugin> = [];
+const getPlugins = () => plugins;
+const pluginStateMapper = new StateMapper(getPlugins);
+let pluginNameMapper: Map<string, Plugin[]> = new Map();
+
+/** 初始化 */
+async function setupPlugins() {
+  let _plugins: Array<Plugin> = [];
+  let _nameMapper: Map<string, Plugin[]> = new Map();
+  try {
+    const pluginsPaths = await RNFS.readDir(pathConst.pluginPath);
+    for (let i = 0; i < pluginsPaths.length; ++i) {
+      const _plugin = pluginsPaths[i];
+
+      if (_plugin.isFile() && _plugin.name.endsWith('.js')) {
+        const funcCode = await RNFS.readFile(_plugin.path, 'utf8');
+        const plugin = new Plugin(funcCode, _plugin.path);
+        const _pluginIndex = _plugins.findIndex(p => p.hash === plugin.hash);
+        if (_pluginIndex !== -1) {
+          // 有重复的了，直接忽略
+          continue;
+        }
+        if (plugin.hash !== '') {
+          const sameNamePlugins = _nameMapper.get(plugin.name);
+          if (sameNamePlugins) {
+            sameNamePlugins.push(plugin);
+            _nameMapper.set(plugin.name, sameNamePlugins);
+          } else {
+            _nameMapper.set(plugin.name, [plugin]);
+          }
+        }
+        plugin.hash !== '' && _plugins.push(plugin);
+      }
+    }
+  } catch (e: any) {
+    ToastAndroid.show(`插件初始化失败:${e?.message ?? e}`, ToastAndroid.LONG);
+  }
+  plugins = _plugins;
+  pluginNameMapper = _nameMapper;
+  pluginStateMapper.notify();
+}
+
+// async function doPluginMethodByName<
+//   N extends keyof IPlugin.IPluginInstanceMethods = keyof IPlugin.IPluginInstanceMethods,
+// >(
+//   pluginName: string,
+//   methodName: N,
+//   params: Parameters<IPlugin.IPluginInstanceMethods[N]>,
+//   mode: 'all' | 'first' = 'all',
+// ) {
+//   const plugins = pluginNameMapper.get(pluginName) ?? [];
+//   if (mode === 'all') {
+//   } else {
+//     let plugin, res, func;
+//     for (let i = 0; i < plugins.length; ++i) {
+//       plugin = plugins[i];
+//       func = plugin.instance[methodName];
+//       if (plugin.instance[methodName]) {
+//         res = await safeCallMethod(func, ...params);
+//       }
+//     }
+//   }
+// }
+/** domethod */
+function safeCallMethod<Args extends any[], R extends Promise<any>>(
+  method: (...args: Args) => R,
+  ...args: Args
+): R | null {
+  try {
+    return method.call(null, ...args);
+  } catch {
+    return null;
+  }
+}
+
+
+
 class PluginManager {
   private plugins: Array<Plugin> = [];
   loading: boolean = true;

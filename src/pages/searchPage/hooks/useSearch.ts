@@ -2,7 +2,7 @@ import {pluginManager, usePlugins} from '@/common/pluginManager';
 import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
 import {useCallback, useRef} from 'react';
-import {PageStatus, pageStatusAtom, searchResultsAtom} from '../store/atoms';
+import {PageStatus, pageStatusAtom, searchResultsAtom, SearchStateCode} from '../store/atoms';
 
 export default function useSearch() {
   const setPageStatus = useSetAtom(pageStatusAtom);
@@ -33,7 +33,7 @@ export default function useSearch() {
         }
         const _prevResult = searchResults[_hash] ?? {};
         if (
-          (_prevResult.state === 'pending' || _prevResult.state === 'done') &&
+          (_prevResult.state === SearchStateCode.PENDING || _prevResult.state === SearchStateCode.FINISHED) &&
           undefined === query
         ) {
           return;
@@ -55,7 +55,7 @@ export default function useSearch() {
             produce(draft => {
               const prev = draft[_hash] ?? {};
               draft[_hash] = {
-                state: 'pending',
+                state: SearchStateCode.PENDING,
                 result: newSearch ? {} : prev.result,
                 query: query,
                 currentPage: page,
@@ -77,9 +77,9 @@ export default function useSearch() {
             produce(draft => {
               const prev = draft[_hash] ?? {};
               if (result._isEnd === false) {
-                prev.state = 'resolved';
+                prev.state = SearchStateCode.PARTLY_DONE;
               } else {
-                prev.state = 'done';
+                prev.state = SearchStateCode.FINISHED;
               }
               prev.result = newSearch
                 ? mergeResult(result, {}, _platform)
@@ -98,7 +98,7 @@ export default function useSearch() {
           setSearchResults(
             produce(draft => {
               const prev = draft[_hash] ?? {};
-              prev.state = 'resolved';
+              prev.state = SearchStateCode.PARTLY_DONE;
               draft[_hash] = prev;
             }),
           );
