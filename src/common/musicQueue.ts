@@ -296,9 +296,10 @@ const getMusicTrack = async (
 /** 播放音乐 */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
   try {
+    
     const _currentIndex = findMusicIndex(musicItem);
-
-    if (_currentIndex === currentIndex) {
+    // console.log('PLAY', musicItem, forcePlay, currentIndex, _currentIndex);
+    if (!musicItem && _currentIndex === currentIndex) {
       // 如果暂停就继续播放，否则
       const currentTrack = await TrackPlayer.getTrack(0);
       if (forcePlay && currentTrack) {
@@ -328,7 +329,8 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     let track: IMusic.IMusicItem;
     try {
       track = (await getMusicTrack(_musicItem)) as IMusic.IMusicItem;
-    } catch {
+    } catch(e) {
+      console.log('播放失败了', e);
       // 播放失败
       if (isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
         await _playFail();
@@ -339,6 +341,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     if (!isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
       return;
     }
+    console.log('TRACK', track);
     musicQueue[currentIndex] = track;
     await _playTrack(track as Track);
     currentMusicStateMapper.notify();

@@ -8,7 +8,7 @@ const config = {
   transportOptions: {
     FS: RNFS,
     filepath: pathConst.logPath,
-    fileName: `/error-log.txt`,
+    fileName: `error-log.log`,
   },
 };
 
@@ -21,3 +21,6 @@ export default {
     );
   },
 };
+
+
+log.info("Print this string to a file");

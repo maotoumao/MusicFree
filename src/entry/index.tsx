@@ -44,6 +44,7 @@ export default function Pages() {
       RNBootSplash.hide({fade: true});
       logManager.error('TEST');
     }
+    logManager.error('TEST111');
   }, []);
 
   return (

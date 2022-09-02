@@ -90,7 +90,7 @@ export default function PlayList(props: IPlayListProps) {
           offset: ITEM_HEIGHT * index,
           index,
         })}
-        initialScrollIndex={4}
+        initialScrollIndex={initIndex  === -1 ? undefined: initIndex}
         renderItem={_ => (
           <Pressable
             onPress={() => {
