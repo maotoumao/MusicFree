@@ -1,36 +1,45 @@
-import React, {useEffect, useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {useAtomValue} from 'jotai';
-import {queryAtom, searchResultsAtom, SearchStateCode} from '../../store/atoms';
+import {
+  ISearchResult,
+  queryAtom,
+  searchResultsAtom,
+  SearchStateCode,
+} from '../../store/atoms';
 import {renderMap} from './results';
 import useSearch from '../../hooks/useSearch';
 import Loading from '@/components/base/loading';
 import {FlatList, StyleSheet} from 'react-native';
 import ThemeText from '@/components/base/themeText';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
-interface IResultWrapperProps {
-  tab: ICommon.SupportMediaType;
+interface IResultWrapperProps<
+  T extends ICommon.SupportMediaType = ICommon.SupportMediaType,
+> {
+  tab: T;
   pluginHash: string;
   pluginName: string;
+  searchResult: ISearchResult<T>;
 }
-export default function ResultWrapper(props: IResultWrapperProps) {
-  const {tab, pluginHash} = props;
+function ResultWrapper(props: IResultWrapperProps) {
+  const {tab, pluginHash, searchResult, pluginName} = props;
   const search = useSearch();
-  const searchResults = useAtomValue(searchResultsAtom);
   const [searchState, setSearchState] = useState<SearchStateCode>(
-    searchResults[tab][pluginHash]?.state ?? SearchStateCode.IDLE,
+    searchResult?.state ?? SearchStateCode.IDLE,
   );
-  const ResultComponent = renderMap[tab]!;
-  const data: any = searchResults[tab][pluginHash]?.data ?? [];
   const query = useAtomValue(queryAtom);
-  console.log('RERENDER', tab, pluginHash);
+
+  const ResultComponent = renderMap[tab]!;
+  const data: any = searchResult?.data ?? [];
 
   useEffect(() => {
-    setSearchState(
-      searchResults[tab][pluginHash]?.state ?? SearchStateCode.IDLE,
-    );
-  }, [searchResults]);
+    if (searchState === SearchStateCode.IDLE) {
+      search(query, 1, tab, pluginHash);
+    }
+  }, []);
 
+  useEffect(() => {
+    setSearchState(searchResult?.state ?? SearchStateCode.IDLE);
+  }, [searchResult]);
 
   const renderItem = ({item, index}: any) => (
     <ResultComponent item={item} index={index}></ResultComponent>
@@ -42,6 +51,7 @@ export default function ResultWrapper(props: IResultWrapperProps) {
     <FlatList
       extraData={searchState}
       style={style.list}
+      ListEmptyComponent={() => <ThemeText>什么都没有</ThemeText>}
       ListFooterComponent={() => (
         <ThemeText>
           {searchState === SearchStateCode.PENDING
@@ -52,6 +62,10 @@ export default function ResultWrapper(props: IResultWrapperProps) {
         </ThemeText>
       )}
       data={data}
+      refreshing={false}
+      onRefresh={() => {
+        search(query, 1, tab, pluginHash);
+      }}
       onEndReached={() => {
         (searchState === SearchStateCode.PARTLY_DONE ||
           searchState === SearchStateCode.IDLE) &&
@@ -62,6 +76,8 @@ export default function ResultWrapper(props: IResultWrapperProps) {
 }
 const style = StyleSheet.create({
   list: {
-    flex: 1
+    flex: 1,
   },
 });
+
+export default memo(ResultWrapper);

@@ -3,7 +3,7 @@ import {Keyboard, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {useAtom, useSetAtom} from 'jotai';
-import {pageStatusAtom, PageStatus, queryAtom} from '../store/atoms';
+import {pageStatusAtom, PageStatus, queryAtom, searchResultsAtom, initSearchResults} from '../store/atoms';
 import useSearch from '../hooks/useSearch';
 import {Appbar, Button, Searchbar} from 'react-native-paper';
 import {addHistory} from '../common/historySearch';
@@ -19,11 +19,13 @@ export default function NavBar(props: INavBarProps) {
   const setPageStatus = useSetAtom(pageStatusAtom);
   const textColor = useTextColor();
   const colors = useColors();
+  const setSearchResultsState = useSetAtom(searchResultsAtom);
 
   const onSearchSubmit = async () => {
     if (query === '') {
       return;
     }
+    setSearchResultsState(initSearchResults);
     setPageStatus(prev =>
       prev === PageStatus.EDITING ? PageStatus.SEARCHING : prev,
     );

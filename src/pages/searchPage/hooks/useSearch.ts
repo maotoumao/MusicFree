@@ -61,6 +61,8 @@ export default function useSearch() {
           return;
         }
 
+        console.log('SEARCHWITH', _platform, searchType);
+
         // 是否是一次新的搜索
         const newSearch =
           query || prevPluginResult?.page === undefined || queryPage === 1;
@@ -86,7 +88,6 @@ export default function useSearch() {
                 query: query,
                 page,
               };
-              return draft;
             }),
           );
           // !! jscore的promise有问题，改成hermes就好了，可能和JIT有关，不知道。
@@ -114,7 +115,7 @@ export default function useSearch() {
 
               prevMediaResult[_hash] = {
                 state:
-                  (result?.isEnd === false && result?.data?.length)
+                  result?.isEnd === false && result?.data?.length
                     ? SearchStateCode.PARTLY_DONE
                     : SearchStateCode.FINISHED,
                 query,

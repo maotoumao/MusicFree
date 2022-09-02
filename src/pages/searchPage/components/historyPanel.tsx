@@ -7,6 +7,7 @@ import useSearch from '../hooks/useSearch';
 import {addHistory, getHistory, removeHistory} from '../common/historySearch';
 import {useSetAtom} from 'jotai';
 import {
+  initSearchResults,
   PageStatus,
   pageStatusAtom,
   queryAtom,
@@ -43,6 +44,7 @@ export default function (props: IProps) {
                 getHistory().then(setHistory);
               }}
               onPress={() => {
+                setSearchResultsState(initSearchResults);
                 search(_, 1);
                 addHistory(_);
                 setPageStatus(PageStatus.SEARCHING);

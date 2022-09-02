@@ -7,6 +7,8 @@ import DefaultResults from './results/defaultResults';
 import {renderMap} from './results';
 import ResultWrapper from './resultWrapper';
 import {fontWeightConst} from '@/constants/uiConst';
+import { useAtomValue } from 'jotai';
+import { searchResultsAtom } from '../../store/atoms';
 
 interface IResultSubPanelProps {
   tab: ICommon.SupportMediaType;
@@ -20,12 +22,19 @@ function getResultComponent(
 ) {
   return tab in renderMap
     ? memo(
-        () => (
-          <ResultWrapper
+        () => {
+          const searchResults = useAtomValue(searchResultsAtom);
+          const pluginSearchResult = searchResults[tab][pluginHash];
+          // 写的不对
+          useEffect(() => {
+            console.log(searchResults, 'results');
+          }, [searchResults])
+          return <ResultWrapper
             tab={tab}
+            searchResult={pluginSearchResult}
             pluginHash={pluginHash}
             pluginName={pluginName}></ResultWrapper>
-        ),
+        },
         () => true,
       )
     : () => <DefaultResults></DefaultResults>;
