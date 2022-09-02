@@ -5,7 +5,8 @@ import getMediaItems from '../../common/getMediaItems';
 import {renderMap} from './results';
 import useSearch from '../../hooks/useSearch';
 import Loading from '@/components/base/loading';
-import {FlatList} from 'react-native';
+import {FlatList, StyleSheet} from 'react-native';
+import ThemeText from '@/components/base/themeText';
 
 interface IResultWrapperProps {
   tab: ICommon.SupportMediaType;
@@ -50,6 +51,9 @@ export default function ResultWrapper(props: IResultWrapperProps) {
     <Loading></Loading>
   ) : (
     <FlatList
+    extraData={searchState}
+      style={style.list}
+      ListFooterComponent={() => <ThemeText>{ searchState === SearchStateCode.PENDING ? '加载中...' : searchState === SearchStateCode.FINISHED ?'到底啦' :''}</ThemeText>}
       data={data ?? []}
       onEndReached={() => {
         // todo 修改
@@ -60,3 +64,8 @@ export default function ResultWrapper(props: IResultWrapperProps) {
       renderItem={renderItem}></FlatList>
   );
 }
+const style = StyleSheet.create({
+  list: {
+    flex: 1,
+  },
+});

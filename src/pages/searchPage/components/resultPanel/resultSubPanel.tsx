@@ -13,10 +13,19 @@ interface IResultSubPanelProps {
 }
 
 // 展示结果的视图
-function getResultComponent(tab: ICommon.SupportMediaType, pluginHash: string, pluginName: string) {
+function getResultComponent(
+  tab: ICommon.SupportMediaType,
+  pluginHash: string,
+  pluginName: string,
+) {
   return tab in renderMap
     ? memo(
-        () => <ResultWrapper tab={tab} pluginHash={pluginHash} pluginName={pluginName}></ResultWrapper>,
+        () => (
+          <ResultWrapper
+            tab={tab}
+            pluginHash={pluginHash}
+            pluginName={pluginName}></ResultWrapper>
+        ),
         () => true,
       )
     : () => <DefaultResults></DefaultResults>;
@@ -70,6 +79,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
           pressColor="transparent"
           renderLabel={({route, focused, color}) => (
             <Text
+              numberOfLines={1}
               style={{
                 fontWeight: focused
                   ? fontWeightConst.bolder

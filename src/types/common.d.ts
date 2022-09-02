@@ -1,3 +1,3 @@
 declare namespace ICommon {
-    export type SupportMediaType = 'music' | 'album' | 'artist'
+    export type SupportMediaType = 'music' | 'album' | 'artist' | 'lyric'
 }

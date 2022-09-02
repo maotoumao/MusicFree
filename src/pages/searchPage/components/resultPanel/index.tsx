@@ -75,8 +75,3 @@ function ResultPanel(props: IResultPanelProps) {
 
 export default memo(ResultPanel);
 
-const style = StyleSheet.create({
-  wrapper: {
-    width: rpx(750),
-  },
-});
