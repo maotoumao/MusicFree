@@ -4,15 +4,14 @@ declare namespace IPlugin {
     url: string;
   }
 
-  export interface ISearchResult {
-    _isEnd?: boolean;
-    // 可能还有歌手页等等
-    artist?: Array<IArtist.IArtistItem>;
-    music?: Array<IMusic.IMusicItem>;
-    album?: Array<IAlbum.IAlbumItem>;
+  export interface ISearchResult<T extends ICommon.SupportMediaType> {
+    isEnd?: boolean;
+    data: ICommon.SupportMediaItemBase[T][]
   }
 
   export type ISearchResultType = ICommon.SupportMediaType;
+
+  type ISearchFunc = <T extends ICommon.SupportMediaType> (query: string, page: number, type: T) => Promise<ISearchResult<T>>
 
   interface IPluginDefine {
     /** 来源名 */
@@ -22,11 +21,7 @@ declare namespace IPlugin {
     /** 默认搜索类型 */
     defaultSearchType?: ICommon.SupportMediaType;
     /** 搜索 */
-    search?: (
-      keyword: string,
-      page?: number,
-      type?: ICommon.SupportMediaType,
-    ) => Promise<ISearchResult>;
+    search?: ISearchFunc;
     /** 获取根据音乐信息获取url */
     getMusicTrack?: (
       musicItem: IMusic.IMusicItemBase,
@@ -35,8 +30,8 @@ declare namespace IPlugin {
     getLyric?: (musicItem: IMusic.IMusicItemBase) => Promise<string>;
     /** 获取专辑信息 */
     getAlbumInfo?: (
-      albumItem: IAlbum.IAlbumItem,
-    ) => Promise<IMusic.IMusicItem[] | null>;
+      albumItem: IAlbum.IAlbumItemBase,
+    ) => Promise<IAlbum.IAlbumItem | null>;
     /** 获取作者信息 */
     getArtistInfo?: (
       artistItem: IArtist.IArtistItem,

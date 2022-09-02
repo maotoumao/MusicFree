@@ -1,5 +1,5 @@
 declare namespace IAlbum {
-    export interface IAlbumItem {
+    export interface IAlbumItemBase {
         artwork: string;
         title: string;
         date: string;
@@ -8,5 +8,10 @@ declare namespace IAlbum {
         platform: string;
         id: string;
         [k: string]: any;
+    }
+
+    export interface IAlbumItem extends IAlbumItemBase {
+        musicList: IMusic.IMusicItem[]
+        
     }
 }

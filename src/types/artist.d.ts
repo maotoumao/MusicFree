@@ -1,5 +1,6 @@
 declare namespace IArtist {
-  export interface IArtistItem {
+
+  export interface IArtistItemBase {
     name: string;
     id: string;
     fans?: number;
@@ -7,6 +8,10 @@ declare namespace IArtist {
     platform?: string;
     avatar: string;
     worksNum: number;
+  }
+  export interface IArtistItem extends IArtistItemBase {
+    musicList: IMusic.IMusicItemBase,
+    albumList: IAlbum.IAlbumItemBase,
     [k: string]: any;
   }
 }

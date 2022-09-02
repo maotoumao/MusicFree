@@ -19,7 +19,7 @@ enum PluginStateCode {
   /** 无法解析 */
   CannotParse,
 }
-class Plugin {
+export class Plugin {
   /** 插件名 */
   public name: string;
   /** 插件的hash，作为唯一id */

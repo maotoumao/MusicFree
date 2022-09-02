@@ -10,7 +10,8 @@ export default function useAlbumMusicList(albumItem: IAlbum.IAlbumItem | null) {
         return;
       }
       const plugin = pluginManager.getPlugin(albumItem.platform);
-      plugin?.instance?.getAlbumInfo?.(albumItem)?.then(_ => setMusicList(_))?.catch();
+      // todo: try
+      plugin?.instance?.getAlbumInfo?.(albumItem)?.then(_ => setMusicList(_?.musicList ?? []))?.catch();
     }, []);
     return musicList;
 }

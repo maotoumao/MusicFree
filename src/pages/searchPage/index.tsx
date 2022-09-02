@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import NavBar from './components/navBar';
 import {useAtom, useAtomValue, useSetAtom} from 'jotai';
-import {PageStatus, pageStatusAtom, queryAtom, searchResultsAtom} from './store/atoms';
+import {initSearchResults, PageStatus, pageStatusAtom, queryAtom, searchResultsAtom} from './store/atoms';
 import HistoryPanel from './components/historyPanel';
 import ResultPanel from './components/resultPanel';
 import MusicBar from '@/components/musicBar';
@@ -16,7 +16,7 @@ export default function (props: IProps) {
   const setQuery = useSetAtom(queryAtom);
   const setSearchResultsState = useSetAtom(searchResultsAtom);
   useEffect(() => {
-    setSearchResultsState({});
+    setSearchResultsState(initSearchResults);
     return () => {
       setPageStatus(PageStatus.EDITING);
       setQuery('');

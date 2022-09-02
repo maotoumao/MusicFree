@@ -46,20 +46,14 @@ function getSubRouterScene(
 function ResultSubPanel(props: IResultSubPanelProps) {
   const [index, setIndex] = useState(0);
   // todo 是否聚合结果，如果是的话
-  const routes = [
-    {
-      key: 'all',
-      title: '全部',
-    },
-  ].concat(
-    pluginManager.getPlugins().map(_ => ({
-      key: _.hash,
-      title: _.name,
-    })),
-  );
+  const routes = pluginManager.getPlugins().map(_ => ({
+    key: _.hash,
+    title: _.name,
+  }));
 
   return (
     <TabView
+      lazy
       navigationState={{
         index,
         routes,

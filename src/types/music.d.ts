@@ -25,6 +25,8 @@ declare namespace IMusic {
     artwork: string;
     /** 音源 */
     url?: string;
+    /** 歌词 */
+    lrc?: string;
     /** 其他可以被序列化的信息 */
     [k: string]: any;
     /** 内部信息 */

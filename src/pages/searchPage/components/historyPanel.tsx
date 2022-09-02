@@ -43,7 +43,7 @@ export default function (props: IProps) {
                 getHistory().then(setHistory);
               }}
               onPress={() => {
-                search(_, 'all');
+                search(_, 1);
                 addHistory(_);
                 setPageStatus(PageStatus.SEARCHING);
                 setQuery(_);

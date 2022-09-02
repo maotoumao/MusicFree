@@ -27,7 +27,7 @@ export default function NavBar(props: INavBarProps) {
     setPageStatus(prev =>
       prev === PageStatus.EDITING ? PageStatus.SEARCHING : prev,
     );
-    await search(query, 'all');
+    await search(query, 1);
     await addHistory(query);
   };
 

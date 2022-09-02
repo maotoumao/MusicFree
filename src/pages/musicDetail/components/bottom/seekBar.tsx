@@ -11,7 +11,7 @@ import Color from 'color';
 
 interface ISeekBarProps {}
 export default function SeekBar(props: ISeekBarProps) {
-  const progress = MusicQueue.useProgress(800);
+  const progress = MusicQueue.useProgress(400);
   const [tmpProgress, setTmpProgress] = useState<number | null>(null);
   const textColor = useTextColor();
 

@@ -33,6 +33,7 @@ function ResultPanel(props: IResultPanelProps) {
 
   return (
     <TabView
+      lazy
       navigationState={{
         index,
         routes,
@@ -74,4 +75,3 @@ function ResultPanel(props: IResultPanelProps) {
 }
 
 export default memo(ResultPanel);
-
