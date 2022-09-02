@@ -18,7 +18,7 @@ import ThemeText from '@/components/base/themeText';
 import IconButton from '@/components/base/iconButton';
 import isSameMusicItem from '@/utils/isSameMusicItem';
 import {internalKey} from '@/constants/commonConst';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import useOnceEffect from '@/hooks/useOnceEffect';
 
 interface IPlayListProps {}
@@ -32,11 +32,14 @@ export default function PlayList(props: IPlayListProps) {
   const {unmountPanel} = _usePanel(sheetRef);
   const {colors} = useTheme();
 
+  const initIndex = musicQueue?.findIndex(_ =>
+    isSameMusicItem(_, currentMusicItem),
+  ) ?? 0;
 
 
   return (
     <BottomSheet
-      ref={_ => sheetRef.current = _}
+      ref={_ => (sheetRef.current = _)}
       backdropComponent={props => {
         return (
           <BottomSheetBackdrop
@@ -76,14 +79,18 @@ export default function PlayList(props: IPlayListProps) {
       <Divider></Divider>
       <BottomSheetFlatList
         style={style.playList}
-        ref={_ => {listRef.current = _}}
+        ref={_ => {
+          listRef.current = _;
+        }}
         data={musicQueue}
+        extraData={currentMusicItem}
         keyExtractor={_ => _[internalKey]?.globalKey ?? `${_.id}-${_.platform}`}
         getItemLayout={(_, index) => ({
           length: ITEM_HEIGHT,
           offset: ITEM_HEIGHT * index,
           index,
         })}
+        initialScrollIndex={4}
         renderItem={_ => (
           <Pressable
             onPress={() => {

@@ -33,7 +33,6 @@ export default function (props: IProps) {
   const progress = MusicQueue.useProgress();
   const {colors} = useTheme();
 
-  console.log(musicItem, showKeyboard);
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
