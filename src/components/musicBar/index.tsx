@@ -1,5 +1,12 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {Pressable, StyleSheet, Text, ToastAndroid, View} from 'react-native';
+import {
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  View,
+} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useTextColor from '@/hooks/useTextColor';
@@ -20,14 +27,31 @@ export default function (props: IProps) {
   // const currentMusicState = useAtomValue(loadableCurrentMusicStateAtom);
   const musicItem = MusicQueue.useCurrentMusicItem();
   const musicState = MusicQueue.usePlaybackState();
+  const [showKeyboard, setKeyboardStatus] = useState(false);
   const {showPanel} = usePanel();
   const navigation = useNavigation<any>();
   const progress = MusicQueue.useProgress();
   const {colors} = useTheme();
 
+  console.log(musicItem, showKeyboard);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus(true);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
     <Fragment>
-      {musicItem && (
+      {musicItem && !showKeyboard && (
         <Pressable
           style={[
             style.wrapper,
