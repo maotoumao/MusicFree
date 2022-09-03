@@ -1,26 +1,54 @@
 import {logger, fileAsyncTransport} from 'react-native-logs';
-import RNFS, {exists, mkdir, writeFile} from 'react-native-fs';
-import dayjs from 'dayjs';
+import RNFS, {} from 'react-native-fs';
 import pathConst from '@/constants/pathConst';
 
 const config = {
   transport: fileAsyncTransport,
   transportOptions: {
     FS: RNFS,
-    filepath: pathConst.logPath,
-    fileName: `error-log.log`,
+    filePath: pathConst.logPath,
+    fileName: `error-log-{date-today}.log`,
   },
+  dateFormat: 'local',
+};
+
+const traceConfig = {
+  transport: fileAsyncTransport,
+  transportOptions: {
+    FS: RNFS,
+    filePath: pathConst.logPath,
+    fileName: `trace-log.log`,
+  },
+  dateFormat: 'local',
 };
 
 const log = logger.createLogger(config);
+const traceLogger = logger.createLogger(traceConfig);
 
-export default {
-  error(reason: string, errMsg?: any) {
-    log.error(
-      `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}]    ${reason}    ${errMsg}`,
-    );
-  },
-};
+export function trace(
+  desc: string,
+  message: any,
+  level: 'info' | 'error' = 'info',
+) {
+  if (__DEV__) {
+    console.log(desc, message);
+  }
+  // 特殊情况记录操作路径
+  if (true) {
+    traceLogger[level]({
+      desc,
+      message,
+    });
+  }
+ 
+}
 
+export function errorLog(desc: string, message: any) {
+  log.error({
+    desc,
+    message,
+  });
+  trace(desc, message, 'error');
+}
 
-log.info("Print this string to a file");
+export {log};

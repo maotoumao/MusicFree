@@ -14,7 +14,6 @@ import {CustomTheme, DefaultTheme} from './theme';
 import {useConfig} from '@/common/localConfigManager';
 import Share from '@/components/share';
 import RNBootSplash from 'react-native-bootsplash';
-import logManager from '@/common/logManager';
 import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
@@ -42,9 +41,7 @@ export default function Pages() {
   useEffect(() => {
     if (__DEV__) {
       RNBootSplash.hide({fade: true});
-      logManager.error('TEST');
     }
-    logManager.error('TEST111');
   }, []);
 
   return (

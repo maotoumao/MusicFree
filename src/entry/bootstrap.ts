@@ -10,7 +10,8 @@ import RNBootSplash from 'react-native-bootsplash';
 import RNFS, {exists, mkdir} from 'react-native-fs';
 import DownloadManager from '@/common/downloadManager';
 import pathConst from '@/constants/pathConst';
-import { checkAndCreateDir } from '@/utils/fileUtils';
+import {checkAndCreateDir} from '@/utils/fileUtils';
+import {errorLog} from '@/common/logManager';
 
 /** app加载前执行 */
 export default async function () {
@@ -66,13 +67,12 @@ export default async function () {
   await MusicSheet.setupMusicSheet();
   await DownloadManager.setupDownload();
 
-  ErrorUtils.setGlobalHandler(error =>
-    ToastAndroid.show(`error: ${error?.message}`, ToastAndroid.LONG),
-  );
+  ErrorUtils.setGlobalHandler(error => {
+    errorLog('未捕获的错误', error);
+  });
   // 隐藏开屏动画
   RNBootSplash.hide({fade: true});
 }
-
 
 /** 初始化 */
 async function setupFolder() {
@@ -81,6 +81,6 @@ async function setupFolder() {
     checkAndCreateDir(pathConst.logPath),
     checkAndCreateDir(pathConst.cachePath),
     checkAndCreateDir(pathConst.storagePath),
-    checkAndCreateDir(pathConst.pluginPath)
+    checkAndCreateDir(pathConst.pluginPath),
   ]);
 }

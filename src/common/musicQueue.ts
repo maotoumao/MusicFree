@@ -12,13 +12,13 @@ import {pluginManager} from './pluginManager';
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import {getConfig, setConfig} from './localConfigManager';
-import logManager from './logManager';
 import {internalKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import DownloadManager from './downloadManager';
 import delay from '@/utils/delay';
 import {exists} from 'react-native-fs';
 import isSameMusicItem from '@/utils/isSameMusicItem';
+import { errorLog, trace, } from './logManager';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -71,8 +71,9 @@ const setupMusicQueue = async () => {
     if (config?.progress) {
       await TrackPlayer.seekTo(config.progress);
     }
+    trace('状态恢复', config);
   } catch (e) {
-    // logManager.error('状态恢复失败', e);
+    errorLog('状态恢复失败', e);
   }
   // 不要依赖playbackchanged，不稳定,
   // 一首歌结束了
@@ -84,7 +85,8 @@ const setupMusicQueue = async () => {
     }
   });
 
-  TrackPlayer.addEventListener(Event.PlaybackError, async () => {
+  TrackPlayer.addEventListener(Event.PlaybackError, async (e) => {
+    errorLog('Player播放失败', e);
     await _playFail();
   });
 
@@ -283,6 +285,7 @@ const getMusicTrack = async (
           return getMusicTrack(musicItem, --retryCount);
         } else {
           // 播放失败,可以用配置
+          errorLog('获取真实URL失败', e);
           throw new Error('TRACK FAIL');
         }
       }
@@ -296,19 +299,20 @@ const getMusicTrack = async (
 /** 播放音乐 */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
   try {
-    
+    console.log('HIII');
     const _currentIndex = findMusicIndex(musicItem);
-    // console.log('PLAY', musicItem, forcePlay, currentIndex, _currentIndex);
     if (!musicItem && _currentIndex === currentIndex) {
       // 如果暂停就继续播放，否则
       const currentTrack = await TrackPlayer.getTrack(0);
       if (forcePlay && currentTrack) {
+        trace('PLAY-重新播放', currentIndex);
         _playTrack(currentTrack);
         return;
       }
       if (currentTrack) {
         const state = await TrackPlayer.getState();
         if (musicIsPaused(state)) {
+          trace('PLAY-继续播放', currentIndex);
           await TrackPlayer.play();
           return;
         }
@@ -330,7 +334,6 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     try {
       track = (await getMusicTrack(_musicItem)) as IMusic.IMusicItem;
     } catch(e) {
-      console.log('播放失败了', e);
       // 播放失败
       if (isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
         await _playFail();
@@ -341,13 +344,16 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     if (!isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
       return;
     }
-    console.log('TRACK', track);
     musicQueue[currentIndex] = track;
     await _playTrack(track as Track);
     currentMusicStateMapper.notify();
-  } catch (e) {
-    await TrackPlayer.setupPlayer();
-    console.log(e);
+  } catch (e: any) {
+    if(e?.message === 'The player is not initialized. Call setupPlayer first.') {
+      trace('重新初始化player', '');
+      await TrackPlayer.setupPlayer();
+      play(musicItem, forcePlay);
+    }
+   
   }
 };
 
@@ -360,6 +366,9 @@ const _playTrack = async (track: Track) => {
 };
 
 const _playFail = async () => {
+  errorLog('播放失败，自动跳过', {
+    currentIndex
+  })
   await TrackPlayer.reset();
   await TrackPlayer.add([
     (musicQueue[currentIndex] ?? {url: ''}) as Track,
@@ -414,7 +423,6 @@ const skipToPrevious = async () => {
 
 async function stop() {
   await TrackPlayer.stop();
-  await TrackPlayer.destroy();
 }
 const MusicQueue = {
   setupMusicQueue,
