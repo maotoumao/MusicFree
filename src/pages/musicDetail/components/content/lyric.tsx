@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicQueue from '@/common/musicQueue';
 import Image from '@/components/base/image';
@@ -8,6 +8,8 @@ import LyricParser from '@/common/lrcParser';
 import isSameMusicItem from '@/utils/isSameMusicItem';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
+import useDelayFalse from '@/hooks/useDelayState';
+import {FlatList} from 'react-native-gesture-handler';
 
 function useLyric() {
   const musicItem = MusicQueue.useCurrentMusicItem();
@@ -74,42 +76,54 @@ function useLyric() {
 
 const ITEM_HEIGHT = rpx(72);
 interface IContentProps {}
+
+function Empty() {
+  return <View style={style.empty}></View>;
+}
+
 export default function Lyric(props: IContentProps) {
   const [lyric, currentLrcItem] = useLyric();
-  const [drag, setDrag] = useState(false);
+  const [drag, setDrag] = useDelayFalse(false, 1500);
   const listRef = useRef<FlatList<IMusic.ILrcItem> | null>();
 
   useEffect(() => {
-    if(lyric.length === 0 || drag) {
-        return;
+    if (lyric.length === 0 || drag) {
+      return;
     }
     if (currentLrcItem?.index === -1 || !currentLrcItem) {
-        listRef.current?.scrollToIndex({
-            index: 0,
-            viewPosition: 0.5
-        })
+      listRef.current?.scrollToIndex({
+        index: 0,
+        viewPosition: 0,
+      });
     } else {
-        listRef.current?.scrollToIndex({
-            index: currentLrcItem.index ?? 0,
-            viewPosition: 0.5
-        })
+      listRef.current?.scrollToIndex({
+        index: currentLrcItem.index ?? 0,
+        viewPosition: 0,
+      });
     }
   }, [currentLrcItem, lyric, drag]);
 
-  const onScrollBeginDrag = () => {
+  const onScrollBeginDrag = (e: any) => {
+    console.log('e', e);
     setDrag(true);
-  }
+  };
 
   const onScrollEndDrag = () => {
     setDrag(false);
-  }
+  };
 
   return (
     <FlatList
-      ref={_ => {listRef.current = _}}
-      getItemLayout={(data, index) => (
-        {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
-      )}
+      ref={_ => {
+        listRef.current = _;
+      }}
+      getItemLayout={(data, index) => ({
+        length: ITEM_HEIGHT,
+        offset: ITEM_HEIGHT * index,
+        index,
+      })}
+      ListHeaderComponent={Empty}
+      ListFooterComponent={Empty}
       onScrollBeginDrag={onScrollBeginDrag}
       onScrollEndDrag={onScrollEndDrag}
       style={style.wrapper}
@@ -138,8 +152,7 @@ const style = StyleSheet.create({
     width: rpx(750),
     height: ITEM_HEIGHT,
     textAlign: 'center',
-    textAlignVertical: 'center'
-
+    textAlignVertical: 'center',
   },
   highlightItem: {
     fontSize: rpx(32),
@@ -147,6 +160,9 @@ const style = StyleSheet.create({
     width: rpx(750),
     height: ITEM_HEIGHT,
     textAlign: 'center',
-    textAlignVertical: 'center'
+    textAlignVertical: 'center',
+  },
+  empty: {
+    paddingTop: '60%',
   },
 });

@@ -14,6 +14,7 @@ export default function Content(props: IContentProps) {
   const [tab, selectTab] = useState<'album' | 'lyric'>('album');
 
   const onPress = () => {
+    console.log('click');
     if(tab === 'album') {
       selectTab('lyric')
     } else {
