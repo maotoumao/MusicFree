@@ -8,6 +8,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import LocalMusicList from './localMusicList';
 import MusicBar from '@/components/musicBar';
+import { useEffect } from 'react';
+import DownloadManager from '@/common/downloadManager';
 
 interface ILocalMusicProps {}
 export default function LocalMusic(props: ILocalMusicProps) {
@@ -16,6 +18,10 @@ export default function LocalMusic(props: ILocalMusicProps) {
   const type: string = route.params?.type;
 
   const {colors} = useTheme();
+
+  useEffect(() => {
+    DownloadManager.setupDownload();
+  }, []);
 
   return (
     <SafeAreaView style={style.wrapper}>
