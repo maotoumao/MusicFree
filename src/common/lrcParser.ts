@@ -99,6 +99,10 @@ export default class LyricParser {
     return this.lrcItems;
   }
 
+  getMeta(){
+    return this.meta;
+  }
+
   parseMeta(metaStr: string) {
     if (metaStr === '') {
       return {};

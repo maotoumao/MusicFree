@@ -10,6 +10,13 @@ import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import useDelayFalse from '@/hooks/useDelayState';
 import {FlatList} from 'react-native-gesture-handler';
+import timeformat from '@/utils/timeformat';
+import {fontSizeConst} from '@/constants/uiConst';
+
+interface ICurrentLyricItem {
+  lrc?: IMusic.ILrcItem;
+  index: number;
+}
 
 function useLyric() {
   const musicItem = MusicQueue.useCurrentMusicItem();
@@ -49,10 +56,8 @@ function useLyric() {
     `;
 
   const [lyric, setLyric] = useState<IMusic.ILrc>([]);
-  const [currentLrcItem, setCurentLrcItem] = useState<{
-    lrc?: IMusic.ILrcItem;
-    index: number;
-  }>();
+  const [meta, setMeta] = useState<Record<string, any>>({});
+  const [currentLrcItem, setCurentLrcItem] = useState<ICurrentLyricItem>();
 
   useEffect(() => {
     if (
@@ -61,6 +66,7 @@ function useLyric() {
     ) {
       const parser = new LyricParser(lrc, musicItem);
       setLyric(parser.getLyric());
+      setMeta(parser.getMeta());
       lrcManagerRef.current = parser;
     }
   }, [musicItem]);
@@ -71,7 +77,7 @@ function useLyric() {
     }
   }, [progress]);
 
-  return [lyric, currentLrcItem] as const;
+  return [lyric, currentLrcItem, meta] as const;
 }
 
 const ITEM_HEIGHT = rpx(72);
@@ -82,8 +88,11 @@ function Empty() {
 }
 
 export default function Lyric(props: IContentProps) {
-  const [lyric, currentLrcItem] = useLyric();
-  const [drag, setDrag] = useDelayFalse(false, 1500);
+  const [lyric, currentLrcItem, meta] = useLyric();
+  const [drag, setDrag] = useState(false);
+  const [draggingIndex, setDraggingIndex] = useState<number | undefined>(
+    undefined,
+  );
   const listRef = useRef<FlatList<IMusic.ILrcItem> | null>();
 
   useEffect(() => {
@@ -104,39 +113,61 @@ export default function Lyric(props: IContentProps) {
   }, [currentLrcItem, lyric, drag]);
 
   const onScrollBeginDrag = (e: any) => {
-    console.log('e', e);
     setDrag(true);
   };
 
-  const onScrollEndDrag = () => {
+  const onScrollEndDrag = async () => {
+    if (draggingIndex !== undefined) {
+      setDraggingIndex(undefined);
+      const time = lyric[draggingIndex].time + meta?.offset ?? 0;
+      time !== undefined && (await MusicQueue.seekTo(time));
+    }
     setDrag(false);
   };
 
+  const onScroll = (e: any) => {
+    if (drag) {
+      setDraggingIndex(Math.floor(e.nativeEvent.contentOffset.y / ITEM_HEIGHT));
+    }
+  };
+
   return (
-    <FlatList
-      ref={_ => {
-        listRef.current = _;
-      }}
-      getItemLayout={(data, index) => ({
-        length: ITEM_HEIGHT,
-        offset: ITEM_HEIGHT * index,
-        index,
-      })}
-      ListHeaderComponent={Empty}
-      ListFooterComponent={Empty}
-      onScrollBeginDrag={onScrollBeginDrag}
-      onScrollEndDrag={onScrollEndDrag}
-      style={style.wrapper}
-      data={lyric}
-      extraData={currentLrcItem}
-      renderItem={({item, index}) => (
-        <ThemeText
-          style={
-            index === currentLrcItem?.index ? style.highlightItem : style.item
-          }>
-          {item.lrc}
-        </ThemeText>
-      )}></FlatList>
+    <>
+      <FlatList
+        ref={_ => {
+          listRef.current = _;
+        }}
+        getItemLayout={(data, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index,
+        })}
+        ListHeaderComponent={Empty}
+        ListFooterComponent={Empty}
+        onScrollBeginDrag={onScrollBeginDrag}
+        onScrollEndDrag={onScrollEndDrag}
+        onScroll={onScroll}
+        style={style.wrapper}
+        data={lyric}
+        extraData={currentLrcItem}
+        renderItem={({item, index}) => (
+          <ThemeText
+            style={
+              index === currentLrcItem?.index ? style.highlightItem : style.item
+            }>
+            {item.lrc}
+          </ThemeText>
+        )}></FlatList>
+      {draggingIndex !== undefined && (
+        <View style={style.draggingTime}>
+          <Text style={style.draggingTimeText}>
+            {timeformat(
+              (lyric[draggingIndex]?.time ?? 0) + (meta?.offset ?? 0),
+            )}
+          </Text>
+        </View>
+      )}
+    </>
   );
 }
 
@@ -164,5 +195,19 @@ const style = StyleSheet.create({
   },
   empty: {
     paddingTop: '60%',
+  },
+  draggingTime: {
+    position: 'absolute',
+    width: 200,
+    height: ITEM_HEIGHT,
+    top: '40%',
+    marginTop: rpx(48),
+    left: 0,
+    justifyContent: 'center',
+  },
+  draggingTimeText: {
+    color: '#dddddd',
+    fontSize: fontSizeConst.description,
+    paddingLeft: rpx(24),
   },
 });
