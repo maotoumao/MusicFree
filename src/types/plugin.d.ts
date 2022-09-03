@@ -6,12 +6,24 @@ declare namespace IPlugin {
 
   export interface ISearchResult<T extends ICommon.SupportMediaType> {
     isEnd?: boolean;
-    data: ICommon.SupportMediaItemBase[T][]
+    data: ICommon.SupportMediaItemBase[T][];
   }
 
   export type ISearchResultType = ICommon.SupportMediaType;
 
-  type ISearchFunc = <T extends ICommon.SupportMediaType> (query: string, page: number, type: T) => Promise<ISearchResult<T>>
+  type ISearchFunc = <T extends ICommon.SupportMediaType>(
+    query: string,
+    page: number,
+    type: T,
+  ) => Promise<ISearchResult<T>>;
+
+  type IQueryArtistWorksFunc = <
+    T extends IArtist.ArtistMediaType,
+  >(
+    artistItem: IArtist.IArtistItem,
+    page: number,
+    type: T,
+  ) => Promise<ISearchResult<T>>;
 
   interface IPluginDefine {
     /** 来源名 */
@@ -32,10 +44,8 @@ declare namespace IPlugin {
     getAlbumInfo?: (
       albumItem: IAlbum.IAlbumItemBase,
     ) => Promise<IAlbum.IAlbumItem | null>;
-    /** 获取作者信息 */
-    getArtistInfo?: (
-      artistItem: IArtist.IArtistItem,
-    ) => Promise<Omit<ISearchResult, 'artist'>>;
+    /** 获取作品 */
+    queryArtistWorks?: IQueryArtistWorksFunc;
   }
 
   export interface IPluginInstance extends IPluginDefine {

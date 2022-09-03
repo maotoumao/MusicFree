@@ -4,13 +4,13 @@ import {
   ISearchResult,
   queryAtom,
   searchResultsAtom,
-  SearchStateCode,
 } from '../../store/atoms';
 import {renderMap} from './results';
 import useSearch from '../../hooks/useSearch';
 import Loading from '@/components/base/loading';
 import {FlatList, StyleSheet} from 'react-native';
 import ThemeText from '@/components/base/themeText';
+import { RequestStateCode } from '@/constants/commonConst';
 
 interface IResultWrapperProps<
   T extends ICommon.SupportMediaType = ICommon.SupportMediaType,
@@ -23,8 +23,8 @@ interface IResultWrapperProps<
 function ResultWrapper(props: IResultWrapperProps) {
   const {tab, pluginHash, searchResult, pluginName} = props;
   const search = useSearch();
-  const [searchState, setSearchState] = useState<SearchStateCode>(
-    searchResult?.state ?? SearchStateCode.IDLE,
+  const [searchState, setSearchState] = useState<RequestStateCode>(
+    searchResult?.state ?? RequestStateCode.IDLE,
   );
   const query = useAtomValue(queryAtom);
 
@@ -32,20 +32,20 @@ function ResultWrapper(props: IResultWrapperProps) {
   const data: any = searchResult?.data ?? [];
 
   useEffect(() => {
-    if (searchState === SearchStateCode.IDLE) {
+    if (searchState === RequestStateCode.IDLE) {
       search(query, 1, tab, pluginHash);
     }
   }, []);
 
   useEffect(() => {
-    setSearchState(searchResult?.state ?? SearchStateCode.IDLE);
+    setSearchState(searchResult?.state ?? RequestStateCode.IDLE);
   }, [searchResult]);
 
   const renderItem = ({item, index}: any) => (
-    <ResultComponent item={item} index={index}></ResultComponent>
+    <ResultComponent item={item} index={index} pluginHash={pluginHash}></ResultComponent>
   );
 
-  return searchState === SearchStateCode.PENDING_FP ? (
+  return searchState === RequestStateCode.PENDING_FP ? (
     <Loading></Loading>
   ) : (
     <FlatList
@@ -54,9 +54,9 @@ function ResultWrapper(props: IResultWrapperProps) {
       ListEmptyComponent={() => <ThemeText>什么都没有</ThemeText>}
       ListFooterComponent={() => (
         <ThemeText>
-          {searchState === SearchStateCode.PENDING
+          {searchState === RequestStateCode.PENDING
             ? '加载中...'
-            : searchState === SearchStateCode.FINISHED
+            : searchState === RequestStateCode.FINISHED
             ? '到底啦'
             : ''}
         </ThemeText>
@@ -67,8 +67,8 @@ function ResultWrapper(props: IResultWrapperProps) {
         search(query, 1, tab, pluginHash);
       }}
       onEndReached={() => {
-        (searchState === SearchStateCode.PARTLY_DONE ||
-          searchState === SearchStateCode.IDLE) &&
+        (searchState === RequestStateCode.PARTLY_DONE ||
+          searchState === RequestStateCode.IDLE) &&
           search(undefined, undefined, tab, pluginHash);
       }}
       renderItem={renderItem}></FlatList>

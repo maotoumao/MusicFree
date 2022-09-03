@@ -25,10 +25,6 @@ function getResultComponent(
         () => {
           const searchResults = useAtomValue(searchResultsAtom);
           const pluginSearchResult = searchResults[tab][pluginHash];
-          // 写的不对
-          useEffect(() => {
-            console.log(searchResults, 'results');
-          }, [searchResults])
           return <ResultWrapper
             tab={tab}
             searchResult={pluginSearchResult}
@@ -76,7 +72,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
             borderColor: 'transparent',
           }}
           tabStyle={{
-            width: rpx(128),
+            width: rpx(200),
           }}
           renderIndicator={() => null}
           pressColor="transparent"

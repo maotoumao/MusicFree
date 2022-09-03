@@ -30,13 +30,10 @@ export default function SimpleAppBar(props: ISimpleAppBarProps) {
 }
 
 const style = StyleSheet.create({
-  wrapper: {
-    width: rpx(750),
-    flex: 1,
-  },
   appbar: {
     shadowColor: 'transparent',
     backgroundColor: '#2b333eaa',
+    zIndex: 10000
   },
   header: {
     backgroundColor: 'transparent',

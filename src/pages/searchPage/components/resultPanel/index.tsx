@@ -47,7 +47,7 @@ function ResultPanel(props: IResultPanelProps) {
             borderColor: 'transparent',
           }}
           tabStyle={{
-            width: rpx(128),
+            width: rpx(200),
           }}
           renderLabel={({route, focused, color}) => (
             <Text

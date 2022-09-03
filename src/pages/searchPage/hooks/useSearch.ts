@@ -1,13 +1,11 @@
+import {errorLog, trace} from '@/common/logManager';
 import {Plugin, pluginManager} from '@/common/pluginManager';
+import {RequestStateCode} from '@/constants/commonConst';
+import { makeTag } from '@/utils/makeTag';
 import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
 import {useCallback, useRef} from 'react';
-import {
-  PageStatus,
-  pageStatusAtom,
-  searchResultsAtom,
-  SearchStateCode,
-} from '../store/atoms';
+import {PageStatus, pageStatusAtom, searchResultsAtom} from '../store/atoms';
 
 export default function useSearch() {
   const setPageStatus = useSetAtom(pageStatusAtom);
@@ -54,14 +52,12 @@ export default function useSearch() {
         const prevPluginResult = searchResults[searchType][plugin.hash];
         /** 上一份搜索还没返回/已经结束 */
         if (
-          (prevPluginResult?.state === SearchStateCode.PENDING ||
-            prevPluginResult?.state === SearchStateCode.FINISHED) &&
+          (prevPluginResult?.state === RequestStateCode.PENDING ||
+            prevPluginResult?.state === RequestStateCode.FINISHED) &&
           undefined === query
         ) {
           return;
         }
-
-        console.log('SEARCHWITH', _platform, searchType);
 
         // 是否是一次新的搜索
         const newSearch =
@@ -75,14 +71,21 @@ export default function useSearch() {
         const page =
           queryPage ?? newSearch ? 1 : (prevPluginResult?.page ?? 0) + 1;
 
+        trace('开始搜索', {
+          _platform,
+          query,
+          page,
+          searchType,
+        });
+
         try {
           setSearchResults(
             produce(draft => {
               const prevMediaResult: any = draft[searchType];
               prevMediaResult[_hash] = {
                 state: newSearch
-                  ? SearchStateCode.PENDING_FP
-                  : SearchStateCode.PENDING,
+                  ? RequestStateCode.PENDING_FP
+                  : RequestStateCode.PENDING,
                 // @ts-ignore
                 data: newSearch ? [] : prevMediaResult[_hash]?.data ?? [],
                 query: query,
@@ -103,7 +106,7 @@ export default function useSearch() {
           /** 切换到结果页 */
           setPageStatus(PageStatus.RESULT);
           if (!result) {
-            throw new Error();
+            throw new Error('搜索结果为空');
           }
           setSearchResults(
             produce(draft => {
@@ -116,8 +119,8 @@ export default function useSearch() {
               prevMediaResult[_hash] = {
                 state:
                   result?.isEnd === false && result?.data?.length
-                    ? SearchStateCode.PARTLY_DONE
-                    : SearchStateCode.FINISHED,
+                    ? RequestStateCode.PARTLY_DONE
+                    : RequestStateCode.FINISHED,
                 query,
                 page,
                 data: newSearch
@@ -128,14 +131,14 @@ export default function useSearch() {
             }),
           );
         } catch (e) {
-          console.log('SEARCH ERROR', e);
+          errorLog('', e);
           setPageStatus(PageStatus.RESULT);
           setSearchResults(
             produce(draft => {
               const prevMediaResult = draft[searchType];
               const prevPluginResult = prevMediaResult[_hash] ?? {data: []};
 
-              prevPluginResult.state = SearchStateCode.PARTLY_DONE;
+              prevPluginResult.state = RequestStateCode.PARTLY_DONE;
               return draft;
             }),
           );
@@ -148,12 +151,3 @@ export default function useSearch() {
   return search;
 }
 
-function makeTag<X extends Record<string, any>[] = any[]>(
-  objArray: X,
-  tag: string,
-): X {
-  objArray.forEach(_ => {
-    _.platform = tag;
-  });
-  return objArray;
-}

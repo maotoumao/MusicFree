@@ -20,7 +20,7 @@ const results: Array<{
   },
   {
     key: 'artist',
-    title: '创作者',
+    title: '作者',
     component: ArtistResultItem
   }
 ];

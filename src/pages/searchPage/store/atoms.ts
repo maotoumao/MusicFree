@@ -1,17 +1,8 @@
+import { RequestStateCode } from '@/constants/commonConst';
 import {atom} from 'jotai';
 
 /** 搜索状态 */
-export enum SearchStateCode {
-  /** 检索第一页 */
-  IDLE = 0,
-  PENDING_FP = 1,
-  /** 检索中 */
-  PENDING = 2,
-  /** 部分结束 */
-  PARTLY_DONE = 4,
-  /** 全部结束 */
-  FINISHED = 5,
-}
+
 
 export interface ISearchResult<T extends ICommon.SupportMediaType> {
   /** 当前页码 */
@@ -19,7 +10,7 @@ export interface ISearchResult<T extends ICommon.SupportMediaType> {
   /** 搜索词 */
   query?: string;
   /** 搜索状态 */
-  state: SearchStateCode;
+  state: RequestStateCode;
   /** 数据 */
   data: ICommon.SupportMediaItemBase[T][];
 }

@@ -11,9 +11,10 @@ import {ROUTE_PATH} from '@/entry/router';
 interface IArtistResultsProps {
   item: IArtist.IArtistItem;
   index: number;
+  pluginHash: string;
 }
 export default function ArtistResultItem(props: IArtistResultsProps) {
-  const {item: artistItem} = props;
+  const {item: artistItem, pluginHash} = props;
   const navigation = useNavigation<any>();
   return (
     <ListItem
@@ -27,6 +28,7 @@ export default function ArtistResultItem(props: IArtistResultsProps) {
       onPress={() => {
         navigation.navigate(ROUTE_PATH.ARTIST_DETAIL, {
           artistItem: artistItem,
+          pluginHash,
         });
       }}></ListItem>
   );

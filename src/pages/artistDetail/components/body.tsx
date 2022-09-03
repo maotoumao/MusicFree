@@ -1,28 +1,98 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {memo, useState} from 'react';
+import {StyleSheet, Text} from 'react-native';
 import rpx from '@/utils/rpx';
-import {FlatList} from 'react-native-gesture-handler';
+import {
+  SceneMap,
+  SceneRendererProps,
+  TabBar,
+  TabView,
+} from 'react-native-tab-view';
+import {fontWeightConst} from '@/constants/uiConst';
+import ResultList from './resultList';
+import {useAtomValue} from 'jotai';
+import {queryResultAtom} from '../store/atoms';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import content from './content';
+
+const sceneMap: Record<string, React.FC> = {
+  album: BodyContentWrapper,
+  music: BodyContentWrapper,
+};
+
+const routes = [
+  {
+    key: 'music',
+    title: '单曲',
+  },
+  {
+    key: 'album',
+    title: '专辑',
+  },
+];
 
 interface IBodyProps {}
 export default function Body(props: IBodyProps) {
+  const [index, setIndex] = useState(0);
+
   return (
-    <View style={style.wrapper}>
-      <FlatList
-        data={[1, 2, 3]}
-        renderItem={({item}) => (
-          <FlatList
-            data={[item + 1]}
-            renderItem={() => <Text>dsd</Text>}></FlatList>
-        )}></FlatList>
-    </View>
+    <TabView
+      lazy
+      style={style.wrapper}
+      navigationState={{
+        index,
+        routes,
+      }}
+      renderTabBar={props => (
+        <TabBar
+          {...props}
+          style={{
+            backgroundColor: 'transparent',
+            shadowColor: 'transparent',
+            borderColor: 'transparent',
+          }}
+          tabStyle={{
+            width: rpx(200),
+          }}
+          renderIndicator={() => null}
+          pressColor="transparent"
+          renderLabel={({route, focused, color}) => (
+            <Text
+              numberOfLines={1}
+              style={{
+                fontWeight: focused
+                  ? fontWeightConst.bolder
+                  : fontWeightConst.bold,
+                color,
+              }}>
+              {route.title}
+            </Text>
+          )}></TabBar>
+      )}
+      renderScene={SceneMap(sceneMap)}
+      onIndexChange={setIndex}
+      initialLayout={{width: rpx(750)}}></TabView>
+  );
+}
+
+export function BodyContentWrapper(props: any) {
+  const tab: IArtist.ArtistMediaType = props.route.key;
+  const queryResult = useAtomValue(queryResultAtom);
+
+  const Component = content[tab];
+  const renderItem = ({item, index}: any) => (
+    <Component item={item} index={index}></Component>
+  );
+
+  return (
+    <ResultList
+      tab={tab}
+      data={queryResult[tab]}
+      renderItem={renderItem}></ResultList>
   );
 }
 
 const style = StyleSheet.create({
   wrapper: {
-    width: rpx(750),
-    height: 900,
-    flexShrink: 0,
-    backgroundColor: 'blue',
+    zIndex: 100,
   },
 });

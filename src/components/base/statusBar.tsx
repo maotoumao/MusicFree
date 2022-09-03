@@ -12,6 +12,7 @@ export default function (props: IStatusBarProps) {
   return (
     <View
       style={{
+        zIndex: 10000,
         position: 'absolute',
         top: 0,
         backgroundColor: backgroundColor ?? colors.primary,
