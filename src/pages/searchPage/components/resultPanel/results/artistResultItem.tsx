@@ -23,7 +23,11 @@ export default function ArtistResultItem(props: IArtistResultsProps) {
         fallback: ImgAsset.albumDefault,
       }}
       title={artistItem.name}
-      desc={`${artistItem.worksNum}个作品    ${artistItem.description ?? ''}`}
+      desc={
+        artistItem.desc
+          ? artistItem.desc
+          : `${artistItem.worksNum}个作品    ${artistItem.description ?? ''}`
+      }
       tag={artistItem.platform}
       onPress={() => {
         navigation.navigate(ROUTE_PATH.ARTIST_DETAIL, {

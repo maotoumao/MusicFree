@@ -3,14 +3,14 @@ const metaReg = /\[(.+)\:(.+)\]/g;
 
 export default class LyricParser {
   private lastIndex: number = 0;
-  private lrcItems: Array<IMusic.ILrcItem>;
+  private lrcItems: Array<ILyric.IParsedLrcItem>;
   private meta: Record<string, any>;
   private currentMusicItem?: IMusic.IMusicItem;
 
   constructor(raw: string, currentMusicItem?: IMusic.IMusicItem) {
     raw = raw.trim();
     this.currentMusicItem = currentMusicItem;
-    const rawLrcItems: Array<IMusic.ILrcItem> = [];
+    const rawLrcItems: Array<ILyric.IParsedLrcItem> = [];
     const rawLrcs = raw.split(timeReg) ?? [];
     const rawTimes = raw.match(timeReg) ?? [];
     const len = rawTimes.length;
@@ -44,7 +44,7 @@ export default class LyricParser {
   }
 
   getPosition(position: number): {
-    lrc?: IMusic.ILrcItem;
+    lrc?: ILyric.IParsedLrcItem;
     index: number;
   } {
     position = position - (this.meta?.offset ?? 0);

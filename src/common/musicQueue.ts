@@ -269,6 +269,7 @@ const getMusicTrack = async (
     const plugin = pluginManager.getPlugin(musicItem.platform);
     if (plugin && plugin.instance.getMusicTrack) {
       try {
+        console.log(musicItem, plugin.instance);
         const {url, headers} =
           (await plugin.instance.getMusicTrack(musicItem)) ?? {};
         if (!url) {

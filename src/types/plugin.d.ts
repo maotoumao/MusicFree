@@ -39,8 +39,8 @@ declare namespace IPlugin {
       musicItem: IMusic.IMusicItemBase,
     ) => Promise<IMusicTrackResult | null>;
     /** 获取歌词 */
-    getLyric?: (musicItem: IMusic.IMusicItemBase) => Promise<string>;
-    /** 获取专辑信息 */
+    getLyric?: (musicItem: IMusic.IMusicItemBase) => Promise<ILyric.ILyricSource>;
+    /** 获取专辑信息[分页] */
     getAlbumInfo?: (
       albumItem: IAlbum.IAlbumItemBase,
     ) => Promise<IAlbum.IAlbumItem | null>;

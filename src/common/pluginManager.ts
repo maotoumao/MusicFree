@@ -1,4 +1,4 @@
-import RNFS from 'react-native-fs';
+import RNFS, {exists, readFile, writeFile} from 'react-native-fs';
 import CryptoJs from 'crypto-js';
 import dayjs from 'dayjs';
 import axios from 'axios';
@@ -8,6 +8,8 @@ import pathConst from '@/constants/pathConst';
 import {satisfies} from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
+import MediaMetaManager from './mediaMetaManager';
+import {nanoid} from 'nanoid';
 
 const sha256 = CryptoJs.SHA256;
 
@@ -105,42 +107,6 @@ export class Plugin {
   }
 }
 
-
-// async function doPluginMethodByName<
-//   N extends keyof IPlugin.IPluginInstanceMethods = keyof IPlugin.IPluginInstanceMethods,
-// >(
-//   pluginName: string,
-//   methodName: N,
-//   params: Parameters<IPlugin.IPluginInstanceMethods[N]>,
-//   mode: 'all' | 'first' = 'all',
-// ) {
-//   const plugins = pluginNameMapper.get(pluginName) ?? [];
-//   if (mode === 'all') {
-//   } else {
-//     let plugin, res, func;
-//     for (let i = 0; i < plugins.length; ++i) {
-//       plugin = plugins[i];
-//       func = plugin.instance[methodName];
-//       if (plugin.instance[methodName]) {
-//         res = await safeCallMethod(func, ...params);
-//       }
-//     }
-//   }
-// }
-/** domethod */
-function safeCallMethod<Args extends any[], R extends Promise<any>>(
-  method: (...args: Args) => R,
-  ...args: Args
-): R | null {
-  try {
-    return method.call(null, ...args);
-  } catch {
-    return null;
-  }
-}
-
-
-
 class PluginManager {
   private plugins: Array<Plugin> = [];
   loading: boolean = true;
@@ -218,4 +184,60 @@ function usePlugins() {
   return plugins;
 }
 
-export {pluginManager, usePlugins};
+/** 封装的插件方法 */
+const pluginMethod = {
+  async getLyric(musicItem: IMusic.IMusicItem): Promise<string | undefined> {
+    console.log('getlyric');
+    const meta = MediaMetaManager.getMediaMeta(musicItem) ?? {};
+    console.log(meta, musicItem);
+    if (meta?.rawLrc || musicItem.rawLrc) {
+      return meta.rawLrc ?? musicItem.rawLrc;
+    }
+    if (meta.localLrc && (await exists(meta.localLrc))) {
+      return await readFile(meta.localLrc, 'utf8');
+    }
+    let lrcUrl: string | undefined = meta?.lrc ?? musicItem.lrc;
+    let rawLrc: string | undefined;
+    if(lrcUrl){
+      try{
+        rawLrc = (await axios.get(lrcUrl, {
+          timeout: 2000
+        })).data;
+        console.log(rawLrc);
+      } catch{
+        lrcUrl = undefined;
+      }
+    }
+    if (!lrcUrl) {
+      const plugin = pluginManager.getPlugin(musicItem.platform);
+      try {
+        const lrcSource = await plugin?.instance?.getLyric?.(musicItem);
+        rawLrc = lrcSource?.rawLrc;
+        lrcUrl = lrcSource?.lrc;
+      } catch(e) {console.log(e)};
+    }
+    if (rawLrc || lrcUrl) {
+      const filename = `${pathConst.lrcCachePath}${nanoid()}.lrc`;
+      if (rawLrc) {
+        await writeFile(filename, rawLrc, 'utf8');
+        MediaMetaManager.updateMediaMeta(musicItem, {
+          localLrc: filename,
+        });
+        return rawLrc;
+      }
+      if (lrcUrl) {
+        try {
+          const content = (await axios.get(lrcUrl)).data;
+          await writeFile(filename, content, 'utf8');
+          MediaMetaManager.updateMediaMeta(musicItem, {
+            localLrc: filename,
+            lrc: lrcUrl,
+          });
+          return content;
+        } catch {}
+      }
+    }
+  },
+};
+
+export {pluginManager, usePlugins, pluginMethod};

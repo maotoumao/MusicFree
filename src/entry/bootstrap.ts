@@ -12,6 +12,7 @@ import DownloadManager from '@/common/downloadManager';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
 import {errorLog} from '@/common/logManager';
+import MediaMetaManager from '@/common/mediaMetaManager';
 
 /** app加载前执行 */
 export default async function () {
@@ -39,9 +40,10 @@ export default async function () {
   Promise.all([
     await pluginManager.setupPlugins(),
     await TrackPlayer.setupPlayer(),
+    await MediaMetaManager.setupMediaMeta(),
   ]);
   await TrackPlayer.updateOptions({
-    progressUpdateEventInterval: 2,
+    progressUpdateEventInterval: 0.8,
     stopWithApp: false,
     alwaysPauseOnInterruption: true,
     capabilities: [
@@ -82,5 +84,6 @@ async function setupFolder() {
     checkAndCreateDir(pathConst.cachePath),
     checkAndCreateDir(pathConst.storagePath),
     checkAndCreateDir(pathConst.pluginPath),
+    checkAndCreateDir(pathConst.lrcCachePath)
   ]);
 }

@@ -15,3 +15,25 @@ export async function getStorage(key: string) {
   } catch {}
   return null;
 }
+
+export async function getMultiStorage(keys: string[]) {
+  if (keys.length === 0) {
+    return [];
+  }
+  const result = await AsyncStorage.multiGet(keys);
+
+  return result.map(_ => {
+    try {
+      if (_[1]) {
+        return JSON.parse(_[1]);
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  });
+}
+
+export async function removeStorage(key: string) {
+  return AsyncStorage.removeItem(key);
+}

@@ -25,19 +25,13 @@ declare namespace IMusic {
     artwork: string;
     /** 音源 */
     url?: string;
-    /** 歌词 */
+    /** 歌词URL */
     lrc?: string;
+    /** 歌词 */
+    rawLrc?: string;
     /** 其他可以被序列化的信息 */
     [k: string]: any;
     /** 内部信息 */
     [k: symbol]: any;
   }
-  export interface ILrcItem {
-    /** 时间 s */
-    time: number;
-    /** 歌词 */
-    lrc: string;
-  }
-
-  export type ILrc = ILrcItem[];
 }

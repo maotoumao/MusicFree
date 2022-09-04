@@ -13,6 +13,7 @@ interface IAlbumDetailProps {}
 export default function AlbumDetail(props: IAlbumDetailProps) {
   const route = useRoute<any>();
   const albumItem = route.params?.albumItem ?? null;
+  console.log(albumItem);
   const musicList = useAlbumMusicList(albumItem);
 
 
