@@ -19,7 +19,6 @@ export default function useQueryArtist(pluginHash: string) {
       const plugin = pluginManager.getPluginByHash(pluginHash);
 
       const prevResult = queryResults[type];
-      console.log('PREV', prevResult);
       if (
         prevResult?.state === RequestStateCode.PENDING ||
         prevResult?.state === RequestStateCode.FINISHED
@@ -34,6 +33,7 @@ export default function useQueryArtist(pluginHash: string) {
             draft[type].state = RequestStateCode.PENDING;
           }),
         );
+
         const result = await plugin?.instance?.queryArtistWorks?.(
           artist,
           page,
@@ -42,13 +42,13 @@ export default function useQueryArtist(pluginHash: string) {
         setQueryResults(
           produce(draft => {
             draft[type].page = page;
-            (draft[type].state =
+            draft[type].state =
               result?.isEnd === false
                 ? RequestStateCode.PARTLY_DONE
-                : RequestStateCode.FINISHED),
-              (draft[type].data = (draft[type].data ?? []).concat(
-                makeTag(result?.data ?? [], plugin?.name ?? ''),
-              ));
+                : RequestStateCode.FINISHED;
+            draft[type].data = (draft[type].data ?? []).concat(
+              makeTag(result?.data ?? [], plugin?.name ?? ''),
+            );
           }),
         );
       } catch (e) {

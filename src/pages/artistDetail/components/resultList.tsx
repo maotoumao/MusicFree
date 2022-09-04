@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicItem from '@/components/musicList/musicItem';
+import MusicItem from '@/components/mediaItem/musicItem';
 import {FlatList} from 'react-native-gesture-handler';
-import {useSetAtom} from 'jotai';
+import {useAtom, useSetAtom} from 'jotai';
 import {IQueryResult, scrollToTopAtom} from '../store/atoms';
 import {RequestStateCode} from '@/constants/commonConst';
 import useQueryArtist from '../hooks/useQuery';
@@ -32,7 +32,7 @@ interface IResultListProps<T = IArtist.ArtistMediaType> {
 }
 export default function ResultList(props: IResultListProps) {
   const {data, renderItem, tab} = props;
-  const setScrollToTopState = useSetAtom(scrollToTopAtom);
+  const [scrollToTopState, setScrollToTopState] = useAtom(scrollToTopAtom);
   const lastScrollY = useRef<number>(0);
   const route = useRoute<any>();
   const pluginHash: string = route.params.pluginHash;
@@ -55,15 +55,18 @@ export default function ResultList(props: IResultListProps) {
     <FlatList
       onScroll={e => {
         const currentY = e.nativeEvent.contentOffset.y;
-        if (currentY < ITEM_HEIGHT * 8) {
+        if (!scrollToTopState && currentY < ITEM_HEIGHT * 8 - rpx(350)) {
           currentY < lastScrollY.current && setScrollToTopState(true);
         } else {
-          setScrollToTopState(false);
+          if (scrollToTopState && currentY > ITEM_HEIGHT * 8) {
+            currentY > lastScrollY.current && setScrollToTopState(false);
+          }
         }
         lastScrollY.current = currentY;
       }}
       onEndReached={() => {
-        (queryState === RequestStateCode.IDLE || queryState === RequestStateCode.PARTLY_DONE) &&
+        (queryState === RequestStateCode.IDLE ||
+          queryState === RequestStateCode.PARTLY_DONE) &&
           queryArtist(artistItem, undefined, tab);
       }}
       getItemLayout={(_, index) => ({

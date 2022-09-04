@@ -11,7 +11,7 @@ import ListItem from '@/components/base/listItem';
 import IconButton from '@/components/base/iconButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DownloadManager from '@/common/downloadManager';
-import MusicItem from './musicItem';
+import MusicItem from '../mediaItem/musicItem';
 
 interface IMusicListProps {
   /** 顶部 */

@@ -8,15 +8,17 @@ import SimpleAppBar from '@/components/base/simpleAppBar';
 import Header from './components/header';
 import Body from './components/body';
 import {useSetAtom} from 'jotai';
-import {initQueryResult, queryResultAtom} from './store/atoms';
+import {initQueryResult, queryResultAtom, scrollToTopAtom} from './store/atoms';
 
 interface IArtistDetailProps {}
 export default function ArtistDetail(props: IArtistDetailProps) {
   const setQueryResult = useSetAtom(queryResultAtom);
+  const setScrollToTopState = useSetAtom(scrollToTopAtom);
 
   useEffect(() => {
     return () => {
       setQueryResult(initQueryResult);
+      setScrollToTopState(true);
     };
   }, []);
 

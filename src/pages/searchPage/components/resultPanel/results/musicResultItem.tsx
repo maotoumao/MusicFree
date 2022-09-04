@@ -1,5 +1,5 @@
 import React from 'react';
-import MusicItem from '@/components/musicList/musicItem';
+import MusicItem from '@/components/mediaItem/musicItem';
 
 interface IMusicResultsProps {
   item: IMusic.IMusicItem;

@@ -8,6 +8,7 @@ import ListItem from '@/components/base/listItem';
 import useSearch from '@/pages/searchPage/hooks/useSearch';
 import Loading from '@/components/base/loading';
 import {ImgAsset} from '@/constants/assetsConst';
+import AlbumItem from '@/components/mediaItem/albumItem';
 
 interface IAlbumResultsProps {
   item: IAlbum.IAlbumItem;
@@ -15,22 +16,7 @@ interface IAlbumResultsProps {
 }
 /** todo 很多rerender，需要避免掉 */
 export default function AlbumResultItem(props: IAlbumResultsProps) {
-  const {item: albumItem, index} = props;
-  const navigation = useNavigation<any>();
+  const {item: albumItem} = props;
 
-  return (
-    <ListItem
-      left={{
-        artwork: albumItem.artwork,
-        fallback: ImgAsset.albumDefault,
-      }}
-      title={albumItem.title}
-      desc={`${albumItem.artist}    ${albumItem.date}`}
-      tag={albumItem.platform}
-      onPress={() => {
-        navigation.navigate(ROUTE_PATH.ALBUM_DETAIL, {
-          albumItem: albumItem,
-        });
-      }}></ListItem>
-  );
+  return <AlbumItem albumItem={albumItem}></AlbumItem>;
 }
