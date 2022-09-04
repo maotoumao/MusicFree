@@ -26,7 +26,6 @@ export default function useQueryArtist(pluginHash: string) {
         return;
       }
       page = page ?? (prevResult.page ?? 0) + 1;
-      console.log('获取作者详情', {artist, page, type, pluginHash});
       try {
         setQueryResults(
           produce(draft => {

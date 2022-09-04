@@ -13,8 +13,8 @@ import StateMapper from '@/utils/stateMapper';
 
 // pluginname - tablekey
 let mediaMetaKeys: Record<string, string> = {};
-// pluginname - mediameta
-let mediaMetas: Record<string, Record<string, any>> = {};
+// pluginname - id - mediameta
+let mediaMetas: Record<string, Record<string, ICommon.IMediaMeta>> = {};
 const mediaMetasStateMapper = new StateMapper(() => mediaMetas); // 可能不用状态
 
 async function setupMediaMeta() {

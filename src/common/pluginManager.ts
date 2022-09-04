@@ -10,6 +10,7 @@ import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
 import MediaMetaManager from './mediaMetaManager';
 import {nanoid} from 'nanoid';
+import isSameMusicItem from '@/utils/isSameMusicItem';
 
 const sha256 = CryptoJs.SHA256;
 
@@ -186,10 +187,27 @@ function usePlugins() {
 
 /** 封装的插件方法 */
 const pluginMethod = {
-  async getLyric(musicItem: IMusic.IMusicItem): Promise<string | undefined> {
-    console.log('getlyric');
+  async getLyric(
+    musicItem: IMusic.IMusicItem,
+    from?: IMusic.IMusicItem,
+  ): Promise<string | undefined> {
     const meta = MediaMetaManager.getMediaMeta(musicItem) ?? {};
-    console.log(meta, musicItem);
+    if (meta.associatedLrc) {
+      if (isSameMusicItem(musicItem, from) || isSameMusicItem(meta.associatedLrc, musicItem)) {
+        // 形成了环 只把自己断开
+        await MediaMetaManager.updateMediaMeta(musicItem, {
+          associatedLrc: undefined,
+        });
+        return;
+      }
+      const result = await pluginMethod.getLyric(
+        meta.associatedLrc as IMusic.IMusicItem,
+        from ?? musicItem,
+      );
+      if (result) {
+        return result;
+      }
+    }
     if (meta?.rawLrc || musicItem.rawLrc) {
       return meta.rawLrc ?? musicItem.rawLrc;
     }
@@ -198,13 +216,15 @@ const pluginMethod = {
     }
     let lrcUrl: string | undefined = meta?.lrc ?? musicItem.lrc;
     let rawLrc: string | undefined;
-    if(lrcUrl){
-      try{
-        rawLrc = (await axios.get(lrcUrl, {
-          timeout: 2000
-        })).data;
+    if (lrcUrl) {
+      try {
+        rawLrc = (
+          await axios.get(lrcUrl, {
+            timeout: 2000,
+          })
+        ).data;
         console.log(rawLrc);
-      } catch{
+      } catch {
         lrcUrl = undefined;
       }
     }
@@ -214,7 +234,9 @@ const pluginMethod = {
         const lrcSource = await plugin?.instance?.getLyric?.(musicItem);
         rawLrc = lrcSource?.rawLrc;
         lrcUrl = lrcSource?.lrc;
-      } catch(e) {console.log(e)};
+      } catch (e) {
+        console.log(e);
+      }
     }
     if (rawLrc || lrcUrl) {
       const filename = `${pathConst.lrcCachePath}${nanoid()}.lrc`;

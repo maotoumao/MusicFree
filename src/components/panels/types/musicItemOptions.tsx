@@ -18,6 +18,7 @@ import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Clipboard from '@react-native-clipboard/clipboard';
 import FastImage from 'react-native-fast-image';
+import MediaMetaManager from '@/common/mediaMetaManager';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -38,8 +39,22 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
   function closePanel() {
     sheetRef.current?.close();
   }
+  // 关联歌词
+  const associatedLrc = MediaMetaManager.getMediaMeta(musicItem)?.associatedLrc;
 
   const options = [
+    {
+      icon: 'id-card',
+      title: `ID: ${musicItem.platform}@${musicItem.id}`,
+      onPress: () => {
+        Clipboard.setString(
+          JSON.stringify({
+            platform: musicItem.platform,
+            id: musicItem.id,
+          }, null, ''),
+        );
+      },
+    },
     {
       icon: 'account-music-outline',
       title: `作者: ${musicItem.artist}`,
@@ -98,6 +113,28 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       show: downloaded,
       onPress: async () => {
         await DownloadManager.removeDownloaded(musicItem);
+        closePanel();
+      },
+    },
+    {
+      icon: 'link-variant',
+      title: associatedLrc
+        ? `已关联歌词 ${associatedLrc.platform}@${associatedLrc.id}`
+        : '关联歌词',
+      onPress: async () => {
+        showPanel('AssociateLrc', {
+          musicItem
+        })
+      },
+    },
+    {
+      icon: 'link-variant-remove',
+      title: '取消关联歌词',
+      show: !!associatedLrc,
+      onPress: () => {
+        MediaMetaManager.updateMediaMeta(musicItem, {
+          associatedLrc: undefined,
+        });
         closePanel();
       },
     },

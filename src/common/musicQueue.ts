@@ -300,7 +300,6 @@ const getMusicTrack = async (
 /** 播放音乐 */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
   try {
-    console.log('HIII');
     const _currentIndex = findMusicIndex(musicItem);
     if (!musicItem && _currentIndex === currentIndex) {
       // 如果暂停就继续播放，否则

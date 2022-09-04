@@ -24,6 +24,7 @@ interface IDownloadMusicOptions {
   filename: string;
   jobId?: number;
 }
+// todo： 直接把下载信息写在meta里面就好了
 /** 已下载 */
 let downloadedMusic: IMusic.IMusicItem[] = [];
 /** 下载中 */

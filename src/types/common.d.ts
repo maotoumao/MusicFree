@@ -15,4 +15,14 @@ declare namespace ICommon {
     [k: string]: any;
     [k: symbol]: any;
   };
+
+  export type IMediaMeta = {
+    localLrc?: string;
+    lrc?: string;
+    associatedLrc?: IMediaBase;
+    id?: string;
+    platform?: string;
+    [k: string]: any;
+    [k: symbol]: any;
+  };
 }

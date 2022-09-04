@@ -1,4 +1,5 @@
 import AddToMusicSheet from './addToMusicSheet';
+import AssociateLrc from './associateLrc';
 import MusicItemOptions from './musicItemOptions';
 import NewMusicSheet from './newMusicSheet';
 import PlayList from './playList';
@@ -12,4 +13,6 @@ export default {
   NewMusicSheet: NewMusicSheet,
   /** 当前播放列表 */
   PlayList: PlayList,
+  /** 关联歌词 */
+  AssociateLrc: AssociateLrc
 };
