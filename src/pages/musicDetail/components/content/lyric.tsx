@@ -8,10 +8,12 @@ import LyricParser from '@/common/lrcParser';
 import isSameMusicItem from '@/utils/isSameMusicItem';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
-import useDelayFalse from '@/hooks/useDelayState';
+import useDelayFalsy from '@/hooks/useDelayFalsy';
 import {FlatList} from 'react-native-gesture-handler';
 import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
+import IconButton from '@/components/base/iconButton';
+import musicIsPaused from '@/utils/musicIsPaused';
 
 interface ICurrentLyricItem {
   lrc?: IMusic.ILrcItem;
@@ -90,13 +92,19 @@ function Empty() {
 export default function Lyric(props: IContentProps) {
   const [lyric, currentLrcItem, meta] = useLyric();
   const [drag, setDrag] = useState(false);
-  const [draggingIndex, setDraggingIndex] = useState<number | undefined>(
-    undefined,
-  );
+  const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] = useDelayFalsy<
+    number | undefined
+  >(undefined, 2000);
   const listRef = useRef<FlatList<IMusic.ILrcItem> | null>();
+  const musicState = MusicQueue.usePlaybackState();
 
   useEffect(() => {
-    if (lyric.length === 0 || drag) {
+    // 暂停且拖拽才返回
+    if (
+      lyric.length === 0 ||
+      draggingIndex !== undefined ||
+      (draggingIndex === undefined && musicIsPaused(musicState))
+    ) {
       return;
     }
     if (currentLrcItem?.index === -1 || !currentLrcItem) {
@@ -110,7 +118,8 @@ export default function Lyric(props: IContentProps) {
         viewPosition: 0,
       });
     }
-  }, [currentLrcItem, lyric, drag]);
+    // 音乐暂停状态不应该影响到滑动，所以不放在依赖里，但是这样写不好。。
+  }, [currentLrcItem, lyric, draggingIndex]);
 
   const onScrollBeginDrag = (e: any) => {
     setDrag(true);
@@ -119,8 +128,6 @@ export default function Lyric(props: IContentProps) {
   const onScrollEndDrag = async () => {
     if (draggingIndex !== undefined) {
       setDraggingIndex(undefined);
-      const time = lyric[draggingIndex].time + meta?.offset ?? 0;
-      time !== undefined && (await MusicQueue.seekTo(time));
     }
     setDrag(false);
   };
@@ -128,6 +135,17 @@ export default function Lyric(props: IContentProps) {
   const onScroll = (e: any) => {
     if (drag) {
       setDraggingIndex(Math.floor(e.nativeEvent.contentOffset.y / ITEM_HEIGHT));
+    }
+  };
+
+  const onLyricSeekPress = async () => {
+    if (draggingIndex !== undefined) {
+      const time = lyric[draggingIndex].time + meta?.offset ?? 0;
+      if (time !== undefined) {
+        await MusicQueue.seekTo(time);
+        await MusicQueue.play();
+        setDraggingIndexImmi(undefined);
+      }
     }
   };
 
@@ -144,6 +162,8 @@ export default function Lyric(props: IContentProps) {
         })}
         ListHeaderComponent={Empty}
         ListFooterComponent={Empty}
+        onStartShouldSetResponder={() => true}
+        onStartShouldSetResponderCapture={() => true}
         onScrollBeginDrag={onScrollBeginDrag}
         onScrollEndDrag={onScrollEndDrag}
         onScroll={onScroll}
@@ -152,9 +172,12 @@ export default function Lyric(props: IContentProps) {
         extraData={currentLrcItem}
         renderItem={({item, index}) => (
           <ThemeText
-            style={
-              index === currentLrcItem?.index ? style.highlightItem : style.item
-            }>
+            style={[
+              index === currentLrcItem?.index
+                ? style.highlightItem
+                : style.item,
+              index === draggingIndex ? style.draggingItem : undefined,
+            ]}>
             {item.lrc}
           </ThemeText>
         )}></FlatList>
@@ -165,6 +188,12 @@ export default function Lyric(props: IContentProps) {
               (lyric[draggingIndex]?.time ?? 0) + (meta?.offset ?? 0),
             )}
           </Text>
+          <View style={style.singleLine}></View>
+          <IconButton
+            style={style.playIcon}
+            size="small"
+            name="play"
+            onPress={onLyricSeekPress}></IconButton>
         </View>
       )}
     </>
@@ -193,21 +222,37 @@ const style = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
   },
+  draggingItem: {
+    color: '#dddddd',
+  },
   empty: {
     paddingTop: '60%',
   },
   draggingTime: {
     position: 'absolute',
-    width: 200,
+    width: rpx(750),
     height: ITEM_HEIGHT,
     top: '40%',
     marginTop: rpx(48),
+    paddingHorizontal: rpx(28),
     left: 0,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   draggingTimeText: {
     color: '#dddddd',
     fontSize: fontSizeConst.description,
-    paddingLeft: rpx(24),
+    width: rpx(90),
+  },
+  singleLine: {
+    width: rpx(458),
+    height: 1,
+    backgroundColor: '#cccccc',
+    opacity: 0.4
+  },
+  playIcon: {
+    width: rpx(90),
+    textAlign: 'right',
   },
 });
