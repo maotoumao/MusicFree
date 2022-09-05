@@ -14,21 +14,15 @@ export default function Content(props: IContentProps) {
   const [tab, selectTab] = useState<'album' | 'lyric'>('album');
 
   const onPress = (evt: any) => {
-    if (evt.nativeEvent.state === State.ACTIVE) {
-      if (tab === 'album') {
-        selectTab('lyric');
-      } else {
-        selectTab('album');
-      }
+    if (tab === 'album') {
+      selectTab('lyric');
+    } else {
+      selectTab('album');
     }
   };
 
   return (
-    <TapGestureHandler
-      onGestureEvent={() => {
-        console.log('WTF');
-      }}
-      onHandlerStateChange={onPress}>
+    <TapGestureHandler onActivated={onPress}>
       <View style={style.wrapper}>
         {tab === 'album' ? <AlbumCover></AlbumCover> : <Lyric></Lyric>}
       </View>

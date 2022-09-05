@@ -53,7 +53,9 @@ export default function HomeDrawer(props: IDrawerProps) {
     {
       icon: 'backup-restore',
       title: '备份与恢复',
-      onPress: () => {},
+      onPress: () => {
+        navigateToSetting('backup');
+      },
     },
   ] as const;
 
@@ -62,19 +64,21 @@ export default function HomeDrawer(props: IDrawerProps) {
       <PageBackground></PageBackground>
       <DrawerContentScrollView {...props} style={style.scrollWrapper}>
         <View style={style.header}>
-          <ThemeText fontSize='appbar' fontWeight='bold'>{DeviceInfo.getApplicationName()}</ThemeText>
+          <ThemeText fontSize="appbar" fontWeight="bold">
+            {DeviceInfo.getApplicationName()}
+          </ThemeText>
           <IconButton icon={'qrcode-scan'} size={rpx(36)}></IconButton>
         </View>
         <Card style={style.card}>
           <Card.Title
             title={
-              <ThemeText fontSize='description'>设置</ThemeText>
+              <ThemeText fontSize="description">设置</ThemeText>
             }></Card.Title>
-          <Card.Content>
+          <Card.Content style={style.cardContent}>
             {basicSetting.map(item => (
               <ListItem
+                itemHeight={rpx(110)}
                 key={item.title}
-                itemPaddingHorizontal={0}
                 left={{
                   icon: {
                     name: item.icon,
@@ -121,6 +125,9 @@ const style = StyleSheet.create({
   },
   card: {
     backgroundColor: '#eeeeee22',
+  },
+  cardContent: {
+    paddingHorizontal: 0
   },
   bottom: {
     height: rpx(100),

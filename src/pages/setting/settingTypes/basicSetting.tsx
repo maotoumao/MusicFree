@@ -16,6 +16,9 @@ export default function BasicSetting(props: IBasicSettingProps) {
     '清空缓存(图片缓存+其他缓存)',
     '缓存容量上限(100MB, 200MB, 1GB, 2GB)'
   ]
+  const options = [{
+    
+  }]
   return (
     <View style={style.wrapper}>
       {d?.map(_ => (

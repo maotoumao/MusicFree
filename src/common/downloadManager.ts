@@ -17,6 +17,7 @@ import {
   readFile,
 } from 'react-native-fs';
 import Toast from 'react-native-toast-message';
+import MediaMetaManager from './mediaMetaManager';
 import {pluginManager} from './pluginManager';
 
 interface IDownloadMusicOptions {
@@ -31,8 +32,7 @@ let downloadedMusic: IMusic.IMusicItem[] = [];
 let downloadingMusicQueue: IDownloadMusicOptions[] = [];
 /** 队列中 */
 let pendingMusicQueue: IDownloadMusicOptions[] = [];
-/** meta */
-let downloadedData: Record<string, IMusic.IMusicItem> = {};
+
 /** 进度 */
 let downloadingProgress: Record<string, {progress: number; size: number}> = {};
 
@@ -124,11 +124,8 @@ async function loadLocalJson(dirBase: string) {
 /** 初始化 */
 async function setupDownload() {
   await checkAndCreateDir(pathConst.downloadPath);
-  const jsonData = await loadLocalJson(pathConst.downloadPath);
-  downloadedData = deepmerge(
-    (await getStorage('download-music')) ?? {},
-    jsonData,
-  );
+  // const jsonData = await loadLocalJson(pathConst.downloadPath);
+
   const newDownloadedData: Record<string, IMusic.IMusicItem> = {};
   const downloads = await readDir(pathConst.downloadPath);
   downloadedMusic = [];
@@ -136,13 +133,17 @@ async function setupDownload() {
   for (let i = 0; i < downloads.length; ++i) {
     const data = parseFilename(downloads[i].name);
     if (data) {
-      const key = `${data.platform}${data.id}`;
-      const mi = downloadedData[key] ?? {...data};
-      mi[internalKey] = {
-        localPath: downloads[i].path,
-      };
-      downloadedMusic.push(mi);
-      newDownloadedData[key] = mi;
+      const platform = data?.platform;
+      const id = data?.id;
+      if (platform && id) {
+        const mi = MediaMetaManager.getMediaMeta(data);
+        mi.id = id;
+        mi.platform = platform;
+        mi[internalKey] = {
+          localPath: downloads[i].path,
+        };
+        downloadedMusic.push(mi as IMusic.IMusicItem);
+      }
     }
   }
   downloadedStateMapper.notify();
@@ -224,8 +225,7 @@ async function downloadNext() {
       return _;
     });
     removeFromDownloadingQueue(nextItem);
-    downloadedData[`${musicItem.platform}${musicItem.id}`] = musicItem;
-    setStorage('download-music', downloadedData);
+    MediaMetaManager.updateMediaMeta({...musicItem, '#downloaded': true});
     if (downloadingMusicQueue.length === 0) {
       stopNotifyProgress();
       Toast.show({

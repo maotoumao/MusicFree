@@ -3,7 +3,13 @@ import {Keyboard, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {useAtom, useSetAtom} from 'jotai';
-import {pageStatusAtom, PageStatus, queryAtom, searchResultsAtom, initSearchResults} from '../store/atoms';
+import {
+  pageStatusAtom,
+  PageStatus,
+  queryAtom,
+  searchResultsAtom,
+  initSearchResults,
+} from '../store/atoms';
 import useSearch from '../hooks/useSearch';
 import {Appbar, Button, Searchbar} from 'react-native-paper';
 import {addHistory} from '../common/historySearch';
@@ -50,7 +56,12 @@ export default function NavBar(props: INavBarProps) {
         }}
         placeholder="输入要搜索的歌曲"
         onSubmitEditing={onSearchSubmit}
-        onChangeText={_ => setQuery(_)}
+        onChangeText={_ => {
+          if(_ === '') {
+            setPageStatus(PageStatus.EDITING);
+          }
+          setQuery(_);
+        }}
         value={query}></Searchbar>
       <Button color={textColor} onPress={onSearchSubmit}>
         搜索

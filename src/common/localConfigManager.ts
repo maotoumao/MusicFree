@@ -11,7 +11,11 @@ interface IConfig {
       maxDownload: boolean;
       /** 插件合并结果 */
       mergePluginResult: boolean;
-    },
+    };
+    debug: {
+      errorLog: boolean;
+      traceLog: boolean;
+    };
     /** 主题 */
     theme: {
       mode: 'light' | 'dark' | 'custom-light' | 'custom-dark';
@@ -19,10 +23,10 @@ interface IConfig {
       backgroundOpacity: number;
       backgroundBlur: number;
       colors: {
-        primary: string,
-        secondary: string,
-        textHighlight: string,
-        pageBackground: string
+        primary: string;
+        secondary: string;
+        textHighlight: string;
+        pageBackground: string;
       };
     };
   };
