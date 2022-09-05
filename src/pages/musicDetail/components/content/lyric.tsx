@@ -16,7 +16,7 @@ import {
 } from 'react-native-gesture-handler';
 import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
-import IconButton from '@/components/base/iconButton';
+import IconButton, { IconButtonWithGesture } from '@/components/base/iconButton';
 import musicIsPaused from '@/utils/musicIsPaused';
 import MediaMetaManager from '@/common/mediaMetaManager';
 import {pluginMethod} from '@/common/pluginManager';
@@ -197,11 +197,11 @@ export default function Lyric(props: IContentProps) {
           </Text>
           <View style={style.singleLine}></View>
 
-          <IconButton
+          <IconButtonWithGesture
             style={style.playIcon}
             size="small"
             name="play"
-            onPress={onLyricSeekPress}></IconButton>
+            onPress={onLyricSeekPress}></IconButtonWithGesture>
         </View>
       )}
     </>

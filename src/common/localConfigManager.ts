@@ -8,14 +8,17 @@ interface IConfig {
   setting: {
     basic: {
       /** 最大同时下载 */
-      maxDownload: boolean;
-      /** 插件合并结果 */
-      mergePluginResult: boolean;
+      maxDownload: number | string;
+      /** 同时播放 */
+      notInterrupt: boolean;
+
+
+      debug: {
+        errorLog: boolean;
+        traceLog: boolean;
+      };
     };
-    debug: {
-      errorLog: boolean;
-      traceLog: boolean;
-    };
+    
     /** 主题 */
     theme: {
       mode: 'light' | 'dark' | 'custom-light' | 'custom-dark';
@@ -144,11 +147,11 @@ export async function setConfig<T extends IConfigPaths>(
 }
 
 /** 获取config */
-export function getConfig(): Promise<PartialConfig>;
+export function getConfig(): PartialConfig;
 export function getConfig<T extends IConfigPaths>(
   key: T,
-): Promise<IConfigPathsObj[T]>;
-export async function getConfig(key?: string) {
+): IConfigPathsObj[T];
+export function getConfig(key?: string) {
   let result: any = config;
   if (key && config) {
     result = getPathValue(config, key);

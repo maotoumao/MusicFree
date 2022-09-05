@@ -90,7 +90,7 @@ export default function Header(props: IHeaderProps) {
           icon="download-circle-outline"
           size={rpx(48)}
           onPress={async () => {
-            showDialog('simple-dialog', {
+            showDialog('SimpleDialog', {
               title: '下载专辑',
               content: `确定下载${musicList?.length}首歌吗?`,
               onOk() {

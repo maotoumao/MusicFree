@@ -74,7 +74,7 @@ const leftStyle = StyleSheet.create({
 /** 歌单item */
 interface IListItemProps {
   /** 标题 */
-  title: string;
+  title: string | number;
   /** 描述 */
   desc?: string | JSX.Element;
   /** 标签 */

@@ -1,15 +1,19 @@
 import {atom, useAtom} from 'jotai';
+import {IDialogKey, IDialogType} from './components';
 
-const dialogNameAtom = atom<keyof IDialogType | null>(null);
-const payloadAtom = atom<IDialogType[keyof IDialogType] | undefined>(undefined);
+type injectedProps = 'visible' | 'hideDialog';
+const dialogNameAtom = atom<IDialogKey | null>(null);
+const payloadAtom = atom<
+  Omit<Parameters<IDialogType[keyof IDialogType]>[0], injectedProps> | undefined
+>(undefined);
 
-type IDialogType = {
-  'simple-dialog': {
-    title: string;
-    content: string;
-    onOk?: () => void;
-  };
-};
+// type IDialogType = {
+//   'simple-dialog': {
+//     title: string;
+//     content: string;
+//     onOk?: () => void;
+//   };
+// };
 
 export default function useDialog() {
   const [dialogName, setDialogName] = useAtom(dialogNameAtom);
@@ -17,7 +21,7 @@ export default function useDialog() {
 
   function showDialog<T extends keyof IDialogType>(
     name: T,
-    payload?: IDialogType[T],
+    payload?: Omit<Parameters<IDialogType[T]>[0], injectedProps>,
   ) {
     setDialogName(name);
     setPayload(payload);

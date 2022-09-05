@@ -1,6 +1,7 @@
 import {logger, fileAsyncTransport} from 'react-native-logs';
-import RNFS, {} from 'react-native-fs';
+import RNFS from 'react-native-fs';
 import pathConst from '@/constants/pathConst';
+import {getConfig} from './localConfigManager';
 
 const config = {
   transport: fileAsyncTransport,
@@ -34,21 +35,22 @@ export function trace(
     console.log(desc, message);
   }
   // 特殊情况记录操作路径
-  if (false) {
+  if (getConfig('setting.basic.debug.traceLog')) {
     traceLogger[level]({
       desc,
       message,
     });
   }
- 
 }
 
 export function errorLog(desc: string, message: any) {
-  log.error({
-    desc,
-    message,
-  });
-  trace(desc, message, 'error');
+  if (getConfig('setting.basic.debug.errorLog')) {
+    log.error({
+      desc,
+      message,
+    });
+    trace(desc, message, 'error');
+  }
 }
 
 export {log};

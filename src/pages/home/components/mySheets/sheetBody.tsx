@@ -37,7 +37,7 @@ export default function SheetBody(props: ISheetBodyProps) {
             <IconButton
               name="dots-vertical"
               onPress={() => {
-                showDialog('simple-dialog', {
+                showDialog('SimpleDialog', {
                   title: '删除歌单',
                   content: `确定删除歌单${sheet.title}吗?`,
                   onOk: () => {

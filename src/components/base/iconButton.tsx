@@ -12,7 +12,7 @@ interface IIconButtonProps {
   fontColor?: ColorKey;
   onPress?: () => void;
 }
-export default function IconButton(props: IIconButtonProps) {
+export function IconButtonWithGesture(props: IIconButtonProps) {
   const {name, size = 'normal', fontColor = 'normal', onPress, style} = props;
   const theme = useTheme();
   const textSize = iconSizeConst[size];
@@ -28,5 +28,23 @@ export default function IconButton(props: IIconButtonProps) {
         ]}
         size={textSize}></Icon>
     </TapGestureHandler>
+  );
+}
+
+export default function IconButton(props: IIconButtonProps) {
+  const {name, size = 'normal', fontColor = 'normal', onPress, style} = props;
+  const theme = useTheme();
+  const textSize = iconSizeConst[size];
+  const color = theme.colors[colorMap[fontColor]];
+  return (
+    <Icon
+      name={name}
+      color={color}
+      onPress={onPress}
+      style={[
+        {height: '100%', minWidth: textSize, textAlignVertical: 'center'},
+        style,
+      ]}
+      size={textSize}></Icon>
   );
 }

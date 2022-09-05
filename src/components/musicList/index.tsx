@@ -1,16 +1,9 @@
 import React from 'react';
-import {FlatListProps, StyleSheet, Text} from 'react-native';
+import {FlatListProps, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useRoute} from '@react-navigation/native';
-import MusicSheet from '@/common/musicSheetManager';
 import MusicQueue from '@/common/musicQueue';
-import usePanel from '@/components/panels/usePanel';
 import {FlatList} from 'react-native-gesture-handler';
 
-import ListItem from '@/components/base/listItem';
-import IconButton from '@/components/base/iconButton';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import DownloadManager from '@/common/downloadManager';
 import MusicItem from '../mediaItem/musicItem';
 
 interface IMusicListProps {

@@ -17,6 +17,7 @@ import {
   readFile,
 } from 'react-native-fs';
 import Toast from 'react-native-toast-message';
+import { getConfig } from './localConfigManager';
 import MediaMetaManager from './mediaMetaManager';
 import {pluginManager} from './pluginManager';
 
@@ -151,10 +152,11 @@ async function setupDownload() {
   setStorage('download-music', newDownloadedData);
 }
 
+let maxDownload = 3;
 /** 从队列取出下一个要下载的 */
 async function downloadNext() {
   // todo 最大同时下载3个，可设置
-  if (downloadingMusicQueue.length >= 3 || pendingMusicQueue.length === 0) {
+  if (downloadingMusicQueue.length >= maxDownload || pendingMusicQueue.length === 0) {
     return;
   }
   const nextItem = pendingMusicQueue[0];
@@ -269,6 +271,7 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
   if (enqueueData.length) {
     pendingMusicQueue = pendingMusicQueue.concat(enqueueData);
     pendingMusicQueueStateMapper.notify();
+    maxDownload = +(getConfig('setting.basic.maxDownload') ?? 3);
     downloadNext();
   }
 }

@@ -1,12 +1,20 @@
 import React from 'react';
 import {Portal} from 'react-native-paper';
-import SimpleDialog from './components/simpleDialog';
+import components from './components';
+import useDialog from './useDialog';
 
 interface IProps {}
 export default function (props: IProps) {
+  const {dialogName, hideDialog, payload} = useDialog();
+  console.log(dialogName);
   return (
     <Portal>
-      <SimpleDialog></SimpleDialog>
+      {components.map(([key, DialogComponent]) => (
+        <DialogComponent
+          visible={dialogName === key}
+          hideDialog={hideDialog}
+          {...(payload ?? {})}></DialogComponent>
+      ))}
     </Portal>
   );
 }

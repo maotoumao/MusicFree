@@ -1,4 +1,4 @@
-import {setConfig} from '@/common/localConfigManager';
+import {getConfig, setConfig} from '@/common/localConfigManager';
 import musicIsPaused from '@/utils/musicIsPaused';
 import TrackPlayer, {Event, State} from 'react-native-track-player';
 import MusicQueue from '../common/musicQueue';
@@ -14,6 +14,9 @@ module.exports = async function () {
   TrackPlayer.addEventListener(
     Event.RemoteDuck,
     async ({paused, parmanent}) => {
+      if (getConfig('setting.basic.notInterrupt')) {
+        return;
+      }
       if (parmanent) {
         return MusicQueue.pause();
       }

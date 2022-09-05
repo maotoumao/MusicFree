@@ -40,7 +40,7 @@ export default function PluginSetting(props: IPluginSettingProps) {
                     name="trash-can-outline"
                     size="normal"
                     onPress={() => {
-                      showDialog('simple-dialog', {
+                      showDialog('SimpleDialog', {
                         title: '卸载插件',
                         content: `确认卸载插件${plugin.instance.platform}吗`,
                         async onOk() {
