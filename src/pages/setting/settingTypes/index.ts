@@ -1,3 +1,4 @@
+import BackupSetting from "./backupSetting";
 import BasicSetting from "./basicSetting";
 import PluginSetting from "./pluginSetting";
 import ThemeSetting from "./themeSetting";
@@ -17,6 +18,10 @@ const settingTypes: Record<string, {
     theme: {
         title: '主题设置',
         component: ThemeSetting
+    },
+    backup: {
+        title: '备份与恢复',
+        component: BackupSetting
     }
 }
 

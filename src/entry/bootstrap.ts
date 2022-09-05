@@ -15,7 +15,7 @@ import {errorLog} from '@/common/logManager';
 import MediaMetaManager from '@/common/mediaMetaManager';
 
 /** app加载前执行 */
-export default async function () {
+async function _bootstrap() {
   // 检查权限
   const [readStoragePermission, writeStoragePermission] = await Promise.all([
     check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE),
@@ -36,14 +36,22 @@ export default async function () {
   // 加载配置
   await loadConfig();
   // 加载插件
+  try {
+    await TrackPlayer.setupPlayer();
+  } catch (e: any) {
+    if (
+      e?.message !== 'The player has already been initialized via setupPlayer.'
+    ) {
+      throw e;
+    }
+  }
 
   Promise.all([
     await pluginManager.setupPlugins(),
-    await TrackPlayer.setupPlayer(),
     await MediaMetaManager.setupMediaMeta(),
   ]);
   await TrackPlayer.updateOptions({
-    progressUpdateEventInterval: 0.8,
+    progressUpdateEventInterval: 0.4,
     stopWithApp: false,
     alwaysPauseOnInterruption: true,
     capabilities: [
@@ -72,8 +80,6 @@ export default async function () {
   ErrorUtils.setGlobalHandler(error => {
     errorLog('未捕获的错误', error);
   });
-  // 隐藏开屏动画
-  RNBootSplash.hide({fade: true});
 }
 
 /** 初始化 */
@@ -84,6 +90,18 @@ async function setupFolder() {
     checkAndCreateDir(pathConst.cachePath),
     checkAndCreateDir(pathConst.storagePath),
     checkAndCreateDir(pathConst.pluginPath),
-    checkAndCreateDir(pathConst.lrcCachePath)
+    checkAndCreateDir(pathConst.lrcCachePath),
   ]);
+}
+
+export default async function () {
+  try {
+    await _bootstrap();
+  } catch (e) {
+    errorLog('初始化出错', e);
+    console.log(e);
+  }
+  // 隐藏开屏动画
+  console.log('HIDE');
+  RNBootSplash.hide({fade: true});
 }

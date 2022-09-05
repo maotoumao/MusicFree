@@ -137,7 +137,7 @@ async function setupDownload() {
       const platform = data?.platform;
       const id = data?.id;
       if (platform && id) {
-        const mi = MediaMetaManager.getMediaMeta(data);
+        const mi = MediaMetaManager.getMediaMeta(data) ?? {};
         mi.id = id;
         mi.platform = platform;
         mi[internalKey] = {
