@@ -41,7 +41,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
   }
   // 关联歌词
   const associatedLrc = MediaMetaManager.getMediaMeta(musicItem)?.associatedLrc;
-
+  // todo: padding bottom
   const options = [
     {
       icon: 'id-card',

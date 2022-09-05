@@ -15,6 +15,7 @@ import useColors from '@/hooks/useColors';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import MediaMetaManager from '@/common/mediaMetaManager';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { errorLog } from '@/common/logManager';
 
 interface INewMusicSheetProps {
   musicItem: IMusic.IMusicItem;
@@ -79,9 +80,8 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                   });
                 }
                 closePanel();
-              } catch(e) {
-                console.log(e);
-                // todo toast 无法解析
+              } catch(e: any) {
+                errorLog('关联歌词失败', e?.message);
               }
             }
           }}>

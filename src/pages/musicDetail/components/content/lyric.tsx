@@ -16,6 +16,8 @@ import IconButton from '@/components/base/iconButton';
 import musicIsPaused from '@/utils/musicIsPaused';
 import MediaMetaManager from '@/common/mediaMetaManager';
 import {pluginMethod} from '@/common/pluginManager';
+import {trace} from '@/common/logManager';
+import Loading from '@/components/base/loading';
 
 interface ICurrentLyricItem {
   lrc?: ILyric.IParsedLrcItem;
@@ -27,27 +29,42 @@ function useLyric() {
   const musicItemRef = useRef<IMusic.IMusicItem>();
   const progress = MusicQueue.useProgress();
   const lrcManagerRef = useRef<LyricParser>();
+  const [loading, setLoading] = useState(true);
 
   const [lyric, setLyric] = useState<ILyric.IParsedLrc>([]);
   const [meta, setMeta] = useState<Record<string, any>>({});
   const [currentLrcItem, setCurentLrcItem] = useState<ICurrentLyricItem>();
 
   useEffect(() => {
-    musicItemRef.current = musicItem;
     if (
       !lrcManagerRef.current ||
-      !isSameMusicItem(lrcManagerRef.current.getCurrentMusicItem(), musicItem)
+      !isSameMusicItem(lrcManagerRef.current?.getCurrentMusicItem?.(), musicItem)
     ) {
+      setLoading(true);
       // 查询meta中是否有歌词
-      pluginMethod.getLyric(musicItem).then(lrc => {
-        if (lrc && isSameMusicItem(musicItem, musicItemRef.current)) {
-          const parser = new LyricParser(lrc, musicItem);
-          setLyric(parser.getLyric());
-          setMeta(parser.getMeta());
-          lrcManagerRef.current = parser;
-        }
-      });
+      pluginMethod
+        .getLyric(musicItem)
+        .then(lrc => {
+          setLoading(false);
+          trace(musicItem.title, lrc);
+          if (isSameMusicItem(musicItem, musicItemRef.current)) {
+            if (lrc) {
+              const parser = new LyricParser(lrc, musicItem);
+              setLyric(parser.getLyric());
+              setMeta(parser.getMeta());
+              lrcManagerRef.current = parser;
+            } else {
+              setLyric([]);
+              setMeta({});
+              lrcManagerRef.current = undefined;
+            }
+          }
+        })
+        .catch(_ => {
+          setLoading(false);
+        });
     }
+    musicItemRef.current = musicItem;
   }, [musicItem]);
 
   useEffect(() => {
@@ -56,7 +73,7 @@ function useLyric() {
     }
   }, [progress]);
 
-  return [lyric, currentLrcItem, meta] as const;
+  return {lyric, currentLrcItem, meta, loading} as const;
 }
 
 const ITEM_HEIGHT = rpx(72);
@@ -67,7 +84,7 @@ function Empty() {
 }
 
 export default function Lyric(props: IContentProps) {
-  const [lyric, currentLrcItem, meta] = useLyric();
+  const {lyric, currentLrcItem, meta, loading} = useLyric();
   const [drag, setDrag] = useState(false);
   const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] = useDelayFalsy<
     number | undefined
@@ -128,36 +145,43 @@ export default function Lyric(props: IContentProps) {
 
   return (
     <>
-      <FlatList
-        ref={_ => {
-          listRef.current = _;
-        }}
-        getItemLayout={(data, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
-        ListHeaderComponent={Empty}
-        ListFooterComponent={Empty}
-        onStartShouldSetResponder={() => true}
-        onStartShouldSetResponderCapture={() => true}
-        onScrollBeginDrag={onScrollBeginDrag}
-        onScrollEndDrag={onScrollEndDrag}
-        onScroll={onScroll}
-        style={style.wrapper}
-        data={lyric}
-        extraData={currentLrcItem}
-        renderItem={({item, index}) => (
-          <ThemeText
-            style={[
-              index === currentLrcItem?.index
-                ? style.highlightItem
-                : style.item,
-              index === draggingIndex ? style.draggingItem : undefined,
-            ]}>
-            {item.lrc}
-          </ThemeText>
-        )}></FlatList>
+      {loading ? (
+        <Loading></Loading>
+      ) : (
+        <FlatList
+          ref={_ => {
+            listRef.current = _;
+          }}
+          getItemLayout={(data, index) => ({
+            length: ITEM_HEIGHT,
+            offset: ITEM_HEIGHT * index,
+            index,
+          })}
+          ListEmptyComponent={
+            <ThemeText style={style.highlightItem}>暂无歌词</ThemeText>
+          }
+          ListHeaderComponent={Empty}
+          ListFooterComponent={Empty}
+          onStartShouldSetResponder={() => true}
+          onStartShouldSetResponderCapture={() => true}
+          onScrollBeginDrag={onScrollBeginDrag}
+          onScrollEndDrag={onScrollEndDrag}
+          onScroll={onScroll}
+          style={style.wrapper}
+          data={lyric}
+          extraData={currentLrcItem}
+          renderItem={({item, index}) => (
+            <ThemeText
+              style={[
+                index === currentLrcItem?.index
+                  ? style.highlightItem
+                  : style.item,
+                index === draggingIndex ? style.draggingItem : undefined,
+              ]}>
+              {item.lrc}
+            </ThemeText>
+          )}></FlatList>
+      )}
       {draggingIndex !== undefined && (
         <View style={style.draggingTime}>
           <Text style={style.draggingTimeText}>

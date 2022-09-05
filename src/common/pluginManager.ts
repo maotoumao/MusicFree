@@ -11,16 +11,19 @@ import StateMapper from '@/utils/stateMapper';
 import MediaMetaManager from './mediaMetaManager';
 import {nanoid} from 'nanoid';
 import isSameMusicItem from '@/utils/isSameMusicItem';
+import {errorLog, trace} from './logManager';
+
+axios.defaults.timeout = 1500;
 
 const sha256 = CryptoJs.SHA256;
 
 enum PluginStateCode {
   /** 版本不匹配 */
-  VersionNotMatch,
+  VersionNotMatch = 'VERSION NOT MATCH',
   /** 插件不完整 */
-  NotComplete,
+  NotComplete = 'NOT COMPLETE',
   /** 无法解析 */
-  CannotParse,
+  CannotParse = 'CANNOT PARSE',
 }
 export class Plugin {
   /** 插件名 */
@@ -56,6 +59,11 @@ export class Plugin {
       if (e?.stateCode) {
         this.stateCode = e.stateCode;
       }
+      errorLog(`${pluginPath}插件无法解析 `, {
+        stateCode: this.stateCode,
+        message: e?.message,
+        stack: e?.stack,
+      });
       _instance = e?.instance ?? {
         _path: '',
         platform: '',
@@ -193,7 +201,10 @@ const pluginMethod = {
   ): Promise<string | undefined> {
     const meta = MediaMetaManager.getMediaMeta(musicItem) ?? {};
     if (meta.associatedLrc) {
-      if (isSameMusicItem(musicItem, from) || isSameMusicItem(meta.associatedLrc, musicItem)) {
+      if (
+        isSameMusicItem(musicItem, from) ||
+        isSameMusicItem(meta.associatedLrc, musicItem)
+      ) {
         // 形成了环 只把自己断开
         await MediaMetaManager.updateMediaMeta(musicItem, {
           associatedLrc: undefined,
@@ -218,12 +229,8 @@ const pluginMethod = {
     let rawLrc: string | undefined;
     if (lrcUrl) {
       try {
-        rawLrc = (
-          await axios.get(lrcUrl, {
-            timeout: 2000,
-          })
-        ).data;
-        console.log(rawLrc);
+        // 需要超时时间 axios timeout 但是没生效
+        rawLrc = (await axios.get(lrcUrl)).data;
       } catch {
         lrcUrl = undefined;
       }
@@ -234,8 +241,8 @@ const pluginMethod = {
         const lrcSource = await plugin?.instance?.getLyric?.(musicItem);
         rawLrc = lrcSource?.rawLrc;
         lrcUrl = lrcSource?.lrc;
-      } catch (e) {
-        console.log(e);
+      } catch (e: any) {
+        trace('插件获取失败', e?.message, 'error');
       }
     }
     if (rawLrc || lrcUrl) {

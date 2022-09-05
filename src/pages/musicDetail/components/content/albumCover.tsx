@@ -10,6 +10,7 @@ interface IAlbumCoverProps {}
 export default function AlbumCover(props: IAlbumCoverProps) {
   const musicItem = MusicQueue.useCurrentMusicItem();
   return (
+    // todo: 封装一层
     <FastImage
       style={style.artwork}
       source={{

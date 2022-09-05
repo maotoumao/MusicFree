@@ -70,7 +70,10 @@ async function updateMediaMeta(mediaItem: ICommon.IMediaBase, patch?: Record<str
   }
   const _patch = patch ?? mediaItem;
   const newMeta = produce(mediaMetas, draft => {
-    const pluginMeta = mediaMetas[platform];
+    const pluginMeta = mediaMetas[platform] ?? {};
+    if(!draft[platform]) {
+      draft[platform] = {};
+    }
     if (pluginMeta[id]) {
       draft[platform][id] = {...pluginMeta[id], ..._patch};
     } else {

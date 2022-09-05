@@ -34,7 +34,7 @@ export function trace(
     console.log(desc, message);
   }
   // 特殊情况记录操作路径
-  if (true) {
+  if (false) {
     traceLogger[level]({
       desc,
       message,
