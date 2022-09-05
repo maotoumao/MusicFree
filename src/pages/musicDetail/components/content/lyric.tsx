@@ -9,7 +9,11 @@ import isSameMusicItem from '@/utils/isSameMusicItem';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import useDelayFalsy from '@/hooks/useDelayFalsy';
-import {FlatList} from 'react-native-gesture-handler';
+import {
+  FlatList,
+  Gesture,
+  TapGestureHandler,
+} from 'react-native-gesture-handler';
 import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
 import IconButton from '@/components/base/iconButton';
@@ -38,10 +42,12 @@ function useLyric() {
   useEffect(() => {
     if (
       !lrcManagerRef.current ||
-      !isSameMusicItem(lrcManagerRef.current?.getCurrentMusicItem?.(), musicItem)
+      !isSameMusicItem(
+        lrcManagerRef.current?.getCurrentMusicItem?.(),
+        musicItem,
+      )
     ) {
       setLoading(true);
-      // 查询meta中是否有歌词
       pluginMethod
         .getLyric(musicItem)
         .then(lrc => {
@@ -190,6 +196,7 @@ export default function Lyric(props: IContentProps) {
             )}
           </Text>
           <View style={style.singleLine}></View>
+
           <IconButton
             style={style.playIcon}
             size="small"
