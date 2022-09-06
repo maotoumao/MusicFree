@@ -1,16 +1,15 @@
 import React, {memo, useEffect, useState} from 'react';
 import {useAtomValue} from 'jotai';
-import {
-  ISearchResult,
-  queryAtom,
-  searchResultsAtom,
-} from '../../store/atoms';
+import {ISearchResult, queryAtom, searchResultsAtom} from '../../store/atoms';
 import {renderMap} from './results';
 import useSearch from '../../hooks/useSearch';
 import Loading from '@/components/base/loading';
 import {FlatList, StyleSheet} from 'react-native';
 import ThemeText from '@/components/base/themeText';
-import { RequestStateCode } from '@/constants/commonConst';
+import {RequestStateCode} from '@/constants/commonConst';
+import ListLoading from '@/components/base/listLoading';
+import Empty from '@/components/base/empty';
+import ListReachEnd from '@/components/base/listReachEnd';
 
 interface IResultWrapperProps<
   T extends ICommon.SupportMediaType = ICommon.SupportMediaType,
@@ -42,7 +41,10 @@ function ResultWrapper(props: IResultWrapperProps) {
   }, [searchResult]);
 
   const renderItem = ({item, index}: any) => (
-    <ResultComponent item={item} index={index} pluginHash={pluginHash}></ResultComponent>
+    <ResultComponent
+      item={item}
+      index={index}
+      pluginHash={pluginHash}></ResultComponent>
   );
 
   return searchState === RequestStateCode.PENDING_FP ? (
@@ -51,16 +53,16 @@ function ResultWrapper(props: IResultWrapperProps) {
     <FlatList
       extraData={searchState}
       style={style.list}
-      ListEmptyComponent={() => <ThemeText>什么都没有</ThemeText>}
-      ListFooterComponent={() => (
-        <ThemeText>
-          {searchState === RequestStateCode.PENDING
-            ? '加载中...'
-            : searchState === RequestStateCode.FINISHED
-            ? '到底啦'
-            : ''}
-        </ThemeText>
-      )}
+      ListEmptyComponent={() => <Empty></Empty>}
+      ListFooterComponent={() =>
+        searchState === RequestStateCode.PENDING ? (
+          <ListLoading></ListLoading>
+        ) : searchState === RequestStateCode.FINISHED ? (
+          <ListReachEnd></ListReachEnd>
+        ) : (
+          <></>
+        )
+      }
       data={data}
       refreshing={false}
       onRefresh={() => {

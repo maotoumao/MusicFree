@@ -1,4 +1,4 @@
-import {internalKey} from '@/constants/commonConst';
+import {internalSymbolKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
 import isSameMusicItem from '@/utils/isSameMusicItem';
@@ -142,7 +142,7 @@ async function setupDownload() {
         mi.platform = platform;
         mi.title = mi.title ?? data.title;
         mi.artist = mi.artist ?? data.artist;
-        mi[internalKey] = {
+        mi[internalSymbolKey] = {
           localPath: downloads[i].path,
         };
         downloadedMusic.push(mi as IMusic.IMusicItem);
@@ -224,7 +224,7 @@ async function downloadNext() {
       ) {
         _.push({
           ...musicItem,
-          [internalKey]: {
+          [internalSymbolKey]: {
             localPath: pathConst.downloadPath + nextItem.filename,
           },
         });
@@ -295,10 +295,13 @@ function getDownloaded(mi: IMusic.IMusicItem | null) {
 
 /** 移除下载的文件 */
 async function removeDownloaded(mi: IMusic.IMusicItem) {
-  const localPath = getDownloaded(mi)?.[internalKey]?.localPath;
+  const localPath = getDownloaded(mi)?.[internalSymbolKey]?.localPath;
   if (localPath) {
     await unlink(localPath);
     downloadedMusic = downloadedMusic.filter(_ => !isSameMusicItem(_, mi));
+    MediaMetaManager.updateMediaMeta(mi, {
+      isDownloaded: undefined
+    })
     downloadedStateMapper.notify();
   }
 }

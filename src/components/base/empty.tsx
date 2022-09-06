@@ -6,14 +6,10 @@ import { fontWeightConst } from '@/constants/uiConst';
 import ThemeText from './themeText';
 
 
-interface ILoadingProps {}
-export default function Loading(props: ILoadingProps) {
-  const {colors} = useTheme();
-
+export default function Empty() {
   return (
     <View style={style.wrapper}>
-      <ActivityIndicator animating color={colors.text}></ActivityIndicator>
-      <ThemeText fontSize='title' fontWeight='semibold' style={style.text}>加载中...</ThemeText>
+      <ThemeText fontSize='title' >什么都没有呀~</ThemeText>
     </View>
   );
 }
@@ -22,10 +18,8 @@ const style = StyleSheet.create({
   wrapper: {
     width: '100%',
     flex: 1,
+    minHeight: rpx(300),
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  text: {
-    marginTop: rpx(48),
   },
 });

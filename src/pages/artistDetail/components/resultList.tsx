@@ -8,6 +8,9 @@ import {IQueryResult, scrollToTopAtom} from '../store/atoms';
 import {RequestStateCode} from '@/constants/commonConst';
 import useQueryArtist from '../hooks/useQuery';
 import {useRoute} from '@react-navigation/native';
+import Empty from '@/components/base/empty';
+import ListLoading from '@/components/base/listLoading';
+import ListReachEnd from '@/components/base/listReachEnd';
 
 const fakeMusicList = Array(50)
   .fill(1)
@@ -64,6 +67,16 @@ export default function ResultList(props: IResultListProps) {
         }
         lastScrollY.current = currentY;
       }}
+      ListEmptyComponent={<Empty></Empty>}
+      ListFooterComponent={
+        queryState === RequestStateCode.PENDING ? (
+          <ListLoading></ListLoading>
+        ) : (queryState === RequestStateCode.FINISHED && data.data?.length !== 0) ? (
+          <ListReachEnd></ListReachEnd>
+        ) : (
+          <></>
+        )
+      }
       onEndReached={() => {
         (queryState === RequestStateCode.IDLE ||
           queryState === RequestStateCode.PARTLY_DONE) &&

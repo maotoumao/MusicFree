@@ -2,18 +2,17 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { fontWeightConst } from '@/constants/uiConst';
+import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
 import ThemeText from './themeText';
 
 
 interface ILoadingProps {}
-export default function Loading(props: ILoadingProps) {
+export default function ListLoading(props: ILoadingProps) {
   const {colors} = useTheme();
 
   return (
     <View style={style.wrapper}>
-      <ActivityIndicator animating color={colors.text}></ActivityIndicator>
-      <ThemeText fontSize='title' fontWeight='semibold' style={style.text}>加载中...</ThemeText>
+      <ActivityIndicator animating color={colors.text} size={fontSizeConst.title}></ActivityIndicator>
     </View>
   );
 }
@@ -21,11 +20,8 @@ export default function Loading(props: ILoadingProps) {
 const style = StyleSheet.create({
   wrapper: {
     width: '100%',
-    flex: 1,
+    height: rpx(100),
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  text: {
-    marginTop: rpx(48),
   },
 });

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, {useRef} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {
@@ -11,8 +11,8 @@ import ThemeText from '@/components/base/themeText';
 import {useTheme} from 'react-native-paper';
 import ListItem from '@/components/base/listItem';
 import MusicSheet from '@/common/musicSheetManager';
-import { ImgAsset } from '@/constants/assetsConst';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import {ImgAsset} from '@/constants/assetsConst';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface IAddToMusicSheetProps {
   musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -27,7 +27,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
 
   return (
     <BottomSheet
-    ref={_ => sheetRef.current = _}
+      ref={_ => (sheetRef.current = _)}
       backdropComponent={props => {
         return (
           <BottomSheetBackdrop
@@ -44,7 +44,10 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
       enableOverDrag={false}
       onClose={unmountPanel}>
       <View style={style.header}>
-        <ThemeText fontSize='title' fontWeight='semibold'>添加到歌单</ThemeText>
+        <ThemeText fontSize="title" fontWeight="semibold">
+          添加到歌单
+          <ThemeText fontSize="subTitle" fontColor="secondary"> ({Array.isArray(musicItem) ? musicItem.length : 1})</ThemeText>
+        </ThemeText>
       </View>
       <BottomSheetFlatList
         data={sheets ?? []}
@@ -54,8 +57,8 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
             key={`${sheet.id}`}
             title={sheet.title}
             left={{
-              artwork:sheet.coverImg,
-              fallback: ImgAsset.albumDefault
+              artwork: sheet.coverImg,
+              fallback: ImgAsset.albumDefault,
             }}
             onPress={async () => {
               try {

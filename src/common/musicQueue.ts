@@ -12,7 +12,7 @@ import {pluginManager} from './pluginManager';
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import {getConfig, setConfig} from './localConfigManager';
-import {internalKey} from '@/constants/commonConst';
+import {internalSymbolKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import DownloadManager from './downloadManager';
 import delay from '@/utils/delay';
@@ -125,7 +125,7 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
   } else {
     musicQueue = produce(musicQueue, draft => {
       return draft.sort(
-        (a, b) => a?.[internalKey]?.globalId - b?.[internalKey]?.globalId ?? 0,
+        (a, b) => a?.[internalSymbolKey]?.globalId - b?.[internalSymbolKey]?.globalId ?? 0,
       );
     });
   }
@@ -158,10 +158,10 @@ const addAll = (
   const _musicItems = musicItems
     .map(item =>
       produce(item, draft => {
-        if (draft[internalKey]) {
-          draft[internalKey].globalId = ++globalId;
+        if (draft[internalSymbolKey]) {
+          draft[internalSymbolKey].globalId = ++globalId;
         } else {
-          draft[internalKey] = {
+          draft[internalSymbolKey] = {
             globalId: ++globalId,
           };
         }
@@ -257,8 +257,8 @@ const getMusicTrack = async (
   let track: Track;
 
   const localPath =
-    musicItem?.[internalKey]?.localPath ??
-    DownloadManager.getDownloaded(musicItem)?.[internalKey]?.localPath;
+    musicItem?.[internalSymbolKey]?.localPath ??
+    DownloadManager.getDownloaded(musicItem)?.[internalSymbolKey]?.localPath;
 
   if (localPath && (await exists(localPath))) {
     track = produce(musicItem, draft => {

@@ -17,7 +17,7 @@ import {fontSizeConst} from '@/constants/uiConst';
 import ThemeText from '@/components/base/themeText';
 import IconButton from '@/components/base/iconButton';
 import isSameMusicItem from '@/utils/isSameMusicItem';
-import {internalKey} from '@/constants/commonConst';
+import {internalSymbolKey} from '@/constants/commonConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import useOnceEffect from '@/hooks/useOnceEffect';
 
@@ -84,7 +84,7 @@ export default function PlayList(props: IPlayListProps) {
         }}
         data={musicQueue}
         extraData={currentMusicItem}
-        keyExtractor={_ => _[internalKey]?.globalKey ?? `${_.id}-${_.platform}`}
+        keyExtractor={_ => _[internalSymbolKey]?.globalKey ?? `${_.id}-${_.platform}`}
         getItemLayout={(_, index) => ({
           length: ITEM_HEIGHT,
           offset: ITEM_HEIGHT * index,
