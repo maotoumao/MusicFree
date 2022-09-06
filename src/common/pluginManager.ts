@@ -121,7 +121,7 @@ class PluginManager {
   loading: boolean = true;
   /** 插件安装位置 */
   pluginPath: string = pathConst.pluginPath;
-  constructor() {}
+  constructor(private onSetup: () => void) {}
 
   private loadPlugin(funcCode: string, pluginPath: string) {
     const plugin = new Plugin(funcCode, pluginPath);
@@ -170,6 +170,7 @@ class PluginManager {
           this.loadPlugin(funcCode, _plugin.path);
         }
       }
+      this.onSetup();
       this.loading = false;
     } catch (e: any) {
       ToastAndroid.show(`插件初始化失败:${e?.message ?? e}`, ToastAndroid.LONG);
@@ -179,19 +180,22 @@ class PluginManager {
   }
 }
 
-const pluginManager = new PluginManager();
+const pluginManager = new PluginManager(() => {
+  pluginStateMapper?.notify?.();
+});
+const pluginStateMapper = new StateMapper(() => pluginManager?.getPlugins?.());
 
-function usePlugins() {
-  const [plugins, setPlugins] = useState(pluginManager.getValidPlugins());
+// function usePlugins() {
+//   const [plugins, setPlugins] = useState(pluginManager.getValidPlugins());
 
-  useEffect(() => {
-    if (pluginManager.loading === false) {
-      setPlugins(pluginManager.getValidPlugins());
-    }
-  }, [pluginManager.loading]);
+//   useEffect(() => {
+//     if (pluginManager.loading === false) {
+//       setPlugins(pluginManager.getValidPlugins());
+//     }
+//   }, [pluginManager.loading]);
 
-  return plugins;
-}
+//   return plugins;
+// }
 
 /** 封装的插件方法 */
 const pluginMethod = {
@@ -268,5 +272,7 @@ const pluginMethod = {
     }
   },
 };
+
+const usePlugins = pluginStateMapper.useMappedState;
 
 export {pluginManager, usePlugins, pluginMethod};

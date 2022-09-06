@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {pluginManager} from '@/common/pluginManager';
-import {Button, List, useTheme} from 'react-native-paper';
+import {pluginManager, usePlugins} from '@/common/pluginManager';
+import {AnimatedFAB, Button, List, useTheme} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Loading from '@/components/base/loading';
@@ -13,14 +13,14 @@ import useDialog from '@/components/dialogs/useDialog';
 
 interface IPluginSettingProps {}
 export default function PluginSetting(props: IPluginSettingProps) {
-  const [plugins, setPlugins] = useState(pluginManager.getPlugins());
+  const plugins = usePlugins();
   const [loading, setLoading] = useState(false);
   const {colors} = useTheme();
   const {showDialog} = useDialog();
 
-  useEffect(() => {});
   return (
     <View style={style.wrapper}>
+
       <ThemeText fontSize="subTitle" style={style.header}>
         插件列表
       </ThemeText>
@@ -49,7 +49,6 @@ export default function PluginSetting(props: IPluginSettingProps) {
                             await RNFS.unlink(plugin.instance._path);
 
                             await pluginManager.setupPlugins();
-                            setPlugins(pluginManager.getPlugins());
                           } catch {}
                           setLoading(false);
                         },
@@ -70,12 +69,14 @@ export default function PluginSetting(props: IPluginSettingProps) {
                 const name =
                   _.name ?? _.uri.substring(_.uri.lastIndexOf('/') + 1);
                 return name.endsWith('.js')
-                  ? RNFS.copyFile(_.uri, pluginManager.pluginPath + `${Date.now()}${name}`)
+                  ? RNFS.copyFile(
+                      _.uri,
+                      pluginManager.pluginPath + `${Date.now()}${name}`,
+                    )
                   : Promise.resolve();
               }),
             );
             await pluginManager.setupPlugins();
-            setPlugins(pluginManager.getPlugins());
           } catch (e) {
             console.log(e, '寄了');
           }
@@ -83,6 +84,13 @@ export default function PluginSetting(props: IPluginSettingProps) {
         }}>
         新增插件
       </Button>
+      <AnimatedFAB
+        icon="plus"
+        animateFrom={'right'}
+        extended
+        iconMode="dynamic"
+        style={style.fab}
+        label="添加插件"></AnimatedFAB>
     </View>
   );
 }
@@ -92,8 +100,14 @@ const style = StyleSheet.create({
     width: rpx(750),
     padding: rpx(24),
     paddingTop: rpx(36),
+    flex: 1
   },
   header: {
     marginBottom: rpx(24),
+  },
+  fab: {
+    position: 'absolute',
+    right: rpx(48),
+    bottom: rpx(96),
   },
 });
