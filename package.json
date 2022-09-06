@@ -31,6 +31,7 @@
     "immer": "^9.0.15",
     "jotai": "^1.7.4",
     "lodash.shuffle": "^4.2.0",
+    "lru-cache": "^7.14.0",
     "nanoid": "^4.0.0",
     "qrcode-generator": "^1.4.4",
     "react": "18.0.0",

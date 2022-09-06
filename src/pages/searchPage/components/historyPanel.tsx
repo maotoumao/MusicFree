@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Loading from '@/components/base/loading';
 import {Chip, useTheme} from 'react-native-paper';
@@ -34,25 +34,31 @@ export default function (props: IProps) {
         <Loading></Loading>
       ) : (
         <>
-          <ThemeText fontSize='title' fontWeight='semibold' style={style.title}>历史记录</ThemeText>
-          {history.map(_ => (
-            <Chip
-              key={`search-history-${_}`}
-              style={style.chip}
-              onClose={async () => {
-                await removeHistory(_);
-                getHistory().then(setHistory);
-              }}
-              onPress={() => {
-                setSearchResultsState(initSearchResults);
-                search(_, 1);
-                addHistory(_);
-                setPageStatus(PageStatus.SEARCHING);
-                setQuery(_);
-              }}>
-              {_}
-            </Chip>
-          ))}
+          <ThemeText fontSize="title" fontWeight="semibold" style={style.title}>
+            历史记录
+          </ThemeText>
+          <ScrollView
+            style={style.historyContent}
+            contentContainerStyle={style.historyContentConainer}>
+            {history.map(_ => (
+              <Chip
+                key={`search-history-${_}`}
+                style={style.chip}
+                onClose={async () => {
+                  await removeHistory(_);
+                  getHistory().then(setHistory);
+                }}
+                onPress={() => {
+                  setSearchResultsState(initSearchResults);
+                  search(_, 1);
+                  addHistory(_);
+                  setPageStatus(PageStatus.SEARCHING);
+                  setQuery(_);
+                }}>
+                {_}
+              </Chip>
+            ))}
+          </ScrollView>
         </>
       )}
     </View>
@@ -63,13 +69,21 @@ const style = StyleSheet.create({
   wrapper: {
     width: rpx(750),
     maxWidth: rpx(750),
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
     padding: rpx(24),
+    flex: 1,
   },
   title: {
     width: '100%',
     marginVertical: rpx(28),
+  },
+  historyContent: {
+    width: rpx(750),
+    flex: 1,
+  },
+  historyContentConainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   chip: {
     flexGrow: 0,

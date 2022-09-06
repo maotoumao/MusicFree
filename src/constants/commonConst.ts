@@ -20,4 +20,5 @@ export enum RequestStateCode {
 
 export const StorageKeys = {
   MediaMeta: 'media-meta-keys',
+  MediaCache: 'media-cache'
 };

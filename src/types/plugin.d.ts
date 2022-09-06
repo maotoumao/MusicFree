@@ -30,6 +30,8 @@ declare namespace IPlugin {
     platform: string;
     /** 匹配的版本号 */
     appVersion?: string;
+    /** 主键 */
+    mediaMainKey: string[];
     /** 默认搜索类型 */
     defaultSearchType?: ICommon.SupportMediaType;
     /** 搜索 */
@@ -38,13 +40,15 @@ declare namespace IPlugin {
     getMusicTrack?: (
       musicItem: IMusic.IMusicItemBase,
     ) => Promise<IMusicTrackResult | null>;
+    /** 根据主键去查询歌曲信息 */
+    getMusicInfo?: (musicBase: ICommon.IMediaBase) => Promise<IMusic.IMusicItem | null>;
     /** 获取歌词 */
     getLyric?: (musicItem: IMusic.IMusicItemBase) => Promise<ILyric.ILyricSource>;
-    /** 获取专辑信息[分页] */
+    /** 获取专辑信息，里面的歌曲不要分页 */
     getAlbumInfo?: (
       albumItem: IAlbum.IAlbumItemBase,
     ) => Promise<IAlbum.IAlbumItem | null>;
-    /** 获取作品 */
+    /** 获取作品，有分页 */
     queryArtistWorks?: IQueryArtistWorksFunc;
   }
 
