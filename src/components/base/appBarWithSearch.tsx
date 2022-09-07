@@ -1,18 +1,33 @@
-import React from 'react';
-import {StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation, useTheme} from '@react-navigation/native';
-import {Appbar} from 'react-native-paper';
-import ThemeText from '@/components/base/themeText';
+import {Appbar, Divider, Menu, Provider} from 'react-native-paper';
+
+interface IMenuOption {
+  icon: string;
+  title: string;
+  show?: boolean;
+  onPress?: () => void;
+}
 
 interface IComplexAppBarProps {
   title?: string;
   onSearchPress?: () => void;
+  menuOptions?: IMenuOption[];
 }
 export default function AppBarWithSearch(props: IComplexAppBarProps) {
   const navigation = useNavigation();
-  const {title, onSearchPress} = props;
+  const {title, onSearchPress, menuOptions = []} = props;
   const {colors} = useTheme();
+  const [isMenuVisible, setMenuVisible] = useState(true);
+
+  const onDismissMenu = () => {
+    setMenuVisible(false);
+  };
+  const onShowMenu = () => {
+    setMenuVisible(true);
+  };
 
   return (
     <Appbar.Header style={[style.appbar, {backgroundColor: colors.primary}]}>
@@ -23,7 +38,25 @@ export default function AppBarWithSearch(props: IComplexAppBarProps) {
       />
       <Appbar.Content title={title} />
       <Appbar.Action icon="magnify" onPress={onSearchPress} />
-      <Appbar.Action icon={'dots-vertical'} onPress={() => {}} />
+      <Menu
+        contentStyle={[style.menuContent, {backgroundColor: colors.primary}]}
+        onDismiss={onDismissMenu}
+        visible={isMenuVisible}
+        anchor={
+          <Appbar.Action
+            color="white"
+            icon="dots-vertical"
+            onPress={onShowMenu}
+          />
+        }>
+        {menuOptions.map(_ => (
+          _.show === false ? <></> :<Menu.Item
+          key={`menu-${_.title}`}
+            icon={_.icon}
+            title={_.title}
+            onPress={_.onPress}></Menu.Item>
+        ))}
+      </Menu>
     </Appbar.Header>
   );
 }
@@ -40,5 +73,8 @@ const style = StyleSheet.create({
   header: {
     backgroundColor: 'transparent',
     shadowColor: 'transparent',
+  },
+  menuContent: {
+    marginTop: rpx(28),
   },
 });

@@ -13,7 +13,7 @@ export default function SheetMusicList(props: IMusicListProps) {
   return (
     <MusicList
       Header={<Header></Header>}
-      musicList={musicSheet.musicList}
+      musicList={musicSheet?.musicList}
       musicSheet={musicSheet}
       showIndex></MusicList>
   );
