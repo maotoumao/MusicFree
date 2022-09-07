@@ -34,6 +34,14 @@ export default function BasicSetting(props: IBasicSettingProps) {
       onPress() {
         setConfig('setting.basic.notInterrupt', !basicSetting?.notInterrupt);
       },
+    },{
+      title: '播放失败时自动播放列表中的下一首',
+      right: () => (
+        <ThemeSwitch value={basicSetting?.autoStopWhenError ?? false}></ThemeSwitch>
+      ),
+      onPress() {
+        setConfig('setting.basic.autoStopWhenError', !basicSetting?.autoStopWhenError);
+      },
     },
     {
       title: '最大同时下载数目',

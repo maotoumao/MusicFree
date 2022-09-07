@@ -11,7 +11,8 @@ interface IConfig {
       maxDownload: number | string;
       /** 同时播放 */
       notInterrupt: boolean;
-
+      /** 播放错误时自动停止 */
+      autoStopWhenError: boolean;
 
       debug: {
         errorLog: boolean;
@@ -102,17 +103,6 @@ export async function loadConfig() {
   config = (await getStorage('local-config')) ?? {};
   // await checkValidPath(['setting.theme.background']);
   notify();
-}
-
-/** 检测合法路径 */
-async function checkValidPath(paths: Array<IConfigPaths> = []) {
-  return Promise.all(
-    paths.map(async _ => {
-      if (!(await exists(getPathValue(config ?? {}, _) as unknown as string))) {
-        await setConfig(_, undefined);
-      }
-    }),
-  );
 }
 
 /** 设置config */

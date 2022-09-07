@@ -7,10 +7,11 @@ import ThemeText from '@/components/base/themeText';
 
 interface IComplexAppBarProps {
   title?: string;
+  onSearchPress?: () => void;
 }
-export default function ComplexAppBar(props: IComplexAppBarProps) {
+export default function AppBarWithSearch(props: IComplexAppBarProps) {
   const navigation = useNavigation();
-  const {title} = props;
+  const {title, onSearchPress} = props;
   const {colors} = useTheme();
 
   return (
@@ -20,8 +21,8 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
           navigation.goBack();
         }}
       />
-      <Appbar.Content title="专辑" />
-      <Appbar.Action icon="magnify" onPress={() => {}} />
+      <Appbar.Content title={title} />
+      <Appbar.Action icon="magnify" onPress={onSearchPress} />
       <Appbar.Action icon={'dots-vertical'} onPress={() => {}} />
     </Appbar.Header>
   );

@@ -1,6 +1,7 @@
 import ArtistDetail from '@/pages/artistDetail';
 import Downloading from '@/pages/downloading';
 import LocalMusic from '@/pages/localMusic';
+import SearchMusicList from '@/pages/searchMusicList';
 import AlbumDetail from '../pages/albumDetail';
 import Home from '../pages/home';
 import MusicDetail from '../pages/musicDetail';
@@ -28,10 +29,14 @@ const ROUTE_PATH = {
   LOCAL: 'local',
   /** 正在下载 */
   DOWNLOADING: 'downloading',
-};
+  /** 从歌曲列表中搜索 */
+  SEARCH_MUSIC_LIST: 'search-music-list',
+} as const;
+
+type Valueof<T> = T[keyof T];
 
 type IRoutes = {
-  path: string;
+  path: Valueof<typeof ROUTE_PATH>;
   component: (...args: any[]) => JSX.Element;
 };
 
@@ -72,6 +77,27 @@ const routes: Array<IRoutes> = [
     path: ROUTE_PATH.DOWNLOADING,
     component: Downloading,
   },
+  {
+    path: ROUTE_PATH.SEARCH_MUSIC_LIST,
+    component: SearchMusicList,
+  },
 ];
 
 export {routes, ROUTE_PATH};
+
+export type RootStackParamList = {
+  home: undefined;
+  'music-detail': undefined;
+  'search-page': undefined;
+  'sheet-detail': undefined;
+  'album-detail': undefined;
+  'artist-detail': undefined;
+  setting: {
+    type: string;
+  };
+  local: undefined;
+  downloading: undefined;
+  'search-music-list': {
+    musicList: IMusic.IMusicItem[]
+  };
+};

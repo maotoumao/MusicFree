@@ -18,7 +18,7 @@ import DownloadManager from './downloadManager';
 import delay from '@/utils/delay';
 import {exists} from 'react-native-fs';
 import isSameMusicItem from '@/utils/isSameMusicItem';
-import { errorLog, trace, } from './logManager';
+import {errorLog, trace} from './logManager';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -85,7 +85,7 @@ const setupMusicQueue = async () => {
     }
   });
 
-  TrackPlayer.addEventListener(Event.PlaybackError, async (e) => {
+  TrackPlayer.addEventListener(Event.PlaybackError, async e => {
     errorLog('Player播放失败', e);
     await _playFail();
   });
@@ -125,7 +125,9 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
   } else {
     musicQueue = produce(musicQueue, draft => {
       return draft.sort(
-        (a, b) => a?.[internalSymbolKey]?.globalId - b?.[internalSymbolKey]?.globalId ?? 0,
+        (a, b) =>
+          a?.[internalSymbolKey]?.globalId - b?.[internalSymbolKey]?.globalId ??
+          0,
       );
     });
   }
@@ -333,7 +335,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     let track: IMusic.IMusicItem;
     try {
       track = (await getMusicTrack(_musicItem)) as IMusic.IMusicItem;
-    } catch(e) {
+    } catch (e) {
       // 播放失败
       if (isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
         await _playFail();
@@ -348,12 +350,13 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     await _playTrack(track as Track);
     currentMusicStateMapper.notify();
   } catch (e: any) {
-    if(e?.message === 'The player is not initialized. Call setupPlayer first.') {
+    if (
+      e?.message === 'The player is not initialized. Call setupPlayer first.'
+    ) {
       trace('重新初始化player', '');
       await TrackPlayer.setupPlayer();
       play(musicItem, forcePlay);
     }
-   
   }
 };
 
@@ -367,15 +370,17 @@ const _playTrack = async (track: Track) => {
 
 const _playFail = async () => {
   errorLog('播放失败，自动跳过', {
-    currentIndex
-  })
+    currentIndex,
+  });
   await TrackPlayer.reset();
   await TrackPlayer.add([
     (musicQueue[currentIndex] ?? {url: ''}) as Track,
     getFakeNextTrack(),
   ]);
-  await delay(100);
-  await skipToNext();
+  if (!getConfig('setting.basic.autoStopWhenError')) {
+    await delay(300);
+    await skipToNext();
+  }
 };
 
 const playWithReplaceQueue = async (
