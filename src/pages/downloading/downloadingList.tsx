@@ -1,15 +1,15 @@
 import React from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 import ListItem from '@/components/base/listItem';
 import {sizeFormatter} from '@/utils/fileUtils';
 
 interface IDownloadingListProps {}
 export default function DownloadingList(props: IDownloadingListProps) {
-  const downloading = DownloadManager.useDownloadingMusic();
-  const pending = DownloadManager.usePendingMusic();
-  const progress = DownloadManager.useDownloadingProgress(); // progress没有更新同步
+  const downloading = Download.useDownloadingMusic();
+  const pending = Download.usePendingMusic();
+  const progress = Download.useDownloadingProgress(); // progress没有更新同步
 
   return (
     <View style={style.wrapper}>

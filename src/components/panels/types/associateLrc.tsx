@@ -6,14 +6,14 @@ import BottomSheet, {
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
-import MusicSheet from '@/core/musicSheetManager';
+import MusicSheet from '@/core/musicSheet';
 import {_usePanel} from '../usePanel';
 import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
-import MediaMetaManager from '@/core/mediaMetaManager';
+import MediaMetaManager from '@/core/mediaMeta';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { errorLog } from '@/utils/log';
 

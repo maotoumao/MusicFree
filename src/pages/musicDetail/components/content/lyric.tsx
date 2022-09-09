@@ -17,7 +17,7 @@ import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
 import IconButton, { IconButtonWithGesture } from '@/components/base/iconButton';
 import musicIsPaused from '@/utils/musicIsPaused';
-import MediaMetaManager from '@/core/mediaMetaManager';
+import MediaMetaManager from '@/core/mediaMeta';
 import {pluginMethod} from '@/core/pluginManager';
 import {trace} from '@/utils/log';
 import Loading from '@/components/base/loading';

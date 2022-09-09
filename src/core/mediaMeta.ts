@@ -16,7 +16,7 @@ let mediaMetaKeys: Record<string, string> = {};
 let mediaMetas: Record<string, Record<string, ICommon.IMediaMeta>> = {};
 const mediaMetasStateMapper = new StateMapper(() => mediaMetas); // 可能不用状态
 
-async function setupMediaMeta() {
+async function setup() {
   const metaKeys = (await getStorage(StorageKeys.MediaMeta)) ?? {};
   if (!metaKeys) {
     await setStorage(StorageKeys.MediaMeta, {});
@@ -84,7 +84,7 @@ async function updateMediaMeta(mediaItem: ICommon.IMediaBase, patch?: Record<str
 }
 
 const MediaMetaManager = {
-  setupMediaMeta,
+  setup,
   getMediaMeta,
   updateMediaMeta,
 };

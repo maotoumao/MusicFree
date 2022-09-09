@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {setConfig, useConfig} from '@/core/localConfigManager';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 import { Text} from 'react-native-paper';
 import ListItem from '@/components/base/listItem';
 import {FlatList} from 'react-native-gesture-handler';

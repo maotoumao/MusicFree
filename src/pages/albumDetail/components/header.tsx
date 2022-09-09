@@ -16,7 +16,7 @@ import ThemeText from '@/components/base/themeText';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import useDialog from '@/components/dialogs/useDialog';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 import FastImage from 'react-native-fast-image';
 
 interface IHeaderProps {
@@ -94,7 +94,7 @@ export default function Header(props: IHeaderProps) {
               title: '下载专辑',
               content: `确定下载${musicList?.length}首歌吗?`,
               onOk() {
-                musicList && DownloadManager.downloadMusic(musicList);
+                musicList && Download.downloadMusic(musicList);
               },
             });
           }}></IconButton>

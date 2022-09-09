@@ -1,10 +1,10 @@
 import React from 'react';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 import MusicList from '@/components/musicList';
 
 interface IMusicListProps {}
 export default function LocalMusicList(props: IMusicListProps) {
-  const downloadedMusic = DownloadManager.useDownloadedMusic();
+  const downloadedMusic = Download.useDownloadedMusic();
 
   return <MusicList musicList={downloadedMusic} showIndex></MusicList>;
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ListItem, {ILeftProps} from '../base/listItem';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicQueue from '@/core/musicQueue';
 import IconButton from '../base/iconButton';
@@ -27,7 +27,7 @@ export default function MusicItem(props: IMusicItemProps) {
       title={musicItem.title}
       desc={
         <>
-          {DownloadManager.isDownloaded(musicItem) && (
+          {Download.isDownloaded(musicItem) && (
             <Icon color="#11659a" name="check-circle" size={rpx(22)}></Icon>
           )}
           <Text>

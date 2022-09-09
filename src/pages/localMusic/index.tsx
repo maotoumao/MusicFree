@@ -9,7 +9,7 @@ import StatusBar from '@/components/base/statusBar';
 import LocalMusicList from './localMusicList';
 import MusicBar from '@/components/musicBar';
 import { useEffect } from 'react';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 
 interface ILocalMusicProps {}
 export default function LocalMusic(props: ILocalMusicProps) {
@@ -20,7 +20,7 @@ export default function LocalMusic(props: ILocalMusicProps) {
   const {colors} = useTheme();
 
   useEffect(() => {
-    DownloadManager.setupDownload();
+    Download.setupDownload();
   }, []);
 
   return (

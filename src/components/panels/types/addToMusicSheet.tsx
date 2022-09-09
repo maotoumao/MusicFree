@@ -10,7 +10,7 @@ import {_usePanel} from '../usePanel';
 import ThemeText from '@/components/base/themeText';
 import {useTheme} from 'react-native-paper';
 import ListItem from '@/components/base/listItem';
-import MusicSheet from '@/core/musicSheetManager';
+import MusicSheet from '@/core/musicSheet';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 

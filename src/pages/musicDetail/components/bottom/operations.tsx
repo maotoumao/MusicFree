@@ -2,12 +2,12 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicSheet from '@/core/musicSheetManager';
+import MusicSheet from '@/core/musicSheet';
 import MusicQueue from '@/core/musicQueue';
 import usePanel from '@/components/panels/usePanel';
 import RNFS from 'react-native-fs';
 import {pluginManager} from '@/core/pluginManager';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 import { isSameMediaItem } from '@/utils/mediaItem';
 
 interface IOpertionsProps {}
@@ -15,7 +15,7 @@ export default function Opertions(props: IOpertionsProps) {
   //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
   const favoriteMusicSheet = MusicSheet.useSheets('favorite');
   const musicItem = MusicQueue.useCurrentMusicItem();
-  const isDownloaded = DownloadManager.useIsDownloaded(musicItem);
+  const isDownloaded = Download.useIsDownloaded(musicItem);
   const {showPanel} = usePanel();
 
   const musicIndexInFav =
@@ -52,7 +52,7 @@ export default function Opertions(props: IOpertionsProps) {
         color="white"
         onPress={() => {
           if (musicItem && !isDownloaded) {
-            DownloadManager.downloadMusic(musicItem);
+            Download.downloadMusic(musicItem);
           }
         }}></Icon>
       <Icon

@@ -1,7 +1,7 @@
 import {internalSymbolKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
-import { isSameMediaItem } from '@/utils/mediaItem';
+import {isSameMediaItem} from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storage';
 import deepmerge from 'deepmerge';
@@ -18,7 +18,7 @@ import {
 } from 'react-native-fs';
 import Toast from 'react-native-toast-message';
 import {getConfig} from './localConfigManager';
-import MediaMetaManager from './mediaMetaManager';
+import MediaMetaManager from './mediaMeta';
 import {pluginManager} from './pluginManager';
 
 interface IDownloadMusicOptions {
@@ -300,8 +300,8 @@ async function removeDownloaded(mi: IMusic.IMusicItem) {
     await unlink(localPath);
     downloadedMusic = downloadedMusic.filter(_ => !isSameMediaItem(_, mi));
     MediaMetaManager.updateMediaMeta(mi, {
-      isDownloaded: undefined
-    })
+      isDownloaded: undefined,
+    });
     downloadedStateMapper.notify();
   }
 }
@@ -321,9 +321,9 @@ function useIsDownloaded(mi: IMusic.IMusicItem | null) {
   return downloaded;
 }
 
-const DownloadManager = {
+const Download = {
   downloadMusic,
-  setupDownload,
+  setup: setupDownload,
   useDownloadedMusic: downloadedStateMapper.useMappedState,
   useDownloadingMusic: downloadingQueueStateMapper.useMappedState,
   usePendingMusic: pendingMusicQueueStateMapper.useMappedState,
@@ -334,4 +334,4 @@ const DownloadManager = {
   removeDownloaded,
 };
 
-export default DownloadManager;
+export default Download;

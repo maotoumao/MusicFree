@@ -25,7 +25,7 @@ function notifyMusicSheets() {
   });
 }
 
-async function setupMusicSheet() {
+async function setup() {
   try {
     const _musicSheets: IMusic.IMusicSheetItemBase[] = await getStorage(
       'music-sheets',
@@ -210,7 +210,7 @@ function useUserSheets(): IMusic.IMusicSheet {
 }
 
 const MusicSheet = {
-  setupMusicSheet,
+  setup,
   addSheet,
   addMusic,
   useSheets,

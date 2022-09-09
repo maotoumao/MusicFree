@@ -1,5 +1,5 @@
 import MusicQueue from '@/core/musicQueue';
-import MusicSheet from '@/core/musicSheetManager';
+import MusicSheet from '@/core/musicSheet';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import TrackPlayer, {Capability} from 'react-native-track-player';
 import {pluginManager} from '../core/pluginManager';
@@ -8,11 +8,11 @@ import {Platform, ToastAndroid} from 'react-native';
 import {loadConfig} from '@/core/localConfigManager';
 import RNBootSplash from 'react-native-bootsplash';
 import RNFS, {exists, mkdir} from 'react-native-fs';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
 import {errorLog} from '@/utils/log';
-import MediaMetaManager from '@/core/mediaMetaManager';
+import MediaMetaManager from '@/core/mediaMeta';
 import Cache from '@/core/cache';
 
 /** app加载前执行 */
@@ -49,7 +49,7 @@ async function _bootstrap() {
 
   Promise.all([
     await pluginManager.setupPlugins(),
-    await MediaMetaManager.setupMediaMeta(),
+    await MediaMetaManager.setup(),
   ]);
   await TrackPlayer.updateOptions({
     progressUpdateEventInterval: 0.4,
@@ -74,9 +74,9 @@ async function _bootstrap() {
       Capability.SkipToPrevious,
     ],
   });
-  await MusicQueue.setupMusicQueue();
-  await MusicSheet.setupMusicSheet();
-  await DownloadManager.setupDownload();
+  await MusicQueue.setup();
+  await MusicSheet.setup();
+  await Download.setup();
   await Cache.setup();
 
   ErrorUtils.setGlobalHandler(error => {

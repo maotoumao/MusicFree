@@ -14,12 +14,12 @@ import musicIsPaused from '@/utils/musicIsPaused';
 import {getConfig, setConfig} from './localConfigManager';
 import {internalSerialzeKey, internalSymbolKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
-import DownloadManager from './downloadManager';
+import Download from './download';
 import delay from '@/utils/delay';
 import {exists} from 'react-native-fs';
 import {errorLog, trace} from '../utils/log';
 import Cache from './cache';
-import { isSameMediaItem } from '@/utils/mediaItem';
+import {isSameMediaItem} from '@/utils/mediaItem';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -43,7 +43,7 @@ const repeatModeStateMapper = new StateMapper(() => repeatMode);
 let globalId: number = 0; // 记录加入队列的次序
 
 /** 初始化 */
-const setupMusicQueue = async () => {
+const setup = async () => {
   // 需要hook一下播放，所以采用这种方式
   await TrackPlayer.reset();
   await TrackPlayer.setRepeatMode(RepeatMode.Off);
@@ -261,7 +261,7 @@ const getMusicTrack = async (
 
   const localPath =
     musicItem?.[internalSymbolKey]?.localPath ??
-    DownloadManager.getDownloaded(musicItem)?.[internalSymbolKey]?.localPath;
+    Download.getDownloaded(musicItem)?.[internalSymbolKey]?.localPath;
   // 1. 本地下载
   if (localPath && (await exists(localPath))) {
     track = produce(musicItem, draft => {
@@ -449,7 +449,7 @@ async function stop() {
   await TrackPlayer.stop();
 }
 const MusicQueue = {
-  setupMusicQueue,
+  setup,
   useMusicQueue: musicQueueStateMapper.useMappedState,
   addAll,
   add,

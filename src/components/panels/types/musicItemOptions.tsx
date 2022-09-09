@@ -7,18 +7,18 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
 import MusicQueue from '@/core/musicQueue';
-import MusicSheet from '@/core/musicSheetManager';
+import MusicSheet from '@/core/musicSheet';
 import {_usePanel} from '../usePanel';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
-import DownloadManager from '@/core/downloadManager';
+import Download from '@/core/download';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Clipboard from '@react-native-clipboard/clipboard';
 import FastImage from 'react-native-fast-image';
-import MediaMetaManager from '@/core/mediaMetaManager';
+import MediaMetaManager from '@/core/mediaMeta';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -35,7 +35,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
 
   const {musicItem, musicSheet} = props ?? {};
 
-  const downloaded = DownloadManager.isDownloaded(musicItem);
+  const downloaded = Download.isDownloaded(musicItem);
   function closePanel() {
     sheetRef.current?.close();
   }
@@ -89,7 +89,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       title: '下载',
       show: !downloaded,
       onPress: async () => {
-        await DownloadManager.downloadMusic(musicItem);
+        await Download.downloadMusic(musicItem);
         closePanel();
       },
     },
@@ -112,7 +112,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       title: '删除本地下载',
       show: downloaded,
       onPress: async () => {
-        await DownloadManager.removeDownloaded(musicItem);
+        await Download.removeDownloaded(musicItem);
         closePanel();
       },
     },

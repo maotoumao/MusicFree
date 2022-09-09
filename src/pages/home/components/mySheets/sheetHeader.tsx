@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useTextColor from '@/hooks/useTextColor';
-import MusicSheet from '@/core/musicSheetManager';
+import MusicSheet from '@/core/musicSheet';
 import usePanel from '@/components/panels/usePanel';
 import { useTheme } from 'react-native-paper';
 import IconButton from '@/components/base/iconButton';

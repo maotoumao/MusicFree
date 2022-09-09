@@ -8,7 +8,7 @@ import pathConst from '@/constants/pathConst';
 import {satisfies} from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
-import MediaMetaManager from './mediaMetaManager';
+import MediaMetaManager from './mediaMeta';
 import {nanoid} from 'nanoid';
 import {errorLog, trace} from '../utils/log';
 import Cache from './cache';
