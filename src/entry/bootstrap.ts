@@ -12,7 +12,7 @@ import Download from '@/core/download';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
 import {errorLog} from '@/utils/log';
-import MediaMetaManager from '@/core/mediaMeta';
+import MediaMeta from '@/core/mediaMeta';
 import Cache from '@/core/cache';
 
 /** app加载前执行 */
@@ -49,7 +49,7 @@ async function _bootstrap() {
 
   Promise.all([
     await pluginManager.setupPlugins(),
-    await MediaMetaManager.setup(),
+    await MediaMeta.setup(),
   ]);
   await TrackPlayer.updateOptions({
     progressUpdateEventInterval: 0.4,

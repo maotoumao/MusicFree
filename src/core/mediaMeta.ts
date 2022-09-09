@@ -83,11 +83,11 @@ async function updateMediaMeta(mediaItem: ICommon.IMediaBase, patch?: Record<str
   mediaMetas = newMeta;
 }
 
-const MediaMetaManager = {
+const MediaMeta = {
   setup,
-  getMediaMeta,
-  updateMediaMeta,
+  get: getMediaMeta,
+  update: updateMediaMeta,
 };
 
 // todo: clear
-export default MediaMetaManager;
+export default MediaMeta;

@@ -8,7 +8,7 @@ import pathConst from '@/constants/pathConst';
 import {satisfies} from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
-import MediaMetaManager from './mediaMeta';
+import MediaMeta from './mediaMeta';
 import {nanoid} from 'nanoid';
 import {errorLog, trace} from '../utils/log';
 import Cache from './cache';
@@ -205,7 +205,7 @@ const pluginMethod = {
     from?: IMusic.IMusicItem,
   ): Promise<string | undefined> {
     // 1. 额外存储的meta信息
-    const meta = MediaMetaManager.getMediaMeta(musicItem) ?? {};
+    const meta = MediaMeta.get(musicItem) ?? {};
     // 有关联歌词
     if (meta.associatedLrc) {
       if (
@@ -213,7 +213,7 @@ const pluginMethod = {
         isSameMediaItem(meta.associatedLrc, musicItem)
       ) {
         // 形成了环 只把自己断开
-        await MediaMetaManager.updateMediaMeta(musicItem, {
+        await MediaMeta.update(musicItem, {
           associatedLrc: undefined,
         });
         return;
@@ -269,7 +269,7 @@ const pluginMethod = {
         });
         // 如果有用户定制化的信息，就写入持久存储中
         if (meta) {
-          MediaMetaManager.updateMediaMeta(musicItem, {
+          MediaMeta.update(musicItem, {
             localLrc: filename,
           });
         }
@@ -284,7 +284,7 @@ const pluginMethod = {
             localLrc: filename,
           });
           if (meta) {
-            MediaMetaManager.updateMediaMeta(musicItem, {
+            MediaMeta.update(musicItem, {
               localLrc: filename,
               lrc: lrcUrl,
             });

@@ -18,7 +18,7 @@ import {
 } from 'react-native-fs';
 import Toast from 'react-native-toast-message';
 import {getConfig} from './localConfigManager';
-import MediaMetaManager from './mediaMeta';
+import MediaMeta from './mediaMeta';
 import {pluginManager} from './pluginManager';
 
 interface IDownloadMusicOptions {
@@ -137,7 +137,7 @@ async function setupDownload() {
       const platform = data?.platform;
       const id = data?.id;
       if (platform && id) {
-        const mi = MediaMetaManager.getMediaMeta(data) ?? {};
+        const mi = MediaMeta.get(data) ?? {};
         mi.id = id;
         mi.platform = platform;
         mi.title = mi.title ?? data.title;
@@ -232,7 +232,7 @@ async function downloadNext() {
       return _;
     });
     removeFromDownloadingQueue(nextItem);
-    MediaMetaManager.updateMediaMeta({...musicItem, '#downloaded': true});
+    MediaMeta.update({...musicItem, '#downloaded': true});
     if (downloadingMusicQueue.length === 0) {
       stopNotifyProgress();
       Toast.show({
@@ -299,7 +299,7 @@ async function removeDownloaded(mi: IMusic.IMusicItem) {
   if (localPath) {
     await unlink(localPath);
     downloadedMusic = downloadedMusic.filter(_ => !isSameMediaItem(_, mi));
-    MediaMetaManager.updateMediaMeta(mi, {
+    MediaMeta.update(mi, {
       isDownloaded: undefined,
     });
     downloadedStateMapper.notify();

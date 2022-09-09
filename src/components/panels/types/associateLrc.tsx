@@ -13,7 +13,7 @@ import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
-import MediaMetaManager from '@/core/mediaMeta';
+import MediaMeta from '@/core/mediaMeta';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { errorLog } from '@/utils/log';
 
@@ -72,7 +72,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                   id = str?.id;
                 }
                 if (platform && id) {
-                  await MediaMetaManager.updateMediaMeta(musicItem, {
+                  await MediaMeta.update(musicItem, {
                     associatedLrc: {
                       platform,
                       id,

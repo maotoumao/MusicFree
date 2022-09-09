@@ -18,7 +18,7 @@ import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Clipboard from '@react-native-clipboard/clipboard';
 import FastImage from 'react-native-fast-image';
-import MediaMetaManager from '@/core/mediaMeta';
+import MediaMeta from '@/core/mediaMeta';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -40,7 +40,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     sheetRef.current?.close();
   }
   // 关联歌词
-  const associatedLrc = MediaMetaManager.getMediaMeta(musicItem)?.associatedLrc;
+  const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
   // todo: padding bottom
   const options = [
     {
@@ -132,7 +132,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       title: '取消关联歌词',
       show: !!associatedLrc,
       onPress: () => {
-        MediaMetaManager.updateMediaMeta(musicItem, {
+        MediaMeta.update(musicItem, {
           associatedLrc: undefined,
         });
         closePanel();
