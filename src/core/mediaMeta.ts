@@ -8,13 +8,12 @@ import {nanoid} from 'nanoid';
 import {ToastAndroid} from 'react-native';
 import {getMultiStorage, getStorage, setStorage} from '@/utils/storage';
 import {StorageKeys} from '@/constants/commonConst';
-import StateMapper from '@/utils/stateMapper';
+import objectPath from 'object-path';
 
 // pluginname - tablekey
 let mediaMetaKeys: Record<string, string> = {};
 // pluginname - id - mediameta
 let mediaMetas: Record<string, Record<string, ICommon.IMediaMeta>> = {};
-const mediaMetasStateMapper = new StateMapper(() => mediaMetas); // 可能不用状态
 
 async function setup() {
   const metaKeys = (await getStorage(StorageKeys.MediaMeta)) ?? {};
@@ -28,58 +27,48 @@ async function setup() {
     newMediaMetas[kv[index][0]] = value ?? {};
   });
   mediaMetas = newMediaMetas;
-  mediaMetasStateMapper.notify();
 }
 
 function getMediaMeta(mediaItem: ICommon.IMediaBase) {
   return mediaMetas[mediaItem.platform]?.[mediaItem.id] ?? null;
 }
 
-// /** 创建/更新mediameta */
-// async function updateMediaMeta(mediaItem: ICommon.IMediaBase) {
-//   const {platform, id} = mediaItem;
-//   if (!mediaMetaKeys[platform]) {
-//     const newkey = nanoid();
-//     mediaMetaKeys[platform] = newkey;
-//     await setStorage(StorageKeys.MediaMeta, mediaMetaKeys);
-//     mediaMetas[platform] = {};
-//   }
-
-//   const newMeta = produce(mediaMetas, draft => {
-//     const pluginMeta = mediaMetas[platform];
-//     if (pluginMeta[id]) {
-//       draft[platform][id] = {...pluginMeta[id], ...mediaItem};
-//     } else {
-//       draft[platform][id] = mediaItem;
-//     }
-//   });
-//   setStorage(mediaMetaKeys[platform], newMeta);
-//   mediaMetas = newMeta;
-//   mediaMetasStateMapper.notify();
-// }
-
 /** 创建/更新mediameta */
-async function updateMediaMeta(mediaItem: ICommon.IMediaBase, patch?: Record<string, any>) {
+async function updateMediaMeta(
+  mediaItem: ICommon.IMediaBase,
+  patch?: Record<string, any> | Array<[string, any]>,
+) {
   const {platform, id} = mediaItem;
+  // 创建一个新的表
   if (!mediaMetaKeys[platform]) {
     const newkey = nanoid();
     mediaMetaKeys[platform] = newkey;
     await setStorage(StorageKeys.MediaMeta, mediaMetaKeys);
     mediaMetas[platform] = {};
   }
-  const _patch = patch ?? mediaItem;
-  const newMeta = produce(mediaMetas, draft => {
-    const pluginMeta = mediaMetas[platform] ?? {};
-    if(!draft[platform]) {
-      draft[platform] = {};
-    }
-    if (pluginMeta[id]) {
-      draft[platform][id] = {...pluginMeta[id], ..._patch};
-    } else {
-      draft[platform][id] = _patch;
-    }
-  });
-  setStorage(mediaMetaKeys[platform], newMeta);
+  let newMeta = mediaMetas;
+  if (Array.isArray(patch)) {
+    newMeta = produce(mediaMetas, draft => {
+      patch.forEach(([pathName, value]) => {
+        objectPath.set(draft, `${platform}.${id}.${pathName}`, value);
+      });
+      return draft;
+    });
+  } else {
+    const _patch = patch ?? mediaItem;
+    newMeta = produce(mediaMetas, draft => {
+      const pluginMeta = mediaMetas[platform] ?? {};
+      if (!draft[platform]) {
+        draft[platform] = {};
+      }
+      if (pluginMeta[id]) {
+        draft[platform][id] = {...pluginMeta[id], ..._patch};
+      } else {
+        draft[platform][id] = _patch;
+      }
+    });
+  }
+  setStorage(mediaMetaKeys[platform], newMeta[platform]);
   mediaMetas = newMeta;
 }
 

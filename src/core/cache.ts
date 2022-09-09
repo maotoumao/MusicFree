@@ -12,7 +12,8 @@ const cache = new LRUCache<string, ICommon.IMediaMeta>({
   max: 2000,
   maxSize: 5 * 1024 * 1024, //5MB
   sizeCalculation: (value, key) => {
-    return Buffer.from(JSON.stringify(value, null, '')).byteLength;
+    // todo: bytelength
+    return (JSON.stringify(value, null, '')).length;
   },
   dispose: async (value, key) => {
     // todo: 如果meta中也用到了，就不删除了
