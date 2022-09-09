@@ -13,6 +13,7 @@ import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
 import {errorLog} from '@/utils/log';
 import MediaMetaManager from '@/core/mediaMetaManager';
+import Cache from '@/core/cache';
 
 /** app加载前执行 */
 async function _bootstrap() {
@@ -76,6 +77,7 @@ async function _bootstrap() {
   await MusicQueue.setupMusicQueue();
   await MusicSheet.setupMusicSheet();
   await DownloadManager.setupDownload();
+  await Cache.setup();
 
   ErrorUtils.setGlobalHandler(error => {
     errorLog('未捕获的错误', error);

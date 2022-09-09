@@ -11,7 +11,7 @@ import StateMapper from '@/utils/stateMapper';
 import MediaMetaManager from './mediaMetaManager';
 import {nanoid} from 'nanoid';
 import {errorLog, trace} from '../utils/log';
-import {getCache, updateCache} from './cacheManager';
+import Cache from './cache';
 import { isSameMediaItem } from '@/utils/mediaItem';
 
 axios.defaults.timeout = 1500;
@@ -226,7 +226,7 @@ const pluginMethod = {
         return result;
       }
     }
-    const cache = getCache(musicItem);
+    const cache = Cache.get(musicItem);
     // 优先级：meta中、当前歌曲最新的rawlrc、缓存中的rawlrc
     if (meta?.rawLrc || musicItem.rawLrc || cache?.rawLrc) {
       return meta.rawLrc ?? musicItem.rawLrc ?? cache?.rawLrc;
@@ -264,7 +264,7 @@ const pluginMethod = {
       if (rawLrc) {
         await writeFile(filename, rawLrc, 'utf8');
         // todo 写入缓存 应该是internaldata
-        updateCache(musicItem, {
+        Cache.update(musicItem, {
           localLrc: filename,
         });
         // 如果有用户定制化的信息，就写入持久存储中
@@ -280,7 +280,7 @@ const pluginMethod = {
         try {
           const content = (await axios.get(lrcUrl)).data;
           await writeFile(filename, content, 'utf8');
-          updateCache(musicItem, {
+          Cache.update(musicItem, {
             localLrc: filename,
           });
           if (meta) {

@@ -27,14 +27,14 @@ const cache = new LRUCache<string, ICommon.IMediaMeta>({
   allowStale: false,
 });
 
-export async function setupCache() {
+async function setupCache() {
   const cacheStorage = await getStorage(StorageKeys.MediaCache);
   if (cacheStorage && Array.isArray(cacheStorage)) {
     cache.load(cacheStorage);
   }
 }
 
-export function getCache(
+function getCache(
   mediaItem: ICommon.IMediaBase,
 ): ICommon.IMediaMeta | undefined {
   // sync
@@ -43,12 +43,12 @@ export function getCache(
   return result;
 }
 
-export async function clearCache() {
+async function clearCache() {
   cache.clear();
   return setStorage(StorageKeys.MediaCache, undefined);
 }
 
-export function updateCache(
+function updateCache(
   mediaItem: ICommon.IMediaBase,
   patch: ICommon.IMediaMeta,
 ) {
@@ -68,3 +68,12 @@ function syncCache() {
 export function removeCache(mediaItem: ICommon.IMediaBase) {
   return cache.delete(getMediaKey(mediaItem));
 }
+
+const Cache = {
+  setup: setupCache,
+  get: getCache,
+  clear: clearCache,
+  update: updateCache,
+};
+
+export default Cache;

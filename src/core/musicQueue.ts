@@ -18,7 +18,7 @@ import DownloadManager from './downloadManager';
 import delay from '@/utils/delay';
 import {exists} from 'react-native-fs';
 import {errorLog, trace} from '../utils/log';
-import {getCache, updateCache} from './cacheManager';
+import Cache from './cache';
 import { isSameMediaItem } from '@/utils/mediaItem';
 
 enum MusicRepeatMode {
@@ -270,7 +270,7 @@ const getMusicTrack = async (
   } else {
     // 插件播放
     // 2. 缓存
-    const internalData = getCache(musicItem)?.[internalSerialzeKey];
+    const internalData = Cache.get(musicItem)?.[internalSerialzeKey];
     if (internalData?.url) {
       return {
         url: internalData.url,
@@ -307,7 +307,7 @@ const getMusicTrack = async (
     }
   }
   // 写入缓存
-  updateCache(musicItem, {
+  Cache.update(musicItem, {
     [internalSerialzeKey]: {
       url: track.url,
       headers: track.headers,
