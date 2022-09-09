@@ -1,4 +1,4 @@
-import {getStorage, setStorage} from '@/utils/storageUtil';
+import {getStorage, setStorage} from '@/utils/storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
 import {exists} from 'react-native-fs';

@@ -11,7 +11,7 @@ import Dialogs from '@/components/dialogs';
 import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
 import {CustomTheme, DefaultTheme} from './theme';
-import {useConfig} from '@/common/localConfigManager';
+import {useConfig} from '@/core/localConfigManager';
 import Share from '@/components/share';
 import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';

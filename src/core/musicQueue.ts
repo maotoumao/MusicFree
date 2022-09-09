@@ -12,13 +12,14 @@ import {pluginManager} from './pluginManager';
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import {getConfig, setConfig} from './localConfigManager';
-import {internalSymbolKey} from '@/constants/commonConst';
+import {internalSerialzeKey, internalSymbolKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import DownloadManager from './downloadManager';
 import delay from '@/utils/delay';
 import {exists} from 'react-native-fs';
-import isSameMusicItem from '@/utils/isSameMusicItem';
-import {errorLog, trace} from './logManager';
+import {errorLog, trace} from '../utils/log';
+import {getCache, updateCache} from './cacheManager';
+import { isSameMediaItem } from '@/utils/mediaItem';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -261,17 +262,26 @@ const getMusicTrack = async (
   const localPath =
     musicItem?.[internalSymbolKey]?.localPath ??
     DownloadManager.getDownloaded(musicItem)?.[internalSymbolKey]?.localPath;
-
+  // 1. 本地下载
   if (localPath && (await exists(localPath))) {
     track = produce(musicItem, draft => {
       draft.url = localPath;
     }) as Track;
   } else {
     // 插件播放
+    // 2. 缓存
+    const internalData = getCache(musicItem)?.[internalSerialzeKey];
+    if (internalData?.url) {
+      return {
+        url: internalData.url,
+        headers: internalData?.headers,
+        userAgent: internalData?.userAgent,
+      };
+    }
+    // 3. 插件解析
     const plugin = pluginManager.getPlugin(musicItem.platform);
     if (plugin && plugin.instance.getMusicTrack) {
       try {
-        console.log(musicItem, plugin.instance);
         const {url, headers} =
           (await plugin.instance.getMusicTrack(musicItem)) ?? {};
         if (!url) {
@@ -296,6 +306,14 @@ const getMusicTrack = async (
       track = musicItem as Track;
     }
   }
+  // 写入缓存
+  updateCache(musicItem, {
+    [internalSerialzeKey]: {
+      url: track.url,
+      headers: track.headers,
+      userAgent: track.userAgent,
+    },
+  });
   return track;
 };
 
@@ -307,14 +325,15 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
       // 如果暂停就继续播放，否则
       const currentTrack = await TrackPlayer.getTrack(0);
       if (forcePlay && currentTrack) {
-        trace('PLAY-重新播放', currentIndex);
+        trace('PLAY-重新播放', currentTrack);
         _playTrack(currentTrack);
         return;
       }
       if (currentTrack) {
         const state = await TrackPlayer.getState();
         if (musicIsPaused(state)) {
-          trace('PLAY-继续播放', currentIndex);
+          trace('PLAY-继续播放', currentTrack);
+          // todo: 如果没有url pluginmethods.getrealtrack
           await TrackPlayer.play();
           return;
         }
@@ -337,13 +356,13 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
       track = (await getMusicTrack(_musicItem)) as IMusic.IMusicItem;
     } catch (e) {
       // 播放失败
-      if (isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
+      if (isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
         await _playFail();
       }
       return;
     }
     /** 可能点了很多次。。。 */
-    if (!isSameMusicItem(_musicItem, musicQueue[currentIndex])) {
+    if (!isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
       return;
     }
     musicQueue[currentIndex] = track;

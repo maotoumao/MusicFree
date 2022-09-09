@@ -5,7 +5,7 @@ import rpx from '@/utils/rpx';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 import AppBarWithSearch from '@/components/base/appBarWithSearch';
-import MusicSheet from '@/common/musicSheetManager';
+import MusicSheet from '@/core/musicSheetManager';
 import {ROUTE_PATH} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
 

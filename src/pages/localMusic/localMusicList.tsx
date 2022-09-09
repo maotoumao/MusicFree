@@ -1,5 +1,5 @@
 import React from 'react';
-import DownloadManager from '@/common/downloadManager';
+import DownloadManager from '@/core/downloadManager';
 import MusicList from '@/components/musicList';
 
 interface IMusicListProps {}

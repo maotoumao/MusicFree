@@ -1,7 +1,7 @@
 import React from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import DownloadManager from '@/common/downloadManager';
+import DownloadManager from '@/core/downloadManager';
 import ListItem from '@/components/base/listItem';
 import {sizeFormatter} from '@/utils/fileUtils';
 

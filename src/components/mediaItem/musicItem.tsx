@@ -2,9 +2,9 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ListItem, {ILeftProps} from '../base/listItem';
-import DownloadManager from '@/common/downloadManager';
+import DownloadManager from '@/core/downloadManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import IconButton from '../base/iconButton';
 import usePanel from '../panels/usePanel';
 

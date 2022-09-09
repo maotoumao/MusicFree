@@ -1,7 +1,7 @@
 import React from 'react';
 import {FlatListProps, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import {FlatList} from 'react-native-gesture-handler';
 
 import MusicItem from '../mediaItem/musicItem';

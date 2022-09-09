@@ -6,8 +6,7 @@ import produce from 'immer';
 import {useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
 import {ToastAndroid} from 'react-native';
-import isSameMusicItem from '@/utils/isSameMusicItem';
-import {getMultiStorage, getStorage, setStorage} from '@/utils/storageUtil';
+import {getMultiStorage, getStorage, setStorage} from '@/utils/storage';
 import {StorageKeys} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 

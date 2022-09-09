@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useConfig} from '@/common/localConfigManager';
+import {useConfig} from '@/core/localConfigManager';
 import {useTheme} from 'react-native-paper';
 import {ImgAsset} from '@/constants/assetsConst';
 import Image from './image';

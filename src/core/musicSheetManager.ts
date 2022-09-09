@@ -5,9 +5,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
-import {ToastAndroid} from 'react-native';
-import isSameMusicItem from '@/utils/isSameMusicItem';
-import {getStorage, setStorage} from '@/utils/storageUtil';
+import {ToastAndroid} from 'react-native';;
+import {getStorage, setStorage} from '@/utils/storage';
+import { isSameMediaItem } from '@/utils/mediaItem';
 
 const defaultSheet: IMusic.IMusicSheetItemBase = {
   id: 'favorite',
@@ -130,7 +130,7 @@ async function addMusic(
   }
   const musicList = sheetMusicMap[sheetId] ?? [];
   musicItem = musicItem.filter(
-    item => musicList.findIndex(_ => isSameMusicItem(_, item)) === -1,
+    item => musicList.findIndex(_ => isSameMediaItem(_, item)) === -1,
   );
   const newMusicList = musicList.concat(musicItem);
   updateAndSaveSheet(sheetId, {
@@ -172,7 +172,7 @@ async function removeMusic(
 
   const musicList = sheetMusicMap[sheetId] ?? [];
   const indices = musicItems
-    .map(musicItem => musicList.findIndex(_ => isSameMusicItem(_, musicItem)))
+    .map(musicItem => musicList.findIndex(_ => isSameMediaItem(_, musicItem)))
     .filter(_ => _ !== -1);
   await removeMusicByIndex(sheetId, indices);
 }
@@ -219,6 +219,5 @@ const MusicSheet = {
   removeMusic,
   useUserSheets,
 };
-// useUserSheets,
 
 export default MusicSheet;

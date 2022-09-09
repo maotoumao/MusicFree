@@ -1,7 +1,7 @@
-import {getConfig, setConfig} from '@/common/localConfigManager';
+import {getConfig, setConfig} from '@/core/localConfigManager';
 import musicIsPaused from '@/utils/musicIsPaused';
 import TrackPlayer, {Event, State} from 'react-native-track-player';
-import MusicQueue from '../common/musicQueue';
+import MusicQueue from '../core/musicQueue';
 
 let resumeState: State;
 module.exports = async function () {

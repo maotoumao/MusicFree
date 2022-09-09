@@ -9,7 +9,7 @@ import StatusBar from '@/components/base/statusBar';
 import LocalMusicList from './localMusicList';
 import MusicBar from '@/components/musicBar';
 import { useEffect } from 'react';
-import DownloadManager from '@/common/downloadManager';
+import DownloadManager from '@/core/downloadManager';
 
 interface ILocalMusicProps {}
 export default function LocalMusic(props: ILocalMusicProps) {

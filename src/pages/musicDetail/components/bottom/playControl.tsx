@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import repeatModeConst from '@/constants/repeatModeConst';
 import musicIsPaused from '@/utils/musicIsPaused';
 import usePanel from '@/components/panels/usePanel';

@@ -1,6 +1,6 @@
 import React from 'react';
 import {FlatList, StyleSheet} from 'react-native';
-import MusicSheet from '@/common/musicSheetManager';
+import MusicSheet from '@/core/musicSheetManager';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';

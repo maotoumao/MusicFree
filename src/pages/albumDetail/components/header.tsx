@@ -3,7 +3,7 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import LinearGradient from 'react-native-linear-gradient';
 import {Divider, IconButton, useTheme} from 'react-native-paper';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import usePanel from '@/components/panels/usePanel';
 import {
@@ -16,7 +16,7 @@ import ThemeText from '@/components/base/themeText';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import useDialog from '@/components/dialogs/useDialog';
-import DownloadManager from '@/common/downloadManager';
+import DownloadManager from '@/core/downloadManager';
 import FastImage from 'react-native-fast-image';
 
 interface IHeaderProps {

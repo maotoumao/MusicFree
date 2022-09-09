@@ -30,8 +30,8 @@ declare namespace IPlugin {
     platform: string;
     /** 匹配的版本号 */
     appVersion?: string;
-    /** 主键 */
-    mediaMainKey: string[];
+    /** 主键，会被存储到mediameta中 */
+    primaryKey: string[];
     /** 默认搜索类型 */
     defaultSearchType?: ICommon.SupportMediaType;
     /** 搜索 */

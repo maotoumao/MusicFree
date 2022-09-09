@@ -6,7 +6,7 @@ import BottomSheet, {
   BottomSheetFlatListMethods,
 } from '@gorhom/bottom-sheet';
 import rpx from '@/utils/rpx';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import {Button, Chip, Divider, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -16,10 +16,11 @@ import {_usePanel} from '../usePanel';
 import {fontSizeConst} from '@/constants/uiConst';
 import ThemeText from '@/components/base/themeText';
 import IconButton from '@/components/base/iconButton';
-import isSameMusicItem from '@/utils/isSameMusicItem';
+
 import {internalSymbolKey} from '@/constants/commonConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import useOnceEffect from '@/hooks/useOnceEffect';
+import { isSameMediaItem } from '@/utils/mediaItem';
 
 interface IPlayListProps {}
 const ITEM_HEIGHT = rpx(96);
@@ -33,7 +34,7 @@ export default function PlayList(props: IPlayListProps) {
   const {colors} = useTheme();
 
   const initIndex = musicQueue?.findIndex(_ =>
-    isSameMusicItem(_, currentMusicItem),
+    isSameMediaItem(_, currentMusicItem),
   ) ?? 0;
 
 
@@ -97,7 +98,7 @@ export default function PlayList(props: IPlayListProps) {
               MusicQueue.play(_.item);
             }}
             style={style.musicItem}>
-            {isSameMusicItem(currentMusicItem, _.item) && (
+            {isSameMediaItem(currentMusicItem, _.item) && (
               <Icon
                 name="music"
                 color={colors.textHighlight}
@@ -108,7 +109,7 @@ export default function PlayList(props: IPlayListProps) {
               style={[
                 style.musicItemTitle,
                 {
-                  color: isSameMusicItem(currentMusicItem, _.item)
+                  color: isSameMediaItem(currentMusicItem, _.item)
                     ? colors.textHighlight
                     : colors.text,
                 },

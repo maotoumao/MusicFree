@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {AppState, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {IconButton} from 'react-native-paper';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import {useNavigation} from '@react-navigation/native';
 import Tag from '@/components/base/tag';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';

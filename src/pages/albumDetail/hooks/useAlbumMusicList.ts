@@ -1,4 +1,4 @@
-import {pluginManager} from '@/common/pluginManager';
+import {pluginManager} from '@/core/pluginManager';
 import {makeTag} from '@/utils/makeTag';
 import {useEffect, useState} from 'react';
 

@@ -6,19 +6,19 @@ import BottomSheet, {
   BottomSheetFlatList,
 } from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
-import MusicQueue from '@/common/musicQueue';
-import MusicSheet from '@/common/musicSheetManager';
+import MusicQueue from '@/core/musicQueue';
+import MusicSheet from '@/core/musicSheetManager';
 import {_usePanel} from '../usePanel';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
-import DownloadManager from '@/common/downloadManager';
+import DownloadManager from '@/core/downloadManager';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Clipboard from '@react-native-clipboard/clipboard';
 import FastImage from 'react-native-fast-image';
-import MediaMetaManager from '@/common/mediaMetaManager';
+import MediaMetaManager from '@/core/mediaMetaManager';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */

@@ -1,5 +1,5 @@
-import {errorLog, trace} from '@/common/logManager';
-import {pluginManager} from '@/common/pluginManager';
+import {errorLog, trace} from '@/utils/log';
+import {pluginManager} from '@/core/pluginManager';
 import {RequestStateCode} from '@/constants/commonConst';
 import {makeTag} from '@/utils/makeTag';
 import produce from 'immer';

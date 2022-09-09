@@ -10,8 +10,9 @@ import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
 import MediaMetaManager from './mediaMetaManager';
 import {nanoid} from 'nanoid';
-import isSameMusicItem from '@/utils/isSameMusicItem';
-import {errorLog, trace} from './logManager';
+import {errorLog, trace} from '../utils/log';
+import {getCache, updateCache} from './cacheManager';
+import { isSameMediaItem } from '@/utils/mediaItem';
 
 axios.defaults.timeout = 1500;
 
@@ -203,11 +204,13 @@ const pluginMethod = {
     musicItem: IMusic.IMusicItem,
     from?: IMusic.IMusicItem,
   ): Promise<string | undefined> {
+    // 1. 额外存储的meta信息
     const meta = MediaMetaManager.getMediaMeta(musicItem) ?? {};
+    // 有关联歌词
     if (meta.associatedLrc) {
       if (
-        isSameMusicItem(musicItem, from) ||
-        isSameMusicItem(meta.associatedLrc, musicItem)
+        isSameMediaItem(musicItem, from) ||
+        isSameMediaItem(meta.associatedLrc, musicItem)
       ) {
         // 形成了环 只把自己断开
         await MediaMetaManager.updateMediaMeta(musicItem, {
@@ -223,14 +226,20 @@ const pluginMethod = {
         return result;
       }
     }
-    if (meta?.rawLrc || musicItem.rawLrc) {
-      return meta.rawLrc ?? musicItem.rawLrc;
+    const cache = getCache(musicItem);
+    // 优先级：meta中、当前歌曲最新的rawlrc、缓存中的rawlrc
+    if (meta?.rawLrc || musicItem.rawLrc || cache?.rawLrc) {
+      return meta.rawLrc ?? musicItem.rawLrc ?? cache?.rawLrc;
     }
-    if (meta.localLrc && (await exists(meta.localLrc))) {
-      return await readFile(meta.localLrc, 'utf8');
+    // 本地文件中的lrc
+    const localLrc = meta.localLrc ?? cache?.localLrc;
+    if (localLrc && (await exists(localLrc))) {
+      return await readFile(localLrc, 'utf8');
     }
-    let lrcUrl: string | undefined = meta?.lrc ?? musicItem.lrc;
+
+    let lrcUrl: string | undefined = meta?.lrc ?? musicItem.lrc ?? cache?.lrc;
     let rawLrc: string | undefined;
+    // mediaItem中自带的lrcurl
     if (lrcUrl) {
       try {
         // 需要超时时间 axios timeout 但是没生效
@@ -240,6 +249,7 @@ const pluginMethod = {
       }
     }
     if (!lrcUrl) {
+      // 从插件中获得
       const plugin = pluginManager.getPlugin(musicItem.platform);
       try {
         const lrcSource = await plugin?.instance?.getLyric?.(musicItem);
@@ -253,19 +263,33 @@ const pluginMethod = {
       const filename = `${pathConst.lrcCachePath}${nanoid()}.lrc`;
       if (rawLrc) {
         await writeFile(filename, rawLrc, 'utf8');
-        MediaMetaManager.updateMediaMeta(musicItem, {
+        // todo 写入缓存 应该是internaldata
+        updateCache(musicItem, {
           localLrc: filename,
         });
+        // 如果有用户定制化的信息，就写入持久存储中
+        if (meta) {
+          MediaMetaManager.updateMediaMeta(musicItem, {
+            localLrc: filename,
+          });
+        }
+
         return rawLrc;
       }
       if (lrcUrl) {
         try {
           const content = (await axios.get(lrcUrl)).data;
           await writeFile(filename, content, 'utf8');
-          MediaMetaManager.updateMediaMeta(musicItem, {
+          updateCache(musicItem, {
             localLrc: filename,
-            lrc: lrcUrl,
           });
+          if (meta) {
+            MediaMetaManager.updateMediaMeta(musicItem, {
+              localLrc: filename,
+              lrc: lrcUrl,
+            });
+          }
+
           return content;
         } catch {}
       }

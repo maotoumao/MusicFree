@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {Plugin, pluginManager, usePlugins} from '@/common/pluginManager';
+import {Plugin, pluginManager, usePlugins} from '@/core/pluginManager';
 import {AnimatedFAB, Button, List, useTheme} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS, {unlink} from 'react-native-fs';

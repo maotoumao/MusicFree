@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from 'react-native-fast-image';

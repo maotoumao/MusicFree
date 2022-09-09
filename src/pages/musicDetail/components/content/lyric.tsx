@@ -1,11 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
-import LyricParser from '@/common/lrcParser';
-import isSameMusicItem from '@/utils/isSameMusicItem';
+import LyricParser from '@/core/lrcParser';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import useDelayFalsy from '@/hooks/useDelayFalsy';
@@ -18,10 +17,11 @@ import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
 import IconButton, { IconButtonWithGesture } from '@/components/base/iconButton';
 import musicIsPaused from '@/utils/musicIsPaused';
-import MediaMetaManager from '@/common/mediaMetaManager';
-import {pluginMethod} from '@/common/pluginManager';
-import {trace} from '@/common/logManager';
+import MediaMetaManager from '@/core/mediaMetaManager';
+import {pluginMethod} from '@/core/pluginManager';
+import {trace} from '@/utils/log';
 import Loading from '@/components/base/loading';
+import { isSameMediaItem } from '@/utils/mediaItem';
 
 interface ICurrentLyricItem {
   lrc?: ILyric.IParsedLrcItem;
@@ -42,7 +42,7 @@ function useLyric() {
   useEffect(() => {
     if (
       !lrcManagerRef.current ||
-      !isSameMusicItem(
+      !isSameMediaItem(
         lrcManagerRef.current?.getCurrentMusicItem?.(),
         musicItem,
       )
@@ -53,7 +53,7 @@ function useLyric() {
         .then(lrc => {
           setLoading(false);
           trace(musicItem.title, lrc);
-          if (isSameMusicItem(musicItem, musicItemRef.current)) {
+          if (isSameMediaItem(musicItem, musicItemRef.current)) {
             if (lrc) {
               const parser = new LyricParser(lrc, musicItem);
               setLyric(parser.getLyric());

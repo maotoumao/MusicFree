@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Slider from '@react-native-community/slider';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import timeformat from '@/utils/timeformat';
 import { fontSizeConst } from '@/constants/uiConst';
 import ThemeText from '@/components/base/themeText';

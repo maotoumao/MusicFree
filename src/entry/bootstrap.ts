@@ -1,18 +1,18 @@
-import MusicQueue from '@/common/musicQueue';
-import MusicSheet from '@/common/musicSheetManager';
+import MusicQueue from '@/core/musicQueue';
+import MusicSheet from '@/core/musicSheetManager';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import TrackPlayer, {Capability} from 'react-native-track-player';
-import {pluginManager} from '../common/pluginManager';
+import {pluginManager} from '../core/pluginManager';
 import 'react-native-get-random-values';
 import {Platform, ToastAndroid} from 'react-native';
-import {loadConfig} from '@/common/localConfigManager';
+import {loadConfig} from '@/core/localConfigManager';
 import RNBootSplash from 'react-native-bootsplash';
 import RNFS, {exists, mkdir} from 'react-native-fs';
-import DownloadManager from '@/common/downloadManager';
+import DownloadManager from '@/core/downloadManager';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
-import {errorLog} from '@/common/logManager';
-import MediaMetaManager from '@/common/mediaMetaManager';
+import {errorLog} from '@/utils/log';
+import MediaMetaManager from '@/core/mediaMetaManager';
 
 /** app加载前执行 */
 async function _bootstrap() {

@@ -10,7 +10,7 @@ import {
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useTextColor from '@/hooks/useTextColor';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import {Avatar, IconButton, Portal, useTheme} from 'react-native-paper';
 import {CircularProgressBase} from 'react-native-circular-progress-indicator';
 import {useNavigation} from '@react-navigation/native';

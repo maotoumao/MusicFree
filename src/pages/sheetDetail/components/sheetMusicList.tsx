@@ -1,6 +1,6 @@
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import MusicSheet from '@/common/musicSheetManager';
+import MusicSheet from '@/core/musicSheetManager';
 import Header from './header';
 import MusicList from '@/components/musicList';
 

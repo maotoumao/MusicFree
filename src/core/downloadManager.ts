@@ -1,9 +1,9 @@
 import {internalSymbolKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
-import isSameMusicItem from '@/utils/isSameMusicItem';
+import { isSameMediaItem } from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
-import {getStorage, setStorage} from '@/utils/storageUtil';
+import {getStorage, setStorage} from '@/utils/storage';
 import deepmerge from 'deepmerge';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
@@ -49,7 +49,7 @@ const downloadingProgressStateMapper = new StateMapper(
 /** 从待下载中移除 */
 function removeFromPendingQueue(item: IDownloadMusicOptions) {
   pendingMusicQueue = pendingMusicQueue.filter(
-    _ => !isSameMusicItem(_.musicItem, item.musicItem),
+    _ => !isSameMediaItem(_.musicItem, item.musicItem),
   );
   pendingMusicQueueStateMapper.notify();
 }
@@ -57,7 +57,7 @@ function removeFromPendingQueue(item: IDownloadMusicOptions) {
 /** 从下载中队列移除 */
 function removeFromDownloadingQueue(item: IDownloadMusicOptions) {
   downloadingMusicQueue = downloadingMusicQueue.filter(
-    _ => !isSameMusicItem(_.musicItem, item.musicItem),
+    _ => !isSameMediaItem(_.musicItem, item.musicItem),
   );
   downloadingQueueStateMapper.notify();
 }
@@ -220,7 +220,7 @@ async function downloadNext() {
     // 下载完成
     downloadedMusic = produce(downloadedMusic, _ => {
       if (
-        downloadedMusic.findIndex(_ => isSameMusicItem(musicItem, _)) === -1
+        downloadedMusic.findIndex(_ => isSameMediaItem(musicItem, _)) === -1
       ) {
         _.push({
           ...musicItem,
@@ -249,7 +249,7 @@ async function downloadNext() {
     downloadNext();
   } catch {
     downloadingMusicQueue = produce(downloadingMusicQueue, _ =>
-      _.filter(item => !isSameMusicItem(item.musicItem, musicItem)),
+      _.filter(item => !isSameMediaItem(item.musicItem, musicItem)),
     );
   }
 }
@@ -263,10 +263,10 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
   musicItems = musicItems.filter(
     musicItem =>
       pendingMusicQueue.findIndex(_ =>
-        isSameMusicItem(_.musicItem, musicItem),
+        isSameMediaItem(_.musicItem, musicItem),
       ) === -1 &&
       downloadingMusicQueue.findIndex(_ =>
-        isSameMusicItem(_.musicItem, musicItem),
+        isSameMediaItem(_.musicItem, musicItem),
       ) === -1,
   );
   const enqueueData = musicItems.map(_ => ({
@@ -284,13 +284,13 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
 /** 是否下载 */
 function isDownloaded(mi: IMusic.IMusicItem | null) {
   return mi
-    ? downloadedMusic.findIndex(_ => isSameMusicItem(_, mi)) !== -1
+    ? downloadedMusic.findIndex(_ => isSameMediaItem(_, mi)) !== -1
     : false;
 }
 
 /** 获取下载的音乐 */
 function getDownloaded(mi: IMusic.IMusicItem | null) {
-  return mi ? downloadedMusic.find(_ => isSameMusicItem(_, mi)) : null;
+  return mi ? downloadedMusic.find(_ => isSameMediaItem(_, mi)) : null;
 }
 
 /** 移除下载的文件 */
@@ -298,7 +298,7 @@ async function removeDownloaded(mi: IMusic.IMusicItem) {
   const localPath = getDownloaded(mi)?.[internalSymbolKey]?.localPath;
   if (localPath) {
     await unlink(localPath);
-    downloadedMusic = downloadedMusic.filter(_ => !isSameMusicItem(_, mi));
+    downloadedMusic = downloadedMusic.filter(_ => !isSameMediaItem(_, mi));
     MediaMetaManager.updateMediaMeta(mi, {
       isDownloaded: undefined
     })
@@ -315,7 +315,7 @@ function useIsDownloaded(mi: IMusic.IMusicItem | null) {
   const [downloaded, setDownloaded] = useState<boolean>(isDownloaded(mi));
   useEffect(() => {
     setDownloaded(
-      downloadedMusicState.findIndex(_ => isSameMusicItem(mi, _)) !== -1,
+      downloadedMusicState.findIndex(_ => isSameMediaItem(mi, _)) !== -1,
     );
   }, [downloadedMusicState, mi]);
   return downloaded;

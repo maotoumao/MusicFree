@@ -1,7 +1,7 @@
 import {logger, fileAsyncTransport} from 'react-native-logs';
 import RNFS from 'react-native-fs';
 import pathConst from '@/constants/pathConst';
-import {getConfig} from './localConfigManager';
+import {getConfig} from '../core/localConfigManager';
 
 const config = {
   transport: fileAsyncTransport,

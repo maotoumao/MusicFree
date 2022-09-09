@@ -1,4 +1,4 @@
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import MusicBar from '@/components/musicBar';
 import StatusBar from '@/components/base/statusBar';
 import rpx from '@/utils/rpx';

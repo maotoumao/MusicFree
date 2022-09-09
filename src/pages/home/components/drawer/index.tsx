@@ -10,7 +10,7 @@ import {
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import {Button, Card, IconButton} from 'react-native-paper';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 import ListItem from '@/components/base/listItem';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';

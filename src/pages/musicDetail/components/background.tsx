@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicQueue from '@/common/musicQueue';
+import MusicQueue from '@/core/musicQueue';
 
 interface IBackgroundProps {}
 export default function Background(props: IBackgroundProps) {

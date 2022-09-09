@@ -1,4 +1,4 @@
-import {getStorage, setStorage} from '@/utils/storageUtil';
+import {getStorage, setStorage} from '@/utils/storage';
 
 export async function getHistory() {
   return await getStorage('history-search') ?? [];

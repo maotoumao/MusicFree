@@ -2,13 +2,13 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicSheet from '@/common/musicSheetManager';
-import MusicQueue from '@/common/musicQueue';
-import isSameMusicItem from '@/utils/isSameMusicItem';
+import MusicSheet from '@/core/musicSheetManager';
+import MusicQueue from '@/core/musicQueue';
 import usePanel from '@/components/panels/usePanel';
 import RNFS from 'react-native-fs';
-import {pluginManager} from '@/common/pluginManager';
-import DownloadManager from '@/common/downloadManager';
+import {pluginManager} from '@/core/pluginManager';
+import DownloadManager from '@/core/downloadManager';
+import { isSameMediaItem } from '@/utils/mediaItem';
 
 interface IOpertionsProps {}
 export default function Opertions(props: IOpertionsProps) {
@@ -20,7 +20,7 @@ export default function Opertions(props: IOpertionsProps) {
 
   const musicIndexInFav =
     favoriteMusicSheet?.musicList.findIndex(_ =>
-      isSameMusicItem(_, musicItem),
+      isSameMediaItem(_, musicItem),
     ) ?? -1;
 
   return (
