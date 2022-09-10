@@ -20,7 +20,7 @@ export default function LocalMusic(props: ILocalMusicProps) {
   const {colors} = useTheme();
 
   useEffect(() => {
-    Download.setupDownload();
+    Download.setup();
   }, []);
 
   return (

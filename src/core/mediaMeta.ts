@@ -6,6 +6,7 @@ import {nanoid} from 'nanoid';
 import {getMultiStorage, getStorage, setStorage} from '@/utils/storage';
 import {StorageKeys} from '@/constants/commonConst';
 import objectPath from 'object-path';
+import PluginManager from './pluginManager';
 
 // pluginname - tablekey
 let mediaMetaKeys: Record<string, string> = {};
@@ -49,6 +50,15 @@ async function updateMediaMeta(
     mediaMetas[platform] = {};
   }
   let newMeta = mediaMetas;
+  if(!newMeta[platform][id]) {
+    // 如果没保存过，自动保存主键
+    const primaryKey = PluginManager.getByMedia(mediaItem)?.instance?.primaryKey ?? ['id'];
+    const mediaData: Record<string, any> = {};
+    for(let k of primaryKey) {
+      mediaData[k] = mediaItem[k];
+    }
+    newMeta[platform][id] = mediaData;
+  }
   if (Array.isArray(patch)) {
     newMeta = produce(mediaMetas, draft => {
       patch.forEach(([pathName, value]) => {
