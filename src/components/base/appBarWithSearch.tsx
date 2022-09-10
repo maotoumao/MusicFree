@@ -49,13 +49,20 @@ export default function AppBarWithSearch(props: IComplexAppBarProps) {
             onPress={onShowMenu}
           />
         }>
-        {menuOptions.map(_ => (
-          _.show === false ? <></> :<Menu.Item
-          key={`menu-${_.title}`}
-            icon={_.icon}
-            title={_.title}
-            onPress={_.onPress}></Menu.Item>
-        ))}
+        {menuOptions.map(_ =>
+          _.show === false ? (
+            <></>
+          ) : (
+            <Menu.Item
+              key={`menu-${_.title}`}
+              icon={_.icon}
+              title={_.title}
+              onPress={() => {
+                _?.onPress?.();
+                setMenuVisible(false);
+              }}></Menu.Item>
+          ),
+        )}
       </Menu>
     </Appbar.Header>
   );

@@ -98,7 +98,7 @@ type IConfigPathsObj = KeyPathsObj<DeepPartial<IConfig>, IConfigPaths>;
 
 let config: PartialConfig = null;
 /** 初始化config */
-async function loadConfig() {
+async function setup() {
   config = (await getStorage('local-config')) ?? {};
   // await checkValidPath(['setting.theme.background']);
   notify();
@@ -189,7 +189,7 @@ const Config = {
   get: getConfig,
   set: setConfig,
   useConfig,
-  setup: loadConfig,
+  setup,
 };
 
 export default Config;
