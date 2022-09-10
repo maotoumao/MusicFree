@@ -152,6 +152,14 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 closePanel();
             },
         },
+        {
+            icon: 'file-remove-outline',
+            title: '清除解析缓存(播放异常时使用)',
+            onPress: () => {
+                Cache.remove(musicItem);
+                Toast.success('缓存已清除');
+            },
+        },
     ];
 
     return (

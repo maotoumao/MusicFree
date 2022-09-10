@@ -104,7 +104,7 @@ function syncCache() {
     setStorage(StorageKeys.MediaCache, cache.dump());
 }
 
-export function removeCache(mediaItem: ICommon.IMediaBase) {
+function removeCache(mediaItem: ICommon.IMediaBase) {
     return cache.delete(getMediaKey(mediaItem));
 }
 
@@ -114,6 +114,7 @@ const Cache = {
     getInternal: getCacheInternal,
     clear: clearCache,
     update: updateCache,
+    remove: removeCache,
 };
 
 export default Cache;
