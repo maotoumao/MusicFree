@@ -21,7 +21,7 @@ export default function PageBackground() {
         ]}></View>
       <Image
         uri={themeConfig?.background}
-        fallback={ImgAsset.backgroundDefault}
+        emptySrc={ImgAsset.backgroundDefault}
         style={[
           style.wrapper,
           {

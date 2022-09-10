@@ -4,14 +4,14 @@ import rpx from '@/utils/rpx';
 
 interface IImageProps extends ImageProps {
   uri?: string;
-  fallback: any;
+  emptySrc: any;
 }
 export default function (props: Omit<IImageProps, 'source'>) {
-  const {uri, fallback} = props;
+  const {uri, emptySrc} = props;
   const source = uri
     ? {
         uri,
       }
-    : fallback;
+    : emptySrc;
   return <Image {...props} source={source}></Image>;
 }

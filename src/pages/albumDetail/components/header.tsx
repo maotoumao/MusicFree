@@ -17,7 +17,7 @@ import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import useDialog from '@/components/dialogs/useDialog';
 import Download from '@/core/download';
-import FastImage from 'react-native-fast-image';
+import FastImage from '@/components/base/fastImage';
 
 interface IHeaderProps {
   albumItem: IAlbum.IAlbumItem | null;
@@ -40,10 +40,8 @@ export default function Header(props: IHeaderProps) {
         <View style={style.content}>
           <FastImage
             style={style.coverImg}
-            source={{
-              uri: albumItem?.artwork,
-            }}
-            defaultSource={ImgAsset.albumDefault}></FastImage>
+            uri={albumItem?.artwork}
+            emptySrc={ImgAsset.albumDefault}></FastImage>
           <View style={style.details}>
             <ThemeText>{albumItem?.title}</ThemeText>
             <ThemeText fontColor="secondary" fontSize="description">

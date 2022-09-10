@@ -9,7 +9,7 @@ import Color from 'color';
 import {useTheme} from 'react-native-paper';
 import Image from '@/components/base/image';
 import { ImgAsset } from '@/constants/assetsConst';
-import FastImage from 'react-native-fast-image';
+import FastImage from '@/components/base/fastImage';
 
 interface IHeaderProps {}
 export default function Header(props: IHeaderProps) {
@@ -28,8 +28,8 @@ export default function Header(props: IHeaderProps) {
       <View style={style.content}>
         <FastImage
           style={style.coverImg}
-          source={{uri: sheet?.coverImg}}
-          defaultSource={ImgAsset.albumDefault}></FastImage>
+          uri={sheet?.coverImg}
+          emptySrc={ImgAsset.albumDefault}></FastImage>
         <View style={style.details}>
           <ThemeText fontSize='title'>{sheet?.title}</ThemeText>
           <ThemeText fontColor="secondary" fontSize="subTitle">

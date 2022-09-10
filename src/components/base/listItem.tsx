@@ -6,7 +6,7 @@ import Tag from './tag';
 import ThemeText from './themeText';
 import Image from './image';
 import IconButton from './iconButton';
-import FastImage from 'react-native-fast-image';
+import FastImage from './fastImage';
 
 export interface ILeftProps {
   /** 序号 */
@@ -47,10 +47,8 @@ function Left(props?: ILeftProps) {
         ) : (
           <FastImage
             style={leftStyle.artwork}
-            source={{
-              uri: artwork?.startsWith('//') ? `https:${artwork}` : artwork,
-            }}
-            defaultSource={fallback}></FastImage>
+            uri={artwork?.startsWith('//') ? `https:${artwork}` : artwork}
+            emptySrc={fallback}></FastImage>
         )}
       </View>
     )

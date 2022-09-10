@@ -17,10 +17,11 @@ import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Clipboard from '@react-native-clipboard/clipboard';
-import FastImage from 'react-native-fast-image';
+
 import MediaMeta from '@/core/mediaMeta';
 import { getMediaKey } from '@/utils/mediaItem';
 import Cache from '@/core/cache';
+import FastImage from '@/components/base/fastImage';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -165,10 +166,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
       <View style={style.header}>
         <FastImage
           style={style.artwork}
-          source={{
-            uri: musicItem?.artwork,
-          }}
-          defaultSource={ImgAsset.albumDefault}></FastImage>
+          uri= {musicItem?.artwork}
+          emptySrc={ImgAsset.albumDefault}></FastImage>
         <View style={style.content}>
           <ThemeText numberOfLines={2} style={style.title}>
             {musicItem?.title}
