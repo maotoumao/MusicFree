@@ -17,6 +17,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {errorLog} from '@/utils/log';
 import {parseMediaKey} from '@/utils/mediaItem';
 import Cache from '@/core/cache';
+import Toast from '@/utils/toast';
 
 interface INewMusicSheetProps {
     musicItem: IMusic.IMusicItem;
@@ -72,7 +73,9 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                 // 目标也要写进去
                                 const targetCache = Cache.get(targetMedia);
                                 if (!targetCache) {
-                                    throw new Error('过期了，重新复制');
+                                    Toast.warn('地址失效了，重新复制一下吧~');
+                                    // TODO: ERROR CODE
+                                    throw new Error('CLIPBOARD TIMEOUT');
                                 }
                                 // todo 双向记录
                                 await MediaMeta.update(musicItem, {
@@ -86,8 +89,12 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                         targetCache.$?.local?.localLrc,
                                     ],
                                 ]);
+                                Toast.success('关联歌词成功');
                                 closePanel();
                             } catch (e: any) {
+                                if (e.message !== 'CLIPBOARD TIMEOUT') {
+                                    Toast.warn('关联歌词失败');
+                                }
                                 errorLog('关联歌词失败', e?.message);
                             }
                         }

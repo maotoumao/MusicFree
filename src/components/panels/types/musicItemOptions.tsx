@@ -21,6 +21,7 @@ import MediaMeta from '@/core/mediaMeta';
 import {getMediaKey} from '@/utils/mediaItem';
 import Cache from '@/core/cache';
 import FastImage from '@/components/base/fastImage';
+import Toast from '@/utils/toast';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -60,6 +61,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                         '',
                     ),
                 );
+                Toast.success('已复制到剪切板');
             },
         },
         {
@@ -67,6 +69,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: `作者: ${musicItem.artist}`,
             onPress: () => {
                 Clipboard.setString(musicItem.artist);
+                Toast.success('已复制到剪切板');
             },
         },
         {
@@ -74,6 +77,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: `专辑: ${musicItem.album}`,
             onPress: () => {
                 Clipboard.setString(musicItem.album);
+                Toast.success('已复制到剪切板');
             },
         },
         {
@@ -92,7 +96,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'download-circle-outline',
+            icon: 'download',
             title: '下载',
             show: !downloaded,
             onPress: async () => {
@@ -111,6 +115,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             show: !!musicSheet,
             onPress: async () => {
                 await MusicSheet.removeMusic(musicSheet!.id, musicItem);
+                Toast.success('已删除');
                 closePanel();
             },
         },
@@ -120,6 +125,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             show: downloaded,
             onPress: async () => {
                 await Download.removeDownloaded(musicItem);
+                Toast.success('已删除本地下载');
                 closePanel();
             },
         },
@@ -136,12 +142,13 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
         },
         {
             icon: 'link-variant-remove',
-            title: '取消关联歌词',
+            title: '解除关联歌词',
             show: !!associatedLrc,
             onPress: () => {
                 MediaMeta.update(musicItem, {
                     associatedLrc: undefined,
                 });
+                Toast.success('已解除关联歌词');
                 closePanel();
             },
         },

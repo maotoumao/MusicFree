@@ -4,6 +4,7 @@ import AppBarWithSearch from '@/components/base/appBarWithSearch';
 import MusicSheet from '@/core/musicSheet';
 import {ROUTE_PATH} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
+import Toast from '@/utils/toast';
 
 export default function () {
     const navigation = useNavigation<any>();
@@ -31,6 +32,7 @@ export default function () {
                             content: `确定删除歌单${musicSheet.title}吗?`,
                             onOk: async () => {
                                 await MusicSheet.removeSheet(id);
+                                Toast.success('已删除');
                                 navigation.goBack();
                             },
                         });

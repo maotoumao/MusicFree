@@ -294,7 +294,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         if (lrcUrl) {
             try {
                 // 需要超时时间 axios timeout 但是没生效
-                rawLrc = (await axios.get(lrcUrl)).data;
+                rawLrc = (await axios.get(lrcUrl, {timeout: 1500})).data;
                 return {
                     rawLrc,
                     lrc: lrcUrl,
@@ -321,7 +321,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             const filename = `${pathConst.lrcCachePath}${nanoid()}.lrc`;
             if (lrcUrl) {
                 try {
-                    rawLrc = (await axios.get(lrcUrl)).data;
+                    rawLrc = (await axios.get(lrcUrl, {timeout: 1500})).data;
                 } catch {}
             }
             if (rawLrc) {

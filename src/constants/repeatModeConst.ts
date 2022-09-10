@@ -9,7 +9,7 @@ export default {
         text: '单曲循环',
     },
     [MusicQueue.MusicRepeatMode.SHUFFLE]: {
-        icon: 'shuffle',
+        icon: 'shuffle-variant',
         text: '随机播放',
     },
 };

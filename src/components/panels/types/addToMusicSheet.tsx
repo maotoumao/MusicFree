@@ -5,7 +5,6 @@ import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetFlatList,
 } from '@gorhom/bottom-sheet';
-import Toast from 'react-native-toast-message';
 import {_usePanel} from '../usePanel';
 import ThemeText from '@/components/base/themeText';
 import {useTheme} from 'react-native-paper';
@@ -13,6 +12,7 @@ import ListItem from '@/components/base/listItem';
 import MusicSheet from '@/core/musicSheet';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import Toast from '@/utils/toast';
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -68,16 +68,9 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                             try {
                                 await MusicSheet.addMusic(sheet.id, musicItem);
                                 unmountPanel();
-                                Toast.show({
-                                    text1: '添加到歌单成功',
-                                    position: 'bottom',
-                                });
+                                Toast.success('添加到歌单成功');
                             } catch {
-                                Toast.show({
-                                    type: 'error',
-                                    text1: '添加到歌单失败',
-                                    position: 'bottom',
-                                });
+                                Toast.warn('添加到歌单失败');
                             }
                         }}
                         desc={`${sheet.musicList.length ?? '-'}首`}

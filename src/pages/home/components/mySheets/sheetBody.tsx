@@ -7,6 +7,7 @@ import useDialog from '@/components/dialogs/useDialog';
 import ListItem from '@/components/base/listItem';
 import IconButton from '@/components/base/iconButton';
 import {ImgAsset} from '@/constants/assetsConst';
+import Toast from '@/utils/toast';
 
 export default function SheetBody() {
     const musicSheets = MusicSheet.useUserSheets();
@@ -39,8 +40,9 @@ export default function SheetBody() {
                                 showDialog('SimpleDialog', {
                                     title: '删除歌单',
                                     content: `确定删除歌单${sheet.title}吗?`,
-                                    onOk: () => {
-                                        MusicSheet.removeSheet(sheet.id);
+                                    onOk: async () => {
+                                        await MusicSheet.removeSheet(sheet.id);
+                                        Toast.success('已删除');
                                     },
                                 });
                             }}

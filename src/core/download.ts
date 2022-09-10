@@ -4,10 +4,11 @@ import {checkAndCreateDir} from '@/utils/fileUtils';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
 import {setStorage} from '@/utils/storage';
+import Toast from '@/utils/toast';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
 import {unlink, downloadFile, readDir} from 'react-native-fs';
-import Toast from 'react-native-toast-message';
+
 import Config from './config';
 import MediaMeta from './mediaMeta';
 import PluginManager from './pluginManager';
@@ -235,10 +236,7 @@ async function downloadNext() {
         });
         if (downloadingMusicQueue.length === 0) {
             stopNotifyProgress();
-            Toast.show({
-                text1: '下载完成',
-                position: 'bottom',
-            });
+            Toast.success('下载完成');
             downloadingMusicQueue = [];
             pendingMusicQueue = [];
             downloadingQueueStateMapper.notify();

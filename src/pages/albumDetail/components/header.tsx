@@ -90,7 +90,7 @@ export default function Header(props: IHeaderProps) {
                     }}
                 />
                 <IconButton
-                    icon="download-circle-outline"
+                    icon="download"
                     size={rpx(48)}
                     onPress={async () => {
                         showDialog('SimpleDialog', {

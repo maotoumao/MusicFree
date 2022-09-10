@@ -47,11 +47,7 @@ export default function Opertions() {
                 />
             )}
             <Icon
-                name={
-                    isDownloaded
-                        ? 'check-circle-outline'
-                        : 'download-circle-outline'
-                }
+                name={isDownloaded ? 'check-circle-outline' : 'download'}
                 size={rpx(48)}
                 color="white"
                 onPress={() => {

@@ -34,7 +34,7 @@ export default function Operations() {
         //   }
         // },
         {
-            iconName: 'download-circle-outline',
+            iconName: 'download',
             title: '下载列表',
             action() {
                 navigation.navigate(ROUTE_PATH.DOWNLOADING);
