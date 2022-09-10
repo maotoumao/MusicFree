@@ -9,7 +9,8 @@
     "clean": "cd ./android && ./gradlew clean",
     "test": "jest",
     "commit-lint": "commitlint --edit",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx src --fix",
+    "lint-staged": "lint-staged",
     "connect-mumu": "adb kill-server & adb connect localhost:7555",
     "build-android": "cd ./android && ./gradlew assembleRelease",
     "prepare": "husky install"
@@ -86,9 +87,13 @@
     "babel-jest": "^26.6.3",
     "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "jest": "^26.6.3",
+    "lint-staged": "^13.0.3",
     "metro-react-native-babel-preset": "^0.70.3",
+    "prettier": "^2.7.1",
     "react-test-renderer": "18.0.0",
     "typescript": "^4.4.4"
   },
@@ -104,6 +109,12 @@
       "jsx",
       "json",
       "node"
+    ]
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "npm run lint",
+      "git add ."
     ]
   }
 }
