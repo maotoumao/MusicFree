@@ -93,7 +93,7 @@ export default function useSearch() {
             }),
           );
           // !! jscore的promise有问题，改成hermes就好了，可能和JIT有关，不知道。
-          const result = await plugin?.instance?.search?.(
+          const result = await plugin?.methods?.search?.(
             query,
             page,
             searchType,

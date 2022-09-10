@@ -8,9 +8,11 @@ export default function useAlbumMusicList(albumItem: IAlbum.IAlbumItem | null) {
     if (albumItem === null) {
       return;
     }
+    console.log('HEREEEEEE');
     PluginManager.getByMedia(albumItem)?.methods?.getAlbumInfo?.(albumItem)?.then(_ => {
+      console.log(_, 'WTF');
       setMusicList(_?.musicList ?? []);
-    })?.catch();
+    })?.catch(console.log);
   }, []);
   return musicList;
 }

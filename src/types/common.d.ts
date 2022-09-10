@@ -19,7 +19,6 @@ declare namespace ICommon {
 
   /** 一些额外信息 */
   export type IMediaMeta = {
-    localLrc?: string;
     lrc?: string;
     associatedLrc?: IMediaBase;
     headers?: Record<string, any>;

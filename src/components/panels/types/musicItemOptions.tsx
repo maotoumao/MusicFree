@@ -19,6 +19,8 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Clipboard from '@react-native-clipboard/clipboard';
 import FastImage from 'react-native-fast-image';
 import MediaMeta from '@/core/mediaMeta';
+import { getMediaKey } from '@/utils/mediaItem';
+import Cache from '@/core/cache';
 
 interface IMusicItemOptionsProps {
   /** 歌曲信息 */
@@ -45,8 +47,9 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
   const options = [
     {
       icon: 'id-card',
-      title: `ID: ${musicItem.platform}@${musicItem.id}`,
+      title: `ID: ${getMediaKey(musicItem)}`,
       onPress: () => {
+        Cache.update(musicItem, []);
         Clipboard.setString(
           JSON.stringify({
             platform: musicItem.platform,

@@ -15,7 +15,9 @@ import useColors from '@/hooks/useColors';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import MediaMeta from '@/core/mediaMeta';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { errorLog } from '@/utils/log';
+import {errorLog} from '@/utils/log';
+import {parseMediaKey} from '@/utils/mediaItem';
+import Cache from '@/core/cache';
 
 interface INewMusicSheetProps {
   musicItem: IMusic.IMusicItem;
@@ -63,24 +65,22 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
             const inputValue = input ?? (await Clipboard.getString());
             if (inputValue) {
               try {
-                const str = JSON.parse(inputValue.trim());
-                let platform, id;
-                if (typeof str === 'string') {
-                  [platform, id] = str.split('@');
-                } else {
-                  platform = str?.platform;
-                  id = str?.id;
+                const targetMedia = parseMediaKey(inputValue.trim());
+                // 目标也要写进去
+                const targetCache = Cache.get(targetMedia);
+                if (!targetCache) {
+                  throw new Error('过期了，重新复制');
                 }
-                if (platform && id) {
-                  await MediaMeta.update(musicItem, {
-                    associatedLrc: {
-                      platform,
-                      id,
-                    },
-                  });
-                }
+                await MediaMeta.update(musicItem, {
+                  associatedLrc: targetMedia,
+                });
+                await MediaMeta.update(targetMedia, [
+                  ['lrc', targetCache.lrc],
+                  ['rawLrc', targetCache.rawLrc],
+                  ['$.local.localLrc', targetCache.$?.local?.localLrc]
+                ]);
                 closePanel();
-              } catch(e: any) {
+              } catch (e: any) {
                 errorLog('关联歌词失败', e?.message);
               }
             }

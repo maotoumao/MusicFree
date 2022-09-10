@@ -70,7 +70,7 @@ function updateCache(
 ) {
   const mediaKey = getMediaKey(mediaItem);
   let cacheData = cache.get(mediaKey);
-  if(!cacheData) {
+  if(!cacheData || !patch) {
     // 自动写入主键
     const primaryKey = PluginManager.getByMedia(mediaItem)?.instance?.primaryKey ?? ['id'];
     cacheData = {};
@@ -92,6 +92,9 @@ function updateCache(
       ...cacheData,
       ...patch,
     });
+  }
+  if(__DEV__) {
+    console.log('CACHE UPDATE, ', cache.dump());
   }
   syncCache();
 }

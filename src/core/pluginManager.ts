@@ -181,6 +181,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
       musicItem?.[internalSymbolKey]?.localPath ??
       Download.getDownloaded(musicItem)?.[internalSymbolKey]?.localPath;
     if (localPath && (await exists(localPath))) {
+      trace('播放', '本地播放');
       return {
         url: localPath,
       };
@@ -188,6 +189,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     // 2. 缓存播放
     const mediaCache = Cache.get(musicItem);
     if (mediaCache && mediaCache?.url) {
+      trace('播放', '缓存播放');
       return {
         url: mediaCache.url,
         headers: mediaCache.headers,
@@ -204,6 +206,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
       if (!url) {
         throw new Error();
       }
+      trace('播放', '插件播放');
       const result = {
         url,
         headers,
@@ -357,11 +360,15 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     try {
       const result = await this.plugin.instance.getAlbumInfo(
         resetMediaItem(albumItem, undefined, true),
-      );
+      ) ;
+      if(!result) {
+        throw new Error();
+      }
       result?.musicList?.forEach(_ => {
         resetMediaItem(_, this.plugin.name);
       });
-      return result;
+      
+      return {...albumItem, ...result};
     } catch {
       return {...albumItem, musicList: []};
     }
@@ -465,7 +472,7 @@ async function uninstallPlugin(hash: string) {
 }
 
 function getByMedia(mediaItem: ICommon.IMediaBase) {
-    return getByName(mediaItem.platform);
+  return getByName(mediaItem.platform);
 }
 
 function getByHash(hash: string) {
@@ -480,16 +487,15 @@ function getValidPlugins() {
   return plugins.filter(_ => _.state === 'enabled');
 }
 
-
 const PluginManager = {
-    setup,
-    installPlugin,
-    uninstallPlugin,
-    getByMedia,
-    getByHash,
-    getByName,
-    getValidPlugins,
-    usePlugins: pluginStateMapper.useMappedState
-}
+  setup,
+  installPlugin,
+  uninstallPlugin,
+  getByMedia,
+  getByHash,
+  getByName,
+  getValidPlugins,
+  usePlugins: pluginStateMapper.useMappedState,
+};
 
 export default PluginManager;

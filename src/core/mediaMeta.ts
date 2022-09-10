@@ -82,6 +82,9 @@ async function updateMediaMeta(
   }
   setStorage(mediaMetaKeys[platform], newMeta[platform]);
   mediaMetas = newMeta;
+  if(__DEV__) {
+    console.log('META UPDATE', mediaMetas);
+  }
 }
 
 const MediaMeta = {
