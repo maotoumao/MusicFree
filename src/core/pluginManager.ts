@@ -300,3 +300,13 @@ const pluginMethod = {
 const usePlugins = pluginStateMapper.useMappedState;
 
 export {pluginManager, usePlugins, pluginMethod};
+
+/**
+ * const Plugin = {
+ * usePlugina,
+ * method,
+ * setup,
+ * get,
+ * getBy...
+ * }
+ */

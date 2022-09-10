@@ -320,6 +320,7 @@ const getMusicTrack = async (
 /** 播放音乐 */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
   try {
+    trace('播放', musicItem);
     const _currentIndex = findMusicIndex(musicItem);
     if (!musicItem && _currentIndex === currentIndex) {
       // 如果暂停就继续播放，否则
