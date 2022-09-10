@@ -71,6 +71,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                 if (!targetCache) {
                   throw new Error('过期了，重新复制');
                 }
+                // todo 双向记录
                 await MediaMeta.update(musicItem, {
                   associatedLrc: targetMedia,
                 });

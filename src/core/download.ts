@@ -1,4 +1,4 @@
-import {internalSymbolKey} from '@/constants/commonConst';
+import {internalSerialzeKey, internalSymbolKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
 import {isSameMediaItem} from '@/utils/mediaItem';
@@ -108,7 +108,7 @@ function generateFilename(musicItem: IMusic.IMusicItem) {
   );
 }
 
-/** 可以配置一个说明文件 */
+/** todo 可以配置一个说明文件 */
 async function loadLocalJson(dirBase: string) {
   const jsonPath = dirBase + 'data.json';
   if (await exists(jsonPath)) {
@@ -231,7 +231,15 @@ async function downloadNext() {
       return _;
     });
     removeFromDownloadingQueue(nextItem);
-    MediaMeta.update({...musicItem, '#downloaded': true});
+    MediaMeta.update({
+      ...musicItem,
+      [internalSerialzeKey]: {
+        downloaded: true,
+        local: {
+          localUrl: pathConst.downloadPath + nextItem.filename,
+        },
+      },
+    });
     if (downloadingMusicQueue.length === 0) {
       stopNotifyProgress();
       Toast.show({
@@ -298,9 +306,7 @@ async function removeDownloaded(mi: IMusic.IMusicItem) {
   if (localPath) {
     await unlink(localPath);
     downloadedMusic = downloadedMusic.filter(_ => !isSameMediaItem(_, mi));
-    MediaMeta.update(mi, {
-      isDownloaded: undefined,
-    });
+    MediaMeta.update(mi, undefined);
     downloadedStateMapper.notify();
   }
 }
