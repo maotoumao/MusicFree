@@ -2,6 +2,7 @@ declare namespace IPlugin {
   export interface IMusicTrackResult {
     headers?: Record<string, string>;
     url: string;
+    userAgent?: string;
   }
 
   export interface ISearchResult<T extends ICommon.SupportMediaType> {
@@ -43,7 +44,7 @@ declare namespace IPlugin {
     /** 根据主键去查询歌曲信息 */
     getMusicInfo?: (musicBase: ICommon.IMediaBase) => Promise<IMusic.IMusicItem | null>;
     /** 获取歌词 */
-    getLyric?: (musicItem: IMusic.IMusicItemBase) => Promise<ILyric.ILyricSource>;
+    getLyric?: (musicItem: IMusic.IMusicItemBase) => Promise<ILyric.ILyricSource | null>;
     /** 获取专辑信息，里面的歌曲不要分页 */
     getAlbumInfo?: (
       albumItem: IAlbum.IAlbumItemBase,

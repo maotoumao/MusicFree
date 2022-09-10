@@ -19,7 +19,7 @@ import {
 import Toast from 'react-native-toast-message';
 import {getConfig} from './localConfigManager';
 import MediaMeta from './mediaMeta';
-import {pluginManager} from './pluginManager';
+import PluginManager from './plugin';
 
 interface IDownloadMusicOptions {
   musicItem: IMusic.IMusicItem;
@@ -175,11 +175,10 @@ async function downloadNext() {
   downloadingQueueStateMapper.notify();
   if (!url || !url?.startsWith('http')) {
     // 插件播放
-    const plugin = pluginManager.getPlugin(musicItem.platform);
-    if (plugin && plugin.instance.getMusicTrack) {
+    const plugin = PluginManager.getByName(musicItem.platform);
+    if (plugin) {
       try {
-        // todo: 重试
-        const data = await plugin.instance.getMusicTrack(musicItem);
+        const data = await plugin.methods.getMusicTrack(musicItem);
         url = data?.url;
         headers = data?.headers;
       } catch {
@@ -289,7 +288,7 @@ function isDownloaded(mi: IMusic.IMusicItem | null) {
 }
 
 /** 获取下载的音乐 */
-function getDownloaded(mi: IMusic.IMusicItem | null) {
+function getDownloaded(mi: ICommon.IMediaBase | null) {
   return mi ? downloadedMusic.find(_ => isSameMediaItem(_, mi)) : null;
 }
 

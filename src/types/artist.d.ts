@@ -1,11 +1,11 @@
 declare namespace IArtist {
 
-  export interface IArtistItemBase {
+  export interface IArtistItemBase extends ICommon.IMediaBase {
     name: string;
     id: string;
     fans?: number;
     description?: string;
-    platform?: string;
+    platform: string;
     avatar: string;
     worksNum: number;
   }

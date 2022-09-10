@@ -2,7 +2,6 @@ import MusicQueue from '@/core/musicQueue';
 import MusicSheet from '@/core/musicSheet';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import TrackPlayer, {Capability} from 'react-native-track-player';
-import {pluginManager} from '../core/pluginManager';
 import 'react-native-get-random-values';
 import {Platform, ToastAndroid} from 'react-native';
 import {loadConfig} from '@/core/localConfigManager';
@@ -14,8 +13,13 @@ import {checkAndCreateDir} from '@/utils/fileUtils';
 import {errorLog} from '@/utils/log';
 import MediaMeta from '@/core/mediaMeta';
 import Cache from '@/core/cache';
+import PluginManager from '@/core/plugin';
 
-/** app加载前执行 */
+/** app加载前执行
+ * 1. 检查权限
+ * 2. 数据初始化
+ * 3. 
+ */
 async function _bootstrap() {
   // 检查权限
   const [readStoragePermission, writeStoragePermission] = await Promise.all([
@@ -36,6 +40,8 @@ async function _bootstrap() {
   await setupFolder();
   // 加载配置
   await loadConfig();
+
+  await Cache.setup();
   // 加载插件
   try {
     await TrackPlayer.setupPlayer();
@@ -48,7 +54,7 @@ async function _bootstrap() {
   }
 
   Promise.all([
-    await pluginManager.setupPlugins(),
+
     await MediaMeta.setup(),
   ]);
   await TrackPlayer.updateOptions({
@@ -77,7 +83,8 @@ async function _bootstrap() {
   await MusicQueue.setup();
   await MusicSheet.setup();
   await Download.setup();
-  await Cache.setup();
+  await PluginManager.setup();
+
 
   ErrorUtils.setGlobalHandler(error => {
     errorLog('未捕获的错误', error);

@@ -8,7 +8,6 @@ import TrackPlayer, {
   usePlaybackState,
   useProgress,
 } from 'react-native-track-player';
-import {pluginManager} from './pluginManager';
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import {getConfig, setConfig} from './localConfigManager';
@@ -19,7 +18,8 @@ import delay from '@/utils/delay';
 import {exists} from 'react-native-fs';
 import {errorLog, trace} from '../utils/log';
 import Cache from './cache';
-import {isSameMediaItem} from '@/utils/mediaItem';
+import {isSameMediaItem, mergeProps} from '@/utils/mediaItem';
+import PluginManager from './plugin';
 
 enum MusicRepeatMode {
   /** 随机播放 */
@@ -65,8 +65,8 @@ const setup = async () => {
     }
     if (config?.track) {
       currentIndex = findMusicIndex(config.track);
-      const track = await getMusicTrack(config.track);
-      await TrackPlayer.add([track, getFakeNextTrack()]);
+      // todo： 判空，理论上不会发生
+      await TrackPlayer.add([config.track as Track, getFakeNextTrack()]);
     }
 
     if (config?.progress) {
@@ -252,70 +252,6 @@ const getFakeNextTrack = () => {
   }
 };
 
-/** 获取真实的url */
-const getMusicTrack = async (
-  musicItem: IMusic.IMusicItem,
-  retryCount = 1,
-): Promise<Track> => {
-  let track: Track;
-
-  const localPath =
-    musicItem?.[internalSymbolKey]?.localPath ??
-    Download.getDownloaded(musicItem)?.[internalSymbolKey]?.localPath;
-  // 1. 本地下载
-  if (localPath && (await exists(localPath))) {
-    track = produce(musicItem, draft => {
-      draft.url = localPath;
-    }) as Track;
-  } else {
-    // 插件播放
-    // 2. 缓存
-    const internalData = Cache.get(musicItem)?.[internalSerialzeKey];
-    if (internalData?.url) {
-      return {
-        url: internalData.url,
-        headers: internalData?.headers,
-        userAgent: internalData?.userAgent,
-      };
-    }
-    // 3. 插件解析
-    const plugin = pluginManager.getPlugin(musicItem.platform);
-    if (plugin && plugin.instance.getMusicTrack) {
-      try {
-        const {url, headers} =
-          (await plugin.instance.getMusicTrack(musicItem)) ?? {};
-        if (!url) {
-          throw new Error();
-        }
-        track = produce(musicItem, draft => {
-          draft.url = url;
-          draft.headers = headers;
-          draft.userAgent = headers?.['user-agent'];
-        }) as Track;
-      } catch (e) {
-        if (retryCount > 0) {
-          await delay(150);
-          return getMusicTrack(musicItem, --retryCount);
-        } else {
-          // 播放失败,可以用配置
-          errorLog('获取真实URL失败', e);
-          throw new Error('TRACK FAIL');
-        }
-      }
-    } else {
-      track = musicItem as Track;
-    }
-  }
-  // 写入缓存
-  Cache.update(musicItem, {
-    [internalSerialzeKey]: {
-      url: track.url,
-      headers: track.headers,
-      userAgent: track.userAgent,
-    },
-  });
-  return track;
-};
 
 /** 播放音乐 */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
@@ -354,10 +290,11 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     const _musicItem = musicQueue[currentIndex];
     let track: IMusic.IMusicItem;
     try {
-      track = (await getMusicTrack(_musicItem)) as IMusic.IMusicItem;
+      // 获取真实源
+      const source = await PluginManager.getByName(_musicItem.platform)?.methods?.getMusicTrack(_musicItem);
+      track = mergeProps(_musicItem, source) as IMusic.IMusicItem;
     } catch (e) {
       // 播放失败
-      console.log(e);
       if (isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
         await _playFail();
       }

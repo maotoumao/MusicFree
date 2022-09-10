@@ -1,11 +1,10 @@
 import {errorLog, trace} from '@/utils/log';
-import {Plugin, pluginManager} from '@/core/pluginManager';
 import {RequestStateCode} from '@/constants/commonConst';
-import { makeTag } from '@/utils/makeTag';
 import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
 import {useCallback, useRef} from 'react';
 import {PageStatus, pageStatusAtom, searchResultsAtom} from '../store/atoms';
+import PluginManager, { Plugin } from '@/core/plugin';
 
 export default function useSearch() {
   const setPageStatus = useSetAtom(pageStatusAtom);
@@ -31,10 +30,10 @@ export default function useSearch() {
 
       let plugins: Plugin[] = [];
       if (pluginHash) {
-        const tgtPlugin = pluginManager.getPluginByHash(pluginHash);
+        const tgtPlugin = PluginManager.getByHash(pluginHash);
         tgtPlugin && (plugins = [tgtPlugin]);
       } else {
-        plugins = pluginManager.getValidPlugins();
+        plugins = PluginManager.getValidPlugins();
       }
 
       // 使用选中插件搜素
@@ -114,7 +113,7 @@ export default function useSearch() {
               const prevPluginResult: any = prevMediaResult[_hash] ?? {
                 data: [],
               };
-              const tagedResult = makeTag(result.data ?? [], _platform);
+              const currResult = result.data ?? [];
 
               prevMediaResult[_hash] = {
                 state:
@@ -124,8 +123,8 @@ export default function useSearch() {
                 query,
                 page,
                 data: newSearch
-                  ? tagedResult
-                  : (prevPluginResult.data ?? []).concat(tagedResult),
+                  ? currResult
+                  : (prevPluginResult.data ?? []).concat(currResult),
               };
               return draft;
             }),

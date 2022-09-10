@@ -12,8 +12,9 @@ declare namespace ICommon {
   export type IMediaBase = {
     id: string;
     platform: string;
-    [k: string]: any;
+    $?: any,
     [k: symbol]: any;
+    [k: string]: any;
   };
 
   /** 一些额外信息 */
@@ -25,6 +26,13 @@ declare namespace ICommon {
     url?: string;
     id?: string;
     platform?: string;
+    $?: {
+      local?: {
+        localLrc?: string;
+        [k: string]: any
+      }
+      [k: string]: any
+    },
     [k: string]: any;
     [k: symbol]: any;
   };

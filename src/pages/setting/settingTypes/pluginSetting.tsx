@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {Plugin, pluginManager, usePlugins} from '@/core/pluginManager';
 import {AnimatedFAB, Button, List, useTheme} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS, {unlink} from 'react-native-fs';
@@ -14,10 +13,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useDialog from '@/components/dialogs/useDialog';
 import useColors from '@/hooks/useColors';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import PluginManager, { Plugin } from '@/core/plugin';
 
 interface IPluginSettingProps {}
 export default function PluginSetting(props: IPluginSettingProps) {
-  const plugins = usePlugins();
+  const plugins = PluginManager.usePlugins();
   const [loading, setLoading] = useState(false);
   const colors = useColors();
   const {showDialog} = useDialog();
@@ -41,19 +41,9 @@ export default function PluginSetting(props: IPluginSettingProps) {
           try {
             const result = await DocumentPicker.pickMultiple();
             setLoading(true);
-            await Promise.all(
-              result.map(_ => {
-                const name =
-                  _.name ?? _.uri.substring(_.uri.lastIndexOf('/') + 1);
-                return name.endsWith('.js')
-                  ? RNFS.copyFile(
-                      _.uri,
-                      pluginManager.pluginPath + `${Date.now()}${name}`,
-                    )
-                  : Promise.resolve();
-              }),
-            );
-            await pluginManager.setupPlugins();
+            // 初步过滤
+            const validResult = result?.filter(_ => _.uri.endsWith('.js'));
+            await Promise.allSettled(validResult.map(_ => PluginManager.installPlugin(_.uri)));
           } catch (e) {
             console.log(e, '寄了');
           }
@@ -103,8 +93,7 @@ function PluginView(props: IPluginViewProps) {
           content: `确认卸载插件${plugin.instance.platform}吗`,
           async onOk() {
             try {
-              await unlink(plugin.instance._path);
-              await pluginManager.setupPlugins();
+              await PluginManager.uninstallPlugin(plugin.hash);
             } catch {}
           },
         });

@@ -2,13 +2,13 @@ import React, {memo, useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
-import {pluginManager, usePlugins} from '@/core/pluginManager';
 import DefaultResults from './results/defaultResults';
 import {renderMap} from './results';
 import ResultWrapper from './resultWrapper';
 import {fontWeightConst} from '@/constants/uiConst';
 import { useAtomValue } from 'jotai';
 import { searchResultsAtom } from '../../store/atoms';
+import PluginManager from '@/core/plugin';
 
 interface IResultSubPanelProps {
   tab: ICommon.SupportMediaType;
@@ -51,7 +51,7 @@ function getSubRouterScene(
 function ResultSubPanel(props: IResultSubPanelProps) {
   const [index, setIndex] = useState(0);
   // todo 是否聚合结果，如果是的话
-  const routes = pluginManager.getPlugins().map(_ => ({
+  const routes = PluginManager.getValidPlugins().map(_ => ({
     key: _.hash,
     title: _.name,
   }));

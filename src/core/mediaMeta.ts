@@ -33,6 +33,11 @@ function getMediaMeta(mediaItem: ICommon.IMediaBase) {
   return mediaMetas[mediaItem.platform]?.[mediaItem.id] ?? null;
 }
 
+function getByMediaKey(mediaKey: string) {
+  const [platform, id] = mediaKey.split('@');
+  return getMediaMeta({platform, id});
+}
+
 /** 创建/更新mediameta */
 async function updateMediaMeta(
   mediaItem: ICommon.IMediaBase,
@@ -75,6 +80,7 @@ async function updateMediaMeta(
 const MediaMeta = {
   setup,
   get: getMediaMeta,
+  getByMediaKey,
   update: updateMediaMeta,
 };
 

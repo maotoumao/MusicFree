@@ -6,7 +6,6 @@ import MusicSheet from '@/core/musicSheet';
 import MusicQueue from '@/core/musicQueue';
 import usePanel from '@/components/panels/usePanel';
 import RNFS from 'react-native-fs';
-import {pluginManager} from '@/core/pluginManager';
 import Download from '@/core/download';
 import { isSameMediaItem } from '@/utils/mediaItem';
 

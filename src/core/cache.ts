@@ -1,8 +1,11 @@
-import {StorageKeys} from '@/constants/commonConst';
+import {internalSerialzeKey, StorageKeys} from '@/constants/commonConst';
 import {getMediaKey} from '@/utils/mediaItem';
 import {getStorage, setStorage} from '@/utils/storage';
+import produce from 'immer';
 import LRUCache from 'lru-cache';
+import objectPath from 'object-path';
 import {exists, unlink} from 'react-native-fs';
+import MediaMeta from './mediaMeta';
 
 /** 缓存一些解析结果、临时的歌词文件等等
  * 触发缓存的时机：播放、部分特殊设置
@@ -13,14 +16,19 @@ const cache = new LRUCache<string, ICommon.IMediaMeta>({
   maxSize: 5 * 1024 * 1024, //5MB
   sizeCalculation: (value, key) => {
     // todo: bytelength
-    return (JSON.stringify(value, null, '')).length;
+    return JSON.stringify(value, null, '').length;
   },
   dispose: async (value, key) => {
     // todo: 如果meta中也用到了，就不删除了
-    const valueObj = Object.values(value ?? {});
-    for (let val of valueObj) {
-      if (val?.startsWith('file:') && (await exists(val))) {
-        unlink(val);
+    // 全都放在internalkey/local中
+    const localFiles = value?.[internalSerialzeKey]?.local;
+    if (localFiles) {
+      const localMeta =
+        MediaMeta.getByMediaKey(key)?.[internalSerialzeKey]?.local;
+      for (let [k, fp] of Object.entries(localFiles)) {
+        if (!localMeta?.[k] && fp) {
+          unlink(fp);
+        }
       }
     }
     syncCache();
@@ -44,6 +52,12 @@ function getCache(
   return result;
 }
 
+function getCacheInternal(
+  mediaItem: ICommon.IMediaBase,
+): Record<string, any> | undefined {
+  return getCache(mediaItem)?.[internalSerialzeKey];
+}
+
 async function clearCache() {
   cache.clear();
   return setStorage(StorageKeys.MediaCache, undefined);
@@ -51,14 +65,25 @@ async function clearCache() {
 
 function updateCache(
   mediaItem: ICommon.IMediaBase,
-  patch: ICommon.IMediaMeta,
+  patch: ICommon.IMediaMeta | Array<[string, any]>,
 ) {
   const mediaKey = getMediaKey(mediaItem);
   const cacheData = cache.get(mediaKey) ?? {};
-  cache.set(mediaKey, {
-    ...cacheData,
-    ...patch,
-  });
+  if (Array.isArray(patch)) {
+    cache.set(
+      mediaKey,
+      produce(cacheData, draft => {
+        for (let [objPath, value] of patch) {
+          objectPath.set(draft, objPath, value);
+        }
+      }),
+    );
+  } else {
+    cache.set(mediaKey, {
+      ...cacheData,
+      ...patch,
+    });
+  }
   syncCache();
 }
 
@@ -73,6 +98,7 @@ export function removeCache(mediaItem: ICommon.IMediaBase) {
 const Cache = {
   setup: setupCache,
   get: getCache,
+  getInternal: getCacheInternal,
   clear: clearCache,
   update: updateCache,
 };

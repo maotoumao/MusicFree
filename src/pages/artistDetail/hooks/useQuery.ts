@@ -1,11 +1,10 @@
 import {errorLog, trace} from '@/utils/log';
-import {pluginManager} from '@/core/pluginManager';
 import {RequestStateCode} from '@/constants/commonConst';
-import {makeTag} from '@/utils/makeTag';
 import produce from 'immer';
 import {useAtom} from 'jotai';
 import {useCallback} from 'react';
 import {queryResultAtom} from '../store/atoms';
+import PluginManager from '@/core/plugin';
 
 export default function useQueryArtist(pluginHash: string) {
   const [queryResults, setQueryResults] = useAtom(queryResultAtom);
@@ -16,7 +15,7 @@ export default function useQueryArtist(pluginHash: string) {
       page?: number,
       type: IArtist.ArtistMediaType = 'music',
     ) => {
-      const plugin = pluginManager.getPluginByHash(pluginHash);
+      const plugin = PluginManager.getByHash(pluginHash);
 
       const prevResult = queryResults[type];
       if (
@@ -33,7 +32,7 @@ export default function useQueryArtist(pluginHash: string) {
           }),
         );
 
-        const result = await plugin?.instance?.queryArtistWorks?.(
+        const result = await plugin?.methods?.queryArtistWorks?.(
           artist,
           page,
           type,
@@ -46,7 +45,7 @@ export default function useQueryArtist(pluginHash: string) {
                 ? RequestStateCode.PARTLY_DONE
                 : RequestStateCode.FINISHED;
             draft[type].data = (draft[type].data ?? []).concat(
-              makeTag(result?.data ?? [], plugin?.name ?? ''),
+              result?.data ?? [],
             );
           }),
         );

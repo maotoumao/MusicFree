@@ -15,13 +15,13 @@ import {
 } from 'react-native-gesture-handler';
 import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
-import IconButton, { IconButtonWithGesture } from '@/components/base/iconButton';
+import IconButton, {IconButtonWithGesture} from '@/components/base/iconButton';
 import musicIsPaused from '@/utils/musicIsPaused';
 import MediaMeta from '@/core/mediaMeta';
-import {pluginMethod} from '@/core/pluginManager';
 import {trace} from '@/utils/log';
 import Loading from '@/components/base/loading';
-import { isSameMediaItem } from '@/utils/mediaItem';
+import {isSameMediaItem} from '@/utils/mediaItem';
+import PluginManager from '@/core/plugin';
 
 interface ICurrentLyricItem {
   lrc?: ILyric.IParsedLrcItem;
@@ -48,9 +48,9 @@ function useLyric() {
       )
     ) {
       setLoading(true);
-      pluginMethod
-        .getLyric(musicItem)
-        .then(lrc => {
+      PluginManager.getByMedia(musicItem)
+        ?.methods?.getLyricText(musicItem)
+        ?.then(lrc => {
           setLoading(false);
           trace(musicItem.title, lrc);
           if (isSameMediaItem(musicItem, musicItemRef.current)) {
@@ -66,7 +66,7 @@ function useLyric() {
             }
           }
         })
-        .catch(_ => {
+        ?.catch(_ => {
           setLoading(false);
         });
     }

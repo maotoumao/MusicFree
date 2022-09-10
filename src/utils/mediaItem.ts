@@ -15,21 +15,28 @@ export function isSameMediaItem(
 }
 
 /** 获取复位的mediaItem */
-export function resetMediaItem(
-  mediaItem: ICommon.IMediaBase,
+export function resetMediaItem<T extends ICommon.IMediaBase>(
+  mediaItem: T,
   platform?: string,
-  immer?: boolean,
-) {
-  if (!immer) {
+  newObj?: boolean,
+): T {
+  if (!newObj) {
+
     mediaItem.platform = platform ?? mediaItem.platform;
     mediaItem[internalSerialzeKey] = undefined;
-    mediaItem[internalSymbolKey] = undefined;
     return mediaItem;
   } else {
     return produce(mediaItem, _ => {
       _.platform = platform ?? mediaItem.platform;
       _[internalSerialzeKey] = undefined;
-      _[internalSymbolKey] = undefined;
     });
   }
+}
+
+
+export function mergeProps (mediaItem: ICommon.IMediaBase, props: Record<string, any> | undefined) {
+  return props ? {
+    ...mediaItem,
+    ...props
+  } : mediaItem;
 }
