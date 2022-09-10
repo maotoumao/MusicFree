@@ -20,7 +20,7 @@ export default function AppBarWithSearch(props: IComplexAppBarProps) {
   const navigation = useNavigation();
   const {title, onSearchPress, menuOptions = []} = props;
   const {colors} = useTheme();
-  const [isMenuVisible, setMenuVisible] = useState(true);
+  const [isMenuVisible, setMenuVisible] = useState(false);
 
   const onDismissMenu = () => {
     setMenuVisible(false);
