@@ -19,7 +19,7 @@ import {
 import Toast from 'react-native-toast-message';
 import {getConfig} from './localConfigManager';
 import MediaMeta from './mediaMeta';
-import PluginManager from './plugin';
+import PluginManager from './pluginManager';
 
 interface IDownloadMusicOptions {
   musicItem: IMusic.IMusicItem;

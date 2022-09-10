@@ -21,7 +21,7 @@ import MediaMeta from '@/core/mediaMeta';
 import {trace} from '@/utils/log';
 import Loading from '@/components/base/loading';
 import {isSameMediaItem} from '@/utils/mediaItem';
-import PluginManager from '@/core/plugin';
+import PluginManager from '@/core/pluginManager';
 
 interface ICurrentLyricItem {
   lrc?: ILyric.IParsedLrcItem;

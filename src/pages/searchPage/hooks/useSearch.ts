@@ -4,7 +4,7 @@ import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
 import {useCallback, useRef} from 'react';
 import {PageStatus, pageStatusAtom, searchResultsAtom} from '../store/atoms';
-import PluginManager, { Plugin } from '@/core/plugin';
+import PluginManager, { Plugin } from '@/core/pluginManager';
 
 export default function useSearch() {
   const setPageStatus = useSetAtom(pageStatusAtom);

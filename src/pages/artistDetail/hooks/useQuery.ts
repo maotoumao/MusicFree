@@ -4,7 +4,7 @@ import produce from 'immer';
 import {useAtom} from 'jotai';
 import {useCallback} from 'react';
 import {queryResultAtom} from '../store/atoms';
-import PluginManager from '@/core/plugin';
+import PluginManager from '@/core/pluginManager';
 
 export default function useQueryArtist(pluginHash: string) {
   const [queryResults, setQueryResults] = useAtom(queryResultAtom);

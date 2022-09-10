@@ -1,7 +1,6 @@
 import {getStorage, setStorage} from '@/utils/storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
-import {exists} from 'react-native-fs';
 
 type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
 interface IConfig {

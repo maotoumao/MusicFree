@@ -19,7 +19,7 @@ import {exists} from 'react-native-fs';
 import {errorLog, trace} from '../utils/log';
 import Cache from './cache';
 import {isSameMediaItem, mergeProps} from '@/utils/mediaItem';
-import PluginManager from './plugin';
+import PluginManager from './pluginManager';
 
 enum MusicRepeatMode {
   /** 随机播放 */

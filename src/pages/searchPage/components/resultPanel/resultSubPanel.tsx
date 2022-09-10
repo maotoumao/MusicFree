@@ -8,7 +8,7 @@ import ResultWrapper from './resultWrapper';
 import {fontWeightConst} from '@/constants/uiConst';
 import { useAtomValue } from 'jotai';
 import { searchResultsAtom } from '../../store/atoms';
-import PluginManager from '@/core/plugin';
+import PluginManager from '@/core/pluginManager';
 
 interface IResultSubPanelProps {
   tab: ICommon.SupportMediaType;

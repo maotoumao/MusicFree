@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useDialog from '@/components/dialogs/useDialog';
 import useColors from '@/hooks/useColors';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-import PluginManager, { Plugin } from '@/core/plugin';
+import PluginManager, { Plugin } from '@/core/pluginManager';
 
 interface IPluginSettingProps {}
 export default function PluginSetting(props: IPluginSettingProps) {

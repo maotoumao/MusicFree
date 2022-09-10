@@ -1,4 +1,4 @@
-import PluginManager from '@/core/plugin';
+import PluginManager from '@/core/pluginManager';
 import {useEffect, useState} from 'react';
 
 export default function useAlbumMusicList(albumItem: IAlbum.IAlbumItem | null) {

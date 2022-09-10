@@ -13,7 +13,7 @@ import {checkAndCreateDir} from '@/utils/fileUtils';
 import {errorLog} from '@/utils/log';
 import MediaMeta from '@/core/mediaMeta';
 import Cache from '@/core/cache';
-import PluginManager from '@/core/plugin';
+import PluginManager from '@/core/pluginManager';
 
 /** app加载前执行
  * 1. 检查权限
@@ -21,7 +21,7 @@ import PluginManager from '@/core/plugin';
  * 3. 
  */
 async function _bootstrap() {
-  // 检查权限
+  // 1. 检查权限
   const [readStoragePermission, writeStoragePermission] = await Promise.all([
     check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE),
     check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE),
@@ -36,12 +36,11 @@ async function _bootstrap() {
     await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
   }
 
+  // 2. 数据初始化
   /** 初始化路径 */
   await setupFolder();
   // 加载配置
-  await loadConfig();
-
-  await Cache.setup();
+  await Promise.all([loadConfig(), MediaMeta.setup(), MusicSheet.setup()])
   // 加载插件
   try {
     await TrackPlayer.setupPlayer();
@@ -52,11 +51,6 @@ async function _bootstrap() {
       throw e;
     }
   }
-
-  Promise.all([
-
-    await MediaMeta.setup(),
-  ]);
   await TrackPlayer.updateOptions({
     progressUpdateEventInterval: 0.4,
     stopWithApp: false,
@@ -80,10 +74,10 @@ async function _bootstrap() {
       Capability.SkipToPrevious,
     ],
   });
-  await MusicQueue.setup();
-  await MusicSheet.setup();
+  await Cache.setup()
   await Download.setup();
   await PluginManager.setup();
+  await MusicQueue.setup();
 
 
   ErrorUtils.setGlobalHandler(error => {
