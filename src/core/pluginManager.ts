@@ -67,7 +67,6 @@ export class Plugin {
         return null;
       }
     `)()({CryptoJs, axios, dayjs});
-
             this.checkValid(_instance);
         } catch (e: any) {
             this.state = 'error';
@@ -412,6 +411,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
     }
 }
+
 let plugins: Array<Plugin> = [];
 const pluginStateMapper = new StateMapper(() => plugins);
 
@@ -444,6 +444,7 @@ async function setup() {
             `插件初始化失败:${e?.message ?? e}`,
             ToastAndroid.LONG,
         );
+        errorLog('插件初始化失败', e?.message);
         throw e;
     }
 }

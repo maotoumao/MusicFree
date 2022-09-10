@@ -10,6 +10,7 @@ import useDialog from '@/components/dialogs/useDialog';
 import useColors from '@/hooks/useColors';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import PluginManager, {Plugin} from '@/core/pluginManager';
+import {trace} from '@/utils/log';
 
 export default function PluginSetting() {
     const plugins = PluginManager.usePlugins();
@@ -45,8 +46,8 @@ export default function PluginSetting() {
                                 PluginManager.installPlugin(_.uri),
                             ),
                         );
-                    } catch (e) {
-                        console.log(e, '寄了');
+                    } catch (e: any) {
+                        trace('插件安装失败', e?.message);
                     }
                     setLoading(false);
                 }}
