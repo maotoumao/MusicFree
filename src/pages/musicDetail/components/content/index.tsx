@@ -5,32 +5,31 @@ import AlbumCover from './albumCover';
 import Lyric from './lyric';
 import {TapGestureHandler} from 'react-native-gesture-handler';
 
-interface IContentProps {}
-export default function Content(props: IContentProps) {
-  const [tab, selectTab] = useState<'album' | 'lyric'>('album');
+export default function Content() {
+    const [tab, selectTab] = useState<'album' | 'lyric'>('album');
 
-  const onPress = (evt: any) => {
-    if (tab === 'album') {
-      selectTab('lyric');
-    } else {
-      selectTab('album');
-    }
-  };
+    const onPress = () => {
+        if (tab === 'album') {
+            selectTab('lyric');
+        } else {
+            selectTab('album');
+        }
+    };
 
-  return (
-    <TapGestureHandler onActivated={onPress}>
-      <View style={style.wrapper}>
-        {tab === 'album' ? <AlbumCover></AlbumCover> : <Lyric></Lyric>}
-      </View>
-    </TapGestureHandler>
-  );
+    return (
+        <TapGestureHandler onActivated={onPress}>
+            <View style={style.wrapper}>
+                {tab === 'album' ? <AlbumCover /> : <Lyric />}
+            </View>
+        </TapGestureHandler>
+    );
 }
 
 const style = StyleSheet.create({
-  wrapper: {
-    width: rpx(750),
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    wrapper: {
+        width: rpx(750),
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });

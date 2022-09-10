@@ -10,35 +10,34 @@ import Body from './components/body';
 import {useSetAtom} from 'jotai';
 import {initQueryResult, queryResultAtom, scrollToTopAtom} from './store/atoms';
 
-interface IArtistDetailProps {}
-export default function ArtistDetail(props: IArtistDetailProps) {
-  const setQueryResult = useSetAtom(queryResultAtom);
-  const setScrollToTopState = useSetAtom(scrollToTopAtom);
+export default function ArtistDetail() {
+    const setQueryResult = useSetAtom(queryResultAtom);
+    const setScrollToTopState = useSetAtom(scrollToTopAtom);
 
-  useEffect(() => {
-    return () => {
-      setQueryResult(initQueryResult);
-      setScrollToTopState(true);
-    };
-  }, []);
+    useEffect(() => {
+        return () => {
+            setQueryResult(initQueryResult);
+            setScrollToTopState(true);
+        };
+    }, []);
 
-  return (
-    <SafeAreaView style={style.wrapper}>
-      <StatusBar></StatusBar>
-      <SimpleAppBar title="作者"></SimpleAppBar>
-      <Header></Header>
-      <Body></Body>
-      <MusicBar></MusicBar>
-    </SafeAreaView>
-  );
+    return (
+        <SafeAreaView style={style.wrapper}>
+            <StatusBar />
+            <SimpleAppBar title="作者" />
+            <Header />
+            <Body />
+            <MusicBar />
+        </SafeAreaView>
+    );
 }
 
 const style = StyleSheet.create({
-  wrapper: {
-    width: rpx(750),
-    flex: 1,
-  },
-  body: {
-    flex: 1,
-  },
+    wrapper: {
+        width: rpx(750),
+        flex: 1,
+    },
+    body: {
+        flex: 1,
+    },
 });

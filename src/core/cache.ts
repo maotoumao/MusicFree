@@ -4,115 +4,116 @@ import {getStorage, setStorage} from '@/utils/storage';
 import produce from 'immer';
 import LRUCache from 'lru-cache';
 import objectPath from 'object-path';
-import {exists, unlink} from 'react-native-fs';
+import {unlink} from 'react-native-fs';
 import MediaMeta from './mediaMeta';
 import PluginManager from './pluginManager';
 
 /** 缓存一些解析结果、临时的歌词文件等等
  * 触发缓存的时机：播放、部分特殊设置
  */
-const localPathKey = [];
+// const localPathKey = [];
 const cache = new LRUCache<string, ICommon.IMediaMeta>({
-  max: 2000,
-  maxSize: 5 * 1024 * 1024, //5MB
-  sizeCalculation: (value, key) => {
-    // todo: bytelength
-    return JSON.stringify(value, null, '').length;
-  },
-  dispose: async (value, key) => {
-    // todo: 如果meta中也用到了，就不删除了
-    // 全都放在internalkey/local中
-    const localFiles = value?.[internalSerialzeKey]?.local;
-    if (localFiles) {
-      const localMeta =
-        MediaMeta.getByMediaKey(key)?.[internalSerialzeKey]?.local;
-      for (let [k, fp] of Object.entries(localFiles)) {
-        if (!localMeta?.[k] && fp) {
-          unlink(fp);
+    max: 2000,
+    maxSize: 5 * 1024 * 1024, //5MB
+    sizeCalculation: value => {
+        // todo: bytelength
+        return JSON.stringify(value, null, '').length;
+    },
+    dispose: async (value, key) => {
+        // todo: 如果meta中也用到了，就不删除了
+        // 全都放在internalkey/local中
+        const localFiles = value?.[internalSerialzeKey]?.local;
+        if (localFiles) {
+            const localMeta =
+                MediaMeta.getByMediaKey(key)?.[internalSerialzeKey]?.local;
+            for (let [k, fp] of Object.entries(localFiles)) {
+                if (!localMeta?.[k] && fp) {
+                    unlink(fp);
+                }
+            }
         }
-      }
-    }
-    syncCache();
-  },
-  allowStale: false,
+        syncCache();
+    },
+    allowStale: false,
 });
 
 async function setupCache() {
-  const cacheStorage = await getStorage(StorageKeys.MediaCache);
-  if (cacheStorage && Array.isArray(cacheStorage)) {
-    cache.load(cacheStorage);
-  }
+    const cacheStorage = await getStorage(StorageKeys.MediaCache);
+    if (cacheStorage && Array.isArray(cacheStorage)) {
+        cache.load(cacheStorage);
+    }
 }
 
 function getCache(
-  mediaItem: ICommon.IMediaBase,
+    mediaItem: ICommon.IMediaBase,
 ): ICommon.IMediaMeta | undefined {
-  // sync
-  const result = cache.get(getMediaKey(mediaItem));
-  syncCache();
-  return result;
+    // sync
+    const result = cache.get(getMediaKey(mediaItem));
+    syncCache();
+    return result;
 }
 
 function getCacheInternal(
-  mediaItem: ICommon.IMediaBase,
+    mediaItem: ICommon.IMediaBase,
 ): Record<string, any> | undefined {
-  return getCache(mediaItem)?.[internalSerialzeKey];
+    return getCache(mediaItem)?.[internalSerialzeKey];
 }
 
 async function clearCache() {
-  cache.clear();
-  return setStorage(StorageKeys.MediaCache, undefined);
+    cache.clear();
+    return setStorage(StorageKeys.MediaCache, undefined);
 }
 
 function updateCache(
-  mediaItem: ICommon.IMediaBase,
-  patch: ICommon.IMediaMeta | Array<[string, any]>,
+    mediaItem: ICommon.IMediaBase,
+    patch: ICommon.IMediaMeta | Array<[string, any]>,
 ) {
-  const mediaKey = getMediaKey(mediaItem);
-  let cacheData = cache.get(mediaKey);
-  if(!cacheData || !patch) {
-    // 自动写入主键
-    const primaryKey = PluginManager.getByMedia(mediaItem)?.instance?.primaryKey ?? ['id'];
-    cacheData = {};
-    for(let k of primaryKey) {
-      cacheData[k] = mediaItem[k];
-    }
-  }
-  if (Array.isArray(patch)) {
-    cache.set(
-      mediaKey,
-      produce(cacheData, draft => {
-        for (let [objPath, value] of patch) {
-          objectPath.set(draft, objPath, value);
+    const mediaKey = getMediaKey(mediaItem);
+    let cacheData = cache.get(mediaKey);
+    if (!cacheData || !patch) {
+        // 自动写入主键
+        const primaryKey = PluginManager.getByMedia(mediaItem)?.instance
+            ?.primaryKey ?? ['id'];
+        cacheData = {};
+        for (let k of primaryKey) {
+            cacheData[k] = mediaItem[k];
         }
-      }),
-    );
-  } else {
-    cache.set(mediaKey, {
-      ...cacheData,
-      ...patch,
-    });
-  }
-  if(__DEV__) {
-    console.log('CACHE UPDATE, ', cache.dump());
-  }
-  syncCache();
+    }
+    if (Array.isArray(patch)) {
+        cache.set(
+            mediaKey,
+            produce(cacheData, draft => {
+                for (let [objPath, value] of patch) {
+                    objectPath.set(draft, objPath, value);
+                }
+            }),
+        );
+    } else {
+        cache.set(mediaKey, {
+            ...cacheData,
+            ...patch,
+        });
+    }
+    if (__DEV__) {
+        console.log('CACHE UPDATE, ', cache.dump());
+    }
+    syncCache();
 }
 
 function syncCache() {
-  setStorage(StorageKeys.MediaCache, cache.dump());
+    setStorage(StorageKeys.MediaCache, cache.dump());
 }
 
 export function removeCache(mediaItem: ICommon.IMediaBase) {
-  return cache.delete(getMediaKey(mediaItem));
+    return cache.delete(getMediaKey(mediaItem));
 }
 
 const Cache = {
-  setup: setupCache,
-  get: getCache,
-  getInternal: getCacheInternal,
-  clear: clearCache,
-  update: updateCache,
+    setup: setupCache,
+    get: getCache,
+    getInternal: getCacheInternal,
+    clear: clearCache,
+    update: updateCache,
 };
 
 export default Cache;

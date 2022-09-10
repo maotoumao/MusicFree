@@ -1561,4 +1561,4 @@ var QRCode;
   QRCode.CorrectLevel = QRErrorCorrectLevel;
 })();
 window.QRCode = QRCode;
-`
+`;

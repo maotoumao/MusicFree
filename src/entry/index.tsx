@@ -1,6 +1,4 @@
-import React, {useEffect} from 'react';
-import {Image, StyleSheet} from 'react-native';
-
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import bootstrap from './bootstrap';
@@ -24,62 +22,51 @@ bootstrap();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Pages() {
-  const themeName = Config.useConfig('setting.theme.mode') ?? 'dark';
-  const themeColors = Config.useConfig('setting.theme.colors') ?? {};
-  const theme = themeName.includes('dark') ? CustomTheme : DefaultTheme;
-  const isCustom = themeName.includes('custom') ? true : false;
-  const mergedTheme = isCustom
-    ? {
-        ...theme,
-        colors: {
-          ...theme.colors,
-          ...themeColors,
-        },
-      }
-    : theme;
+    const themeName = Config.useConfig('setting.theme.mode') ?? 'dark';
+    const themeColors = Config.useConfig('setting.theme.colors') ?? {};
+    const theme = themeName.includes('dark') ? CustomTheme : DefaultTheme;
+    const isCustom = themeName.includes('custom') ? true : false;
+    const mergedTheme = isCustom
+        ? {
+              ...theme,
+              colors: {
+                  ...theme.colors,
+                  ...themeColors,
+              },
+          }
+        : theme;
 
-  return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <PaperProvider theme={mergedTheme}>
-        <SafeAreaProvider>
-          <NavigationContainer theme={mergedTheme}>
-            <PageBackground></PageBackground>
-            <Stack.Navigator
-              initialRouteName={routes[0].path}
-              screenOptions={{
-                statusBarColor: 'transparent',
-                statusBarTranslucent: true,
-                headerShown: false,
-                animation: 'slide_from_right',
-                animationDuration: 200,
-              }}>
-              {routes.map(route => (
-                <Stack.Screen
-                  key={route.path}
-                  name={route.path}
-                  component={route.component}></Stack.Screen>
-              ))}
-            </Stack.Navigator>
+    return (
+        <GestureHandlerRootView style={{flex: 1}}>
+            <PaperProvider theme={mergedTheme}>
+                <SafeAreaProvider>
+                    <NavigationContainer theme={mergedTheme}>
+                        <PageBackground />
+                        <Stack.Navigator
+                            initialRouteName={routes[0].path}
+                            screenOptions={{
+                                statusBarColor: 'transparent',
+                                statusBarTranslucent: true,
+                                headerShown: false,
+                                animation: 'slide_from_right',
+                                animationDuration: 200,
+                            }}>
+                            {routes.map(route => (
+                                <Stack.Screen
+                                    key={route.path}
+                                    name={route.path}
+                                    component={route.component}
+                                />
+                            ))}
+                        </Stack.Navigator>
 
-            <Panels></Panels>
-            <Dialogs></Dialogs>
-            <Share></Share>
-            <Toast></Toast>
-          </NavigationContainer>
-        </SafeAreaProvider>
-      </PaperProvider>
-    </GestureHandlerRootView>
-  );
+                        <Panels />
+                        <Dialogs />
+                        <Share />
+                        <Toast />
+                    </NavigationContainer>
+                </SafeAreaProvider>
+            </PaperProvider>
+        </GestureHandlerRootView>
+    );
 }
-
-const style = StyleSheet.create({
-  blur: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-});

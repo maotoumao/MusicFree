@@ -1,18 +1,13 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import SimpleAppBar from '@/components/base/simpleAppBar';
 
-interface IBackupProps {}
-export default function BackupSetting(props: IBackupProps) {
-  return (
-    <View>
-    </View>
-  );
+export default function BackupSetting() {
+    return <View style={style.wrapper} />;
 }
 
 const style = StyleSheet.create({
-  wrapper: {
-    width: rpx(750),
-  },
+    wrapper: {
+        width: rpx(750),
+    },
 });

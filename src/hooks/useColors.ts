@@ -1,6 +1,6 @@
-import { useTheme } from 'react-native-paper';
+import {useTheme} from 'react-native-paper';
 
 export default function useColors() {
-  const {colors} = useTheme();
-  return colors;
+    const {colors} = useTheme();
+    return colors;
 }

@@ -2,12 +2,12 @@ import RadioDialog from './radioDialog';
 import SimpleDialog from './simpleDialog';
 
 const dialogs = {
-  SimpleDialog,
-  RadioDialog,
+    SimpleDialog,
+    RadioDialog,
 };
 
 const dialogArray: Array<[string, (...args: any) => JSX.Element]> =
-  Object.entries(dialogs);
+    Object.entries(dialogs);
 
 export default dialogArray;
 

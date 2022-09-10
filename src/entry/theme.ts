@@ -1,42 +1,42 @@
 import deepmerge from 'deepmerge';
 import {
-  DarkTheme as NavigationDarkTheme,
-  DefaultTheme as NavigationDefaultTheme,
+    DarkTheme as NavigationDarkTheme,
+    DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native';
 import {
-  DarkTheme as PaperDarkTheme,
-  DefaultTheme as PaperDefaultTheme,
+    DarkTheme as PaperDarkTheme,
+    DefaultTheme as PaperDefaultTheme,
 } from 'react-native-paper';
 
 const _DefaultTheme = deepmerge(PaperDefaultTheme, NavigationDefaultTheme);
 const _CustomTheme = deepmerge(PaperDarkTheme, NavigationDarkTheme);
 
 const DefaultTheme = {
-  ..._DefaultTheme,
-  colors: {
-    ..._DefaultTheme.colors,
-    primary: '#cdd1d3',
-    text: '#333333',
-    textSecondary: '#666666',
-    textHighlight: '#11659a',
-    background: 'transparent',
-    pageBackground: '#100000',
-    backdrop: 'rgba(0,0,0,0.2)',
-  },
+    ..._DefaultTheme,
+    colors: {
+        ..._DefaultTheme.colors,
+        primary: '#cdd1d3',
+        text: '#333333',
+        textSecondary: '#666666',
+        textHighlight: '#11659a',
+        background: 'transparent',
+        pageBackground: '#100000',
+        backdrop: 'rgba(0,0,0,0.2)',
+    },
 };
 
 const CustomTheme = {
-  ..._CustomTheme,
-  colors: {
-    ..._CustomTheme.colors,
-    primary: '#2b333e',
-    text: '#eeeeee',
-    textSecondary: '#aaaaaa',
-    textHighlight: '#eba0b3',
-    background: 'transparent',
-    pageBackground: '#080000',
-    backdrop: 'rgba(0,0,0,0.2)',
-  },
+    ..._CustomTheme,
+    colors: {
+        ..._CustomTheme.colors,
+        primary: '#2b333e',
+        text: '#eeeeee',
+        textSecondary: '#aaaaaa',
+        textHighlight: '#eba0b3',
+        background: 'transparent',
+        pageBackground: '#080000',
+        backdrop: 'rgba(0,0,0,0.2)',
+    },
 };
 
 export {DefaultTheme, CustomTheme};

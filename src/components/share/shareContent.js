@@ -44,9 +44,4 @@ export var template = () => String.raw`<!DOCTYPE html>
     </script>
   </body>
 </html>
-`
-
-
-
-
-
+`;

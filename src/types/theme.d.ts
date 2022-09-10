@@ -12,6 +12,5 @@ declare module ReactNativePaper {
         backgroundHighlight?: string;
         /** 页面背景 */
         pageBackground?: string;
-
     }
 }

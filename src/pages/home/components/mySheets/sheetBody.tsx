@@ -6,55 +6,57 @@ import {ROUTE_PATH} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
 import ListItem from '@/components/base/listItem';
 import IconButton from '@/components/base/iconButton';
-import { ImgAsset } from '@/constants/assetsConst';
+import {ImgAsset} from '@/constants/assetsConst';
 
-interface ISheetBodyProps {}
-export default function SheetBody(props: ISheetBodyProps) {
-  const musicSheets = MusicSheet.useUserSheets();
-  const navigation = useNavigation<any>();
-  const {showDialog} = useDialog();
+export default function SheetBody() {
+    const musicSheets = MusicSheet.useUserSheets();
+    const navigation = useNavigation<any>();
+    const {showDialog} = useDialog();
 
-  return (
-    <FlatList
-      style={style.wrapper}
-      data={musicSheets ?? []}
-      keyExtractor={sheet => sheet.id}
-      renderItem={({item: sheet}) => (
-        <ListItem
-          key={`${sheet.id}`}
-          title={sheet.title}
-          itemPaddingHorizontal={0}
-          left={{
-            artwork: sheet.coverImg,
-            fallback: ImgAsset.albumDefault,
-          }}
-          onPress={() => {
-            navigation.navigate(ROUTE_PATH.SHEET_DETAIL, {
-              id: sheet.id,
-            });
-          }}
-          right={() => (
-            <IconButton
-              name="dots-vertical"
-              onPress={() => {
-                showDialog('SimpleDialog', {
-                  title: '删除歌单',
-                  content: `确定删除歌单${sheet.title}吗?`,
-                  onOk: () => {
-                    MusicSheet.removeSheet(sheet.id);
-                  },
-                });
-              }}
-              fontColor='secondary'></IconButton>
-          )}
-          desc={`${sheet.musicList.length ?? '-'}首`}></ListItem>
-      )}></FlatList>
-  );
+    return (
+        <FlatList
+            style={style.wrapper}
+            data={musicSheets ?? []}
+            keyExtractor={sheet => sheet.id}
+            renderItem={({item: sheet}) => (
+                <ListItem
+                    key={`${sheet.id}`}
+                    title={sheet.title}
+                    itemPaddingHorizontal={0}
+                    left={{
+                        artwork: sheet.coverImg,
+                        fallback: ImgAsset.albumDefault,
+                    }}
+                    onPress={() => {
+                        navigation.navigate(ROUTE_PATH.SHEET_DETAIL, {
+                            id: sheet.id,
+                        });
+                    }}
+                    right={() => (
+                        <IconButton
+                            name="dots-vertical"
+                            onPress={() => {
+                                showDialog('SimpleDialog', {
+                                    title: '删除歌单',
+                                    content: `确定删除歌单${sheet.title}吗?`,
+                                    onOk: () => {
+                                        MusicSheet.removeSheet(sheet.id);
+                                    },
+                                });
+                            }}
+                            fontColor="secondary"
+                        />
+                    )}
+                    desc={`${sheet.musicList.length ?? '-'}首`}
+                />
+            )}
+        />
+    );
 }
 
 const style = StyleSheet.create({
-  wrapper: {
-    width: '100%',
-    flex: 1,
-  },
+    wrapper: {
+        width: '100%',
+        flex: 1,
+    },
 });

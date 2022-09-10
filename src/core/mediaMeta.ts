@@ -14,84 +14,85 @@ let mediaMetaKeys: Record<string, string> = {};
 let mediaMetas: Record<string, Record<string, ICommon.IMediaMeta>> = {};
 
 async function setup() {
-  const metaKeys = (await getStorage(StorageKeys.MediaMeta)) ?? {};
-  if (!metaKeys) {
-    await setStorage(StorageKeys.MediaMeta, {});
-  }
-  const kv: [string, string][] = Object.entries(metaKeys);
-  const metas = await getMultiStorage(kv.map(_ => _[1]));
-  const newMediaMetas: Record<string, Record<string, any>> = {};
-  metas.forEach((value, index) => {
-    newMediaMetas[kv[index][0]] = value ?? {};
-  });
-  mediaMetas = newMediaMetas;
+    const metaKeys = (await getStorage(StorageKeys.MediaMeta)) ?? {};
+    if (!metaKeys) {
+        await setStorage(StorageKeys.MediaMeta, {});
+    }
+    const kv: [string, string][] = Object.entries(metaKeys);
+    const metas = await getMultiStorage(kv.map(_ => _[1]));
+    const newMediaMetas: Record<string, Record<string, any>> = {};
+    metas.forEach((value, index) => {
+        newMediaMetas[kv[index][0]] = value ?? {};
+    });
+    mediaMetas = newMediaMetas;
 }
 
 function getMediaMeta(mediaItem: ICommon.IMediaBase) {
-  return mediaMetas[mediaItem.platform]?.[mediaItem.id] ?? null;
+    return mediaMetas[mediaItem.platform]?.[mediaItem.id] ?? null;
 }
 
 function getByMediaKey(mediaKey: string) {
-  const [platform, id] = mediaKey.split('@');
-  return getMediaMeta({platform, id});
+    const [platform, id] = mediaKey.split('@');
+    return getMediaMeta({platform, id});
 }
 
 /** 创建/更新mediameta */
 async function updateMediaMeta(
-  mediaItem: ICommon.IMediaBase,
-  patch?: Record<string, any> | Array<[string, any]>,
+    mediaItem: ICommon.IMediaBase,
+    patch?: Record<string, any> | Array<[string, any]>,
 ) {
-  const {platform, id} = mediaItem;
-  // 创建一个新的表
-  if (!mediaMetaKeys[platform]) {
-    const newkey = nanoid();
-    mediaMetaKeys[platform] = newkey;
-    await setStorage(StorageKeys.MediaMeta, mediaMetaKeys);
-    mediaMetas[platform] = {};
-  }
-  let newMeta = mediaMetas;
-  if(!newMeta[platform][id]) {
-    // 如果没保存过，自动保存主键
-    const primaryKey = PluginManager.getByMedia(mediaItem)?.instance?.primaryKey ?? ['id'];
-    const mediaData: Record<string, any> = {};
-    for(let k of primaryKey) {
-      mediaData[k] = mediaItem[k];
+    const {platform, id} = mediaItem;
+    // 创建一个新的表
+    if (!mediaMetaKeys[platform]) {
+        const newkey = nanoid();
+        mediaMetaKeys[platform] = newkey;
+        await setStorage(StorageKeys.MediaMeta, mediaMetaKeys);
+        mediaMetas[platform] = {};
     }
-    newMeta[platform][id] = mediaData;
-  }
-  if (Array.isArray(patch)) {
-    newMeta = produce(mediaMetas, draft => {
-      patch.forEach(([pathName, value]) => {
-        objectPath.set(draft, `${platform}.${id}.${pathName}`, value);
-      });
-      return draft;
-    });
-  } else {
-    const _patch = patch ?? mediaItem;
-    newMeta = produce(mediaMetas, draft => {
-      const pluginMeta = mediaMetas[platform] ?? {};
-      if (!draft[platform]) {
-        draft[platform] = {};
-      }
-      if (pluginMeta[id]) {
-        draft[platform][id] = {...pluginMeta[id], ..._patch};
-      } else {
-        draft[platform][id] = _patch;
-      }
-    });
-  }
-  setStorage(mediaMetaKeys[platform], newMeta[platform]);
-  mediaMetas = newMeta;
-  if(__DEV__) {
-    console.log('META UPDATE', mediaMetas);
-  }
+    let newMeta = mediaMetas;
+    if (!newMeta[platform][id]) {
+        // 如果没保存过，自动保存主键
+        const primaryKey = PluginManager.getByMedia(mediaItem)?.instance
+            ?.primaryKey ?? ['id'];
+        const mediaData: Record<string, any> = {};
+        for (let k of primaryKey) {
+            mediaData[k] = mediaItem[k];
+        }
+        newMeta[platform][id] = mediaData;
+    }
+    if (Array.isArray(patch)) {
+        newMeta = produce(mediaMetas, draft => {
+            patch.forEach(([pathName, value]) => {
+                objectPath.set(draft, `${platform}.${id}.${pathName}`, value);
+            });
+            return draft;
+        });
+    } else {
+        const _patch = patch ?? mediaItem;
+        newMeta = produce(mediaMetas, draft => {
+            const pluginMeta = mediaMetas[platform] ?? {};
+            if (!draft[platform]) {
+                draft[platform] = {};
+            }
+            if (pluginMeta[id]) {
+                draft[platform][id] = {...pluginMeta[id], ..._patch};
+            } else {
+                draft[platform][id] = _patch;
+            }
+        });
+    }
+    setStorage(mediaMetaKeys[platform], newMeta[platform]);
+    mediaMetas = newMeta;
+    if (__DEV__) {
+        console.log('META UPDATE', mediaMetas);
+    }
 }
 
 const MediaMeta = {
-  setup,
-  get: getMediaMeta,
-  getByMediaKey,
-  update: updateMediaMeta,
+    setup,
+    get: getMediaMeta,
+    getByMediaKey,
+    update: updateMediaMeta,
 };
 
 // todo: clear
