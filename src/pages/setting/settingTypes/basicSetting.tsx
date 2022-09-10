@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {setConfig, useConfig} from '@/core/localConfigManager';
+import Config from '@/core/config';
 import Download from '@/core/download';
 import { Text} from 'react-native-paper';
 import ListItem from '@/components/base/listItem';
@@ -23,7 +23,7 @@ export default function BasicSetting(props: IBasicSettingProps) {
     '缓存容量上限(100MB, 200MB, 1GB, 2GB)',
   ];
 
-  const basicSetting = useConfig('setting.basic');
+  const basicSetting = Config.useConfig('setting.basic');
   const {showDialog} = useDialog();
   const options = [
     {
@@ -32,7 +32,7 @@ export default function BasicSetting(props: IBasicSettingProps) {
         <ThemeSwitch value={basicSetting?.notInterrupt ?? false}></ThemeSwitch>
       ),
       onPress() {
-        setConfig('setting.basic.notInterrupt', !basicSetting?.notInterrupt);
+        Config.set('setting.basic.notInterrupt', !basicSetting?.notInterrupt);
       },
     },{
       title: '播放失败时自动播放列表中的下一首',
@@ -40,7 +40,7 @@ export default function BasicSetting(props: IBasicSettingProps) {
         <ThemeSwitch value={basicSetting?.autoStopWhenError ?? false}></ThemeSwitch>
       ),
       onPress() {
-        setConfig('setting.basic.autoStopWhenError', !basicSetting?.autoStopWhenError);
+        Config.set('setting.basic.autoStopWhenError', !basicSetting?.autoStopWhenError);
       },
     },
     {
@@ -55,7 +55,7 @@ export default function BasicSetting(props: IBasicSettingProps) {
           title: '最大同时下载数目',
           content: [1, 3, 5, 7],
           onOk(val) {
-            setConfig('setting.basic.maxDownload', val);
+            Config.set('setting.basic.maxDownload', val);
           },
         });
       },
@@ -66,7 +66,7 @@ export default function BasicSetting(props: IBasicSettingProps) {
         <ThemeSwitch value={basicSetting?.debug?.errorLog ?? false}></ThemeSwitch>
       ),
       onPress() {
-        setConfig(
+        Config.set(
           'setting.basic.debug.errorLog',
           !basicSetting?.debug?.errorLog,
         );
@@ -78,7 +78,7 @@ export default function BasicSetting(props: IBasicSettingProps) {
         <ThemeSwitch value={basicSetting?.debug?.traceLog ?? false}></ThemeSwitch>
       ),
       onPress() {
-        setConfig(
+        Config.set(
           'setting.basic.debug.traceLog',
           !basicSetting?.debug?.traceLog,
         );

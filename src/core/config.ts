@@ -18,7 +18,7 @@ interface IConfig {
         traceLog: boolean;
       };
     };
-    
+
     /** 主题 */
     theme: {
       mode: 'light' | 'dark' | 'custom-light' | 'custom-dark';
@@ -98,14 +98,14 @@ type IConfigPathsObj = KeyPathsObj<DeepPartial<IConfig>, IConfigPaths>;
 
 let config: PartialConfig = null;
 /** 初始化config */
-export async function loadConfig() {
+async function loadConfig() {
   config = (await getStorage('local-config')) ?? {};
   // await checkValidPath(['setting.theme.background']);
   notify();
 }
 
 /** 设置config */
-export async function setConfig<T extends IConfigPaths>(
+async function setConfig<T extends IConfigPaths>(
   key: T,
   value: IConfigPathsObj[T],
   shouldNotify = true,
@@ -136,11 +136,9 @@ export async function setConfig<T extends IConfigPaths>(
 }
 
 /** 获取config */
-export function getConfig(): PartialConfig;
-export function getConfig<T extends IConfigPaths>(
-  key: T,
-): IConfigPathsObj[T];
-export function getConfig(key?: string) {
+function getConfig(): PartialConfig;
+function getConfig<T extends IConfigPaths>(key: T): IConfigPathsObj[T];
+function getConfig(key?: string) {
   let result: any = config;
   if (key && config) {
     result = getPathValue(config, key);
@@ -166,9 +164,9 @@ function notify() {
 }
 
 /** hook */
-export function useConfig(): PartialConfig;
-export function useConfig<T extends IConfigPaths>(key: T): IConfigPathsObj[T];
-export function useConfig(key?: string) {
+function useConfig(): PartialConfig;
+function useConfig<T extends IConfigPaths>(key: T): IConfigPathsObj[T];
+function useConfig(key?: string) {
   const [_cfg, _setCfg] = useState<PartialConfig>(config);
   function setCfg() {
     _setCfg(config);
@@ -186,3 +184,12 @@ export function useConfig(key?: string) {
     return _cfg;
   }
 }
+
+const Config = {
+  get: getConfig,
+  set: setConfig,
+  useConfig,
+  setup: loadConfig,
+};
+
+export default Config;

@@ -4,7 +4,7 @@ import {check, PERMISSIONS, request} from 'react-native-permissions';
 import TrackPlayer, {Capability} from 'react-native-track-player';
 import 'react-native-get-random-values';
 import {Platform, ToastAndroid} from 'react-native';
-import {loadConfig} from '@/core/localConfigManager';
+import Config from '@/core/config';
 import RNBootSplash from 'react-native-bootsplash';
 import RNFS, {exists, mkdir} from 'react-native-fs';
 import Download from '@/core/download';
@@ -40,7 +40,7 @@ async function _bootstrap() {
   /** 初始化路径 */
   await setupFolder();
   // 加载配置
-  await Promise.all([loadConfig(), MediaMeta.setup(), MusicSheet.setup()])
+  await Promise.all([Config.setup(), MediaMeta.setup(), MusicSheet.setup()])
   // 加载插件
   try {
     await TrackPlayer.setupPlayer();

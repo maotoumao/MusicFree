@@ -11,7 +11,7 @@ import Dialogs from '@/components/dialogs';
 import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
 import {CustomTheme, DefaultTheme} from './theme';
-import {useConfig} from '@/core/localConfigManager';
+import Config from '@/core/config';
 import Share from '@/components/share';
 import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -24,8 +24,8 @@ bootstrap();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Pages() {
-  const themeName = useConfig('setting.theme.mode') ?? 'dark';
-  const themeColors = useConfig('setting.theme.colors') ?? {};
+  const themeName = Config.useConfig('setting.theme.mode') ?? 'dark';
+  const themeColors = Config.useConfig('setting.theme.colors') ?? {};
   const theme = themeName.includes('dark') ? CustomTheme : DefaultTheme;
   const isCustom = themeName.includes('custom') ? true : false;
   const mergedTheme = isCustom

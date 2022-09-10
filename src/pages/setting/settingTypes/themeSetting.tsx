@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {setConfig, useConfig} from '@/core/localConfigManager';
+import Config from '@/core/config';
 import {List, ProgressBar, Switch} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 import ImageColors from 'react-native-image-colors';
@@ -13,9 +13,9 @@ import { ImgAsset } from '@/constants/assetsConst';
 
 interface IThemeSettingProps {}
 export default function ThemeSetting(props: IThemeSettingProps) {
-  const theme = useConfig('setting.theme')
+  const theme = Config.useConfig('setting.theme')
 
-  const mode = useConfig('setting.theme.mode') ?? 'dark';
+  const mode = Config.useConfig('setting.theme.mode') ?? 'dark';
   return (
     <View style={style.wrapper}>
       <ThemeText fontSize="title" style={style.header}>
@@ -28,7 +28,7 @@ export default function ThemeSetting(props: IThemeSettingProps) {
             <Switch
               value={mode === 'dark'}
               onValueChange={_ => {
-                setConfig('setting.theme.mode', _ ? 'dark' : 'light');
+                Config.set('setting.theme.mode', _ ? 'dark' : 'light');
               }}></Switch>
           )}></List.Item>
       </View>
@@ -45,8 +45,8 @@ export default function ThemeSetting(props: IThemeSettingProps) {
         <ImageCard
           source={ImgAsset.backgroundDefault}
           onPress={() => {
-            setConfig('setting.theme.background', undefined);
-            setConfig('setting.theme.colors', undefined);
+            Config.set('setting.theme.background', undefined);
+            Config.set('setting.theme.colors', undefined);
           }}></ImageCard>
         <ImageCard
           source={
@@ -70,7 +70,7 @@ export default function ThemeSetting(props: IThemeSettingProps) {
                 uri.lastIndexOf('.'),
               )}`;
               await copyFile(uri, bgPath);
-              setConfig(
+              Config.set(
                 'setting.theme.background',
                 `file://${bgPath}#${Date.now()}`,
               );
@@ -108,8 +108,8 @@ export default function ThemeSetting(props: IThemeSettingProps) {
               )
                 .saturate(0.5)
                 .toString();
-              setConfig('setting.theme.mode', 'custom-dark');
-              setConfig('setting.theme.colors', {
+              Config.set('setting.theme.mode', 'custom-dark');
+              Config.set('setting.theme.colors', {
                 primary: primaryColor,
                 textHighlight: textHighlight,
               });

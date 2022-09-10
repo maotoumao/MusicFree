@@ -1,12 +1,12 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useConfig} from '@/core/localConfigManager';
+import Config from '@/core/config';
 import {useTheme} from 'react-native-paper';
 import {ImgAsset} from '@/constants/assetsConst';
 import Image from './image';
 
 export default function PageBackground() {
-  const themeConfig = useConfig('setting.theme');
+  const themeConfig = Config.useConfig('setting.theme');
   const theme = useTheme();
 
   return (

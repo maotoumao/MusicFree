@@ -17,7 +17,7 @@ import {
   readFile,
 } from 'react-native-fs';
 import Toast from 'react-native-toast-message';
-import {getConfig} from './localConfigManager';
+import Config from './config';
 import MediaMeta from './mediaMeta';
 import PluginManager from './pluginManager';
 
@@ -283,7 +283,7 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
   if (enqueueData.length) {
     pendingMusicQueue = pendingMusicQueue.concat(enqueueData);
     pendingMusicQueueStateMapper.notify();
-    maxDownload = +(getConfig('setting.basic.maxDownload') ?? 3);
+    maxDownload = +(Config.get('setting.basic.maxDownload') ?? 3);
     downloadNext();
   }
 }

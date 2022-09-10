@@ -10,7 +10,7 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
-import {getConfig, setConfig} from './localConfigManager';
+import Config from './config';
 import {internalSerialzeKey, internalSymbolKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import Download from './download';
@@ -51,7 +51,7 @@ const setup = async () => {
   musicQueue.length = 0;
   /** 状态恢复 */
   try {
-    const config = await getConfig('status.music');
+    const config = await Config.get('status.music');
     if (config?.repeatMode) {
       repeatMode = config.repeatMode as MusicRepeatMode;
     }
@@ -136,7 +136,7 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
   repeatMode = mode;
   TrackPlayer.updateMetadataForTrack(1, getFakeNextTrack());
   // 记录
-  setConfig('status.music.repeatMode', mode, false);
+  Config.set('status.music.repeatMode', mode, false);
   repeatModeStateMapper.notify();
   currentMusicStateMapper.notify();
   musicQueueStateMapper.notify();
@@ -179,7 +179,7 @@ const addAll = (
     });
   }
   if (!notCache) {
-    setConfig('status.music.musicQueue', musicQueue, false);
+    Config.set('status.music.musicQueue', musicQueue, false);
   }
   if (shouldShuffle) {
     musicQueue = shuffle(musicQueue);
@@ -225,7 +225,7 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
       draft.splice(_ind, 1);
     });
   }
-  setConfig('status.music.musicQueue', musicQueue, false);
+  Config.set('status.music.musicQueue', musicQueue, false);
   musicQueueStateMapper.notify();
   currentMusicStateMapper.notify();
 };
@@ -322,8 +322,8 @@ const _playTrack = async (track: Track) => {
   await TrackPlayer.reset();
   await TrackPlayer.add([track, getFakeNextTrack()]);
   await TrackPlayer.play();
-  setConfig('status.music.track', track as IMusic.IMusicItem, false);
-  setConfig('status.music.progress', 0, false);
+  Config.set('status.music.track', track as IMusic.IMusicItem, false);
+  Config.set('status.music.progress', 0, false);
 };
 
 const _playFail = async () => {
@@ -335,7 +335,7 @@ const _playFail = async () => {
     (musicQueue[currentIndex] ?? {url: ''}) as Track,
     getFakeNextTrack(),
   ]);
-  if (!getConfig('setting.basic.autoStopWhenError')) {
+  if (!Config.get('setting.basic.autoStopWhenError')) {
     await delay(300);
     await skipToNext();
   }
