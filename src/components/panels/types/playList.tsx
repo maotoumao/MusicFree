@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import BottomSheet, {
     BottomSheetBackdrop,
@@ -21,7 +21,7 @@ import {internalSymbolKey} from '@/constants/commonConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {isSameMediaItem} from '@/utils/mediaItem';
 
-const ITEM_HEIGHT = rpx(96);
+const ITEM_HEIGHT = rpx(108);
 export default function PlayList() {
     const musicQueue = MusicQueue.useMusicQueue();
     const currentMusicItem = MusicQueue.useCurrentMusicItem();
@@ -30,9 +30,60 @@ export default function PlayList() {
     const listRef = useRef<BottomSheetFlatListMethods | null>();
     const {unmountPanel} = _usePanel(sheetRef);
     const {colors} = useTheme();
+    const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
-    const initIndex =
-        musicQueue?.findIndex(_ => isSameMediaItem(_, currentMusicItem)) ?? 0;
+    useEffect(() => {
+        setCurrentIndex(
+            musicQueue.findIndex(_ => isSameMediaItem(currentMusicItem, _)),
+        );
+    }, [musicQueue, currentMusicItem]);
+
+    const renderItem = useCallback(
+        (_: {item: IMusic.IMusicItem; index: number}) => (
+            <Pressable
+                onPress={() => {
+                    MusicQueue.play(_.item);
+                }}
+                style={style.musicItem}>
+                {currentIndex === _.index && (
+                    <Icon
+                        name="music"
+                        color={colors.textHighlight}
+                        size={fontSizeConst.content}
+                        style={style.currentPlaying}
+                    />
+                )}
+                <ThemeText
+                    style={[
+                        style.musicItemTitle,
+                        {
+                            color:
+                                _.index === currentIndex
+                                    ? colors.textHighlight
+                                    : colors.text,
+                        },
+                    ]}
+                    ellipsizeMode="tail"
+                    numberOfLines={1}>
+                    {_.item.title}
+                    <Text style={{fontSize: fontSizeConst.description}}>
+                        {' '}
+                        - {_.item.artist}
+                    </Text>
+                </ThemeText>
+                <Tag tagName={_.item.platform} />
+                <IconButton
+                    style={{marginLeft: rpx(14)}}
+                    name="close"
+                    size="small"
+                    onPress={() => {
+                        MusicQueue.remove(_.item);
+                    }}
+                />
+            </Pressable>
+        ),
+        [currentIndex],
+    );
 
     return (
         <BottomSheet
@@ -49,7 +100,6 @@ export default function PlayList() {
             }}
             backgroundStyle={{backgroundColor: colors.primary}}
             handleComponent={null}
-            index={0}
             snapPoints={['60%']}
             enablePanDownToClose
             enableOverDrag={false}
@@ -73,12 +123,6 @@ export default function PlayList() {
                     icon={repeatModeConst[repeatMode].icon}>
                     {repeatModeConst[repeatMode].text}
                 </Button>
-                {/* <IconButton
-          icon="trash-can-outline"
-          size={rpx(36)}
-          onPress={() => {
-            console.log('二次确认');
-          }}></IconButton> */}
             </View>
             <Divider />
             <BottomSheetFlatList
@@ -87,7 +131,7 @@ export default function PlayList() {
                     listRef.current = _;
                 }}
                 data={musicQueue}
-                extraData={currentMusicItem}
+                extraData={currentIndex}
                 keyExtractor={_ =>
                     _[internalSymbolKey]?.globalKey ?? `${_.id}-${_.platform}`
                 }
@@ -96,52 +140,7 @@ export default function PlayList() {
                     offset: ITEM_HEIGHT * index,
                     index,
                 })}
-                initialScrollIndex={initIndex === -1 ? undefined : initIndex}
-                renderItem={_ => (
-                    <Pressable
-                        onPress={() => {
-                            MusicQueue.play(_.item);
-                        }}
-                        style={style.musicItem}>
-                        {isSameMediaItem(currentMusicItem, _.item) && (
-                            <Icon
-                                name="music"
-                                color={colors.textHighlight}
-                                size={fontSizeConst.content}
-                                style={style.currentPlaying}
-                            />
-                        )}
-                        <ThemeText
-                            style={[
-                                style.musicItemTitle,
-                                {
-                                    color: isSameMediaItem(
-                                        currentMusicItem,
-                                        _.item,
-                                    )
-                                        ? colors.textHighlight
-                                        : colors.text,
-                                },
-                            ]}
-                            ellipsizeMode="tail"
-                            numberOfLines={1}>
-                            {_.item.title}
-                            <Text style={{fontSize: fontSizeConst.description}}>
-                                {' '}
-                                - {_.item.artist}
-                            </Text>
-                        </ThemeText>
-                        <Tag tagName={_.item.platform} />
-                        <IconButton
-                            style={{marginLeft: rpx(14)}}
-                            name="close"
-                            size="small"
-                            onPress={() => {
-                                MusicQueue.remove(_.item);
-                            }}
-                        />
-                    </Pressable>
-                )}
+                renderItem={renderItem}
             />
         </BottomSheet>
     );
@@ -150,6 +149,7 @@ export default function PlayList() {
 const style = StyleSheet.create({
     wrapper: {
         width: rpx(750),
+        height: rpx(80),
         paddingHorizontal: rpx(24),
         marginTop: rpx(24),
         flexDirection: 'row',
@@ -166,7 +166,7 @@ const style = StyleSheet.create({
         marginRight: rpx(6),
     },
     musicItem: {
-        height: rpx(120),
+        height: ITEM_HEIGHT,
         flexDirection: 'row',
         alignItems: 'center',
     },

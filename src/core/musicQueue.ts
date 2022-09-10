@@ -16,6 +16,7 @@ import delay from '@/utils/delay';
 import {errorLog, trace} from '../utils/log';
 import {isSameMediaItem, mergeProps} from '@/utils/mediaItem';
 import PluginManager from './pluginManager';
+import Cache from './cache';
 
 enum MusicRepeatMode {
     /** 随机播放 */
@@ -30,6 +31,7 @@ enum MusicRepeatMode {
 let currentIndex: number = -1;
 let musicQueue: Array<IMusic.IMusicItem> = [];
 let repeatMode: MusicRepeatMode = MusicRepeatMode.QUEUE;
+let isPlaying: boolean = false;
 
 const currentMusicStateMapper = new StateMapper(() => musicQueue[currentIndex]);
 const musicQueueStateMapper = new StateMapper(() => musicQueue);
@@ -79,6 +81,32 @@ const setup = async () => {
             await play(undefined, true);
         } else {
             await skipToNext();
+        }
+    });
+    let badTrack: ICommon.IMediaBase | null = null;
+    TrackPlayer.addEventListener(Event.PlaybackState, async data => {
+        if (data.state === State.None) {
+            const track = await TrackPlayer.getTrack(0);
+            if (!track) {
+                return;
+            }
+            if (
+                isSameMediaItem(
+                    track as unknown as ICommon.IMediaBase,
+                    badTrack,
+                )
+            ) {
+                // 这是一个坏掉的track
+            } else {
+                // 缓存过期的情况
+                Cache.remove(track as unknown as ICommon.IMediaBase);
+                badTrack = track as unknown as ICommon.IMediaBase;
+                if (isPlaying) {
+                    play(track as IMusic.IMusicItem);
+                } else {
+                    replaceTrack({...track, url: ''}, false);
+                }
+            }
         }
     });
 
@@ -252,20 +280,15 @@ const getFakeNextTrack = () => {
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     try {
         trace('播放', musicItem);
+        isPlaying = true;
         const _currentIndex = findMusicIndex(musicItem);
-        if (!musicItem && _currentIndex === currentIndex) {
+        if (!musicItem && _currentIndex === currentIndex && !forcePlay) {
             // 如果暂停就继续播放，否则
             const currentTrack = await TrackPlayer.getTrack(0);
-            if (forcePlay && currentTrack) {
-                trace('PLAY-重新播放', currentTrack);
-                _playTrack(currentTrack);
-                return;
-            }
-            if (currentTrack) {
+            if (currentTrack && currentTrack.url) {
                 const state = await TrackPlayer.getState();
                 if (musicIsPaused(state)) {
                     trace('PLAY-继续播放', currentTrack);
-                    // todo: 如果没有url pluginmethods.getrealtrack
                     await TrackPlayer.play();
                     return;
                 }
@@ -302,7 +325,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             return;
         }
         musicQueue[currentIndex] = track;
-        await _playTrack(track as Track);
+        await replaceTrack(track as Track);
         currentMusicStateMapper.notify();
     } catch (e: any) {
         if (
@@ -316,10 +339,12 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     }
 };
 
-const _playTrack = async (track: Track) => {
+const replaceTrack = async (track: Track, autoPlay = true) => {
     await TrackPlayer.reset();
     await TrackPlayer.add([track, getFakeNextTrack()]);
-    await TrackPlayer.play();
+    if (autoPlay) {
+        await TrackPlayer.play();
+    }
     Config.set('status.music.track', track as IMusic.IMusicItem, false);
     Config.set('status.music.progress', 0, false);
 };
@@ -356,6 +381,7 @@ const playWithReplaceQueue = async (
 };
 
 const pause = async () => {
+    isPlaying = false;
     await TrackPlayer.pause();
 };
 
