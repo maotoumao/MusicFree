@@ -201,7 +201,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return {url: musicItem.url};
         }
         try {
-            const {url, headers} =
+            const {url, headers, cache} =
                 (await this.plugin.instance.getMusicTrack(musicItem)) ?? {};
             if (!url) {
                 throw new Error();
@@ -213,7 +213,9 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 userAgent: headers?.['user-agent'],
             };
 
-            Cache.update(musicItem, result);
+            if (cache !== false) {
+                Cache.update(musicItem, result);
+            }
             return result;
         } catch (e: any) {
             if (retryCount > 0) {
