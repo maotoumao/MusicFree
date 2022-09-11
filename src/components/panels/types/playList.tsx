@@ -44,11 +44,21 @@ const BottomSheetRecyclerListView = createBottomSheetScrollableComponent<
     RecyclerListViewProps
 >(SCROLLABLE_TYPE.FLATLIST, AnimatedRecyclerListView);
 
+const layoutProvider = new LayoutProvider(
+    () => 1,
+    (type, dim) => {
+        dim.height = ITEM_HEIGHT;
+        dim.width = ITEM_WIDTH;
+    },
+);
+layoutProvider.shouldRefreshWithAnchoring = false;
+
 export default function PlayList() {
     const musicQueue = MusicQueue.useMusicQueue();
     const currentMusicItem = MusicQueue.useCurrentMusicItem();
     const repeatMode = MusicQueue.useRepeatMode();
     const sheetRef = useRef<BottomSheetMethods | null>();
+    const listRef = useRef<any>();
 
     const {unmountPanel} = _usePanel(sheetRef);
     const {colors} = useTheme();
@@ -58,14 +68,7 @@ export default function PlayList() {
             musicQueue ?? [],
         ),
     );
-    const layoutProvider = new LayoutProvider(
-        () => 1,
-        (type, dim) => {
-            dim.height = ITEM_HEIGHT;
-            dim.width = ITEM_WIDTH;
-        },
-    );
-    layoutProvider.shouldRefreshWithAnchoring = false;
+    console.log('rerender');
 
     useEffect(() => {
         setCurrentIndex(
@@ -77,6 +80,11 @@ export default function PlayList() {
         const newDataProvider = dataProvider.cloneWithRows(musicQueue);
         setDataProvider(newDataProvider);
     }, [musicQueue]);
+
+    useEffect(() => {
+        listRef.current?.scrollToOffset?.(0, 1, false);
+        listRef.current?.scrollToOffset?.(0, -1, false);
+    }, []);
 
     const rowRenderer = useCallback(
         (type: string | number, item: IMusic.IMusicItem, index: number) => (
@@ -167,6 +175,7 @@ export default function PlayList() {
             <Divider />
             <View style={style.playListWrapper}>
                 <BottomSheetRecyclerListView
+                    ref={_ => (listRef.current = _)}
                     initialOffset={
                         musicQueue.findIndex(_ =>
                             isSameMediaItem(_, currentMusicItem),
@@ -174,12 +183,10 @@ export default function PlayList() {
                             ITEM_HEIGHT -
                         INIT_OFFSET
                     }
-                    scrollViewProps={{}}
                     canChangeSize={false}
                     style={style.playList}
                     dataProvider={dataProvider}
                     layoutProvider={layoutProvider}
-                    // windowcorrection
                     rowRenderer={rowRenderer}
                 />
             </View>
