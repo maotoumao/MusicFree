@@ -93,25 +93,6 @@ function PluginView(props: IPluginViewProps) {
     const {showPanel} = usePanel();
     const options = [
         {
-            title: '卸载插件',
-            icon: 'trash-can-outline',
-            show: true,
-            onPress() {
-                showDialog('SimpleDialog', {
-                    title: '卸载插件',
-                    content: `确认卸载插件${plugin.name}吗`,
-                    async onOk() {
-                        try {
-                            await PluginManager.uninstallPlugin(plugin.hash);
-                            Toast.success('卸载成功~');
-                        } catch {
-                            Toast.warn('卸载失败');
-                        }
-                    },
-                });
-            },
-        },
-        {
             title: '导入单曲',
             icon: 'trash-can-outline',
             onPress() {
@@ -169,6 +150,25 @@ function PluginView(props: IPluginViewProps) {
                 });
             },
             show: !!plugin.instance.importMusicSheet,
+        },
+        {
+            title: '卸载插件',
+            icon: 'trash-can-outline',
+            show: true,
+            onPress() {
+                showDialog('SimpleDialog', {
+                    title: '卸载插件',
+                    content: `确认卸载插件${plugin.name}吗`,
+                    async onOk() {
+                        try {
+                            await PluginManager.uninstallPlugin(plugin.hash);
+                            Toast.success('卸载成功~');
+                        } catch {
+                            Toast.warn('卸载失败');
+                        }
+                    },
+                });
+            },
         },
     ];
 
