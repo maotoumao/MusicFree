@@ -63,7 +63,8 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-view-shot": "^3.4.0",
     "react-native-webview": "^11.23.0",
-    "react-qr-code": "^2.0.7"
+    "react-qr-code": "^2.0.7",
+    "recyclerlistview": "^4.1.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

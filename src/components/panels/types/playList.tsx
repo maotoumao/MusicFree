@@ -2,10 +2,10 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import BottomSheet, {
     BottomSheetBackdrop,
-    BottomSheetFlatList,
-    BottomSheetFlatListMethods,
+    createBottomSheetScrollableComponent,
+    SCROLLABLE_TYPE,
 } from '@gorhom/bottom-sheet';
-import rpx from '@/utils/rpx';
+import rpx, {vh} from '@/utils/rpx';
 import MusicQueue from '@/core/musicQueue';
 import {Button, Divider, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,20 +17,55 @@ import {fontSizeConst} from '@/constants/uiConst';
 import ThemeText from '@/components/base/themeText';
 import IconButton from '@/components/base/iconButton';
 
-import {internalSymbolKey} from '@/constants/commonConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {isSameMediaItem} from '@/utils/mediaItem';
+import {
+    DataProvider,
+    LayoutProvider,
+    RecyclerListView,
+    RecyclerListViewProps,
+} from 'recyclerlistview';
+import Animated from 'react-native-reanimated';
 
 const ITEM_HEIGHT = rpx(108);
+const ITEM_WIDTH = rpx(750);
+const WRAPPER_HEIGHT = vh(60) - rpx(104);
+const INIT_OFFSET = (WRAPPER_HEIGHT - ITEM_HEIGHT) / 2;
+
+// @ts-ignore  解决报错
+RecyclerListView.prototype.setNativeProps = function () {
+    // todo 参数被传了过去但是貌似没生效。
+    // console.log(this);
+};
+const AnimatedRecyclerListView =
+    Animated.createAnimatedComponent(RecyclerListView);
+const BottomSheetRecyclerListView = createBottomSheetScrollableComponent<
+    any,
+    RecyclerListViewProps
+>(SCROLLABLE_TYPE.FLATLIST, AnimatedRecyclerListView);
+
 export default function PlayList() {
     const musicQueue = MusicQueue.useMusicQueue();
     const currentMusicItem = MusicQueue.useCurrentMusicItem();
     const repeatMode = MusicQueue.useRepeatMode();
     const sheetRef = useRef<BottomSheetMethods | null>();
-    const listRef = useRef<BottomSheetFlatListMethods | null>();
+
     const {unmountPanel} = _usePanel(sheetRef);
     const {colors} = useTheme();
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
+    const [dataProvider, setDataProvider] = useState(
+        new DataProvider((item1, item2) => item1 !== item2).cloneWithRows(
+            musicQueue ?? [],
+        ),
+    );
+    const layoutProvider = new LayoutProvider(
+        () => 1,
+        (type, dim) => {
+            dim.height = ITEM_HEIGHT;
+            dim.width = ITEM_WIDTH;
+        },
+    );
+    layoutProvider.shouldRefreshWithAnchoring = false;
 
     useEffect(() => {
         setCurrentIndex(
@@ -38,14 +73,19 @@ export default function PlayList() {
         );
     }, [musicQueue, currentMusicItem]);
 
-    const renderItem = useCallback(
-        (_: {item: IMusic.IMusicItem; index: number}) => (
+    useEffect(() => {
+        const newDataProvider = dataProvider.cloneWithRows(musicQueue);
+        setDataProvider(newDataProvider);
+    }, [musicQueue]);
+
+    const rowRenderer = useCallback(
+        (type: string | number, item: IMusic.IMusicItem, index: number) => (
             <Pressable
                 onPress={() => {
-                    MusicQueue.play(_.item);
+                    MusicQueue.play(item);
                 }}
                 style={style.musicItem}>
-                {currentIndex === _.index && (
+                {currentIndex === index && (
                     <Icon
                         name="music"
                         color={colors.textHighlight}
@@ -58,26 +98,26 @@ export default function PlayList() {
                         style.musicItemTitle,
                         {
                             color:
-                                _.index === currentIndex
+                                index === currentIndex
                                     ? colors.textHighlight
                                     : colors.text,
                         },
                     ]}
                     ellipsizeMode="tail"
                     numberOfLines={1}>
-                    {_.item.title}
+                    {item.title}
                     <Text style={{fontSize: fontSizeConst.description}}>
                         {' '}
-                        - {_.item.artist}
+                        - {item.artist}
                     </Text>
                 </ThemeText>
-                <Tag tagName={_.item.platform} />
+                <Tag tagName={item.platform} />
                 <IconButton
                     style={{marginLeft: rpx(14)}}
                     name="close"
                     size="small"
                     onPress={() => {
-                        MusicQueue.remove(_.item);
+                        MusicQueue.remove(item);
                     }}
                 />
             </Pressable>
@@ -100,7 +140,7 @@ export default function PlayList() {
             }}
             backgroundStyle={{backgroundColor: colors.primary}}
             handleComponent={null}
-            snapPoints={['60%']}
+            snapPoints={[vh(60)]}
             enablePanDownToClose
             enableOverDrag={false}
             onClose={unmountPanel}>
@@ -125,23 +165,24 @@ export default function PlayList() {
                 </Button>
             </View>
             <Divider />
-            <BottomSheetFlatList
-                style={style.playList}
-                ref={_ => {
-                    listRef.current = _;
-                }}
-                data={musicQueue}
-                extraData={currentIndex}
-                keyExtractor={_ =>
-                    _[internalSymbolKey]?.globalKey ?? `${_.id}-${_.platform}`
-                }
-                getItemLayout={(_, index) => ({
-                    length: ITEM_HEIGHT,
-                    offset: ITEM_HEIGHT * index,
-                    index,
-                })}
-                renderItem={renderItem}
-            />
+            <View style={style.playListWrapper}>
+                <BottomSheetRecyclerListView
+                    initialOffset={
+                        musicQueue.findIndex(_ =>
+                            isSameMediaItem(_, currentMusicItem),
+                        ) *
+                            ITEM_HEIGHT -
+                        INIT_OFFSET
+                    }
+                    scrollViewProps={{}}
+                    canChangeSize={false}
+                    style={style.playList}
+                    dataProvider={dataProvider}
+                    layoutProvider={layoutProvider}
+                    // windowcorrection
+                    rowRenderer={rowRenderer}
+                />
+            </View>
         </BottomSheet>
     );
 }
@@ -159,14 +200,25 @@ const style = StyleSheet.create({
     headerText: {
         flex: 1,
     },
+    playListWrapper: {
+        minHeight: WRAPPER_HEIGHT,
+        minWidth: rpx(750),
+        width: rpx(750),
+        height: WRAPPER_HEIGHT,
+        flex: 1,
+    },
     playList: {
-        paddingHorizontal: rpx(24),
+        width: rpx(750),
+        height: WRAPPER_HEIGHT,
+        flex: 1,
     },
     currentPlaying: {
         marginRight: rpx(6),
     },
     musicItem: {
+        width: ITEM_WIDTH,
         height: ITEM_HEIGHT,
+        paddingHorizontal: rpx(24),
         flexDirection: 'row',
         alignItems: 'center',
     },
