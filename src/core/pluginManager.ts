@@ -22,6 +22,7 @@ import {isSameMediaItem, resetMediaItem} from '@/utils/mediaItem';
 import {internalSerialzeKey, internalSymbolKey} from '@/constants/commonConst';
 import Download from './download';
 import delay from '@/utils/delay';
+import * as cheerio from 'cheerio';
 
 axios.defaults.timeout = 1500;
 
@@ -64,7 +65,7 @@ export class Plugin {
       } catch(e) {
         return null;
       }
-    `)()({CryptoJs, axios, dayjs});
+    `)()({CryptoJs, axios, dayjs, cheerio});
             this.checkValid(_instance);
         } catch (e: any) {
             this.state = 'error';
@@ -410,6 +411,21 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return [];
         }
     }
+    /** 导入单曲 */
+    async importMusicItem(urlLike: string): Promise<IMusic.IMusicItem | null> {
+        try {
+            const result = await this.plugin.instance?.importMusicItem?.(
+                urlLike,
+            );
+            if (!result) {
+                throw new Error();
+            }
+            resetMediaItem(result, this.plugin.name);
+            return result;
+        } catch {
+            return null;
+        }
+    }
 }
 
 let plugins: Array<Plugin> = [];
@@ -451,12 +467,13 @@ async function setup() {
 
 // 安装插件
 async function installPlugin(pluginPath: string) {
-    if (pluginPath.endsWith('.js') && (await exists(pluginPath))) {
+    let checkPath = decodeURIComponent(pluginPath);
+    if (pluginPath.endsWith('.js') && (await exists(checkPath))) {
         const funcCode = await readFile(pluginPath, 'utf8');
         const plugin = new Plugin(funcCode, pluginPath);
         const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
         if (_pluginIndex !== -1) {
-            return;
+            throw new Error('插件已安装');
         }
         if (plugin.hash !== '') {
             const fn = nanoid();
@@ -464,9 +481,13 @@ async function installPlugin(pluginPath: string) {
             await copyFile(pluginPath, _pluginPath);
             plugin.path = _pluginPath;
             plugins = plugins.concat(plugin);
+            console.log(plugins, 'xxxx');
             pluginStateMapper.notify();
+            return;
         }
+        throw new Error('插件无法解析');
     }
+    throw new Error('插件不存在');
 }
 
 /** 卸载插件 */

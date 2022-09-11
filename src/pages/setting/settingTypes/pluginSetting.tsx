@@ -28,7 +28,7 @@ export default function PluginSetting() {
                     data={plugins ?? []}
                     keyExtractor={_ => _.hash}
                     renderItem={({item: plugin}) => (
-                        <PluginView plugin={plugin} />
+                        <PluginView key={plugin.hash} plugin={plugin} />
                     )}
                 />
             )}
@@ -43,13 +43,16 @@ export default function PluginSetting() {
                         const validResult = result?.filter(_ =>
                             _.uri.endsWith('.js'),
                         );
-                        await Promise.allSettled(
+                        console.log(result);
+                        await Promise.all(
                             validResult.map(_ =>
                                 PluginManager.installPlugin(_.uri),
                             ),
                         );
+                        Toast.success('插件安装成功~');
                     } catch (e: any) {
                         trace('插件安装失败', e?.message);
+                        Toast.warn(`插件安装失败: ${e?.message ?? ''}`);
                     }
                     setLoading(false);
                 }}
@@ -100,10 +103,43 @@ function PluginView(props: IPluginViewProps) {
                     async onOk() {
                         try {
                             await PluginManager.uninstallPlugin(plugin.hash);
-                        } catch {}
+                            Toast.success('卸载成功~');
+                        } catch {
+                            Toast.warn('卸载失败');
+                        }
                     },
                 });
             },
+        },
+        {
+            title: '导入单曲',
+            icon: 'trash-can-outline',
+            onPress() {
+                showPanel('SimpleInput', {
+                    placeholder: '输入目标歌曲',
+                    maxLength: 1000,
+                    async onOk(text) {
+                        const result = await plugin.methods.importMusicItem(
+                            text,
+                        );
+                        console.log(result);
+                        if (result) {
+                            showDialog('SimpleDialog', {
+                                title: '准备导入',
+                                content: `发现歌曲 ${result.title} ! 现在开始导入吗?`,
+                                onOk() {
+                                    showPanel('AddToMusicSheet', {
+                                        musicItem: result,
+                                    });
+                                },
+                            });
+                        } else {
+                            Toast.warn('无法导入~');
+                        }
+                    },
+                });
+            },
+            show: !!plugin.instance.importMusicItem,
         },
         {
             title: '导入歌单',
@@ -111,6 +147,7 @@ function PluginView(props: IPluginViewProps) {
             onPress() {
                 showPanel('SimpleInput', {
                     placeholder: '输入目标歌单',
+                    maxLength: 1000,
                     async onOk(text) {
                         const result = await plugin.methods.importMusicSheet(
                             text,
@@ -130,7 +167,6 @@ function PluginView(props: IPluginViewProps) {
                         }
                     },
                 });
-                console.log(plugin.instance.defaultSearchType);
             },
             show: !!plugin.instance.importMusicSheet,
         },

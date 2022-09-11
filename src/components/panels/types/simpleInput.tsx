@@ -16,10 +16,11 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 interface ISimpleInputProps {
     onOk: (text: string) => void;
     onCancel?: () => void;
+    maxLength?: number;
     placeholder?: string;
 }
 export default function SimpleInput(props: ISimpleInputProps) {
-    const {onOk, onCancel, placeholder} = props;
+    const {onOk, onCancel, placeholder, maxLength = 80} = props;
     const sheetRef = useRef<BottomSheetMethods | null>();
     const {unmountPanel} = _usePanel(sheetRef);
     const [input, setInput] = useState('');
@@ -82,7 +83,7 @@ export default function SimpleInput(props: ISimpleInputProps) {
                 ]}
                 placeholderTextColor={colors.textSecondary}
                 placeholder={placeholder ?? ''}
-                maxLength={80}
+                maxLength={maxLength}
             />
         </BottomSheet>
     );

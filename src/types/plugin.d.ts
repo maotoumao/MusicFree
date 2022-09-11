@@ -55,7 +55,13 @@ declare namespace IPlugin {
         /** 获取作品，有分页 */
         queryArtistWorks?: IQueryArtistWorksFunc;
         /** 导入歌单 */
-        importMusicSheet?: (urlLike: string) => Promise<IMusic.IMusicItem[]>;
+        importMusicSheet?: (
+            urlLike: string,
+        ) => Promise<IMusic.IMusicItem[] | null>;
+        /** 导入单曲 */
+        importMusicItem?: (
+            urlLike: string,
+        ) => Promise<IMusic.IMusicItem | null>;
     }
 
     export interface IPluginInstance extends IPluginDefine {
