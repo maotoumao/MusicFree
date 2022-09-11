@@ -311,7 +311,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             // 获取真实源
             const source = await PluginManager.getByName(
                 _musicItem.platform,
-            )?.methods?.getMusicTrack(_musicItem);
+            )?.methods?.getMusicSource(_musicItem);
             track = mergeProps(_musicItem, source) as IMusic.IMusicItem;
         } catch (e) {
             // 播放失败

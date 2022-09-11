@@ -170,7 +170,7 @@ async function downloadNext() {
         const plugin = PluginManager.getByName(musicItem.platform);
         if (plugin) {
             try {
-                const data = await plugin.methods.getMusicTrack(musicItem);
+                const data = await plugin.methods.getMusicSource(musicItem);
                 url = data?.url;
                 headers = data?.headers;
             } catch {

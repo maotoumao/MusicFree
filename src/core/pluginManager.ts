@@ -82,7 +82,7 @@ export class Plugin {
                 _path: '',
                 platform: '',
                 appVersion: '',
-                async getMusicTrack() {
+                async getMusicSource() {
                     return null;
                 },
                 async search() {
@@ -158,10 +158,10 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     }
 
     /** 获取真实源 */
-    async getMusicTrack(
+    async getMusicSource(
         musicItem: IMusic.IMusicItemBase,
         retryCount = 1,
-    ): Promise<IPlugin.IMusicTrackResult> {
+    ): Promise<IPlugin.IMusicSourceResult> {
         // 1. 本地搜索 其实直接读mediameta就好了
         const localPath =
             musicItem?.[internalSymbolKey]?.localPath ??
@@ -184,12 +184,12 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         }
         // 3. 插件解析
-        if (!this.plugin.instance.getMusicTrack) {
+        if (!this.plugin.instance.getMusicSource) {
             return {url: musicItem.url};
         }
         try {
             const {url, headers, cache} =
-                (await this.plugin.instance.getMusicTrack(musicItem)) ?? {};
+                (await this.plugin.instance.getMusicSource(musicItem)) ?? {};
             if (!url) {
                 throw new Error();
             }
@@ -207,7 +207,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         } catch (e: any) {
             if (retryCount > 0) {
                 await delay(150);
-                return this.getMusicTrack(musicItem, --retryCount);
+                return this.getMusicSource(musicItem, --retryCount);
             }
             errorLog('获取真实源失败', e?.message);
             throw e;
