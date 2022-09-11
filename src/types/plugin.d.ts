@@ -1,5 +1,5 @@
 declare namespace IPlugin {
-    export interface IMusicSourceResult {
+    export interface IMediaSourceResult {
         headers?: Record<string, string>;
         url: string;
         userAgent?: string;
@@ -37,9 +37,9 @@ declare namespace IPlugin {
         /** 搜索 */
         search?: ISearchFunc;
         /** 获取根据音乐信息获取url */
-        getMusicSource?: (
+        getMediaSource?: (
             musicItem: IMusic.IMusicItemBase,
-        ) => Promise<IMusicSourceResult | null>;
+        ) => Promise<IMediaSourceResult | null>;
         /** 根据主键去查询歌曲信息 */
         getMusicInfo?: (
             musicBase: ICommon.IMediaBase,
