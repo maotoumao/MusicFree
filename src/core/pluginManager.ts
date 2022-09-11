@@ -30,8 +30,6 @@ const sha256 = CryptoJs.SHA256;
 enum PluginStateCode {
     /** 版本不匹配 */
     VersionNotMatch = 'VERSION NOT MATCH',
-    /** 插件不完整 */
-    NotComplete = 'NOT COMPLETE',
     /** 无法解析 */
     CannotParse = 'CANNOT PARSE',
 }
@@ -108,18 +106,6 @@ export class Plugin {
     }
 
     private checkValid(_instance: IPlugin.IPluginInstance) {
-        // 总不会一个都没有吧
-        const keys: Array<keyof IPlugin.IPluginInstance> = [
-            'getAlbumInfo',
-            'search',
-            'getMusicTrack',
-        ];
-        if (keys.every(k => !_instance[k])) {
-            throw {
-                instance: _instance,
-                stateCode: PluginStateCode.NotComplete,
-            };
-        }
         /** 版本号校验 */
         if (
             _instance.appVersion &&
@@ -410,6 +396,18 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         } catch (e) {
             throw e;
+        }
+    }
+
+    /** 导入歌单 */
+    async importMusicSheet(urlLike: string): Promise<IMusic.IMusicItem[]> {
+        try {
+            const result =
+                (await this.plugin.instance?.importMusicSheet?.(urlLike)) ?? [];
+            result.forEach(_ => resetMediaItem(_, this.plugin.name));
+            return result;
+        } catch {
+            return [];
         }
     }
 }

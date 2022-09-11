@@ -3,6 +3,7 @@ import AssociateLrc from './associateLrc';
 import MusicItemOptions from './musicItemOptions';
 import NewMusicSheet from './newMusicSheet';
 import PlayList from './playList';
+import SimpleInput from './simpleInput';
 
 export default {
     /** 加入歌单 */
@@ -15,4 +16,6 @@ export default {
     PlayList: PlayList,
     /** 关联歌词 */
     AssociateLrc: AssociateLrc,
+    /** 简单的输入 */
+    SimpleInput: SimpleInput,
 };

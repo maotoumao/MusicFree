@@ -11,6 +11,8 @@ import useColors from '@/hooks/useColors';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import PluginManager, {Plugin} from '@/core/pluginManager';
 import {trace} from '@/utils/log';
+import usePanel from '@/components/panels/usePanel';
+import Toast from '@/utils/toast';
 
 export default function PluginSetting() {
     const plugins = PluginManager.usePlugins();
@@ -85,6 +87,7 @@ function PluginView(props: IPluginViewProps) {
     const {plugin} = props;
     const colors = useColors();
     const {showDialog} = useDialog();
+    const {showPanel} = usePanel();
     const options = [
         {
             title: '卸载插件',
@@ -93,7 +96,7 @@ function PluginView(props: IPluginViewProps) {
             onPress() {
                 showDialog('SimpleDialog', {
                     title: '卸载插件',
-                    content: `确认卸载插件${plugin.instance.platform}吗`,
+                    content: `确认卸载插件${plugin.name}吗`,
                     async onOk() {
                         try {
                             await PluginManager.uninstallPlugin(plugin.hash);
@@ -106,9 +109,30 @@ function PluginView(props: IPluginViewProps) {
             title: '导入歌单',
             icon: 'trash-can-outline',
             onPress() {
+                showPanel('SimpleInput', {
+                    placeholder: '输入目标歌单',
+                    async onOk(text) {
+                        const result = await plugin.methods.importMusicSheet(
+                            text,
+                        );
+                        if (result.length > 0) {
+                            showDialog('SimpleDialog', {
+                                title: '准备导入',
+                                content: `发现${result.length}首歌曲! 现在开始导入吗?`,
+                                onOk() {
+                                    showPanel('AddToMusicSheet', {
+                                        musicItem: result,
+                                    });
+                                },
+                            });
+                        } else {
+                            Toast.warn('目标歌单是空的哦');
+                        }
+                    },
+                });
                 console.log(plugin.instance.defaultSearchType);
             },
-            show: !!plugin.instance.defaultSearchType,
+            show: !!plugin.instance.importMusicSheet,
         },
     ];
 
