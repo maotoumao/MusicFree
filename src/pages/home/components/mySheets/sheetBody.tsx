@@ -35,7 +35,7 @@ export default function SheetBody() {
                     }}
                     right={() => (
                         <IconButton
-                            name="dots-vertical"
+                            name="trash-can-outline"
                             onPress={() => {
                                 showDialog('SimpleDialog', {
                                     title: '删除歌单',

@@ -1,3 +1,5 @@
+import deviceInfoModule from 'react-native-device-info';
+import AboutSetting from './aboutSetting';
 import BackupSetting from './backupSetting';
 import BasicSetting from './basicSetting';
 import PluginSetting from './pluginSetting';
@@ -25,6 +27,10 @@ const settingTypes: Record<
     backup: {
         title: '备份与恢复',
         component: BackupSetting,
+    },
+    about: {
+        title: `关于${deviceInfoModule.getApplicationName()}`,
+        component: AboutSetting,
     },
 };
 

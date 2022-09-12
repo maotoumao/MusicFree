@@ -48,6 +48,13 @@ export default function HomeDrawer(props: any) {
                 navigateToSetting('backup');
             },
         },
+        {
+            icon: 'information-outline',
+            title: '关于',
+            onPress: () => {
+                navigateToSetting('about');
+            },
+        },
     ] as const;
 
     return (
@@ -57,7 +64,6 @@ export default function HomeDrawer(props: any) {
                 <View style={style.header}>
                     <ThemeText fontSize="appbar" fontWeight="bold">
                         {DeviceInfo.getApplicationName()}
-                        {DeviceInfo.getVersion()}
                     </ThemeText>
                     <IconButton icon={'qrcode-scan'} size={rpx(36)} />
                 </View>

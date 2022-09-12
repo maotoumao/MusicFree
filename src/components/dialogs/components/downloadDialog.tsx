@@ -39,7 +39,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
             style={{backgroundColor: colors.primary}}>
             <Dialog.Title>{title}</Dialog.Title>
             <Dialog.Content>
-                {content?.map(_ => (
+                {content?.map?.(_ => (
                     <ThemeText key={_} style={style.item}>
                         {_}
                     </ThemeText>

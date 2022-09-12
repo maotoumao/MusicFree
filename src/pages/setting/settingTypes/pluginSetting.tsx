@@ -98,7 +98,7 @@ function PluginView(props: IPluginViewProps) {
     const options = [
         {
             title: '导入单曲',
-            icon: 'trash-can-outline',
+            icon: 'import',
             onPress() {
                 showPanel('SimpleInput', {
                     placeholder: '输入目标歌曲',
@@ -107,7 +107,6 @@ function PluginView(props: IPluginViewProps) {
                         const result = await plugin.methods.importMusicItem(
                             text,
                         );
-                        console.log(result);
                         if (result) {
                             showDialog('SimpleDialog', {
                                 title: '准备导入',
@@ -128,7 +127,7 @@ function PluginView(props: IPluginViewProps) {
         },
         {
             title: '导入歌单',
-            icon: 'trash-can-outline',
+            icon: 'database-import-outline',
             onPress() {
                 showPanel('SimpleInput', {
                     placeholder: '输入目标歌单',
@@ -183,10 +182,13 @@ function PluginView(props: IPluginViewProps) {
                     primary: colors.textHighlight,
                 },
             }}
-            titleStyle={{
-                fontSize: fontSizeConst.title,
-                fontWeight: fontWeightConst.semibold,
-            }}
+            titleStyle={[
+                {
+                    fontSize: fontSizeConst.title,
+                    fontWeight: fontWeightConst.semibold,
+                },
+                plugin.state === 'error' ? {color: 'red'} : undefined,
+            ]}
             title={plugin.name}>
             {options.map(_ =>
                 _.show ? (
