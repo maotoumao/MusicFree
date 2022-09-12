@@ -57,6 +57,7 @@ export default function HomeDrawer(props: any) {
                 <View style={style.header}>
                     <ThemeText fontSize="appbar" fontWeight="bold">
                         {DeviceInfo.getApplicationName()}
+                        {DeviceInfo.getVersion()}
                     </ThemeText>
                     <IconButton icon={'qrcode-scan'} size={rpx(36)} />
                 </View>

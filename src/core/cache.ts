@@ -1,4 +1,5 @@
 import {internalSerialzeKey, StorageKeys} from '@/constants/commonConst';
+import {trace} from '@/utils/log';
 import {getMediaKey} from '@/utils/mediaItem';
 import {getStorage, setStorage} from '@/utils/storage';
 import produce from 'immer';
@@ -28,6 +29,7 @@ const cache = new LRUCache<string, ICommon.IMediaMeta>({
                 MediaMeta.getByMediaKey(key)?.[internalSerialzeKey]?.local;
             for (let [k, fp] of Object.entries(localFiles)) {
                 if (!localMeta?.[k] && fp) {
+                    trace(k, fp);
                     unlink(fp);
                 }
             }

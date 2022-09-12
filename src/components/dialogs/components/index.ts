@@ -1,9 +1,11 @@
+import DownloadDialog from './downloadDialog';
 import RadioDialog from './radioDialog';
 import SimpleDialog from './simpleDialog';
 
 const dialogs = {
     SimpleDialog,
     RadioDialog,
+    DownloadDialog,
 };
 
 const dialogArray: Array<[string, (...args: any) => JSX.Element]> =

@@ -6,7 +6,7 @@ interface ISimpleDialogProps {
     visible: boolean;
     hideDialog: () => void;
     title: string;
-    content: string;
+    content: string | JSX.Element;
     onOk?: () => void;
 }
 export default function SimpleDialog(props: ISimpleDialogProps) {
@@ -19,7 +19,11 @@ export default function SimpleDialog(props: ISimpleDialogProps) {
             style={{backgroundColor: colors.primary}}>
             <Dialog.Title>{title}</Dialog.Title>
             <Dialog.Content>
-                <Paragraph>{content}</Paragraph>
+                {typeof content === 'string' ? (
+                    <Paragraph>{content}</Paragraph>
+                ) : (
+                    <>{content}</>
+                )}
             </Dialog.Content>
             <Dialog.Actions>
                 <Button color={colors.text} onPress={hideDialog}>
