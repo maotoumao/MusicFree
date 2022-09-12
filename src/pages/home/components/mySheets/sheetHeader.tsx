@@ -24,13 +24,13 @@ export default function () {
                         showPanel('NewMusicSheet');
                     }}
                 />
-                <IconButton
+                {/* <IconButton
                     style={style.headerAction}
                     name="dots-vertical"
                     onPress={() => {
                         console.log('more歌单');
                     }}
-                />
+                /> */}
             </View>
         </View>
     );

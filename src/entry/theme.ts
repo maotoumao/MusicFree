@@ -15,13 +15,14 @@ const DefaultTheme = {
     ..._DefaultTheme,
     colors: {
         ..._DefaultTheme.colors,
-        primary: '#cdd1d3',
+        primary: '#FDEEDC',
         text: '#333333',
         textSecondary: '#666666',
-        textHighlight: '#11659a',
+        textHighlight: '#E38B29',
         background: 'transparent',
-        pageBackground: '#100000',
+        pageBackground: '#FCF8E8',
         backdrop: 'rgba(0,0,0,0.2)',
+        accent: '#E38B29',
     },
 };
 
@@ -34,8 +35,9 @@ const CustomTheme = {
         textSecondary: '#aaaaaa',
         textHighlight: '#eba0b3',
         background: 'transparent',
-        pageBackground: '#080000',
+        pageBackground: '#1B2430',
         backdrop: 'rgba(0,0,0,0.2)',
+        accent: '#eba0b3',
     },
 };
 

@@ -30,6 +30,7 @@ interface IConfig {
                 secondary: string;
                 textHighlight: string;
                 pageBackground: string;
+                accent: string;
             };
         };
     };

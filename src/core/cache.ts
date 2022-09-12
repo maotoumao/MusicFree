@@ -29,7 +29,10 @@ const cache = new LRUCache<string, ICommon.IMediaMeta>({
                 MediaMeta.getByMediaKey(key)?.[internalSerialzeKey]?.local;
             for (let [k, fp] of Object.entries(localFiles)) {
                 if (!localMeta?.[k] && fp) {
-                    trace(k, fp);
+                    trace('清理缓存', fp);
+                    if (!fp.startsWith('file')) {
+                        fp = 'file://' + fp;
+                    }
                     unlink(fp);
                 }
             }

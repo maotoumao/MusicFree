@@ -36,7 +36,7 @@ export default function BasicSetting() {
             },
         },
         {
-            title: '播放失败时自动播放列表中的下一首',
+            title: '播放失败时自动暂停',
             right: () => (
                 <ThemeSwitch value={basicSetting?.autoStopWhenError ?? false} />
             ),
