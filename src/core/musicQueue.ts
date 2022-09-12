@@ -40,6 +40,9 @@ const repeatModeStateMapper = new StateMapper(() => repeatMode);
 /** 内部使用的排序id */
 let globalId: number = 0; // 记录加入队列的次序
 
+const maxMusicQueueLength = 1500; // 当前播放最大限制
+const halfMaxMusicQueueLength = Math.floor(maxMusicQueueLength / 2);
+
 /** 初始化 */
 const setup = async () => {
     // 需要hook一下播放，所以采用这种方式
@@ -176,6 +179,26 @@ const findMusicIndex = (musicItem?: IMusic.IMusicItem) =>
           )
         : currentIndex;
 
+const shrinkMusicQueueToSize = (
+    queue: IMusic.IMusicItem[],
+    targetIndex = currentIndex,
+) => {
+    // 播放列表上限，太多无法缓存状态
+    if (queue.length > maxMusicQueueLength) {
+        if (targetIndex < halfMaxMusicQueueLength) {
+            queue = queue.slice(0, maxMusicQueueLength);
+        } else {
+            const right = Math.min(
+                queue.length,
+                targetIndex + halfMaxMusicQueueLength,
+            );
+            const left = Math.max(0, right - maxMusicQueueLength);
+            queue = queue.slice(left, right);
+        }
+    }
+    return queue;
+};
+
 const addAll = (
     musicItems: Array<IMusic.IMusicItem> = [],
     beforeIndex?: number,
@@ -202,6 +225,11 @@ const addAll = (
             draft.splice(beforeIndex, 0, ..._musicItems);
         });
     }
+    // 播放列表上限，太多无法缓存状态
+    musicQueue = shrinkMusicQueueToSize(
+        musicQueue,
+        findMusicIndex(_musicItems[0]),
+    );
     if (!notCache) {
         Config.set('status.music.musicQueue', musicQueue, false);
     }
@@ -369,6 +397,10 @@ const playWithReplaceQueue = async (
     newQueue: IMusic.IMusicItem[],
 ) => {
     if (newQueue.length !== 0) {
+        newQueue = shrinkMusicQueueToSize(
+            newQueue,
+            newQueue.findIndex(_ => isSameMediaItem(_, musicItem)),
+        );
         musicQueue = [];
         addAll(
             newQueue,

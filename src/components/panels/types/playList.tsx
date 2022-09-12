@@ -2,8 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import BottomSheet, {
     BottomSheetBackdrop,
-    createBottomSheetScrollableComponent,
-    SCROLLABLE_TYPE,
+    BottomSheetFlatList,
 } from '@gorhom/bottom-sheet';
 import rpx, {vh} from '@/utils/rpx';
 import MusicQueue from '@/core/musicQueue';
@@ -19,39 +18,10 @@ import IconButton from '@/components/base/iconButton';
 
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {isSameMediaItem} from '@/utils/mediaItem';
-import {
-    DataProvider,
-    LayoutProvider,
-    RecyclerListView,
-    RecyclerListViewProps,
-} from 'recyclerlistview';
-import Animated from 'react-native-reanimated';
 
 const ITEM_HEIGHT = rpx(108);
 const ITEM_WIDTH = rpx(750);
 const WRAPPER_HEIGHT = vh(60) - rpx(104);
-const INIT_OFFSET = (WRAPPER_HEIGHT - ITEM_HEIGHT) / 2;
-
-// @ts-ignore  解决报错
-RecyclerListView.prototype.setNativeProps = function () {
-    // todo 参数被传了过去但是貌似没生效。
-    // console.log(this);
-};
-const AnimatedRecyclerListView =
-    Animated.createAnimatedComponent(RecyclerListView);
-const BottomSheetRecyclerListView = createBottomSheetScrollableComponent<
-    any,
-    RecyclerListViewProps
->(SCROLLABLE_TYPE.FLATLIST, AnimatedRecyclerListView);
-
-const layoutProvider = new LayoutProvider(
-    () => 1,
-    (type, dim) => {
-        dim.height = ITEM_HEIGHT;
-        dim.width = ITEM_WIDTH;
-    },
-);
-layoutProvider.shouldRefreshWithAnchoring = false;
 
 export default function PlayList() {
     const musicQueue = MusicQueue.useMusicQueue();
@@ -59,16 +29,15 @@ export default function PlayList() {
     const repeatMode = MusicQueue.useRepeatMode();
     const sheetRef = useRef<BottomSheetMethods | null>();
     const listRef = useRef<any>();
+    const [mount, setMount] = useState(false);
 
     const {unmountPanel} = _usePanel(sheetRef);
     const {colors} = useTheme();
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
-    const [dataProvider, setDataProvider] = useState(
-        new DataProvider((item1, item2) => item1 !== item2).cloneWithRows(
-            musicQueue ?? [],
-        ),
-    );
-    console.log('rerender');
+
+    useEffect(() => {
+        setMount(true);
+    }, []);
 
     useEffect(() => {
         setCurrentIndex(
@@ -76,18 +45,8 @@ export default function PlayList() {
         );
     }, [musicQueue, currentMusicItem]);
 
-    useEffect(() => {
-        const newDataProvider = dataProvider.cloneWithRows(musicQueue);
-        setDataProvider(newDataProvider);
-    }, [musicQueue]);
-
-    useEffect(() => {
-        listRef.current?.scrollToOffset?.(0, 1, false);
-        listRef.current?.scrollToOffset?.(0, -1, false);
-    }, []);
-
-    const rowRenderer = useCallback(
-        (type: string | number, item: IMusic.IMusicItem, index: number) => (
+    const renderItem = useCallback(
+        ({item, index}: {item: IMusic.IMusicItem; index: number}) => (
             <Pressable
                 onPress={() => {
                     MusicQueue.play(item);
@@ -173,23 +132,27 @@ export default function PlayList() {
                 </Button>
             </View>
             <Divider />
-            <View style={style.playListWrapper}>
-                <BottomSheetRecyclerListView
-                    ref={_ => (listRef.current = _)}
-                    initialOffset={
-                        musicQueue.findIndex(_ =>
-                            isSameMediaItem(_, currentMusicItem),
-                        ) *
-                            ITEM_HEIGHT -
-                        INIT_OFFSET
-                    }
-                    canChangeSize={false}
-                    style={style.playList}
-                    dataProvider={dataProvider}
-                    layoutProvider={layoutProvider}
-                    rowRenderer={rowRenderer}
-                />
-            </View>
+            {mount && (
+                <View style={style.playListWrapper}>
+                    <BottomSheetFlatList
+                        ref={_ => (listRef.current = _)}
+                        extraData={{currentIndex}}
+                        initialScrollIndex={Math.max(
+                            musicQueue.findIndex(_ =>
+                                isSameMediaItem(currentMusicItem, _),
+                            ) - 3,
+                            0,
+                        )}
+                        data={musicQueue}
+                        renderItem={renderItem}
+                        getItemLayout={(_, index) => ({
+                            length: ITEM_HEIGHT,
+                            offset: ITEM_HEIGHT * index,
+                            index,
+                        })}
+                    />
+                </View>
+            )}
         </BottomSheet>
     );
 }

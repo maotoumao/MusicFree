@@ -468,7 +468,11 @@ async function setup() {
 // 安装插件
 async function installPlugin(pluginPath: string) {
     let checkPath = decodeURIComponent(pluginPath);
-    if (pluginPath.endsWith('.js') && (await exists(checkPath))) {
+    trace(checkPath, await exists(checkPath));
+    trace(pluginPath, await exists(pluginPath));
+    trace(pluginPath.substring(7), await exists(pluginPath.substring(7)));
+    trace(checkPath.substring(7), await exists(checkPath.substring(7)));
+    if (pluginPath.endsWith('.js')) {
         const funcCode = await readFile(pluginPath, 'utf8');
         const plugin = new Plugin(funcCode, pluginPath);
         const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
@@ -481,7 +485,6 @@ async function installPlugin(pluginPath: string) {
             await copyFile(pluginPath, _pluginPath);
             plugin.path = _pluginPath;
             plugins = plugins.concat(plugin);
-            console.log(plugins, 'xxxx');
             pluginStateMapper.notify();
             return;
         }

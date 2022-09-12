@@ -3,9 +3,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function setStorage(key: string, value: any) {
     try {
+        console.log('KEY', key, 'VALUE', JSON.stringify(value, null, ''));
         await AsyncStorage.setItem(key, JSON.stringify(value, null, ''));
     } catch (e: any) {
-        errorLog('存储失败', e?.message);
+        errorLog(`存储失败${key}`, e?.message);
+        console.log('????', key, e);
     }
 }
 

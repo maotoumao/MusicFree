@@ -51,6 +51,10 @@ export default function PluginSetting() {
                         );
                         Toast.success('插件安装成功~');
                     } catch (e: any) {
+                        if (e?.message?.startsWith('User')) {
+                            setLoading(false);
+                            return;
+                        }
                         trace('插件安装失败', e?.message);
                         Toast.warn(`插件安装失败: ${e?.message ?? ''}`);
                     }
