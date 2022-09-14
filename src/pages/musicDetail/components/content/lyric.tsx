@@ -235,7 +235,7 @@ const style = StyleSheet.create({
         color: '#dddddd',
     },
     empty: {
-        paddingTop: '60%',
+        paddingTop: '65%',
     },
     draggingTime: {
         position: 'absolute',

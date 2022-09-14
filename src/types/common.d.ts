@@ -23,6 +23,7 @@ declare namespace ICommon {
         associatedLrc?: IMediaBase;
         headers?: Record<string, any>;
         url?: string;
+        cacheControl?: string; // 是否缓存url解析结果
         id?: string;
         platform?: string;
         $?: {

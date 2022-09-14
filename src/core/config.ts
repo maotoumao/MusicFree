@@ -6,12 +6,20 @@ type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
 interface IConfig {
     setting: {
         basic: {
+            /** 使用移动网络播放 */
+            useCelluarNetworkPlay: boolean;
+            /** 使用移动网络下载 */
+            useCelluarNetworkDownload: boolean;
             /** 最大同时下载 */
             maxDownload: number | string;
             /** 同时播放 */
             notInterrupt: boolean;
             /** 播放错误时自动停止 */
             autoStopWhenError: boolean;
+            /** 插件缓存策略 todo */
+            pluginCacheControl: string;
+            /** 最大音乐缓存 */
+            maxCacheSize: number;
 
             debug: {
                 errorLog: boolean;
@@ -96,7 +104,7 @@ type DeepPartial<T> = {
         : T[K];
 };
 
-type IConfigPaths = KeyPaths<IConfig>;
+export type IConfigPaths = KeyPaths<IConfig>;
 type PartialConfig = DeepPartial<IConfig> | null;
 type IConfigPathsObj = KeyPathsObj<DeepPartial<IConfig>, IConfigPaths>;
 

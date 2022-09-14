@@ -4,7 +4,7 @@
   "license": "GPL",
   "private": true,
   "author": {
-    "name": "maotoumao",
+    "name": "猫头猫",
     "email": "lhx_xjtu@163.com"
   },
   "scripts": {
@@ -24,6 +24,7 @@
     "@gorhom/bottom-sheet": "^4",
     "@react-native-async-storage/async-storage": "^1.17.7",
     "@react-native-clipboard/clipboard": "^1.11.0",
+    "@react-native-community/netinfo": "^9.3.0",
     "@react-native-community/slider": "^4.2.4",
     "@react-navigation/drawer": "^6.4.3",
     "@react-navigation/native": "^6.0.11",

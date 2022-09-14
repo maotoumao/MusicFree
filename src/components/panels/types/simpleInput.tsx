@@ -14,7 +14,7 @@ import useColors from '@/hooks/useColors';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface ISimpleInputProps {
-    onOk: (text: string) => void;
+    onOk: (text: string, closePanel: () => void) => void;
     onCancel?: () => void;
     maxLength?: number;
     placeholder?: string;
@@ -61,7 +61,7 @@ export default function SimpleInput(props: ISimpleInputProps) {
                 </Button>
                 <Button
                     onPress={async () => {
-                        onOk(input);
+                        onOk(input, closePanel);
                     }}>
                     确认
                 </Button>

@@ -9,7 +9,7 @@ import ListItem from '@/components/base/listItem';
 import useDialog from '@/components/dialogs/useDialog';
 import useColors from '@/hooks/useColors';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-import PluginManager, {Plugin} from '@/core/pluginManager';
+import PluginManager, {Plugin, PluginStateCode} from '@/core/pluginManager';
 import {trace} from '@/utils/log';
 import usePanel from '@/components/panels/usePanel';
 import Toast from '@/utils/toast';
@@ -132,7 +132,9 @@ function PluginView(props: IPluginViewProps) {
                 showPanel('SimpleInput', {
                     placeholder: '输入目标歌单',
                     maxLength: 1000,
-                    async onOk(text) {
+                    async onOk(text, closePanel) {
+                        Toast.success('正在导入中...');
+                        closePanel();
                         const result = await plugin.methods.importMusicSheet(
                             text,
                         );
@@ -189,7 +191,14 @@ function PluginView(props: IPluginViewProps) {
                 },
                 plugin.state === 'error' ? {color: 'red'} : undefined,
             ]}
-            title={plugin.name}>
+            title={plugin.name}
+            description={
+                plugin.stateCode === PluginStateCode.VersionNotMatch
+                    ? '插件和app版本不兼容'
+                    : plugin.stateCode === PluginStateCode.CannotParse
+                    ? '无法解析插件'
+                    : undefined
+            }>
             {options.map(_ =>
                 _.show ? (
                     <ListItem

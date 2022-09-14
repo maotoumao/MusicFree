@@ -1,27 +1,38 @@
-import RNFS, {exists, mkdir} from 'react-native-fs';
+import pathConst from '@/constants/pathConst';
+import FastImage from 'react-native-fast-image';
+import {
+    copyFile,
+    downloadFile,
+    exists,
+    mkdir,
+    PicturesDirectoryPath,
+    readDir,
+    unlink,
+    writeFile,
+} from 'react-native-fs';
 
-const basePath = `${RNFS.PicturesDirectoryPath}/MusicFree/`;
+const basePath = `${PicturesDirectoryPath}/MusicFree/`;
 export async function saveToGallery(src: string) {
     const fileName = `${basePath}${Date.now()}.png`;
-    if (!(await RNFS.exists(basePath))) {
-        await RNFS.mkdir(basePath);
+    if (!(await exists(basePath))) {
+        await mkdir(basePath);
     }
-    if (await RNFS.exists(src)) {
+    if (await exists(src)) {
         try {
-            await RNFS.copyFile(src, fileName);
+            await copyFile(src, fileName);
         } catch (e) {
             console.log('... ', e);
         }
     }
     if (src.startsWith('http')) {
-        await RNFS.downloadFile({
+        await downloadFile({
             fromUrl: src,
             toFile: fileName,
             background: true,
         });
     }
     if (src.startsWith('data')) {
-        await RNFS.writeFile(fileName, src);
+        await writeFile(fileName, src);
     }
 }
 
@@ -37,5 +48,52 @@ export async function checkAndCreateDir(path: string) {
     const filePath = path;
     if (!(await exists(filePath))) {
         await mkdir(filePath);
+    }
+}
+
+async function getFolderSize(path: string): Promise<number> {
+    let size = 0;
+    try {
+        const fns = await readDir(path);
+        for (let fn of fns) {
+            if (fn.isFile()) {
+                size += fn.size;
+            }
+            // todo: 可以改成并行 promise.all
+            if (fn.isDirectory()) {
+                size += await getFolderSize(fn.path);
+            }
+        }
+    } catch {}
+    return size;
+}
+
+export async function getCacheSize(
+    type: 'music' | 'lyric' | 'image',
+): Promise<number> {
+    if (type === 'music') {
+        return getFolderSize(pathConst.musicCachePath);
+    } else if (type === 'lyric') {
+        return getFolderSize(pathConst.lrcCachePath);
+    } else if (type === 'image') {
+        return getFolderSize(pathConst.imageCachePath);
+    }
+    throw new Error();
+}
+
+export async function clearCache(type: 'music' | 'lyric' | 'image') {
+    if (type === 'music') {
+        try {
+            if (await exists(pathConst.musicCachePath)) {
+                return unlink(pathConst.musicCachePath);
+            }
+        } catch {}
+    } else if (type === 'lyric') {
+        try {
+            const lrcs = readDir(pathConst.lrcCachePath);
+            return Promise.all((await lrcs).map(_ => unlink(_.path)));
+        } catch {}
+    } else if (type === 'image') {
+        return FastImage.clearDiskCache();
     }
 }

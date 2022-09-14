@@ -5,7 +5,7 @@ import {getStorage, setStorage} from '@/utils/storage';
 import produce from 'immer';
 import LRUCache from 'lru-cache';
 import objectPath from 'object-path';
-import {unlink} from 'react-native-fs';
+import {exists, unlink} from 'react-native-fs';
 import MediaMeta from './mediaMeta';
 import PluginManager from './pluginManager';
 
@@ -33,7 +33,9 @@ const cache = new LRUCache<string, ICommon.IMediaMeta>({
                     if (!fp.startsWith('file')) {
                         fp = 'file://' + fp;
                     }
-                    unlink(fp);
+                    if (await exists(fp)) {
+                        unlink(fp);
+                    }
                 }
             }
         }

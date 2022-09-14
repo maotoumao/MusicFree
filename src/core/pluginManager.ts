@@ -19,7 +19,11 @@ import {nanoid} from 'nanoid';
 import {errorLog, trace} from '../utils/log';
 import Cache from './cache';
 import {isSameMediaItem, resetMediaItem} from '@/utils/mediaItem';
-import {internalSerialzeKey, internalSymbolKey} from '@/constants/commonConst';
+import {
+    CacheControl,
+    internalSerialzeKey,
+    internalSymbolKey,
+} from '@/constants/commonConst';
 import Download from './download';
 import delay from '@/utils/delay';
 import * as cheerio from 'cheerio';
@@ -28,7 +32,7 @@ axios.defaults.timeout = 1500;
 
 const sha256 = CryptoJs.SHA256;
 
-enum PluginStateCode {
+export enum PluginStateCode {
     /** 版本不匹配 */
     VersionNotMatch = 'VERSION NOT MATCH',
     /** 无法解析 */
@@ -173,8 +177,13 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         }
         // 2. 缓存播放
+        // todo: 无网络情况下强制使用缓存播放 no-cache: 无网络情况下使用cache
         const mediaCache = Cache.get(musicItem);
-        if (mediaCache && mediaCache?.url) {
+        if (
+            mediaCache &&
+            mediaCache?.url &&
+            mediaCache.cache === CacheControl.Cache
+        ) {
             trace('播放', '缓存播放');
             return {
                 url: mediaCache.url,
@@ -188,7 +197,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return {url: musicItem.url};
         }
         try {
-            const {url, headers, cache} =
+            const {url, headers, cacheControl} =
                 (await this.plugin.instance.getMediaSource(musicItem)) ?? {};
             if (!url) {
                 throw new Error();
@@ -198,11 +207,13 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 url,
                 headers,
                 userAgent: headers?.['user-agent'],
-            };
+                cacheControl: cacheControl ?? CacheControl.Cache,
+            } as IPlugin.IMediaSourceResult;
 
-            if (cache !== false) {
+            if (cacheControl !== CacheControl.NoStore) {
                 Cache.update(musicItem, result);
             }
+
             return result;
         } catch (e: any) {
             if (retryCount > 0) {
@@ -467,11 +478,11 @@ async function setup() {
 
 // 安装插件
 async function installPlugin(pluginPath: string) {
-    let checkPath = decodeURIComponent(pluginPath);
-    trace(checkPath, await exists(checkPath));
-    trace(pluginPath, await exists(pluginPath));
-    trace(pluginPath.substring(7), await exists(pluginPath.substring(7)));
-    trace(checkPath.substring(7), await exists(checkPath.substring(7)));
+    // let checkPath = decodeURIComponent(pluginPath);
+    // trace(checkPath, await exists(checkPath));
+    // trace(pluginPath, await exists(pluginPath));
+    // trace(pluginPath.substring(7), await exists(pluginPath.substring(7)));
+    // trace(checkPath.substring(7), await exists(checkPath.substring(7)));
     if (pluginPath.endsWith('.js')) {
         const funcCode = await readFile(pluginPath, 'utf8');
         const plugin = new Plugin(funcCode, pluginPath);

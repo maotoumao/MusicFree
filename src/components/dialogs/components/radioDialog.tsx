@@ -5,12 +5,12 @@ import useColors from '@/hooks/useColors';
 import {FlatList} from 'react-native-gesture-handler';
 import ListItem from '@/components/base/listItem';
 
-interface IRadioDialogProps {
+interface IRadioDialogProps<T extends string | number = string | number> {
     visible: boolean;
     hideDialog: () => void;
     title: string;
-    content: Array<string | number>;
-    onOk?: (value: string | number) => void;
+    content: T[];
+    onOk?: (value: T) => void;
 }
 
 export default function RadioDialog(props: IRadioDialogProps) {

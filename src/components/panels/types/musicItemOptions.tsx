@@ -154,7 +154,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
         },
         {
             icon: 'file-remove-outline',
-            title: '清除解析缓存(播放异常时使用)',
+            title: '清除插件缓存(播放异常时使用)',
             onPress: () => {
                 Cache.remove(musicItem);
                 Toast.success('缓存已清除');

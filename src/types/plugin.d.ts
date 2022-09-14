@@ -3,7 +3,7 @@ declare namespace IPlugin {
         headers?: Record<string, string>;
         url: string;
         userAgent?: string;
-        cache?: boolean;
+        cacheControl?: 'cache' | 'no-cache' | 'no-store';
     }
 
     export interface ISearchResult<T extends ICommon.SupportMediaType> {

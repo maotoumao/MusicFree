@@ -23,3 +23,9 @@ export const StorageKeys = {
     MediaMeta: 'media-meta-keys',
     MediaCache: 'media-cache',
 };
+
+export const CacheControl = {
+    Cache: 'cache',
+    NoCache: 'no-cache',
+    NoStore: 'no-store',
+};

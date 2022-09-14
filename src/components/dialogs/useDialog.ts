@@ -8,14 +8,6 @@ const payloadAtom = atom<
     | undefined
 >(undefined);
 
-// type IDialogType = {
-//   'simple-dialog': {
-//     title: string;
-//     content: string;
-//     onOk?: () => void;
-//   };
-// };
-
 export default function useDialog() {
     const [dialogName, setDialogName] = useAtom(dialogNameAtom);
     const [payload, setPayload] = useAtom(payloadAtom);
