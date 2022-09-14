@@ -27,6 +27,7 @@ import {
 import Download from './download';
 import delay from '@/utils/delay';
 import * as cheerio from 'cheerio';
+import Network from './network';
 
 axios.defaults.timeout = 1500;
 
@@ -177,12 +178,13 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         }
         // 2. 缓存播放
-        // todo: 无网络情况下强制使用缓存播放 no-cache: 无网络情况下使用cache
         const mediaCache = Cache.get(musicItem);
         if (
             mediaCache &&
             mediaCache?.url &&
-            mediaCache.cache === CacheControl.Cache
+            (mediaCache.cacheControl === CacheControl.Cache ||
+                (mediaCache.cacheControl === CacheControl.NoCache &&
+                    Network.isOffline()))
         ) {
             trace('播放', '缓存播放');
             return {

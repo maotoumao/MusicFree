@@ -92,7 +92,18 @@ export default function BasicSetting() {
         },
         {
             title: '网络',
-            data: [],
+            data: [
+                createSwitch(
+                    '使用移动网络播放',
+                    'setting.basic.useCelluarNetworkPlay',
+                    basicSetting?.useCelluarNetworkPlay ?? false,
+                ),
+                createSwitch(
+                    '使用移动网络下载',
+                    'setting.basic.useCelluarNetworkDownload',
+                    basicSetting?.useCelluarNetworkDownload ?? false,
+                ),
+            ],
         },
         {
             title: '缓存',

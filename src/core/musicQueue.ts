@@ -17,6 +17,8 @@ import {errorLog, trace} from '../utils/log';
 import {isSameMediaItem, mergeProps} from '@/utils/mediaItem';
 import PluginManager from './pluginManager';
 import Cache from './cache';
+import Network from './network';
+import Toast from '@/utils/toast';
 
 enum MusicRepeatMode {
     /** 随机播放 */
@@ -33,9 +35,11 @@ let musicQueue: Array<IMusic.IMusicItem> = [];
 let repeatMode: MusicRepeatMode = MusicRepeatMode.QUEUE;
 let isPlaying: boolean = false;
 
+const getRepeatMode = () => repeatMode;
+
 const currentMusicStateMapper = new StateMapper(() => musicQueue[currentIndex]);
 const musicQueueStateMapper = new StateMapper(() => musicQueue);
-const repeatModeStateMapper = new StateMapper(() => repeatMode);
+const repeatModeStateMapper = new StateMapper(getRepeatMode);
 
 /** 内部使用的排序id */
 let globalId: number = 0; // 记录加入队列的次序
@@ -118,20 +122,6 @@ const setup = async () => {
         await _playFail();
     });
 
-    /** 播放下一个 */
-    TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
-        // 是track里的，不是playlist里的
-        if (
-            evt.nextTrack === 1 &&
-            !(await TrackPlayer.getTrack(evt.nextTrack))?.url
-        ) {
-            if (repeatMode === MusicRepeatMode.SINGLE) {
-                await play(undefined, true);
-            } else {
-                await skipToNext();
-            }
-        }
-    });
     currentMusicStateMapper.notify();
     repeatModeStateMapper.notify();
 };
@@ -308,6 +298,13 @@ const getFakeNextTrack = () => {
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     try {
         trace('播放', musicItem);
+        if (
+            Network.isCellular() &&
+            !Config.get('setting.basic.useCelluarNetworkPlay')
+        ) {
+            Toast.warn('当前设置移动网络不可播放，可在侧边栏基本设置中打开');
+            return;
+        }
         isPlaying = true;
         const _currentIndex = findMusicIndex(musicItem);
         if (!musicItem && _currentIndex === currentIndex && !forcePlay) {
@@ -457,6 +454,7 @@ const MusicQueue = {
     remove,
     useCurrentMusicItem: currentMusicStateMapper.useMappedState,
     useRepeatMode: repeatModeStateMapper.useMappedState,
+    getRepeatMode,
     toggleRepeatMode,
     MusicRepeatMode,
     usePlaybackState,

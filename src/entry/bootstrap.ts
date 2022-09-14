@@ -12,6 +12,7 @@ import {errorLog} from '@/utils/log';
 import MediaMeta from '@/core/mediaMeta';
 import Cache from '@/core/cache';
 import PluginManager from '@/core/pluginManager';
+import Network from '@/core/network';
 
 /** app加载前执行
  * 1. 检查权限
@@ -38,7 +39,12 @@ async function _bootstrap() {
     /** 初始化路径 */
     await setupFolder();
     // 加载配置
-    await Promise.all([Config.setup(), MediaMeta.setup(), MusicSheet.setup()]);
+    await Promise.all([
+        Config.setup(),
+        MediaMeta.setup(),
+        MusicSheet.setup(),
+        Network.setup(),
+    ]);
     // 加载插件
     try {
         await TrackPlayer.setupPlayer({

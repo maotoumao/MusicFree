@@ -27,6 +27,9 @@ export default function SeekBar() {
                 }}
                 onSlidingComplete={val => {
                     setTmpProgress(null);
+                    if (val >= progress.duration - 3) {
+                        val = progress.duration - 3;
+                    }
                     MusicQueue.seekTo(val);
                 }}
                 value={progress.position}

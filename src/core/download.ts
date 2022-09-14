@@ -11,6 +11,7 @@ import {unlink, downloadFile, readDir} from 'react-native-fs';
 
 import Config from './config';
 import MediaMeta from './mediaMeta';
+import Network from './network';
 import PluginManager from './pluginManager';
 
 interface IDownloadMusicOptions {
@@ -254,6 +255,17 @@ async function downloadNext() {
 
 /** 下载音乐 */
 function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
+    if (Network.isOffline()) {
+        Toast.warn('当前无网络，无法下载');
+        return;
+    }
+    if (
+        Network.isCellular() &&
+        !Config.get('setting.basic.useCelluarNetworkDownload')
+    ) {
+        Toast.warn('当前设置移动网络不可下载，可在侧边栏基本设置修改');
+        return;
+    }
     // 如果已经在下载中
     if (!Array.isArray(musicItems)) {
         musicItems = [musicItems];
