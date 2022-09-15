@@ -9,7 +9,7 @@ export default function Background() {
             {musicItem?.artwork && (
                 <Image
                     style={style.blur}
-                    blurRadius={15}
+                    blurRadius={18}
                     source={{
                         uri: musicItem.artwork,
                     }}

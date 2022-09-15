@@ -6,12 +6,13 @@ import MusicQueue from '@/core/musicQueue';
 import {useNavigation} from '@react-navigation/native';
 import Tag from '@/components/base/tag';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-import useShare from '@/components/share/useShare';
+// import useShare from '@/components/share/useShare';
+import Toast from '@/utils/toast';
 
 export default function NavBar() {
     const navigation = useNavigation();
     const musicItem = MusicQueue.useCurrentMusicItem();
-    const {showShare} = useShare();
+    // const {showShare} = useShare();
 
     return (
         <View style={style.wrapper}>
@@ -39,17 +40,18 @@ export default function NavBar() {
                 color="white"
                 size={rpx(48)}
                 onPress={() => {
-                    showShare({
-                        content: {
-                            type: 'ShareMusic',
-                            track: {
-                                id: musicItem?.id,
-                                platform: musicItem?.platform,
-                            },
-                        },
-                        title: musicItem?.title,
-                        desc: musicItem?.artist,
-                    });
+                    Toast.warn('还没做好...再等等吧');
+                    // showShare({
+                    //     content: {
+                    //         type: 'ShareMusic',
+                    //         track: {
+                    //             id: musicItem?.id,
+                    //             platform: musicItem?.platform,
+                    //         },
+                    //     },
+                    //     title: musicItem?.title,
+                    //     desc: musicItem?.artist,
+                    // });
                 }}
             />
         </View>

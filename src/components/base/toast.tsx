@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fbeee2',
         flexDirection: 'row',
         alignItems: 'center',
+        paddingRight: fontSizeConst.content,
     },
     text: {
         fontSize: fontSizeConst.content,

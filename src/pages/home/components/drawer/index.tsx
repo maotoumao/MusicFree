@@ -2,7 +2,7 @@ import React from 'react';
 import {BackHandler, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
-import {Button, Card, IconButton} from 'react-native-paper';
+import {Button, Card} from 'react-native-paper';
 import MusicQueue from '@/core/musicQueue';
 import ListItem from '@/components/base/listItem';
 import {useNavigation} from '@react-navigation/native';
@@ -65,7 +65,7 @@ export default function HomeDrawer(props: any) {
                     <ThemeText fontSize="appbar" fontWeight="bold">
                         {DeviceInfo.getApplicationName()}
                     </ThemeText>
-                    <IconButton icon={'qrcode-scan'} size={rpx(36)} />
+                    {/* <IconButton icon={'qrcode-scan'} size={rpx(36)} /> */}
                 </View>
                 <Card style={style.card}>
                     <Card.Title

@@ -10,6 +10,7 @@ import {
     unlink,
     writeFile,
 } from 'react-native-fs';
+import {errorLog} from './log';
 
 const basePath = `${PicturesDirectoryPath}/MusicFree/`;
 export async function saveToGallery(src: string) {
@@ -46,8 +47,12 @@ export function sizeFormatter(bytes: number) {
 
 export async function checkAndCreateDir(path: string) {
     const filePath = path;
-    if (!(await exists(filePath))) {
-        await mkdir(filePath);
+    try {
+        if (!(await exists(filePath))) {
+            await mkdir(filePath);
+        }
+    } catch (e) {
+        errorLog('无法初始化目录', path);
     }
 }
 

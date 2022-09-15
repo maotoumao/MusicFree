@@ -16,15 +16,17 @@ const mapState = (state: any) => {
     if (state.type === 'none') {
         networkState = 'Offline';
     } else if (state.type === 'wifi') {
-        networkState === 'Wifi';
+        networkState = 'Wifi';
     } else {
-        networkState === 'Cellular';
+        networkState = 'Cellular';
     }
 };
 
 async function setup() {
-    const state = await NetInfo.fetch();
-    mapState(state);
+    try {
+        const state = await NetInfo.fetch();
+        mapState(state);
+    } catch (e) {}
 
     NetInfo.addEventListener(state => {
         mapState(state);

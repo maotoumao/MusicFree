@@ -8,7 +8,6 @@ import FastImage from '@/components/base/fastImage';
 export default function AlbumCover() {
     const musicItem = MusicQueue.useCurrentMusicItem();
     return (
-        // todo: 封装一层
         <FastImage
             style={style.artwork}
             uri={musicItem?.artwork}

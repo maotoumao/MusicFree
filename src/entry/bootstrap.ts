@@ -48,7 +48,8 @@ async function _bootstrap() {
     // 加载插件
     try {
         await TrackPlayer.setupPlayer({
-            maxCacheSize: 1024 * 1024 * 512,
+            maxCacheSize:
+                Config.get('setting.basic.maxCacheSize') ?? 1024 * 1024 * 512,
         });
     } catch (e: any) {
         if (
