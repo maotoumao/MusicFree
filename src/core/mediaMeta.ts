@@ -43,7 +43,7 @@ async function updateMediaMeta(
 ) {
     const {platform, id} = mediaItem;
     // 创建一个新的表
-    if (!mediaMetaKeys[platform]) {
+    if (!mediaMetaKeys[platform] || !mediaMetas[mediaMetaKeys[platform]]) {
         const newkey = nanoid();
         mediaMetaKeys[platform] = newkey;
         await setStorage(StorageKeys.MediaMeta, mediaMetaKeys);
