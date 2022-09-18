@@ -8,7 +8,7 @@ import RNBootSplash from 'react-native-bootsplash';
 import Download from '@/core/download';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
-import {errorLog} from '@/utils/log';
+import {errorLog, trace} from '@/utils/log';
 import MediaMeta from '@/core/mediaMeta';
 import Cache from '@/core/cache';
 import PluginManager from '@/core/pluginManager';
@@ -38,6 +38,7 @@ async function _bootstrap() {
     // 2. 数据初始化
     /** 初始化路径 */
     await setupFolder();
+    trace('文件夹初始化完成');
     // 加载配置
     await Promise.all([
         Config.setup(),
@@ -45,6 +46,7 @@ async function _bootstrap() {
         MusicSheet.setup(),
         Network.setup(),
     ]);
+    trace('配置初始化完成');
     // 加载插件
     try {
         await TrackPlayer.setupPlayer({
@@ -82,10 +84,15 @@ async function _bootstrap() {
             Capability.SkipToPrevious,
         ],
     });
+    trace('播放器初始化完成');
     await Cache.setup();
+    trace('缓存初始化完成');
     await Download.setup();
+    trace('下载初始化完成');
     await PluginManager.setup();
+    trace('插件初始化完成');
     await MusicQueue.setup();
+    trace('播放列表初始化完成');
 
     ErrorUtils.setGlobalHandler(error => {
         errorLog('未捕获的错误', error);

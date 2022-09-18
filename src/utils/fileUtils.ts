@@ -52,7 +52,7 @@ export async function checkAndCreateDir(path: string) {
             await mkdir(filePath);
         }
     } catch (e) {
-        errorLog('无法初始化目录', path);
+        errorLog('无法初始化目录', {path, e});
     }
 }
 

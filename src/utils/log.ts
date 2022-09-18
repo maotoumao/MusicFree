@@ -28,7 +28,7 @@ const traceLogger = logger.createLogger(traceConfig);
 
 export function trace(
     desc: string,
-    message: any,
+    message?: any,
     level: 'info' | 'error' = 'info',
 ) {
     if (__DEV__) {

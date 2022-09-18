@@ -451,8 +451,12 @@ async function setup() {
         const pluginsPaths = await readDir(pathConst.pluginPath);
         for (let i = 0; i < pluginsPaths.length; ++i) {
             const _pluginUrl = pluginsPaths[i];
-
-            if (_pluginUrl.isFile() && _pluginUrl.name.endsWith('.js')) {
+            trace('初始化插件', _pluginUrl);
+            if (
+                _pluginUrl.isFile() &&
+                (_pluginUrl.name?.endsWith?.('.js') ||
+                    _pluginUrl.path?.endsWith?.('.js'))
+            ) {
                 const funcCode = await readFile(_pluginUrl.path, 'utf8');
                 const plugin = new Plugin(funcCode, _pluginUrl.path);
                 const _pluginIndex = _plugins.findIndex(

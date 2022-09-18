@@ -1,6 +1,7 @@
 import {internalSerialzeKey, internalSymbolKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
+import {errorLog} from '@/utils/log';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
 import {setStorage} from '@/utils/storage';
@@ -121,30 +122,35 @@ async function setupDownload() {
     // const jsonData = await loadLocalJson(pathConst.downloadPath);
 
     const newDownloadedData: Record<string, IMusic.IMusicItem> = {};
-    const downloads = await readDir(pathConst.downloadPath);
     downloadedMusic = [];
 
-    for (let i = 0; i < downloads.length; ++i) {
-        const data = parseFilename(downloads[i].name);
-        if (data) {
-            const platform = data?.platform;
-            const id = data?.id;
-            if (platform && id) {
-                const mi = MediaMeta.get(data) ?? {};
-                mi.id = id;
-                mi.platform = platform;
-                mi.title = mi.title ?? data.title;
-                mi.artist = mi.artist ?? data.artist;
-                mi[internalSymbolKey] = {
-                    localPath: downloads[i].path,
-                };
-                downloadedMusic.push(mi as IMusic.IMusicItem);
+    try {
+        const downloads = await readDir(pathConst.downloadPath);
+        for (let i = 0; i < downloads.length; ++i) {
+            const data = parseFilename(downloads[i].name);
+            if (data) {
+                const platform = data?.platform;
+                const id = data?.id;
+                if (platform && id) {
+                    const mi = MediaMeta.get(data) ?? {};
+                    mi.id = id;
+                    mi.platform = platform;
+                    mi.title = mi.title ?? data.title;
+                    mi.artist = mi.artist ?? data.artist;
+                    mi[internalSymbolKey] = {
+                        localPath: downloads[i].path,
+                    };
+                    downloadedMusic.push(mi as IMusic.IMusicItem);
+                }
             }
         }
+
+        downloadedStateMapper.notify();
+        // 去掉冗余数据
+        setStorage('download-music', newDownloadedData);
+    } catch (e) {
+        errorLog('本地下载初始化失败', e);
     }
-    downloadedStateMapper.notify();
-    // 去掉冗余数据
-    setStorage('download-music', newDownloadedData);
 }
 
 let maxDownload = 3;

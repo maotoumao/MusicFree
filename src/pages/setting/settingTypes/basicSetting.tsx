@@ -222,34 +222,16 @@ export default function BasicSetting() {
         {
             title: '错误日志',
             data: [
-                {
-                    title: '记录错误日志',
-                    right: () => (
-                        <ThemeSwitch
-                            value={basicSetting?.debug?.errorLog ?? false}
-                        />
-                    ),
-                    onPress() {
-                        Config.set(
-                            'setting.basic.debug.errorLog',
-                            !basicSetting?.debug?.errorLog,
-                        );
-                    },
-                },
-                {
-                    title: '记录详细日志',
-                    right: () => (
-                        <ThemeSwitch
-                            value={basicSetting?.debug?.traceLog ?? false}
-                        />
-                    ),
-                    onPress() {
-                        Config.set(
-                            'setting.basic.debug.traceLog',
-                            !basicSetting?.debug?.traceLog,
-                        );
-                    },
-                },
+                createSwitch(
+                    '记录错误日志',
+                    'setting.basic.debug.errorLog',
+                    basicSetting?.debug?.errorLog ?? false,
+                ),
+                createSwitch(
+                    '记录详细日志',
+                    'setting.basic.debug.traceLog',
+                    basicSetting?.debug?.traceLog ?? false,
+                ),
             ],
         },
     ];
