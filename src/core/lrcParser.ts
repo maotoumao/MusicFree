@@ -41,6 +41,12 @@ export default class LyricParser {
             rawLrcs.shift();
         }
         this.lrcItems = rawLrcItems.sort((a, b) => a.time - b.time);
+        if (this.lrcItems.length === 0 && raw.length) {
+            this.lrcItems = raw.split('\n').map(_ => ({
+                time: 0,
+                lrc: _,
+            }));
+        }
     }
 
     getPosition(position: number): {

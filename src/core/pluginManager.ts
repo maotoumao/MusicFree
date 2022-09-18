@@ -246,6 +246,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         musicItem: IMusic.IMusicItemBase,
         from?: IMusic.IMusicItemBase,
     ): Promise<ILyric.ILyricSource | null> {
+        console.log('LRC: ', musicItem);
         // 1.额外存储的meta信息
         const meta = MediaMeta.get(musicItem);
         if (meta && meta.associatedLrc) {
@@ -262,8 +263,9 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 return null;
             }
             // 获取关联歌词
+            const associatedMeta = MediaMeta.get(meta.associatedLrc) ?? {};
             const result = await this.getLyric(
-                meta.associatedLrc,
+                {...meta.associatedLrc, ...associatedMeta},
                 from ?? musicItem,
             );
             if (result) {
@@ -309,9 +311,19 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         if (!lrcUrl) {
             // 插件获得url
             try {
-                const lrcSource = await this.plugin.instance?.getLyric?.(
-                    resetMediaItem(musicItem, undefined, true),
-                );
+                let lrcSource;
+                if (from) {
+                    lrcSource = await PluginManager.getByMedia(
+                        musicItem,
+                    )?.instance?.getLyric?.(
+                        resetMediaItem(musicItem, undefined, true),
+                    );
+                } else {
+                    lrcSource = await this.plugin.instance?.getLyric?.(
+                        resetMediaItem(musicItem, undefined, true),
+                    );
+                }
+
                 rawLrc = lrcSource?.rawLrc;
                 lrcUrl = lrcSource?.lrc;
             } catch (e: any) {
@@ -319,11 +331,13 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             }
         }
         // 5. 最后一次请求
+        console.log('555', rawLrc, lrcUrl);
         if (rawLrc || lrcUrl) {
             const filename = `${pathConst.lrcCachePath}${nanoid()}.lrc`;
             if (lrcUrl) {
                 try {
                     rawLrc = (await axios.get(lrcUrl, {timeout: 1500})).data;
+                    console.log('RAWLRC', rawLrc);
                 } catch {}
             }
             if (rawLrc) {
@@ -520,6 +534,7 @@ async function uninstallPlugin(hash: string) {
             pluginStateMapper.notify();
         } catch {}
     }
+    // todo 清除MediaMeta
 }
 
 function getByMedia(mediaItem: ICommon.IMediaBase) {

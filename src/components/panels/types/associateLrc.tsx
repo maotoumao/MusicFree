@@ -81,14 +81,17 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                 await MediaMeta.update(musicItem, {
                                     associatedLrc: targetMedia,
                                 });
-                                await MediaMeta.update(targetMedia, [
-                                    ['lrc', targetCache.lrc],
-                                    ['rawLrc', targetCache.rawLrc],
+                                await MediaMeta.update(
+                                    {...targetMedia, ...targetCache},
                                     [
-                                        '$.local.localLrc',
-                                        targetCache.$?.local?.localLrc,
+                                        ['lrc', targetCache.lrc],
+                                        ['rawLrc', targetCache.rawLrc],
+                                        [
+                                            '$.local.localLrc',
+                                            targetCache.$?.local?.localLrc,
+                                        ],
                                     ],
-                                ]);
+                                );
                                 Toast.success('关联歌词成功');
                                 closePanel();
                             } catch (e: any) {

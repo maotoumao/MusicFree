@@ -42,26 +42,31 @@ async function updateMediaMeta(
     patch?: Record<string, any> | Array<[string, any]>,
 ) {
     const {platform, id} = mediaItem;
+    let newMetas = mediaMetas;
     // 创建一个新的表
     if (!mediaMetaKeys[platform] || !mediaMetas[mediaMetaKeys[platform]]) {
         const newkey = nanoid();
         mediaMetaKeys[platform] = newkey;
         await setStorage(StorageKeys.MediaMeta, mediaMetaKeys);
-        mediaMetas[platform] = {};
+        newMetas = produce(newMetas, _ => {
+            _[platform] = {};
+        });
     }
-    let newMeta = mediaMetas;
-    if (!newMeta[platform][id]) {
+    if (!newMetas[platform][id]) {
         // 如果没保存过，自动保存主键
         const primaryKey = PluginManager.getByMedia(mediaItem)?.instance
             ?.primaryKey ?? ['id'];
+        console.log('PRIMARYKEY', primaryKey, mediaItem);
         const mediaData: Record<string, any> = {};
         for (let k of primaryKey) {
             mediaData[k] = mediaItem[k];
         }
-        newMeta[platform][id] = mediaData;
+        newMetas = produce(newMetas, _ => {
+            _[platform][id] = mediaData;
+        });
     }
     if (Array.isArray(patch)) {
-        newMeta = produce(mediaMetas, draft => {
+        newMetas = produce(newMetas, draft => {
             patch.forEach(([pathName, value]) => {
                 objectPath.set(draft, `${platform}.${id}.${pathName}`, value);
             });
@@ -69,7 +74,7 @@ async function updateMediaMeta(
         });
     } else {
         const _patch = patch ?? mediaItem;
-        newMeta = produce(mediaMetas, draft => {
+        newMetas = produce(newMetas, draft => {
             const pluginMeta = mediaMetas[platform] ?? {};
             if (!draft[platform]) {
                 draft[platform] = {};
@@ -81,8 +86,8 @@ async function updateMediaMeta(
             }
         });
     }
-    setStorage(mediaMetaKeys[platform], newMeta[platform]);
-    mediaMetas = newMeta;
+    setStorage(mediaMetaKeys[platform], newMetas[platform]);
+    mediaMetas = newMetas;
     if (__DEV__) {
         console.log('META UPDATE', mediaMetas);
     }
