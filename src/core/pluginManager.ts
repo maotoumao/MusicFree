@@ -246,7 +246,6 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         musicItem: IMusic.IMusicItemBase,
         from?: IMusic.IMusicItemBase,
     ): Promise<ILyric.ILyricSource | null> {
-        console.log('LRC: ', musicItem);
         // 1.额外存储的meta信息
         const meta = MediaMeta.get(musicItem);
         if (meta && meta.associatedLrc) {
@@ -331,13 +330,11 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             }
         }
         // 5. 最后一次请求
-        console.log('555', rawLrc, lrcUrl);
         if (rawLrc || lrcUrl) {
             const filename = `${pathConst.lrcCachePath}${nanoid()}.lrc`;
             if (lrcUrl) {
                 try {
                     rawLrc = (await axios.get(lrcUrl, {timeout: 1500})).data;
-                    console.log('RAWLRC', rawLrc);
                 } catch {}
             }
             if (rawLrc) {
