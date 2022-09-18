@@ -495,11 +495,6 @@ async function setup() {
 
 // 安装插件
 async function installPlugin(pluginPath: string) {
-    // let checkPath = decodeURIComponent(pluginPath);
-    // trace(checkPath, await exists(checkPath));
-    // trace(pluginPath, await exists(pluginPath));
-    // trace(pluginPath.substring(7), await exists(pluginPath.substring(7)));
-    // trace(checkPath.substring(7), await exists(checkPath.substring(7)));
     if (pluginPath.endsWith('.js')) {
         const funcCode = await readFile(pluginPath, 'utf8');
         const plugin = new Plugin(funcCode, pluginPath);
@@ -519,6 +514,32 @@ async function installPlugin(pluginPath: string) {
         throw new Error('插件无法解析');
     }
     throw new Error('插件不存在');
+}
+
+async function installPluginFromUrl(url: string) {
+    try {
+        const funcCode = (await axios.get(url)).data;
+        if (funcCode) {
+            const plugin = new Plugin(funcCode, '');
+            const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
+            if (_pluginIndex !== -1) {
+                throw new Error('插件已安装');
+            }
+            if (plugin.hash !== '') {
+                const fn = nanoid();
+                const _pluginPath = `${pathConst.pluginPath}${fn}.js`;
+                await writeFile(_pluginPath, funcCode, 'utf8');
+                plugin.path = _pluginPath;
+                plugins = plugins.concat(plugin);
+                pluginStateMapper.notify();
+                return;
+            }
+            throw new Error('插件无法解析');
+        }
+    } catch (e) {
+        errorLog('URL安装插件失败', e);
+        throw new Error('插件安装失败');
+    }
 }
 
 /** 卸载插件 */
@@ -553,6 +574,7 @@ function getValidPlugins() {
 const PluginManager = {
     setup,
     installPlugin,
+    installPluginFromUrl,
     uninstallPlugin,
     getByMedia,
     getByHash,

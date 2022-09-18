@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {AnimatedFAB, List} from 'react-native-paper';
+import {FAB, List, Portal} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import Loading from '@/components/base/loading';
 import ListItem from '@/components/base/listItem';
@@ -17,7 +17,9 @@ import Toast from '@/utils/toast';
 export default function PluginSetting() {
     const plugins = PluginManager.usePlugins();
     const [loading, setLoading] = useState(false);
+    const [fabOpen, setFabOpen] = useState(false);
     const colors = useColors();
+    const {showPanel} = usePanel();
 
     return (
         <View style={style.wrapper}>
@@ -32,39 +34,78 @@ export default function PluginSetting() {
                     )}
                 />
             )}
-            <AnimatedFAB
-                icon="plus"
-                animateFrom={'right'}
-                onPress={async () => {
-                    try {
-                        const result = await DocumentPicker.pickMultiple();
-                        setLoading(true);
-                        // 初步过滤
-                        const validResult = result?.filter(_ =>
-                            _.uri.endsWith('.js'),
-                        );
-                        console.log(result);
-                        await Promise.all(
-                            validResult.map(_ =>
-                                PluginManager.installPlugin(_.uri),
-                            ),
-                        );
-                        Toast.success('插件安装成功~');
-                    } catch (e: any) {
-                        if (e?.message?.startsWith('User')) {
-                            setLoading(false);
-                            return;
-                        }
-                        trace('插件安装失败', e?.message);
-                        Toast.warn(`插件安装失败: ${e?.message ?? ''}`);
-                    }
-                    setLoading(false);
-                }}
-                extended
-                iconMode="dynamic"
-                style={[style.fab, {backgroundColor: colors.primary}]}
-                label="添加插件"
-            />
+            <Portal>
+                <FAB.Group
+                    visible
+                    open={fabOpen}
+                    icon={fabOpen ? 'close' : 'plus'}
+                    color={colors.text}
+                    fabStyle={{backgroundColor: colors.primary}}
+                    actions={[
+                        {
+                            icon: 'file-plus',
+                            label: '从本地安装插件',
+                            async onPress() {
+                                try {
+                                    const result =
+                                        await DocumentPicker.pickMultiple();
+                                    setLoading(true);
+                                    // 初步过滤
+                                    const validResult = result?.filter(_ =>
+                                        _.uri.endsWith('.js'),
+                                    );
+                                    await Promise.all(
+                                        validResult.map(_ =>
+                                            PluginManager.installPlugin(_.uri),
+                                        ),
+                                    );
+                                    Toast.success('插件安装成功~');
+                                } catch (e: any) {
+                                    if (e?.message?.startsWith('User')) {
+                                        setLoading(false);
+                                        return;
+                                    }
+                                    trace('插件安装失败', e?.message);
+                                    Toast.warn(
+                                        `插件安装失败: ${e?.message ?? ''}`,
+                                    );
+                                }
+                                setLoading(false);
+                            },
+                        },
+                        {
+                            icon: 'link-variant-plus',
+                            label: '从网络安装插件',
+                            async onPress() {
+                                showPanel('SimpleInput', {
+                                    placeholder: '输入插件URL',
+                                    maxLength: 120,
+                                    async onOk(text, closePanel) {
+                                        try {
+                                            setLoading(true);
+                                            closePanel();
+                                            await PluginManager.installPluginFromUrl(
+                                                text,
+                                            );
+                                            Toast.success('插件安装成功~');
+                                        } catch (e: any) {
+                                            Toast.warn(
+                                                `插件安装失败: ${
+                                                    e?.message ?? ''
+                                                }`,
+                                            );
+                                        }
+                                        setLoading(false);
+                                    },
+                                });
+                            },
+                        },
+                    ]}
+                    onStateChange={({open}) => {
+                        setFabOpen(open);
+                    }}
+                />
+            </Portal>
         </View>
     );
 }
@@ -78,12 +119,6 @@ const style = StyleSheet.create({
     },
     header: {
         marginBottom: rpx(24),
-    },
-    fab: {
-        position: 'absolute',
-        right: rpx(48),
-        bottom: rpx(96),
-        fontSize: fontSizeConst.content,
     },
 });
 
