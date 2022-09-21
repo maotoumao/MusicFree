@@ -1,9 +1,5 @@
 declare namespace IMusic {
-    export interface IMusicItemBase {
-        /** 歌曲在平台的唯一编号 */
-        id: string;
-        /** 平台 */
-        platform: string;
+    export interface IMusicItemBase extends ICommon.IMediaBase {
         /** 其他属性 */
         [k: keyof IMusicItem]: IMusicItem[k];
     }
