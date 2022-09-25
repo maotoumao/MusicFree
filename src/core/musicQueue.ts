@@ -437,9 +437,6 @@ const skipToPrevious = async () => {
     );
 };
 
-async function stop() {
-    await TrackPlayer.stop();
-}
 const MusicQueue = {
     setup,
     useMusicQueue: musicQueueStateMapper.useMappedState,
@@ -460,8 +457,8 @@ const MusicQueue = {
     usePlaybackState,
     MusicState: State,
     useProgress,
+    reset: TrackPlayer.reset,
     seekTo: TrackPlayer.seekTo,
-    stop,
     currentIndex,
 };
 

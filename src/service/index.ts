@@ -15,11 +15,11 @@ module.exports = async function () {
     );
     TrackPlayer.addEventListener(
         Event.RemoteDuck,
-        async ({paused, parmanent}) => {
+        async ({paused, permanent}) => {
             if (Config.get('setting.basic.notInterrupt')) {
                 return;
             }
-            if (parmanent) {
+            if (permanent) {
                 return MusicQueue.pause();
             }
             if (paused) {

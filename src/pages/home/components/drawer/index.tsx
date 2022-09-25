@@ -1,15 +1,16 @@
 import React from 'react';
-import {BackHandler, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import {Button, Card} from 'react-native-paper';
-import MusicQueue from '@/core/musicQueue';
 import ListItem from '@/components/base/listItem';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
 import ThemeText from '@/components/base/themeText';
 import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';
+import NativeUtils from '@/utils/native';
+import MusicQueue from '@/core/musicQueue';
 
 export default function HomeDrawer(props: any) {
     const navigation = useNavigation<any>();
@@ -94,11 +95,11 @@ export default function HomeDrawer(props: any) {
                 </Card>
                 <View style={style.bottom}>
                     <Button
-                        onPress={() => {
-                            MusicQueue.stop();
-                            BackHandler.exitApp();
+                        onPress={async () => {
+                            await MusicQueue.reset();
+                            NativeUtils.exitApp();
                         }}>
-                        退出
+                        <ThemeText>退出</ThemeText>
                     </Button>
                 </View>
             </DrawerContentScrollView>

@@ -62,8 +62,7 @@ async function _bootstrap() {
         }
     }
     await TrackPlayer.updateOptions({
-        progressUpdateEventInterval: 0.4,
-        stopWithApp: false,
+        progressUpdateEventInterval: 1,
         alwaysPauseOnInterruption: true,
         capabilities: [
             Capability.Play,
