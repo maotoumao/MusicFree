@@ -73,7 +73,7 @@
 - 插件使用过程中可能会产生某些和本软件无关的版权数据，插件产生的任何数据与本软件无关，请使用者自行删除数据。
 
 ## 下载地址
-请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases)
+请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (github传不上去... 进上边的群拿或者转到[gitee发布页吧](https://gitee.com/maotoumao/MusicFree/releases)...)
 
 
 ## ChangeLog
