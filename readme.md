@@ -14,7 +14,51 @@
 - 隐私：所有的数据都存储在本地，本软件不会收集你的任何个人信息。
 - 歌词关联：你可以把两首歌的歌词关联起来，比如将歌曲A的歌词关联到歌曲B，关联后A、B两首歌都将显示歌曲B的歌词。你也可以关联多首歌的歌词，如A->B->C，这样A、B、C三首歌都将显示C的歌词。
 
+## 应用截图
+#### 主界面
+![主界面](./.imgs/main.jpg)
 
+#### 侧边栏
+- 基础设置
+![基础设置](./.imgs/basic-setting.jpg)
+
+- 插件设置
+![插件设置](./.imgs/plugin-setting.jpg)
+
+- 主题设置
+![主题设置](./.imgs/theme-setting.jpg)
+
+#### 音乐相关
+- 歌单页
+![歌单页](./.imgs/song-sheet.jpg)
+
+- 歌单内检索
+![歌单内检索](./.imgs/search-in-sheet.jpg)
+
+- 播放页
+![播放页](./.imgs/song-cover.jpg)
+
+- 歌词页
+![歌词页](./.imgs/song-lrc.jpg)
+
+- 播放列表页
+![播放列表页](./.imgs/play-list.jpg)
+
+#### 搜索相关
+- 搜索单曲
+![搜索单曲](./.imgs/search.jpg)
+
+- 搜索专辑
+![搜索专辑](./.imgs/search-album.jpg)
+
+- 专辑信息
+![专辑信息](./.imgs/album-detail.jpg)
+
+- 搜索作者
+![搜索作者](./.imgs/search-artist.jpg)
+
+- 作者信息
+![专辑信息](./.imgs/artist-detail.jpg)
 
 
 ## 插件
