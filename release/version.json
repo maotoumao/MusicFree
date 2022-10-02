@@ -1,9 +1,9 @@
 {
-    "version": "1.0.0-alpha",
+    "version": "0.0.1-alpha",
     "changelog": [
         "开发版本"
     ],
     "download": [
-        ""
+        "https://gitee.com/maotoumao/MusicFree/releases/download/v0.0.1-alpha/app-release.apk"
     ]
 }
