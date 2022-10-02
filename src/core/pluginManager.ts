@@ -547,12 +547,15 @@ async function uninstallPlugin(hash: string) {
     const targetIndex = plugins.findIndex(_ => _.hash === hash);
     if (targetIndex !== -1) {
         try {
+            const pluginName = plugins[targetIndex].name;
             await unlink(plugins[targetIndex].path);
             plugins = plugins.filter(_ => _.hash !== hash);
             pluginStateMapper.notify();
+            if (plugins.every(_ => _.name !== pluginName)) {
+                await MediaMeta.removePlugin(pluginName);
+            }
         } catch {}
     }
-    // todo 清除MediaMeta
 }
 
 function getByMedia(mediaItem: ICommon.IMediaBase) {

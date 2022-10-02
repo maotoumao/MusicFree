@@ -3,7 +3,12 @@
  */
 import produce from 'immer';
 import {nanoid} from 'nanoid';
-import {getMultiStorage, getStorage, setStorage} from '@/utils/storage';
+import {
+    getMultiStorage,
+    getStorage,
+    removeStorage,
+    setStorage,
+} from '@/utils/storage';
 import {StorageKeys} from '@/constants/commonConst';
 import objectPath from 'object-path';
 import PluginManager from './pluginManager';
@@ -14,9 +19,9 @@ let mediaMetaKeys: Record<string, string> = {};
 let mediaMetas: Record<string, Record<string, ICommon.IMediaMeta>> = {};
 
 async function setup() {
-    const metaKeys = (await getStorage(StorageKeys.MediaMeta)) ?? {};
+    const metaKeys = (await getStorage(StorageKeys.MediaMetaKeys)) ?? {};
     if (!metaKeys) {
-        await setStorage(StorageKeys.MediaMeta, {});
+        await setStorage(StorageKeys.MediaMetaKeys, {});
     }
     const kv: [string, string][] = Object.entries(metaKeys);
     const metas = await getMultiStorage(kv.map(_ => _[1]));
@@ -36,6 +41,19 @@ function getByMediaKey(mediaKey: string) {
     return getMediaMeta({platform, id});
 }
 
+/** 卸载插件时需要删除meta信息 */
+async function removeMediaMeta(pluginName: string) {
+    const idKey = mediaMetaKeys[pluginName];
+    try {
+        await removeStorage(idKey);
+        mediaMetas = produce(mediaMetas, draft => {
+            delete draft[idKey];
+        });
+        delete mediaMetaKeys[pluginName];
+        await setStorage(StorageKeys.MediaMetaKeys, mediaMetaKeys);
+    } catch {}
+}
+
 /** 创建/更新mediameta */
 async function updateMediaMeta(
     mediaItem: ICommon.IMediaBase,
@@ -47,7 +65,7 @@ async function updateMediaMeta(
     if (!mediaMetaKeys[platform] || !mediaMetas[mediaMetaKeys[platform]]) {
         const newkey = nanoid();
         mediaMetaKeys[platform] = newkey;
-        await setStorage(StorageKeys.MediaMeta, mediaMetaKeys);
+        await setStorage(StorageKeys.MediaMetaKeys, mediaMetaKeys);
         newMetas = produce(newMetas, _ => {
             _[platform] = {};
         });
@@ -98,7 +116,7 @@ const MediaMeta = {
     get: getMediaMeta,
     getByMediaKey,
     update: updateMediaMeta,
+    removePlugin: removeMediaMeta,
 };
 
-// todo: clear
 export default MediaMeta;
