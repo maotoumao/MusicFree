@@ -14,7 +14,7 @@ import PluginManager from './pluginManager';
  */
 // const localPathKey = [];
 const cache = new LRUCache<string, ICommon.IMediaMeta>({
-    max: 1000,
+    max: 800,
     maxSize: 5 * 1024 * 1024, //5MB
     sizeCalculation: value => {
         // todo: bytelength

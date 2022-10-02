@@ -16,7 +16,6 @@ import delay from '@/utils/delay';
 import {errorLog, trace} from '../utils/log';
 import {isSameMediaItem, mergeProps} from '@/utils/mediaItem';
 import PluginManager from './pluginManager';
-import Cache from './cache';
 import Network from './network';
 import Toast from '@/utils/toast';
 
@@ -33,7 +32,6 @@ enum MusicRepeatMode {
 let currentIndex: number = -1;
 let musicQueue: Array<IMusic.IMusicItem> = [];
 let repeatMode: MusicRepeatMode = MusicRepeatMode.QUEUE;
-let isPlaying: boolean = false;
 
 const getRepeatMode = () => repeatMode;
 
@@ -88,32 +86,6 @@ const setup = async () => {
             await play(undefined, true);
         } else {
             await skipToNext();
-        }
-    });
-    let badTrack: ICommon.IMediaBase | null = null;
-    TrackPlayer.addEventListener(Event.PlaybackState, async data => {
-        if (data.state === State.None) {
-            const track = await TrackPlayer.getTrack(0);
-            if (!track) {
-                return;
-            }
-            if (
-                isSameMediaItem(
-                    track as unknown as ICommon.IMediaBase,
-                    badTrack,
-                )
-            ) {
-                // 这是一个坏掉的track
-            } else {
-                // 缓存过期的情况
-                Cache.remove(track as unknown as ICommon.IMediaBase);
-                badTrack = track as unknown as ICommon.IMediaBase;
-                if (isPlaying) {
-                    play(track as IMusic.IMusicItem);
-                } else {
-                    replaceTrack({...track, url: ''}, false);
-                }
-            }
         }
     });
 
@@ -305,7 +277,6 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             Toast.warn('当前设置移动网络不可播放，可在侧边栏基本设置中打开');
             return;
         }
-        isPlaying = true;
         const _currentIndex = findMusicIndex(musicItem);
         if (!musicItem && _currentIndex === currentIndex && !forcePlay) {
             // 如果暂停就继续播放，否则
@@ -366,7 +337,10 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
 
 const replaceTrack = async (track: Track, autoPlay = true) => {
     await TrackPlayer.reset();
+    await TrackPlayer.remove([0, 1]);
+    // console.log(await TrackPlayer.getQueue(), 'REPLACE-TRACK');
     await TrackPlayer.add([track, getFakeNextTrack()]);
+    // console.log(await TrackPlayer.getQueue(), 'REPLACE-TRACK-AFTER-ADD');
     if (autoPlay) {
         await TrackPlayer.play();
     }
@@ -410,11 +384,11 @@ const playWithReplaceQueue = async (
 };
 
 const pause = async () => {
-    isPlaying = false;
     await TrackPlayer.pause();
 };
 
 const skipToNext = async () => {
+    console.log('SKIP');
     if (musicQueue.length === 0) {
         currentIndex = -1;
         return;

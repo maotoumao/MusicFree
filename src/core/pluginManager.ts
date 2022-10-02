@@ -179,11 +179,12 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
         // 2. 缓存播放
         const mediaCache = Cache.get(musicItem);
+        const pluginCacheControl = this.plugin.instance.cacheControl;
         if (
             mediaCache &&
             mediaCache?.url &&
-            (mediaCache.cacheControl === CacheControl.Cache ||
-                (mediaCache.cacheControl === CacheControl.NoCache &&
+            (pluginCacheControl === CacheControl.Cache ||
+                (pluginCacheControl === CacheControl.NoCache &&
                     Network.isOffline()))
         ) {
             trace('播放', '缓存播放');
@@ -199,7 +200,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return {url: musicItem.url};
         }
         try {
-            const {url, headers, cacheControl} =
+            const {url, headers} =
                 (await this.plugin.instance.getMediaSource(musicItem)) ?? {};
             if (!url) {
                 throw new Error();
@@ -209,10 +210,9 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 url,
                 headers,
                 userAgent: headers?.['user-agent'],
-                cacheControl: cacheControl ?? CacheControl.Cache,
             } as IPlugin.IMediaSourceResult;
 
-            if (cacheControl !== CacheControl.NoStore) {
+            if (pluginCacheControl !== CacheControl.NoStore) {
                 Cache.update(musicItem, result);
             }
 

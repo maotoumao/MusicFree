@@ -3,7 +3,6 @@ declare namespace IPlugin {
         headers?: Record<string, string>;
         url: string;
         userAgent?: string;
-        cacheControl?: 'cache' | 'no-cache' | 'no-store';
     }
 
     export interface ISearchResult<T extends ICommon.SupportMediaType> {
@@ -34,6 +33,8 @@ declare namespace IPlugin {
         primaryKey?: string[];
         /** 默认搜索类型 */
         defaultSearchType?: ICommon.SupportMediaType;
+        /** 插件缓存控制 */
+        cacheControl?: 'cache' | 'no-cache' | 'no-store';
         /** 搜索 */
         search?: ISearchFunc;
         /** 获取根据音乐信息获取url */

@@ -1,6 +1,7 @@
 import Config from '@/core/config';
+import {isSameMediaItem} from '@/utils/mediaItem';
 import musicIsPaused from '@/utils/musicIsPaused';
-import TrackPlayer, {Event, State} from 'react-native-track-player';
+import TrackPlayer, {Event, State, Track} from 'react-native-track-player';
 import MusicQueue from '../core/musicQueue';
 
 let resumeState: State;
@@ -34,7 +35,10 @@ module.exports = async function () {
         Config.set('status.music.progress', evt.position);
     });
     /** 播放下一个 */
+    let nextTrack: Track;
+    // 事件有重复
     TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
+        // console.log('track变化', evt, await TrackPlayer.getQueue())
         // 是track里的，不是playlist里的
         if (
             evt.nextTrack === 1 &&
@@ -43,7 +47,18 @@ module.exports = async function () {
             if (MusicQueue.getRepeatMode() === 'SINGLE') {
                 await MusicQueue.play(undefined, true);
             } else {
-                console.log('SKIP');
+                const queue = await TrackPlayer.getQueue();
+                // @ts-ignore
+                if (
+                    isSameMediaItem(nextTrack, queue[1]) &&
+                    !isSameMediaItem(queue[0].queue[1])
+                ) {
+                    // 已经处理过了，忽略掉
+                    console.log('多余的事件');
+                    return;
+                }
+                // console.log('SKIP-PlaybackTrackChanged');
+                nextTrack = queue[1];
                 await MusicQueue.skipToNext();
             }
         }
