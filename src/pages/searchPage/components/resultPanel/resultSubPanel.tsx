@@ -69,6 +69,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
             renderTabBar={_ => (
                 <TabBar
                     {..._}
+                    scrollEnabled
                     style={{
                         backgroundColor: 'transparent',
                         shadowColor: 'transparent',

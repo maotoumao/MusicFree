@@ -44,6 +44,9 @@ function getByMediaKey(mediaKey: string) {
 /** 卸载插件时需要删除meta信息 */
 async function removeMediaMeta(pluginName: string) {
     const idKey = mediaMetaKeys[pluginName];
+    if (!idKey) {
+        return;
+    }
     try {
         await removeStorage(idKey);
         mediaMetas = produce(mediaMetas, draft => {

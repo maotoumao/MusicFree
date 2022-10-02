@@ -143,7 +143,7 @@ export default function useSearch() {
                         }),
                     );
                 } catch (e) {
-                    errorLog('', e);
+                    errorLog('搜索失败', e);
                     setPageStatus(PageStatus.RESULT);
                     setSearchResults(
                         produce(draft => {

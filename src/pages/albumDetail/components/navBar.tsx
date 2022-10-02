@@ -4,9 +4,14 @@ import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation} from '@react-navigation/native';
 import useColors from '@/hooks/useColors';
+import {ROUTE_PATH} from '@/entry/router';
 
-export default function () {
-    const navigation = useNavigation();
+interface INavBarProps {
+    musicList: IMusic.IMusicItem[] | null;
+}
+
+export default function (props: INavBarProps) {
+    const navigation = useNavigation<any>();
     const colors = useColors();
 
     return (
@@ -18,7 +23,14 @@ export default function () {
                 }}
             />
             <Appbar.Content title="专辑" />
-            <Appbar.Action icon="magnify" onPress={() => {}} />
+            <Appbar.Action
+                icon="magnify"
+                onPress={() => {
+                    navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
+                        musicList: props?.musicList ?? [],
+                    });
+                }}
+            />
             <Appbar.Action icon={'dots-vertical'} onPress={() => {}} />
         </Appbar.Header>
     );

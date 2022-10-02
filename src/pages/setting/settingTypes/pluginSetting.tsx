@@ -226,7 +226,9 @@ function PluginView(props: IPluginViewProps) {
                 },
                 plugin.state === 'error' ? {color: 'red'} : undefined,
             ]}
-            title={plugin.name}
+            title={`${plugin.name}${
+                plugin.instance.version ? `(${plugin.instance.version})` : ''
+            }`}
             description={
                 plugin.stateCode === PluginStateCode.VersionNotMatch
                     ? '插件和app版本不兼容'

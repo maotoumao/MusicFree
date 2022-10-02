@@ -9,6 +9,8 @@ import {
 import CryptoJs from 'crypto-js';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import bigInt from 'big-integer';
+import qs from 'qs';
 import {ToastAndroid} from 'react-native';
 import pathConst from '@/constants/pathConst';
 import {satisfies} from 'compare-versions';
@@ -70,7 +72,7 @@ export class Plugin {
       } catch(e) {
         return null;
       }
-    `)()({CryptoJs, axios, dayjs, cheerio});
+    `)()({CryptoJs, axios, dayjs, cheerio, bigInt, qs});
             this.checkValid(_instance);
         } catch (e: any) {
             this.state = 'error';

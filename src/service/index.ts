@@ -48,10 +48,15 @@ module.exports = async function () {
                 await MusicQueue.play(undefined, true);
             } else {
                 const queue = await TrackPlayer.getQueue();
-                // @ts-ignore
                 if (
-                    isSameMediaItem(nextTrack, queue[1]) &&
-                    !isSameMediaItem(queue[0].queue[1])
+                    isSameMediaItem(
+                        nextTrack as unknown as ICommon.IMediaBase,
+                        queue[1] as unknown as ICommon.IMediaBase,
+                    ) &&
+                    !isSameMediaItem(
+                        queue[0] as unknown as ICommon.IMediaBase,
+                        queue[1] as unknown as ICommon.IMediaBase,
+                    )
                 ) {
                     // 已经处理过了，忽略掉
                     console.log('多余的事件');

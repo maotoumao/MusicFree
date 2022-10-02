@@ -29,6 +29,10 @@ declare namespace IPlugin {
         platform: string;
         /** 匹配的版本号 */
         appVersion?: string;
+        /** 插件版本 */
+        version?: string;
+        /** 远程更新的url */
+        srcUrl?: string;
         /** 主键，会被存储到mediameta中 */
         primaryKey?: string[];
         /** 默认搜索类型 */

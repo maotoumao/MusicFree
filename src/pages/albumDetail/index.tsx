@@ -18,7 +18,7 @@ export default function AlbumDetail() {
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
-            <NavBar />
+            <NavBar musicList={musicList} />
             <AlbumMusicList albumItem={albumItem} musicList={musicList} />
             <MusicBar />
         </SafeAreaView>
