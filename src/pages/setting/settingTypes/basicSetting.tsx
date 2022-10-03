@@ -284,6 +284,7 @@ const style = StyleSheet.create({
     wrapper: {
         width: rpx(750),
         paddingVertical: rpx(24),
+        flex: 1,
     },
     centerText: {
         textAlignVertical: 'center',
