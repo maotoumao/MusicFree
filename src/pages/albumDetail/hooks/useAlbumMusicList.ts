@@ -1,11 +1,9 @@
 import PluginManager from '@/core/pluginManager';
 import {useEffect, useState} from 'react';
 
-export default function useAlbumMusicList(albumItem: IAlbum.IAlbumItem | null) {
-    const [musicList, setMusicList] = useState<IMusic.IMusicItem[] | null>(
-        null,
-    );
-
+export default function useAlbumDetail(albumItem: IAlbum.IAlbumItem | null) {
+    const [mergedAlbumItem, setMergedAlbumItem] =
+        useState<IAlbum.IAlbumItem | null>(albumItem);
     useEffect(() => {
         if (albumItem === null) {
             return;
@@ -13,9 +11,15 @@ export default function useAlbumMusicList(albumItem: IAlbum.IAlbumItem | null) {
         PluginManager.getByMedia(albumItem)
             ?.methods?.getAlbumInfo?.(albumItem)
             ?.then(_ => {
-                setMusicList(_?.musicList ?? []);
+                console.log('RES', _);
+                if (_) {
+                    setMergedAlbumItem(prev => ({
+                        ...(prev ?? {}),
+                        ...(_ ?? {}),
+                    }));
+                }
             })
             ?.catch();
     }, []);
-    return musicList;
+    return mergedAlbumItem;
 }

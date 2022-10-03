@@ -393,19 +393,19 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     }
 
     /** 查询作者信息 */
-    async queryArtistWorks<T extends IArtist.ArtistMediaType>(
+    async getArtistWorks<T extends IArtist.ArtistMediaType>(
         artistItem: IArtist.IArtistItem,
         page: number,
         type: T,
     ): Promise<IPlugin.ISearchResult<T>> {
-        if (!this.plugin.instance.queryArtistWorks) {
+        if (!this.plugin.instance.getArtistWorks) {
             return {
                 isEnd: true,
                 data: [],
             };
         }
         try {
-            const result = await this.plugin.instance.queryArtistWorks(
+            const result = await this.plugin.instance.getArtistWorks(
                 artistItem,
                 page,
                 type,
@@ -576,6 +576,10 @@ function getValidPlugins() {
     return plugins.filter(_ => _.state === 'enabled');
 }
 
+function getSearchablePlugins() {
+    return plugins.filter(_ => _.state === 'enabled' && _.instance.search);
+}
+
 const PluginManager = {
     setup,
     installPlugin,
@@ -585,6 +589,7 @@ const PluginManager = {
     getByHash,
     getByName,
     getValidPlugins,
+    getSearchablePlugins,
     usePlugins: pluginStateMapper.useMappedState,
 };
 

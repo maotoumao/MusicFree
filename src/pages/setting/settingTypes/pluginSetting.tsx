@@ -86,9 +86,12 @@ export default function PluginSetting() {
                                             setLoading(true);
                                             closePanel();
                                             let urls: string[] = [];
+                                            const iptUrl = addRandomHash(
+                                                text.trim(),
+                                            );
                                             if (text.endsWith('.json')) {
                                                 const jsonFile = (
-                                                    await axios.get(text)
+                                                    await axios.get(iptUrl)
                                                 ).data;
                                                 /**
                                                  * {
@@ -100,9 +103,11 @@ export default function PluginSetting() {
                                                  */
                                                 urls = (
                                                     jsonFile?.plugins ?? []
-                                                ).map((_: any) => _.url);
+                                                ).map((_: any) =>
+                                                    addRandomHash(_.url),
+                                                );
                                             } else {
-                                                urls = [text.trim()];
+                                                urls = [iptUrl];
                                             }
                                             await Promise.all(
                                                 urls.map(url =>
@@ -274,4 +279,11 @@ function PluginView(props: IPluginViewProps) {
             )}
         </List.Accordion>
     );
+}
+
+function addRandomHash(url: string) {
+    if (url.indexOf('#') === undefined) {
+        return `${url}#${Date.now()}`;
+    }
+    return url;
 }

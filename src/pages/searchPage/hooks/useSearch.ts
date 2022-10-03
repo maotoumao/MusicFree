@@ -33,7 +33,7 @@ export default function useSearch() {
                 const tgtPlugin = PluginManager.getByHash(pluginHash);
                 tgtPlugin && (plugins = [tgtPlugin]);
             } else {
-                plugins = PluginManager.getValidPlugins();
+                plugins = PluginManager.getSearchablePlugins();
             }
             if (plugins.length === 0) {
                 setPageStatus(PageStatus.NO_PLUGIN);

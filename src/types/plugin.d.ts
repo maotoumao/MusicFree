@@ -18,7 +18,7 @@ declare namespace IPlugin {
         type: T,
     ) => Promise<ISearchResult<T>>;
 
-    type IQueryArtistWorksFunc = <T extends IArtist.ArtistMediaType>(
+    type IGetArtistWorksFunc = <T extends IArtist.ArtistMediaType>(
         artistItem: IArtist.IArtistItem,
         page: number,
         type: T,
@@ -58,7 +58,7 @@ declare namespace IPlugin {
             albumItem: IAlbum.IAlbumItemBase,
         ) => Promise<IAlbum.IAlbumItem | null>;
         /** 获取作品，有分页 */
-        queryArtistWorks?: IQueryArtistWorksFunc;
+        getArtistWorks?: IGetArtistWorksFunc;
         /** 导入歌单 */
         importMusicSheet?: (
             urlLike: string,

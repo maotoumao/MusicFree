@@ -46,6 +46,7 @@ function getSubRouterScene(
 ) {
     const scene: Record<string, React.FC> = {};
     routes.forEach(r => {
+        // todo: 是否声明不可搜索
         scene[r.key] = getResultComponent(tab, r.key, r.title);
     });
     return SceneMap(scene);
@@ -53,8 +54,8 @@ function getSubRouterScene(
 
 function ResultSubPanel(props: IResultSubPanelProps) {
     const [index, setIndex] = useState(0);
-    // todo 是否聚合结果，如果是的话
-    const routes = PluginManager.getValidPlugins().map(_ => ({
+
+    const routes = PluginManager.getSearchablePlugins().map(_ => ({
         key: _.hash,
         title: _.name,
     }));

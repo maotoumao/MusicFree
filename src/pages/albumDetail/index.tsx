@@ -5,21 +5,23 @@ import {useRoute} from '@react-navigation/native';
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
 import AlbumMusicList from './components/albumMusicList';
-import useAlbumMusicList from './hooks/useAlbumMusicList';
+import useAlbumDetail from './hooks/useAlbumMusicList';
 import StatusBar from '@/components/base/statusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 export default function AlbumDetail() {
     const route = useRoute<any>();
     const albumItem = route.params?.albumItem ?? null;
-    console.log(albumItem);
-    const musicList = useAlbumMusicList(albumItem);
+    const albumDetail = useAlbumDetail(albumItem);
 
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
-            <NavBar musicList={musicList} />
-            <AlbumMusicList albumItem={albumItem} musicList={musicList} />
+            <NavBar musicList={albumDetail?.musicList ?? []} />
+            <AlbumMusicList
+                albumItem={albumDetail}
+                musicList={albumDetail?.musicList ?? []}
+            />
             <MusicBar />
         </SafeAreaView>
     );

@@ -31,8 +31,7 @@ export default function useQueryArtist(pluginHash: string) {
                         draft[type].state = RequestStateCode.PENDING;
                     }),
                 );
-
-                const result = await plugin?.methods?.queryArtistWorks?.(
+                const result = await plugin?.methods?.getArtistWorks?.(
                     artist,
                     page,
                     type,
