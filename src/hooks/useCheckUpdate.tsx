@@ -12,7 +12,7 @@ export default function (callOnMount = true) {
             if (updateInfo?.needUpdate) {
                 const {data} = updateInfo;
                 showDialog('DownloadDialog', {
-                    title: '发现新版本',
+                    title: `发现新版本(${data.version})`,
                     content: data.changeLog,
                     fromUrl: data.download[0],
                     toFile: `${

@@ -32,6 +32,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
     const [totalSize, setTotalSize] = useState(0);
     const jobId = useRef<number>();
     const colors = useColors();
+    console.log(content);
     return (
         <Dialog
             visible={visible}
