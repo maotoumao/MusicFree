@@ -5,6 +5,8 @@ import rpx from '@/utils/rpx';
 import Loading from '@/components/base/loading';
 import Header from './header';
 import MusicList from '@/components/musicList';
+import Config from '@/core/config';
+import MusicQueue from '@/core/musicQueue';
 
 interface IMusicListProps {
     albumItem: IAlbum.IAlbumItem | null;
@@ -24,6 +26,19 @@ export default function AlbumMusicList(props: IMusicListProps) {
                         <Header albumItem={albumItem} musicList={musicList} />
                     }
                     musicList={musicList}
+                    onItemPress={(musicItem, musicList) => {
+                        if (
+                            Config.get('setting.basic.clickMusicInAlbum') ===
+                            '播放单曲'
+                        ) {
+                            MusicQueue.play(musicItem);
+                        } else {
+                            MusicQueue.playWithReplaceQueue(
+                                musicItem,
+                                musicList ?? [musicItem],
+                            );
+                        }
+                    }}
                 />
             )}
         </View>

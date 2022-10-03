@@ -88,6 +88,26 @@ export default function BasicSetting() {
                         });
                     },
                 },
+                {
+                    title: '点击专辑内单曲时',
+                    right: () => (
+                        <ThemeText style={style.centerText}>
+                            {basicSetting?.clickMusicInAlbum ?? '播放专辑'}
+                        </ThemeText>
+                    ),
+                    onPress() {
+                        showDialog('RadioDialog', {
+                            title: '点击专辑内单曲时',
+                            content: ['播放单曲', '播放专辑'],
+                            onOk(val) {
+                                Config.set(
+                                    'setting.basic.clickMusicInAlbum',
+                                    val as any,
+                                );
+                            },
+                        });
+                    },
+                },
             ],
         },
         {

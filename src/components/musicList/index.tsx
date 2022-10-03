@@ -16,7 +16,10 @@ interface IMusicListProps {
     /** 是否展示序号 */
     showIndex?: boolean;
     /** 点击 */
-    onItemPress?: (musicItem: IMusic.IMusicItem) => void;
+    onItemPress?: (
+        musicItem: IMusic.IMusicItem,
+        musicList?: IMusic.IMusicItem[],
+    ) => void;
 }
 const ITEM_HEIGHT = rpx(120);
 export default function MusicList(props: IMusicListProps) {
@@ -42,7 +45,7 @@ export default function MusicList(props: IMusicListProps) {
                         index={showIndex ? index + 1 : undefined}
                         onItemPress={() => {
                             if (onItemPress) {
-                                onItemPress(musicItem);
+                                onItemPress(musicItem, musicList);
                             } else {
                                 MusicQueue.playWithReplaceQueue(
                                     musicItem,
