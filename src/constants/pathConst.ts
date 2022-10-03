@@ -6,8 +6,6 @@ export const basePath =
         ? RNFS.ExternalDirectoryPath
         : RNFS.DocumentDirectoryPath;
 
-const storagePath = RNFS.ExternalStorageDirectoryPath;
-
 export default {
     pluginPath: `${basePath}/plugins/`,
     logPath: `${basePath}/log/`,
@@ -16,6 +14,6 @@ export default {
     musicCachePath: CachesDirectoryPath + '/TrackPlayer',
     imageCachePath: CachesDirectoryPath + '/image_manager_disk_cache',
     lrcCachePath: `${basePath}/cache/lrc/`,
-    storagePath: `${storagePath}/musicfree/`,
-    downloadPath: `${storagePath}/musicfree/download/`,
+    downloadPath: `${basePath}/download/`,
+    downloadMusicPath: `${basePath}/download/music/`,
 };

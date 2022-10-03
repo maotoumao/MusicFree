@@ -106,7 +106,6 @@ async function setupFolder() {
         checkAndCreateDir(pathConst.dataPath),
         checkAndCreateDir(pathConst.logPath),
         checkAndCreateDir(pathConst.cachePath),
-        checkAndCreateDir(pathConst.storagePath),
         checkAndCreateDir(pathConst.pluginPath),
         checkAndCreateDir(pathConst.lrcCachePath),
     ]);

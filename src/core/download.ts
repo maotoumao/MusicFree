@@ -118,14 +118,14 @@ function generateFilename(musicItem: IMusic.IMusicItem) {
 
 /** 初始化 */
 async function setupDownload() {
-    await checkAndCreateDir(pathConst.downloadPath);
-    // const jsonData = await loadLocalJson(pathConst.downloadPath);
+    await checkAndCreateDir(pathConst.downloadMusicPath);
+    // const jsonData = await loadLocalJson(pathConst.downloadMusicPath);
 
     const newDownloadedData: Record<string, IMusic.IMusicItem> = {};
     downloadedMusic = [];
 
     try {
-        const downloads = await readDir(pathConst.downloadPath);
+        const downloads = await readDir(pathConst.downloadMusicPath);
         for (let i = 0; i < downloads.length; ++i) {
             const data = parseFilename(downloads[i].name);
             if (data) {
@@ -191,7 +191,7 @@ async function downloadNext() {
     downloadNext();
     const {promise, jobId} = downloadFile({
         fromUrl: url ?? '',
-        toFile: pathConst.downloadPath + nextItem.filename,
+        toFile: pathConst.downloadMusicPath + nextItem.filename,
         headers: headers,
         background: true,
         begin(res) {
@@ -225,7 +225,8 @@ async function downloadNext() {
                 _.push({
                     ...musicItem,
                     [internalSymbolKey]: {
-                        localPath: pathConst.downloadPath + nextItem.filename,
+                        localPath:
+                            pathConst.downloadMusicPath + nextItem.filename,
                     },
                 });
             }
@@ -237,7 +238,7 @@ async function downloadNext() {
             [internalSerialzeKey]: {
                 downloaded: true,
                 local: {
-                    localUrl: pathConst.downloadPath + nextItem.filename,
+                    localUrl: pathConst.downloadMusicPath + nextItem.filename,
                 },
             },
         });

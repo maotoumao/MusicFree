@@ -1,8 +1,8 @@
 import useDialog from '@/components/dialogs/useDialog';
+import pathConst from '@/constants/pathConst';
 import checkUpdate from '@/utils/checkUpdate';
 import Toast from '@/utils/toast';
 import {useEffect} from 'react';
-import RNFS from 'react-native-fs';
 
 export default function (callOnMount = true) {
     const {showDialog} = useDialog();
@@ -16,8 +16,8 @@ export default function (callOnMount = true) {
                     content: data.changeLog,
                     fromUrl: data.download[0],
                     toFile: `${
-                        RNFS.DownloadDirectoryPath
-                    }/musicfree_${data.version.replace(/\./g, '_')}.apk`,
+                        pathConst.downloadPath
+                    }musicfree_${data.version.replace(/\./g, '_')}.apk`,
                     afterDownload() {
                         Toast.success('下载成功');
                         //todo: 默认安装
