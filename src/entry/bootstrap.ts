@@ -13,6 +13,7 @@ import MediaMeta from '@/core/mediaMeta';
 import Cache from '@/core/cache';
 import PluginManager from '@/core/pluginManager';
 import Network from '@/core/network';
+import {ImgAsset} from '@/constants/assetsConst';
 
 /** app加载前执行
  * 1. 检查权限
@@ -62,6 +63,7 @@ async function _bootstrap() {
         }
     }
     await TrackPlayer.updateOptions({
+        icon: ImgAsset.logo,
         progressUpdateEventInterval: 1,
         alwaysPauseOnInterruption: true,
         capabilities: [

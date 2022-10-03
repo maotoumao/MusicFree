@@ -13,6 +13,7 @@ import PluginManager, {Plugin, PluginStateCode} from '@/core/pluginManager';
 import {trace} from '@/utils/log';
 import usePanel from '@/components/panels/usePanel';
 import Toast from '@/utils/toast';
+import axios from 'axios';
 
 export default function PluginSetting() {
     const plugins = PluginManager.usePlugins();
@@ -84,9 +85,32 @@ export default function PluginSetting() {
                                         try {
                                             setLoading(true);
                                             closePanel();
-                                            await PluginManager.installPluginFromUrl(
-                                                text,
-                                            );
+                                            let urls: string[] = [];
+                                            if (text.endsWith('.json')) {
+                                                const jsonFile = (
+                                                    await axios.get(text)
+                                                ).data;
+                                                /**
+                                                 * {
+                                                 *     plugins: [{
+                                                 *          version: xxx,
+                                                 *          url: xxx
+                                                 *      }]
+                                                 * }
+                                                 */
+                                                urls = (
+                                                    jsonFile?.plugins ?? []
+                                                ).map((_: any) => _.url);
+                                            } else {
+                                                urls = [text.trim()];
+                                            }
+                                            await Promise.all(
+                                                urls.map(url =>
+                                                    PluginManager.installPluginFromUrl(
+                                                        url,
+                                                    ),
+                                                ),
+                                            ).catch();
                                             Toast.success('插件安装成功~');
                                         } catch (e: any) {
                                             Toast.warn(

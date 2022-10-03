@@ -52,9 +52,9 @@ export default function () {
                                 }}
                                 onPress={() => {
                                     setSearchResultsState(initSearchResults);
+                                    setPageStatus(PageStatus.SEARCHING);
                                     search(_, 1);
                                     addHistory(_);
-                                    setPageStatus(PageStatus.SEARCHING);
                                     setQuery(_);
                                 }}>
                                 {_}

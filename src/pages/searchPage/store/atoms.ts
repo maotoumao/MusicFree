@@ -38,6 +38,8 @@ export enum PageStatus {
     SEARCHING = 'SEARCHING',
     /** 有结果 */
     RESULT = 'RESULT',
+    /** 没有安装插件 */
+    NO_PLUGIN = 'NO_PLUGIN',
 }
 
 /** 当前正在搜索的 */

@@ -35,7 +35,10 @@ export default function useSearch() {
             } else {
                 plugins = PluginManager.getValidPlugins();
             }
-
+            if (plugins.length === 0) {
+                setPageStatus(PageStatus.NO_PLUGIN);
+                return;
+            }
             // 使用选中插件搜素
             plugins.forEach(async plugin => {
                 const _platform = plugin.instance.platform;
