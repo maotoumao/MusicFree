@@ -130,6 +130,14 @@ export default function PlayList() {
                     icon={repeatModeConst[repeatMode].icon}>
                     {repeatModeConst[repeatMode].text}
                 </Button>
+                <Button
+                    color={colors.text}
+                    onPress={() => {
+                        MusicQueue.clear();
+                    }}
+                    icon={'trash-can-outline'}>
+                    清空
+                </Button>
             </View>
             <Divider />
             {mount && (

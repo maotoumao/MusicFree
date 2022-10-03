@@ -243,6 +243,20 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
     musicQueueStateMapper.notify();
     currentMusicStateMapper.notify();
 };
+
+/** 清空播放列表 */
+const clear = async () => {
+    musicQueue = [];
+    currentIndex = -1;
+
+    Config.set('status.music', {
+        repeatMode,
+    });
+    await TrackPlayer.reset();
+    musicQueueStateMapper.notify();
+    currentMusicStateMapper.notify();
+};
+
 /**
  * 获取自动播放的下一个track
  */
@@ -423,6 +437,7 @@ const MusicQueue = {
     playWithReplaceQueue,
     pause,
     remove,
+    clear,
     useCurrentMusicItem: currentMusicStateMapper.useMappedState,
     useRepeatMode: repeatModeStateMapper.useMappedState,
     getRepeatMode,
