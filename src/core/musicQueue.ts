@@ -34,9 +34,11 @@ let musicQueue: Array<IMusic.IMusicItem> = [];
 let repeatMode: MusicRepeatMode = MusicRepeatMode.QUEUE;
 
 const getRepeatMode = () => repeatMode;
+const getCurrentMusicItem = () => musicQueue[currentIndex];
+const getMusicQueue = () => musicQueue;
 
-const currentMusicStateMapper = new StateMapper(() => musicQueue[currentIndex]);
-const musicQueueStateMapper = new StateMapper(() => musicQueue);
+const currentMusicStateMapper = new StateMapper(getCurrentMusicItem);
+const musicQueueStateMapper = new StateMapper(getMusicQueue);
 const repeatModeStateMapper = new StateMapper(getRepeatMode);
 
 /** 内部使用的排序id */
@@ -428,6 +430,7 @@ const skipToPrevious = async () => {
 const MusicQueue = {
     setup,
     useMusicQueue: musicQueueStateMapper.useMappedState,
+    getMusicQueue: getMusicQueue,
     addAll,
     add,
     addNext,
@@ -439,6 +442,7 @@ const MusicQueue = {
     remove,
     clear,
     useCurrentMusicItem: currentMusicStateMapper.useMappedState,
+    getCurrentMusicItem: getCurrentMusicItem,
     useRepeatMode: repeatModeStateMapper.useMappedState,
     getRepeatMode,
     toggleRepeatMode,

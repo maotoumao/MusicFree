@@ -169,6 +169,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         musicItem: IMusic.IMusicItemBase,
         retryCount = 1,
     ): Promise<IPlugin.IMediaSourceResult> {
+        console.log('获取真实源');
         // 1. 本地搜索 其实直接读mediameta就好了
         const localPath =
             musicItem?.[internalSymbolKey]?.localPath ??

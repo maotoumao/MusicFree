@@ -1,7 +1,8 @@
 import Config from '@/core/config';
+import {trace} from '@/utils/log';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import musicIsPaused from '@/utils/musicIsPaused';
-import TrackPlayer, {Event, State, Track} from 'react-native-track-player';
+import TrackPlayer, {Event, State} from 'react-native-track-player';
 import MusicQueue from '../core/musicQueue';
 
 let resumeState: State;
@@ -35,11 +36,13 @@ module.exports = async function () {
         Config.set('status.music.progress', evt.position);
     });
     /** 播放下一个 */
-    let nextTrack: Track;
-    // 事件有重复
     TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
         // console.log('track变化', evt, await TrackPlayer.getQueue())
         // 是track里的，不是playlist里的
+        trace('PlaybackTrackChanged', {
+            evt,
+        });
+
         if (
             evt.nextTrack === 1 &&
             !(await TrackPlayer.getTrack(evt.nextTrack))?.url
@@ -48,22 +51,22 @@ module.exports = async function () {
                 await MusicQueue.play(undefined, true);
             } else {
                 const queue = await TrackPlayer.getQueue();
+                // 要跳到的下一个就是当前的，并且队列里面有多首歌
                 if (
                     isSameMediaItem(
-                        nextTrack as unknown as ICommon.IMediaBase,
                         queue[1] as unknown as ICommon.IMediaBase,
+                        MusicQueue.getCurrentMusicItem(),
                     ) &&
-                    !isSameMediaItem(
-                        queue[0] as unknown as ICommon.IMediaBase,
-                        queue[1] as unknown as ICommon.IMediaBase,
-                    )
+                    MusicQueue.getMusicQueue().length > 1
                 ) {
-                    // 已经处理过了，忽略掉
                     console.log('多余的事件');
                     return;
                 }
-                // console.log('SKIP-PlaybackTrackChanged');
-                nextTrack = queue[1];
+                trace('PlaybackTrackChanged-shouldskip', {
+                    evt,
+                    queue,
+                });
+
                 await MusicQueue.skipToNext();
             }
         }
