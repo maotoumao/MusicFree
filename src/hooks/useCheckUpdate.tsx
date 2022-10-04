@@ -1,6 +1,7 @@
 import useDialog from '@/components/dialogs/useDialog';
 import pathConst from '@/constants/pathConst';
 import checkUpdate from '@/utils/checkUpdate';
+import openUrl from '@/utils/openUrl';
 import Toast from '@/utils/toast';
 import {useEffect} from 'react';
 
@@ -18,9 +19,9 @@ export default function (callOnMount = true) {
                     toFile: `${
                         pathConst.downloadPath
                     }musicfree_${data.version.replace(/\./g, '_')}.apk`,
-                    afterDownload() {
+                    afterDownload(toFile) {
                         Toast.success('下载成功');
-                        //todo: 默认安装
+                        openUrl(`file://${toFile}`);
                     },
                 });
             } else {
