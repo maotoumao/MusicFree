@@ -1,12 +1,10 @@
 {
-    "version": "0.0.1-alpha.2",
+    "version": "0.0.1-alpha.3",
     "changeLog": [
-        "1. 插件协议更新，需要重新安装插件",
-        "2. 支持批量导入插件",
-        "3. 新增清空播放列表功能",
-        "4. 优化搜索结果面板和播放专辑逻辑"
+        "1. 修复设置页无法滚动的问题",
+        "2. 修复播放结束时可能暂停的问题"
     ],
     "download": [
-        "https://gitee.com/maotoumao/MusicFree/releases/download/v0.0.1-alpha.2/app-release.apk"
+        "https://gitee.com/maotoumao/MusicFree/releases/download/v0.0.1-alpha.3/app-release.apk"
     ]
 }
