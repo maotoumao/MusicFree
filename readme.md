@@ -62,6 +62,7 @@
 
 
 ## 插件
+### 插件简介
 插件本质上是一个满足插件协议的js函数。插件中定义了搜索（音乐、专辑、作者）、播放、查看专辑、作者详细信息、导入歌单、获取歌词等基本函数，插件的开发者只需要关心输入输出逻辑，至于分页、缓存等全都交给MusicFree控制即可。本软件通过插件来完成播放器的所有功能，这样解耦的设计也可以使得本软件可以专注于做一个功能完善的播放器，我直呼小而美。  
 
 插件开发文档可以参考 [这里](http://blog.upup.fun/2022/09/15/%E5%BC%80%E5%8F%91MusicFree%E6%8F%92%E4%BB%B6/) (写的很简略....真的有人需要的时候再详细写吧..)
@@ -72,8 +73,12 @@
 
 - 插件使用过程中可能会产生某些和本软件无关的版权数据，插件产生的任何数据与本软件无关，请使用者自行删除数据。
 
+### 插件使用
+下载app之后，只需要在侧边栏设置-插件设置中安装插件即可。支持安装本地插件和从网络安装插件（支持解析.js文件和.json描述文件；已经写了几个示意的插件：[指路](https://github.com/maotoumao/MusicFreePlugins)，不过可能功能还不是很完善）；
+你可以直接点击从网络安装插件，然后输入https://gitee.com/maotoumao/MusicFreePlugins/raw/master/plugins.json，点击确认即可安装。
+
 ## 下载地址
-请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (github传不上去... 进上边的群拿或者转到[gitee发布页吧](https://gitee.com/maotoumao/MusicFree/releases)...)
+请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)
 
 
 ## ChangeLog

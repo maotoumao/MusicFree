@@ -45,11 +45,11 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         {_}
                     </ThemeText>
                 ))}
-                {progress && totalSize ? (
+                {progress && totalSize && totalSize !== 0 ? (
                     <View style={style.progress}>
                         <ProgressBar
                             color={colors.textHighlight}
-                            progress={progress / (totalSize + 1)}
+                            progress={progress / totalSize}
                         />
                         <ThemeText fontColor="highlight" fontSize="subTitle">
                             {sizeFormatter(progress)}/{sizeFormatter(totalSize)}
