@@ -145,8 +145,8 @@ export default function useSearch() {
                             return draft;
                         }),
                     );
-                } catch (e) {
-                    errorLog('搜索失败', e);
+                } catch (e: any) {
+                    errorLog('搜索失败', e?.message);
                     setPageStatus(PageStatus.RESULT);
                     setSearchResults(
                         produce(draft => {

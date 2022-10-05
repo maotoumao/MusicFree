@@ -89,6 +89,7 @@ export default function PluginSetting() {
                                             const iptUrl = addRandomHash(
                                                 text.trim(),
                                             );
+                                            console.log('add', iptUrl);
                                             if (text.endsWith('.json')) {
                                                 const jsonFile = (
                                                     await axios.get(iptUrl)
@@ -282,7 +283,7 @@ function PluginView(props: IPluginViewProps) {
 }
 
 function addRandomHash(url: string) {
-    if (url.indexOf('#') === undefined) {
+    if (url.indexOf('#') === -1) {
         return `${url}#${Date.now()}`;
     }
     return url;

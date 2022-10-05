@@ -59,6 +59,11 @@ function useLyric() {
                     }
                 })
                 ?.catch(_ => {
+                    if (isSameMediaItem(musicItem, musicItemRef.current)) {
+                        setLyric([]);
+                        setMeta({});
+                        lrcManagerRef.current = undefined;
+                    }
                     setLoading(false);
                 });
         }

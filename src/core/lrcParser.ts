@@ -26,7 +26,7 @@ export default class LyricParser {
                 ++counter;
                 rawLrcs.shift();
             }
-            lrc = rawLrcs[0].trim();
+            lrc = rawLrcs[0]?.trim?.() ?? '';
             for (j = i; j < i + counter; ++j) {
                 rawLrcItems.push({
                     time: this.parseTime(rawTimes[j]),
@@ -34,10 +34,12 @@ export default class LyricParser {
                 });
             }
             i += counter;
-            rawLrcItems.push({
-                time: this.parseTime(rawTimes[i]),
-                lrc,
-            });
+            if (i < len) {
+                rawLrcItems.push({
+                    time: this.parseTime(rawTimes[i]),
+                    lrc,
+                });
+            }
             rawLrcs.shift();
         }
         this.lrcItems = rawLrcItems.sort((a, b) => a.time - b.time);
