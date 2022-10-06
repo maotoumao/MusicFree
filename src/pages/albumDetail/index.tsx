@@ -20,7 +20,7 @@ export default function AlbumDetail() {
             <NavBar musicList={albumDetail?.musicList ?? []} />
             <AlbumMusicList
                 albumItem={albumDetail}
-                musicList={albumDetail?.musicList ?? []}
+                musicList={albumDetail?.musicList}
             />
             <MusicBar />
         </SafeAreaView>

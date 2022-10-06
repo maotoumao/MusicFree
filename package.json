@@ -1,6 +1,6 @@
 {
   "name": "MusicFree",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "license": "GPL",
   "private": true,
   "author": {
@@ -26,6 +26,7 @@
     "@react-native-clipboard/clipboard": "^1.11.0",
     "@react-native-community/netinfo": "^9.3.0",
     "@react-native-community/slider": "^4.2.4",
+    "@react-native-cookies/cookies": "^6.2.1",
     "@react-navigation/drawer": "^6.4.3",
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/native-stack": "^6.7.0",
@@ -37,6 +38,7 @@
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.4",
     "deepmerge": "^4.2.2",
+    "he": "^1.2.0",
     "immer": "^9.0.15",
     "jotai": "^1.7.4",
     "lodash.shuffle": "^4.2.0",
@@ -84,6 +86,7 @@
     "@tsconfig/react-native": "^2.0.0",
     "@types/color": "^3.0.3",
     "@types/crypto-js": "^4.1.1",
+    "@types/he": "^1.1.2",
     "@types/jest": "^26.0.23",
     "@types/lodash.shuffle": "^4.2.7",
     "@types/node": "^18.0.4",

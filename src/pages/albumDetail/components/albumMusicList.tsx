@@ -10,7 +10,7 @@ import MusicQueue from '@/core/musicQueue';
 
 interface IMusicListProps {
     albumItem: IAlbum.IAlbumItem | null;
-    musicList: IMusic.IMusicItem[] | null;
+    musicList?: IMusic.IMusicItem[] | null;
 }
 export default function AlbumMusicList(props: IMusicListProps) {
     const {albumItem, musicList} = props;

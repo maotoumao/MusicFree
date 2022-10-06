@@ -18,8 +18,7 @@ export default function useAlbumDetail(albumItem: IAlbum.IAlbumItem | null) {
                         ...(_ ?? {}),
                     }));
                 }
-            })
-            ?.catch();
+            });
     }, []);
     return mergedAlbumItem;
 }

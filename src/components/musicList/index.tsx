@@ -5,6 +5,7 @@ import MusicQueue from '@/core/musicQueue';
 import {FlatList} from 'react-native-gesture-handler';
 
 import MusicItem from '../mediaItem/musicItem';
+import Empty from '../base/empty';
 
 interface IMusicListProps {
     /** 顶部 */
@@ -29,6 +30,7 @@ export default function MusicList(props: IMusicListProps) {
         <FlatList
             style={style.wrapper}
             ListHeaderComponent={Header}
+            ListEmptyComponent={Empty}
             data={musicList ?? []}
             keyExtractor={musicItem =>
                 `ml-${musicItem.id}${musicItem.platform}`

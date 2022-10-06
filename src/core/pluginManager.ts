@@ -29,6 +29,8 @@ import {
 import Download from './download';
 import delay from '@/utils/delay';
 import * as cheerio from 'cheerio';
+import CookieManager from '@react-native-cookies/cookies';
+import he from 'he';
 import Network from './network';
 
 axios.defaults.timeout = 1500;
@@ -72,7 +74,19 @@ export class Plugin {
       } catch(e) {
         return null;
       }
-    `)()({CryptoJs, axios, dayjs, cheerio, bigInt, qs});
+    `)()({
+                CryptoJs,
+                axios,
+                dayjs,
+                cheerio,
+                bigInt,
+                qs,
+                he,
+                CookieManager: {
+                    flush: CookieManager.flush,
+                    get: CookieManager.get,
+                },
+            });
             this.checkValid(_instance);
         } catch (e: any) {
             this.state = 'error';
@@ -388,7 +402,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             });
 
             return {...albumItem, ...result};
-        } catch {
+        } catch (e) {
             return {...albumItem, musicList: []};
         }
     }
