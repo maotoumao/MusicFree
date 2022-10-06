@@ -89,5 +89,6 @@ const style = StyleSheet.create({
         color: 'white',
         fontSize: fontSizeConst.subTitle,
         includeFontPadding: false,
+        maxWidth: rpx(540),
     },
 });
