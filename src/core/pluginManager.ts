@@ -575,6 +575,20 @@ async function uninstallPlugin(hash: string) {
     }
 }
 
+async function uninstallAllPlugins() {
+    await Promise.all(
+        plugins.map(async plugin => {
+            try {
+                const pluginName = plugin.name;
+                await unlink(plugin.path);
+                await MediaMeta.removePlugin(pluginName);
+            } catch (e) {}
+        }),
+    );
+    plugins = [];
+    pluginStateMapper.notify();
+}
+
 function getByMedia(mediaItem: ICommon.IMediaBase) {
     return getByName(mediaItem.platform);
 }
@@ -606,6 +620,7 @@ const PluginManager = {
     getValidPlugins,
     getSearchablePlugins,
     usePlugins: pluginStateMapper.useMappedState,
+    uninstallAllPlugins,
 };
 
 export default PluginManager;

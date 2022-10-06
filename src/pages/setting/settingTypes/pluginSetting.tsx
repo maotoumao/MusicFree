@@ -21,6 +21,7 @@ export default function PluginSetting() {
     const [fabOpen, setFabOpen] = useState(false);
     const colors = useColors();
     const {showPanel} = usePanel();
+    const {showDialog} = useDialog();
 
     return (
         <View style={style.wrapper}>
@@ -89,7 +90,6 @@ export default function PluginSetting() {
                                             const iptUrl = addRandomHash(
                                                 text.trim(),
                                             );
-                                            console.log('add', iptUrl);
                                             if (text.endsWith('.json')) {
                                                 const jsonFile = (
                                                     await axios.get(iptUrl)
@@ -125,6 +125,22 @@ export default function PluginSetting() {
                                                 }`,
                                             );
                                         }
+                                        setLoading(false);
+                                    },
+                                });
+                            },
+                        },
+                        {
+                            icon: 'trash-can-outline',
+                            label: '卸载全部插件',
+                            onPress() {
+                                showDialog('SimpleDialog', {
+                                    title: '卸载插件',
+                                    content:
+                                        '确认卸载全部插件吗？此操作不可恢复！',
+                                    async onOk() {
+                                        setLoading(true);
+                                        await PluginManager.uninstallAllPlugins();
                                         setLoading(false);
                                     },
                                 });
