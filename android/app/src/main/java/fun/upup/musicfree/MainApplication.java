@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.rnfs.RNFSPackage;
 import fun.upup.musicfree.utils.UtilsPackage;
+import fun.upup.musicfree.mp3Util.Mp3UtilPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -35,6 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
                     // Packages that cannot be autolinked yet can be added manually here, for example:
                     // packages.add(new MyReactNativePackage());
                     packages.add(new UtilsPackage());
+                    packages.add(new Mp3UtilPackage());
                     return packages;
                 }
 

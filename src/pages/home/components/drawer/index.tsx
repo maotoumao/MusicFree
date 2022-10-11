@@ -9,7 +9,7 @@ import {ROUTE_PATH} from '@/entry/router';
 import ThemeText from '@/components/base/themeText';
 import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';
-import NativeUtils from '@/utils/native';
+import NativeUtils from '@/native/utils';
 import MusicQueue from '@/core/musicQueue';
 
 export default function HomeDrawer(props: any) {
