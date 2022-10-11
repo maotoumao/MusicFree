@@ -16,7 +16,7 @@ interface IComplexAppBarProps {
     onSearchPress?: () => void;
     menuOptions?: IMenuOption[];
 }
-export default function AppBarWithSearch(props: IComplexAppBarProps) {
+export default function ComplexAppBar(props: IComplexAppBarProps) {
     const navigation = useNavigation();
     const {title, onSearchPress, menuOptions = []} = props;
     const {colors} = useTheme();
@@ -38,37 +38,45 @@ export default function AppBarWithSearch(props: IComplexAppBarProps) {
                 }}
             />
             <Appbar.Content title={title} />
-            <Appbar.Action icon="magnify" onPress={onSearchPress} />
-            <Menu
-                contentStyle={[
-                    style.menuContent,
-                    {backgroundColor: colors.primary},
-                ]}
-                onDismiss={onDismissMenu}
-                visible={isMenuVisible}
-                anchor={
-                    <Appbar.Action
-                        color="white"
-                        icon="dots-vertical"
-                        onPress={onShowMenu}
-                    />
-                }>
-                {menuOptions.map(_ =>
-                    _.show === false ? (
-                        <></>
-                    ) : (
-                        <Menu.Item
-                            key={`menu-${_.title}`}
-                            icon={_.icon}
-                            title={_.title}
-                            onPress={() => {
-                                _?.onPress?.();
-                                setMenuVisible(false);
-                            }}
+            {onSearchPress ? (
+                <Appbar.Action icon="magnify" onPress={onSearchPress} />
+            ) : (
+                <></>
+            )}
+            {menuOptions.length !== 0 ? (
+                <Menu
+                    contentStyle={[
+                        style.menuContent,
+                        {backgroundColor: colors.primary},
+                    ]}
+                    onDismiss={onDismissMenu}
+                    visible={isMenuVisible}
+                    anchor={
+                        <Appbar.Action
+                            color="white"
+                            icon="dots-vertical"
+                            onPress={onShowMenu}
                         />
-                    ),
-                )}
-            </Menu>
+                    }>
+                    {menuOptions.map(_ =>
+                        _.show === false ? (
+                            <></>
+                        ) : (
+                            <Menu.Item
+                                key={`menu-${_.title}`}
+                                icon={_.icon}
+                                title={_.title}
+                                onPress={() => {
+                                    _?.onPress?.();
+                                    setMenuVisible(false);
+                                }}
+                            />
+                        ),
+                    )}
+                </Menu>
+            ) : (
+                <></>
+            )}
         </Appbar.Header>
     );
 }

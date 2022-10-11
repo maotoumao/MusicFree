@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import AppBarWithSearch from '@/components/base/appBarWithSearch';
+import ComplexAppBar from '@/components/base/ComplexAppBar';
 import MusicSheet from '@/core/musicSheet';
 import {ROUTE_PATH} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
@@ -14,7 +14,7 @@ export default function () {
     const {showDialog} = useDialog();
 
     return (
-        <AppBarWithSearch
+        <ComplexAppBar
             title="歌单"
             onSearchPress={() => {
                 navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
