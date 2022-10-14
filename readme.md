@@ -33,6 +33,11 @@
 ## 下载地址
 请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)
 
+## WIP
+1. 导入本地音乐 [60%]
+2. 歌曲批量编辑 [0%]
+3. 插件升级方案 [0%]
+4. 横屏适配 [0%]
 
 ## ChangeLog
 `2022.10.06  v0.0.1-alpha.4`
