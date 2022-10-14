@@ -1,6 +1,6 @@
 import {NativeModules} from 'react-native';
 
-interface IBasicMeta {
+export interface IBasicMeta {
     album?: string;
     artist?: string;
     author?: string;
@@ -12,6 +12,6 @@ interface IMp3Util {
     getBasicMeta: (fileName: string) => Promise<IBasicMeta>;
 }
 
-const NativeUtils = NativeModules.Mp3Util;
+const Mp3Util = NativeModules.Mp3Util;
 
-export default NativeUtils as IMp3Util;
+export default Mp3Util as IMp3Util;

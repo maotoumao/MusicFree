@@ -7438,6 +7438,11 @@ react-native-fast-image@^8.6.0:
   resolved "https://registry.npmmirror.com/react-native-fast-image/-/react-native-fast-image-8.6.0.tgz#0141fa428839511f5ae8c66ad0a7587d13346162"
   integrity sha512-NJe6ReNPbFZ3X3/mYGACqOhtzGIkuzENfryYs91lv2fScAq9OYte9UVwtFftUl3HfB+IvVgmfLBEXyCeqlcmLw==
 
+react-native-file-access@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.npmmirror.com/react-native-file-access/-/react-native-file-access-2.5.0.tgz#df6916e5edacaaed73a1ea20bea79d4be13b3faf"
+  integrity sha512-12Dq2NJ4pcTi+nATwT6ZwotpFn1iHZt/W5fOYNcCOuxIg2JnV4KlyDHEBI2WwwEXn6BvEkg9SZDYFk4rkQFttA==
+
 react-native-fs@^2.20.0:
   version "2.20.0"
   resolved "https://registry.npmmirror.com/react-native-fs/-/react-native-fs-2.20.0.tgz#05a9362b473bfc0910772c0acbb73a78dbc810f6"

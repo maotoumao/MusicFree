@@ -3,6 +3,8 @@ package fun.upup.musicfree.utils;
 import android.app.Activity;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -19,6 +21,7 @@ public class UtilsModule extends ReactContextBaseJavaModule {
         reactContext = context;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return "NativeUtils";

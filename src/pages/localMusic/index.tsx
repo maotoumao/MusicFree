@@ -10,6 +10,7 @@ import Download from '@/core/download';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 import DocumentPicker from 'react-native-document-picker';
 import Toast from '@/utils/toast';
+import {importFolder} from '@/core/localMusicSheet';
 
 export default function LocalMusic() {
     useEffect(() => {
@@ -29,8 +30,9 @@ export default function LocalMusic() {
                             try {
                                 const dir =
                                     await DocumentPicker.pickDirectory();
-                                console.log(dir);
-                                // todo: 读取文件夹
+                                if (dir?.uri) {
+                                    importFolder(dir.uri);
+                                }
                             } catch (e) {
                                 console.log(e);
                                 Toast.warn('导入失败');

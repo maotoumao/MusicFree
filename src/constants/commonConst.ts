@@ -22,6 +22,7 @@ export enum RequestStateCode {
 export const StorageKeys = {
     MediaMetaKeys: 'media-meta-keys',
     MediaCache: 'media-cache',
+    LocalMusicSheet: 'local-music-sheet',
 };
 
 export const CacheControl = {
