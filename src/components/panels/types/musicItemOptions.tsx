@@ -23,6 +23,7 @@ import Cache from '@/core/cache';
 import FastImage from '@/components/base/fastImage';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
+import {localMusicSheetId} from '@/constants/commonConst';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -32,7 +33,7 @@ interface IMusicItemOptionsProps {
 }
 
 const ITEM_HEIGHT = rpx(96);
-// todo: memo
+// todo: rerender有点多
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
     const {showPanel, unmountPanel} = _usePanel(sheetRef);
@@ -116,7 +117,11 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '删除',
             show: !!musicSheet,
             onPress: async () => {
-                await MusicSheet.removeMusic(musicSheet!.id, musicItem);
+                if (musicSheet?.id === localMusicSheetId) {
+                    await LocalMusicSheet.removeMusic(musicItem);
+                } else {
+                    await MusicSheet.removeMusic(musicSheet!.id, musicItem);
+                }
                 Toast.success('已删除');
                 closePanel();
             },

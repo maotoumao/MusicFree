@@ -28,8 +28,6 @@ export default function SearchMusicList() {
     const [result, setResult] = useState<IMusic.IMusicItem[]>(musicList);
     const [query, setQuery] = useState('');
 
-    console.log(musicList);
-
     const colors = useColors();
 
     const onChangeSearch = (_: string) => {

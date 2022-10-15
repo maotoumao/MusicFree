@@ -11,6 +11,7 @@ import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_PATH} from '@/entry/router';
+import {errorLog} from '@/utils/log';
 
 export default function LocalMusic() {
     const navigation = useNavigation<any>();
@@ -34,10 +35,11 @@ export default function LocalMusic() {
                                 const dir =
                                     await DocumentPicker.pickDirectory();
                                 if (dir?.uri) {
-                                    LocalMusicSheet.importFolder(dir.uri);
+                                    await LocalMusicSheet.importFolder(dir.uri);
+                                    Toast.success('导入成功');
                                 }
-                            } catch (e) {
-                                console.log(e);
+                            } catch (e: any) {
+                                errorLog('导入歌曲失败', e?.message ?? '');
                                 Toast.warn('导入失败');
                             }
                         },
