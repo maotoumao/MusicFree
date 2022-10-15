@@ -9,13 +9,22 @@ import ComplexAppBar from '@/components/base/ComplexAppBar';
 import DocumentPicker from 'react-native-document-picker';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
+import {useNavigation} from '@react-navigation/native';
+import {ROUTE_PATH} from '@/entry/router';
 
 export default function LocalMusic() {
+    const navigation = useNavigation<any>();
+
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
             <ComplexAppBar
                 title="本地音乐"
+                onSearchPress={() => {
+                    navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
+                        musicList: LocalMusicSheet.getMusicList(),
+                    });
+                }}
                 menuOptions={[
                     {
                         icon: 'magnify',

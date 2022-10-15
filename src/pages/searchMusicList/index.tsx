@@ -12,7 +12,7 @@ import {fontSizeConst} from '@/constants/uiConst';
 
 function filterMusic(query: string, musicList: IMusic.IMusicItem[]) {
     if (query?.length === 0) {
-        return [];
+        return musicList;
     }
     return musicList.filter(_ =>
         `${_.title} ${_.artist} ${_.album} ${_.platform}`.includes(
@@ -25,7 +25,7 @@ export default function SearchMusicList() {
     const route = useRoute<any>();
     const navigation = useNavigation();
     const musicList: IMusic.IMusicItem[] = route.params?.musicList ?? [];
-    const [result, setResult] = useState<IMusic.IMusicItem[]>([]);
+    const [result, setResult] = useState<IMusic.IMusicItem[]>(musicList);
     const [query, setQuery] = useState('');
 
     console.log(musicList);

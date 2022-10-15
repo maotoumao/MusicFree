@@ -145,6 +145,10 @@ function useIsLocal(musicItem: IMusic.IMusicItem | null) {
     return isLocal;
 }
 
+function getMusicList() {
+    return localSheet;
+}
+
 const LocalMusicSheet = {
     setup,
     addMusic,
@@ -152,6 +156,7 @@ const LocalMusicSheet = {
     importFolder,
     isLocalMusic,
     useIsLocal,
+    getMusicList,
     useMusicList: localSheetStateMapper.useMappedState,
 };
 
