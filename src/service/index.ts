@@ -37,7 +37,7 @@ module.exports = async function () {
     });
     /** 播放下一个 */
     TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
-        // console.log('track变化', evt, await TrackPlayer.getQueue())
+        console.log('track变化', evt, await TrackPlayer.getQueue());
         // 是track里的，不是playlist里的
         trace('PlaybackTrackChanged', {
             evt,

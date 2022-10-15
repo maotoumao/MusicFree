@@ -7,12 +7,13 @@ import MusicQueue from '@/core/musicQueue';
 import usePanel from '@/components/panels/usePanel';
 import Download from '@/core/download';
 import {isSameMediaItem} from '@/utils/mediaItem';
+import LocalMusicSheet from '@/core/localMusicSheet';
 
 export default function Opertions() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
     const favoriteMusicSheet = MusicSheet.useSheets('favorite');
     const musicItem = MusicQueue.useCurrentMusicItem();
-    const isDownloaded = Download.useIsDownloaded(musicItem);
+    const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
     const {showPanel} = usePanel();
 
     const musicIndexInFav =

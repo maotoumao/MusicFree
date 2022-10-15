@@ -1,4 +1,4 @@
-import {internalSerialzeKey, StorageKeys} from '@/constants/commonConst';
+import {internalSerializeKey, StorageKeys} from '@/constants/commonConst';
 import {trace} from '@/utils/log';
 import {getMediaKey} from '@/utils/mediaItem';
 import {getStorage, setStorage} from '@/utils/storage';
@@ -23,10 +23,10 @@ const cache = new LRUCache<string, ICommon.IMediaMeta>({
     dispose: async (value, key) => {
         // todo: 如果meta中也用到了，就不删除了
         // 全都放在internalkey/local中
-        const localFiles = value?.[internalSerialzeKey]?.local;
+        const localFiles = value?.[internalSerializeKey]?.local;
         if (localFiles) {
             const localMeta =
-                MediaMeta.getByMediaKey(key)?.[internalSerialzeKey]?.local;
+                MediaMeta.getByMediaKey(key)?.[internalSerializeKey]?.local;
             for (let [k, fp] of Object.entries(localFiles)) {
                 if (!localMeta?.[k] && fp) {
                     trace('清理缓存', fp);
@@ -63,7 +63,7 @@ function getCache(
 function getCacheInternal(
     mediaItem: ICommon.IMediaBase,
 ): Record<string, any> | undefined {
-    return getCache(mediaItem)?.[internalSerialzeKey];
+    return getCache(mediaItem)?.[internalSerializeKey];
 }
 
 async function clearCache() {

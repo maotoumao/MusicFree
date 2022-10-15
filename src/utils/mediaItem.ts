@@ -1,5 +1,6 @@
-import {internalSerialzeKey} from '@/constants/commonConst';
+import {internalSerializeKey} from '@/constants/commonConst';
 import produce from 'immer';
+import objectPath from 'object-path';
 
 /** 获取mediakey */
 export function getMediaKey(mediaItem: ICommon.IMediaBase) {
@@ -29,12 +30,23 @@ export function parseMediaKey(key: string): ICommon.IMediaBase {
     }
 }
 
-/** 比较两歌media是否相同 */
+/** 比较两media是否相同 */
 export function isSameMediaItem(
     a: ICommon.IMediaBase | null | undefined,
     b: ICommon.IMediaBase | null | undefined,
 ) {
     return a && b && a.id === b.id && a.platform === b.platform;
+}
+
+/** 查找是否存在 */
+export function includesMedia(
+    a: ICommon.IMediaBase[] | null | undefined,
+    b: ICommon.IMediaBase | null | undefined,
+) {
+    if (!a || !b) {
+        return false;
+    }
+    return a.findIndex(_ => isSameMediaItem(_, b)) !== -1;
 }
 
 /** 获取复位的mediaItem */
@@ -45,12 +57,12 @@ export function resetMediaItem<T extends ICommon.IMediaBase>(
 ): T {
     if (!newObj) {
         mediaItem.platform = platform ?? mediaItem.platform;
-        mediaItem[internalSerialzeKey] = undefined;
+        mediaItem[internalSerializeKey] = undefined;
         return mediaItem;
     } else {
         return produce(mediaItem, _ => {
             _.platform = platform ?? mediaItem.platform;
-            _[internalSerialzeKey] = undefined;
+            _[internalSerializeKey] = undefined;
         });
     }
 }
@@ -65,4 +77,28 @@ export function mergeProps(
               ...props,
           }
         : mediaItem;
+}
+
+export enum InternalDataType {
+    LOCALPATH = 'localPath',
+}
+
+export function setInternalData<T extends ICommon.IMediaBase>(
+    mediaItem: T,
+    key: InternalDataType,
+    value: string | number | undefined | null,
+): T {
+    return produce(mediaItem, draft => {
+        objectPath.set(draft, `${internalSerializeKey}.${key}`, value);
+    });
+}
+
+export function getInternalData<T>(
+    mediaItem: ICommon.IMediaBase | null | undefined,
+    key: InternalDataType,
+): T | undefined {
+    if (!mediaItem) {
+        return undefined;
+    }
+    return objectPath.get(mediaItem, `${internalSerializeKey}.${key}`);
 }

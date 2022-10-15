@@ -22,6 +22,7 @@ import {getMediaKey} from '@/utils/mediaItem';
 import Cache from '@/core/cache';
 import FastImage from '@/components/base/fastImage';
 import Toast from '@/utils/toast';
+import LocalMusicSheet from '@/core/localMusicSheet';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -31,6 +32,7 @@ interface IMusicItemOptionsProps {
 }
 
 const ITEM_HEIGHT = rpx(96);
+// todo: memo
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
     const {showPanel, unmountPanel} = _usePanel(sheetRef);
@@ -38,7 +40,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
 
     const {musicItem, musicSheet} = props ?? {};
 
-    const downloaded = Download.isDownloaded(musicItem);
+    const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
     function closePanel() {
         sheetRef.current?.close();
     }
@@ -100,14 +102,14 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '下载',
             show: !downloaded,
             onPress: async () => {
-                await Download.downloadMusic(musicItem);
+                Download.downloadMusic(musicItem);
                 closePanel();
             },
         },
         {
             icon: 'check-circle-outline',
             title: '已下载',
-            show: downloaded,
+            show: !!downloaded,
         },
         {
             icon: 'trash-can-outline',
@@ -124,7 +126,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '删除本地下载',
             show: downloaded,
             onPress: async () => {
-                await Download.removeDownloaded(musicItem);
+                await LocalMusicSheet.removeMusic(musicItem, true);
                 Toast.success('已删除本地下载');
                 closePanel();
             },

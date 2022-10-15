@@ -1,9 +1,9 @@
 import React from 'react';
-import Download from '@/core/download';
 import MusicList from '@/components/musicList';
+import LocalMusicSheet from '@/core/localMusicSheet';
 
 export default function LocalMusicList() {
-    const downloadedMusic = Download.useDownloadedMusic();
+    const musicList = LocalMusicSheet.useMusicList();
 
-    return <MusicList musicList={downloadedMusic} showIndex />;
+    return <MusicList musicList={musicList} showIndex />;
 }

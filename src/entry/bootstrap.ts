@@ -14,6 +14,7 @@ import Cache from '@/core/cache';
 import PluginManager from '@/core/pluginManager';
 import Network from '@/core/network';
 import {ImgAsset} from '@/constants/assetsConst';
+import LocalMusicSheet from '@/core/localMusicSheet';
 
 /** app加载前执行
  * 1. 检查权限
@@ -94,6 +95,8 @@ async function _bootstrap() {
     trace('插件初始化完成');
     await MusicQueue.setup();
     trace('播放列表初始化完成');
+    await LocalMusicSheet.setup();
+    trace('本地音乐初始化完成');
 
     ErrorUtils.setGlobalHandler(error => {
         errorLog('未捕获的错误', error);
@@ -108,6 +111,9 @@ async function setupFolder() {
         checkAndCreateDir(pathConst.cachePath),
         checkAndCreateDir(pathConst.pluginPath),
         checkAndCreateDir(pathConst.lrcCachePath),
+        checkAndCreateDir(pathConst.downloadPath).then(() => {
+            checkAndCreateDir(pathConst.downloadMusicPath);
+        }),
     ]);
 }
 

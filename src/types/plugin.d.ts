@@ -60,6 +60,7 @@ declare namespace IPlugin {
         /** 获取作品，有分页 */
         getArtistWorks?: IGetArtistWorksFunc;
         /** 导入歌单 */
+        // todo: 数据结构应该是IMusicSheetItem
         importMusicSheet?: (
             urlLike: string,
         ) => Promise<IMusic.IMusicItem[] | null>;

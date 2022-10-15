@@ -1,16 +1,13 @@
-import {internalSerialzeKey, internalSymbolKey} from '@/constants/commonConst';
+import {internalSerializeKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
-import {checkAndCreateDir} from '@/utils/fileUtils';
-import {errorLog} from '@/utils/log';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
-import {setStorage} from '@/utils/storage';
 import Toast from '@/utils/toast';
 import produce from 'immer';
-import {useEffect, useState} from 'react';
-import {unlink, downloadFile, readDir} from 'react-native-fs';
+import {downloadFile} from 'react-native-fs';
 
 import Config from './config';
+import LocalMusicSheet from './localMusicSheet';
 import MediaMeta from './mediaMeta';
 import Network from './network';
 import PluginManager from './pluginManager';
@@ -21,8 +18,6 @@ interface IDownloadMusicOptions {
     jobId?: number;
 }
 // todo： 直接把下载信息写在meta里面就好了
-/** 已下载 */
-let downloadedMusic: IMusic.IMusicItem[] = [];
 /** 下载中 */
 let downloadingMusicQueue: IDownloadMusicOptions[] = [];
 /** 队列中 */
@@ -31,7 +26,6 @@ let pendingMusicQueue: IDownloadMusicOptions[] = [];
 /** 进度 */
 let downloadingProgress: Record<string, {progress: number; size: number}> = {};
 
-const downloadedStateMapper = new StateMapper(() => downloadedMusic);
 const downloadingQueueStateMapper = new StateMapper(
     () => downloadingMusicQueue,
 );
@@ -77,21 +71,6 @@ function stopNotifyProgress() {
     progressNotifyTimer = null;
 }
 
-/** 根据文件名解析 */
-function parseFilename(fn: string): IMusic.IMusicItemBase | null {
-    const data = fn.slice(0, fn.lastIndexOf('.')).split('@');
-    const [platform, id, title, artist] = data;
-    if (!platform || !id) {
-        return null;
-    }
-    return {
-        id,
-        platform,
-        title,
-        artist,
-    };
-}
-
 /** 生成下载文件名 */
 function generateFilename(musicItem: IMusic.IMusicItem) {
     return (
@@ -118,39 +97,35 @@ function generateFilename(musicItem: IMusic.IMusicItem) {
 
 /** 初始化 */
 async function setupDownload() {
-    await checkAndCreateDir(pathConst.downloadMusicPath);
-    // const jsonData = await loadLocalJson(pathConst.downloadMusicPath);
-
-    const newDownloadedData: Record<string, IMusic.IMusicItem> = {};
-    downloadedMusic = [];
-
-    try {
-        const downloads = await readDir(pathConst.downloadMusicPath);
-        for (let i = 0; i < downloads.length; ++i) {
-            const data = parseFilename(downloads[i].name);
-            if (data) {
-                const platform = data?.platform;
-                const id = data?.id;
-                if (platform && id) {
-                    const mi = MediaMeta.get(data) ?? {};
-                    mi.id = id;
-                    mi.platform = platform;
-                    mi.title = mi.title ?? data.title;
-                    mi.artist = mi.artist ?? data.artist;
-                    mi[internalSymbolKey] = {
-                        localPath: downloads[i].path,
-                    };
-                    downloadedMusic.push(mi as IMusic.IMusicItem);
-                }
-            }
-        }
-
-        downloadedStateMapper.notify();
-        // 去掉冗余数据
-        setStorage('download-music', newDownloadedData);
-    } catch (e) {
-        errorLog('本地下载初始化失败', e);
-    }
+    // // const jsonData = await loadLocalJson(pathConst.downloadMusicPath);
+    // const newDownloadedData: Record<string, IMusic.IMusicItem> = {};
+    // downloadedMusic = [];
+    // try {
+    //     const downloads = await readDir(pathConst.downloadMusicPath);
+    //     for (let i = 0; i < downloads.length; ++i) {
+    //         const data = parseFilename(downloads[i].name);
+    //         if (data) {
+    //             const platform = data?.platform;
+    //             const id = data?.id;
+    //             if (platform && id) {
+    //                 const mi = MediaMeta.get(data) ?? {};
+    //                 mi.id = id;
+    //                 mi.platform = platform;
+    //                 mi.title = mi.title ?? data.title;
+    //                 mi.artist = mi.artist ?? data.artist;
+    //                 mi[internalSymbolKey] = {
+    //                     localPath: downloads[i].path,
+    //                 };
+    //                 downloadedMusic.push(mi as IMusic.IMusicItem);
+    //             }
+    //         }
+    //     }
+    //     downloadedStateMapper.notify();
+    //     // 去掉冗余数据
+    //     setStorage('download-music', newDownloadedData);
+    // } catch (e) {
+    //     errorLog('本地下载初始化失败', e);
+    // }
 }
 
 let maxDownload = 3;
@@ -215,27 +190,16 @@ async function downloadNext() {
     nextItem.jobId = jobId;
     try {
         await promise;
-        // 下载完成
-        downloadedMusic = produce(downloadedMusic, _ => {
-            if (
-                downloadedMusic.findIndex(_ =>
-                    isSameMediaItem(musicItem, _),
-                ) === -1
-            ) {
-                _.push({
-                    ...musicItem,
-                    [internalSymbolKey]: {
-                        localPath:
-                            pathConst.downloadMusicPath + nextItem.filename,
-                    },
-                });
-            }
-            return _;
+        LocalMusicSheet.addMusic({
+            ...musicItem,
+            [internalSerializeKey]: {
+                localPath: pathConst.downloadMusicPath + nextItem.filename,
+            },
         });
         removeFromDownloadingQueue(nextItem);
         MediaMeta.update({
             ...musicItem,
-            [internalSerialzeKey]: {
+            [internalSerializeKey]: {
                 downloaded: true,
                 local: {
                     localUrl: pathConst.downloadMusicPath + nextItem.filename,
@@ -251,7 +215,6 @@ async function downloadNext() {
             pendingMusicQueueStateMapper.notify();
         }
         delete downloadingProgress[nextItem.filename];
-        downloadedStateMapper.notify();
         downloadNext();
     } catch {
         downloadingMusicQueue = produce(downloadingMusicQueue, _ =>
@@ -298,57 +261,12 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
     }
 }
 
-/** 是否下载 */
-function isDownloaded(mi: IMusic.IMusicItem | null) {
-    return mi
-        ? downloadedMusic.findIndex(_ => isSameMediaItem(_, mi)) !== -1
-        : false;
-}
-
-/** 获取下载的音乐 */
-function getDownloaded(mi: ICommon.IMediaBase | null) {
-    return mi ? downloadedMusic.find(_ => isSameMediaItem(_, mi)) : null;
-}
-
-/** 移除下载的文件 */
-async function removeDownloaded(mi: IMusic.IMusicItem) {
-    const localPath = getDownloaded(mi)?.[internalSymbolKey]?.localPath;
-    if (localPath) {
-        await unlink(localPath);
-        downloadedMusic = downloadedMusic.filter(_ => !isSameMediaItem(_, mi));
-        MediaMeta.update(mi, undefined);
-        downloadedStateMapper.notify();
-    }
-}
-
-/** 某个音乐是否被下载-状态 */
-function useIsDownloaded(mi: IMusic.IMusicItem | null) {
-    const downloadedMusicState = downloadedStateMapper.useMappedState();
-    const [downloaded, setDownloaded] = useState<boolean>(isDownloaded(mi));
-    useEffect(() => {
-        if (!mi) {
-            setDownloaded(false);
-        } else {
-            setDownloaded(
-                downloadedMusicState.findIndex(_ => isSameMediaItem(mi, _)) !==
-                    -1,
-            );
-        }
-    }, [downloadedMusicState, mi]);
-    return downloaded;
-}
-
 const Download = {
     downloadMusic,
     setup: setupDownload,
-    useDownloadedMusic: downloadedStateMapper.useMappedState,
     useDownloadingMusic: downloadingQueueStateMapper.useMappedState,
     usePendingMusic: pendingMusicQueueStateMapper.useMappedState,
     useDownloadingProgress: downloadingProgressStateMapper.useMappedState,
-    isDownloaded,
-    useIsDownloaded,
-    getDownloaded,
-    removeDownloaded,
 };
 
 export default Download;

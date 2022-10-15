@@ -1,5 +1,5 @@
 export const internalSymbolKey = Symbol.for('$');
-export const internalSerialzeKey = '$';
+export const internalSerializeKey = '$';
 export const tabName = {
     music: '单曲',
     album: '专辑',

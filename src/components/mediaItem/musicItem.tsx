@@ -2,11 +2,11 @@ import React from 'react';
 import {Text} from 'react-native';
 import rpx from '@/utils/rpx';
 import ListItem, {ILeftProps} from '../base/listItem';
-import Download from '@/core/download';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicQueue from '@/core/musicQueue';
 import IconButton from '../base/iconButton';
 import usePanel from '../panels/usePanel';
+import LocalMusicSheet from '@/core/localMusicSheet';
 
 interface IMusicItemProps {
     index?: string | number;
@@ -27,7 +27,7 @@ export default function MusicItem(props: IMusicItemProps) {
             title={musicItem.title}
             desc={
                 <>
-                    {Download.isDownloaded(musicItem) && (
+                    {LocalMusicSheet.isLocalMusic(musicItem) && (
                         <Icon
                             color="#11659a"
                             name="check-circle"

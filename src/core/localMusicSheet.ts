@@ -1,8 +1,9 @@
-import {internalSerialzeKey, StorageKeys} from '@/constants/commonConst';
+import {internalSerializeKey, StorageKeys} from '@/constants/commonConst';
 import mp3Util, {IBasicMeta} from '@/native/mp3Util';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storage';
+import {useEffect, useState} from 'react';
 import {FileSystem} from 'react-native-file-access';
 
 let localSheet: IMusic.IMusicItem[] = [];
@@ -43,8 +44,8 @@ export async function removeMusic(
     let newSheet = [...localSheet];
     if (idx !== -1) {
         newSheet.splice(idx, 1);
-        if (deleteOriginalFile && musicItem[internalSerialzeKey]?.localPath) {
-            await FileSystem.unlink(musicItem[internalSerialzeKey].localPath);
+        if (deleteOriginalFile && musicItem[internalSerializeKey]?.localPath) {
+            await FileSystem.unlink(musicItem[internalSerializeKey].localPath);
         }
     }
     localSheet = newSheet;
@@ -65,7 +66,8 @@ function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
     };
 }
 
-export async function importFolder(folderPath: string) {
+/** 从文件夹导入 */
+async function importFolder(folderPath: string) {
     const dirFiles = await FileSystem.statDir(folderPath);
     const musicFiles = dirFiles.filter(
         _ => _.type === 'file' && _.filename.endsWith('.mp3'),
@@ -76,7 +78,6 @@ export async function importFolder(folderPath: string) {
             let {platform, id, title, artist} =
                 parseFilename(mf.filename) ?? {};
 
-            const decodedPath = decodeURIComponent(mf.path);
             let meta: IBasicMeta | null;
             try {
                 meta = await mp3Util.getBasicMeta(mf.path);
@@ -95,11 +96,46 @@ export async function importFolder(folderPath: string) {
                 duration: parseInt(meta?.duration ?? '0') / 1000,
                 album: meta?.album ?? '',
                 artwork: '',
-                [internalSerialzeKey]: {
-                    localPath: decodedPath,
+                [internalSerializeKey]: {
+                    localPath: mf.path,
                 },
             };
         }),
     );
     addMusic(musicItems);
 }
+
+/** 是否为本地音乐 */
+function isLocalMusic(
+    musicItem: ICommon.IMediaBase | null,
+): IMusic.IMusicItem | undefined {
+    return musicItem
+        ? localSheet.find(_ => isSameMediaItem(_, musicItem))
+        : undefined;
+}
+
+/** 状态-是否为本地音乐 */
+function useIsLocal(musicItem: IMusic.IMusicItem | null) {
+    const localMusicState = localSheetStateMapper.useMappedState();
+    const [isLocal, setIsLocal] = useState<boolean>(!!isLocalMusic(musicItem));
+    useEffect(() => {
+        if (!musicItem) {
+            setIsLocal(false);
+        } else {
+            setIsLocal(!!isLocalMusic(musicItem));
+        }
+    }, [localMusicState, musicItem]);
+    return isLocal;
+}
+
+const LocalMusicSheet = {
+    setup,
+    addMusic,
+    removeMusic,
+    importFolder,
+    isLocalMusic,
+    useIsLocal,
+    useMusicList: localSheetStateMapper.useMappedState,
+};
+
+export default LocalMusicSheet;

@@ -20,18 +20,20 @@ import MediaMeta from './mediaMeta';
 import {nanoid} from 'nanoid';
 import {errorLog, trace} from '../utils/log';
 import Cache from './cache';
-import {isSameMediaItem, resetMediaItem} from '@/utils/mediaItem';
 import {
-    CacheControl,
-    internalSerialzeKey,
-    internalSymbolKey,
-} from '@/constants/commonConst';
-import Download from './download';
+    getInternalData,
+    InternalDataType,
+    isSameMediaItem,
+    resetMediaItem,
+} from '@/utils/mediaItem';
+import {CacheControl, internalSerializeKey} from '@/constants/commonConst';
 import delay from '@/utils/delay';
 import * as cheerio from 'cheerio';
 import CookieManager from '@react-native-cookies/cookies';
 import he from 'he';
 import Network from './network';
+import LocalMusicSheet from './localMusicSheet';
+import {FileSystem} from 'react-native-file-access';
 
 axios.defaults.timeout = 1500;
 
@@ -183,13 +185,15 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         musicItem: IMusic.IMusicItemBase,
         retryCount = 1,
     ): Promise<IPlugin.IMediaSourceResult> {
-        console.log('获取真实源');
         // 1. 本地搜索 其实直接读mediameta就好了
         const localPath =
-            musicItem?.[internalSymbolKey]?.localPath ??
-            Download.getDownloaded(musicItem)?.[internalSymbolKey]?.localPath;
-        if (localPath && (await exists(localPath))) {
-            trace('播放', '本地播放');
+            getInternalData<string>(musicItem, InternalDataType.LOCALPATH) ??
+            getInternalData<string>(
+                LocalMusicSheet.isLocalMusic(musicItem),
+                InternalDataType.LOCALPATH,
+            );
+        if (localPath && (await FileSystem.exists(localPath))) {
+            trace('本地播放', localPath);
             return {
                 url: localPath,
             };
@@ -301,8 +305,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
         // 2.本地缓存
         const localLrc =
-            meta?.[internalSerialzeKey]?.local?.localLrc ||
-            cache?.[internalSerialzeKey]?.local?.localLrc;
+            meta?.[internalSerializeKey]?.local?.localLrc ||
+            cache?.[internalSerializeKey]?.local?.localLrc;
         if (localLrc && (await exists(localLrc))) {
             rawLrc = await readFile(localLrc, 'utf8');
             return {
@@ -358,12 +362,12 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 await writeFile(filename, rawLrc, 'utf8');
                 // 写入缓存
                 Cache.update(musicItem, [
-                    [`${internalSerialzeKey}.local.localLrc`, filename],
+                    [`${internalSerializeKey}.local.localLrc`, filename],
                 ]);
                 // 如果有meta
                 if (meta) {
                     MediaMeta.update(musicItem, [
-                        [`${internalSerialzeKey}.local.localLrc`, filename],
+                        [`${internalSerializeKey}.local.localLrc`, filename],
                     ]);
                 }
                 return {
@@ -448,7 +452,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 (await this.plugin.instance?.importMusicSheet?.(urlLike)) ?? [];
             result.forEach(_ => resetMediaItem(_, this.plugin.name));
             return result;
-        } catch {
+        } catch (e) {
+            console.log(e);
             return [];
         }
     }
@@ -471,6 +476,14 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
 
 let plugins: Array<Plugin> = [];
 const pluginStateMapper = new StateMapper(() => plugins);
+const localFilePlugin = new Plugin(
+    `function (){
+    return {
+        platform: '本地',
+    }
+}`,
+    '',
+);
 
 async function setup() {
     const _plugins: Array<Plugin> = [];
@@ -598,7 +611,9 @@ function getByHash(hash: string) {
 }
 
 function getByName(name: string) {
-    return plugins.find(_ => _.name === name);
+    return name === '本地'
+        ? localFilePlugin
+        : plugins.find(_ => _.name === name);
 }
 
 function getValidPlugins() {
