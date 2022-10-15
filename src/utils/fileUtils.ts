@@ -102,3 +102,10 @@ export async function clearCache(type: 'music' | 'lyric' | 'image') {
         return FastImage.clearDiskCache();
     }
 }
+
+export function addFileScheme(fileName: string) {
+    if (fileName.startsWith('/')) {
+        return `file://${fileName}`;
+    }
+    return fileName;
+}

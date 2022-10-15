@@ -217,26 +217,6 @@ export default function BasicSetting() {
                         });
                     },
                 },
-                // {
-                //     title: '插件缓存策略',
-                //     right: () => (
-                //         <ThemeText style={style.centerText}>
-                //             {basicSetting?.pluginCacheControl ?? CacheControl.Cache}
-                //         </ThemeText>
-                //     ),
-                //     onPress() {
-                //         showDialog('RadioDialog', {
-                //             title: '插件缓存策略',
-                //             content: [CacheControl.Cache, CacheControl.NoCache, CacheControl.NoStore],
-                //             onOk(val) {
-                //                 Config.set(
-                //                     'setting.basic.pluginCacheControl',
-                //                     val as string,
-                //                 );
-                //             },
-                //         });
-                //     },
-                // },
             ],
         },
         {
