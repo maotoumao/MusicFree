@@ -11,6 +11,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
 
@@ -28,7 +29,7 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
     }
 
     private boolean isContentUri(Uri uri) {
-        if(uri != null) {
+        if (uri != null) {
             String scheme = uri.getScheme();
             return scheme != null && scheme.equalsIgnoreCase("content");
         }
@@ -40,7 +41,7 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
         try {
             Uri uri = Uri.parse(filePath);
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            if(isContentUri(uri)) {
+            if (isContentUri(uri)) {
                 mmr.setDataSource(getReactApplicationContext(), uri);
             } else {
                 mmr.setDataSource(filePath);

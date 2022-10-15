@@ -129,7 +129,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
         {
             icon: 'delete-forever-outline',
             title: '删除本地下载',
-            show: downloaded,
+            show: !!downloaded,
             onPress: async () => {
                 await LocalMusicSheet.removeMusic(musicItem, true);
                 Toast.success('已删除本地下载');
