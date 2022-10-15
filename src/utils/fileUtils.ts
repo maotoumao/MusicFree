@@ -1,6 +1,5 @@
 import pathConst from '@/constants/pathConst';
 import FastImage from 'react-native-fast-image';
-import {FileSystem} from 'react-native-file-access';
 import {
     copyFile,
     downloadFile,
@@ -101,15 +100,5 @@ export async function clearCache(type: 'music' | 'lyric' | 'image') {
         } catch {}
     } else if (type === 'image') {
         return FastImage.clearDiskCache();
-    }
-}
-
-export async function fileExists(fileName: string) {
-    if (fileName.startsWith('file://')) {
-        return await exists(fileName);
-    } else if (fileName.startsWith('content://')) {
-        return await FileSystem.exists(fileName);
-    } else {
-        return await exists(fileName);
     }
 }

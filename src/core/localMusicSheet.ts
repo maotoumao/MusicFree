@@ -1,6 +1,10 @@
 import {internalSerializeKey, StorageKeys} from '@/constants/commonConst';
 import mp3Util, {IBasicMeta} from '@/native/mp3Util';
-import {isSameMediaItem} from '@/utils/mediaItem';
+import {
+    getInternalData,
+    InternalDataType,
+    isSameMediaItem,
+} from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storage';
 import {useEffect, useState} from 'react';
@@ -10,9 +14,22 @@ let localSheet: IMusic.IMusicItem[] = [];
 const localSheetStateMapper = new StateMapper(() => localSheet);
 
 export async function setup() {
-    const sheets = await getStorage(StorageKeys.LocalMusicSheet);
-    if (sheets) {
-        localSheet = sheets;
+    const sheet = await getStorage(StorageKeys.LocalMusicSheet);
+    if (sheet) {
+        let validSheet = [];
+        for (let musicItem of sheet) {
+            const localPath = getInternalData<string>(
+                musicItem,
+                InternalDataType.LOCALPATH,
+            );
+            if (localPath && (await FileSystem.exists(localPath))) {
+                validSheet.push(musicItem);
+            }
+        }
+        if (validSheet.length !== sheet.length) {
+            await setStorage(StorageKeys.LocalMusicSheet, validSheet);
+        }
+        localSheet = validSheet;
     } else {
         await setStorage(StorageKeys.LocalMusicSheet, []);
     }
