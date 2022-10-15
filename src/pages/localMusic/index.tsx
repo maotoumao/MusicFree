@@ -5,18 +5,12 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import LocalMusicList from './localMusicList';
 import MusicBar from '@/components/musicBar';
-import {useEffect} from 'react';
-import Download from '@/core/download';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 import DocumentPicker from 'react-native-document-picker';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
 
 export default function LocalMusic() {
-    useEffect(() => {
-        Download.setup();
-    }, []);
-
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />

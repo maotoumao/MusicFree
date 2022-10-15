@@ -5,7 +5,6 @@ import TrackPlayer, {Capability} from 'react-native-track-player';
 import 'react-native-get-random-values';
 import Config from '@/core/config';
 import RNBootSplash from 'react-native-bootsplash';
-import Download from '@/core/download';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
 import {errorLog, trace} from '@/utils/log';
@@ -89,8 +88,6 @@ async function _bootstrap() {
     trace('播放器初始化完成');
     await Cache.setup();
     trace('缓存初始化完成');
-    await Download.setup();
-    trace('下载初始化完成');
     await PluginManager.setup();
     trace('插件初始化完成');
     await MusicQueue.setup();

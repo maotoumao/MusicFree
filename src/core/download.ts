@@ -95,39 +95,6 @@ function generateFilename(musicItem: IMusic.IMusicItem) {
 //   return {};
 // }
 
-/** 初始化 */
-async function setupDownload() {
-    // // const jsonData = await loadLocalJson(pathConst.downloadMusicPath);
-    // const newDownloadedData: Record<string, IMusic.IMusicItem> = {};
-    // downloadedMusic = [];
-    // try {
-    //     const downloads = await readDir(pathConst.downloadMusicPath);
-    //     for (let i = 0; i < downloads.length; ++i) {
-    //         const data = parseFilename(downloads[i].name);
-    //         if (data) {
-    //             const platform = data?.platform;
-    //             const id = data?.id;
-    //             if (platform && id) {
-    //                 const mi = MediaMeta.get(data) ?? {};
-    //                 mi.id = id;
-    //                 mi.platform = platform;
-    //                 mi.title = mi.title ?? data.title;
-    //                 mi.artist = mi.artist ?? data.artist;
-    //                 mi[internalSymbolKey] = {
-    //                     localPath: downloads[i].path,
-    //                 };
-    //                 downloadedMusic.push(mi as IMusic.IMusicItem);
-    //             }
-    //         }
-    //     }
-    //     downloadedStateMapper.notify();
-    //     // 去掉冗余数据
-    //     setStorage('download-music', newDownloadedData);
-    // } catch (e) {
-    //     errorLog('本地下载初始化失败', e);
-    // }
-}
-
 let maxDownload = 3;
 /** 从队列取出下一个要下载的 */
 async function downloadNext() {
@@ -263,7 +230,6 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
 
 const Download = {
     downloadMusic,
-    setup: setupDownload,
     useDownloadingMusic: downloadingQueueStateMapper.useMappedState,
     usePendingMusic: pendingMusicQueueStateMapper.useMappedState,
     useDownloadingProgress: downloadingProgressStateMapper.useMappedState,
