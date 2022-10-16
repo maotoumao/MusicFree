@@ -238,6 +238,19 @@ function PluginView(props: IPluginViewProps) {
             show: !!plugin.instance.importMusicSheet,
         },
         {
+            title: '更新插件',
+            icon: 'update',
+            async onPress() {
+                try {
+                    await PluginManager.updatePlugin(plugin);
+                    Toast.success('已更新到最新版本');
+                } catch (e: any) {
+                    Toast.warn(e?.message ?? '更新失败');
+                }
+            },
+            show: !!plugin.instance.srcUrl,
+        },
+        {
             title: '卸载插件',
             icon: 'trash-can-outline',
             show: true,

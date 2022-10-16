@@ -13,7 +13,7 @@ import bigInt from 'big-integer';
 import qs from 'qs';
 import {ToastAndroid} from 'react-native';
 import pathConst from '@/constants/pathConst';
-import {satisfies} from 'compare-versions';
+import {compare, satisfies} from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
 import MediaMeta from './mediaMeta';
@@ -555,20 +555,41 @@ async function installPluginFromUrl(url: string) {
             if (_pluginIndex !== -1) {
                 throw new Error('插件已安装');
             }
+            const oldVersionPlugin = plugins.find(p => p.name === plugin.name);
+            if (oldVersionPlugin) {
+                if (
+                    compare(
+                        oldVersionPlugin.instance.version ?? '',
+                        plugin.instance.version ?? '',
+                        '>',
+                    )
+                ) {
+                    throw new Error('已安装更新版本的插件');
+                }
+            }
+
             if (plugin.hash !== '') {
                 const fn = nanoid();
                 const _pluginPath = `${pathConst.pluginPath}${fn}.js`;
                 await writeFile(_pluginPath, funcCode, 'utf8');
                 plugin.path = _pluginPath;
                 plugins = plugins.concat(plugin);
+                if (oldVersionPlugin) {
+                    plugins = plugins.filter(
+                        _ => _.hash !== oldVersionPlugin.hash,
+                    );
+                    try {
+                        await unlink(oldVersionPlugin.path);
+                    } catch {}
+                }
                 pluginStateMapper.notify();
                 return;
             }
             throw new Error('插件无法解析');
         }
-    } catch (e) {
+    } catch (e: any) {
         errorLog('URL安装插件失败', e);
-        throw new Error('插件安装失败');
+        throw new Error(e?.message ?? '');
     }
 }
 
@@ -602,6 +623,22 @@ async function uninstallAllPlugins() {
     pluginStateMapper.notify();
 }
 
+async function updatePlugin(plugin: Plugin) {
+    const updateUrl = plugin.instance.srcUrl;
+    if (!updateUrl) {
+        throw new Error('没有更新源');
+    }
+    try {
+        await installPluginFromUrl(updateUrl);
+    } catch (e: any) {
+        if (e.message === '插件已安装') {
+            throw new Error('当前已是最新版本');
+        } else {
+            throw e;
+        }
+    }
+}
+
 function getByMedia(mediaItem: ICommon.IMediaBase) {
     return getByName(mediaItem.platform);
 }
@@ -628,6 +665,7 @@ const PluginManager = {
     setup,
     installPlugin,
     installPluginFromUrl,
+    updatePlugin,
     uninstallPlugin,
     getByMedia,
     getByHash,
