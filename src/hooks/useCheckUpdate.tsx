@@ -4,6 +4,7 @@ import checkUpdate from '@/utils/checkUpdate';
 import openUrl from '@/utils/openUrl';
 import Toast from '@/utils/toast';
 import {useEffect} from 'react';
+import {exists, unlink} from 'react-native-fs';
 
 export default function (callOnMount = true) {
     const {showDialog} = useDialog();
@@ -22,6 +23,11 @@ export default function (callOnMount = true) {
                     afterDownload(toFile) {
                         Toast.success('下载成功');
                         openUrl(`file://${toFile}`);
+                    },
+                    async afterCancel(toFile) {
+                        if (await exists(toFile)) {
+                            await unlink(toFile);
+                        }
                     },
                 });
             } else {

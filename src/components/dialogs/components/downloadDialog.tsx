@@ -15,7 +15,7 @@ interface IDownloadDialogProps {
     fromUrl: string;
     toFile: string;
     afterDownload?: (downloadPath: string) => void;
-    afterCancel?: () => void;
+    afterCancel?: (downloadPath: string) => void;
 }
 export default function DownloadDialog(props: IDownloadDialogProps) {
     const {
@@ -66,7 +66,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         if (jobId.current) {
                             stopDownload(jobId.current);
                             jobId.current = undefined;
-                            afterCancel?.();
+                            afterCancel?.(toFile);
                         }
                         hideDialog();
                     }}>
