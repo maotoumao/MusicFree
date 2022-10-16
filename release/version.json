@@ -1,12 +1,11 @@
 {
-    "version": "0.0.1-alpha.4",
+    "version": "0.0.1-alpha.5",
     "changeLog": [
-        "1. 修复专辑详情页没有loading的问题",
-        "2. 为插件新增Cookie管理器",
-        "3. 优化播放页的显示",
-        "4. 新增一键卸载全部插件的功能"
+        "1. 新增功能：导入本地音乐文件",
+        "2. 从网络源安装的插件可在插件页直接更新",
+        "3. 调整下载音乐的逻辑"
     ],
     "download": [
-        "https://gitee.com/maotoumao/MusicFree/releases/download/v0.0.1-alpha.4/app-release.apk"
+        "https://gitee.com/maotoumao/MusicFree/releases/download/v0.0.1-alpha.5/app-release.apk"
     ]
 }
