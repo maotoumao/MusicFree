@@ -1,11 +1,11 @@
-import React, {useRef, useState} from 'react';
-import {Button, Dialog, ProgressBar} from 'react-native-paper';
+import React from 'react';
+import {Button, Dialog} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/base/themeText';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import {downloadFile, stopDownload} from 'react-native-fs';
-import {sizeFormatter} from '@/utils/fileUtils';
+import openUrl from '@/utils/openUrl';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 interface IDownloadDialogProps {
     visible: boolean;
@@ -13,24 +13,9 @@ interface IDownloadDialogProps {
     title: string;
     content: string[];
     fromUrl: string;
-    toFile: string;
-    afterDownload?: (downloadPath: string) => void;
-    afterCancel?: (downloadPath: string) => void;
 }
 export default function DownloadDialog(props: IDownloadDialogProps) {
-    const {
-        visible,
-        title,
-        content,
-        afterDownload,
-        afterCancel,
-        fromUrl,
-        toFile,
-        hideDialog,
-    } = props;
-    const [progress, setProgress] = useState(0);
-    const [totalSize, setTotalSize] = useState(0);
-    const jobId = useRef<number>();
+    const {visible, title, content, fromUrl, hideDialog} = props;
     const colors = useColors();
 
     return (
@@ -45,29 +30,11 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         {_}
                     </ThemeText>
                 ))}
-                {progress && totalSize && totalSize !== 0 ? (
-                    <View style={style.progress}>
-                        <ProgressBar
-                            color={colors.textHighlight}
-                            progress={progress / totalSize}
-                        />
-                        <ThemeText fontColor="highlight" fontSize="subTitle">
-                            {sizeFormatter(progress)}/{sizeFormatter(totalSize)}
-                        </ThemeText>
-                    </View>
-                ) : (
-                    <></>
-                )}
             </Dialog.Content>
             <Dialog.Actions>
                 <Button
                     color={colors.text}
                     onPress={() => {
-                        if (jobId.current) {
-                            stopDownload(jobId.current);
-                            jobId.current = undefined;
-                            afterCancel?.(toFile);
-                        }
                         hideDialog();
                     }}>
                     取消
@@ -75,25 +42,10 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                 <Button
                     color={colors.text}
                     onPress={async () => {
-                        if (jobId.current === undefined) {
-                            const res = downloadFile({
-                                fromUrl,
-                                toFile,
-                                background: true,
-                                begin(res) {
-                                    setTotalSize(res.contentLength);
-                                },
-                                progress(res) {
-                                    setProgress(res.bytesWritten);
-                                },
-                            });
-                            jobId.current = res.jobId;
-                            await res.promise;
-                            afterDownload?.(toFile);
-                            hideDialog();
-                        }
+                        openUrl(fromUrl);
+                        Clipboard.setString(fromUrl);
                     }}>
-                    下载
+                    从浏览器下载
                 </Button>
             </Dialog.Actions>
         </Dialog>
