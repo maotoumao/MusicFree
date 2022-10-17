@@ -108,10 +108,10 @@ async function importFolder(folderPath: string) {
             return {
                 id,
                 platform,
-                title: title ?? meta?.title ?? '未知名称',
+                title: title ?? meta?.title ?? mf.filename,
                 artist: artist ?? meta?.artist ?? '未知歌手',
                 duration: parseInt(meta?.duration ?? '0') / 1000,
-                album: meta?.album ?? '',
+                album: meta?.album ?? '未知专辑',
                 artwork: '',
                 [internalSerializeKey]: {
                     localPath: mf.path,
