@@ -38,6 +38,16 @@ export default function () {
                         });
                     },
                 },
+                {
+                    icon: 'playlist-edit',
+                    title: '批量编辑',
+                    onPress() {
+                        navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
+                            musicList: musicSheet.musicList,
+                            musicSheet: musicSheet,
+                        });
+                    },
+                },
             ]}
         />
     );

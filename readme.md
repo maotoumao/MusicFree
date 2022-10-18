@@ -34,7 +34,7 @@
 请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)
 
 ## WIP
-1. 歌曲批量编辑 [0%]
+1. 歌曲批量编辑 [40%]
 2. 最近播放 [0%]
 3. 横屏适配 [0%]
 

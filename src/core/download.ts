@@ -105,7 +105,7 @@ async function downloadNext() {
     ) {
         return;
     }
-    const nextItem = pendingMusicQueue[0];
+    let nextItem = pendingMusicQueue[0];
     const musicItem = nextItem.musicItem;
     let url = musicItem.url;
     let headers = musicItem.headers;
@@ -154,7 +154,7 @@ async function downloadNext() {
             });
         },
     });
-    nextItem.jobId = jobId;
+    nextItem = {...nextItem, jobId};
     try {
         await promise;
         LocalMusicSheet.addMusic({
@@ -214,7 +214,8 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
             ) === -1 &&
             downloadingMusicQueue.findIndex(_ =>
                 isSameMediaItem(_.musicItem, musicItem),
-            ) === -1,
+            ) === -1 &&
+            !LocalMusicSheet.isLocalMusic(musicItem),
     );
     const enqueueData = musicItems.map(_ => ({
         musicItem: _,

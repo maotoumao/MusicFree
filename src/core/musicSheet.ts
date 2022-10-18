@@ -217,6 +217,7 @@ const MusicSheet = {
     useSheets,
     removeSheet,
     removeMusicByIndex,
+    updateAndSaveSheet,
     removeMusic,
     useUserSheets,
 };

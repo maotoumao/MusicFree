@@ -1,6 +1,7 @@
 import ArtistDetail from '@/pages/artistDetail';
 import Downloading from '@/pages/downloading';
 import LocalMusic from '@/pages/localMusic';
+import MusicListEditor from '@/pages/musicListEditor';
 import SearchMusicList from '@/pages/searchMusicList';
 import AlbumDetail from '../pages/albumDetail';
 import Home from '../pages/home';
@@ -31,6 +32,8 @@ const ROUTE_PATH = {
     DOWNLOADING: 'downloading',
     /** 从歌曲列表中搜索 */
     SEARCH_MUSIC_LIST: 'search-music-list',
+    /** 批量编辑 */
+    MUSIC_LIST_EDITOR: 'music-list-editor',
 } as const;
 
 type Valueof<T> = T[keyof T];
@@ -80,6 +83,10 @@ const routes: Array<IRoutes> = [
     {
         path: ROUTE_PATH.SEARCH_MUSIC_LIST,
         component: SearchMusicList,
+    },
+    {
+        path: ROUTE_PATH.MUSIC_LIST_EDITOR,
+        component: MusicListEditor,
     },
 ];
 

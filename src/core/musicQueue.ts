@@ -204,15 +204,18 @@ const addAll = (
 };
 
 /** 追加到队尾 */
-const add = (musicItem: IMusic.IMusicItem, beforeIndex?: number) => {
-    addAll([musicItem], beforeIndex);
+const add = (
+    musicItem: IMusic.IMusicItem | IMusic.IMusicItem[],
+    beforeIndex?: number,
+) => {
+    addAll(Array.isArray(musicItem) ? musicItem : [musicItem], beforeIndex);
 };
 
-const addNext = (musicItem: IMusic.IMusicItem) => {
+const addNext = (musicItem: IMusic.IMusicItem | IMusic.IMusicItem[]) => {
     const shouldPlay = musicQueue.length === 0;
     add(musicItem, currentIndex + 1);
     if (shouldPlay) {
-        play(musicItem);
+        play(Array.isArray(musicItem) ? musicItem[0] : musicItem);
     }
 };
 
