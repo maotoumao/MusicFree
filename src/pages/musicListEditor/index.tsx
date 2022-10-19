@@ -26,6 +26,7 @@ export default function MusicListEditor() {
 
     useEffect(() => {
         setEditingMusicList(musicList);
+        setSelectedIndices(Array(musicList.length).fill(false));
         return () => {
             setEditingMusicList([]);
             setSelectedIndices([]);

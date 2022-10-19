@@ -88,7 +88,9 @@ interface IListItemProps {
     right?: () => JSX.Element;
     itemPaddingHorizontal?: number;
     itemHeight?: number;
+    itemBackgroundColor?: string;
     onPress?: () => void;
+    onLongPress?: () => void;
 }
 
 export default function ListItem(props: IListItemProps) {
@@ -99,11 +101,14 @@ export default function ListItem(props: IListItemProps) {
         right,
         itemHeight,
         onPress,
+        onLongPress,
         left,
+        itemBackgroundColor,
         itemPaddingHorizontal = rpx(24),
     } = props;
     return (
         <List.Item
+            onLongPress={onLongPress}
             left={() => <Left {...(left ?? {})} />}
             style={[
                 style.wrapper,
@@ -111,6 +116,7 @@ export default function ListItem(props: IListItemProps) {
                     paddingHorizontal: itemPaddingHorizontal,
                     height: itemHeight ?? rpx(120),
                     paddingVertical: 0,
+                    backgroundColor: itemBackgroundColor,
                 },
             ]}
             title={() => (

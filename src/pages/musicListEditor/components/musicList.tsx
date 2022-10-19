@@ -1,12 +1,13 @@
 import React, {memo} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Empty from '@/components/base/empty';
 import MusicItem from '@/components/mediaItem/musicItem';
 import produce from 'immer';
-import {useAtom, useAtomValue, useSetAtom} from 'jotai';
+import {useAtom, useSetAtom} from 'jotai';
 import {Checkbox} from 'react-native-paper';
 import {editingMusicListAtom, selectedIndicesAtom} from '../store/atom';
+import DraggableFlatList from 'react-native-draggable-flatlist';
 
 const ITEM_HEIGHT = rpx(120);
 
@@ -14,14 +15,17 @@ interface IMusicEditorItemProps {
     index: number;
     checked: boolean;
     musicItem: IMusic.IMusicItem;
+    isActive: boolean;
+    drag: () => void;
 }
 function _MusicEditorItem(props: IMusicEditorItemProps) {
     const setSelectedIndices = useSetAtom(selectedIndicesAtom);
-    const {index, checked, musicItem} = props;
-
+    const {index, checked, musicItem, isActive, drag} = props;
     return (
         <MusicItem
             musicItem={musicItem}
+            onItemLongPress={drag}
+            itemBackgroundColor={isActive ? '#99999933' : undefined}
             left={{
                 component: () => (
                     <View style={style.checkBox}>
@@ -55,32 +59,18 @@ const MusicEditorItem = memo(
     (prev, curr) =>
         prev.checked === curr.checked &&
         prev.index === curr.index &&
-        prev.musicItem === curr.musicItem,
+        prev.musicItem === curr.musicItem &&
+        prev.isActive === curr.isActive,
 );
 
 /** 音乐列表 */
 export default function MusicList() {
-    const [editingMusicList] = useAtom(editingMusicListAtom);
-    const selectedIndices = useAtomValue(selectedIndicesAtom);
-
-    const renderItem = ({
-        index,
-        item: musicItem,
-    }: {
-        index: number;
-        item: IMusic.IMusicItem;
-    }) => {
-        return (
-            <MusicEditorItem
-                musicItem={musicItem}
-                checked={selectedIndices[index]}
-                index={index}
-            />
-        );
-    };
+    const [editingMusicList, setEditingMusicList] =
+        useAtom(editingMusicListAtom);
+    const [selectedIndices, setSelectedIndices] = useAtom(selectedIndicesAtom);
 
     return (
-        <FlatList
+        <DraggableFlatList
             ListEmptyComponent={Empty}
             keyExtractor={musicItem =>
                 `ml-${musicItem.id}${musicItem.platform}`
@@ -91,9 +81,31 @@ export default function MusicList() {
                 index,
             })}
             extraData={{selectedIndices}}
-            style={style.wrapper}
+            containerStyle={style.wrapper}
             data={editingMusicList}
-            renderItem={renderItem}
+            onDragEnd={data => {
+                setEditingMusicList(data.data);
+                const {from, to} = data;
+                setSelectedIndices(prev => {
+                    const newIndices = [
+                        ...prev.slice(0, from),
+                        ...prev.slice(from + 1),
+                    ];
+                    newIndices.splice(to, 0, prev[from]);
+                    return newIndices;
+                });
+            }}
+            renderItem={({index, item: musicItem, isActive, drag}) => {
+                return (
+                    <MusicEditorItem
+                        musicItem={musicItem}
+                        checked={selectedIndices[index!]}
+                        index={index!}
+                        isActive={isActive}
+                        drag={drag}
+                    />
+                );
+            }}
         />
     );
 }

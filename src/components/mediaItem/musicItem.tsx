@@ -11,18 +11,32 @@ import LocalMusicSheet from '@/core/localMusicSheet';
 interface IMusicItemProps {
     index?: string | number;
     left?: ILeftProps;
+    right?: () => JSX.Element;
     musicItem: IMusic.IMusicItem;
     musicSheet?: IMusic.IMusicSheetItem;
     onItemPress?: (musicItem: IMusic.IMusicItem) => void;
+    onItemLongPress?: () => void;
+    itemBackgroundColor?: string;
 }
 const ITEM_HEIGHT = rpx(120);
 export default function MusicItem(props: IMusicItemProps) {
-    const {musicItem, index, left, onItemPress, musicSheet} = props;
+    const {
+        musicItem,
+        index,
+        left,
+        right,
+        onItemPress,
+        onItemLongPress,
+        musicSheet,
+        itemBackgroundColor,
+    } = props;
     const {showPanel} = usePanel();
 
     return (
         <ListItem
             itemHeight={ITEM_HEIGHT}
+            itemBackgroundColor={itemBackgroundColor}
+            onLongPress={onItemLongPress}
             left={index !== undefined ? {index: index, width: rpx(56)} : left}
             title={musicItem.title}
             desc={
@@ -47,16 +61,23 @@ export default function MusicItem(props: IMusicItemProps) {
                     MusicQueue.play(musicItem);
                 }
             }}
-            right={() => (
-                <IconButton
-                    name="dots-vertical"
-                    size="normal"
-                    fontColor="normal"
-                    onPress={() => {
-                        showPanel('MusicItemOptions', {musicItem, musicSheet});
-                    }}
-                />
-            )}
+            right={
+                right
+                    ? right
+                    : () => (
+                          <IconButton
+                              name={'dots-vertical'}
+                              size="normal"
+                              fontColor="normal"
+                              onPress={() => {
+                                  showPanel('MusicItemOptions', {
+                                      musicItem,
+                                      musicSheet,
+                                  });
+                              }}
+                          />
+                      )
+            }
         />
     );
 }
