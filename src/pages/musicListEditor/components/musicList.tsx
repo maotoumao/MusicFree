@@ -6,7 +6,11 @@ import MusicItem from '@/components/mediaItem/musicItem';
 import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
 import {Checkbox} from 'react-native-paper';
-import {editingMusicListAtom, selectedIndicesAtom} from '../store/atom';
+import {
+    editingMusicListAtom,
+    musicListChangedAtom,
+    selectedIndicesAtom,
+} from '../store/atom';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 
 const ITEM_HEIGHT = rpx(120);
@@ -68,6 +72,7 @@ export default function MusicList() {
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const [selectedIndices, setSelectedIndices] = useAtom(selectedIndicesAtom);
+    const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
     return (
         <DraggableFlatList
@@ -86,6 +91,9 @@ export default function MusicList() {
             onDragEnd={data => {
                 setEditingMusicList(data.data);
                 const {from, to} = data;
+                if (from !== to) {
+                    setMusicListChanged(true);
+                }
                 setSelectedIndices(prev => {
                     const newIndices = [
                         ...prev.slice(0, from),

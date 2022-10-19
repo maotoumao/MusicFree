@@ -5,8 +5,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ThemeText from '@/components/base/themeText';
 import {iconSizeConst} from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
-import {useAtom} from 'jotai';
-import {editingMusicListAtom, selectedIndicesAtom} from '../store/atom';
+import {useAtom, useSetAtom} from 'jotai';
+import {
+    editingMusicListAtom,
+    musicListChangedAtom,
+    selectedIndicesAtom,
+} from '../store/atom';
 import MusicQueue from '@/core/musicQueue';
 import Toast from '@/utils/toast';
 import Download from '@/core/download';
@@ -16,12 +20,17 @@ export default function Bottom() {
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const [selectedIndices, setSelectedIndices] = useAtom(selectedIndicesAtom);
+    const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
     const selectedItems = useMemo(
         () => () =>
             editingMusicList.filter((_, index) => selectedIndices[index]),
         [editingMusicList, selectedIndices],
     );
+
+    function resetSelectedIndices() {
+        setSelectedIndices(Array(editingMusicList.length).fill(false));
+    }
 
     const {showPanel} = usePanel();
     return (
@@ -31,7 +40,7 @@ export default function Bottom() {
                 title="下一首播放"
                 onPress={async () => {
                     MusicQueue.addNext(selectedItems());
-                    setSelectedIndices([]);
+                    resetSelectedIndices();
                     Toast.success('已添加到下一首播放');
                 }}
             />
@@ -43,7 +52,7 @@ export default function Bottom() {
                         showPanel('AddToMusicSheet', {
                             musicItem: selectedItems(),
                         });
-                        setSelectedIndices([]);
+                        resetSelectedIndices();
                     }
                 }}
             />
@@ -54,19 +63,21 @@ export default function Bottom() {
                     if (selectedItems().length) {
                         Download.downloadMusic(selectedItems());
                         Toast.success('开始下载');
-                        setSelectedIndices([]);
+                        resetSelectedIndices();
                     }
                 }}
             />
             <BottomIcon
                 icon="trash-can-outline"
                 title="删除"
+                color={selectedItems().length ? 'text' : 'textSecondary'}
                 onPress={() => {
                     if (selectedItems().length) {
                         setEditingMusicList(prev =>
                             prev.filter((_, index) => !selectedIndices[index]),
                         );
-                        setSelectedIndices([]);
+                        resetSelectedIndices();
+                        setMusicListChanged(true);
                         Toast.success('记得保存哦');
                     }
                 }}
@@ -78,10 +89,11 @@ export default function Bottom() {
 interface IBottomIconProps {
     icon: string;
     title: string;
+    color?: 'text' | 'textSecondary';
     onPress: () => void;
 }
 function BottomIcon(props: IBottomIconProps) {
-    const {icon, title, onPress} = props;
+    const {icon, title, onPress, color = 'text'} = props;
     const colors = useColors();
     return (
         <Pressable
@@ -92,11 +104,14 @@ function BottomIcon(props: IBottomIconProps) {
             ]}>
             <Icon
                 name={icon}
-                color={colors.text}
+                color={colors[color]}
                 size={iconSizeConst.big}
                 onPress={onPress}
             />
-            <ThemeText fontSize="subTitle" style={style.bottomIconText}>
+            <ThemeText
+                fontSize="subTitle"
+                fontColor={color === 'text' ? 'normal' : 'secondary'}
+                style={style.bottomIconText}>
                 {title}
             </ThemeText>
         </Pressable>

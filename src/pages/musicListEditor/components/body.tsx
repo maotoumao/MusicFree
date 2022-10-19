@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Button from '@/components/base/button';
-import {useAtom, useSetAtom} from 'jotai';
+import {useAtom} from 'jotai';
 import {
     editingMusicListAtom,
     musicListChangedAtom,
@@ -19,7 +19,8 @@ export default function Body(props: IBodyProps) {
     const {musicSheet} = props;
     const [editingMusicList] = useAtom(editingMusicListAtom);
     const [selectedIndices, setSelectedIndices] = useAtom(selectedIndicesAtom);
-    const setMusicListChanged = useSetAtom(musicListChangedAtom);
+    const [musicListChanged, setMusicListChanged] =
+        useAtom(musicListChangedAtom);
     const selectedItems = useMemo(
         () => () =>
             editingMusicList.filter((_, index) => selectedIndices[index]),
@@ -39,7 +40,9 @@ export default function Body(props: IBodyProps) {
                                 Array(editingMusicList.length).fill(true),
                             );
                         } else {
-                            setSelectedIndices([]);
+                            setSelectedIndices(
+                                Array(editingMusicList.length).fill(false),
+                            );
                         }
                     }}>
                     {`${
@@ -50,14 +53,20 @@ export default function Body(props: IBodyProps) {
                     } (已选${selectedIndices.filter(_ => _).length}首)`}
                 </Button>
                 <Button
+                    fontColor={
+                        musicListChanged && musicSheet.id
+                            ? 'normal'
+                            : 'secondary'
+                    }
                     onPress={async () => {
-                        if (musicSheet.id) {
+                        if (musicListChanged && musicSheet.id) {
                             await MusicSheet.updateAndSaveSheet(musicSheet.id, {
                                 musicList: editingMusicList,
                             });
                             Toast.success('保存成功');
+
+                            setMusicListChanged(false);
                         }
-                        setMusicListChanged(true);
                     }}>
                     保存
                 </Button>
