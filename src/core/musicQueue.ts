@@ -163,6 +163,7 @@ const shrinkMusicQueueToSize = (
     return queue;
 };
 
+/** 添加到播放列表 */
 const addAll = (
     musicItems: Array<IMusic.IMusicItem> = [],
     beforeIndex?: number,

@@ -7433,10 +7433,15 @@ react-native-document-picker@^8.1.1:
   dependencies:
     invariant "^2.2.4"
 
-react-native-fast-image@^8.6.0:
-  version "8.6.0"
-  resolved "https://registry.npmmirror.com/react-native-fast-image/-/react-native-fast-image-8.6.0.tgz#0141fa428839511f5ae8c66ad0a7587d13346162"
-  integrity sha512-NJe6ReNPbFZ3X3/mYGACqOhtzGIkuzENfryYs91lv2fScAq9OYte9UVwtFftUl3HfB+IvVgmfLBEXyCeqlcmLw==
+react-native-draggable-flatlist@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.npmmirror.com/react-native-draggable-flatlist/-/react-native-draggable-flatlist-3.1.2.tgz#b66538007f645ccd851c729d4b8a8f7e07666d3f"
+  integrity sha512-cqBR+lZktTqHY/J7V0aq+TZNkuqeILxwZ5bBXKndokwH4qvZl7ifijM7LlfWhfhU1/pzjketTsX7P2zyojfAaQ==
+
+react-native-fast-image@^8.6.1:
+  version "8.6.1"
+  resolved "https://registry.npmmirror.com/react-native-fast-image/-/react-native-fast-image-8.6.1.tgz#6a3a11b8ebc7629919265d33a420a04d13c897e0"
+  integrity sha512-ILuP7EuakqHNzTr8ZbumhuxG4tE/wGQ66z4nEEuzc0FlqY6rYaPsnq/UD2ahoyFj6QP1WvA2RIK3odib+VcqWg==
 
 react-native-file-access@^2.5.0:
   version "2.5.0"
@@ -7451,10 +7456,10 @@ react-native-fs@^2.20.0:
     base-64 "^0.1.0"
     utf8 "^3.0.0"
 
-react-native-gesture-handler@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.npmmirror.com/react-native-gesture-handler/-/react-native-gesture-handler-2.5.0.tgz#61385583570ed0a45a9ed142425e35f8fe8274fb"
-  integrity sha512-djZdcprFf08PZC332D+AeG5wcGeAPhzfCJtB3otUgOgTlvjVXmg/SLFdPJSpzLBqkRAmrC77tM79QgKbuLxkfw==
+react-native-gesture-handler@^2.7.1:
+  version "2.7.1"
+  resolved "https://registry.npmmirror.com/react-native-gesture-handler/-/react-native-gesture-handler-2.7.1.tgz#c109d33c38cb182fafcda13012b77c6cac43b127"
+  integrity sha512-Rnak7U4v3ZB+vjVghv5CvAGS+UfRLsXUq7Nq+FycloxZ7jUZjBo+7rPnt+EdTIE2zc2pKhQHIQKcD+IAPg2Scg==
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
