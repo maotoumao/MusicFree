@@ -28,7 +28,7 @@
 
 ### 插件使用
 下载app之后，只需要在侧边栏设置-插件设置中安装插件即可。支持安装本地插件和从网络安装插件（支持解析.js文件和.json描述文件；已经写了几个示意的插件：[指路这个仓库](https://github.com/maotoumao/MusicFreePlugins)，不过可能功能还不是很完善）；
-你可以直接点击从网络安装插件，然后输入https://gitee.com/maotoumao/MusicFreePlugins/raw/master/plugins.json，点击确认即可安装。
+你可以直接点击从网络安装插件，然后输入https://gitee.com/maotoumao/MusicFreePlugins/raw/master/plugins.json ，点击确认即可安装。
 
 ## 下载地址
 请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)

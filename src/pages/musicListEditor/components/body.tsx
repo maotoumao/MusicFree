@@ -1,7 +1,6 @@
 import React, {useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {FlatList} from 'react-native-gesture-handler';
 import Button from '@/components/base/button';
 import {useAtom, useSetAtom} from 'jotai';
 import {
@@ -9,14 +8,10 @@ import {
     musicListChangedAtom,
     selectedIndicesAtom,
 } from '../store/atom';
-import Empty from '@/components/base/empty';
-import MusicItem from '@/components/mediaItem/musicItem';
-import {Checkbox} from 'react-native-paper';
-import produce from 'immer';
 import MusicSheet from '@/core/musicSheet';
 import Toast from '@/utils/toast';
+import MusicList from './musicList';
 
-const ITEM_HEIGHT = rpx(120);
 interface IBodyProps {
     musicSheet: IMusic.IMusicSheetItem;
 }
@@ -67,56 +62,7 @@ export default function Body(props: IBodyProps) {
                     保存
                 </Button>
             </View>
-            <FlatList
-                ListEmptyComponent={Empty}
-                keyExtractor={musicItem =>
-                    `ml-${musicItem.id}${musicItem.platform}`
-                }
-                getItemLayout={(_, index) => ({
-                    length: ITEM_HEIGHT,
-                    offset: ITEM_HEIGHT * index,
-                    index,
-                })}
-                extraData={{selectedIndices}}
-                style={style.wrapper}
-                data={editingMusicList}
-                renderItem={({index, item: musicItem}) => {
-                    return (
-                        <MusicItem
-                            musicItem={musicItem}
-                            left={{
-                                component: () => (
-                                    <View style={style.checkBox}>
-                                        <Checkbox
-                                            onPress={() => {
-                                                setSelectedIndices(
-                                                    produce(draft => {
-                                                        draft[index] =
-                                                            !draft[index];
-                                                    }),
-                                                );
-                                            }}
-                                            status={
-                                                selectedIndices[index]
-                                                    ? 'checked'
-                                                    : 'unchecked'
-                                            }
-                                        />
-                                    </View>
-                                ),
-                            }}
-                            onItemPress={() => {
-                                setSelectedIndices(
-                                    produce(draft => {
-                                        draft[index] = !draft[index];
-                                    }),
-                                );
-                            }}
-                            // musicSheet={musicSheet}
-                        />
-                    );
-                }}
-            />
+            <MusicList />
         </>
     );
 }
@@ -128,13 +74,5 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(24),
         alignItems: 'center',
         justifyContent: 'space-between',
-    },
-    wrapper: {
-        width: rpx(750),
-        flex: 1,
-    },
-    checkBox: {
-        height: '100%',
-        justifyContent: 'center',
     },
 });
