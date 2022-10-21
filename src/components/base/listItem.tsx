@@ -6,6 +6,7 @@ import Tag from './tag';
 import ThemeText from './themeText';
 import IconButton from './iconButton';
 import FastImage from './fastImage';
+import {fontSizeConst} from '@/constants/uiConst';
 
 export interface ILeftProps {
     /** 序号 */
@@ -40,7 +41,13 @@ function Left(props?: ILeftProps) {
                 {index !== undefined ? (
                     <ThemeText
                         fontColor="secondary"
-                        style={{fontStyle: 'italic'}}>
+                        style={{
+                            fontStyle: 'italic',
+                            fontSize: Math.min(
+                                width / `${index}`.length,
+                                fontSizeConst.content,
+                            ),
+                        }}>
                         {index}
                     </ThemeText>
                 ) : icon !== undefined ? (

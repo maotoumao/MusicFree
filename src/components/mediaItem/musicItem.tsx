@@ -37,7 +37,7 @@ export default function MusicItem(props: IMusicItemProps) {
             itemHeight={ITEM_HEIGHT}
             itemBackgroundColor={itemBackgroundColor}
             onLongPress={onItemLongPress}
-            left={index !== undefined ? {index: index, width: rpx(56)} : left}
+            left={index !== undefined ? {index: index, width: rpx(72)} : left}
             title={musicItem.title}
             desc={
                 <>
