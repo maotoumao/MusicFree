@@ -1,10 +1,7 @@
 import React from 'react';
-import {Appbar} from 'react-native-paper';
-import {StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
 import {useNavigation} from '@react-navigation/native';
-import useColors from '@/hooks/useColors';
 import {ROUTE_PATH} from '@/entry/router';
+import ComplexAppBar from '@/components/base/ComplexAppBar';
 
 interface INavBarProps {
     musicList: IMusic.IMusicItem[] | null;
@@ -12,34 +9,30 @@ interface INavBarProps {
 
 export default function (props: INavBarProps) {
     const navigation = useNavigation<any>();
-    const colors = useColors();
+    const {musicList = []} = props;
 
     return (
-        <Appbar.Header
-            style={[style.appbar, {backgroundColor: colors.primary}]}>
-            <Appbar.BackAction
-                onPress={() => {
-                    navigation.goBack();
-                }}
-            />
-            <Appbar.Content title="专辑" />
-            <Appbar.Action
-                icon="magnify"
-                onPress={() => {
-                    navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
-                        musicList: props?.musicList ?? [],
-                    });
-                }}
-            />
-            <Appbar.Action icon={'dots-vertical'} onPress={() => {}} />
-        </Appbar.Header>
+        <ComplexAppBar
+            title="专辑"
+            onSearchPress={() => {
+                navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
+                    musicList: musicList,
+                });
+            }}
+            menuOptions={[
+                {
+                    icon: 'playlist-edit',
+                    title: '批量编辑',
+                    onPress() {
+                        navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
+                            musicList: musicList,
+                            musicSheet: {
+                                title: '专辑',
+                            },
+                        });
+                    },
+                },
+            ]}
+        />
     );
 }
-
-const style = StyleSheet.create({
-    appbar: {
-        shadowColor: 'transparent',
-        flexDirection: 'row',
-        width: rpx(750),
-    },
-});

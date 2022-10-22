@@ -10,9 +10,9 @@ import {iconSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
-import useDialog from '@/components/dialogs/useDialog';
-import Download from '@/core/download';
 import FastImage from '@/components/base/fastImage';
+import {ROUTE_PATH} from '@/entry/router';
+import {useNavigation} from '@react-navigation/native';
 
 interface IHeaderProps {
     albumItem: IAlbum.IAlbumItem | null;
@@ -21,8 +21,9 @@ interface IHeaderProps {
 export default function Header(props: IHeaderProps) {
     const {albumItem, musicList} = props;
     const {showPanel} = usePanel();
-    const {showDialog} = useDialog();
     const {colors} = useTheme();
+
+    const navigation = useNavigation<any>();
 
     return (
         <>
@@ -90,14 +91,13 @@ export default function Header(props: IHeaderProps) {
                     }}
                 />
                 <IconButton
-                    icon="download"
+                    icon="playlist-edit"
                     size={rpx(48)}
                     onPress={async () => {
-                        showDialog('SimpleDialog', {
-                            title: '下载专辑',
-                            content: `确定下载${musicList?.length}首歌吗?`,
-                            onOk() {
-                                musicList && Download.downloadMusic(musicList);
+                        navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
+                            musicList: musicList,
+                            musicSheet: {
+                                title: albumItem?.title,
                             },
                         });
                     }}

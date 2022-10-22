@@ -67,14 +67,13 @@ export default function Body(props: IBodyProps) {
                                 ),
                             });
                             Toast.success('保存成功');
-
                             setMusicListChanged(false);
                         }
                     }}>
                     保存
                 </Button>
             </View>
-            <MusicList />
+            <MusicList musicSheet={musicSheet} />
         </>
     );
 }

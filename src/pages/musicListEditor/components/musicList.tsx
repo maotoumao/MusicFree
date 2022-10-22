@@ -19,7 +19,7 @@ interface IMusicEditorItemProps {
     index: number;
     editorMusicItem: IEditorMusicItem;
     isActive: boolean;
-    drag: () => void;
+    drag?: () => void;
 }
 function _MusicEditorItem(props: IMusicEditorItemProps) {
     const {index, editorMusicItem, isActive, drag} = props;
@@ -66,7 +66,12 @@ const MusicEditorItem = memo(
 );
 
 /** 音乐列表 */
-export default function MusicList() {
+
+interface IMusicListProps {
+    musicSheet: IMusic.IMusicSheetItem;
+}
+export default function MusicList(props: IMusicListProps) {
+    const {musicSheet} = props;
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
@@ -78,8 +83,8 @@ export default function MusicList() {
                     editorMusicItem={item}
                     // checked={selectedIndices[index!]}
                     index={index!}
-                    isActive={isActive}
-                    drag={drag}
+                    isActive={musicSheet.id ? isActive : false}
+                    drag={musicSheet.id ? drag : undefined}
                 />
             );
         },
