@@ -1,10 +1,14 @@
 import {atom} from 'jotai';
 
-/** 选中 */
-const selectedIndicesAtom = atom<boolean[]>([]);
+export interface IEditorMusicItem {
+    musicItem: IMusic.IMusicItem;
+    checked?: boolean;
+}
 
-const editingMusicListAtom = atom<IMusic.IMusicItem[]>([]);
+/** 编辑页中的音乐条目 */
+const editingMusicListAtom = atom<IEditorMusicItem[]>([]);
 
+/** 是否变动过 */
 const musicListChangedAtom = atom(false);
 
-export {selectedIndicesAtom, editingMusicListAtom, musicListChangedAtom};
+export {editingMusicListAtom, musicListChangedAtom};

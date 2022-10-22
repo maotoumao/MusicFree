@@ -8,28 +8,22 @@ import {useRoute} from '@react-navigation/native';
 import Bottom from './components/bottom';
 import Body from './components/body';
 import {useSetAtom} from 'jotai';
-import {
-    editingMusicListAtom,
-    musicListChangedAtom,
-    selectedIndicesAtom,
-} from './store/atom';
+import {editingMusicListAtom, musicListChangedAtom} from './store/atom';
 
-// todo 批量编辑
 export default function MusicListEditor() {
     const route = useRoute<any>();
     const musicSheet: IMusic.IMusicSheetItem = route.params?.musicSheet ?? null;
     const musicList: IMusic.IMusicItem[] = route.params?.musicList ?? [];
 
     const setEditingMusicList = useSetAtom(editingMusicListAtom);
-    const setSelectedIndices = useSetAtom(selectedIndicesAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
     useEffect(() => {
-        setEditingMusicList(musicList);
-        setSelectedIndices(Array(musicList.length).fill(false));
+        setEditingMusicList(
+            musicList.map(_ => ({musicItem: _, checked: false})),
+        );
         return () => {
             setEditingMusicList([]);
-            setSelectedIndices([]);
             setMusicListChanged(false);
         };
     }, []);

@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Empty from '@/components/base/empty';
@@ -8,51 +8,50 @@ import {useAtom, useSetAtom} from 'jotai';
 import {Checkbox} from 'react-native-paper';
 import {
     editingMusicListAtom,
+    IEditorMusicItem,
     musicListChangedAtom,
-    selectedIndicesAtom,
 } from '../store/atom';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+import DraggableFlatList, {RenderItem} from 'react-native-draggable-flatlist';
 
 const ITEM_HEIGHT = rpx(120);
 
 interface IMusicEditorItemProps {
     index: number;
-    checked: boolean;
-    musicItem: IMusic.IMusicItem;
+    editorMusicItem: IEditorMusicItem;
     isActive: boolean;
     drag: () => void;
 }
 function _MusicEditorItem(props: IMusicEditorItemProps) {
-    const setSelectedIndices = useSetAtom(selectedIndicesAtom);
-    const {index, checked, musicItem, isActive, drag} = props;
+    const {index, editorMusicItem, isActive, drag} = props;
+    const setEditingMusicList = useSetAtom(editingMusicListAtom);
+
+    const onPress = useCallback(() => {
+        setEditingMusicList(
+            produce(draft => {
+                draft[index].checked = !draft[index].checked;
+            }),
+        );
+    }, [index]);
     return (
         <MusicItem
-            musicItem={musicItem}
+            musicItem={editorMusicItem.musicItem}
             onItemLongPress={drag}
             itemBackgroundColor={isActive ? '#99999933' : undefined}
             left={{
                 component: () => (
                     <View style={style.checkBox}>
                         <Checkbox
-                            onPress={() => {
-                                setSelectedIndices(
-                                    produce(draft => {
-                                        draft[index] = !draft[index];
-                                    }),
-                                );
-                            }}
-                            status={checked ? 'checked' : 'unchecked'}
+                            onPress={onPress}
+                            status={
+                                editorMusicItem.checked
+                                    ? 'checked'
+                                    : 'unchecked'
+                            }
                         />
                     </View>
                 ),
             }}
-            onItemPress={() => {
-                setSelectedIndices(
-                    produce(draft => {
-                        draft[index] = !draft[index];
-                    }),
-                );
-            }}
+            onItemPress={onPress}
             // musicSheet={musicSheet}
         />
     );
@@ -61,9 +60,8 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
 const MusicEditorItem = memo(
     _MusicEditorItem,
     (prev, curr) =>
-        prev.checked === curr.checked &&
+        prev.editorMusicItem === curr.editorMusicItem &&
         prev.index === curr.index &&
-        prev.musicItem === curr.musicItem &&
         prev.isActive === curr.isActive,
 );
 
@@ -71,50 +69,49 @@ const MusicEditorItem = memo(
 export default function MusicList() {
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
-    const [selectedIndices, setSelectedIndices] = useAtom(selectedIndicesAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
-    return (
+    const renderItem: RenderItem<IEditorMusicItem> = useCallback(
+        ({index, item, isActive, drag}) => {
+            return (
+                <MusicEditorItem
+                    editorMusicItem={item}
+                    // checked={selectedIndices[index!]}
+                    index={index!}
+                    isActive={isActive}
+                    drag={drag}
+                />
+            );
+        },
+        [editingMusicList],
+    );
+
+    return editingMusicList?.length ? (
         <DraggableFlatList
             ListEmptyComponent={Empty}
-            keyExtractor={musicItem =>
-                `ml-${musicItem.id}${musicItem.platform}`
+            keyExtractor={item =>
+                `ml-${item.musicItem.id}${item.musicItem.platform}`
             }
             getItemLayout={(_, index) => ({
                 length: ITEM_HEIGHT,
                 offset: ITEM_HEIGHT * index,
                 index,
             })}
-            extraData={{selectedIndices}}
             containerStyle={style.wrapper}
             data={editingMusicList}
             onDragEnd={data => {
                 setEditingMusicList(data.data);
-                const {from, to} = data;
-                if (from !== to) {
-                    setMusicListChanged(true);
-                }
-                setSelectedIndices(prev => {
-                    const newIndices = [
-                        ...prev.slice(0, from),
-                        ...prev.slice(from + 1),
-                    ];
-                    newIndices.splice(to, 0, prev[from]);
-                    return newIndices;
+                requestAnimationFrame(() => {
+                    const {from, to} = data;
+                    if (from !== to) {
+                        setMusicListChanged(true);
+                    }
                 });
             }}
-            renderItem={({index, item: musicItem, isActive, drag}) => {
-                return (
-                    <MusicEditorItem
-                        musicItem={musicItem}
-                        checked={selectedIndices[index!]}
-                        index={index!}
-                        isActive={isActive}
-                        drag={drag}
-                    />
-                );
-            }}
+            renderItem={renderItem}
         />
+    ) : (
+        <View style={style.wrapper} />
     );
 }
 

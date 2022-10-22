@@ -34,9 +34,15 @@
 请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)
 
 ## WIP
+### 1.0版本
 1. 歌曲批量编辑 [60%]
 2. 最近播放 [0%]
 3. 横屏适配 [0%]
+4. 其他剩余功能
+### 2.0版本
+1. ReactNative版本升级
+2. 体验优化（长列表、弹窗、底部浮层等）
+3. 代码逻辑优化
 
 ## ChangeLog
 `2022.10.16  v0.0.1-alpha.5`

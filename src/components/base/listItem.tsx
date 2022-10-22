@@ -94,6 +94,7 @@ interface IListItemProps {
     /** 右侧按钮 */
     right?: () => JSX.Element;
     itemPaddingHorizontal?: number;
+    itemWidth?: number;
     itemHeight?: number;
     itemBackgroundColor?: string;
     onPress?: () => void;
@@ -106,6 +107,7 @@ export default function ListItem(props: IListItemProps) {
         desc,
         tag,
         right,
+        itemWidth,
         itemHeight,
         onPress,
         onLongPress,
@@ -121,6 +123,7 @@ export default function ListItem(props: IListItemProps) {
                 style.wrapper,
                 {
                     paddingHorizontal: itemPaddingHorizontal,
+                    width: itemWidth,
                     height: itemHeight ?? rpx(120),
                     paddingVertical: 0,
                     backgroundColor: itemBackgroundColor,
@@ -166,6 +169,7 @@ export default function ListItem(props: IListItemProps) {
 const style = StyleSheet.create({
     wrapper: {
         justifyContent: 'center',
+        width: '100%',
     },
     titleWrapper: {
         flexDirection: 'row',

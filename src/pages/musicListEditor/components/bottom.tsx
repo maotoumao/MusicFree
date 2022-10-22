@@ -6,30 +6,35 @@ import ThemeText from '@/components/base/themeText';
 import {iconSizeConst} from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
 import {useAtom, useSetAtom} from 'jotai';
-import {
-    editingMusicListAtom,
-    musicListChangedAtom,
-    selectedIndicesAtom,
-} from '../store/atom';
+import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import MusicQueue from '@/core/musicQueue';
 import Toast from '@/utils/toast';
 import Download from '@/core/download';
 import usePanel from '@/components/panels/usePanel';
+import produce from 'immer';
 
 export default function Bottom() {
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
-    const [selectedIndices, setSelectedIndices] = useAtom(selectedIndicesAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
+    const selectedEditorItems = useMemo(
+        () => () => editingMusicList.filter(_ => _.checked),
+        [editingMusicList],
+    );
+
     const selectedItems = useMemo(
-        () => () =>
-            editingMusicList.filter((_, index) => selectedIndices[index]),
-        [editingMusicList, selectedIndices],
+        () => () => selectedEditorItems().map(_ => _.musicItem),
+        [selectedEditorItems],
     );
 
     function resetSelectedIndices() {
-        setSelectedIndices(Array(editingMusicList.length).fill(false));
+        setEditingMusicList(
+            editingMusicList.map(_ => ({
+                musicItem: _.musicItem,
+                checked: false,
+            })),
+        );
     }
 
     const {showPanel} = usePanel();
@@ -73,10 +78,9 @@ export default function Bottom() {
                 color={selectedItems().length ? 'text' : 'textSecondary'}
                 onPress={() => {
                     if (selectedItems().length) {
-                        setEditingMusicList(prev =>
-                            prev.filter((_, index) => !selectedIndices[index]),
+                        setEditingMusicList(
+                            produce(prev => prev.filter(_ => !_.checked)),
                         );
-                        resetSelectedIndices();
                         setMusicListChanged(true);
                         Toast.success('记得保存哦');
                     }

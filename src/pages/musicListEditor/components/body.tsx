@@ -3,11 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Button from '@/components/base/button';
 import {useAtom} from 'jotai';
-import {
-    editingMusicListAtom,
-    musicListChangedAtom,
-    selectedIndicesAtom,
-} from '../store/atom';
+import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import MusicSheet from '@/core/musicSheet';
 import Toast from '@/utils/toast';
 import MusicList from './musicList';
@@ -17,14 +13,13 @@ interface IBodyProps {
 }
 export default function Body(props: IBodyProps) {
     const {musicSheet} = props;
-    const [editingMusicList] = useAtom(editingMusicListAtom);
-    const [selectedIndices, setSelectedIndices] = useAtom(selectedIndicesAtom);
+    const [editingMusicList, setEditingMusicList] =
+        useAtom(editingMusicListAtom);
     const [musicListChanged, setMusicListChanged] =
         useAtom(musicListChangedAtom);
     const selectedItems = useMemo(
-        () => () =>
-            editingMusicList.filter((_, index) => selectedIndices[index]),
-        [editingMusicList, selectedIndices],
+        () => () => editingMusicList.filter(_ => _.checked),
+        [editingMusicList],
     );
     return (
         <>
@@ -36,12 +31,18 @@ export default function Body(props: IBodyProps) {
                                 editingMusicList.length &&
                             editingMusicList.length
                         ) {
-                            setSelectedIndices(
-                                Array(editingMusicList.length).fill(true),
+                            setEditingMusicList(
+                                editingMusicList.map(_ => ({
+                                    musicItem: _.musicItem,
+                                    checked: true,
+                                })),
                             );
                         } else {
-                            setSelectedIndices(
-                                Array(editingMusicList.length).fill(false),
+                            setEditingMusicList(
+                                editingMusicList.map(_ => ({
+                                    musicItem: _.musicItem,
+                                    checked: false,
+                                })),
                             );
                         }
                     }}>
@@ -50,7 +51,7 @@ export default function Body(props: IBodyProps) {
                         editingMusicList.length
                             ? '全选'
                             : '全不选'
-                    } (已选${selectedIndices.filter(_ => _).length}首)`}
+                    } (已选${selectedItems().length}首)`}
                 </Button>
                 <Button
                     fontColor={
@@ -61,7 +62,9 @@ export default function Body(props: IBodyProps) {
                     onPress={async () => {
                         if (musicListChanged && musicSheet.id) {
                             await MusicSheet.updateAndSaveSheet(musicSheet.id, {
-                                musicList: editingMusicList,
+                                musicList: editingMusicList.map(
+                                    _ => _.musicItem,
+                                ),
                             });
                             Toast.success('保存成功');
 

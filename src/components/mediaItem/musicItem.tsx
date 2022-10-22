@@ -16,6 +16,7 @@ interface IMusicItemProps {
     musicSheet?: IMusic.IMusicSheetItem;
     onItemPress?: (musicItem: IMusic.IMusicItem) => void;
     onItemLongPress?: () => void;
+    itemWidth?: number;
     itemBackgroundColor?: string;
 }
 const ITEM_HEIGHT = rpx(120);
@@ -28,12 +29,14 @@ export default function MusicItem(props: IMusicItemProps) {
         onItemPress,
         onItemLongPress,
         musicSheet,
+        itemWidth,
         itemBackgroundColor,
     } = props;
     const {showPanel} = usePanel();
 
     return (
         <ListItem
+            itemWidth={itemWidth}
             itemHeight={ITEM_HEIGHT}
             itemBackgroundColor={itemBackgroundColor}
             onLongPress={onItemLongPress}
