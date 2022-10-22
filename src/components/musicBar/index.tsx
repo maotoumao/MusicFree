@@ -5,8 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicQueue from '@/core/musicQueue';
 import {Avatar, IconButton, useTheme} from 'react-native-paper';
 import {CircularProgressBase} from 'react-native-circular-progress-indicator';
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
 import musicIsPaused from '@/utils/musicIsPaused';
 import usePanel from '../panels/usePanel';
@@ -15,12 +14,11 @@ import ThemeText from '../base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 
 export default function () {
-    // const currentMusicState = useAtomValue(loadableCurrentMusicStateAtom);
     const musicItem = MusicQueue.useCurrentMusicItem();
     const musicState = MusicQueue.usePlaybackState();
     const [showKeyboard, setKeyboardStatus] = useState(false);
     const {showPanel} = usePanel();
-    const navigation = useNavigation<any>();
+    const navigate = useNavigate();
     const progress = MusicQueue.useProgress();
     const {colors} = useTheme();
 
@@ -51,7 +49,7 @@ export default function () {
                         },
                     ]}
                     onPress={() => {
-                        navigation.navigate(ROUTE_PATH.MUSIC_DETAIL);
+                        navigate(ROUTE_PATH.MUSIC_DETAIL);
                     }}>
                     <View style={style.artworkWrapper}>
                         <Avatar.Image

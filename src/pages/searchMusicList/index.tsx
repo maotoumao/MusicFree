@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import MusicBar from '@/components/musicBar';
 import SearchResult from './searchResult';
 import StatusBar from '@/components/base/statusBar';
@@ -9,6 +9,7 @@ import {Appbar, Searchbar} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {fontSizeConst} from '@/constants/uiConst';
+import {useParams} from '@/entry/router';
 
 function filterMusic(query: string, musicList: IMusic.IMusicItem[]) {
     if (query?.length === 0) {
@@ -22,10 +23,9 @@ function filterMusic(query: string, musicList: IMusic.IMusicItem[]) {
 }
 
 export default function SearchMusicList() {
-    const route = useRoute<any>();
+    const {musicList} = useParams<'search-music-list'>();
     const navigation = useNavigation();
-    const musicList: IMusic.IMusicItem[] = route.params?.musicList ?? [];
-    const [result, setResult] = useState<IMusic.IMusicItem[]>(musicList);
+    const [result, setResult] = useState<IMusic.IMusicItem[]>(musicList ?? []);
     const [query, setQuery] = useState('');
 
     const colors = useColors();
@@ -33,7 +33,7 @@ export default function SearchMusicList() {
     const onChangeSearch = (_: string) => {
         _ = _.trim();
         setQuery(_);
-        setResult(filterMusic(_, musicList));
+        setResult(filterMusic(_, musicList ?? []));
     };
 
     return (

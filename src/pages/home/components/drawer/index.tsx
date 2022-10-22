@@ -4,8 +4,7 @@ import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import {Button, Card} from 'react-native-paper';
 import ListItem from '@/components/base/listItem';
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import ThemeText from '@/components/base/themeText';
 import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';
@@ -13,9 +12,9 @@ import NativeUtils from '@/native/utils';
 import MusicQueue from '@/core/musicQueue';
 
 export default function HomeDrawer(props: any) {
-    const navigation = useNavigation<any>();
+    const navigate = useNavigate();
     function navigateToSetting(settingType: string) {
-        navigation.navigate(ROUTE_PATH.SETTING, {
+        navigate(ROUTE_PATH.SETTING, {
             type: settingType,
         });
     }

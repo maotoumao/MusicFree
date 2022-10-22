@@ -5,10 +5,10 @@ import {useAtom} from 'jotai';
 import {IQueryResult, scrollToTopAtom} from '../store/atoms';
 import {RequestStateCode} from '@/constants/commonConst';
 import useQueryArtist from '../hooks/useQuery';
-import {useRoute} from '@react-navigation/native';
 import Empty from '@/components/base/empty';
 import ListLoading from '@/components/base/listLoading';
 import ListReachEnd from '@/components/base/listReachEnd';
+import {useParams} from '@/entry/router';
 
 const ITEM_HEIGHT = rpx(120);
 
@@ -21,9 +21,7 @@ export default function ResultList(props: IResultListProps) {
     const {data, renderItem, tab} = props;
     const [scrollToTopState, setScrollToTopState] = useAtom(scrollToTopAtom);
     const lastScrollY = useRef<number>(0);
-    const route = useRoute<any>();
-    const pluginHash: string = route.params.pluginHash;
-    const artistItem: IArtist.IArtistItem = route.params.artistItem;
+    const {pluginHash, artistItem} = useParams<'artist-detail'>();
     const [queryState, setQueryState] = useState<RequestStateCode>(
         data?.state ?? RequestStateCode.IDLE,
     );

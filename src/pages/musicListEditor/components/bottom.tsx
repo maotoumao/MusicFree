@@ -12,11 +12,10 @@ import Toast from '@/utils/toast';
 import Download from '@/core/download';
 import usePanel from '@/components/panels/usePanel';
 import produce from 'immer';
-import {useRoute} from '@react-navigation/native';
+import {useParams} from '@/entry/router';
 
 export default function Bottom() {
-    const route = useRoute<any>();
-    const musicSheet: IMusic.IMusicSheetItem = route.params?.musicSheet ?? null;
+    const {musicSheet} = useParams<'music-list-editor'>();
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
@@ -79,12 +78,12 @@ export default function Bottom() {
                 icon="trash-can-outline"
                 title="删除"
                 color={
-                    selectedItems().length && musicSheet.id
+                    selectedItems().length && musicSheet?.id
                         ? 'text'
                         : 'textSecondary'
                 }
                 onPress={() => {
-                    if (selectedItems().length && musicSheet.id) {
+                    if (selectedItems().length && musicSheet?.id) {
                         setEditingMusicList(
                             produce(prev => prev.filter(_ => !_.checked)),
                         );

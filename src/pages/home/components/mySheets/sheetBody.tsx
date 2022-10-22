@@ -1,8 +1,7 @@
 import React from 'react';
 import {FlatList, StyleSheet} from 'react-native';
 import MusicSheet from '@/core/musicSheet';
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
 import ListItem from '@/components/base/listItem';
 import IconButton from '@/components/base/iconButton';
@@ -11,7 +10,7 @@ import Toast from '@/utils/toast';
 
 export default function SheetBody() {
     const musicSheets = MusicSheet.useUserSheets();
-    const navigation = useNavigation<any>();
+    const navigate = useNavigate();
     const {showDialog} = useDialog();
 
     return (
@@ -29,7 +28,7 @@ export default function SheetBody() {
                         fallback: ImgAsset.albumDefault,
                     }}
                     onPress={() => {
-                        navigation.navigate(ROUTE_PATH.SHEET_DETAIL, {
+                        navigate(ROUTE_PATH.SHEET_DETAIL, {
                             id: sheet.id,
                         });
                     }}

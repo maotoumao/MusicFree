@@ -1,15 +1,14 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useRoute} from '@react-navigation/native';
 import settingTypes from './settingTypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import SimpleAppBar from '@/components/base/simpleAppBar';
+import {useParams} from '@/entry/router';
 
 export default function Setting() {
-    const route = useRoute<any>();
-    const type: string = route.params?.type;
+    const {type} = useParams<'setting'>();
     const settingItem = settingTypes[type];
 
     return (

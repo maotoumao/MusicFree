@@ -11,8 +11,7 @@ import Color from 'color';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
-import {ROUTE_PATH} from '@/entry/router';
-import {useNavigation} from '@react-navigation/native';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
 interface IHeaderProps {
     albumItem: IAlbum.IAlbumItem | null;
@@ -23,7 +22,7 @@ export default function Header(props: IHeaderProps) {
     const {showPanel} = usePanel();
     const {colors} = useTheme();
 
-    const navigation = useNavigation<any>();
+    const navigate = useNavigate();
 
     return (
         <>
@@ -94,7 +93,7 @@ export default function Header(props: IHeaderProps) {
                     icon="playlist-edit"
                     size={rpx(48)}
                     onPress={async () => {
-                        navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
+                        navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                             musicList: musicList,
                             musicSheet: {
                                 title: albumItem?.title,

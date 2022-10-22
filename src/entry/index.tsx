@@ -2,7 +2,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import bootstrap from './bootstrap';
-import {RootStackParamList, routes} from './router';
+import {routes} from './router';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Dialogs from '@/components/dialogs';
@@ -21,7 +21,7 @@ import useBootstrap from './useBootstrap';
  */
 
 bootstrap();
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<any>();
 
 export default function Pages() {
     const themeName = Config.useConfig('setting.theme.mode') ?? 'dark';

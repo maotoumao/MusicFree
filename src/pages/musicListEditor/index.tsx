@@ -4,23 +4,21 @@ import rpx from '@/utils/rpx';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 import StatusBar from '@/components/base/statusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useRoute} from '@react-navigation/native';
 import Bottom from './components/bottom';
 import Body from './components/body';
 import {useSetAtom} from 'jotai';
 import {editingMusicListAtom, musicListChangedAtom} from './store/atom';
+import {useParams} from '@/entry/router';
 
 export default function MusicListEditor() {
-    const route = useRoute<any>();
-    const musicSheet: IMusic.IMusicSheetItem = route.params?.musicSheet ?? null;
-    const musicList: IMusic.IMusicItem[] = route.params?.musicList ?? [];
+    const {musicSheet, musicList} = useParams<'music-list-editor'>();
 
     const setEditingMusicList = useSetAtom(editingMusicListAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
     useEffect(() => {
         setEditingMusicList(
-            musicList.map(_ => ({musicItem: _, checked: false})),
+            (musicList ?? []).map(_ => ({musicItem: _, checked: false})),
         );
         return () => {
             setEditingMusicList([]);
@@ -31,8 +29,8 @@ export default function MusicListEditor() {
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
-            <ComplexAppBar title={musicSheet.title ?? '歌单'} />
-            <Body musicSheet={musicSheet} />
+            <ComplexAppBar title={musicSheet?.title ?? '歌单'} />
+            <Body />
             <Bottom />
         </SafeAreaView>
     );

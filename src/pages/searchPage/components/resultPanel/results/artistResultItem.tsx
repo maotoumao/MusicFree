@@ -1,8 +1,7 @@
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
 import ListItem from '@/components/base/listItem';
 import {ImgAsset} from '@/constants/assetsConst';
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
 interface IArtistResultsProps {
     item: IArtist.IArtistItem;
@@ -11,7 +10,7 @@ interface IArtistResultsProps {
 }
 export default function ArtistResultItem(props: IArtistResultsProps) {
     const {item: artistItem, pluginHash} = props;
-    const navigation = useNavigation<any>();
+    const navigate = useNavigate();
     return (
         <ListItem
             left={{
@@ -28,7 +27,7 @@ export default function ArtistResultItem(props: IArtistResultsProps) {
             }
             tag={artistItem.platform}
             onPress={() => {
-                navigation.navigate(ROUTE_PATH.ARTIST_DETAIL, {
+                navigate(ROUTE_PATH.ARTIST_DETAIL, {
                     artistItem: artistItem,
                     pluginHash,
                 });

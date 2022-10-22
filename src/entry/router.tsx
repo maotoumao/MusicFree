@@ -3,6 +3,8 @@ import Downloading from '@/pages/downloading';
 import LocalMusic from '@/pages/localMusic';
 import MusicListEditor from '@/pages/musicListEditor';
 import SearchMusicList from '@/pages/searchMusicList';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useCallback} from 'react';
 import AlbumDetail from '../pages/albumDetail';
 import Home from '../pages/home';
 import MusicDetail from '../pages/musicDetail';
@@ -11,7 +13,7 @@ import Setting from '../pages/setting';
 import SheetDetail from '../pages/sheetDetail';
 
 /** 路由key */
-const ROUTE_PATH = {
+export const ROUTE_PATH = {
     /** 主页 */
     HOME: 'home',
     /** 音乐播放页 */
@@ -37,13 +39,14 @@ const ROUTE_PATH = {
 } as const;
 
 type Valueof<T> = T[keyof T];
+type RoutePaths = Valueof<typeof ROUTE_PATH>;
 
 type IRoutes = {
-    path: Valueof<typeof ROUTE_PATH>;
+    path: RoutePaths;
     component: (...args: any[]) => JSX.Element;
 };
 
-const routes: Array<IRoutes> = [
+export const routes: Array<IRoutes> = [
     {
         path: ROUTE_PATH.HOME,
         component: Home,
@@ -90,21 +93,55 @@ const routes: Array<IRoutes> = [
     },
 ];
 
-export {routes, ROUTE_PATH};
-
-export type RootStackParamList = {
+type RouterParamsBase = Record<RoutePaths, any>;
+/** 路由参数 */
+interface RouterParams extends RouterParamsBase {
     home: undefined;
     'music-detail': undefined;
     'search-page': undefined;
-    'sheet-detail': undefined;
-    'album-detail': undefined;
-    'artist-detail': undefined;
+    'sheet-detail': {
+        id: string;
+    };
+    'album-detail': {
+        albumItem: IAlbum.IAlbumItem;
+    };
+    'artist-detail': {
+        artistItem: IArtist.IArtistItem;
+        pluginHash: string;
+    };
     setting: {
         type: string;
     };
     local: undefined;
     downloading: undefined;
     'search-music-list': {
-        musicList: IMusic.IMusicItem[];
+        musicList: IMusic.IMusicItem[] | null;
     };
-};
+    'music-list-editor': {
+        musicSheet?: Partial<IMusic.IMusicSheetItem>;
+        musicList: IMusic.IMusicItem[] | null;
+    };
+}
+
+/** 路由参数Hook */
+export function useParams<T extends RoutePaths>(): RouterParams[T] {
+    const route = useRoute<any>();
+
+    const routeParams = route?.params as RouterParams[T];
+    return routeParams;
+}
+
+/** 导航 */
+export function useNavigate() {
+    const navigation = useNavigation<any>();
+
+    const navigate = useCallback(function <T extends RoutePaths>(
+        route: T,
+        params?: RouterParams[T],
+    ) {
+        navigation.navigate(route, params);
+    },
+    []);
+
+    return navigate;
+}

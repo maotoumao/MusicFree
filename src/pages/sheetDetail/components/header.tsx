@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useRoute} from '@react-navigation/native';
 import MusicSheet from '@/core/musicSheet';
 import LinearGradient from 'react-native-linear-gradient';
 import ThemeText from '@/components/base/themeText';
@@ -9,10 +8,10 @@ import Color from 'color';
 import {useTheme} from 'react-native-paper';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
+import {useParams} from '@/entry/router';
 
 export default function Header() {
-    const route = useRoute<any>();
-    const id = route.params?.id ?? 'favorite';
+    const {id = 'favorite'} = useParams<'sheet-detail'>();
     const sheet = MusicSheet.useSheets(id);
     const {colors} = useTheme();
 

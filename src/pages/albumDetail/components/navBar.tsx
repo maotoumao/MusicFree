@@ -1,6 +1,6 @@
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_PATH} from '@/entry/router';
+
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 
 interface INavBarProps {
@@ -8,14 +8,14 @@ interface INavBarProps {
 }
 
 export default function (props: INavBarProps) {
-    const navigation = useNavigation<any>();
+    const navigate = useNavigate();
     const {musicList = []} = props;
 
     return (
         <ComplexAppBar
             title="专辑"
             onSearchPress={() => {
-                navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
+                navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                     musicList: musicList,
                 });
             }}
@@ -24,7 +24,7 @@ export default function (props: INavBarProps) {
                     icon: 'playlist-edit',
                     title: '批量编辑',
                     onPress() {
-                        navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
+                        navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                             musicList: musicList,
                             musicSheet: {
                                 title: '专辑',

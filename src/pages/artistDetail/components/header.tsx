@@ -11,12 +11,11 @@ import {scrollToTopAtom} from '../store/atoms';
 import {Avatar} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 import Tag from '@/components/base/tag';
-import {useRoute} from '@react-navigation/native';
+import {useParams} from '@/entry/router';
 
 const headerHeight = rpx(350);
 export default function Header() {
-    const route = useRoute<any>();
-    const artistItem: IArtist.IArtistItem = route.params?.artistItem ?? null;
+    const {artistItem} = useParams<'artist-detail'>();
 
     const heightValue = useSharedValue(headerHeight);
     const opacityValue = useSharedValue(1);

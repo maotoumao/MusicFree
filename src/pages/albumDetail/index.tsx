@@ -1,17 +1,16 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useRoute} from '@react-navigation/native';
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
 import AlbumMusicList from './components/albumMusicList';
 import useAlbumDetail from './hooks/useAlbumMusicList';
 import StatusBar from '@/components/base/statusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useParams} from '@/entry/router';
 
 export default function AlbumDetail() {
-    const route = useRoute<any>();
-    const albumItem = route.params?.albumItem ?? null;
+    const {albumItem} = useParams<'album-detail'>();
     const albumDetail = useAlbumDetail(albumItem);
 
     return (

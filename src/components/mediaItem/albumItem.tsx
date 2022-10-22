@@ -1,6 +1,5 @@
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import ListItem from '@/components/base/listItem';
 import {ImgAsset} from '@/constants/assetsConst';
 
@@ -10,7 +9,7 @@ interface IAlbumResultsProps {
 
 export default function AlbumItem(props: IAlbumResultsProps) {
     const {albumItem} = props;
-    const navigation = useNavigation<any>();
+    const navigate = useNavigate();
 
     return (
         <ListItem
@@ -22,8 +21,8 @@ export default function AlbumItem(props: IAlbumResultsProps) {
             desc={`${albumItem.artist}    ${albumItem.date}`}
             tag={albumItem.platform}
             onPress={() => {
-                navigation.navigate(ROUTE_PATH.ALBUM_DETAIL, {
-                    albumItem: albumItem,
+                navigate(ROUTE_PATH.ALBUM_DETAIL, {
+                    albumItem,
                 });
             }}
         />

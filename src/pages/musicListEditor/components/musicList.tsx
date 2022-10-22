@@ -12,6 +12,7 @@ import {
     musicListChangedAtom,
 } from '../store/atom';
 import DraggableFlatList, {RenderItem} from 'react-native-draggable-flatlist';
+import {useParams} from '@/entry/router';
 
 const ITEM_HEIGHT = rpx(120);
 
@@ -67,11 +68,8 @@ const MusicEditorItem = memo(
 
 /** 音乐列表 */
 
-interface IMusicListProps {
-    musicSheet: IMusic.IMusicSheetItem;
-}
-export default function MusicList(props: IMusicListProps) {
-    const {musicSheet} = props;
+export default function MusicList() {
+    const {musicSheet} = useParams<'music-list-editor'>();
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
@@ -83,8 +81,8 @@ export default function MusicList(props: IMusicListProps) {
                     editorMusicItem={item}
                     // checked={selectedIndices[index!]}
                     index={index!}
-                    isActive={musicSheet.id ? isActive : false}
-                    drag={musicSheet.id ? drag : undefined}
+                    isActive={musicSheet?.id ? isActive : false}
+                    drag={musicSheet?.id ? drag : undefined}
                 />
             );
         },

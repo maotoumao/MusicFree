@@ -7,12 +7,10 @@ import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import MusicSheet from '@/core/musicSheet';
 import Toast from '@/utils/toast';
 import MusicList from './musicList';
+import {useParams} from '@/entry/router';
 
-interface IBodyProps {
-    musicSheet: IMusic.IMusicSheetItem;
-}
-export default function Body(props: IBodyProps) {
-    const {musicSheet} = props;
+export default function Body() {
+    const {musicSheet} = useParams<'music-list-editor'>();
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const [musicListChanged, setMusicListChanged] =
@@ -55,12 +53,12 @@ export default function Body(props: IBodyProps) {
                 </Button>
                 <Button
                     fontColor={
-                        musicListChanged && musicSheet.id
+                        musicListChanged && musicSheet?.id
                             ? 'normal'
                             : 'secondary'
                     }
                     onPress={async () => {
-                        if (musicListChanged && musicSheet.id) {
+                        if (musicListChanged && musicSheet?.id) {
                             await MusicSheet.updateAndSaveSheet(musicSheet.id, {
                                 musicList: editingMusicList.map(
                                     _ => _.musicItem,
@@ -73,7 +71,7 @@ export default function Body(props: IBodyProps) {
                     保存
                 </Button>
             </View>
-            <MusicList musicSheet={musicSheet} />
+            <MusicList />
         </>
     );
 }

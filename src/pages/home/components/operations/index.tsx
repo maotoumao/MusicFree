@@ -2,11 +2,10 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ActionButton from './ActionButton';
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
 export default function Operations() {
-    const navigation = useNavigation<any>();
+    const navigate = useNavigate();
 
     const actionButtons = [
         {
@@ -14,7 +13,7 @@ export default function Operations() {
             iconColor: 'red',
             title: '我喜欢',
             action() {
-                navigation.navigate(ROUTE_PATH.SHEET_DETAIL, {
+                navigate(ROUTE_PATH.SHEET_DETAIL, {
                     id: 'favorite',
                 });
             },
@@ -23,7 +22,7 @@ export default function Operations() {
             iconName: 'folder-music-outline',
             title: '本地音乐',
             action() {
-                navigation.navigate(ROUTE_PATH.LOCAL);
+                navigate(ROUTE_PATH.LOCAL);
             },
         },
         // {
@@ -37,7 +36,7 @@ export default function Operations() {
             iconName: 'download',
             title: '下载列表',
             action() {
-                navigation.navigate(ROUTE_PATH.DOWNLOADING);
+                navigate(ROUTE_PATH.DOWNLOADING);
             },
         },
     ];

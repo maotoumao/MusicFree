@@ -1,15 +1,14 @@
 import React from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 import MusicSheet from '@/core/musicSheet';
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH, useParams} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
 import Toast from '@/utils/toast';
 
 export default function () {
     const navigation = useNavigation<any>();
-    const route = useRoute<any>();
-    const id = route.params?.id ?? 'favorite';
+    const {id = 'favorite'} = useParams<'sheet-detail'>();
     const musicSheet = MusicSheet.useSheets(id);
     const {showDialog} = useDialog();
 
