@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#fbeee2',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingRight: fontSizeConst.content,
     },
     text: {
         fontSize: fontSizeConst.content,
         includeFontPadding: false,
         marginLeft: fontSizeConst.tag,
+        width: rpx(488),
         color: '#333333',
     },
     icon: {
