@@ -3,9 +3,9 @@
 ## 简介
 一个插件化、定制化、无广告的免费音乐播放器，目前只支持Android和Harmony OS。
 
-如果需要了解后续进展可以关注b站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)；如果有问题可以在issue区或者qq群：[252994941](https://jq.qq.com/?_wv=1027&k=igip9n4T)反馈。
+如果需要了解后续进展可以关注~~b站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)~~(不到一天就被吞了！还是进群吧)；如果有问题可以在issue区或者qq群：[252994941](https://jq.qq.com/?_wv=1027&k=igip9n4T)反馈。
 
-介绍&使用视频可以看这里：[B站视频](https://www.bilibili.com/video/BV1qe4y1e76b/?vd_source=e8accf11e2b54f8b670ba6118bd36678#reply134846503408)
+简介视频放在了公众号里：[简介视频](https://mp.weixin.qq.com/s/sH_2vRm7EyBGgWggkJmsdg)
 
 ## 特性
 - 插件化：本软件仅仅是一个播放器，本身**并不集成**任何平台的任何音源，所有的搜索、播放、歌单导入等功能全部基于**插件**。这也就意味着，**只要可以在互联网上搜索到的音源，只要有对应的插件，你都可以使用本软件进行搜索、播放等功能**。关于插件的详细说明请看插件一节。
