@@ -18,6 +18,7 @@ import {isSameMediaItem, mergeProps} from '@/utils/mediaItem';
 import PluginManager from './pluginManager';
 import Network from './network';
 import Toast from '@/utils/toast';
+import LocalMusicSheet from './localMusicSheet';
 
 enum MusicRepeatMode {
     /** 随机播放 */
@@ -292,7 +293,8 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
         trace('播放', musicItem);
         if (
             Network.isCellular() &&
-            !Config.get('setting.basic.useCelluarNetworkPlay')
+            !Config.get('setting.basic.useCelluarNetworkPlay') &&
+            !LocalMusicSheet.isLocalMusic(musicItem ?? null)
         ) {
             Toast.warn('当前设置移动网络不可播放，可在侧边栏基本设置中打开');
             return;
