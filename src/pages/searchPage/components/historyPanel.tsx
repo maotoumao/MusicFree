@@ -4,7 +4,12 @@ import rpx from '@/utils/rpx';
 import Loading from '@/components/base/loading';
 import {Chip} from 'react-native-paper';
 import useSearch from '../hooks/useSearch';
-import {addHistory, getHistory, removeHistory} from '../common/historySearch';
+import {
+    addHistory,
+    getHistory,
+    removeAllHistory,
+    removeHistory,
+} from '../common/historySearch';
 import {useSetAtom} from 'jotai';
 import {
     initSearchResults,
@@ -14,6 +19,7 @@ import {
     searchResultsAtom,
 } from '../store/atoms';
 import ThemeText from '@/components/base/themeText';
+import Button from '@/components/base/button';
 
 export default function () {
     const [history, setHistory] = useState<string[] | null>(null);
@@ -33,12 +39,19 @@ export default function () {
                 <Loading />
             ) : (
                 <>
-                    <ThemeText
-                        fontSize="title"
-                        fontWeight="semibold"
-                        style={style.title}>
-                        历史记录
-                    </ThemeText>
+                    <View style={style.header}>
+                        <ThemeText fontSize="title" fontWeight="semibold">
+                            历史记录
+                        </ThemeText>
+                        <Button
+                            fontColor="secondary"
+                            onPress={async () => {
+                                await removeAllHistory();
+                                getHistory().then(setHistory);
+                            }}>
+                            清空
+                        </Button>
+                    </View>
                     <ScrollView
                         style={style.historyContent}
                         contentContainerStyle={style.historyContentConainer}>
@@ -75,9 +88,12 @@ const style = StyleSheet.create({
         padding: rpx(24),
         flex: 1,
     },
-    title: {
+    header: {
         width: '100%',
-        marginVertical: rpx(28),
+        flexDirection: 'row',
+        paddingVertical: rpx(28),
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     historyContent: {
         width: rpx(750),

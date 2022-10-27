@@ -15,3 +15,7 @@ export async function removeHistory(query: string) {
     searchList = searchList.filter((_: string) => _ !== query);
     await setStorage('history-search', searchList);
 }
+
+export async function removeAllHistory() {
+    await setStorage('history-search', []);
+}
