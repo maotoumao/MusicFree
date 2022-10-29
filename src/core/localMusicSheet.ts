@@ -87,7 +87,10 @@ function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
 async function importFolder(folderPath: string) {
     const dirFiles = await FileSystem.statDir(folderPath);
     const musicFiles = dirFiles.filter(
-        _ => _.type === 'file' && _.filename.endsWith('.mp3'),
+        // todo: flac播放没有声音
+        _ =>
+            _.type === 'file' &&
+            (_.filename.endsWith('.mp3') || _.filename.endsWith('.flac')),
     );
 
     const musicItems: IMusic.IMusicItem[] = await Promise.all(

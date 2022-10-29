@@ -4,15 +4,18 @@ import rpx from '@/utils/rpx';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import MusicBar from '@/components/musicBar';
-import SimpleAppBar from '@/components/base/simpleAppBar';
 import Header from './components/header';
 import Body from './components/body';
-import {useSetAtom} from 'jotai';
+import {useAtom, useSetAtom} from 'jotai';
 import {initQueryResult, queryResultAtom, scrollToTopAtom} from './store/atoms';
+import ComplexAppBar from '@/components/base/ComplexAppBar';
+import {ROUTE_PATH, useNavigate, useParams} from '@/entry/router';
 
 export default function ArtistDetail() {
-    const setQueryResult = useSetAtom(queryResultAtom);
+    const [queryResult, setQueryResult] = useAtom(queryResultAtom);
+    const {artistItem} = useParams<'artist-detail'>();
     const setScrollToTopState = useSetAtom(scrollToTopAtom);
+    const navigate = useNavigate();
 
     useEffect(() => {
         return () => {
@@ -24,7 +27,23 @@ export default function ArtistDetail() {
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
-            <SimpleAppBar title="作者" />
+            <ComplexAppBar
+                title="作者"
+                menuOptions={[
+                    {
+                        title: '批量编辑单曲',
+                        icon: 'playlist-edit',
+                        onPress() {
+                            navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
+                                musicList: queryResult?.music?.data ?? [],
+                                musicSheet: {
+                                    title: `${artistItem.name} - 单曲`,
+                                },
+                            });
+                        },
+                    },
+                ]}
+            />
             <Header />
             <Body />
             <MusicBar />
