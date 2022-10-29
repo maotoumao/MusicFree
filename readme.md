@@ -3,7 +3,7 @@
 ## 简介
 一个插件化、定制化、无广告的免费音乐播放器，目前只支持Android和Harmony OS。
 
-如果需要了解后续进展可以关注~~b站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)~~(不到一天就被吞了！还是进群吧)；如果有问题可以在issue区或者qq群：[252994941](https://jq.qq.com/?_wv=1027&k=igip9n4T)反馈。
+如果需要了解后续进展可以关注~~b站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)~~(不到一天就被吞了！还是进群吧，下边视频的公众号也行)；如果有问题可以在issue区或者qq群：[252994941](https://jq.qq.com/?_wv=1027&k=igip9n4T)反馈。
 
 简介视频放在了公众号里：[简介视频](https://mp.weixin.qq.com/s/sH_2vRm7EyBGgWggkJmsdg)
 

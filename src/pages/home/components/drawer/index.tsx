@@ -112,16 +112,16 @@ const style = StyleSheet.create({
         backgroundColor: '#999999',
     },
     scrollWrapper: {
-        paddingHorizontal: rpx(24),
         paddingTop: rpx(12),
     },
 
     header: {
-        height: rpx(100),
+        height: rpx(120),
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginLeft: rpx(24),
     },
     card: {
         backgroundColor: '#eeeeee22',

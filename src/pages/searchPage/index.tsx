@@ -34,7 +34,7 @@ export default function () {
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
             <NavBar />
-            <View style={{flex: 1}}>
+            <View style={style.flex1}>
                 {pageStatus === PageStatus.EDITING && <HistoryPanel />}
                 {pageStatus === PageStatus.SEARCHING && <Loading />}
                 {pageStatus === PageStatus.RESULT && <ResultPanel />}
@@ -48,6 +48,9 @@ export default function () {
 const style = StyleSheet.create({
     wrapper: {
         width: rpx(750),
+        flex: 1,
+    },
+    flex1: {
         flex: 1,
     },
 });
