@@ -38,9 +38,10 @@ export default function MusicItem(props: IMusicItemProps) {
         <ListItem
             itemWidth={itemWidth}
             itemHeight={ITEM_HEIGHT}
+            itemPaddingLeft={index !== undefined ? 0 : undefined}
             itemBackgroundColor={itemBackgroundColor}
             onLongPress={onItemLongPress}
-            left={index !== undefined ? {index: index, width: rpx(72)} : left}
+            left={index !== undefined ? {index: index, width: rpx(96)} : left}
             title={musicItem.title}
             desc={
                 <>

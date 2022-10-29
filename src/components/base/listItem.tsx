@@ -44,7 +44,7 @@ function Left(props?: ILeftProps) {
                         style={{
                             fontStyle: 'italic',
                             fontSize: Math.min(
-                                width / `${index}`.length,
+                                (width / `${index}`.length) * 0.8,
                                 fontSizeConst.content,
                             ),
                         }}>
@@ -94,6 +94,7 @@ interface IListItemProps {
     /** 右侧按钮 */
     right?: () => JSX.Element;
     itemPaddingHorizontal?: number;
+    itemPaddingLeft?: number;
     itemWidth?: number;
     itemHeight?: number;
     itemBackgroundColor?: string;
@@ -114,6 +115,7 @@ export default function ListItem(props: IListItemProps) {
         left,
         itemBackgroundColor,
         itemPaddingHorizontal = rpx(24),
+        itemPaddingLeft,
     } = props;
     return (
         <List.Item
@@ -123,6 +125,7 @@ export default function ListItem(props: IListItemProps) {
                 style.wrapper,
                 {
                     paddingHorizontal: itemPaddingHorizontal,
+                    paddingLeft: itemPaddingLeft,
                     width: itemWidth,
                     height: itemHeight ?? rpx(120),
                     paddingVertical: 0,
