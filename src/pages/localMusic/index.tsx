@@ -43,6 +43,15 @@ export default function LocalMusic() {
                             }
                         },
                     },
+                    {
+                        icon: 'playlist-edit',
+                        title: '批量编辑',
+                        async onPress() {
+                            navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
+                                musicList: LocalMusicSheet.getMusicList(),
+                            });
+                        },
+                    },
                 ]}
             />
             <LocalMusicList />
