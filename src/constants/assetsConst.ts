@@ -3,4 +3,5 @@ export const ImgAsset = {
     backgroundDefault: require('@/assets/imgs/background.jpeg'),
     addBackground: require('@/assets/imgs/add-image.png'),
     logo: require('@/assets/imgs/logo.jpg'),
+    wechatChannel: require('@/assets/imgs/wechat_channel.jpg'),
 };

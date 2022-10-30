@@ -198,6 +198,9 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 url: localPath,
             };
         }
+        if (musicItem.platform === '本地') {
+            throw new Error('本地音乐不存在');
+        }
         // 2. 缓存播放
         const mediaCache = Cache.get(musicItem);
         const pluginCacheControl = this.plugin.instance.cacheControl;
@@ -239,6 +242,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
 
             return result;
         } catch (e: any) {
+            console.log('eeee', e);
             if (retryCount > 0) {
                 await delay(150);
                 return this.getMediaSource(musicItem, --retryCount);

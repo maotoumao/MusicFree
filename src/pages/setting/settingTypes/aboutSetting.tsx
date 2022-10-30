@@ -1,10 +1,15 @@
 import React from 'react';
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+    Image,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import rpx from '@/utils/rpx';
 import {ImgAsset} from '@/constants/assetsConst';
 import ThemeText from '@/components/base/themeText';
 import deviceInfoModule from 'react-native-device-info';
-import {ScrollView} from 'react-native-gesture-handler';
 import LinkText from '@/components/base/linkText';
 import useCheckUpdate from '@/hooks/useCheckUpdate';
 
@@ -28,10 +33,16 @@ export default function AboutSetting() {
                     当前版本: {deviceInfoModule.getVersion()} (点击logo检查更新)
                 </ThemeText>
             </View>
-            <ScrollView style={style.scrollView}>
+            <ScrollView
+                contentContainerStyle={style.scrollViewContainer}
+                style={style.scrollView}>
                 <ThemeText fontSize="title">开发者的话: </ThemeText>
                 <ThemeText style={style.content}>
-                    首先感谢你使用这款软件。开发这款软件的初衷首先是满足自己日常的需求，顺便分享出来，如果能对更多人有帮助那再好不过。
+                    首先感谢你使用这款软件。开发这款软件的初衷首先是满足自己日常的需求，顺便分享出来，如果能对更多人有帮助那再好不过。简单的介绍视频可以戳
+                    <LinkText linkTo="https://mp.weixin.qq.com/s/sH_2vRm7EyBGgWggkJmsdg">
+                        这里
+                    </LinkText>
+                    ，是公众号链接，如果要了解后续更新的话，点个关注也行。
                 </ThemeText>
                 <ThemeText style={style.content}>
                     本软件完全免费，并基于GPL协议开源，仅供学习参考使用，不可用于商业目的。代码地址如下，如果打不开试试把github换成gitee:
@@ -51,14 +62,12 @@ export default function AboutSetting() {
                     <LinkText linkTo="https://qm.qq.com/cgi-bin/qm/qr?k=O9R33tW_lrx85ng-mtlqV6awSbEvaFJP&authKey=SchXj8Uz5sHL4JcfORmfwgvp0BAPoZ9vZsPoHimAlFo%2F8GPQOIoOKWpbS1ZepM2S&noverify=0&group_code=252994941">
                         252994941
                     </LinkText>
-                    ，也可以在github的issue区反馈；最新的进展可能会在b站:{' '}
-                    <LinkText
-                        fontWeight="semibold"
-                        linkTo="https://space.bilibili.com/12866223">
-                        不想睡觉猫头猫
-                    </LinkText>{' '}
-                    或者上边的QQ群更新，感兴趣的话就点个关注吧orz~
+                    ，也可以在github的issue区反馈；最新的进展可能会在公众号(b站估计更不下去了hh)或者上边的QQ群更新，感兴趣的话就点个关注吧orz~
                 </ThemeText>
+                <Image
+                    source={ImgAsset.wechatChannel}
+                    style={style.wcChannel}
+                />
                 <ThemeText style={style.content}>
                     最后，如果真的有人看到这里，希望这款软件可以帮到你，这也是这款软件存在的意义。
                 </ThemeText>
@@ -91,9 +100,18 @@ const style = StyleSheet.create({
         marginTop: rpx(24),
         lineHeight: rpx(48),
     },
+    wcChannel: {
+        width: rpx(330),
+        height: rpx(330),
+        marginLeft: rpx(210),
+        marginTop: rpx(24),
+    },
     scrollView: {
         flex: 1,
         paddingHorizontal: rpx(24),
         paddingVertical: rpx(48),
+    },
+    scrollViewContainer: {
+        paddingBottom: rpx(96),
     },
 });
