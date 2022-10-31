@@ -43,6 +43,10 @@ interface IConfig {
                 accent: string;
             };
         };
+
+        plugin: {
+            subscribeUrl: string;
+        };
     };
     status: {
         music: {

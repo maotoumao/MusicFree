@@ -557,7 +557,8 @@ async function installPluginFromUrl(url: string) {
             const plugin = new Plugin(funcCode, '');
             const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
             if (_pluginIndex !== -1) {
-                throw new Error('插件已安装');
+                // 静默忽略
+                return;
             }
             const oldVersionPlugin = plugins.find(p => p.name === plugin.name);
             if (oldVersionPlugin) {

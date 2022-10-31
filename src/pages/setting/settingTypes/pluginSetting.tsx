@@ -14,6 +14,7 @@ import {trace} from '@/utils/log';
 import usePanel from '@/components/panels/usePanel';
 import Toast from '@/utils/toast';
 import axios from 'axios';
+import Config from '@/core/config';
 
 export default function PluginSetting() {
     const plugins = PluginManager.usePlugins();
@@ -44,6 +45,25 @@ export default function PluginSetting() {
                     color={colors.text}
                     fabStyle={{backgroundColor: colors.primary}}
                     actions={[
+                        {
+                            icon: 'book-plus-multiple-outline',
+                            label: '订阅设置',
+                            async onPress() {
+                                showDialog('SubscribePluginDialog', {
+                                    async onUpdatePlugins(hideDialog) {
+                                        const url = Config.get(
+                                            'setting.plugin.subscribeUrl',
+                                        );
+                                        setLoading(true);
+                                        if (url) {
+                                            await installPluginFromUrl(url);
+                                        }
+                                        setLoading(false);
+                                        hideDialog();
+                                    },
+                                });
+                            },
+                        },
                         {
                             icon: 'file-plus',
                             label: '从本地安装插件',
@@ -83,48 +103,9 @@ export default function PluginSetting() {
                                     placeholder: '输入插件URL',
                                     maxLength: 120,
                                     async onOk(text, closePanel) {
-                                        try {
-                                            setLoading(true);
-                                            closePanel();
-                                            let urls: string[] = [];
-                                            const iptUrl = addRandomHash(
-                                                text.trim(),
-                                            );
-                                            if (text.endsWith('.json')) {
-                                                const jsonFile = (
-                                                    await axios.get(iptUrl)
-                                                ).data;
-                                                /**
-                                                 * {
-                                                 *     plugins: [{
-                                                 *          version: xxx,
-                                                 *          url: xxx
-                                                 *      }]
-                                                 * }
-                                                 */
-                                                urls = (
-                                                    jsonFile?.plugins ?? []
-                                                ).map((_: any) =>
-                                                    addRandomHash(_.url),
-                                                );
-                                            } else {
-                                                urls = [iptUrl];
-                                            }
-                                            await Promise.all(
-                                                urls.map(url =>
-                                                    PluginManager.installPluginFromUrl(
-                                                        url,
-                                                    ),
-                                                ),
-                                            ).catch();
-                                            Toast.success('插件安装成功~');
-                                        } catch (e: any) {
-                                            Toast.warn(
-                                                `插件安装失败: ${
-                                                    e?.message ?? ''
-                                                }`,
-                                            );
-                                        }
+                                        setLoading(true);
+                                        closePanel();
+                                        await installPluginFromUrl(text);
                                         setLoading(false);
                                     },
                                 });
@@ -316,4 +297,33 @@ function addRandomHash(url: string) {
         return `${url}#${Date.now()}`;
     }
     return url;
+}
+
+async function installPluginFromUrl(text: string) {
+    try {
+        let urls: string[] = [];
+        const iptUrl = addRandomHash(text.trim());
+        if (text.endsWith('.json')) {
+            const jsonFile = (await axios.get(iptUrl)).data;
+            /**
+             * {
+             *     plugins: [{
+             *          version: xxx,
+             *          url: xxx
+             *      }]
+             * }
+             */
+            urls = (jsonFile?.plugins ?? []).map((_: any) =>
+                addRandomHash(_.url),
+            );
+        } else {
+            urls = [iptUrl];
+        }
+        await Promise.all(
+            urls.map(url => PluginManager.installPluginFromUrl(url)),
+        ).catch();
+        Toast.success('插件安装成功~');
+    } catch (e: any) {
+        Toast.warn(`插件安装失败: ${e?.message ?? ''}`);
+    }
 }
