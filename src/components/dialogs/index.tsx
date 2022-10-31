@@ -8,14 +8,18 @@ export default function () {
 
     return (
         <Portal>
-            {components.map(([key, DialogComponent]) => (
-                <DialogComponent
-                    key={key}
-                    visible={dialogName === key}
-                    hideDialog={hideDialog}
-                    {...(payload ?? {})}
-                />
-            ))}
+            {components.map(([key, DialogComponent]) =>
+                dialogName === key ? (
+                    <DialogComponent
+                        key={key}
+                        visible={dialogName === key}
+                        hideDialog={hideDialog}
+                        {...(payload ?? {})}
+                    />
+                ) : (
+                    <></>
+                ),
+            )}
         </Portal>
     );
 }
