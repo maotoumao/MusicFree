@@ -92,6 +92,41 @@ const setup = async () => {
         }
     });
 
+    /** 播放下一个 */
+    TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async evt => {
+        // 是track里的，不是playlist里的
+        trace('PlaybackTrackChanged', {
+            evt,
+        });
+
+        if (
+            evt.nextTrack === 1 &&
+            !(await TrackPlayer.getTrack(evt.nextTrack))?.url
+        ) {
+            if (MusicQueue.getRepeatMode() === 'SINGLE') {
+                await MusicQueue.play(undefined, true);
+            } else {
+                const queue = await TrackPlayer.getQueue();
+                // 要跳到的下一个就是当前的，并且队列里面有多首歌
+                if (
+                    isSameMediaItem(
+                        queue[1] as unknown as ICommon.IMediaBase,
+                        MusicQueue.getCurrentMusicItem(),
+                    ) &&
+                    MusicQueue.getMusicQueue().length > 1
+                ) {
+                    return;
+                }
+                trace('PlaybackTrackChanged-shouldskip', {
+                    evt,
+                    queue,
+                });
+
+                await MusicQueue.skipToNext();
+            }
+        }
+    });
+
     TrackPlayer.addEventListener(Event.PlaybackError, async e => {
         errorLog('Player播放失败', e);
         await _playFail();
