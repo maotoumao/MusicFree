@@ -13,13 +13,52 @@ import Color from 'color';
 import ThemeText from '../base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 
+function CircularPlayBtn() {
+    const progress = MusicQueue.useProgress();
+    const musicState = MusicQueue.usePlaybackState();
+    const {colors} = useTheme();
+
+    return (
+        <CircularProgressBase
+            activeStrokeWidth={rpx(4)}
+            inActiveStrokeWidth={rpx(2)}
+            inActiveStrokeOpacity={0.2}
+            value={
+                progress?.duration
+                    ? (100 * progress.position) / progress.duration
+                    : 0
+            }
+            duration={100}
+            radius={rpx(36)}
+            activeStrokeColor={colors.text}
+            inActiveStrokeColor={Color(colors.text).alpha(0.5).toString()}>
+            {musicIsPaused(musicState) ? (
+                <IconButton
+                    icon="play"
+                    size={rpx(48)}
+                    onPress={async () => {
+                        await MusicQueue.play();
+                    }}
+                />
+            ) : (
+                <IconButton
+                    icon="pause"
+                    size={rpx(48)}
+                    onPress={async () => {
+                        await MusicQueue.pause();
+                    }}
+                />
+            )}
+        </CircularProgressBase>
+    );
+}
+
 export default function () {
     const musicItem = MusicQueue.useCurrentMusicItem();
-    const musicState = MusicQueue.usePlaybackState();
+
     const [showKeyboard, setKeyboardStatus] = useState(false);
     const {showPanel} = usePanel();
     const navigate = useNavigate();
-    const progress = MusicQueue.useProgress();
     const {colors} = useTheme();
 
     useEffect(() => {
@@ -80,40 +119,7 @@ export default function () {
                         )}
                     </Text>
                     <View style={style.actionGroup}>
-                        <CircularProgressBase
-                            activeStrokeWidth={rpx(4)}
-                            inActiveStrokeWidth={rpx(2)}
-                            inActiveStrokeOpacity={0.2}
-                            value={
-                                progress?.duration
-                                    ? (100 * progress.position) /
-                                      progress.duration
-                                    : 0
-                            }
-                            duration={100}
-                            radius={rpx(36)}
-                            activeStrokeColor={colors.text}
-                            inActiveStrokeColor={Color(colors.text)
-                                .alpha(0.5)
-                                .toString()}>
-                            {musicIsPaused(musicState) ? (
-                                <IconButton
-                                    icon="play"
-                                    size={rpx(48)}
-                                    onPress={async () => {
-                                        await MusicQueue.play();
-                                    }}
-                                />
-                            ) : (
-                                <IconButton
-                                    icon="pause"
-                                    size={rpx(48)}
-                                    onPress={async () => {
-                                        await MusicQueue.pause();
-                                    }}
-                                />
-                            )}
-                        </CircularProgressBase>
+                        <CircularPlayBtn />
 
                         <Icon
                             name="playlist-music"

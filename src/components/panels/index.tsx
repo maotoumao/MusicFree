@@ -4,7 +4,7 @@ import {Portal} from 'react-native-paper';
 import panels from './types';
 import {_usePanel} from './usePanel';
 
-export default function () {
+function Panels() {
     const {panelName, payload, unmountPanel} = _usePanel();
     const Component = panelName ? panels[panelName] : null;
 
@@ -38,3 +38,5 @@ export default function () {
         </Portal>
     );
 }
+
+export default React.memo(Panels, () => true);

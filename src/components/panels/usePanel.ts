@@ -1,6 +1,6 @@
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {atom, useAtom} from 'jotai';
-import {MutableRefObject, useEffect, useRef} from 'react';
+import {MutableRefObject, useCallback, useEffect, useRef} from 'react';
 import {BackHandler, NativeEventSubscription} from 'react-native';
 import panels from './types';
 
@@ -47,10 +47,10 @@ export function _usePanel(
         };
     }, []);
 
-    function unmountPanel() {
+    const unmountPanel = useCallback(() => {
         setPanelName(null);
         setPayload(null);
-    }
+    }, []);
 
     return {payload, panelName, showPanel, unmountPanel};
 }
