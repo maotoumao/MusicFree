@@ -377,7 +377,9 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
         if (!isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
             return;
         }
-        musicQueue[currentIndex] = track;
+        musicQueue = produce(musicQueue, draft => {
+            draft[currentIndex] = track;
+        });
         await replaceTrack(track as Track);
         currentMusicStateMapper.notify();
     } catch (e: any) {
