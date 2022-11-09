@@ -4,6 +4,8 @@
 一个插件化、定制化、无广告的免费音乐播放器，目前只支持Android和Harmony OS。
 
 如果需要了解后续进展可以关注~~b站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)~~(不到一天就被吞了！还是进群吧，下边视频的公众号也行)；如果有问题可以在issue区或者qq群：[252994941](https://jq.qq.com/?_wv=1027&k=igip9n4T)反馈。
+1群满了 去2群吧：[817438799](https://jq.qq.com/?_wv=1027&k=3SRFG8qC)~
+
 
 简介视频放在了公众号里：[简介视频](https://mp.weixin.qq.com/s/sH_2vRm7EyBGgWggkJmsdg)
 
@@ -32,18 +34,16 @@
 下载app之后，只需要在侧边栏设置-插件设置中安装插件即可。支持安装本地插件和从网络安装插件（支持解析.js文件和.json描述文件；已经写了几个示意的插件：[指路这个仓库](https://github.com/maotoumao/MusicFreePlugins)，不过可能功能还不是很完善）；
 你可以直接点击从网络安装插件，然后输入https://gitee.com/maotoumao/MusicFreePlugins/raw/master/plugins.json ，点击确认即可安装。
 
+图文版详细使用说明可以参考这里：[MusicFree插件使用指南](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483875&idx=1&sn=aedf8bb909540634d927de7fd2b4b8b1&chksm=c1a390c4f6d419d233908bb781d418c6b9fd2ca82e9e93291e7c93b8ead3c50ca5ae39668212#rd)
+
 ## 下载地址
 请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)
 
+## Q&A
+使用时遇到的常见问题可以看这里：[MusicFree使用Q&A](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483937&idx=1&sn=486c735b1fb78acc75f8f4acdcb9e253&chksm=c1a39306f6d41a101a6f8d3adefcd980092ce94140119bb3cc0eb3aa8c6ae22fe1b97899be21#rd)
 ## WIP
-### 1.0版本
-1. 最近播放 [0%]
-2. 横屏适配 [0%]
-3. 其他剩余功能
-### 2.0版本
-1. ReactNative版本升级
-2. 体验优化（长列表、弹窗、底部浮层等）
-3. 代码逻辑优化
+当前开发进度以及问题&需求列表可以看这里：
+[MusicFree建议&bug](https://docs.qq.com/sheet/DT3djQm1ReWJya2Vo?tab=BB08J2)
 
 ## ChangeLog
 `2022.10.30  v0.0.1-alpha.7`
@@ -88,6 +88,15 @@
 如果你喜欢这个项目，或者希望我可以持续维护下去，你可以通过以下任何一种方式支持我;)
 1. Star这个项目，分享给你身边的人；
 2. 关注b站[不想睡觉猫头猫](https://space.bilibili.com/12866223)或公众号获取最新信息；
+
+![微信公众号](./src/assets/imgs/wechat_channel.jpg)
+
+
+感谢以下小伙伴的推荐，很意外也很惊喜 ~~~
+
+来自**果核剥壳**的安利~ https://mp.weixin.qq.com/s/F6hMbLv_a-Ty0fPA_0P0Rg
+
+来自**小棉袄**的安利~ https://mp.weixin.qq.com/s/Fqe3o7vcTw0KDKoB-gsQfg
 
 
 ---

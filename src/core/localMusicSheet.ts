@@ -135,6 +135,7 @@ function localMediaFilter(_: FileStat) {
 }
 
 // TODO: 需要支持中断&取消
+// 搜索本地的文件列表
 async function getMusicFiles(folderPath: string) {
     try {
         const dirFiles = await FileSystem.statDir(folderPath);
