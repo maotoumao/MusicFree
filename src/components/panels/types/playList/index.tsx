@@ -27,12 +27,16 @@ export default function () {
     const colors = useColors();
 
     useEffect(() => {
-        snapPoint.value = withTiming(1);
+        snapPoint.value = withTiming(1, {
+            duration: 200,
+        });
     }, []);
 
     const maskAnimated = useAnimatedStyle(() => {
         return {
-            opacity: withTiming(snapPoint.value * 0.5),
+            opacity: withTiming(snapPoint.value * 0.5, {
+                duration: 200,
+            }),
         };
     });
 
@@ -40,7 +44,12 @@ export default function () {
         return {
             transform: [
                 {
-                    translateY: withTiming((1 - snapPoint.value) * LIST_HEIGHT),
+                    translateY: withTiming(
+                        (1 - snapPoint.value) * LIST_HEIGHT,
+                        {
+                            duration: 200,
+                        },
+                    ),
                 },
             ],
         };
@@ -51,10 +60,12 @@ export default function () {
             <Pressable
                 style={style.maskWrapper}
                 onPress={() => {
-                    snapPoint.value = withTiming(0);
+                    snapPoint.value = withTiming(0, {
+                        duration: 200,
+                    });
                     setTimeout(() => {
                         unmountPanel();
-                    }, 500);
+                    }, 300);
                 }}>
                 <Animated.View
                     style={[style.maskWrapper, style.mask, maskAnimated]}

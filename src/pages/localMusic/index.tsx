@@ -3,59 +3,33 @@ import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
-import LocalMusicList from './localMusicList';
-import MusicBar from '@/components/musicBar';
-import ComplexAppBar from '@/components/base/ComplexAppBar';
-import DocumentPicker from 'react-native-document-picker';
-import Toast from '@/utils/toast';
-import LocalMusicSheet from '@/core/localMusicSheet';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import {errorLog} from '@/utils/log';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import MainPage from './mainPage';
+import ScanPage from './scanPage';
 
+const Stack = createNativeStackNavigator();
 export default function LocalMusic() {
-    const navigate = useNavigate();
-
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
-            <ComplexAppBar
-                title="本地音乐"
-                onSearchPress={() => {
-                    navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
-                        musicList: LocalMusicSheet.getMusicList(),
-                    });
-                }}
-                menuOptions={[
-                    {
-                        icon: 'magnify',
-                        title: '从文件夹导入',
-                        async onPress() {
-                            try {
-                                const dir =
-                                    await DocumentPicker.pickDirectory();
-                                if (dir?.uri) {
-                                    await LocalMusicSheet.importFolder(dir.uri);
-                                    Toast.success('导入成功');
-                                }
-                            } catch (e: any) {
-                                errorLog('导入歌曲失败', e?.message ?? '');
-                                Toast.warn('导入失败');
-                            }
-                        },
-                    },
-                    {
-                        icon: 'playlist-edit',
-                        title: '批量编辑',
-                        async onPress() {
-                            navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
-                                musicList: LocalMusicSheet.getMusicList(),
-                            });
-                        },
-                    },
-                ]}
-            />
-            <LocalMusicList />
-            <MusicBar />
+            <Stack.Navigator
+                initialRouteName="local/index"
+                screenOptions={{
+                    headerShown: false,
+                    animation: 'slide_from_right',
+                    animationDuration: 200,
+                }}>
+                <Stack.Screen
+                    key={'local-index'}
+                    name={'local/index'}
+                    component={MainPage}
+                />
+                <Stack.Screen
+                    key={'local-scan'}
+                    name={'local/scan'}
+                    component={ScanPage}
+                />
+            </Stack.Navigator>
         </SafeAreaView>
     );
 }

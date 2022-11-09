@@ -7,6 +7,7 @@ export const basePath =
         : RNFS.DocumentDirectoryPath;
 
 export default {
+    basePath,
     pluginPath: `${basePath}/plugins/`,
     logPath: `${basePath}/log/`,
     dataPath: `${basePath}/data/`,

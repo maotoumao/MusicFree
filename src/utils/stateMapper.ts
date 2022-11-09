@@ -25,3 +25,26 @@ export default class StateMapper<T> {
         return _state;
     };
 }
+
+export class GlobalState<T> {
+    private value: T;
+    private stateMapper: StateMapper<T>;
+
+    constructor(initValue: T) {
+        this.value = initValue;
+        this.stateMapper = new StateMapper(this.getValue);
+    }
+
+    public getValue = () => {
+        return this.value;
+    };
+
+    useValue() {
+        return this.stateMapper.useMappedState();
+    }
+
+    setValue(value: T) {
+        this.value = value;
+        this.stateMapper.notify();
+    }
+}

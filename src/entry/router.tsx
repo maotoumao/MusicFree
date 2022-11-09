@@ -28,8 +28,10 @@ export const ROUTE_PATH = {
     ARTIST_DETAIL: 'artist-detail',
     /** 设置页 */
     SETTING: 'setting',
-    /** 本地下载 */
+    /** 本地音乐 */
     LOCAL: 'local',
+    /** 本地音乐-搜索页 */
+    LOCAL_SCAN: 'local/scan',
     /** 正在下载 */
     DOWNLOADING: 'downloading',
     /** 从歌曲列表中搜索 */
