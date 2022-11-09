@@ -11,7 +11,9 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
 
@@ -62,4 +64,45 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
         }
 
     }
+
+    @ReactMethod
+    public void getMediaMeta(ReadableArray filePaths, Promise promise) {
+        WritableArray metas = Arguments.createArray();
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        for (int i = 0; i < filePaths.size(); ++i) {
+            try {
+                String filePath = filePaths.getString(i);
+                Uri uri = Uri.parse(filePath);
+
+                if (isContentUri(uri)) {
+                    mmr.setDataSource(getReactApplicationContext(), uri);
+                } else {
+                    mmr.setDataSource(filePath);
+                }
+                // b站源部分直接转格式的mp3文件好像有问题 0x08000
+
+                WritableMap properties = Arguments.createMap();
+                properties.putString("duration", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                properties.putString("bitrate", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE));
+                properties.putString("artist", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+                properties.putString("author", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR));
+                properties.putString("album", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+                properties.putString("title", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
+                properties.putString("date", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE));
+                properties.putString("year", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR));
+                metas.pushMap(properties);
+
+            } catch (Exception e) {
+                metas.pushNull();
+            }
+        }
+        try {
+            mmr.release();
+        } catch (Exception ignored) {
+        }
+        promise.resolve(metas);
+
+    }
+
+
 }

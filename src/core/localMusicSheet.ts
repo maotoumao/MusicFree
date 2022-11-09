@@ -1,5 +1,6 @@
 import {internalSerializeKey, StorageKeys} from '@/constants/commonConst';
 import mp3Util, {IBasicMeta} from '@/native/mp3Util';
+import {errorLog} from '@/utils/log';
 import {
     getInternalData,
     InternalDataType,
@@ -8,7 +9,7 @@ import {
 import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storage';
 import {useEffect, useState} from 'react';
-import {FileSystem} from 'react-native-file-access';
+import {FileStat, FileSystem} from 'react-native-file-access';
 
 let localSheet: IMusic.IMusicItem[] = [];
 const localSheetStateMapper = new StateMapper(() => localSheet);
@@ -125,6 +126,69 @@ async function importFolder(folderPath: string) {
     addMusic(musicItems);
 }
 
+function localMediaFilter(_: FileStat) {
+    return (
+        _.filename.endsWith('.mp3') ||
+        _.filename.endsWith('.flac') ||
+        _.filename.endsWith('.wma')
+    );
+}
+
+// TODO: 需要支持中断&取消
+async function getMusicFiles(folderPath: string) {
+    try {
+        const dirFiles = await FileSystem.statDir(folderPath);
+        const musicFiles: FileStat[] = [];
+
+        await Promise.all(
+            dirFiles.map(async item => {
+                if (item.type === 'directory') {
+                    const res = await getMusicFiles(item.path);
+                    musicFiles.push(...res);
+                } else if (localMediaFilter(item)) {
+                    musicFiles.push(item);
+                }
+            }),
+        );
+        return musicFiles;
+    } catch (e: any) {
+        errorLog('获取本地文件失败', e?.message);
+        return [];
+    }
+}
+
+// 导入本地音乐
+async function importLocal(folderPaths: string[]) {
+    const musics = await Promise.all(folderPaths.map(_ => getMusicFiles(_)));
+    const musicList = musics.flat();
+    const metas = await mp3Util.getMediaMeta(musicList.map(_ => _.path));
+    console.log(metas);
+    const musicItems = await Promise.all(
+        musicList.map(async (musicStat, index) => {
+            let {platform, id, title, artist} =
+                parseFilename(musicStat.filename) ?? {};
+            const meta = metas[index];
+            if (!platform || !id) {
+                platform = '本地';
+                id = await FileSystem.hash(musicStat.path, 'MD5');
+            }
+            return {
+                id,
+                platform,
+                title: title ?? meta?.title ?? musicStat.filename,
+                artist: artist ?? meta?.artist ?? '未知歌手',
+                duration: parseInt(meta?.duration ?? '0') / 1000,
+                album: meta?.album ?? '未知专辑',
+                artwork: '',
+                [internalSerializeKey]: {
+                    localPath: musicStat.path,
+                },
+            };
+        }),
+    );
+    addMusic(musicItems);
+}
+
 /** 是否为本地音乐 */
 function isLocalMusic(
     musicItem: ICommon.IMediaBase | null,
@@ -157,6 +221,7 @@ const LocalMusicSheet = {
     addMusic,
     removeMusic,
     importFolder,
+    importLocal,
     isLocalMusic,
     useIsLocal,
     getMusicList,

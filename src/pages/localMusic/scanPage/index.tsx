@@ -9,6 +9,7 @@ import Color from 'color';
 import IconButton from '@/components/base/iconButton';
 import FolderItem from './folderItem';
 import Empty from '@/components/base/empty';
+import LocalMusicSheet from '@/core/localMusicSheet';
 
 // function FileItem(props: IFileItemProps){
 //     return
@@ -89,7 +90,7 @@ export default function ScanPage() {
             />
             <Pressable
                 onPress={() => {
-                    console.log('扫描');
+                    LocalMusicSheet.importLocal(checkedPath).then(console.log);
                 }}>
                 <View
                     style={[
