@@ -116,9 +116,6 @@ export default function ScanPage() {
                             hideDialog();
                             navigation.goBack();
                         },
-                        onReject(reason) {
-                            console.log(reason);
-                        },
                         onCancel(hideDialog) {
                             LocalMusicSheet.cancelImportLocal();
                             hideDialog();

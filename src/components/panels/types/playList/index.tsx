@@ -8,7 +8,9 @@ import {_usePanel} from '../../usePanel';
 import Header from './header';
 import Body from './body';
 import Animated, {
+    Easing,
     runOnJS,
+    useAnimatedReaction,
     useAnimatedStyle,
     useSharedValue,
     withTiming,
@@ -19,6 +21,13 @@ const ITEM_HEIGHT = rpx(108);
 const ITEM_WIDTH = rpx(750);
 const WRAPPER_HEIGHT = vh(60) - rpx(104);
 const LIST_HEIGHT = vh(60);
+const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
+const ANIMATION_DURATION = 250;
+
+const timingConfig = {
+    duration: ANIMATION_DURATION,
+    easing: ANIMATION_EASING,
+};
 
 export default function () {
     const snapPoint = useSharedValue(0);
@@ -28,16 +37,12 @@ export default function () {
     const colors = useColors();
 
     useEffect(() => {
-        snapPoint.value = withTiming(1, {
-            duration: 200,
-        });
+        snapPoint.value = withTiming(1, timingConfig);
     }, []);
 
     const maskAnimated = useAnimatedStyle(() => {
         return {
-            opacity: withTiming(snapPoint.value * 0.5, {
-                duration: 250,
-            }),
+            opacity: withTiming(snapPoint.value * 0.5, timingConfig),
         };
     });
 
@@ -47,33 +52,29 @@ export default function () {
                 {
                     translateY: withTiming(
                         (1 - snapPoint.value) * LIST_HEIGHT,
-                        {
-                            duration: 250,
-                        },
+                        timingConfig,
                     ),
                 },
             ],
         };
     });
 
-    const _unmountPanel = runOnJS(unmountPanel);
+    useAnimatedReaction(
+        () => snapPoint.value,
+        (result, prevResult) => {
+            if (prevResult && result < prevResult && result === 0) {
+                runOnJS(unmountPanel)();
+            }
+        },
+        [],
+    );
 
     return (
         <>
             <Pressable
                 style={style.maskWrapper}
                 onPress={() => {
-                    snapPoint.value = withTiming(
-                        0,
-                        {
-                            duration: 250,
-                        },
-                        finished => {
-                            if (finished) {
-                                _unmountPanel();
-                            }
-                        },
-                    );
+                    snapPoint.value = withTiming(0, timingConfig);
                 }}>
                 <Animated.View
                     style={[style.maskWrapper, style.mask, maskAnimated]}
