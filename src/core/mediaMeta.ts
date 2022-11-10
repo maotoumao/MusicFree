@@ -30,6 +30,7 @@ async function setup() {
         newMediaMetas[kv[index][0]] = value ?? {};
     });
     mediaMetas = newMediaMetas;
+    // todo： setup时校验一下，清空冗余数据
 }
 
 function getMediaMeta(mediaItem: ICommon.IMediaBase) {

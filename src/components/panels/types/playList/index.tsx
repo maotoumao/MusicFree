@@ -8,6 +8,7 @@ import {_usePanel} from '../../usePanel';
 import Header from './header';
 import Body from './body';
 import Animated, {
+    runOnJS,
     useAnimatedStyle,
     useSharedValue,
     withTiming,
@@ -35,7 +36,7 @@ export default function () {
     const maskAnimated = useAnimatedStyle(() => {
         return {
             opacity: withTiming(snapPoint.value * 0.5, {
-                duration: 200,
+                duration: 250,
             }),
         };
     });
@@ -47,7 +48,7 @@ export default function () {
                     translateY: withTiming(
                         (1 - snapPoint.value) * LIST_HEIGHT,
                         {
-                            duration: 200,
+                            duration: 250,
                         },
                     ),
                 },
@@ -55,17 +56,24 @@ export default function () {
         };
     });
 
+    const _unmountPanel = runOnJS(unmountPanel);
+
     return (
         <>
             <Pressable
                 style={style.maskWrapper}
                 onPress={() => {
-                    snapPoint.value = withTiming(0, {
-                        duration: 200,
-                    });
-                    setTimeout(() => {
-                        unmountPanel();
-                    }, 300);
+                    snapPoint.value = withTiming(
+                        0,
+                        {
+                            duration: 250,
+                        },
+                        finished => {
+                            if (finished) {
+                                _unmountPanel();
+                            }
+                        },
+                    );
                 }}>
                 <Animated.View
                     style={[style.maskWrapper, style.mask, maskAnimated]}
