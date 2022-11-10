@@ -65,7 +65,7 @@ async function updateMediaMeta(
     const {platform, id} = mediaItem;
     let newMetas = mediaMetas;
     // 创建一个新的表
-    if (!mediaMetaKeys[platform] || !mediaMetas[mediaMetaKeys[platform]]) {
+    if (!mediaMetaKeys[platform] || !mediaMetas[platform]) {
         const newkey = nanoid();
         mediaMetaKeys[platform] = newkey;
         await setStorage(StorageKeys.MediaMetaKeys, mediaMetaKeys);
@@ -77,7 +77,6 @@ async function updateMediaMeta(
         // 如果没保存过，自动保存主键
         const primaryKey = PluginManager.getByMedia(mediaItem)?.instance
             ?.primaryKey ?? ['id'];
-        console.log('PRIMARYKEY', primaryKey, mediaItem);
         const mediaData: Record<string, any> = {};
         for (let k of primaryKey) {
             mediaData[k] = mediaItem[k];

@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import {Checkbox} from 'react-native-paper';
 
-const ITEM_HEIGHT = rpx(72);
+const ITEM_HEIGHT = rpx(96);
 
 interface IProps {
     folderPath: string;
@@ -23,12 +23,11 @@ function FolderItem(props: IProps) {
     } = props;
     return (
         <View style={style.wrapper}>
-            <Pressable onPress={onItemPress}>
+            <Pressable onPress={onItemPress} style={style.pathWrapper}>
                 <ThemeText
                     style={style.path}
                     numberOfLines={1}
-                    ellipsizeMode="tail"
-                    fontSize="subTitle">
+                    ellipsizeMode="tail">
                     {folderPath.substring(parentPath.length + 1)}
                 </ThemeText>
             </Pressable>
@@ -59,9 +58,12 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
     },
+    pathWrapper: {
+        flex: 1,
+        marginRight: rpx(60),
+    },
     path: {
         height: '100%',
         textAlignVertical: 'center',
-        paddingEnd: rpx(60),
     },
 });

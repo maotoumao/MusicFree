@@ -20,7 +20,7 @@ interface IPathItem {
     parent: null | IPathItem;
 }
 
-const ITEM_HEIGHT = rpx(72);
+const ITEM_HEIGHT = rpx(96);
 
 export default function ScanPage() {
     const [currentPath, setCurrentPath] = useState<IPathItem>({
