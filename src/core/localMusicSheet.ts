@@ -1,6 +1,5 @@
 import {internalSerializeKey, StorageKeys} from '@/constants/commonConst';
-import mp3Util, {IBasicMeta} from '@/native/mp3Util';
-import {errorLog} from '@/utils/log';
+import mp3Util from '@/native/mp3Util';
 import {
     getInternalData,
     InternalDataType,
@@ -8,6 +7,7 @@ import {
 } from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storage';
+import {nanoid} from 'nanoid';
 import {useEffect, useState} from 'react';
 import {FileStat, FileSystem} from 'react-native-file-access';
 
@@ -84,48 +84,6 @@ function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
     };
 }
 
-/** 从文件夹导入 */
-async function importFolder(folderPath: string) {
-    const dirFiles = await FileSystem.statDir(folderPath);
-    const musicFiles = dirFiles.filter(
-        // todo: flac播放没有声音
-        _ =>
-            _.type === 'file' &&
-            (_.filename.endsWith('.mp3') || _.filename.endsWith('.flac')),
-    );
-
-    const musicItems: IMusic.IMusicItem[] = await Promise.all(
-        musicFiles.map(async mf => {
-            let {platform, id, title, artist} =
-                parseFilename(mf.filename) ?? {};
-
-            let meta: IBasicMeta | null;
-            try {
-                meta = await mp3Util.getBasicMeta(mf.path);
-            } catch {
-                meta = null;
-            }
-            if (!platform || !id) {
-                platform = '本地';
-                id = await FileSystem.hash(mf.path, 'MD5');
-            }
-            return {
-                id,
-                platform,
-                title: title ?? meta?.title ?? mf.filename,
-                artist: artist ?? meta?.artist ?? '未知歌手',
-                duration: parseInt(meta?.duration ?? '0') / 1000,
-                album: meta?.album ?? '未知专辑',
-                artwork: '',
-                [internalSerializeKey]: {
-                    localPath: mf.path,
-                },
-            };
-        }),
-    );
-    addMusic(musicItems);
-}
-
 function localMediaFilter(_: FileStat) {
     return (
         _.filename.endsWith('.mp3') ||
@@ -134,36 +92,51 @@ function localMediaFilter(_: FileStat) {
     );
 }
 
-// TODO: 需要支持中断&取消
-// 搜索本地的文件列表
-async function getMusicFiles(folderPath: string) {
-    try {
-        const dirFiles = await FileSystem.statDir(folderPath);
-        const musicFiles: FileStat[] = [];
+let importToken: string | null = null;
+// 获取本地的文件列表
+async function getMusicStats(folderPaths: string[]) {
+    const _importToken = nanoid();
+    importToken = _importToken;
+    const musicList: FileStat[] = [];
+    let peek: string | undefined;
+    let dirFiles: FileStat[] = [];
+    while (folderPaths.length !== 0) {
+        if (importToken !== _importToken) {
+            throw new Error('Import Broken');
+        }
+        peek = folderPaths.shift() as string;
+        try {
+            dirFiles = await FileSystem.statDir(peek);
+        } catch {
+            dirFiles = [];
+        }
 
-        await Promise.all(
-            dirFiles.map(async item => {
-                if (item.type === 'directory') {
-                    const res = await getMusicFiles(item.path);
-                    musicFiles.push(...res);
-                } else if (localMediaFilter(item)) {
-                    musicFiles.push(item);
-                }
-            }),
-        );
-        return musicFiles;
-    } catch (e: any) {
-        errorLog('获取本地文件失败', e?.message);
-        return [];
+        dirFiles.forEach(item => {
+            if (item.type === 'directory') {
+                folderPaths.push(item.path);
+            } else if (localMediaFilter(item)) {
+                musicList.push(item);
+            }
+        });
     }
+    return {musicList, token: _importToken};
+}
+
+function cancelImportLocal() {
+    importToken = null;
 }
 
 // 导入本地音乐
-async function importLocal(folderPaths: string[]) {
-    const musics = await Promise.all(folderPaths.map(_ => getMusicFiles(_)));
-    const musicList = musics.flat();
+async function importLocal(_folderPaths: string[]) {
+    const folderPaths = [..._folderPaths];
+    const {musicList, token} = await getMusicStats(folderPaths);
+    if (token !== importToken) {
+        throw new Error('Import Broken');
+    }
     const metas = await mp3Util.getMediaMeta(musicList.map(_ => _.path));
-    console.log(metas);
+    if (token !== importToken) {
+        throw new Error('Import Broken');
+    }
     const musicItems = await Promise.all(
         musicList.map(async (musicStat, index) => {
             let {platform, id, title, artist} =
@@ -187,6 +160,9 @@ async function importLocal(folderPaths: string[]) {
             };
         }),
     );
+    if (token !== importToken) {
+        throw new Error('Import Broken');
+    }
     addMusic(musicItems);
 }
 
@@ -221,8 +197,8 @@ const LocalMusicSheet = {
     setup,
     addMusic,
     removeMusic,
-    importFolder,
     importLocal,
+    cancelImportLocal,
     isLocalMusic,
     useIsLocal,
     getMusicList,

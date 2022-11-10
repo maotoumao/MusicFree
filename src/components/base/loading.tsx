@@ -4,7 +4,10 @@ import rpx from '@/utils/rpx';
 import {ActivityIndicator, useTheme} from 'react-native-paper';
 import ThemeText from './themeText';
 
-export default function Loading() {
+interface ILoadingProps {
+    text?: string;
+}
+export default function Loading(props: ILoadingProps) {
     const {colors} = useTheme();
 
     return (
@@ -14,7 +17,7 @@ export default function Loading() {
                 fontSize="title"
                 fontWeight="semibold"
                 style={style.text}>
-                加载中...
+                {props?.text ?? '加载中...'}
             </ThemeText>
         </View>
     );

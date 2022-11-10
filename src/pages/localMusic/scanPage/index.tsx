@@ -12,6 +12,8 @@ import Empty from '@/components/base/empty';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import useHardwareBack from '@/hooks/useHardwareBack';
 import {useNavigation} from '@react-navigation/native';
+import useDialog from '@/components/dialogs/useDialog';
+import Toast from '@/utils/toast';
 
 // function FileItem(props: IFileItemProps){
 //     return
@@ -33,7 +35,7 @@ export default function ScanPage() {
     const [folderData, setFolderData] = useState<string[]>([]);
     const [checkedPath, setCheckedPath] = useState<string[]>([]);
     const navigation = useNavigation();
-
+    const {showDialog} = useDialog();
     const colors = useColors();
 
     useEffect(() => {
@@ -106,7 +108,22 @@ export default function ScanPage() {
             />
             <Pressable
                 onPress={() => {
-                    LocalMusicSheet.importLocal(checkedPath).then(console.log);
+                    showDialog('LoadingDialog', {
+                        title: '扫描本地音乐',
+                        promise: LocalMusicSheet.importLocal(checkedPath),
+                        onResolve(data, hideDialog) {
+                            Toast.success('导入成功~');
+                            hideDialog();
+                            navigation.goBack();
+                        },
+                        onReject(reason) {
+                            console.log(reason);
+                        },
+                        onCancel(hideDialog) {
+                            LocalMusicSheet.cancelImportLocal();
+                            hideDialog();
+                        },
+                    });
                 }}>
                 <View
                     style={[
