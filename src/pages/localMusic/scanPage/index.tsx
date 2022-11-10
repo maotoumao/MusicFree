@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
@@ -10,6 +10,8 @@ import IconButton from '@/components/base/iconButton';
 import FolderItem from './folderItem';
 import Empty from '@/components/base/empty';
 import LocalMusicSheet from '@/core/localMusicSheet';
+import useHardwareBack from '@/hooks/useHardwareBack';
+import {useNavigation} from '@react-navigation/native';
 
 // function FileItem(props: IFileItemProps){
 //     return
@@ -27,8 +29,10 @@ export default function ScanPage() {
         path: ExternalStorageDirectoryPath,
         parent: null,
     });
+    const currentPathRef = useRef<IPathItem>(currentPath);
     const [folderData, setFolderData] = useState<string[]>([]);
     const [checkedPath, setCheckedPath] = useState<string[]>([]);
+    const navigation = useNavigation();
 
     const colors = useColors();
 
@@ -37,7 +41,19 @@ export default function ScanPage() {
         readDir(currentPath.path).then(res => {
             setFolderData(res.filter(_ => _.isDirectory()).map(_ => _.path));
         });
+        currentPathRef.current = currentPath;
     }, [currentPath.path]);
+
+    useHardwareBack(() => {
+        // 注意闭包
+        const _currentPath = currentPathRef.current;
+        if (_currentPath.parent !== null) {
+            setCurrentPath(_currentPath.parent);
+        } else {
+            navigation.goBack();
+        }
+        return true;
+    });
 
     return (
         <>
