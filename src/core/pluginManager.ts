@@ -34,6 +34,7 @@ import he from 'he';
 import Network from './network';
 import LocalMusicSheet from './localMusicSheet';
 import {FileSystem} from 'react-native-file-access';
+import Mp3Util from '@/native/mp3Util';
 
 axios.defaults.timeout = 1500;
 
@@ -64,31 +65,38 @@ export class Plugin {
     /** 插件方法 */
     public methods: PluginMethods;
 
-    constructor(funcCode: string, pluginPath: string) {
+    constructor(
+        funcCode: string | (() => IPlugin.IPluginInstance),
+        pluginPath: string,
+    ) {
         this.state = 'enabled';
         let _instance: IPlugin.IPluginInstance;
         try {
-            // eslint-disable-next-line no-new-func
-            _instance = Function(`
-      'use strict';
-      try {
-        return ${funcCode};
-      } catch(e) {
-        return null;
-      }
-    `)()({
-                CryptoJs,
-                axios,
-                dayjs,
-                cheerio,
-                bigInt,
-                qs,
-                he,
-                CookieManager: {
-                    flush: CookieManager.flush,
-                    get: CookieManager.get,
-                },
-            });
+            if (typeof funcCode === 'string') {
+                // eslint-disable-next-line no-new-func
+                _instance = Function(`
+            'use strict';
+            try {
+              return ${funcCode};
+            } catch(e) {
+              return null;
+            }
+          `)()({
+                    CryptoJs,
+                    axios,
+                    dayjs,
+                    cheerio,
+                    bigInt,
+                    qs,
+                    he,
+                    CookieManager: {
+                        flush: CookieManager.flush,
+                        get: CookieManager.get,
+                    },
+                });
+            } else {
+                _instance = funcCode();
+            }
             this.checkValid(_instance);
         } catch (e: any) {
             this.state = 'error';
@@ -122,7 +130,11 @@ export class Plugin {
         if (this.instance.platform === '') {
             this.hash = '';
         } else {
-            this.hash = sha256(funcCode).toString();
+            if (typeof funcCode === 'string') {
+                this.hash = sha256(funcCode).toString();
+            } else {
+                this.hash = sha256(funcCode.toString()).toString();
+            }
         }
 
         // 放在最后
@@ -242,7 +254,6 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
 
             return result;
         } catch (e: any) {
-            console.log('eeee', e);
             if (retryCount > 0) {
                 await delay(150);
                 return this.getMediaSource(musicItem, --retryCount);
@@ -255,15 +266,22 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     /** 获取音乐详情 */
     async getMusicInfo(
         musicItem: ICommon.IMediaBase,
-    ): Promise<IMusic.IMusicItem | null> {
+    ): Promise<Partial<IMusic.IMusicItem> | null> {
         if (!this.plugin.instance.getMusicInfo) {
-            return musicItem as IMusic.IMusicItem;
+            return {};
         }
-        return (
-            this.plugin.instance.getMusicInfo(
-                resetMediaItem(musicItem, undefined, true),
-            ) ?? musicItem
-        );
+        try {
+            return (
+                this.plugin.instance.getMusicInfo(
+                    this.plugin.name === '本地'
+                        ? musicItem
+                        : resetMediaItem(musicItem, undefined, true),
+                ) ?? {}
+            );
+        } catch (e) {
+            console.log(e);
+            return {};
+        }
     }
 
     /** 获取歌词 */
@@ -480,14 +498,27 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
 
 let plugins: Array<Plugin> = [];
 const pluginStateMapper = new StateMapper(() => plugins);
-const localFilePlugin = new Plugin(
-    `function (){
+
+/** 本地插件 */
+const localFilePlugin = new Plugin(function () {
     return {
-        platform: '本地',
-    }
-}`,
-    '',
-);
+        platform: '本地', //todo 改成常量
+        _path: '',
+        async getMusicInfo(musicBase) {
+            const localPath = getInternalData<string>(
+                musicBase,
+                InternalDataType.LOCALPATH,
+            );
+            if (localPath) {
+                const coverImg = await Mp3Util.getMediaCoverImg(localPath);
+                return {
+                    artwork: coverImg,
+                };
+            }
+            return null;
+        },
+    };
+}, '');
 
 async function setup() {
     const _plugins: Array<Plugin> = [];

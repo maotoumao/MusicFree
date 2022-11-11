@@ -11,6 +11,7 @@ export interface IBasicMeta {
 interface IMp3Util {
     getBasicMeta: (fileName: string) => Promise<IBasicMeta>;
     getMediaMeta: (fileNames: string[]) => Promise<IBasicMeta[]>;
+    getMediaCoverImg: (mediaPath: string) => Promise<string>;
 }
 
 const Mp3Util = NativeModules.Mp3Util;

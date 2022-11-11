@@ -361,11 +361,12 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
         const _musicItem = musicQueue[currentIndex];
         let track: IMusic.IMusicItem;
         try {
-            // 获取真实源
-            const source = await PluginManager.getByName(
-                _musicItem.platform,
-            )?.methods?.getMediaSource(_musicItem);
-            track = mergeProps(_musicItem, source) as IMusic.IMusicItem;
+            // 通过插件获取音乐
+            const plugin = PluginManager.getByName(_musicItem.platform);
+            const source = await plugin?.methods?.getMediaSource(_musicItem);
+            // 获取音乐信息
+            const info = await plugin?.methods?.getMusicInfo?.(_musicItem);
+            track = mergeProps(_musicItem, source, info) as IMusic.IMusicItem;
         } catch (e) {
             // 播放失败
             if (isSameMediaItem(_musicItem, musicQueue[currentIndex])) {

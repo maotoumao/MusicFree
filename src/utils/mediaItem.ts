@@ -70,11 +70,15 @@ export function resetMediaItem<T extends ICommon.IMediaBase>(
 export function mergeProps(
     mediaItem: ICommon.IMediaBase,
     props: Record<string, any> | undefined,
+    anotherProps?: Record<string, any> | undefined | null,
 ) {
     return props
         ? {
               ...mediaItem,
               ...props,
+              ...(anotherProps ?? {}),
+              id: mediaItem.id,
+              platform: mediaItem.platform,
           }
         : mediaItem;
 }

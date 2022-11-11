@@ -48,7 +48,7 @@ declare namespace IPlugin {
         /** 根据主键去查询歌曲信息 */
         getMusicInfo?: (
             musicBase: ICommon.IMediaBase,
-        ) => Promise<IMusic.IMusicItem | null>;
+        ) => Promise<Partial<IMusic.IMusicItem> | null>;
         /** 获取歌词 */
         getLyric?: (
             musicItem: IMusic.IMusicItemBase,

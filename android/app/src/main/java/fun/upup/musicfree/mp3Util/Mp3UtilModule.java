@@ -1,5 +1,7 @@
 package fun.upup.musicfree.mp3Util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
@@ -9,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
@@ -16,12 +19,17 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Paths;
+
 
 public class Mp3UtilModule extends ReactContextBaseJavaModule {
-
+    private static ReactApplicationContext reactContext;
 
     public Mp3UtilModule(ReactApplicationContext context) {
         super(context);
+        reactContext = context;
     }
 
     @NonNull
@@ -104,5 +112,50 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
 
     }
 
+
+    // 读取内置的封面图,直接返回临时文件路径
+    @ReactMethod
+    public void getMediaCoverImg(String filePath, Promise promise) {
+        int pathHashCode;
+        try {
+            File file = new File(filePath);
+            if(!file.exists()){
+                promise.reject("File not exist", "File not exist");
+                return;
+            }
+            // 路径的hashcode就够了
+            pathHashCode = file.hashCode();
+            if(pathHashCode == 0) {
+                promise.resolve(null);
+                return;
+            }
+            // 判断缓存是否存在，如果存在直接返回
+            File cacheDir = reactContext.getCacheDir();
+            File coverFile = new File(cacheDir, "image_manager_disk_cache/" + pathHashCode + ".jpg");
+            if(coverFile.exists()) {
+                promise.resolve(coverFile.toURI().toString());
+                return;
+            }
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.setDataSource(filePath);
+            byte[] coverImg = mmr.getEmbeddedPicture();
+            if(coverImg != null) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(coverImg, 0, coverImg.length);
+                // 存储到本地路径
+                FileOutputStream outputStream = new FileOutputStream(coverFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                outputStream.flush();
+                outputStream.close();
+                promise.resolve(coverFile.toURI().toString());
+            } else {
+
+                promise.resolve(null);
+            }
+            mmr.release();
+        } catch(Exception ignored) {
+            promise.reject("Error", "Got error");
+        }
+
+    }
 
 }

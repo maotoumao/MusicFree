@@ -91,7 +91,8 @@ function localMediaFilter(_: FileStat) {
         _.filename.endsWith('.wma') ||
         _.filename.endsWith('.wav') ||
         _.filename.endsWith('.m4a') ||
-        _.filename.endsWith('.ogg')
+        _.filename.endsWith('.ogg') ||
+        _.filename.endsWith('.acc')
     );
 }
 
