@@ -73,8 +73,10 @@ export default function PluginSetting() {
                                         await DocumentPicker.pickMultiple();
                                     setLoading(true);
                                     // 初步过滤
-                                    const validResult = result?.filter(_ =>
-                                        _.uri.endsWith('.js'),
+                                    const validResult = result?.filter(
+                                        _ =>
+                                            _.uri.endsWith('.js') ||
+                                            _.name?.endsWith('.js'),
                                     );
                                     await Promise.all(
                                         validResult.map(_ =>
@@ -105,7 +107,7 @@ export default function PluginSetting() {
                                     async onOk(text, closePanel) {
                                         setLoading(true);
                                         closePanel();
-                                        await installPluginFromUrl(text);
+                                        await installPluginFromUrl(text.trim());
                                         setLoading(false);
                                     },
                                 });
@@ -319,6 +321,7 @@ async function installPluginFromUrl(text: string) {
         } else {
             urls = [iptUrl];
         }
+        // todo: 改成allSettled
         await Promise.all(
             urls.map(url => PluginManager.installPluginFromUrl(url)),
         ).catch();

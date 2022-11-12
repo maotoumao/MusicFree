@@ -59,8 +59,8 @@ export default function AboutSetting() {
                 </ThemeText>
                 <ThemeText style={style.content}>
                     如果你对这款软件有一些建议，无论是设计（自己设计的实在太丑...）、逻辑还是交互；或者有一些bug需要反馈，又或者想一起写代码，欢迎加QQ群
-                    <LinkText linkTo="https://qm.qq.com/cgi-bin/qm/qr?k=O9R33tW_lrx85ng-mtlqV6awSbEvaFJP&authKey=SchXj8Uz5sHL4JcfORmfwgvp0BAPoZ9vZsPoHimAlFo%2F8GPQOIoOKWpbS1ZepM2S&noverify=0&group_code=252994941">
-                        252994941
+                    <LinkText linkTo="https://jq.qq.com/?_wv=1027&k=3SRFG8qC">
+                        817438799
                     </LinkText>
                     ，也可以在github的issue区反馈；最新的进展可能会在公众号(b站估计更不下去了hh)或者上边的QQ群更新，感兴趣的话就点个关注吧orz~
                 </ThemeText>

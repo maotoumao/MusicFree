@@ -116,7 +116,7 @@ async function getMusicStats(folderPaths: string[]) {
         }
 
         dirFiles.forEach(item => {
-            if (item.type === 'directory') {
+            if (item.type === 'directory' && !folderPaths.includes(item.path)) {
                 folderPaths.push(item.path);
             } else if (localMediaFilter(item)) {
                 musicList.push(item);

@@ -560,25 +560,25 @@ async function setup() {
 
 // 安装插件
 async function installPlugin(pluginPath: string) {
-    if (pluginPath.endsWith('.js')) {
-        const funcCode = await readFile(pluginPath, 'utf8');
-        const plugin = new Plugin(funcCode, pluginPath);
-        const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
-        if (_pluginIndex !== -1) {
-            throw new Error('插件已安装');
-        }
-        if (plugin.hash !== '') {
-            const fn = nanoid();
-            const _pluginPath = `${pathConst.pluginPath}${fn}.js`;
-            await copyFile(pluginPath, _pluginPath);
-            plugin.path = _pluginPath;
-            plugins = plugins.concat(plugin);
-            pluginStateMapper.notify();
-            return;
-        }
-        throw new Error('插件无法解析');
+    // if (pluginPath.endsWith('.js')) {
+    const funcCode = await readFile(pluginPath, 'utf8');
+    const plugin = new Plugin(funcCode, pluginPath);
+    const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
+    if (_pluginIndex !== -1) {
+        throw new Error('插件已安装');
     }
-    throw new Error('插件不存在');
+    if (plugin.hash !== '') {
+        const fn = nanoid();
+        const _pluginPath = `${pathConst.pluginPath}${fn}.js`;
+        await copyFile(pluginPath, _pluginPath);
+        plugin.path = _pluginPath;
+        plugins = plugins.concat(plugin);
+        pluginStateMapper.notify();
+        return;
+    }
+    throw new Error('插件无法解析');
+    // }
+    // throw new Error('插件不存在');
 }
 
 async function installPluginFromUrl(url: string) {
