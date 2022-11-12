@@ -71,6 +71,12 @@ const setup = async () => {
         }
         if (config?.track) {
             currentIndex = findMusicIndex(config.track);
+            // todo： 想想是在这里还是加在下边的play
+            if (currentIndex !== -1) {
+                musicQueue = produce(musicQueue, draft => {
+                    draft[currentIndex] = config.track as IMusic.IMusicItem;
+                });
+            }
             // todo： 判空，理论上不会发生
             await TrackPlayer.add([config.track as Track, getFakeNextTrack()]);
         }
