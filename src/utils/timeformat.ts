@@ -1,4 +1,5 @@
 export default function (time: number) {
+    time = Math.round(time);
     if (time < 60) {
         return `00:${time.toFixed(0).padStart(2, '0')}`;
     }
