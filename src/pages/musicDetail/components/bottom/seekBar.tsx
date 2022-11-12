@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Slider from '@react-native-community/slider';
@@ -6,15 +6,23 @@ import MusicQueue from '@/core/musicQueue';
 import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
 
+interface ITimeLabelProps {
+    time: number;
+}
+
+function TimeLabel(props: ITimeLabelProps) {
+    console.log('rerendertme', props.time);
+    return <Text style={style.text}>{timeformat(props.time)}</Text>;
+}
+
 export default function SeekBar() {
-    const progress = MusicQueue.useProgress(400);
+    const progress = MusicQueue.useProgress(1000);
     const [tmpProgress, setTmpProgress] = useState<number | null>(null);
+    const slidingRef = useRef(false);
 
     return (
         <View style={style.wrapper}>
-            <Text style={style.text}>
-                {timeformat(tmpProgress ?? progress.position)}
-            </Text>
+            <TimeLabel time={tmpProgress ?? progress.position} />
             <Slider
                 style={style.slider}
                 minimumTrackTintColor={'#cccccc'}
@@ -22,10 +30,16 @@ export default function SeekBar() {
                 thumbTintColor={'#dddddd'}
                 minimumValue={0}
                 maximumValue={progress.duration}
+                onSlidingStart={() => {
+                    slidingRef.current = true;
+                }}
                 onValueChange={val => {
-                    setTmpProgress(val);
+                    if (slidingRef.current) {
+                        setTmpProgress(val);
+                    }
                 }}
                 onSlidingComplete={val => {
+                    slidingRef.current = false;
                     setTmpProgress(null);
                     if (val >= progress.duration - 3) {
                         val = progress.duration - 3;
@@ -34,7 +48,7 @@ export default function SeekBar() {
                 }}
                 value={progress.position}
             />
-            <Text style={style.text}>{timeformat(progress.duration)}</Text>
+            <TimeLabel time={progress.duration} />
         </View>
     );
 }
