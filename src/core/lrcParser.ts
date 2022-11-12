@@ -58,7 +58,7 @@ export default class LyricParser {
         position = position - (this.meta?.offset ?? 0);
         let index;
         /** 最前面 */
-        if (position < this.lrcItems[0].time) {
+        if (!this.lrcItems[0] || position < this.lrcItems[0].time) {
             this.lastIndex = 0;
             return {
                 lrc: undefined,
