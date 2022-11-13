@@ -70,7 +70,10 @@ export default function ScanPage() {
                         }
                     }}
                 />
-                <ThemeText style={style.headerPath}>
+                <ThemeText
+                    numberOfLines={2}
+                    ellipsizeMode="head"
+                    style={style.headerPath}>
                     {currentPath.path}
                 </ThemeText>
             </View>
