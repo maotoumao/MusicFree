@@ -428,7 +428,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             });
 
             return {...albumItem, ...result};
-        } catch (e) {
+        } catch (e: any) {
+            trace('获取专辑信息失败', e?.message);
             return {...albumItem, musicList: []};
         }
     }
@@ -462,7 +463,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 isEnd: result.isEnd ?? true,
                 data: result.data,
             };
-        } catch (e) {
+        } catch (e: any) {
+            trace('查询作者信息失败', e?.message);
             throw e;
         }
     }

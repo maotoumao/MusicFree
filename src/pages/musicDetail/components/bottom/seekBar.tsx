@@ -11,7 +11,6 @@ interface ITimeLabelProps {
 }
 
 function TimeLabel(props: ITimeLabelProps) {
-    console.log('rerendertme', props.time);
     return <Text style={style.text}>{timeformat(props.time)}</Text>;
 }
 
