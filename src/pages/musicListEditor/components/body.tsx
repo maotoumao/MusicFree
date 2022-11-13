@@ -8,6 +8,8 @@ import MusicSheet from '@/core/musicSheet';
 import Toast from '@/utils/toast';
 import MusicList from './musicList';
 import {useParams} from '@/entry/router';
+import {localMusicSheetId} from '@/constants/commonConst';
+import LocalMusicSheet from '@/core/localMusicSheet';
 
 export default function Body() {
     const {musicSheet} = useParams<'music-list-editor'>();
@@ -59,11 +61,21 @@ export default function Body() {
                     }
                     onPress={async () => {
                         if (musicListChanged && musicSheet?.id) {
-                            await MusicSheet.updateAndSaveSheet(musicSheet.id, {
-                                musicList: editingMusicList.map(
-                                    _ => _.musicItem,
-                                ),
-                            });
+                            if (musicSheet.id === localMusicSheetId) {
+                                await LocalMusicSheet.updateMusicList(
+                                    editingMusicList.map(_ => _.musicItem),
+                                );
+                            } else {
+                                await MusicSheet.updateAndSaveSheet(
+                                    musicSheet.id,
+                                    {
+                                        musicList: editingMusicList.map(
+                                            _ => _.musicItem,
+                                        ),
+                                    },
+                                );
+                            }
+
                             Toast.success('保存成功');
                             setMusicListChanged(false);
                         }

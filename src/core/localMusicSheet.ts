@@ -197,6 +197,15 @@ function getMusicList() {
     return localSheet;
 }
 
+async function updateMusicList(newSheet: IMusic.IMusicItem[]) {
+    const _localSheet = [...newSheet];
+    try {
+        await setStorage(StorageKeys.LocalMusicSheet, _localSheet);
+        localSheet = _localSheet;
+        localSheetStateMapper.notify();
+    } catch {}
+}
+
 const LocalMusicSheet = {
     setup,
     addMusic,
@@ -207,6 +216,7 @@ const LocalMusicSheet = {
     useIsLocal,
     getMusicList,
     useMusicList: localSheetStateMapper.useMappedState,
+    updateMusicList,
 };
 
 export default LocalMusicSheet;
