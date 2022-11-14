@@ -1,4 +1,7 @@
-import {internalSerializeKey} from '@/constants/commonConst';
+import {
+    internalSerializeKey,
+    localPluginPlatform,
+} from '@/constants/commonConst';
 import produce from 'immer';
 import objectPath from 'object-path';
 
@@ -55,6 +58,13 @@ export function resetMediaItem<T extends ICommon.IMediaBase>(
     platform?: string,
     newObj?: boolean,
 ): T {
+    // 本地音乐不做处理
+    if (
+        mediaItem.platform === localPluginPlatform ||
+        platform === localPluginPlatform
+    ) {
+        return newObj ? {...mediaItem} : mediaItem;
+    }
     if (!newObj) {
         mediaItem.platform = platform ?? mediaItem.platform;
         mediaItem[internalSerializeKey] = undefined;

@@ -1,6 +1,9 @@
 export const internalSymbolKey = Symbol.for('$');
 export const internalSerializeKey = '$';
 export const localMusicSheetId = 'local-music-sheet';
+
+export const localPluginPlatform = '本地';
+export const localPluginHash = 'local-plugin-hash';
 export const tabName = {
     music: '单曲',
     album: '专辑',

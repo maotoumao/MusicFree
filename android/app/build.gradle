@@ -313,6 +313,9 @@ dependencies {
 
     implementation project(':react-native-fs')
     implementation 'com.facebook.fresco:animated-gif:2.5.0'
+    // https://mvnrepository.com/artifact/net.jthink/jaudiotagger
+    implementation 'net.jthink:jaudiotagger:2.2.5'
+
 }
 
 if (isNewArchitectureEnabled()) {

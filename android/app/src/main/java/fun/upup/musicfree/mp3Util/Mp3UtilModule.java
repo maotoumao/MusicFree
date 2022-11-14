@@ -19,9 +19,14 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.file.Paths;
+import java.io.IOException;
 
 
 public class Mp3UtilModule extends ReactContextBaseJavaModule {
@@ -156,6 +161,26 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
             promise.reject("Error", "Got error");
         }
 
+    }
+
+
+    // 读取歌词
+    @ReactMethod
+    public void getLyric(String filePath, Promise promise) {
+        try {
+            File file = new File(filePath);
+            if(file.exists()) {
+                AudioFile audioFile = AudioFileIO.read(file);
+                Tag tag = audioFile.getTag();
+                String lrc = tag.getFirst(FieldKey.LYRICS);
+                promise.resolve(lrc);
+            } else {
+                throw new IOException("File not found");
+            }
+
+        } catch(Exception e) {
+            promise.reject("Error", e.getMessage());
+        }
     }
 
 }

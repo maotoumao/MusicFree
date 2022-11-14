@@ -26,7 +26,12 @@ import {
     isSameMediaItem,
     resetMediaItem,
 } from '@/utils/mediaItem';
-import {CacheControl, internalSerializeKey} from '@/constants/commonConst';
+import {
+    CacheControl,
+    internalSerializeKey,
+    localPluginHash,
+    localPluginPlatform,
+} from '@/constants/commonConst';
 import delay from '@/utils/delay';
 import * as cheerio from 'cheerio';
 import CookieManager from '@react-native-cookies/cookies';
@@ -210,7 +215,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 url: localPath,
             };
         }
-        if (musicItem.platform === '本地') {
+        if (musicItem.platform === localPluginPlatform) {
             throw new Error('本地音乐不存在');
         }
         // 2. 缓存播放
@@ -273,9 +278,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         try {
             return (
                 this.plugin.instance.getMusicInfo(
-                    this.plugin.name === '本地'
-                        ? musicItem
-                        : resetMediaItem(musicItem, undefined, true),
+                    resetMediaItem(musicItem, undefined, true),
                 ) ?? {}
             );
         } catch (e) {
@@ -504,7 +507,7 @@ const pluginStateMapper = new StateMapper(() => plugins);
 /** 本地插件 */
 const localFilePlugin = new Plugin(function () {
     return {
-        platform: '本地', //todo 改成常量
+        platform: localPluginPlatform, //todo 改成常量
         _path: '',
         async getMusicInfo(musicBase) {
             const localPath = getInternalData<string>(
@@ -519,8 +522,22 @@ const localFilePlugin = new Plugin(function () {
             }
             return null;
         },
+        async getLyric(musicBase) {
+            const localPath = getInternalData<string>(
+                musicBase,
+                InternalDataType.LOCALPATH,
+            );
+            if (localPath) {
+                const rawLrc = await Mp3Util.getLyric(localPath);
+                return {
+                    rawLrc,
+                };
+            }
+            return null;
+        },
     };
 }, '');
+localFilePlugin.hash = localPluginHash;
 
 async function setup() {
     const _plugins: Array<Plugin> = [];
@@ -682,11 +699,13 @@ function getByMedia(mediaItem: ICommon.IMediaBase) {
 }
 
 function getByHash(hash: string) {
-    return plugins.find(_ => _.hash === hash);
+    return hash === localPluginHash
+        ? localFilePlugin
+        : plugins.find(_ => _.hash === hash);
 }
 
 function getByName(name: string) {
-    return name === '本地'
+    return name === localPluginPlatform
         ? localFilePlugin
         : plugins.find(_ => _.name === name);
 }
