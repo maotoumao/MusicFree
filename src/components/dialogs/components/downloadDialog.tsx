@@ -3,9 +3,10 @@ import {Button, Dialog} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/base/themeText';
 import {StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
+import rpx, {vh} from '@/utils/rpx';
 import openUrl from '@/utils/openUrl';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {ScrollView} from 'react-native-gesture-handler';
 
 interface IDownloadDialogProps {
     visible: boolean;
@@ -13,9 +14,10 @@ interface IDownloadDialogProps {
     title: string;
     content: string[];
     fromUrl: string;
+    backUrl?: string;
 }
 export default function DownloadDialog(props: IDownloadDialogProps) {
-    const {visible, title, content, fromUrl, hideDialog} = props;
+    const {visible, title, content, fromUrl, backUrl, hideDialog} = props;
     const colors = useColors();
 
     return (
@@ -24,13 +26,13 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
             onDismiss={hideDialog}
             style={{backgroundColor: colors.primary}}>
             <Dialog.Title>{title}</Dialog.Title>
-            <Dialog.Content>
+            <ScrollView style={style.scrollView}>
                 {content?.map?.(_ => (
                     <ThemeText key={_} style={style.item}>
                         {_}
                     </ThemeText>
                 ))}
-            </Dialog.Content>
+            </ScrollView>
             <Dialog.Actions>
                 <Button
                     color={colors.text}
@@ -47,6 +49,16 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                     }}>
                     从浏览器下载
                 </Button>
+                {backUrl && (
+                    <Button
+                        color={colors.text}
+                        onPress={async () => {
+                            openUrl(backUrl);
+                            Clipboard.setString(backUrl);
+                        }}>
+                        备用链接
+                    </Button>
+                )}
             </Dialog.Actions>
         </Dialog>
     );
@@ -54,9 +66,15 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
 
 const style = StyleSheet.create({
     item: {
-        marginBottom: rpx(12),
+        marginBottom: rpx(20),
+        lineHeight: rpx(36),
     },
-    progress: {
-        marginTop: rpx(12),
+    content: {
+        flex: 1,
+        maxHeight: vh(50),
+    },
+    scrollView: {
+        maxHeight: vh(40),
+        paddingHorizontal: rpx(26),
     },
 });
