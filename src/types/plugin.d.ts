@@ -1,7 +1,12 @@
 declare namespace IPlugin {
     export interface IMediaSourceResult {
         headers?: Record<string, string>;
+        /** 标准音质 */
         url: string;
+        /** 高品质 */
+        urlHQ?: string;
+        /** 无损音质 */
+        urlSQ?: string;
         userAgent?: string;
     }
 
@@ -24,6 +29,11 @@ declare namespace IPlugin {
         type: T,
     ) => Promise<ISearchResult<T>>;
 
+    interface IUserEnv {
+        key: string;
+        name: string;
+    }
+
     interface IPluginDefine {
         /** 来源名 */
         platform: string;
@@ -39,6 +49,8 @@ declare namespace IPlugin {
         defaultSearchType?: ICommon.SupportMediaType;
         /** 插件缓存控制 */
         cacheControl?: 'cache' | 'no-cache' | 'no-store';
+        /** 用户自定义输入 */
+        userEnv?: IUserEnv[];
         /** 搜索 */
         search?: ISearchFunc;
         /** 获取根据音乐信息获取url */

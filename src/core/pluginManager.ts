@@ -52,6 +52,7 @@ export enum PluginStateCode {
     CannotParse = 'CANNOT PARSE',
 }
 
+//#region 插件类
 export class Plugin {
     /** 插件名 */
     public name: string;
@@ -69,6 +70,8 @@ export class Plugin {
     public path: string;
     /** 插件方法 */
     public methods: PluginMethods;
+    /** 用户输入 */
+    public userEnv?: Record<string, string>;
 
     constructor(
         funcCode: string | (() => IPlugin.IPluginInstance),
@@ -160,7 +163,9 @@ export class Plugin {
         return true;
     }
 }
+//#endregion
 
+//#region 基于插件类封装的方法，供给APP侧直接调用
 /** 有缓存等信息 */
 class PluginMethods implements IPlugin.IPluginInstanceMethods {
     private plugin;
@@ -500,14 +505,16 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
     }
 }
+//#endregion
 
 let plugins: Array<Plugin> = [];
 const pluginStateMapper = new StateMapper(() => plugins);
 
+//#region 本地音乐插件
 /** 本地插件 */
 const localFilePlugin = new Plugin(function () {
     return {
-        platform: localPluginPlatform, //todo 改成常量
+        platform: localPluginPlatform,
         _path: '',
         async getMusicInfo(musicBase) {
             const localPath = getInternalData<string>(
@@ -538,6 +545,8 @@ const localFilePlugin = new Plugin(function () {
     };
 }, '');
 localFilePlugin.hash = localPluginHash;
+
+//#endregion
 
 async function setup() {
     const _plugins: Array<Plugin> = [];
