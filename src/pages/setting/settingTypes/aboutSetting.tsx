@@ -58,16 +58,26 @@ export default function AboutSetting() {
                     。
                 </ThemeText>
                 <ThemeText style={style.content}>
-                    如果你对这款软件有一些建议，无论是设计（自己设计的实在太丑...）、逻辑还是交互；或者有一些bug需要反馈，又或者想一起写代码，欢迎加QQ群
-                    <LinkText linkTo="https://jq.qq.com/?_wv=1027&k=3SRFG8qC">
-                        817438799
-                    </LinkText>
-                    ，也可以在github的issue区反馈；最新的进展可能会在公众号(b站估计更不下去了hh)或者上边的QQ群更新，感兴趣的话就点个关注吧orz~
+                    如果你对这款软件有一些建议，无论是设计（自己设计的实在太丑...）、逻辑还是交互；或者有一些bug需要反馈，了解一些最新进展，请直接公众号留言或移步github仓库。
                 </ThemeText>
                 <Image
                     source={ImgAsset.wechatChannel}
                     style={style.wcChannel}
                 />
+                <ThemeText style={style.content}>
+                    <ThemeText fontWeight="bold">
+                        还请注意本软件只是个人的业余项目，距离正式版也有很长一段距离。
+                    </ThemeText>
+                    如果你在找成熟稳定的音乐软件，可以考虑其他优秀的软件。当然我会一直维护，让它变得尽可能的完善一些。业余时间用爱发电，进度慢还请见谅。
+                </ThemeText>
+                <ThemeText style={style.content}>
+                    如果是技术交流或者技术向的闲聊的话，欢迎加QQ群
+                    <LinkText linkTo="https://jq.qq.com/?_wv=1027&k=aHFTp906">
+                        683467814
+                    </LinkText>
+                    ，也可以直接发邮件;)
+                </ThemeText>
+
                 <ThemeText style={style.content}>
                     最后，如果真的有人看到这里，希望这款软件可以帮到你，这也是这款软件存在的意义。
                 </ThemeText>

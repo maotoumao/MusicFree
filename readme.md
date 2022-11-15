@@ -9,11 +9,13 @@
 ## 简介
 一个插件化、定制化、无广告的免费音乐播放器，目前只支持Android和Harmony OS。
 
-如果需要了解后续进展可以关注~~b站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)~~(不到一天就被吞了！还是进群吧，下边视频的公众号也行)；如果有问题可以在issue区或者qq群：[252994941](https://jq.qq.com/?_wv=1027&k=igip9n4T)反馈。
-1群满了 去2群吧：[817438799](https://jq.qq.com/?_wv=1027&k=3SRFG8qC)~
-
+如果需要了解后续进展可以关注~~b站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)~~(不到一天就被吞了！还是关注公众号↓吧)；如果有问题可以在issue区或者公众号反馈。
+技术交流/一起写点有意思的东西/技术向的闲聊欢迎加群：[683467814](https://jq.qq.com/?_wv=1027&k=upVpi2k3)~
 
 简介视频放在了公众号里：[简介视频](https://mp.weixin.qq.com/s/sH_2vRm7EyBGgWggkJmsdg)
+
+![微信公众号](./src/assets/imgs/wechat_channel.jpg)
+
 
 ## 特性
 - 插件化：本软件仅仅是一个播放器，本身**并不集成**任何平台的任何音源，所有的搜索、播放、歌单导入等功能全部基于**插件**。这也就意味着，**只要可以在互联网上搜索到的音源，只要有对应的插件，你都可以使用本软件进行搜索、播放等功能**。关于插件的详细说明请看插件一节。
@@ -43,7 +45,7 @@
 图文版详细使用说明可以参考这里：[MusicFree插件使用指南](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483875&idx=1&sn=aedf8bb909540634d927de7fd2b4b8b1&chksm=c1a390c4f6d419d233908bb781d418c6b9fd2ca82e9e93291e7c93b8ead3c50ca5ae39668212#rd)
 
 ## 下载地址
-请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)
+请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)，公众号回复Musicfree也可以。
 
 ## Q&A
 使用时遇到的常见问题可以看这里：[MusicFree使用Q&A](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483937&idx=1&sn=486c735b1fb78acc75f8f4acdcb9e253&chksm=c1a39306f6d41a101a6f8d3adefcd980092ce94140119bb3cc0eb3aa8c6ae22fe1b97899be21#rd)
@@ -106,7 +108,7 @@
 ## 支持这个项目
 如果你喜欢这个项目，或者希望我可以持续维护下去，你可以通过以下任何一种方式支持我;)
 1. Star这个项目，分享给你身边的人；
-2. 关注b站[不想睡觉猫头猫](https://space.bilibili.com/12866223)或公众号获取最新信息；
+2. 关注公众号或b站[不想睡觉猫头猫](https://space.bilibili.com/12866223)获取最新信息；
 
 ![微信公众号](./src/assets/imgs/wechat_channel.jpg)
 
