@@ -92,7 +92,7 @@ function localMediaFilter(_: FileStat) {
         _.filename.endsWith('.wav') ||
         _.filename.endsWith('.m4a') ||
         _.filename.endsWith('.ogg') ||
-        _.filename.endsWith('.acc')
+        _.filename.endsWith('.aac')
     );
 }
 
