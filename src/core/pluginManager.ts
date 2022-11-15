@@ -225,7 +225,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
         // 2. 缓存播放
         const mediaCache = Cache.get(musicItem);
-        const pluginCacheControl = this.plugin.instance.cacheControl;
+        const pluginCacheControl =
+            this.plugin.instance.cacheControl ?? 'no-cache';
         if (
             mediaCache &&
             mediaCache?.url &&
