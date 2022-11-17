@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import MusicQueue from '@/core/musicQueue';
@@ -10,6 +10,7 @@ import {useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import IconButton from '@/components/base/iconButton';
+import Loading from '@/components/base/loading';
 
 const ITEM_HEIGHT = rpx(108);
 const ITEM_WIDTH = rpx(750);
@@ -81,11 +82,29 @@ const PlayListItem = React.memo(
                 next.currentIndex !== next.index)),
 );
 
-export default function Body() {
+interface IBodyProps {
+    loading?: boolean;
+}
+export default function Body(props: IBodyProps) {
+    const {loading} = props;
     const musicQueue = MusicQueue.useMusicQueue();
     const currentMusicItem = MusicQueue.useCurrentMusicItem();
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
     const listRef = useRef<FlatList<IMusic.IMusicItem> | null>();
+
+    const getInitIndex = useMemo(
+        () => () => {
+            const id = musicQueue.findIndex(_ =>
+                isSameMediaItem(currentMusicItem, _),
+            );
+
+            if (id !== -1) {
+                return id;
+            }
+            return undefined;
+        },
+        [],
+    );
 
     useEffect(() => {
         setCurrentIndex(
@@ -93,18 +112,19 @@ export default function Body() {
         );
     }, [musicQueue, currentMusicItem]);
 
-    useEffect(() => {
-        const id = musicQueue.findIndex(_ =>
-            isSameMediaItem(currentMusicItem, _),
-        );
-        if (id !== -1 && id) {
-            listRef.current?.scrollToIndex({
-                index: id,
-                viewPosition: 0,
-                viewOffset: ITEM_HEIGHT * 3,
-            });
-        }
-    }, []);
+    // useEffect(() => {
+    //     const id = musicQueue.findIndex(_ =>
+    //         isSameMediaItem(currentMusicItem, _),
+    //     );
+    //     if (id !== -1 && id) {
+    //         listRef.current?.scrollToIndex({
+    //             index: id,
+    //             viewPosition: 0,
+    //             viewOffset: ITEM_HEIGHT * 3,
+
+    //         });
+    //     }
+    // }, []);
 
     const renderItem = useCallback(
         ({item, index}: {item: IMusic.IMusicItem; index: number}) => {
@@ -120,7 +140,9 @@ export default function Body() {
         [currentIndex],
     );
 
-    return (
+    return loading ? (
+        <Loading />
+    ) : (
         <FlatList
             ref={_ => {
                 listRef.current = _;
@@ -132,6 +154,7 @@ export default function Body() {
                 index,
             })}
             data={musicQueue}
+            initialScrollIndex={getInitIndex()}
             renderItem={renderItem}
         />
     );

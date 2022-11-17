@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import {Divider} from 'react-native-paper';
@@ -35,6 +35,7 @@ export default function () {
 
     const {unmountPanel} = _usePanel();
     const colors = useColors();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         snapPoint.value = withTiming(1, timingConfig);
@@ -59,9 +60,16 @@ export default function () {
         };
     });
 
+    const mountPanel = useCallback(() => {
+        setLoading(false);
+    }, []);
+
     useAnimatedReaction(
         () => snapPoint.value,
         (result, prevResult) => {
+            if (prevResult && result > prevResult && result > 0.8) {
+                runOnJS(mountPanel)();
+            }
             if (prevResult && result < prevResult && result === 0) {
                 runOnJS(unmountPanel)();
             }
@@ -88,7 +96,7 @@ export default function () {
                 ]}>
                 <Header />
                 <Divider />
-                <Body />
+                <Body loading={loading} />
             </Animated.View>
         </>
     );
