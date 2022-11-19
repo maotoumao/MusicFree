@@ -4,6 +4,7 @@ import MusicItemOptions from './musicItemOptions';
 import NewMusicSheet from './newMusicSheet';
 import PlayList from './playList';
 import SimpleInput from './simpleInput';
+import TimingClose from './timingClose';
 
 export default {
     /** 加入歌单 */
@@ -18,4 +19,6 @@ export default {
     AssociateLrc: AssociateLrc,
     /** 简单的输入 */
     SimpleInput: SimpleInput,
+    /** 定时关闭 */
+    TimingClose: TimingClose,
 };

@@ -24,12 +24,15 @@ import FastImage from '@/components/base/fastImage';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {localMusicSheetId} from '@/constants/commonConst';
+import {ROUTE_PATH} from '@/entry/router';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
     musicItem: IMusic.IMusicItem;
     /** 歌曲所在歌单 */
     musicSheet?: IMusic.IMusicSheetItem;
+    /** 来源 */
+    from?: string;
 }
 
 const ITEM_HEIGHT = rpx(96);
@@ -39,7 +42,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const {showPanel, unmountPanel} = _usePanel(sheetRef);
     const primaryColor = usePrimaryColor();
 
-    const {musicItem, musicSheet} = props ?? {};
+    const {musicItem, musicSheet, from} = props ?? {};
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
     function closePanel() {
@@ -160,6 +163,14 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
+            icon: 'timer-outline',
+            title: '定时关闭',
+            show: from === ROUTE_PATH.MUSIC_DETAIL,
+            onPress: () => {
+                showPanel('TimingClose');
+            },
+        },
+        {
             icon: 'file-remove-outline',
             title: '清除插件缓存(播放异常时使用)',
             onPress: () => {
@@ -212,6 +223,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     offset: ITEM_HEIGHT * index,
                     index,
                 })}
+                ListFooterComponent={<View style={style.footer} />}
                 style={style.listWrapper}
                 keyExtractor={_ => _.title}
                 renderItem={({item}) =>
@@ -267,5 +279,9 @@ const style = StyleSheet.create({
     },
     title: {
         paddingRight: rpx(24),
+    },
+    footer: {
+        width: rpx(750),
+        height: rpx(30),
     },
 });

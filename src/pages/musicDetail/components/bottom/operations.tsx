@@ -8,6 +8,7 @@ import usePanel from '@/components/panels/usePanel';
 import Download from '@/core/download';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import LocalMusicSheet from '@/core/localMusicSheet';
+import {ROUTE_PATH} from '@/entry/router';
 
 export default function Opertions() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -65,6 +66,7 @@ export default function Opertions() {
                     if (musicItem) {
                         showPanel('MusicItemOptions', {
                             musicItem: musicItem,
+                            from: ROUTE_PATH.MUSIC_DETAIL,
                         });
                     }
                 }}
