@@ -95,6 +95,7 @@ interface IListItemProps {
     right?: () => JSX.Element;
     itemPaddingHorizontal?: number;
     itemPaddingLeft?: number;
+    itemPaddingRight?: number;
     itemWidth?: number;
     itemHeight?: number;
     itemBackgroundColor?: string;
@@ -116,6 +117,7 @@ export default function ListItem(props: IListItemProps) {
         itemBackgroundColor,
         itemPaddingHorizontal = rpx(24),
         itemPaddingLeft,
+        itemPaddingRight,
     } = props;
     return (
         <List.Item
@@ -126,6 +128,7 @@ export default function ListItem(props: IListItemProps) {
                 {
                     paddingHorizontal: itemPaddingHorizontal,
                     paddingLeft: itemPaddingLeft,
+                    paddingRight: itemPaddingRight,
                     width: itemWidth,
                     height: itemHeight ?? rpx(120),
                     paddingVertical: 0,

@@ -49,6 +49,7 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
                 ),
             }}
             right={() => <></>}
+            itemPaddingRight={0}
             onItemPress={onPress}
         />
     );

@@ -18,6 +18,7 @@ interface IMusicItemProps {
     onItemLongPress?: () => void;
     itemWidth?: number;
     itemBackgroundColor?: string;
+    itemPaddingRight?: number;
 }
 const ITEM_HEIGHT = rpx(120);
 export default function MusicItem(props: IMusicItemProps) {
@@ -30,6 +31,7 @@ export default function MusicItem(props: IMusicItemProps) {
         onItemLongPress,
         musicSheet,
         itemWidth,
+        itemPaddingRight,
         itemBackgroundColor,
     } = props;
     const {showPanel} = usePanel();
@@ -39,6 +41,7 @@ export default function MusicItem(props: IMusicItemProps) {
             itemWidth={itemWidth}
             itemHeight={ITEM_HEIGHT}
             itemPaddingLeft={index !== undefined ? 0 : undefined}
+            itemPaddingRight={itemPaddingRight}
             itemBackgroundColor={itemBackgroundColor}
             onLongPress={onItemLongPress}
             left={index !== undefined ? {index: index, width: rpx(96)} : left}
