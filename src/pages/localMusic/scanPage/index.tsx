@@ -14,10 +14,7 @@ import useHardwareBack from '@/hooks/useHardwareBack';
 import {useNavigation} from '@react-navigation/native';
 import useDialog from '@/components/dialogs/useDialog';
 import Toast from '@/utils/toast';
-
-// function FileItem(props: IFileItemProps){
-//     return
-// }
+import Loading from '@/components/base/loading';
 
 interface IPathItem {
     path: string;
@@ -37,12 +34,22 @@ export default function ScanPage() {
     const navigation = useNavigation();
     const {showDialog} = useDialog();
     const colors = useColors();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         // 路径变化时，重新读取
-        readDir(currentPath.path).then(res => {
-            setFolderData(res.filter(_ => _.isDirectory()).map(_ => _.path));
-        });
+        setLoading(true);
+        readDir(currentPath.path)
+            .then(res => {
+                setFolderData(
+                    res.filter(_ => _.isDirectory()).map(_ => _.path),
+                );
+                setLoading(false);
+            })
+            .catch(() => {
+                setFolderData([]);
+                setLoading(false);
+            });
         currentPathRef.current = currentPath;
     }, [currentPath.path]);
 
@@ -77,38 +84,42 @@ export default function ScanPage() {
                     {currentPath.path}
                 </ThemeText>
             </View>
-            <FlatList
-                ListEmptyComponent={Empty}
-                style={style.wrapper}
-                data={folderData}
-                getItemLayout={(_, index) => ({
-                    length: ITEM_HEIGHT,
-                    offset: ITEM_HEIGHT * index,
-                    index,
-                })}
-                renderItem={({item}) => (
-                    <FolderItem
-                        folderPath={item}
-                        parentPath={currentPath.path}
-                        onItemPress={() => {
-                            setCurrentPath(prev => ({
-                                parent: prev,
-                                path: item,
-                            }));
-                        }}
-                        checked={checkedPath.includes(item)}
-                        onCheckedChange={checked => {
-                            setCheckedPath(prev => {
-                                if (checked) {
-                                    return [...prev, item];
-                                } else {
-                                    return prev.filter(_ => _ !== item);
-                                }
-                            });
-                        }}
-                    />
-                )}
-            />
+            {loading ? (
+                <Loading />
+            ) : (
+                <FlatList
+                    ListEmptyComponent={Empty}
+                    style={style.wrapper}
+                    data={folderData}
+                    getItemLayout={(_, index) => ({
+                        length: ITEM_HEIGHT,
+                        offset: ITEM_HEIGHT * index,
+                        index,
+                    })}
+                    renderItem={({item}) => (
+                        <FolderItem
+                            folderPath={item}
+                            parentPath={currentPath.path}
+                            onItemPress={() => {
+                                setCurrentPath(prev => ({
+                                    parent: prev,
+                                    path: item,
+                                }));
+                            }}
+                            checked={checkedPath.includes(item)}
+                            onCheckedChange={checked => {
+                                setCheckedPath(prev => {
+                                    if (checked) {
+                                        return [...prev, item];
+                                    } else {
+                                        return prev.filter(_ => _ !== item);
+                                    }
+                                });
+                            }}
+                        />
+                    )}
+                />
+            )}
             <Pressable
                 onPress={() => {
                     showDialog('LoadingDialog', {
