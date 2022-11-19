@@ -1,15 +1,19 @@
 import React, {memo, useCallback} from 'react';
-import {ListRenderItem, StyleSheet, View} from 'react-native';
+import {StatusBar, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Empty from '@/components/base/empty';
 import MusicItem from '@/components/mediaItem/musicItem';
 import produce from 'immer';
-import {useAtomValue, useSetAtom} from 'jotai';
+import {useAtom, useSetAtom} from 'jotai';
 import {Checkbox} from 'react-native-paper';
-import {editingMusicListAtom, IEditorMusicItem} from '../store/atom';
-import {FlatList} from 'react-native-gesture-handler';
+import {
+    editingMusicListAtom,
+    IEditorMusicItem,
+    musicListChangedAtom,
+} from '../store/atom';
+import SortableFlatList from '@/components/base/SortableFlatList';
 
 const ITEM_HEIGHT = rpx(120);
+const ITEM_WIDTH = rpx(646);
 
 interface IMusicEditorItemProps {
     index: number;
@@ -28,6 +32,7 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
     }, [index]);
     return (
         <MusicItem
+            itemWidth={ITEM_WIDTH}
             musicItem={editorMusicItem.musicItem}
             left={{
                 component: () => (
@@ -43,8 +48,8 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
                     </View>
                 ),
             }}
+            right={() => <></>}
             onItemPress={onPress}
-            // musicSheet={musicSheet}
         />
     );
 }
@@ -57,37 +62,30 @@ const MusicEditorItem = memo(
 );
 
 /** 音乐列表 */
-
+const marginTop = rpx(88) * 2 + (StatusBar.currentHeight ?? 0);
 export default function MusicList() {
-    const editingMusicList = useAtomValue(editingMusicListAtom);
+    const [editingMusicList, setEditingMusicList] =
+        useAtom(editingMusicListAtom);
+    const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
-    const renderItem: ListRenderItem<IEditorMusicItem> = useCallback(
-        ({index, item}) => {
-            return (
-                <MusicEditorItem
-                    editorMusicItem={item}
-                    // checked={selectedIndices[index!]}
-                    index={index!}
-                />
-            );
+    const renderItem = useCallback(
+        ({index, item}: any) => {
+            return <MusicEditorItem editorMusicItem={item} index={index!} />;
         },
         [editingMusicList],
     );
 
     return editingMusicList?.length ? (
-        <FlatList
-            ListEmptyComponent={Empty}
-            keyExtractor={item =>
-                `ml-${item.musicItem.id}${item.musicItem.platform}`
-            }
-            getItemLayout={(_, index) => ({
-                length: ITEM_HEIGHT,
-                offset: ITEM_HEIGHT * index,
-                index,
-            })}
-            style={style.wrapper}
+        <SortableFlatList
+            activeBackgroundColor="rgba(33,33,33,0.8)"
+            marginTop={marginTop}
             data={editingMusicList}
             renderItem={renderItem}
+            itemHeight={ITEM_HEIGHT}
+            onSortEnd={newData => {
+                setEditingMusicList(newData);
+                setMusicListChanged(true);
+            }}
         />
     ) : (
         <View style={style.wrapper} />

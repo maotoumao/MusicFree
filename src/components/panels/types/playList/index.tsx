@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import {Divider} from 'react-native-paper';
@@ -36,9 +36,23 @@ export default function () {
     const {unmountPanel} = _usePanel();
     const colors = useColors();
     const [loading, setLoading] = useState(true);
+    const timerRef = useRef<any>();
 
     useEffect(() => {
         snapPoint.value = withTiming(1, timingConfig);
+        timerRef.current = setTimeout(() => {
+            if (loading) {
+                // 兜底
+                setLoading(false);
+            }
+        }, 400);
+
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+                timerRef.current = null;
+            }
+        };
     }, []);
 
     const maskAnimated = useAnimatedStyle(() => {

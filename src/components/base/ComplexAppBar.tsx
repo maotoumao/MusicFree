@@ -89,6 +89,7 @@ const style = StyleSheet.create({
     appbar: {
         shadowColor: 'transparent',
         backgroundColor: '#2b333eaa',
+        height: rpx(88),
     },
     header: {
         backgroundColor: 'transparent',
