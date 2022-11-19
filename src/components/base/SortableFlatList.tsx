@@ -266,6 +266,7 @@ export default function SortableFlatList<T extends any = any>(
                     contentOffsetYRef.current = 0;
                 }}
                 onTouchCancel={() => {
+                    // todo: 滑动很快的时候会触发取消，native的flatlist就这样
                     activeRef.current = -1;
                     setScrollEnabled(true);
                     setActiveItem(null);
