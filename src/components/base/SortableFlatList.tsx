@@ -266,7 +266,15 @@ export default function SortableFlatList<T extends any = any>(
                     contentOffsetYRef.current = 0;
                 }}
                 onTouchCancel={() => {
-                    console.log('cancel');
+                    activeRef.current = -1;
+                    setScrollEnabled(true);
+                    setActiveItem(null);
+                    fakeItemRef.current!.setNativeProps({
+                        top: 0,
+                        opacity: 0,
+                        zIndex: -1,
+                    });
+                    contentOffsetYRef.current = 0;
                 }}
                 onScroll={e => {
                     contentOffsetYRef.current = e.nativeEvent.contentOffset.y;
