@@ -28,7 +28,7 @@ export default function () {
                     onPress() {
                         showDialog('SimpleDialog', {
                             title: '删除歌单',
-                            content: `确定删除歌单${musicSheet.title}吗?`,
+                            content: `确定删除歌单「${musicSheet.title}」吗?`,
                             onOk: async () => {
                                 await MusicSheet.removeSheet(id);
                                 Toast.success('已删除');

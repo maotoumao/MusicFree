@@ -21,7 +21,7 @@ interface IAddToMusicSheetProps {
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
     const sheets = MusicSheet.useSheets();
-    const {unmountPanel} = _usePanel(sheetRef);
+    const {showPanel, unmountPanel} = _usePanel(sheetRef);
     const {musicItem = []} = props ?? {};
     const {colors} = useTheme();
 
@@ -56,6 +56,35 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
             <BottomSheetFlatList
                 data={sheets ?? []}
                 keyExtractor={sheet => sheet.id}
+                ListHeaderComponent={
+                    <ListItem
+                        key="new"
+                        title="新建歌单"
+                        left={{
+                            fallback: ImgAsset.add,
+                        }}
+                        onPress={() => {
+                            showPanel('NewMusicSheet', {
+                                async onSheetCreated(sheetId) {
+                                    try {
+                                        await MusicSheet.addMusic(
+                                            sheetId,
+                                            musicItem,
+                                        );
+                                        Toast.success('添加到歌单成功');
+                                    } catch {
+                                        Toast.warn('添加到歌单失败');
+                                    }
+                                },
+                                onCancel() {
+                                    showPanel('AddToMusicSheet', {
+                                        musicItem: musicItem,
+                                    });
+                                },
+                            });
+                        }}
+                    />
+                }
                 renderItem={({item: sheet}) => (
                     <ListItem
                         key={`${sheet.id}`}

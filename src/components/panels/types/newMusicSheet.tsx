@@ -14,7 +14,14 @@ import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
-export default function NewMusicSheet() {
+interface INewMusicSheetProps {
+    onSheetCreated?: (sheetId: string) => void;
+    onCancel?: () => void;
+}
+
+export default function NewMusicSheet(props: INewMusicSheetProps) {
+    const {onSheetCreated, onCancel} = props;
+
     const sheetRef = useRef<BottomSheetMethods | null>();
     const {unmountPanel} = _usePanel(sheetRef);
     const [input, setInput] = useState('');
@@ -44,14 +51,15 @@ export default function NewMusicSheet() {
             <View style={style.opeartions}>
                 <Button
                     onPress={() => {
-                        unmountPanel();
+                        onCancel ? onCancel() : unmountPanel();
                     }}>
                     取消
                 </Button>
                 <Button
                     onPress={async () => {
                         if (input) {
-                            MusicSheet.addSheet(input);
+                            const sheetId = await MusicSheet.addSheet(input);
+                            onSheetCreated?.(sheetId);
                             unmountPanel();
                         }
                     }}>

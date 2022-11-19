@@ -104,6 +104,7 @@ async function addSheet(title: string) {
         _[newId] = [];
     });
     notifyMusicSheets();
+    return newId;
 }
 
 async function removeSheet(sheetId: string) {
