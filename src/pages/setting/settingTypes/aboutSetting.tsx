@@ -53,12 +53,11 @@ export default function AboutSetting() {
                 <ThemeText style={style.content}>
                     本软件需要通过插件来完成包括播放、搜索在内的大部分功能，如果你是从第三方下载的插件，
                     <ThemeText fontWeight="bold">
-                        请一定谨慎识别这些插件的安全性，保护好自己
+                        请一定谨慎识别这些插件的安全性，保护好自己。（注意：插件以及插件可能产生的数据与本软件无关，请使用者合理合法使用。）
                     </ThemeText>
-                    。
                 </ThemeText>
                 <ThemeText style={style.content}>
-                    如果你对这款软件有一些建议，无论是设计（自己设计的实在太丑...）、逻辑还是交互；或者有一些bug需要反馈，了解一些最新进展，请直接公众号留言或移步github仓库。
+                    如果你对这款软件有一些建议，无论是设计（自己设计的实在太丑...）、逻辑还是交互；或者有一些bug需要反馈、了解一些最新进展，请移步Github仓库或直接公众号留言（不一定看得到）。
                 </ThemeText>
                 <Image
                     source={ImgAsset.wechatChannel}
@@ -71,11 +70,8 @@ export default function AboutSetting() {
                     如果你在找成熟稳定的音乐软件，可以考虑其他优秀的软件。当然我会一直维护，让它变得尽可能的完善一些。业余时间用爱发电，进度慢还请见谅。
                 </ThemeText>
                 <ThemeText style={style.content}>
-                    如果是技术交流或者技术向的闲聊的话，欢迎加QQ群
-                    <LinkText linkTo="https://jq.qq.com/?_wv=1027&k=aHFTp906">
-                        683467814
-                    </LinkText>
-                    ，也可以直接发邮件;)
+                    如果是技术交流或者技术向的闲聊的话，欢迎加QQ群(Github
+                    Readme自取)，也可以直接发邮件;)
                 </ThemeText>
 
                 <ThemeText style={style.content}>
