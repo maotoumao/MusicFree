@@ -288,7 +288,6 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 ) ?? {}
             );
         } catch (e) {
-            console.log(e);
             return {};
         }
     }
@@ -650,7 +649,7 @@ async function installPluginFromUrl(url: string) {
                 pluginStateMapper.notify();
                 return;
             }
-            throw new Error('插件无法解析');
+            throw new Error('插件无法解析!');
         }
     } catch (e: any) {
         errorLog('URL安装插件失败', e);

@@ -40,7 +40,9 @@ function FolderItem(props: IProps) {
                     style={style.path}
                     numberOfLines={1}
                     ellipsizeMode="tail">
-                    {folderPath.substring(parentPath.length + 1)}
+                    {folderPath.substring(
+                        parentPath === '/' ? 1 : parentPath.length + 1,
+                    )}
                 </ThemeText>
             </Pressable>
             <Checkbox

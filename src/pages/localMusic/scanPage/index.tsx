@@ -2,7 +2,12 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
-import {ExternalStorageDirectoryPath, readDir} from 'react-native-fs';
+import {
+    ExternalStorageDirectoryPath,
+    readDir,
+    getAllExternalFilesDirs,
+    exists,
+} from 'react-native-fs';
 import {FlatList} from 'react-native-gesture-handler';
 import useColors from '@/hooks/useColors';
 import Color from 'color';
@@ -25,7 +30,7 @@ const ITEM_HEIGHT = rpx(96);
 
 export default function ScanPage() {
     const [currentPath, setCurrentPath] = useState<IPathItem>({
-        path: ExternalStorageDirectoryPath,
+        path: '/',
         parent: null,
     });
     const currentPathRef = useRef<IPathItem>(currentPath);
@@ -37,20 +42,52 @@ export default function ScanPage() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // 路径变化时，重新读取
-        setLoading(true);
-        readDir(currentPath.path)
-            .then(res => {
-                setFolderData(
-                    res.filter(_ => _.isDirectory()).map(_ => _.path),
-                );
-                setLoading(false);
-            })
-            .catch(() => {
+        (async () => {
+            // 路径变化时，重新读取
+            setLoading(true);
+            try {
+                if (currentPath.path === '/') {
+                    try {
+                        const allExt = await getAllExternalFilesDirs();
+                        if (allExt.length > 1) {
+                            const sdCardPaths = allExt.map(sdp =>
+                                sdp.substring(0, sdp.indexOf('/Android')),
+                            );
+                            if (
+                                (
+                                    await Promise.all(
+                                        sdCardPaths.map(_ => exists(_)),
+                                    )
+                                ).every(val => val)
+                            ) {
+                                setFolderData(sdCardPaths);
+                            }
+                        } else {
+                            setCurrentPath({
+                                path: ExternalStorageDirectoryPath,
+                                parent: null,
+                            });
+                            return;
+                        }
+                    } catch {
+                        setCurrentPath({
+                            path: ExternalStorageDirectoryPath,
+                            parent: null,
+                        });
+                        return;
+                    }
+                } else {
+                    const res = await readDir(currentPath.path);
+                    setFolderData(
+                        res.filter(_ => _.isDirectory()).map(_ => _.path),
+                    );
+                }
+            } catch {
                 setFolderData([]);
-                setLoading(false);
-            });
-        currentPathRef.current = currentPath;
+            }
+            setLoading(false);
+            currentPathRef.current = currentPath;
+        })();
     }, [currentPath.path]);
 
     useHardwareBack(() => {
