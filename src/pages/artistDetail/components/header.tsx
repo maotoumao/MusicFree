@@ -54,17 +54,21 @@ export default function Header() {
                             style={style.titleText}
                             numberOfLines={1}
                             ellipsizeMode="tail">
-                            {artistItem.name}
+                            {artistItem?.name ?? ''}
                         </ThemeText>
-                        {artistItem.platform && (
+                        {artistItem.platform ? (
                             <Tag tagName={artistItem.platform} />
+                        ) : (
+                            <></>
                         )}
                     </View>
 
-                    {artistItem.fans && (
+                    {artistItem.fans ? (
                         <ThemeText fontSize="subTitle" fontColor="secondary">
                             粉丝数: {artistItem.fans}
                         </ThemeText>
+                    ) : (
+                        <></>
                     )}
                 </View>
             </View>
@@ -75,7 +79,7 @@ export default function Header() {
                 ellipsizeMode="tail"
                 fontColor="secondary"
                 fontSize="description">
-                {artistItem.description}
+                {artistItem?.description ?? ''}
             </ThemeText>
         </Animated.View>
     );
