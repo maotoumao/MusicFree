@@ -6,3 +6,8 @@ export const ImgAsset = {
     logo: require('@/assets/imgs/logo.jpg'),
     wechatChannel: require('@/assets/imgs/wechat_channel.jpg'),
 };
+
+export const SoundAsset = {
+    // 静音的音频，https://github.com/anars/blank-audio/blob/master/15-seconds-of-silence.mp3
+    fakeAudio: require('@/assets/sounds/fake-audio.mp3'),
+};

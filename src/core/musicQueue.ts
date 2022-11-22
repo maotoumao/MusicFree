@@ -10,7 +10,7 @@ import TrackPlayer, {
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import Config from './config';
-import {internalSymbolKey} from '@/constants/commonConst';
+import {internalFakeSoundKey, internalSymbolKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import delay from '@/utils/delay';
 import {errorLog, trace} from '../utils/log';
@@ -19,6 +19,7 @@ import PluginManager from './pluginManager';
 import Network from './network';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from './localMusicSheet';
+import {SoundAsset} from '@/constants/assetsConst';
 
 enum MusicRepeatMode {
     /** 随机播放 */
@@ -107,13 +108,14 @@ const setup = async () => {
 
         if (
             evt.nextTrack === 1 &&
-            !(await TrackPlayer.getTrack(evt.nextTrack))?.url
+            (await TrackPlayer.getTrack(evt.nextTrack))?.$ ===
+                internalFakeSoundKey
         ) {
             if (MusicQueue.getRepeatMode() === 'SINGLE') {
                 await MusicQueue.play(undefined, true);
             } else {
                 const queue = await TrackPlayer.getQueue();
-                // 要跳到的下一个就是当前的，并且队列里面有多首歌
+                // 要跳到的下一个就是当前的，并且队列里面有多首歌  因为有重复事件
                 if (
                     isSameMediaItem(
                         queue[1] as unknown as ICommon.IMediaBase,
@@ -321,10 +323,11 @@ const getFakeNextTrack = () => {
 
     if (track) {
         return produce(track, _ => {
-            _.url = '';
+            _.url = SoundAsset.fakeAudio;
+            _.$ = internalFakeSoundKey;
         });
     } else {
-        return {url: ''};
+        return {url: SoundAsset.fakeAudio, $: internalFakeSoundKey} as Track;
     }
 };
 
@@ -420,7 +423,10 @@ const _playFail = async () => {
     });
     await TrackPlayer.reset();
     await TrackPlayer.add([
-        (musicQueue[currentIndex] ?? {url: ''}) as Track,
+        (musicQueue[currentIndex] ?? {
+            url: SoundAsset.fakeAudio,
+            $: internalFakeSoundKey,
+        }) as Track,
         getFakeNextTrack(),
     ]);
     if (!Config.get('setting.basic.autoStopWhenError')) {

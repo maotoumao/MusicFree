@@ -31,7 +31,6 @@ const timingConfig = {
 
 export default function () {
     const snapPoint = useSharedValue(0);
-    // TODO: 奇怪的rerender
 
     const {unmountPanel} = usePanel();
     const colors = useColors();
