@@ -39,12 +39,12 @@ export class GlobalState<T> {
         return this.value;
     };
 
-    useValue() {
+    public useValue = () => {
         return this.stateMapper.useMappedState();
-    }
+    };
 
-    setValue(value: T) {
+    public setValue = (value: T) => {
         this.value = value;
         this.stateMapper.notify();
-    }
+    };
 }

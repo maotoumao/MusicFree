@@ -3,7 +3,7 @@ import {Pressable, StyleSheet} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import {Divider} from 'react-native-paper';
 
-import {_usePanel} from '../../usePanel';
+import usePanel from '../../usePanel';
 
 import Header from './header';
 import Body from './body';
@@ -33,7 +33,7 @@ export default function () {
     const snapPoint = useSharedValue(0);
     // TODO: 奇怪的rerender
 
-    const {unmountPanel} = _usePanel();
+    const {unmountPanel} = usePanel();
     const colors = useColors();
     const [loading, setLoading] = useState(true);
     const timerRef = useRef<any>();

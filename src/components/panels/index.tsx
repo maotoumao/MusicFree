@@ -2,11 +2,13 @@ import React, {useEffect, useRef} from 'react';
 import {BackHandler, NativeEventSubscription} from 'react-native';
 import {Portal} from 'react-native-paper';
 import panels from './types';
-import {_usePanel} from './usePanel';
+import usePanel, {panelInfoStore} from './usePanel';
 
 function Panels() {
-    const {panelName, payload, unmountPanel} = _usePanel();
-    const Component = panelName ? panels[panelName] : null;
+    const {unmountPanel} = usePanel();
+    const panelInfoState = panelInfoStore.useValue();
+
+    const Component = panelInfoState.name ? panels[panelInfoState.name] : null;
 
     const backHandlerRef = useRef<NativeEventSubscription>();
 
@@ -15,7 +17,7 @@ function Panels() {
             backHandlerRef.current?.remove();
             backHandlerRef.current = undefined;
         }
-        if (panelName) {
+        if (panelInfoState.name) {
             backHandlerRef.current = BackHandler.addEventListener(
                 'hardwareBackPress',
                 () => {
@@ -30,11 +32,15 @@ function Panels() {
                 backHandlerRef.current = undefined;
             }
         };
-    }, [panelName]);
+    }, [panelInfoState]);
 
     return (
         <Portal>
-            {Component ? <Component {...(payload ?? {})} /> : <></>}
+            {Component ? (
+                <Component {...(panelInfoState.payload ?? {})} />
+            ) : (
+                <></>
+            )}
         </Portal>
     );
 }

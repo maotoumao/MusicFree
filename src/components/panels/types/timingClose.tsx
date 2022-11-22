@@ -3,7 +3,6 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {Divider, TextInput} from 'react-native-paper';
-import {_usePanel} from '../usePanel';
 import ThemeText from '@/components/base/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -11,13 +10,14 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {setTimingClose, useTimingClose} from '@/utils/timingClose';
 import ThemeSwitch from '@/components/base/swtich';
 import timeformat from '@/utils/timeformat';
+import usePanel from '../usePanel';
 
 // const hours = Array(24).fill(1).map(_ => _.index);
 // const mins = Array(60).fill(1).map(_ => _.index);
 
 export default function TimingClose() {
     const sheetRef = useRef<BottomSheetMethods | null>();
-    const {unmountPanel} = _usePanel(sheetRef);
+    const {unmountPanel} = usePanel();
     const primaryColor = usePrimaryColor();
     const countDown = useTimingClose();
 

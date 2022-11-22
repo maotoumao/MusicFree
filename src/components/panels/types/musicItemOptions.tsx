@@ -8,7 +8,6 @@ import BottomSheet, {
 import {Divider} from 'react-native-paper';
 import MusicQueue from '@/core/musicQueue';
 import MusicSheet from '@/core/musicSheet';
-import {_usePanel} from '../usePanel';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
@@ -25,6 +24,7 @@ import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {localMusicSheetId} from '@/constants/commonConst';
 import {ROUTE_PATH} from '@/entry/router';
+import usePanel from '../usePanel';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -39,7 +39,7 @@ const ITEM_HEIGHT = rpx(96);
 // todo: rerender有点多
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
-    const {showPanel, unmountPanel} = _usePanel(sheetRef);
+    const {showPanel, unmountPanel} = usePanel();
     const primaryColor = usePrimaryColor();
 
     const {musicItem, musicSheet, from} = props ?? {};

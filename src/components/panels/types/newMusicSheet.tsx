@@ -7,12 +7,12 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
 import MusicSheet from '@/core/musicSheet';
-import {_usePanel} from '../usePanel';
 import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import usePanel from '../usePanel';
 
 interface INewMusicSheetProps {
     onSheetCreated?: (sheetId: string) => void;
@@ -23,7 +23,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
     const {onSheetCreated, onCancel} = props;
 
     const sheetRef = useRef<BottomSheetMethods | null>();
-    const {unmountPanel} = _usePanel(sheetRef);
+    const {unmountPanel} = usePanel();
     const [input, setInput] = useState('');
     const colors = useColors();
     const snap = useRef(['30%']);

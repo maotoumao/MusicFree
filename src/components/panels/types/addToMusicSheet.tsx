@@ -5,7 +5,6 @@ import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetFlatList,
 } from '@gorhom/bottom-sheet';
-import {_usePanel} from '../usePanel';
 import ThemeText from '@/components/base/themeText';
 import {useTheme} from 'react-native-paper';
 import ListItem from '@/components/base/listItem';
@@ -13,6 +12,7 @@ import MusicSheet from '@/core/musicSheet';
 import {ImgAsset} from '@/constants/assetsConst';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Toast from '@/utils/toast';
+import usePanel from '../usePanel';
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -21,7 +21,7 @@ interface IAddToMusicSheetProps {
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
     const sheets = MusicSheet.useSheets();
-    const {showPanel, unmountPanel} = _usePanel(sheetRef);
+    const {showPanel, unmountPanel} = usePanel();
     const {musicItem = []} = props ?? {};
     const {colors} = useTheme();
 
