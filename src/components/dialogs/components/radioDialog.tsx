@@ -4,21 +4,21 @@ import {Dialog} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import {FlatList} from 'react-native-gesture-handler';
 import ListItem from '@/components/base/listItem';
+import useDialog from '../useDialog';
 
 interface IRadioDialogProps<T extends string | number = string | number> {
-    visible: boolean;
-    hideDialog: () => void;
     title: string;
     content: T[];
     onOk?: (value: T) => void;
 }
 
 export default function RadioDialog(props: IRadioDialogProps) {
-    const {visible, hideDialog, title, content, onOk} = props;
+    const {title, content, onOk} = props;
+    const {hideDialog} = useDialog();
     const colors = useColors();
     return (
         <Dialog
-            visible={visible}
+            visible={true}
             onDismiss={hideDialog}
             style={{backgroundColor: colors.primary}}>
             <Dialog.Title>{title}</Dialog.Title>

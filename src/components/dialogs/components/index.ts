@@ -12,10 +12,7 @@ const dialogs = {
     LoadingDialog,
 };
 
-const dialogArray: Array<[string, (...args: any) => JSX.Element]> =
-    Object.entries(dialogs);
-
-export default dialogArray;
+export default dialogs;
 
 export type IDialogType = typeof dialogs;
 export type IDialogKey = keyof IDialogType;

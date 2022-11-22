@@ -38,9 +38,7 @@ function Panels() {
         <Portal>
             {Component ? (
                 <Component {...(panelInfoState.payload ?? {})} />
-            ) : (
-                <></>
-            )}
+            ) : null}
         </Portal>
     );
 }

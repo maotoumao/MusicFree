@@ -7,22 +7,22 @@ import rpx, {vh} from '@/utils/rpx';
 import openUrl from '@/utils/openUrl';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {ScrollView} from 'react-native-gesture-handler';
+import useDialog from '../useDialog';
 
 interface IDownloadDialogProps {
-    visible: boolean;
-    hideDialog: () => void;
     title: string;
     content: string[];
     fromUrl: string;
     backUrl?: string;
 }
 export default function DownloadDialog(props: IDownloadDialogProps) {
-    const {visible, title, content, fromUrl, backUrl, hideDialog} = props;
+    const {title, content, fromUrl, backUrl} = props;
     const colors = useColors();
+    const {hideDialog} = useDialog();
 
     return (
         <Dialog
-            visible={visible}
+            visible={true}
             onDismiss={hideDialog}
             style={{backgroundColor: colors.primary}}>
             <Dialog.Title>{title}</Dialog.Title>

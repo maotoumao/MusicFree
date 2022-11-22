@@ -1,20 +1,20 @@
 import React from 'react';
 import {Button, Dialog, Paragraph} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
+import useDialog from '../useDialog';
 
 interface ISimpleDialogProps {
-    visible: boolean;
-    hideDialog: () => void;
     title: string;
     content: string | JSX.Element;
     onOk?: () => void;
 }
 export default function SimpleDialog(props: ISimpleDialogProps) {
-    const {visible, hideDialog, title, content, onOk} = props;
+    const {title, content, onOk} = props;
     const colors = useColors();
+    const {hideDialog} = useDialog();
     return (
         <Dialog
-            visible={visible}
+            visible={true}
             onDismiss={hideDialog}
             style={{backgroundColor: colors.primary}}>
             <Dialog.Title>{title}</Dialog.Title>

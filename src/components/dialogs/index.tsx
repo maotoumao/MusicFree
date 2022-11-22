@@ -1,25 +1,20 @@
 import React from 'react';
 import {Portal} from 'react-native-paper';
 import components from './components';
-import useDialog from './useDialog';
+import {dialogInfoStore} from './useDialog';
 
 export default function () {
-    const {dialogName, hideDialog, payload} = useDialog();
+    const dialogInfoState = dialogInfoStore.useValue();
+
+    const Component = dialogInfoState.name
+        ? components[dialogInfoState.name]
+        : null;
 
     return (
         <Portal>
-            {components.map(([key, DialogComponent]) =>
-                dialogName === key ? (
-                    <DialogComponent
-                        key={key}
-                        visible={dialogName === key}
-                        hideDialog={hideDialog}
-                        {...(payload ?? {})}
-                    />
-                ) : (
-                    <></>
-                ),
-            )}
+            {Component ? (
+                <Component {...(dialogInfoState.payload ?? {})} />
+            ) : null}
         </Portal>
     );
 }

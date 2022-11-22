@@ -7,6 +7,7 @@ import ThemeText from '@/components/base/themeText';
 import Button from '@/components/base/button';
 import Config from '@/core/config';
 import Toast from '@/utils/toast';
+import useDialog from '../useDialog';
 
 interface ISubscribePluginDialogProps {
     visible: boolean;
@@ -17,13 +18,14 @@ interface ISubscribePluginDialogProps {
 export default function SubscribePluginDialog(
     props: ISubscribePluginDialogProps,
 ) {
-    const {visible, hideDialog, onUpdatePlugins} = props;
+    const {onUpdatePlugins} = props;
+    const {hideDialog} = useDialog();
     const colors = useColors();
     const [text, setText] = useState(Config.get('setting.plugin.subscribeUrl'));
     const subscribeUrl = Config.useConfig('setting.plugin.subscribeUrl');
     return (
         <Dialog
-            visible={visible}
+            visible={true}
             onDismiss={hideDialog}
             style={{backgroundColor: colors.primary}}>
             <Dialog.Title>插件订阅</Dialog.Title>
