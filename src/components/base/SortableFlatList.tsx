@@ -11,8 +11,8 @@ import React, {
     ForwardedRef,
     forwardRef,
     memo,
-    useCallback,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -24,6 +24,7 @@ import {
     ViewToken,
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
+import {useDerivedValue, useSharedValue} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const WINDOW_WIDTH = rpx(750);
@@ -66,11 +67,14 @@ export default function SortableFlatList<T extends any = any>(
 
     const layoutRef = useRef<LayoutRectangle>();
     // listref
-    const listRef = useRef<FlatList | null>(null);
+    const listRef = useRef<FlatList<T> | null>(null);
     // fakeref
     const fakeItemRef = useRef<View | null>(null);
     // contentoffset
     const contentOffsetYRef = useRef<number>(0);
+    const targetOffsetYRef = useRef<number>(0);
+
+    const direction = useSharedValue(0);
 
     useEffect(() => {
         _setData([...(data ?? [])]);
@@ -81,63 +85,68 @@ export default function SortableFlatList<T extends any = any>(
     const offsetRef = useRef<number>(0);
 
     //#region 滚动
-    const scrollControllerRef = useRef<{
-        timer?: any;
-        direction: number;
-    }>({direction: 0});
+    const scrollingRef = useRef(false);
 
-    function scrollInterval() {
-        if (scrollControllerRef.current.timer) {
+    // 列表整体的高度
+    const getListContentHeight = useMemo(
+        () => () => itemHeight * data.length,
+        [data],
+    );
+
+    function scrollToTarget(forceScroll = false) {
+        // 未选中
+        if (activeRef.current === -1) {
+            scrollingRef.current = false;
             return;
         }
-        scrollControllerRef.current.timer = setInterval(() => {
-            const scrollController = scrollControllerRef.current;
-            if (scrollController.direction === 0) {
-                clearScrollInterval();
-            } else if (scrollController.direction <= 0) {
-                listRef.current?.scrollToIndex?.({
-                    index: viewableItemsRef.current
-                        ? (viewableItemsRef.current[0]?.index ?? 2) - 2
-                        : 0,
-                    animated: true,
-                    viewOffset: 0,
-                });
-                if (viewableItemsRef.current?.[0]?.index === 0) {
-                    clearScrollInterval();
-                }
-            } else {
-                // todo: 改成offset
-                listRef.current?.scrollToIndex?.({
-                    index: viewableItemsRef.current
-                        ? (viewableItemsRef.current[
-                              viewableItemsRef.current.length - 1
-                          ]?.index ?? data.length - 3) + 2
-                        : 0,
-                    animated: true,
-                    viewOffset: 1,
-                });
-                if (
-                    viewableItemsRef.current?.[
-                        viewableItemsRef?.current.length - 1
-                    ]?.index ===
-                    data.length - 1
-                ) {
-                    clearScrollInterval();
-                }
-            }
-        }, 250);
+
+        // 滚动中就不滚了 /
+        if (scrollingRef.current && !forceScroll) {
+            scrollingRef.current = true;
+            return;
+        }
+        // 方向是0
+        if (direction.value === 0) {
+            scrollingRef.current = false;
+            return;
+        }
+
+        const nextTarget =
+            Math.sign(direction.value) *
+                Math.max(Math.abs(direction.value), 0.3) *
+                300 +
+            contentOffsetYRef.current;
+        // 当前到极限了
+        if (
+            (contentOffsetYRef.current <= 2 &&
+                nextTarget < contentOffsetYRef.current) ||
+            (contentOffsetYRef.current >=
+                getListContentHeight() - (layoutRef.current?.height ?? 0) - 2 &&
+                nextTarget > contentOffsetYRef.current)
+        ) {
+            scrollingRef.current = false;
+            return;
+        }
+        scrollingRef.current = true;
+        // 超出区域
+        targetOffsetYRef.current = Math.min(
+            Math.max(0, nextTarget),
+            getListContentHeight() - (layoutRef.current?.height ?? 0),
+        );
+        listRef.current?.scrollToOffset({
+            animated: true,
+            offset: targetOffsetYRef.current,
+        });
     }
 
-    const clearScrollInterval = useCallback(() => {
-        scrollControllerRef.current.timer &&
-            clearInterval(scrollControllerRef.current.timer);
-        scrollControllerRef.current.timer = null;
-    }, []);
-
-    useEffect(() => {
-        return () => {
-            clearScrollInterval();
-        };
+    useDerivedValue(() => {
+        // 正在滚动
+        if (scrollingRef.current) {
+            return;
+        } else if (direction.value !== 0) {
+            // 开始滚动
+            scrollToTarget();
+        }
     }, []);
 
     //#endregion
@@ -171,6 +180,7 @@ export default function SortableFlatList<T extends any = any>(
                     offset: itemHeight * index,
                     index,
                 })}
+                scrollEventThrottle={16}
                 onTouchStart={e => {
                     if (activeRef.current !== -1) {
                         // 相对于整个页面顶部的距离
@@ -194,7 +204,6 @@ export default function SortableFlatList<T extends any = any>(
                             offsetRef.current =
                                 (layoutRef.current?.height ?? 0) - itemHeight;
                         }
-
                         fakeItemRef.current!.setNativeProps({
                             top: offsetRef.current,
                             opacity: 1,
@@ -204,25 +213,26 @@ export default function SortableFlatList<T extends any = any>(
                         // 如果超出范围，停止
                         if (offsetRef.current < itemHeight * 2) {
                             // 上滑
-                            if (viewableItemsRef.current) {
-                            }
-                            scrollControllerRef.current.direction = -1;
-                            scrollInterval();
+                            direction.value =
+                                offsetRef.current / itemHeight / 2 - 1;
                         } else if (
                             offsetRef.current >
                             (layoutRef.current?.height ?? 0) - 3 * itemHeight
                         ) {
                             // 下滑
-                            scrollControllerRef.current.direction = 1;
-                            scrollInterval();
+                            direction.value =
+                                (offsetRef.current -
+                                    (layoutRef.current?.height ?? 0) +
+                                    3 * itemHeight) /
+                                itemHeight /
+                                2;
                         } else {
-                            // 取消timer
-                            clearScrollInterval();
+                            // 不滑动
+                            direction.value = 0;
                         }
                     }
                 }}
                 onTouchEnd={e => {
-                    clearScrollInterval();
                     if (activeRef.current !== -1) {
                         // 计算最终的位置，触发onSortEnd
                         let index = activeRef.current;
@@ -255,6 +265,7 @@ export default function SortableFlatList<T extends any = any>(
                             // _setData(nData);
                         }
                     }
+                    scrollingRef.current = false;
                     activeRef.current = -1;
                     setScrollEnabled(true);
                     setActiveItem(null);
@@ -263,11 +274,11 @@ export default function SortableFlatList<T extends any = any>(
                         opacity: 0,
                         zIndex: -1,
                     });
-                    contentOffsetYRef.current = 0;
                 }}
                 onTouchCancel={() => {
                     // todo: 滑动很快的时候会触发取消，native的flatlist就这样
                     activeRef.current = -1;
+                    scrollingRef.current = false;
                     setScrollEnabled(true);
                     setActiveItem(null);
                     fakeItemRef.current!.setNativeProps({
@@ -279,6 +290,15 @@ export default function SortableFlatList<T extends any = any>(
                 }}
                 onScroll={e => {
                     contentOffsetYRef.current = e.nativeEvent.contentOffset.y;
+                    if (
+                        activeRef.current !== -1 &&
+                        Math.abs(
+                            contentOffsetYRef.current -
+                                targetOffsetYRef.current,
+                        ) < 2
+                    ) {
+                        scrollToTarget(true);
+                    }
                 }}
                 renderItem={({item, index}) => {
                     return (
