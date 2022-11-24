@@ -401,6 +401,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             await TrackPlayer.setupPlayer();
             play(musicItem, forcePlay);
         }
+        errorLog('播放失败!!!', e?.message ?? '');
     }
 };
 

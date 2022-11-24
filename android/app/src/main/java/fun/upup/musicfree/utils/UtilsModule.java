@@ -1,12 +1,16 @@
 package fun.upup.musicfree.utils;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+
+import java.util.List;
 
 
 public class UtilsModule extends ReactContextBaseJavaModule {

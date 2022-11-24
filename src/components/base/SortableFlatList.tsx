@@ -24,7 +24,11 @@ import {
     ViewToken,
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {useDerivedValue, useSharedValue} from 'react-native-reanimated';
+import {
+    runOnJS,
+    useDerivedValue,
+    useSharedValue,
+} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const WINDOW_WIDTH = rpx(750);
@@ -145,7 +149,7 @@ export default function SortableFlatList<T extends any = any>(
             return;
         } else if (direction.value !== 0) {
             // 开始滚动
-            scrollToTarget();
+            runOnJS(scrollToTarget)();
         }
     }, []);
 

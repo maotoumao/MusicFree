@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, memo, useEffect, useState} from 'react';
 import {Keyboard, Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -52,8 +52,7 @@ function CircularPlayBtn() {
         </CircularProgressBase>
     );
 }
-
-export default function () {
+function MusicBar() {
     const musicItem = MusicQueue.useCurrentMusicItem();
 
     const [showKeyboard, setKeyboardStatus] = useState(false);
@@ -135,6 +134,8 @@ export default function () {
         </Fragment>
     );
 }
+
+export default memo(MusicBar, () => true);
 
 const style = StyleSheet.create({
     wrapper: {
