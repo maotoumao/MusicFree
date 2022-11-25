@@ -7,6 +7,7 @@
 import {iconSizeConst} from '@/constants/uiConst';
 import useTextColor from '@/hooks/useTextColor';
 import rpx from '@/utils/rpx';
+import {FlashList} from '@shopify/flash-list';
 import React, {
     ForwardedRef,
     forwardRef,
@@ -23,7 +24,6 @@ import {
     View,
     ViewToken,
 } from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
 import {
     runOnJS,
     useDerivedValue,
@@ -71,7 +71,7 @@ export default function SortableFlatList<T extends any = any>(
 
     const layoutRef = useRef<LayoutRectangle>();
     // listref
-    const listRef = useRef<FlatList<T> | null>(null);
+    const listRef = useRef<FlashList<T> | null>(null);
     // fakeref
     const fakeItemRef = useRef<View | null>(null);
     // contentoffset
@@ -168,10 +168,9 @@ export default function SortableFlatList<T extends any = any>(
                 itemHeight={itemHeight}
                 item={activeItem}
             />
-            <FlatList
+            <FlashList
                 scrollEnabled={scrollEnabled}
                 onViewableItemsChanged={onViewRef.current}
-                style={style.flex1}
                 ref={_ => {
                     listRef.current = _;
                 }}
@@ -179,11 +178,7 @@ export default function SortableFlatList<T extends any = any>(
                     layoutRef.current = evt.nativeEvent.layout;
                 }}
                 data={_data}
-                getItemLayout={(_, index) => ({
-                    length: itemHeight,
-                    offset: itemHeight * index,
-                    index,
-                })}
+                estimatedItemSize={itemHeight}
                 scrollEventThrottle={16}
                 onTouchStart={e => {
                     if (activeRef.current !== -1) {
