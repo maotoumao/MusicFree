@@ -5,7 +5,7 @@ declare namespace IPlugin {
         url: string;
         /** 高品质 */
         urlHQ?: string;
-        /** 无损音质 */
+        /** 超高音质 */
         urlSQ?: string;
         userAgent?: string;
     }
@@ -91,5 +91,11 @@ declare namespace IPlugin {
     type R = Required<IPluginInstance>;
     export type IPluginInstanceMethods = {
         [K in keyof R as R[K] extends (...args: any) => any ? K : never]: R[K];
+    };
+
+    /** 插件其他属性 */
+    export type IPluginMeta = {
+        order: number;
+        userEnv: Record<string, string>;
     };
 }

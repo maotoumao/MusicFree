@@ -6,11 +6,20 @@ export const localPluginPlatform = '本地';
 export const localPluginHash = 'local-plugin-hash';
 
 export const internalFakeSoundKey = 'fake-key';
-export const tabName = {
-    music: '单曲',
-    album: '专辑',
-    artist: '作者',
-};
+
+const emptyFunction = () => {};
+Object.freeze(emptyFunction);
+export {emptyFunction};
+
+/** 音质 */
+export enum Quality {
+    /** 标准 */
+    Standard,
+    /** 高音质 */
+    HighQuality,
+    /** 超高音质 */
+    SuperQuality,
+}
 
 export enum RequestStateCode {
     /** 空闲 */
@@ -27,6 +36,7 @@ export enum RequestStateCode {
 
 export const StorageKeys = {
     MediaMetaKeys: 'media-meta-keys',
+    PluginMetaKey: 'plugin-meta',
     MediaCache: 'media-cache',
     LocalMusicSheet: 'local-music-sheet',
 };

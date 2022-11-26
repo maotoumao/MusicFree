@@ -1,3 +1,4 @@
+import {Quality} from '@/constants/commonConst';
 import {getStorage, setStorage} from '@/utils/storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
@@ -23,6 +24,14 @@ interface IConfig {
             /** 最大音乐缓存 */
             maxCacheSize: number;
 
+            /** 默认播放音质 */
+            defaultPlayQuality: Quality;
+            /** 音质顺序 */
+            playQualityOrder: 'asc' | 'desc';
+            /** 默认下载音质 */
+            defaultDownloadQuality: Quality;
+            /** 下载音质顺序 */
+            downloadQualityOrder: 'asc' | 'desc';
             debug: {
                 errorLog: boolean;
                 traceLog: boolean;

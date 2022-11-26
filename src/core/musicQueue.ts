@@ -58,7 +58,7 @@ const setup = async () => {
     musicQueue.length = 0;
     /** 状态恢复 */
     try {
-        const config = await Config.get('status.music');
+        const config = Config.get('status.music');
         if (config?.repeatMode) {
             repeatMode = config.repeatMode as MusicRepeatMode;
         }

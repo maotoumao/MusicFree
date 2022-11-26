@@ -10,8 +10,6 @@ import Toast from '@/utils/toast';
 import useDialog from '../useDialog';
 
 interface ISubscribePluginDialogProps {
-    visible: boolean;
-    hideDialog: () => void;
     onUpdatePlugins: (hideDialog: () => void) => void;
 }
 

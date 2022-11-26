@@ -28,6 +28,7 @@ import {
 } from '@/utils/mediaItem';
 import {
     CacheControl,
+    emptyFunction,
     internalSerializeKey,
     localPluginHash,
     localPluginPlatform,
@@ -40,6 +41,7 @@ import Network from './network';
 import LocalMusicSheet from './localMusicSheet';
 import {FileSystem} from 'react-native-file-access';
 import Mp3Util from '@/native/mp3Util';
+import {PluginMeta} from './pluginMeta';
 
 axios.defaults.timeout = 1500;
 
@@ -576,6 +578,8 @@ async function setup() {
 
         plugins = _plugins;
         pluginStateMapper.notify();
+        /** 初始化meta信息 */
+        PluginMeta.setupMeta(plugins.map(_ => _.name));
     } catch (e: any) {
         ToastAndroid.show(
             `插件初始化失败:${e?.message ?? e}`,
@@ -685,6 +689,15 @@ async function uninstallAllPlugins() {
     );
     plugins = [];
     pluginStateMapper.notify();
+
+    /** 清除空余文件，异步做就可以了 */
+    readDir(pathConst.pluginPath)
+        .then(fns => {
+            fns.forEach(fn => {
+                unlink(fn.path).catch(emptyFunction);
+            });
+        })
+        .catch(emptyFunction);
 }
 
 async function updatePlugin(plugin: Plugin) {
@@ -727,6 +740,29 @@ function getSearchablePlugins() {
     return plugins.filter(_ => _.state === 'enabled' && _.instance.search);
 }
 
+function getSortedSearchablePlugins() {
+    return getSearchablePlugins().sort((a, b) =>
+        (PluginMeta.getPluginMeta(a).order ?? Infinity) -
+            (PluginMeta.getPluginMeta(b).order ?? Infinity) <
+        0
+            ? -1
+            : 1,
+    );
+}
+
+function useSortedPlugins() {
+    const _plugins = pluginStateMapper.useMappedState();
+    const _pluginMetaAll = PluginMeta.usePluginMetaAll();
+
+    return [..._plugins].sort((a, b) =>
+        (_pluginMetaAll[a.name]?.order ?? Infinity) -
+            (_pluginMetaAll[b.name]?.order ?? Infinity) <
+        0
+            ? -1
+            : 1,
+    );
+}
+
 const PluginManager = {
     setup,
     installPlugin,
@@ -738,7 +774,9 @@ const PluginManager = {
     getByName,
     getValidPlugins,
     getSearchablePlugins,
+    getSortedSearchablePlugins,
     usePlugins: pluginStateMapper.useMappedState,
+    useSortedPlugins,
     uninstallAllPlugins,
 };
 
