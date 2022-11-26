@@ -22,8 +22,8 @@ async function setupMeta(validKeys?: string[]) {
         } else {
             const newMeta: Record<string, IPlugin.IPluginMeta> = {};
             validKeys.forEach(k => {
-                if (pluginMetaAll[k]) {
-                    newMeta[k] = pluginMetaAll[k];
+                if (meta[k]) {
+                    newMeta[k] = meta[k];
                 }
             });
             await setStorage(StorageKeys.PluginMetaKey, newMeta);
@@ -31,6 +31,12 @@ async function setupMeta(validKeys?: string[]) {
         }
         pluginMetaAllStateMapper.notify();
     }
+}
+
+async function setPluginMetaAll(newMeta: Record<string, IPlugin.IPluginMeta>) {
+    await setStorage(StorageKeys.PluginMetaKey, newMeta);
+    pluginMetaAll = newMeta;
+    pluginMetaAllStateMapper.notify();
 }
 
 async function setPluginMeta(plugin: Plugin, meta: IPlugin.IPluginMeta) {
@@ -58,6 +64,8 @@ function getPluginMeta(plugin: Plugin) {
 export const PluginMeta = {
     setupMeta,
     setPluginMeta,
+    setPluginMetaAll,
+    getPluginMetaAll,
     setPluginMetaProp,
     getPluginMeta,
     usePluginMetaAll: pluginMetaAllStateMapper.useMappedState,

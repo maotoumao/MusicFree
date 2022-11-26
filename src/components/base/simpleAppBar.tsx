@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {Appbar} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
+import rpx from '@/utils/rpx';
 
 interface ISimpleAppBarProps {
     title?: string;
@@ -37,6 +38,7 @@ const style = StyleSheet.create({
         shadowColor: 'transparent',
         backgroundColor: '#2b333eaa',
         zIndex: 10000,
+        height: rpx(88),
     },
     header: {
         backgroundColor: 'transparent',

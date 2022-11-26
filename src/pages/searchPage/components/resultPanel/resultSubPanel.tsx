@@ -55,7 +55,7 @@ function getSubRouterScene(
 function ResultSubPanel(props: IResultSubPanelProps) {
     const [index, setIndex] = useState(0);
 
-    const routes = PluginManager.getSearchablePlugins().map(_ => ({
+    const routes = PluginManager.getSortedSearchablePlugins().map(_ => ({
         key: _.hash,
         title: _.name,
     }));

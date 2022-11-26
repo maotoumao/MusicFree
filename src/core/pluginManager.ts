@@ -42,6 +42,7 @@ import LocalMusicSheet from './localMusicSheet';
 import {FileSystem} from 'react-native-file-access';
 import Mp3Util from '@/native/mp3Util';
 import {PluginMeta} from './pluginMeta';
+import {useEffect, useState} from 'react';
 
 axios.defaults.timeout = 1500;
 
@@ -754,13 +755,29 @@ function useSortedPlugins() {
     const _plugins = pluginStateMapper.useMappedState();
     const _pluginMetaAll = PluginMeta.usePluginMetaAll();
 
-    return [..._plugins].sort((a, b) =>
-        (_pluginMetaAll[a.name]?.order ?? Infinity) -
-            (_pluginMetaAll[b.name]?.order ?? Infinity) <
-        0
-            ? -1
-            : 1,
+    const [sortedPlugins, setSortedPlugins] = useState(
+        [..._plugins].sort((a, b) =>
+            (_pluginMetaAll[a.name]?.order ?? Infinity) -
+                (_pluginMetaAll[b.name]?.order ?? Infinity) <
+            0
+                ? -1
+                : 1,
+        ),
     );
+
+    useEffect(() => {
+        setSortedPlugins(
+            [..._plugins].sort((a, b) =>
+                (_pluginMetaAll[a.name]?.order ?? Infinity) -
+                    (_pluginMetaAll[b.name]?.order ?? Infinity) <
+                0
+                    ? -1
+                    : 1,
+            ),
+        );
+    }, [_plugins, _pluginMetaAll]);
+
+    return sortedPlugins;
 }
 
 const PluginManager = {

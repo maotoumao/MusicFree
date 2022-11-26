@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {FlatList, StatusBar, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {FAB, List, Portal} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
@@ -15,126 +15,193 @@ import usePanel from '@/components/panels/usePanel';
 import Toast from '@/utils/toast';
 import axios from 'axios';
 import Config from '@/core/config';
+import ThemeText from '@/components/base/themeText';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {PluginMeta} from '@/core/pluginMeta';
+import produce from 'immer';
+import objectPath from 'object-path';
+import SortableFlatList from '@/components/base/SortableFlatList';
+
+const ITEM_HEIGHT = rpx(96);
+const marginTop = rpx(88 + 64) + (StatusBar.currentHeight ?? 0);
 
 export default function PluginSetting() {
-    const plugins = PluginManager.usePlugins();
+    const plugins = PluginManager.useSortedPlugins();
     const [loading, setLoading] = useState(false);
     const [fabOpen, setFabOpen] = useState(false);
     const colors = useColors();
     const {showPanel} = usePanel();
     const {showDialog} = useDialog();
+    const [pageState, setPageState] = useState<'normal' | 'sort'>('normal');
+    const [sortingPlugins, setSortingPlugins] = useState([...plugins]);
+
+    const fabActions = [
+        {
+            icon: 'menu',
+            label: '插件排序',
+            onPress() {
+                setPageState('sort');
+            },
+        },
+        {
+            icon: 'book-plus-multiple-outline',
+            label: '订阅设置',
+            async onPress() {
+                showDialog('SubscribePluginDialog', {
+                    async onUpdatePlugins(hideDialog) {
+                        const url = Config.get('setting.plugin.subscribeUrl');
+                        setLoading(true);
+                        if (url) {
+                            await installPluginFromUrl(url);
+                        }
+                        setLoading(false);
+                        hideDialog();
+                    },
+                });
+            },
+        },
+        {
+            icon: 'file-plus',
+            label: '从本地安装插件',
+            async onPress() {
+                try {
+                    const result = await DocumentPicker.pickMultiple();
+                    setLoading(true);
+                    // 初步过滤
+                    const validResult = result?.filter(
+                        _ => _.uri.endsWith('.js') || _.name?.endsWith('.js'),
+                    );
+                    await Promise.all(
+                        validResult.map(_ =>
+                            PluginManager.installPlugin(_.uri),
+                        ),
+                    );
+                    Toast.success('插件安装成功~');
+                } catch (e: any) {
+                    if (e?.message?.startsWith('User')) {
+                        setLoading(false);
+                        return;
+                    }
+                    trace('插件安装失败', e?.message);
+                    Toast.warn(`插件安装失败: ${e?.message ?? ''}`);
+                }
+                setLoading(false);
+            },
+        },
+        {
+            icon: 'link-variant-plus',
+            label: '从网络安装插件',
+            async onPress() {
+                showPanel('SimpleInput', {
+                    placeholder: '输入插件URL',
+                    maxLength: 120,
+                    async onOk(text, closePanel) {
+                        setLoading(true);
+                        closePanel();
+                        await installPluginFromUrl(text.trim());
+                        setLoading(false);
+                    },
+                });
+            },
+        },
+        {
+            icon: 'trash-can-outline',
+            label: '卸载全部插件',
+            onPress() {
+                showDialog('SimpleDialog', {
+                    title: '卸载插件',
+                    content: '确认卸载全部插件吗？此操作不可恢复！',
+                    async onOk() {
+                        setLoading(true);
+                        await PluginManager.uninstallAllPlugins();
+                        setLoading(false);
+                    },
+                });
+            },
+        },
+    ];
+
+    useEffect(() => {
+        setSortingPlugins([...plugins]);
+    }, [plugins]);
+
+    function renderSortingItem({item}: {item: Plugin}) {
+        return (
+            <View style={style.sortItem}>
+                <ThemeText>{item.name}</ThemeText>
+            </View>
+        );
+    }
 
     return (
         <View style={style.wrapper}>
-            {loading ? (
-                <Loading />
-            ) : (
-                <FlatList
-                    data={plugins ?? []}
-                    keyExtractor={_ => _.hash}
-                    renderItem={({item: plugin}) => (
-                        <PluginView key={plugin.hash} plugin={plugin} />
+            {pageState === 'normal' ? (
+                <>
+                    {loading ? (
+                        <Loading />
+                    ) : (
+                        <FlatList
+                            data={plugins ?? []}
+                            keyExtractor={_ => _.hash}
+                            renderItem={({item: plugin}) => (
+                                <PluginView key={plugin.hash} plugin={plugin} />
+                            )}
+                        />
                     )}
-                />
+                    <Portal>
+                        <FAB.Group
+                            visible
+                            open={fabOpen}
+                            icon={fabOpen ? 'close' : 'plus'}
+                            color={colors.text}
+                            fabStyle={{backgroundColor: colors.primary}}
+                            actions={fabActions}
+                            onStateChange={({open}) => {
+                                setFabOpen(open);
+                            }}
+                        />
+                    </Portal>
+                </>
+            ) : (
+                <>
+                    <View style={style.sortWrapper}>
+                        <ThemeText fontWeight="bold">插件排序</ThemeText>
+                        <TouchableOpacity
+                            onPress={async () => {
+                                await PluginMeta.setPluginMetaAll(
+                                    produce(
+                                        PluginMeta.getPluginMetaAll(),
+                                        draft => {
+                                            sortingPlugins.forEach(
+                                                (plg, idx) => {
+                                                    objectPath.set(
+                                                        draft,
+                                                        `${plg.name}.order`,
+                                                        idx,
+                                                    );
+                                                },
+                                            );
+                                        },
+                                    ),
+                                );
+                                setPageState('normal');
+                            }}>
+                            <ThemeText>完成</ThemeText>
+                        </TouchableOpacity>
+                    </View>
+                    <SortableFlatList
+                        data={sortingPlugins}
+                        activeBackgroundColor="rgba(33,33,33,0.8)"
+                        marginTop={marginTop}
+                        renderItem={renderSortingItem}
+                        itemHeight={ITEM_HEIGHT}
+                        itemJustifyContent={'space-between'}
+                        onSortEnd={data => {
+                            setSortingPlugins(data);
+                        }}
+                    />
+                </>
             )}
-            <Portal>
-                <FAB.Group
-                    visible
-                    open={fabOpen}
-                    icon={fabOpen ? 'close' : 'plus'}
-                    color={colors.text}
-                    fabStyle={{backgroundColor: colors.primary}}
-                    actions={[
-                        {
-                            icon: 'book-plus-multiple-outline',
-                            label: '订阅设置',
-                            async onPress() {
-                                showDialog('SubscribePluginDialog', {
-                                    async onUpdatePlugins(hideDialog) {
-                                        const url = Config.get(
-                                            'setting.plugin.subscribeUrl',
-                                        );
-                                        setLoading(true);
-                                        if (url) {
-                                            await installPluginFromUrl(url);
-                                        }
-                                        setLoading(false);
-                                        hideDialog();
-                                    },
-                                });
-                            },
-                        },
-                        {
-                            icon: 'file-plus',
-                            label: '从本地安装插件',
-                            async onPress() {
-                                try {
-                                    const result =
-                                        await DocumentPicker.pickMultiple();
-                                    setLoading(true);
-                                    // 初步过滤
-                                    const validResult = result?.filter(
-                                        _ =>
-                                            _.uri.endsWith('.js') ||
-                                            _.name?.endsWith('.js'),
-                                    );
-                                    await Promise.all(
-                                        validResult.map(_ =>
-                                            PluginManager.installPlugin(_.uri),
-                                        ),
-                                    );
-                                    Toast.success('插件安装成功~');
-                                } catch (e: any) {
-                                    if (e?.message?.startsWith('User')) {
-                                        setLoading(false);
-                                        return;
-                                    }
-                                    trace('插件安装失败', e?.message);
-                                    Toast.warn(
-                                        `插件安装失败: ${e?.message ?? ''}`,
-                                    );
-                                }
-                                setLoading(false);
-                            },
-                        },
-                        {
-                            icon: 'link-variant-plus',
-                            label: '从网络安装插件',
-                            async onPress() {
-                                showPanel('SimpleInput', {
-                                    placeholder: '输入插件URL',
-                                    maxLength: 120,
-                                    async onOk(text, closePanel) {
-                                        setLoading(true);
-                                        closePanel();
-                                        await installPluginFromUrl(text.trim());
-                                        setLoading(false);
-                                    },
-                                });
-                            },
-                        },
-                        {
-                            icon: 'trash-can-outline',
-                            label: '卸载全部插件',
-                            onPress() {
-                                showDialog('SimpleDialog', {
-                                    title: '卸载插件',
-                                    content:
-                                        '确认卸载全部插件吗？此操作不可恢复！',
-                                    async onOk() {
-                                        setLoading(true);
-                                        await PluginManager.uninstallAllPlugins();
-                                        setLoading(false);
-                                    },
-                                });
-                            },
-                        },
-                    ]}
-                    onStateChange={({open}) => {
-                        setFabOpen(open);
-                    }}
-                />
-            </Portal>
         </View>
     );
 }
@@ -142,12 +209,25 @@ export default function PluginSetting() {
 const style = StyleSheet.create({
     wrapper: {
         width: rpx(750),
-        padding: rpx(24),
         paddingTop: rpx(36),
         flex: 1,
     },
     header: {
         marginBottom: rpx(24),
+    },
+    sortWrapper: {
+        width: rpx(702),
+        marginHorizontal: rpx(24),
+        justifyContent: 'space-between',
+        height: rpx(64),
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    sortItem: {
+        height: ITEM_HEIGHT,
+        width: rpx(500),
+        paddingLeft: rpx(24),
+        justifyContent: 'center',
     },
 });
 
@@ -261,6 +341,9 @@ function PluginView(props: IPluginViewProps) {
                     primary: colors.textHighlight,
                 },
             }}
+            style={{
+                height: ITEM_HEIGHT,
+            }}
             titleStyle={[
                 {
                     fontSize: fontSizeConst.title,
@@ -281,6 +364,7 @@ function PluginView(props: IPluginViewProps) {
             {options.map(_ =>
                 _.show ? (
                     <ListItem
+                        itemHeight={ITEM_HEIGHT}
                         key={`${plugin.hash}${_.title}`}
                         left={{icon: {name: _.icon}}}
                         title={_.title}
@@ -321,8 +405,7 @@ async function installPluginFromUrl(text: string) {
         } else {
             urls = [iptUrl];
         }
-        // todo: 改成allSettled
-        await Promise.all(
+        await Promise.allSettled(
             urls.map(url => PluginManager.installPluginFromUrl(url)),
         ).catch();
         Toast.success('插件安装成功~');

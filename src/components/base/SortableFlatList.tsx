@@ -39,6 +39,13 @@ interface ISortableFlatListProps<T> {
     renderItem: (props: {item: T; index: number}) => JSX.Element;
     // 高度
     itemHeight: number;
+    itemJustifyContent?:
+        | 'flex-start'
+        | 'flex-end'
+        | 'center'
+        | 'space-between'
+        | 'space-around'
+        | 'space-evenly';
     // 滚动list距离顶部的距离, 这里写的不好
     marginTop: number;
     /** 拖拽时的背景色 */
@@ -54,6 +61,7 @@ export default function SortableFlatList<T extends any = any>(
         data,
         renderItem,
         itemHeight,
+        itemJustifyContent,
         marginTop,
         activeBackgroundColor,
         onSortEnd,
@@ -167,6 +175,7 @@ export default function SortableFlatList<T extends any = any>(
                 renderItem={renderItem}
                 itemHeight={itemHeight}
                 item={activeItem}
+                itemJustifyContent={itemJustifyContent}
             />
             <FlashList
                 scrollEnabled={scrollEnabled}
@@ -308,6 +317,7 @@ export default function SortableFlatList<T extends any = any>(
                             item={item}
                             index={index}
                             setActiveItem={setActiveItem}
+                            itemJustifyContent={itemJustifyContent}
                             itemHeight={itemHeight}
                         />
                     );
@@ -322,6 +332,13 @@ interface ISortableFlatListItemProps<T extends any = any> {
     index: number;
     // 高度
     itemHeight: number;
+    itemJustifyContent?:
+        | 'flex-start'
+        | 'flex-end'
+        | 'center'
+        | 'space-between'
+        | 'space-around'
+        | 'space-evenly';
     setScrollEnabled: (scrollEnabled: boolean) => void;
     renderItem: (props: {item: T; index: number}) => JSX.Element;
     setActiveItem: (item: T | null) => void;
@@ -333,6 +350,7 @@ function _SortableFlatListItem(props: ISortableFlatListItemProps) {
         setScrollEnabled,
         renderItem,
         setActiveItem,
+        itemJustifyContent,
         item,
         index,
         activeRef,
@@ -345,7 +363,7 @@ function _SortableFlatListItem(props: ISortableFlatListItemProps) {
                 height: itemHeight,
                 width: WINDOW_WIDTH,
                 flexDirection: 'row',
-                justifyContent: 'flex-end',
+                justifyContent: itemJustifyContent ?? 'flex-end',
                 zIndex: defaultZIndex,
             },
             btn: {
@@ -391,13 +409,14 @@ const SortableFlatListItem = memo(
 const FakeFlatListItem = forwardRef(function (
     props: Pick<
         ISortableFlatListItemProps,
-        'itemHeight' | 'renderItem' | 'item'
+        'itemHeight' | 'renderItem' | 'item' | 'itemJustifyContent'
     > & {
         backgroundColor?: string;
     },
     ref: ForwardedRef<View>,
 ) {
-    const {itemHeight, renderItem, item, backgroundColor} = props;
+    const {itemHeight, renderItem, item, backgroundColor, itemJustifyContent} =
+        props;
 
     const styleRef = useRef(
         StyleSheet.create({
@@ -405,7 +424,7 @@ const FakeFlatListItem = forwardRef(function (
                 height: itemHeight,
                 width: WINDOW_WIDTH,
                 flexDirection: 'row',
-                justifyContent: 'flex-end',
+                justifyContent: itemJustifyContent ?? 'flex-end',
                 zIndex: defaultZIndex,
             },
             btn: {
