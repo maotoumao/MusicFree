@@ -11,7 +11,6 @@
 一个插件化、定制化、无广告的免费音乐播放器，目前只支持Android和Harmony OS。
 
 如果需要了解后续进展可以关注~~b站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)~~(不到一天就被吞了！还是关注公众号↓吧)；如果有问题可以在issue区或者公众号反馈。
-技术交流/一起写点有意思的东西/技术向的闲聊欢迎加群：[683467814](https://jq.qq.com/?_wv=1027&k=upVpi2k3)~
 
 简介视频放在了公众号里：[简介视频](https://mp.weixin.qq.com/s/sH_2vRm7EyBGgWggkJmsdg)
 
@@ -49,11 +48,27 @@
 请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把github换成gitee)，公众号回复Musicfree也可以。
 
 ## Q&A
-使用时遇到的常见问题可以看这里：[MusicFree使用Q&A](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483937&idx=1&sn=486c735b1fb78acc75f8f4acdcb9e253&chksm=c1a39306f6d41a101a6f8d3adefcd980092ce94140119bb3cc0eb3aa8c6ae22fe1b97899be21#rd)
+使用时遇到的常见问题可以看这里：[MusicFree使用Q&A](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483937&idx=1&sn=486c735b1fb78acc75f8f4acdcb9e253&chksm=c1a39306f6d41a101a6f8d3adefcd980092ce94140119bb3cc0eb3aa8c6ae22fe1b97899be21#rd)     
+
+技术交流/一起写点有意思的东西/技术向的闲聊欢迎加群：[683467814](https://jq.qq.com/?_wv=1027&k=upVpi2k3)~
 
 ## WIP
 当前开发进度以及问题&需求列表可以看这里：
 [MusicFree建议&bug](https://docs.qq.com/sheet/DT3djQm1ReWJya2Vo?tab=BB08J2)
+
+## 支持这个项目
+如果你喜欢这个项目，或者希望我可以持续维护下去，你可以通过以下任何一种方式支持我;)
+1. Star这个项目，分享给你身边的人；
+2. 关注公众号或b站[不想睡觉猫头猫](https://space.bilibili.com/12866223)获取最新信息；
+
+![微信公众号](./src/assets/imgs/wechat_channel.jpg)
+
+
+感谢以下小伙伴的推荐，很意外也很惊喜 ~~~
+
+来自**果核剥壳**的安利~ https://mp.weixin.qq.com/s/F6hMbLv_a-Ty0fPA_0P0Rg
+
+来自**小棉袄**的安利~ https://mp.weixin.qq.com/s/Fqe3o7vcTw0KDKoB-gsQfg
 
 ## ChangeLog
 `2022.11.20  v0.0.1-alpha.9`
@@ -117,21 +132,6 @@
 
 `2022.10.02`
 测试版本出现啦！撒花
-
-## 支持这个项目
-如果你喜欢这个项目，或者希望我可以持续维护下去，你可以通过以下任何一种方式支持我;)
-1. Star这个项目，分享给你身边的人；
-2. 关注公众号或b站[不想睡觉猫头猫](https://space.bilibili.com/12866223)获取最新信息；
-
-![微信公众号](./src/assets/imgs/wechat_channel.jpg)
-
-
-感谢以下小伙伴的推荐，很意外也很惊喜 ~~~
-
-来自**果核剥壳**的安利~ https://mp.weixin.qq.com/s/F6hMbLv_a-Ty0fPA_0P0Rg
-
-来自**小棉袄**的安利~ https://mp.weixin.qq.com/s/Fqe3o7vcTw0KDKoB-gsQfg
-
 
 ---
 本项目仅供学习参考使用，基于GPL3.0协议开源；请在符合法律法规的情况下合理使用本项目，禁止用于商业目的使用。
