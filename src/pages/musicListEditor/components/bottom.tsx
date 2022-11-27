@@ -88,7 +88,7 @@ export default function Bottom() {
                             produce(prev => prev.filter(_ => !_.checked)),
                         );
                         setMusicListChanged(true);
-                        Toast.success('记得保存哦');
+                        Toast.warn('记得保存哦');
                     }
                 }}
             />

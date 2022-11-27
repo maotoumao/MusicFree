@@ -34,6 +34,15 @@ const downloadingProgressStateMapper = new StateMapper(
     () => downloadingProgress,
 );
 
+const getDownloadPath = (fileName?: string) => {
+    const dlPath =
+        Config.get('setting.basic.downloadPath') ?? pathConst.downloadMusicPath;
+    if (!dlPath.endsWith('/')) {
+        return `${dlPath}/${fileName ?? ''}`;
+    }
+    return fileName ? dlPath : dlPath + fileName;
+};
+
 /** 从待下载中移除 */
 function removeFromPendingQueue(item: IDownloadMusicOptions) {
     pendingMusicQueue = pendingMusicQueue.filter(
@@ -133,7 +142,7 @@ async function downloadNext() {
     downloadNext();
     const {promise, jobId} = downloadFile({
         fromUrl: url ?? '',
-        toFile: pathConst.downloadMusicPath + nextItem.filename,
+        toFile: getDownloadPath(nextItem.filename),
         headers: headers,
         background: true,
         begin(res) {
@@ -160,7 +169,7 @@ async function downloadNext() {
         LocalMusicSheet.addMusic({
             ...musicItem,
             [internalSerializeKey]: {
-                localPath: pathConst.downloadMusicPath + nextItem.filename,
+                localPath: getDownloadPath(nextItem.filename),
             },
         });
         removeFromDownloadingQueue(nextItem);
@@ -169,7 +178,7 @@ async function downloadNext() {
             [internalSerializeKey]: {
                 downloaded: true,
                 local: {
-                    localUrl: pathConst.downloadMusicPath + nextItem.filename,
+                    localUrl: getDownloadPath(nextItem.filename),
                 },
             },
         });

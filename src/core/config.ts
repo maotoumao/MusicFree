@@ -15,6 +15,8 @@ interface IConfig {
             maxDownload: number | string;
             /** 点击专辑单曲 */
             clickMusicInAlbum: '播放专辑' | '播放单曲';
+            /** 下载文件夹 */
+            downloadPath: string;
             /** 同时播放 */
             notInterrupt: boolean;
             /** 播放错误时自动停止 */

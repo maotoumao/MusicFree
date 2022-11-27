@@ -1,5 +1,6 @@
 import ArtistDetail from '@/pages/artistDetail';
 import Downloading from '@/pages/downloading';
+import FileSelector from '@/pages/fileSelector';
 import LocalMusic from '@/pages/localMusic';
 import MusicListEditor from '@/pages/musicListEditor';
 import SearchMusicList from '@/pages/searchMusicList';
@@ -11,6 +12,11 @@ import MusicDetail from '../pages/musicDetail';
 import SearchPage from '../pages/searchPage';
 import Setting from '../pages/setting';
 import SheetDetail from '../pages/sheetDetail';
+import {LogBox} from 'react-native';
+
+LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+]);
 
 /** 路由key */
 export const ROUTE_PATH = {
@@ -30,14 +36,14 @@ export const ROUTE_PATH = {
     SETTING: 'setting',
     /** 本地音乐 */
     LOCAL: 'local',
-    /** 本地音乐-搜索页 */
-    LOCAL_SCAN: 'local/scan',
     /** 正在下载 */
     DOWNLOADING: 'downloading',
     /** 从歌曲列表中搜索 */
     SEARCH_MUSIC_LIST: 'search-music-list',
     /** 批量编辑 */
     MUSIC_LIST_EDITOR: 'music-list-editor',
+    /** 选择文件夹 */
+    FILE_SELECTOR: 'file-selector',
 } as const;
 
 type Valueof<T> = T[keyof T];
@@ -93,6 +99,10 @@ export const routes: Array<IRoutes> = [
         path: ROUTE_PATH.MUSIC_LIST_EDITOR,
         component: MusicListEditor,
     },
+    {
+        path: ROUTE_PATH.FILE_SELECTOR,
+        component: FileSelector,
+    },
 ];
 
 type RouterParamsBase = Record<RoutePaths, any>;
@@ -122,6 +132,19 @@ interface RouterParams extends RouterParamsBase {
     'music-list-editor': {
         musicSheet?: Partial<IMusic.IMusicSheetItem>;
         musicList: IMusic.IMusicItem[] | null;
+    };
+    'file-selector': {
+        fileType?: 'folder' | 'file' | 'file-and-folder'; // 10: folder 11: file and folder,
+        multi?: boolean; // 是否多选
+        actionText?: string; // 底部行动点的文本
+        actionIcon?: string; // 底部行动点的图标
+        onAction?: (
+            selectedFiles: {
+                path: string;
+                type: 'file' | 'folder';
+            }[],
+        ) => Promise<boolean>; // true会自动关闭，false会停在当前页面
+        matchExtension?: (path: string) => boolean;
     };
 }
 

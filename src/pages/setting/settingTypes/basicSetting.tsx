@@ -9,6 +9,9 @@ import ThemeSwitch from '@/components/base/swtich';
 import {clearCache, getCacheSize, sizeFormatter} from '@/utils/fileUtils';
 import usePanel from '@/components/panels/usePanel';
 import Toast from '@/utils/toast';
+import pathConst from '@/constants/pathConst';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {readdir} from 'react-native-fs';
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -50,6 +53,7 @@ export default function BasicSetting() {
     const basicSetting = Config.useConfig('setting.basic');
     const {showDialog} = useDialog();
     const {showPanel} = usePanel();
+    const navigate = useNavigate();
 
     const [cacheSize, refreshCacheSize] = useCacheSize();
 
@@ -104,6 +108,39 @@ export default function BasicSetting() {
                                     'setting.basic.clickMusicInAlbum',
                                     val as any,
                                 );
+                            },
+                        });
+                    },
+                },
+                {
+                    title: '下载路径',
+                    right: () => (
+                        <ThemeText
+                            fontSize="subTitle"
+                            style={style.centerText}
+                            numberOfLines={3}>
+                            {basicSetting?.downloadPath ??
+                                pathConst.downloadMusicPath}
+                        </ThemeText>
+                    ),
+                    onPress() {
+                        navigate<'file-selector'>(ROUTE_PATH.FILE_SELECTOR, {
+                            fileType: 'folder',
+                            multi: false,
+                            actionText: '选择文件夹',
+                            async onAction(selectedFiles) {
+                                try {
+                                    const targetDir = selectedFiles[0];
+                                    await readdir(targetDir.path);
+                                    Config.set(
+                                        'setting.basic.downloadPath',
+                                        targetDir.path,
+                                    );
+                                    return true;
+                                } catch {
+                                    Toast.warn('文件夹不存在或无权限');
+                                    return false;
+                                }
                             },
                         });
                     },
@@ -268,6 +305,7 @@ const style = StyleSheet.create({
     },
     centerText: {
         textAlignVertical: 'center',
+        maxWidth: rpx(400),
     },
     sectionHeader: {
         paddingHorizontal: rpx(36),

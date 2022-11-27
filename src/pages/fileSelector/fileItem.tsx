@@ -9,15 +9,17 @@ import useTextColor from '@/hooks/useTextColor';
 const ITEM_HEIGHT = rpx(96);
 
 interface IProps {
-    folderPath: string;
+    type: 'folder' | 'file';
+    path: string;
     parentPath: string;
     checked?: boolean;
-    onItemPress: () => void;
+    onItemPress: (currentChecked?: boolean) => void;
     onCheckedChange: (checked: boolean) => void;
 }
-function FolderItem(props: IProps) {
+function FileItem(props: IProps) {
     const {
-        folderPath,
+        type,
+        path,
         parentPath,
         checked,
         onItemPress,
@@ -30,9 +32,13 @@ function FolderItem(props: IProps) {
 
     return (
         <View style={style.wrapper}>
-            <Pressable onPress={onItemPress} style={style.pathWrapper}>
+            <Pressable
+                onPress={() => {
+                    onItemPress(checked);
+                }}
+                style={style.pathWrapper}>
                 <Icon
-                    name="folder-outline"
+                    name={type === 'folder' ? 'folder-outline' : 'file-outline'}
                     color={textColor}
                     style={style.folderIcon}
                 />
@@ -40,7 +46,7 @@ function FolderItem(props: IProps) {
                     style={style.path}
                     numberOfLines={1}
                     ellipsizeMode="tail">
-                    {folderPath.substring(
+                    {path.substring(
                         parentPath === '/' ? 1 : parentPath.length + 1,
                     )}
                 </ThemeText>
@@ -56,11 +62,11 @@ function FolderItem(props: IProps) {
 }
 
 export default memo(
-    FolderItem,
+    FileItem,
     (prev, curr) =>
         prev.checked === curr.checked &&
         prev.parentPath === curr.parentPath &&
-        prev.folderPath === curr.folderPath,
+        prev.path === curr.path,
 );
 
 const style = StyleSheet.create({

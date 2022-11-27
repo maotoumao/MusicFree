@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
@@ -12,32 +12,48 @@ import {FlatList} from 'react-native-gesture-handler';
 import useColors from '@/hooks/useColors';
 import Color from 'color';
 import IconButton from '@/components/base/iconButton';
-import FolderItem from './folderItem';
+import FileItem from './fileItem';
 import Empty from '@/components/base/empty';
-import LocalMusicSheet from '@/core/localMusicSheet';
 import useHardwareBack from '@/hooks/useHardwareBack';
 import {useNavigation} from '@react-navigation/native';
-import useDialog from '@/components/dialogs/useDialog';
-import Toast from '@/utils/toast';
 import Loading from '@/components/base/loading';
+import {useParams} from '@/entry/router';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import StatusBar from '@/components/base/statusBar';
 
 interface IPathItem {
     path: string;
     parent: null | IPathItem;
 }
 
+interface IFileItem {
+    path: string;
+    type: 'file' | 'folder';
+}
+
 const ITEM_HEIGHT = rpx(96);
 
-export default function ScanPage() {
+export default function FileSelector() {
+    const {
+        fileType = 'file-and-folder',
+        multi = true,
+        actionText = '确定',
+        matchExtension,
+        onAction,
+    } = useParams<'file-selector'>() ?? {};
+
     const [currentPath, setCurrentPath] = useState<IPathItem>({
         path: '/',
         parent: null,
     });
     const currentPathRef = useRef<IPathItem>(currentPath);
-    const [folderData, setFolderData] = useState<string[]>([]);
-    const [checkedPath, setCheckedPath] = useState<string[]>([]);
+    const [filesData, setFilesData] = useState<IFileItem[]>([]);
+    const [checkedItems, setCheckedItems] = useState<IFileItem[]>([]);
+    const getCheckedPaths = useMemo(
+        () => () => checkedItems.map(_ => _.path),
+        [checkedItems],
+    );
     const navigation = useNavigation();
-    const {showDialog} = useDialog();
     const colors = useColors();
     const [loading, setLoading] = useState(false);
 
@@ -60,7 +76,12 @@ export default function ScanPage() {
                                     )
                                 ).every(val => val)
                             ) {
-                                setFolderData(sdCardPaths);
+                                setFilesData(
+                                    sdCardPaths.map(_ => ({
+                                        type: 'folder',
+                                        path: _,
+                                    })),
+                                );
                             }
                         } else {
                             setCurrentPath({
@@ -77,13 +98,38 @@ export default function ScanPage() {
                         return;
                     }
                 } else {
-                    const res = await readDir(currentPath.path);
-                    setFolderData(
-                        res.filter(_ => _.isDirectory()).map(_ => _.path),
-                    );
+                    const res = (await readDir(currentPath.path)) ?? [];
+                    let folders: IFileItem[] = [];
+                    let files: IFileItem[] = [];
+                    if (
+                        fileType === 'folder' ||
+                        fileType === 'file-and-folder'
+                    ) {
+                        folders = res
+                            .filter(_ => _.isDirectory())
+                            .map(_ => ({
+                                type: 'folder',
+                                path: _.path,
+                            }));
+                    }
+                    if (fileType === 'file' || fileType === 'file-and-folder') {
+                        files = res
+                            .filter(
+                                _ =>
+                                    _.isFile() &&
+                                    (matchExtension
+                                        ? matchExtension(_.path)
+                                        : true),
+                            )
+                            .map(_ => ({
+                                type: 'file',
+                                path: _.path,
+                            }));
+                    }
+                    setFilesData([...folders, ...files]);
                 }
             } catch {
-                setFolderData([]);
+                setFilesData([]);
             }
             setLoading(false);
             currentPathRef.current = currentPath;
@@ -101,8 +147,45 @@ export default function ScanPage() {
         return true;
     });
 
+    const selectPath = useCallback((item: IFileItem, nextChecked: boolean) => {
+        if (multi) {
+            setCheckedItems(prev => {
+                if (nextChecked) {
+                    return [...prev, item];
+                } else {
+                    return prev.filter(_ => _ !== item);
+                }
+            });
+        } else {
+            setCheckedItems(nextChecked ? [item] : []);
+        }
+    }, []);
+
+    const renderItem = ({item}: {item: IFileItem}) => (
+        <FileItem
+            path={item.path}
+            type={item.type}
+            parentPath={currentPath.path}
+            onItemPress={currentChecked => {
+                if (item.type === 'folder') {
+                    setCurrentPath(prev => ({
+                        parent: prev,
+                        path: item.path,
+                    }));
+                } else {
+                    selectPath(item, !currentChecked);
+                }
+            }}
+            checked={getCheckedPaths().includes(item.path)}
+            onCheckedChange={checked => {
+                selectPath(item, checked);
+            }}
+        />
+    );
+
     return (
-        <>
+        <SafeAreaView style={style.wrapper}>
+            <StatusBar />
             <View style={[style.header, {backgroundColor: colors.primary}]}>
                 <IconButton
                     size="small"
@@ -124,54 +207,28 @@ export default function ScanPage() {
             {loading ? (
                 <Loading />
             ) : (
-                <FlatList
-                    ListEmptyComponent={Empty}
-                    style={style.wrapper}
-                    data={folderData}
-                    getItemLayout={(_, index) => ({
-                        length: ITEM_HEIGHT,
-                        offset: ITEM_HEIGHT * index,
-                        index,
-                    })}
-                    renderItem={({item}) => (
-                        <FolderItem
-                            folderPath={item}
-                            parentPath={currentPath.path}
-                            onItemPress={() => {
-                                setCurrentPath(prev => ({
-                                    parent: prev,
-                                    path: item,
-                                }));
-                            }}
-                            checked={checkedPath.includes(item)}
-                            onCheckedChange={checked => {
-                                setCheckedPath(prev => {
-                                    if (checked) {
-                                        return [...prev, item];
-                                    } else {
-                                        return prev.filter(_ => _ !== item);
-                                    }
-                                });
-                            }}
-                        />
-                    )}
-                />
+                <>
+                    <FlatList
+                        ListEmptyComponent={Empty}
+                        style={style.wrapper}
+                        data={filesData}
+                        getItemLayout={(_, index) => ({
+                            length: ITEM_HEIGHT,
+                            offset: ITEM_HEIGHT * index,
+                            index,
+                        })}
+                        renderItem={renderItem}
+                    />
+                </>
             )}
             <Pressable
-                onPress={() => {
-                    showDialog('LoadingDialog', {
-                        title: '扫描本地音乐',
-                        promise: LocalMusicSheet.importLocal(checkedPath),
-                        onResolve(data, hideDialog) {
-                            Toast.success('导入成功~');
-                            hideDialog();
+                onPress={async () => {
+                    if (checkedItems.length) {
+                        const shouldBack = await onAction?.(checkedItems);
+                        if (shouldBack) {
                             navigation.goBack();
-                        },
-                        onCancel(hideDialog) {
-                            LocalMusicSheet.cancelImportLocal();
-                            hideDialog();
-                        },
-                    });
+                        }
+                    }
                 }}>
                 <View
                     style={[
@@ -184,16 +241,16 @@ export default function ScanPage() {
                     ]}>
                     <ThemeText
                         fontColor={
-                            checkedPath.length > 0 ? 'normal' : 'secondary'
+                            checkedItems.length > 0 ? 'normal' : 'secondary'
                         }>
-                        开始扫描
-                        {checkedPath?.length > 0
-                            ? ` (选中${checkedPath.length})`
+                        {actionText}
+                        {multi && checkedItems?.length > 0
+                            ? ` (选中${checkedItems.length})`
                             : ''}
                     </ThemeText>
                 </View>
             </Pressable>
-        </>
+        </SafeAreaView>
     );
 }
 
