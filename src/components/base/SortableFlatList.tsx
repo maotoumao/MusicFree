@@ -83,7 +83,7 @@ export default function SortableFlatList<T extends any = any>(
     // fakeref
     const fakeItemRef = useRef<View | null>(null);
     // contentoffset
-    const contentOffsetYRef = useRef<number>(0);
+    const contentOffsetYRef = useRef<number>(-1);
     const targetOffsetYRef = useRef<number>(0);
 
     const direction = useSharedValue(0);
@@ -244,7 +244,7 @@ export default function SortableFlatList<T extends any = any>(
                     if (activeRef.current !== -1) {
                         // 计算最终的位置，触发onSortEnd
                         let index = activeRef.current;
-                        if (contentOffsetYRef.current) {
+                        if (contentOffsetYRef.current !== -1) {
                             index = Math.round(
                                 (contentOffsetYRef.current +
                                     offsetRef.current) /
@@ -294,7 +294,7 @@ export default function SortableFlatList<T extends any = any>(
                         opacity: 0,
                         zIndex: -1,
                     });
-                    contentOffsetYRef.current = 0;
+                    contentOffsetYRef.current = -1;
                 }}
                 onScroll={e => {
                     contentOffsetYRef.current = e.nativeEvent.contentOffset.y;
