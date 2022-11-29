@@ -10,7 +10,12 @@ import TrackPlayer, {
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import Config from './config';
-import {internalFakeSoundKey, internalSymbolKey} from '@/constants/commonConst';
+import {
+    internalFakeSoundKey,
+    internalSymbolKey,
+    Quality,
+    QualityList,
+} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import delay from '@/utils/delay';
 import {errorLog, trace} from '../utils/log';
@@ -331,6 +336,12 @@ const getFakeNextTrack = () => {
     }
 };
 
+const qualityUrlMapper = {
+    [Quality.Standard]: 'urlST',
+    [Quality.HighQuality]: 'urlHQ',
+    [Quality.SuperQuality]: 'urlSQ',
+} as const;
+
 /** 播放音乐 */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     try {
@@ -341,6 +352,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             !LocalMusicSheet.isLocalMusic(musicItem ?? null)
         ) {
             Toast.warn('当前设置移动网络不可播放，可在侧边栏基本设置中打开');
+            await TrackPlayer.reset();
             return;
         }
         const _currentIndex = findMusicIndex(musicItem);
@@ -373,9 +385,78 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             // 通过插件获取音乐
             const plugin = PluginManager.getByName(_musicItem.platform);
             const source = await plugin?.methods?.getMediaSource(_musicItem);
+            const quality =
+                Config.get('setting.basic.defaultPlayQuality') ??
+                Quality.Standard;
+            let url = source?.url;
+            if (source?.[qualityUrlMapper[quality]]) {
+                url = source[qualityUrlMapper[quality]];
+            } else {
+                const qIdx = QualityList.indexOf(quality);
+                // 2是音质种类
+                let nUrl;
+                if (Config.get('setting.basic.playQualityOrder') === 'desc') {
+                    // 优先高音质
+                    for (let i = qIdx + 1; i < 3; ++i) {
+                        nUrl = source?.[qualityUrlMapper[QualityList[i]]];
+                        if (nUrl) {
+                            url = nUrl;
+                            break;
+                        }
+                    }
+                    if (!nUrl) {
+                        for (let i = qIdx - 1; i >= 0; --i) {
+                            nUrl = source?.[qualityUrlMapper[QualityList[i]]];
+                            if (nUrl) {
+                                url = nUrl;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    // 优先低音质
+                    for (let i = qIdx - 1; i >= 0; --i) {
+                        nUrl = source?.[qualityUrlMapper[QualityList[i]]];
+                        if (nUrl) {
+                            url = nUrl;
+                            break;
+                        }
+                    }
+                    if (!nUrl) {
+                        for (let i = qIdx + 1; i < 3; ++i) {
+                            nUrl = source?.[qualityUrlMapper[QualityList[i]]];
+                            if (nUrl) {
+                                url = nUrl;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            const _source = {...(source ?? {}), url};
             // 获取音乐信息
+            track = mergeProps(_musicItem, _source) as IMusic.IMusicItem;
+            /** 可能点了很多次。。。 */
+            if (!isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
+                return;
+            }
+            musicQueue = produce(musicQueue, draft => {
+                draft[currentIndex] = track;
+            });
+            await replaceTrack(track as Track);
+            currentMusicStateMapper.notify();
+
             const info = await plugin?.methods?.getMusicInfo?.(_musicItem);
-            track = mergeProps(_musicItem, source, info) as IMusic.IMusicItem;
+            if (info && isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
+                await TrackPlayer.updateMetadataForTrack(0, info);
+                musicQueue = produce(musicQueue, draft => {
+                    draft[currentIndex] = mergeProps(
+                        track as IMusic.IMusicItem,
+                        info,
+                    ) as IMusic.IMusicItem;
+                });
+                currentMusicStateMapper.notify();
+            }
         } catch (e) {
             // 播放失败
             if (isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
@@ -383,15 +464,6 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             }
             return;
         }
-        /** 可能点了很多次。。。 */
-        if (!isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
-            return;
-        }
-        musicQueue = produce(musicQueue, draft => {
-            draft[currentIndex] = track;
-        });
-        await replaceTrack(track as Track);
-        currentMusicStateMapper.notify();
     } catch (e: any) {
         if (
             e?.message ===

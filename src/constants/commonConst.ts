@@ -21,6 +21,12 @@ export enum Quality {
     SuperQuality = 'su',
 }
 
+export const QualityList = [
+    Quality.Standard,
+    Quality.HighQuality,
+    Quality.SuperQuality,
+];
+
 export const QualityText = {
     [Quality.Standard]: '标准',
     [Quality.HighQuality]: '高音质',

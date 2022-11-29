@@ -1,8 +1,10 @@
 declare namespace IPlugin {
     export interface IMediaSourceResult {
         headers?: Record<string, string>;
+        /** 兜底播放 */
+        url?: string;
         /** 标准音质 */
-        url: string;
+        urlST?: string;
         /** 高品质 */
         urlHQ?: string;
         /** 超高音质 */
