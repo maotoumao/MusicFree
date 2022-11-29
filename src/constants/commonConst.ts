@@ -14,12 +14,18 @@ export {emptyFunction};
 /** 音质 */
 export enum Quality {
     /** 标准 */
-    Standard,
+    Standard = 'st',
     /** 高音质 */
-    HighQuality,
+    HighQuality = 'hi',
     /** 超高音质 */
-    SuperQuality,
+    SuperQuality = 'su',
 }
+
+export const QualityText = {
+    [Quality.Standard]: '标准',
+    [Quality.HighQuality]: '高音质',
+    [Quality.SuperQuality]: '超高音质',
+};
 
 export enum RequestStateCode {
     /** 空闲 */

@@ -23,6 +23,7 @@ import objectPath from 'object-path';
 import SortableFlatList from '@/components/base/SortableFlatList';
 
 const ITEM_HEIGHT = rpx(96);
+const ITEM_HEIGHT_BIG = rpx(120);
 const marginTop = rpx(88 + 64) + (StatusBar.currentHeight ?? 0);
 
 export default function PluginSetting() {
@@ -342,7 +343,7 @@ function PluginView(props: IPluginViewProps) {
                 },
             }}
             style={{
-                height: ITEM_HEIGHT,
+                height: ITEM_HEIGHT_BIG,
             }}
             titleStyle={[
                 {
@@ -364,7 +365,7 @@ function PluginView(props: IPluginViewProps) {
             {options.map(_ =>
                 _.show ? (
                     <ListItem
-                        itemHeight={ITEM_HEIGHT}
+                        itemHeight={ITEM_HEIGHT_BIG}
                         key={`${plugin.hash}${_.title}`}
                         left={{icon: {name: _.icon}}}
                         title={_.title}
