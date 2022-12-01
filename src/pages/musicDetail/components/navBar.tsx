@@ -26,13 +26,15 @@ export default function NavBar() {
             />
             <View style={style.headerContent}>
                 <Text numberOfLines={1} style={style.headerTitleText}>
-                    {musicItem?.title ?? ''}
+                    {musicItem?.title ?? '无音乐'}
                 </Text>
                 <View style={style.headerDesc}>
                     <Text style={style.headerArtistText}>
                         {musicItem?.artist}
                     </Text>
-                    <Tag tagName={musicItem?.platform ?? ''} />
+                    {musicItem?.platform ? (
+                        <Tag tagName={musicItem.platform} />
+                    ) : null}
                 </View>
             </View>
             <IconButton

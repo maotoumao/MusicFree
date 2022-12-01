@@ -724,7 +724,7 @@ async function updatePlugin(plugin: Plugin) {
 }
 
 function getByMedia(mediaItem: ICommon.IMediaBase) {
-    return getByName(mediaItem.platform);
+    return getByName(mediaItem?.platform);
 }
 
 function getByHash(hash: string) {
