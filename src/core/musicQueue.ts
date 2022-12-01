@@ -346,6 +346,7 @@ const qualityUrlMapper = {
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     try {
         trace('播放', musicItem);
+        //#region 移动网络时 根据设置重置player
         if (
             Network.isCellular() &&
             !Config.get('setting.basic.useCelluarNetworkPlay') &&
@@ -355,6 +356,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             await TrackPlayer.reset();
             return;
         }
+        //#endregion
         const _currentIndex = findMusicIndex(musicItem);
         if (!musicItem && _currentIndex === currentIndex && !forcePlay) {
             // 如果暂停就继续播放，否则
@@ -385,6 +387,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             // 通过插件获取音乐
             const plugin = PluginManager.getByName(_musicItem.platform);
             const source = await plugin?.methods?.getMediaSource(_musicItem);
+            //#region 音质判断
             const quality =
                 Config.get('setting.basic.defaultPlayQuality') ??
                 Quality.Standard;
@@ -434,6 +437,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
                 }
             }
             const _source = {...(source ?? {}), url};
+            //#endregion
             // 获取音乐信息
             track = mergeProps(_musicItem, _source) as IMusic.IMusicItem;
             /** 可能点了很多次。。。 */

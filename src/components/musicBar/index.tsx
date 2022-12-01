@@ -93,7 +93,7 @@ function MusicBar() {
                         <Avatar.Image
                             size={rpx(96)}
                             source={
-                                musicItem.artwork
+                                musicItem?.artwork
                                     ? {
                                           uri: musicItem.artwork,
                                       }
@@ -106,7 +106,7 @@ function MusicBar() {
                         style={style.textWrapper}
                         numberOfLines={1}>
                         <ThemeText fontSize="content">
-                            {musicItem.title}
+                            {musicItem?.title}
                         </ThemeText>
                         {musicItem?.artist && (
                             <ThemeText
