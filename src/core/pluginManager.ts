@@ -11,7 +11,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import bigInt from 'big-integer';
 import qs from 'qs';
-import {ToastAndroid} from 'react-native';
+import {InteractionManager, ToastAndroid} from 'react-native';
 import pathConst from '@/constants/pathConst';
 import {compare, satisfies} from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
@@ -768,15 +768,17 @@ function useSortedPlugins() {
     );
 
     useEffect(() => {
-        setSortedPlugins(
-            [..._plugins].sort((a, b) =>
-                (_pluginMetaAll[a.name]?.order ?? Infinity) -
-                    (_pluginMetaAll[b.name]?.order ?? Infinity) <
-                0
-                    ? -1
-                    : 1,
-            ),
-        );
+        InteractionManager.runAfterInteractions(() => {
+            setSortedPlugins(
+                [..._plugins].sort((a, b) =>
+                    (_pluginMetaAll[a.name]?.order ?? Infinity) -
+                        (_pluginMetaAll[b.name]?.order ?? Infinity) <
+                    0
+                        ? -1
+                        : 1,
+                ),
+            );
+        });
     }, [_plugins, _pluginMetaAll]);
 
     return sortedPlugins;
