@@ -10,12 +10,7 @@ import TrackPlayer, {
 import shuffle from 'lodash.shuffle';
 import musicIsPaused from '@/utils/musicIsPaused';
 import Config from './config';
-import {
-    internalFakeSoundKey,
-    internalSymbolKey,
-    Quality,
-    QualityList,
-} from '@/constants/commonConst';
+import {internalFakeSoundKey, internalSymbolKey} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import delay from '@/utils/delay';
 import {errorLog, trace} from '../utils/log';
@@ -25,6 +20,7 @@ import Network from './network';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from './localMusicSheet';
 import {SoundAsset} from '@/constants/assetsConst';
+import {getQualityUrl} from '@/utils/qualities';
 
 enum MusicRepeatMode {
     /** 随机播放 */
@@ -336,12 +332,6 @@ const getFakeNextTrack = () => {
     }
 };
 
-const qualityUrlMapper = {
-    [Quality.Standard]: 'urlST',
-    [Quality.HighQuality]: 'urlHQ',
-    [Quality.SuperQuality]: 'urlSQ',
-} as const;
-
 /** 播放音乐 */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     try {
@@ -388,53 +378,16 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             const plugin = PluginManager.getByName(_musicItem.platform);
             const source = await plugin?.methods?.getMediaSource(_musicItem);
             //#region 音质判断
-            const quality =
-                Config.get('setting.basic.defaultPlayQuality') ??
-                Quality.Standard;
+            const quality = Config.get('setting.basic.defaultPlayQuality');
+            const qualities = source?.qualities;
             let url = source?.url;
-            if (source?.[qualityUrlMapper[quality]]) {
-                url = source[qualityUrlMapper[quality]];
-            } else {
-                const qIdx = QualityList.indexOf(quality);
-                // 2是音质种类
-                let nUrl;
-                if (Config.get('setting.basic.playQualityOrder') === 'desc') {
-                    // 优先高音质
-                    for (let i = qIdx + 1; i < 3; ++i) {
-                        nUrl = source?.[qualityUrlMapper[QualityList[i]]];
-                        if (nUrl) {
-                            url = nUrl;
-                            break;
-                        }
-                    }
-                    if (!nUrl) {
-                        for (let i = qIdx - 1; i >= 0; --i) {
-                            nUrl = source?.[qualityUrlMapper[QualityList[i]]];
-                            if (nUrl) {
-                                url = nUrl;
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    // 优先低音质
-                    for (let i = qIdx - 1; i >= 0; --i) {
-                        nUrl = source?.[qualityUrlMapper[QualityList[i]]];
-                        if (nUrl) {
-                            url = nUrl;
-                            break;
-                        }
-                    }
-                    if (!nUrl) {
-                        for (let i = qIdx + 1; i < 3; ++i) {
-                            nUrl = source?.[qualityUrlMapper[QualityList[i]]];
-                            if (nUrl) {
-                                url = nUrl;
-                                break;
-                            }
-                        }
-                    }
-                }
+            if (qualities) {
+                url =
+                    getQualityUrl(
+                        qualities,
+                        quality ?? 'standard',
+                        Config.get('setting.basic.playQualityOrder') ?? 'asc',
+                    ) ?? source?.url;
             }
             const _source = {...(source ?? {}), url};
             //#endregion

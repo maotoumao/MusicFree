@@ -1,6 +1,7 @@
 import {internalSerializeKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
 import {isSameMediaItem} from '@/utils/mediaItem';
+import {getQualityUrl} from '@/utils/qualities';
 import StateMapper from '@/utils/stateMapper';
 import Toast from '@/utils/toast';
 import produce from 'immer';
@@ -130,6 +131,18 @@ async function downloadNext() {
             try {
                 const data = await plugin.methods.getMediaSource(musicItem);
                 url = data?.url;
+                const qualities = data?.qualities;
+                if (qualities) {
+                    url =
+                        getQualityUrl(
+                            qualities,
+                            Config.get(
+                                'setting.basic.defaultDownloadQuality',
+                            ) ?? 'standard',
+                            Config.get('setting.basic.downloadQualityOrder') ??
+                                'asc',
+                        ) ?? data?.url;
+                }
                 headers = data?.headers;
             } catch {
                 /** 无法下载，跳过 */

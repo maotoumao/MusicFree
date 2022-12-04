@@ -12,7 +12,7 @@ import Toast from '@/utils/toast';
 import pathConst from '@/constants/pathConst';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import {readdir} from 'react-native-fs';
-import {Quality, QualityText} from '@/constants/commonConst';
+import {qualityKeys, qualityText} from '@/utils/qualities';
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -157,13 +157,9 @@ export default function BasicSetting() {
                 createRadio(
                     '默认播放音质',
                     'setting.basic.defaultPlayQuality',
-                    [
-                        Quality.Standard,
-                        Quality.HighQuality,
-                        Quality.SuperQuality,
-                    ],
-                    basicSetting?.defaultPlayQuality ?? Quality.Standard,
-                    QualityText,
+                    qualityKeys,
+                    basicSetting?.defaultPlayQuality ?? 'standard',
+                    qualityText,
                 ),
                 createRadio(
                     '默认播放音质缺失时',
@@ -178,13 +174,9 @@ export default function BasicSetting() {
                 createRadio(
                     '默认下载音质',
                     'setting.basic.defaultDownloadQuality',
-                    [
-                        Quality.Standard,
-                        Quality.HighQuality,
-                        Quality.SuperQuality,
-                    ],
-                    basicSetting?.defaultDownloadQuality ?? Quality.Standard,
-                    QualityText,
+                    qualityKeys,
+                    basicSetting?.defaultDownloadQuality ?? 'standard',
+                    qualityText,
                 ),
                 createRadio(
                     '默认下载音质缺失时',

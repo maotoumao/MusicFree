@@ -240,9 +240,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             trace('播放', '缓存播放');
             return {
                 url: mediaCache.url,
-                urlSQ: mediaCache.urlSQ,
-                urlHQ: mediaCache.urlHQ,
-                urlST: mediaCache.urlST,
+                qualities: mediaCache?.qualities,
                 headers: mediaCache.headers,
                 userAgent:
                     mediaCache.userAgent ?? mediaCache.headers?.['user-agent'],
@@ -253,7 +251,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return {url: musicItem.url};
         }
         try {
-            const {url, headers, urlHQ, urlSQ, urlST} =
+            const {url, headers, qualities} =
                 (await this.plugin.instance.getMediaSource(musicItem)) ?? {};
             if (!url) {
                 throw new Error();
@@ -263,9 +261,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 url,
                 headers,
                 userAgent: headers?.['user-agent'],
-                urlSQ,
-                urlHQ,
-                urlST,
+                qualities,
             } as IPlugin.IMediaSourceResult;
 
             if (pluginCacheControl !== CacheControl.NoStore) {

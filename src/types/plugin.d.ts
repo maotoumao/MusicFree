@@ -3,13 +3,10 @@ declare namespace IPlugin {
         headers?: Record<string, string>;
         /** 兜底播放 */
         url?: string;
-        /** 标准音质 */
-        urlST?: string;
-        /** 高品质 */
-        urlHQ?: string;
-        /** 超高音质 */
-        urlSQ?: string;
+        /** UA */
         userAgent?: string;
+        /** 音质 */
+        qualities?: IMusic.IQuality;
     }
 
     export interface ISearchResult<T extends ICommon.SupportMediaType> {

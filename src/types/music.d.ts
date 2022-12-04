@@ -4,6 +4,16 @@ declare namespace IMusic {
         [k: keyof IMusicItem]: IMusicItem[k];
     }
 
+    /** 音质 */
+    export type IQualityKey = 'low' | 'standard' | 'high' | 'super';
+    export type IQuality = Record<
+        IQualityKey,
+        {
+            url?: string;
+            size?: string;
+        }
+    >;
+
     export interface IMusicItem {
         /** 歌曲在平台的唯一编号 */
         id: string;
@@ -19,12 +29,14 @@ declare namespace IMusic {
         album: string;
         /** 专辑封面图 */
         artwork: string;
-        /** 音源 */
+        /** 默认音源 */
         url?: string;
         /** 歌词URL */
         lrc?: string;
         /** 歌词 */
         rawLrc?: string;
+        /** 音质信息 */
+        qualities?: IQuality;
         /** 其他可以被序列化的信息 */
         [k: string]: any;
         /** 内部信息 */

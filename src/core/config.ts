@@ -1,9 +1,9 @@
-import {Quality} from '@/constants/commonConst';
+// import {Quality} from '@/constants/commonConst';
 import {getStorage, setStorage} from '@/utils/storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
 
-type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[];
+type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[] | IMusic.IQuality;
 interface IConfig {
     setting: {
         basic: {
@@ -25,13 +25,12 @@ interface IConfig {
             pluginCacheControl: string;
             /** 最大音乐缓存 */
             maxCacheSize: number;
-
             /** 默认播放音质 */
-            defaultPlayQuality: Quality;
+            defaultPlayQuality: IMusic.IQualityKey;
             /** 音质顺序 */
             playQualityOrder: 'asc' | 'desc';
             /** 默认下载音质 */
-            defaultDownloadQuality: Quality;
+            defaultDownloadQuality: IMusic.IQualityKey;
             /** 下载音质顺序 */
             downloadQualityOrder: 'asc' | 'desc';
             debug: {
@@ -164,6 +163,7 @@ async function setConfig<T extends IConfigPaths>(
     }
 }
 
+// todo: 获取兜底
 /** 获取config */
 function getConfig(): PartialConfig;
 function getConfig<T extends IConfigPaths>(key: T): IConfigPathsObj[T];
