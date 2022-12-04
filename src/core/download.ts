@@ -41,7 +41,7 @@ const getDownloadPath = (fileName?: string) => {
     if (!dlPath.endsWith('/')) {
         return `${dlPath}/${fileName ?? ''}`;
     }
-    return fileName ? dlPath : dlPath + fileName;
+    return fileName ? dlPath + fileName : dlPath;
 };
 
 /** 从待下载中移除 */
