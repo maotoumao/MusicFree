@@ -21,7 +21,7 @@ import Network from './network';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from './localMusicSheet';
 import {SoundAsset} from '@/constants/assetsConst';
-import {getQualityUrl} from '@/utils/qualities';
+import {getQualityOrder} from '@/utils/qualities';
 
 enum MusicRepeatMode {
     /** 随机播放 */
@@ -36,14 +36,16 @@ enum MusicRepeatMode {
 let currentIndex: number = -1;
 let musicQueue: Array<IMusic.IMusicItem> = [];
 let repeatMode: MusicRepeatMode = MusicRepeatMode.QUEUE;
-
+let currentQuality: IMusic.IQualityKey = 'standard';
 const getRepeatMode = () => repeatMode;
 const getCurrentMusicItem = () => musicQueue[currentIndex];
 const getMusicQueue = () => musicQueue;
+const getCurrentQuality = () => currentQuality;
 
 const currentMusicStateMapper = new StateMapper(getCurrentMusicItem);
 const musicQueueStateMapper = new StateMapper(getMusicQueue);
 const repeatModeStateMapper = new StateMapper(getRepeatMode);
+const currentQualityStateMapper = new StateMapper(getCurrentQuality);
 
 /** 内部使用的排序id */
 let globalId: number = 0; // 记录加入队列的次序
@@ -87,6 +89,8 @@ const setup = async () => {
         if (config?.progress) {
             await TrackPlayer.seekTo(config.progress);
         }
+        currentQuality =
+            Config.get('setting.basic.defaultPlayQuality') ?? 'standard';
         trace('状态恢复', config);
     } catch (e) {
         errorLog('状态恢复失败', e);
@@ -377,23 +381,38 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
         try {
             // 通过插件获取音乐
             const plugin = PluginManager.getByName(_musicItem.platform);
-            const source = await plugin?.methods?.getMediaSource(_musicItem);
             //#region 音质判断
-            const quality = Config.get('setting.basic.defaultPlayQuality');
-            const qualities = source?.qualities;
-            let url = source?.url;
-            if (qualities) {
-                url =
-                    getQualityUrl(
-                        qualities,
-                        quality ?? 'standard',
-                        Config.get('setting.basic.playQualityOrder') ?? 'asc',
-                    ) ?? source?.url;
+            const qualityOrder = getQualityOrder(
+                Config.get('setting.basic.defaultPlayQuality') ?? 'standard',
+                Config.get('setting.basic.playQualityOrder') ?? 'asc',
+            );
+            let source: IPlugin.IMediaSourceResult | undefined;
+            for (let quality of qualityOrder) {
+                if (isSameMediaItem(musicQueue[currentIndex], _musicItem)) {
+                    source = await plugin?.methods?.getMediaSource(
+                        _musicItem,
+                        quality,
+                    );
+                    if (source) {
+                        currentQuality = quality;
+                        currentQualityStateMapper.notify();
+                        break;
+                    }
+                } else {
+                    // 中断
+                    return;
+                }
             }
-            const _source = {...(source ?? {}), url};
+            if (!source) {
+                source = {
+                    url: _musicItem.url,
+                };
+                currentQuality = 'standard';
+                currentQualityStateMapper.notify();
+            }
             //#endregion
             // 获取音乐信息
-            track = mergeProps(_musicItem, _source) as IMusic.IMusicItem;
+            track = mergeProps(_musicItem, source) as IMusic.IMusicItem;
             /** 可能点了很多次。。。 */
             if (!isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
                 return;
@@ -517,6 +536,38 @@ const skipToPrevious = async () => {
     );
 };
 
+/** 修改当前播放的音质 */
+const changeQuality = async (newQuality: IMusic.IQualityKey) => {
+    // 获取当前的音乐和进度
+    const musicItem = musicQueue[currentIndex];
+    if (newQuality === currentQuality) {
+        return true;
+    }
+    const position = await TrackPlayer.getPosition();
+    const plugin = PluginManager.getByMedia(musicItem);
+    try {
+        const newSource = await plugin?.methods?.getMediaSource(
+            musicItem,
+            newQuality,
+        );
+        if (!newSource?.url) {
+            throw new Error();
+        }
+        if (isSameMediaItem(musicItem, musicQueue[currentIndex])) {
+            await replaceTrack(
+                mergeProps(musicItem, newSource) as unknown as Track,
+            );
+            await TrackPlayer.seekTo(position);
+            currentQuality = newQuality;
+            currentQualityStateMapper.notify();
+        }
+        return true;
+    } catch {
+        // 修改失败
+        return false;
+    }
+};
+
 const MusicQueue = {
     setup,
     useMusicQueue: musicQueueStateMapper.useMappedState,
@@ -544,6 +595,8 @@ const MusicQueue = {
     reset: TrackPlayer.reset,
     seekTo: TrackPlayer.seekTo,
     currentIndex,
+    changeQuality,
+    useCurrentQuality: currentQualityStateMapper.useMappedState,
 };
 
 export default MusicQueue;

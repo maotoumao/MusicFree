@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -10,26 +10,15 @@ import {isSameMediaItem} from '@/utils/mediaItem';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {ROUTE_PATH} from '@/entry/router';
 import {ImgAsset} from '@/constants/assetsConst';
-import {getMusicItemQuality} from '@/utils/qualities';
-import Config from '@/core/config';
 import Toast from '@/utils/toast';
 
 export default function Opertions() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
     const favoriteMusicSheet = MusicSheet.useSheets('favorite');
     const musicItem = MusicQueue.useCurrentMusicItem();
+    const currentQuality = MusicQueue.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
     const {showPanel} = usePanel();
-
-    const [currQuality, setCurrQuality] =
-        useState<IMusic.IQualityKey>('standard');
-
-    useEffect(() => {
-        if (musicItem) {
-            const quality = getMusicItemQuality(musicItem);
-            setCurrQuality(quality);
-        }
-    }, [musicItem]);
 
     const musicIndexInFav =
         favoriteMusicSheet?.musicList.findIndex(_ =>
@@ -64,40 +53,20 @@ export default function Opertions() {
             )}
             <Pressable
                 onPress={() => {
-                    if (!musicItem.qualities) {
-                        Toast.warn('当前音乐暂无其他音质');
-                        return;
-                    }
                     showPanel('MusicQuality', {
                         musicItem,
-                        async onQualityPress(quality, available, musicItem) {
-                            if (!available) {
-                                Toast.warn('当前音乐暂无此音质');
-                                return;
-                            }
-                            const qualitySetting =
-                                Config.get(
-                                    'setting.basic.defaultPlayQuality',
-                                ) ?? 'standard';
-                            if (
-                                quality !== currQuality &&
-                                quality !== qualitySetting
-                            ) {
-                                // 修改音源，重新播放
-                                await Config.set(
-                                    'setting.basic.defaultPlayQuality',
-                                    quality,
-                                );
-                                /** 当前进度 */
-                                const position = await MusicQueue.getPosition();
-                                await MusicQueue.play(musicItem, true);
-                                await MusicQueue.seekTo(position);
+                        async onQualityPress(quality) {
+                            const changeResult = await MusicQueue.changeQuality(
+                                quality,
+                            );
+                            if (!changeResult) {
+                                Toast.warn('当前暂无此音质音乐');
                             }
                         },
                     });
                 }}>
                 <Image
-                    source={ImgAsset.quality[currQuality]}
+                    source={ImgAsset.quality[currentQuality]}
                     style={style.quality}
                 />
             </Pressable>

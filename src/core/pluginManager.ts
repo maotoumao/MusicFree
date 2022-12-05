@@ -208,6 +208,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     /** 获取真实源 */
     async getMediaSource(
         musicItem: IMusic.IMusicItemBase,
+        quality: IMusic.IQualityKey = 'standard',
         retryCount = 1,
     ): Promise<IPlugin.IMediaSourceResult> {
         // 1. 本地搜索 其实直接读mediameta就好了
@@ -232,15 +233,15 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             this.plugin.instance.cacheControl ?? 'no-cache';
         if (
             mediaCache &&
-            mediaCache?.url &&
+            mediaCache?.qualities?.[quality]?.url &&
             (pluginCacheControl === CacheControl.Cache ||
                 (pluginCacheControl === CacheControl.NoCache &&
                     Network.isOffline()))
         ) {
             trace('播放', '缓存播放');
+            const qualityInfo = mediaCache.qualities[quality];
             return {
-                url: mediaCache.url,
-                qualities: mediaCache?.qualities,
+                url: qualityInfo.url,
                 headers: mediaCache.headers,
                 userAgent:
                     mediaCache.userAgent ?? mediaCache.headers?.['user-agent'],
@@ -248,11 +249,13 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
         // 3. 插件解析
         if (!this.plugin.instance.getMediaSource) {
-            return {url: musicItem.url};
+            return {url: musicItem?.qualities?.[quality]?.url ?? musicItem.url};
         }
         try {
-            const {url, headers, qualities} =
-                (await this.plugin.instance.getMediaSource(musicItem)) ?? {};
+            const {url, headers} = (await this.plugin.instance.getMediaSource(
+                musicItem,
+                quality,
+            )) ?? {url: musicItem?.qualities?.[quality]?.url};
             if (!url) {
                 throw new Error();
             }
@@ -261,18 +264,21 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 url,
                 headers,
                 userAgent: headers?.['user-agent'],
-                qualities,
             } as IPlugin.IMediaSourceResult;
 
             if (pluginCacheControl !== CacheControl.NoStore) {
-                Cache.update(musicItem, result);
+                Cache.update(musicItem, [
+                    ['headers', result.headers],
+                    ['userAgent', result.userAgent],
+                    [`qualities.${quality}.url`, url],
+                ]);
             }
 
             return result;
         } catch (e: any) {
             if (retryCount > 0) {
                 await delay(150);
-                return this.getMediaSource(musicItem, --retryCount);
+                return this.getMediaSource(musicItem, quality, --retryCount);
             }
             errorLog('获取真实源失败', e?.message);
             throw e;

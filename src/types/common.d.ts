@@ -25,6 +25,7 @@ declare namespace ICommon {
         url?: string;
         id?: string;
         platform?: string;
+        qualities?: IMusic.IQuality;
         $?: {
             local?: {
                 localLrc?: string;

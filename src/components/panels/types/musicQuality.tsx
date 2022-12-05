@@ -17,7 +17,6 @@ interface IMusicQualityProps {
     /** 点击回调 */
     onQualityPress: (
         quality: IMusic.IQualityKey,
-        available: boolean,
         musicItem: IMusic.IMusicItem,
     ) => void;
 }
@@ -61,21 +60,10 @@ export default function MusicQuality(props: IMusicQualityProps) {
                                 key={key}
                                 style={style.item}
                                 onPress={() => {
-                                    onQualityPress(
-                                        key,
-                                        musicItem.qualities?.[key]
-                                            ? true
-                                            : false,
-                                        musicItem,
-                                    );
+                                    onQualityPress(key, musicItem);
+                                    sheetRef.current?.close();
                                 }}>
-                                <ThemeText
-                                    fontSize="subTitle"
-                                    fontColor={
-                                        musicItem.qualities?.[key]
-                                            ? 'normal'
-                                            : 'secondary'
-                                    }>
+                                <ThemeText fontSize="subTitle">
                                     {qualityText[key]}{' '}
                                     {musicItem.qualities?.[key]?.size
                                         ? `(${sizeFormatter(
