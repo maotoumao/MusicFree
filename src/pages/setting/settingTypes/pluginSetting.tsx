@@ -21,6 +21,7 @@ import {PluginMeta} from '@/core/pluginMeta';
 import produce from 'immer';
 import objectPath from 'object-path';
 import SortableFlatList from '@/components/base/SortableFlatList';
+import {emptyFunction} from '@/constants/commonConst';
 
 const ITEM_HEIGHT = rpx(96);
 const ITEM_HEIGHT_BIG = rpx(120);
@@ -407,9 +408,11 @@ async function installPluginFromUrl(text: string) {
         } else {
             urls = [iptUrl];
         }
-        await Promise.allSettled(
-            urls.map(url => PluginManager.installPluginFromUrl(url)),
-        ).catch();
+        await Promise.all(
+            urls.map(url =>
+                PluginManager.installPluginFromUrl(url).catch(emptyFunction),
+            ),
+        );
         Toast.success('插件安装成功~');
     } catch (e: any) {
         Toast.warn(`插件安装失败: ${e?.message ?? ''}`);
