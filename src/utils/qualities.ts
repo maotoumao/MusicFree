@@ -16,6 +16,7 @@ export const qualityText = {
     super: '超高音质',
 };
 
+/** 获取音质信息 */
 export function getQuality(
     qualities: IMusic.IQuality,
     qualityKey: IMusic.IQualityKey,
@@ -56,6 +57,7 @@ export function getQuality(
     }
 }
 
+/** 获取音质url */
 export function getQualityUrl(
     qualities: IMusic.IQuality,
     qualityKey: IMusic.IQualityKey,
@@ -94,4 +96,18 @@ export function getQualityUrl(
             }
         }
     }
+}
+
+/** 获取musicItem的音质类型 */
+export function getMusicItemQuality(
+    musicItem: IMusic.IMusicItem,
+): IMusic.IQualityKey {
+    if (musicItem?.qualities) {
+        for (let i = 0; i < qualityKeys.length; ++i) {
+            if (musicItem.qualities[qualityKeys[i]]?.url === musicItem.url) {
+                return qualityKeys[i];
+            }
+        }
+    }
+    return 'standard';
 }

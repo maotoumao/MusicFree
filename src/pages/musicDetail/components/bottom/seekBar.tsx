@@ -40,8 +40,8 @@ export default function SeekBar() {
                 onSlidingComplete={val => {
                     slidingRef.current = false;
                     setTmpProgress(null);
-                    if (val >= progress.duration - 3) {
-                        val = progress.duration - 3;
+                    if (val >= progress.duration - 2) {
+                        val = progress.duration - 2;
                     }
                     MusicQueue.seekTo(val);
                 }}
