@@ -10,7 +10,7 @@ declare namespace IMusic {
         IQualityKey,
         {
             url?: string;
-            size?: string;
+            size?: string | number;
         }
     >;
 

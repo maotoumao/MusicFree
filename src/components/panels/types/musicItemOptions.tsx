@@ -36,7 +36,7 @@ interface IMusicItemOptionsProps {
 }
 
 const ITEM_HEIGHT = rpx(96);
-// todo: rerender有点多
+
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
     const {showPanel, unmountPanel} = usePanel();
@@ -50,7 +50,6 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     }
     // 关联歌词
     const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
-    // todo: padding bottom
     const options = [
         {
             icon: 'id-card',

@@ -1,6 +1,7 @@
 import AddToMusicSheet from './addToMusicSheet';
 import AssociateLrc from './associateLrc';
 import MusicItemOptions from './musicItemOptions';
+import MusicQuality from './musicQuality';
 import NewMusicSheet from './newMusicSheet';
 import PlayList from './playList';
 import SimpleInput from './simpleInput';
@@ -21,4 +22,6 @@ export default {
     SimpleInput: SimpleInput,
     /** 定时关闭 */
     TimingClose: TimingClose,
+    /** 音质选择 */
+    MusicQuality: MusicQuality,
 };

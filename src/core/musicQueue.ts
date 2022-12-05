@@ -540,6 +540,7 @@ const MusicQueue = {
     usePlaybackState,
     MusicState: State,
     useProgress,
+    getPosition: TrackPlayer.getPosition,
     reset: TrackPlayer.reset,
     seekTo: TrackPlayer.seekTo,
     currentIndex,

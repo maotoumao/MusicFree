@@ -37,7 +37,10 @@ export async function saveToGallery(src: string) {
     }
 }
 
-export function sizeFormatter(bytes: number) {
+export function sizeFormatter(bytes: number | string) {
+    if (typeof bytes === 'string') {
+        return bytes;
+    }
     if (bytes === 0) return '0B';
     let k = 1024,
         sizes = ['B', 'KB', 'MB', 'GB'],
