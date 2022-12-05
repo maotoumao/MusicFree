@@ -445,7 +445,7 @@ const FakeFlatListItem = forwardRef(function (
                 style.activeItemDefault,
                 backgroundColor ? {backgroundColor} : {},
             ]}>
-            {item ? renderItem({item, index: -1}) : <></>}
+            {item ? renderItem({item, index: -1}) : null}
             <Pressable style={styleRef.current.btn}>
                 <Icon
                     name="menu"

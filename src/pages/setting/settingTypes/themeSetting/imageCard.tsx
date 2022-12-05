@@ -15,7 +15,7 @@ export default function ImageCard(props: IImageCardProps) {
     return (
         <Pressable onPress={onPress} style={style.wrapper}>
             <Image uri={uri} emptySrc={emptySrc} style={style.image} />
-            {title ? <ThemeText style={style.text}>{title}</ThemeText> : <></>}
+            {title ? <ThemeText style={style.text}>{title}</ThemeText> : null}
         </Pressable>
     );
 }

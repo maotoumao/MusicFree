@@ -40,9 +40,7 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
             <Appbar.Content title={title} />
             {onSearchPress ? (
                 <Appbar.Action icon="magnify" onPress={onSearchPress} />
-            ) : (
-                <></>
-            )}
+            ) : null}
             {menuOptions.length !== 0 ? (
                 <Menu
                     contentStyle={[
@@ -59,9 +57,7 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
                         />
                     }>
                     {menuOptions.map(_ =>
-                        _.show === false ? (
-                            <></>
-                        ) : (
+                        _.show === false ? null : (
                             <Menu.Item
                                 key={`menu-${_.title}`}
                                 icon={_.icon}
@@ -74,9 +70,7 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
                         ),
                     )}
                 </Menu>
-            ) : (
-                <></>
-            )}
+            ) : null}
         </Appbar.Header>
     );
 }

@@ -242,9 +242,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                             title={item.title}
                             onPress={item.onPress}
                         />
-                    ) : (
-                        <></>
-                    )
+                    ) : null
                 }
             />
         </BottomSheet>

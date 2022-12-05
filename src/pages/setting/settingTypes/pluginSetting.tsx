@@ -373,9 +373,7 @@ function PluginView(props: IPluginViewProps) {
                         title={_.title}
                         onPress={_.onPress}
                     />
-                ) : (
-                    <></>
-                ),
+                ) : null,
             )}
         </List.Accordion>
     );

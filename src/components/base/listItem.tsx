@@ -65,9 +65,7 @@ function Left(props?: ILeftProps) {
                 )}
             </View>
         )
-    ) : (
-        <></>
-    );
+    ) : null;
 }
 
 const leftStyle = StyleSheet.create({
@@ -147,7 +145,7 @@ export default function ListItem(props: IListItemProps) {
                         <ThemeText numberOfLines={1} style={style.textWidth}>
                             {title}
                         </ThemeText>
-                        {tag ? <Tag tagName={tag} /> : <></>}
+                        {tag ? <Tag tagName={tag} /> : null}
                     </View>
                     {desc ? (
                         <ThemeText
@@ -157,9 +155,7 @@ export default function ListItem(props: IListItemProps) {
                             style={[style.textWidth, {marginTop: rpx(18)}]}>
                             {desc}
                         </ThemeText>
-                    ) : (
-                        <></>
-                    )}
+                    ) : null}
                 </View>
             )}
             titleStyle={{
@@ -167,7 +163,7 @@ export default function ListItem(props: IListItemProps) {
                 marginLeft: 0,
                 marginVertical: 0,
             }}
-            right={right ? right : () => <></>}
+            right={right ? right : () => null}
             onPress={onPress}
         />
     );

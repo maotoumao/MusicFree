@@ -58,18 +58,14 @@ export default function Header() {
                         </ThemeText>
                         {artistItem.platform ? (
                             <Tag tagName={artistItem.platform} />
-                        ) : (
-                            <></>
-                        )}
+                        ) : null}
                     </View>
 
                     {artistItem.fans ? (
                         <ThemeText fontSize="subTitle" fontColor="secondary">
                             粉丝数: {artistItem.fans}
                         </ThemeText>
-                    ) : (
-                        <></>
-                    )}
+                    ) : null}
                 </View>
             </View>
 

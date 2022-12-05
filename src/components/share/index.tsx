@@ -87,5 +87,5 @@ const style = StyleSheet.create({
 
 export default () => {
     const showShare = useAtomValue(showShareAtom);
-    return showShare ? <Share /> : <></>;
+    return showShare ? <Share /> : null;
 };

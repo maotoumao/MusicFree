@@ -60,9 +60,7 @@ export default function ResultList(props: IResultListProps) {
                 ) : queryState === RequestStateCode.FINISHED &&
                   data.data?.length !== 0 ? (
                     <ListReachEnd />
-                ) : (
-                    <></>
-                )
+                ) : null
             }
             onEndReached={() => {
                 (queryState === RequestStateCode.IDLE ||
