@@ -4,6 +4,7 @@ import TrackPlayer, {
     RepeatMode,
     State,
     Track,
+    TrackMetadataBase,
     usePlaybackState,
     useProgress,
 } from 'react-native-track-player';
@@ -405,7 +406,10 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
 
             const info = await plugin?.methods?.getMusicInfo?.(_musicItem);
             if (info && isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
-                await TrackPlayer.updateMetadataForTrack(0, info);
+                await TrackPlayer.updateMetadataForTrack(
+                    0,
+                    mergeProps(track, info) as TrackMetadataBase,
+                );
                 musicQueue = produce(musicQueue, draft => {
                     draft[currentIndex] = mergeProps(
                         track as IMusic.IMusicItem,
