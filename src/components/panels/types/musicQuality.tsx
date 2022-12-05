@@ -44,12 +44,14 @@ export default function MusicQuality(props: IMusicQualityProps) {
             backgroundStyle={{backgroundColor: primaryColor}}
             handleComponent={null}
             index={0}
-            snapPoints={[rpx(400)]}
+            snapPoints={[rpx(520)]}
             enablePanDownToClose
             enableOverDrag={false}
             onClose={unmountPanel}>
             <View style={style.header}>
-                <ThemeText fontWeight="bold">音质选择</ThemeText>
+                <ThemeText fontWeight="bold" fontSize="title">
+                    音质选择
+                </ThemeText>
             </View>
             <View style={style.body}>
                 {qualityKeys.map(key => {
@@ -63,7 +65,7 @@ export default function MusicQuality(props: IMusicQualityProps) {
                                     onQualityPress(key, musicItem);
                                     sheetRef.current?.close();
                                 }}>
-                                <ThemeText fontSize="subTitle">
+                                <ThemeText>
                                     {qualityText[key]}{' '}
                                     {musicItem.qualities?.[key]?.size
                                         ? `(${sizeFormatter(
@@ -92,7 +94,7 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(24),
     },
     item: {
-        height: rpx(64),
+        height: rpx(96),
         justifyContent: 'center',
     },
 });
