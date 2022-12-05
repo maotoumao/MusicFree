@@ -352,6 +352,7 @@ function PluginView(props: IPluginViewProps) {
                 },
                 plugin.state === 'error' ? {color: 'red'} : undefined,
             ]}
+            key={`plg-${plugin.hash}`}
             title={`${plugin.name}${
                 plugin.instance.version ? `(${plugin.instance.version})` : ''
             }`}
