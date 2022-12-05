@@ -38,7 +38,7 @@ export function isSameMediaItem(
     a: ICommon.IMediaBase | null | undefined,
     b: ICommon.IMediaBase | null | undefined,
 ) {
-    return a && b && a.id === b.id && a.platform === b.platform;
+    return a && b && a.id == b.id && a.platform === b.platform;
 }
 
 /** 查找是否存在 */
