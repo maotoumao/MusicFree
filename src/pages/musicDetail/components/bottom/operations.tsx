@@ -53,6 +53,9 @@ export default function Opertions() {
             )}
             <Pressable
                 onPress={() => {
+                    if (!musicItem) {
+                        return;
+                    }
                     showPanel('MusicQuality', {
                         musicItem,
                         async onQualityPress(quality) {

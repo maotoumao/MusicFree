@@ -55,7 +55,7 @@ export default function MusicQuality(props: IMusicQualityProps) {
                 {qualityKeys.map(key => {
                     return (
                         <>
-                            <Divider />
+                            <Divider key={`di-${key}`} />
                             <Pressable
                                 key={key}
                                 style={style.item}
