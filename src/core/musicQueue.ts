@@ -121,7 +121,7 @@ const setup = async () => {
                 await MusicQueue.play(undefined, true);
             } else {
                 const queue = await TrackPlayer.getQueue();
-                // 要跳到的下一个就是当前的，并且队列里面有多首歌  因为有重复事件
+                // 要跳到的下一个就是当前的，并且队列里面有多首歌  因为有重复事件(因为不同的原因重复触发)
                 if (
                     isSameMediaItem(
                         queue[1] as unknown as ICommon.IMediaBase,
@@ -459,7 +459,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
 
 const replaceTrack = async (track: Track, autoPlay = true) => {
     await TrackPlayer.reset();
-    await TrackPlayer.remove([0, 1]);
+    // await TrackPlayer.remove([0, 1]);
     // console.log(await TrackPlayer.getQueue(), 'REPLACE-TRACK');
     await TrackPlayer.add([track, getFakeNextTrack()]);
     // console.log(await TrackPlayer.getQueue(), 'REPLACE-TRACK-AFTER-ADD');
