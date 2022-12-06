@@ -257,7 +257,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 quality,
             )) ?? {url: musicItem?.qualities?.[quality]?.url};
             if (!url) {
-                throw new Error();
+                throw new Error('NOT RETRY');
             }
             trace('播放', '插件播放');
             const result = {
@@ -276,7 +276,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
 
             return result;
         } catch (e: any) {
-            if (retryCount > 0) {
+            if (retryCount > 0 && e?.message !== 'NOT RETRY') {
                 await delay(150);
                 return this.getMediaSource(musicItem, quality, --retryCount);
             }
