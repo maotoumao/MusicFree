@@ -135,8 +135,7 @@ const setup = async () => {
                     evt,
                     queue,
                 });
-
-                await MusicQueue.skipToNext();
+                await skipToNext();
             }
         }
     });
@@ -386,13 +385,14 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
                 Config.get('setting.basic.defaultPlayQuality') ?? 'standard',
                 Config.get('setting.basic.playQualityOrder') ?? 'asc',
             );
-            let source: IPlugin.IMediaSourceResult | undefined;
+            let source: IPlugin.IMediaSourceResult | null = null;
             for (let quality of qualityOrder) {
                 if (isSameMediaItem(musicQueue[currentIndex], _musicItem)) {
-                    source = await plugin?.methods?.getMediaSource(
-                        _musicItem,
-                        quality,
-                    );
+                    source =
+                        (await plugin?.methods?.getMediaSource(
+                            _musicItem,
+                            quality,
+                        )) ?? null;
                     if (source) {
                         currentQuality = quality;
                         currentQualityStateMapper.notify();
@@ -404,6 +404,9 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
                 }
             }
             if (!source) {
+                if (!_musicItem.url) {
+                    throw new Error('播放失败');
+                }
                 source = {
                     url: _musicItem.url,
                 };

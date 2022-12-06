@@ -210,7 +210,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         musicItem: IMusic.IMusicItemBase,
         quality: IMusic.IQualityKey = 'standard',
         retryCount = 1,
-    ): Promise<IPlugin.IMediaSourceResult> {
+    ): Promise<IPlugin.IMediaSourceResult | null> {
         // 1. 本地搜索 其实直接读mediameta就好了
         const localPath =
             getInternalData<string>(musicItem, InternalDataType.LOCALPATH) ??
@@ -281,7 +281,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 return this.getMediaSource(musicItem, quality, --retryCount);
             }
             errorLog('获取真实源失败', e?.message);
-            throw e;
+            return null;
         }
     }
 
