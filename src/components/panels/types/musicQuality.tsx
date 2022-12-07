@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {Fragment, useRef} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
@@ -56,10 +56,10 @@ export default function MusicQuality(props: IMusicQualityProps) {
             <View style={style.body}>
                 {qualityKeys.map(key => {
                     return (
-                        <>
+                        <Fragment key={`frag-${key}`}>
                             <Divider key={`di-${key}`} />
                             <Pressable
-                                key={key}
+                                key={`btn-${key}`}
                                 style={style.item}
                                 onPress={() => {
                                     onQualityPress(key, musicItem);
@@ -74,7 +74,7 @@ export default function MusicQuality(props: IMusicQualityProps) {
                                         : ''}
                                 </ThemeText>
                             </Pressable>
-                        </>
+                        </Fragment>
                     );
                 })}
                 <Divider />
