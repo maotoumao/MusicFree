@@ -16,9 +16,7 @@ function filterMusic(query: string, musicList: IMusic.IMusicItem[]) {
         return musicList;
     }
     return musicList.filter(_ =>
-        `${_.title} ${_.artist} ${_.album} ${_.platform}`.includes(
-            query.trim(),
-        ),
+        `${_.title} ${_.artist} ${_.album} ${_.platform}`.includes(query),
     );
 }
 
@@ -31,9 +29,8 @@ export default function SearchMusicList() {
     const colors = useColors();
 
     const onChangeSearch = (_: string) => {
-        _ = _.trim();
         setQuery(_);
-        setResult(filterMusic(_, musicList ?? []));
+        setResult(filterMusic(_.trim(), musicList ?? []));
     };
 
     return (
