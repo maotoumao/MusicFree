@@ -49,8 +49,9 @@ export default function FileSelector() {
     const currentPathRef = useRef<IPathItem>(currentPath);
     const [filesData, setFilesData] = useState<IFileItem[]>([]);
     const [checkedItems, setCheckedItems] = useState<IFileItem[]>([]);
-    const getCheckedPaths = useMemo(
-        () => () => checkedItems.map(_ => _.path),
+
+    const checkedPaths = useMemo(
+        () => checkedItems.map(_ => _.path),
         [checkedItems],
     );
     const navigation = useNavigation();
@@ -176,7 +177,7 @@ export default function FileSelector() {
                     selectPath(item, !currentChecked);
                 }
             }}
-            checked={getCheckedPaths().includes(item.path)}
+            checked={checkedPaths.includes(item.path)}
             onCheckedChange={checked => {
                 selectPath(item, checked);
             }}

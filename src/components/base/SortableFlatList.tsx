@@ -100,10 +100,7 @@ export default function SortableFlatList<T extends any = any>(
     const scrollingRef = useRef(false);
 
     // 列表整体的高度
-    const getListContentHeight = useMemo(
-        () => () => itemHeight * data.length,
-        [data],
-    );
+    const listContentHeight = useMemo(() => itemHeight * data.length, [data]);
 
     function scrollToTarget(forceScroll = false) {
         // 未选中
@@ -133,7 +130,7 @@ export default function SortableFlatList<T extends any = any>(
             (contentOffsetYRef.current <= 2 &&
                 nextTarget < contentOffsetYRef.current) ||
             (contentOffsetYRef.current >=
-                getListContentHeight() - (layoutRef.current?.height ?? 0) - 2 &&
+                listContentHeight - (layoutRef.current?.height ?? 0) - 2 &&
                 nextTarget > contentOffsetYRef.current)
         ) {
             scrollingRef.current = false;
@@ -143,7 +140,7 @@ export default function SortableFlatList<T extends any = any>(
         // 超出区域
         targetOffsetYRef.current = Math.min(
             Math.max(0, nextTarget),
-            getListContentHeight() - (layoutRef.current?.height ?? 0),
+            listContentHeight - (layoutRef.current?.height ?? 0),
         );
         listRef.current?.scrollToOffset({
             animated: true,

@@ -124,27 +124,27 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
         int pathHashCode;
         try {
             File file = new File(filePath);
-            if(!file.exists()){
+            if (!file.exists()) {
                 promise.reject("File not exist", "File not exist");
                 return;
             }
             // 路径的hashcode就够了
             pathHashCode = file.hashCode();
-            if(pathHashCode == 0) {
+            if (pathHashCode == 0) {
                 promise.resolve(null);
                 return;
             }
             // 判断缓存是否存在，如果存在直接返回
             File cacheDir = reactContext.getCacheDir();
             File coverFile = new File(cacheDir, "image_manager_disk_cache/" + pathHashCode + ".jpg");
-            if(coverFile.exists()) {
+            if (coverFile.exists()) {
                 promise.resolve(coverFile.toURI().toString());
                 return;
             }
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
             mmr.setDataSource(filePath);
             byte[] coverImg = mmr.getEmbeddedPicture();
-            if(coverImg != null) {
+            if (coverImg != null) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(coverImg, 0, coverImg.length);
                 // 存储到本地路径
                 FileOutputStream outputStream = new FileOutputStream(coverFile);
@@ -157,7 +157,7 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
                 promise.resolve(null);
             }
             mmr.release();
-        } catch(Exception ignored) {
+        } catch (Exception ignored) {
             promise.reject("Error", "Got error");
         }
 
@@ -169,7 +169,7 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
     public void getLyric(String filePath, Promise promise) {
         try {
             File file = new File(filePath);
-            if(file.exists()) {
+            if (file.exists()) {
                 AudioFile audioFile = AudioFileIO.read(file);
                 Tag tag = audioFile.getTag();
                 String lrc = tag.getFirst(FieldKey.LYRICS);
@@ -178,7 +178,34 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
                 throw new IOException("File not found");
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
+            promise.reject("Error", e.getMessage());
+        }
+    }
+
+    @ReactMethod
+    public void setMediaMeta(String filePath, ReadableMap meta, Promise promise) {
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                AudioFile audioFile = AudioFileIO.read(file);
+                Tag tag = audioFile.getTag();
+                String title = meta.getString("title");
+                String artist = meta.getString("artist");
+                String album = meta.getString("album");
+                if (title != null) {
+                    tag.setField(FieldKey.TITLE, title);
+                }
+                if (artist != null) {
+                    tag.setField(FieldKey.ARTIST, artist);
+                }
+                if (album != null) {
+                    tag.setField(FieldKey.ALBUM, album);
+                }
+
+                tag.setField(FieldKey.COMMENT, meta.getString("meta"));
+            }
+        } catch (Exception e) {
             promise.reject("Error", e.getMessage());
         }
     }

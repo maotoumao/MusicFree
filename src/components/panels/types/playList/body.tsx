@@ -92,19 +92,16 @@ export default function Body(props: IBodyProps) {
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
     const listRef = useRef<FlatList<IMusic.IMusicItem> | null>();
 
-    const getInitIndex = useMemo(
-        () => () => {
-            const id = musicQueue.findIndex(_ =>
-                isSameMediaItem(currentMusicItem, _),
-            );
+    const initIndex = useMemo(() => {
+        const id = musicQueue.findIndex(_ =>
+            isSameMediaItem(currentMusicItem, _),
+        );
 
-            if (id !== -1) {
-                return id;
-            }
-            return undefined;
-        },
-        [],
-    );
+        if (id !== -1) {
+            return id;
+        }
+        return undefined;
+    }, []);
 
     useEffect(() => {
         setCurrentIndex(
@@ -154,7 +151,7 @@ export default function Body(props: IBodyProps) {
                 index,
             })}
             data={musicQueue}
-            initialScrollIndex={getInitIndex()}
+            initialScrollIndex={initIndex}
             renderItem={renderItem}
         />
     );

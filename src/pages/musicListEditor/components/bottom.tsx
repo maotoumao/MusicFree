@@ -21,12 +21,12 @@ export default function Bottom() {
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
     const selectedEditorItems = useMemo(
-        () => () => editingMusicList.filter(_ => _.checked),
+        () => editingMusicList.filter(_ => _.checked),
         [editingMusicList],
     );
 
     const selectedItems = useMemo(
-        () => () => selectedEditorItems().map(_ => _.musicItem),
+        () => selectedEditorItems.map(_ => _.musicItem),
         [selectedEditorItems],
     );
 
@@ -46,7 +46,7 @@ export default function Bottom() {
                 icon="motion-play-outline"
                 title="下一首播放"
                 onPress={async () => {
-                    MusicQueue.addNext(selectedItems());
+                    MusicQueue.addNext(selectedItems);
                     resetSelectedIndices();
                     Toast.success('已添加到下一首播放');
                 }}
@@ -55,9 +55,9 @@ export default function Bottom() {
                 icon="music-note-plus"
                 title="加入歌单"
                 onPress={() => {
-                    if (selectedItems().length) {
+                    if (selectedItems.length) {
                         showPanel('AddToMusicSheet', {
-                            musicItem: selectedItems(),
+                            musicItem: selectedItems,
                         });
                         resetSelectedIndices();
                     }
@@ -67,8 +67,8 @@ export default function Bottom() {
                 icon="arrow-down-bold-circle-outline"
                 title="下载"
                 onPress={() => {
-                    if (selectedItems().length) {
-                        Download.downloadMusic(selectedItems());
+                    if (selectedItems.length) {
+                        Download.downloadMusic(selectedItems);
                         Toast.success('开始下载');
                         resetSelectedIndices();
                     }
@@ -78,12 +78,12 @@ export default function Bottom() {
                 icon="trash-can-outline"
                 title="删除"
                 color={
-                    selectedItems().length && musicSheet?.id
+                    selectedItems.length && musicSheet?.id
                         ? 'text'
                         : 'textSecondary'
                 }
                 onPress={() => {
-                    if (selectedItems().length && musicSheet?.id) {
+                    if (selectedItems.length && musicSheet?.id) {
                         setEditingMusicList(
                             produce(prev => prev.filter(_ => !_.checked)),
                         );

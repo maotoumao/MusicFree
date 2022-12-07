@@ -18,7 +18,7 @@ export default function Body() {
     const [musicListChanged, setMusicListChanged] =
         useAtom(musicListChangedAtom);
     const selectedItems = useMemo(
-        () => () => editingMusicList.filter(_ => _.checked),
+        () => editingMusicList.filter(_ => _.checked),
         [editingMusicList],
     );
     return (
@@ -27,8 +27,7 @@ export default function Body() {
                 <Button
                     onPress={() => {
                         if (
-                            selectedItems().length !==
-                                editingMusicList.length &&
+                            selectedItems.length !== editingMusicList.length &&
                             editingMusicList.length
                         ) {
                             setEditingMusicList(
@@ -47,11 +46,11 @@ export default function Body() {
                         }
                     }}>
                     {`${
-                        selectedItems().length !== editingMusicList.length &&
+                        selectedItems.length !== editingMusicList.length &&
                         editingMusicList.length
                             ? '全选'
                             : '全不选'
-                    } (已选${selectedItems().length}首)`}
+                    } (已选${selectedItems.length}首)`}
                 </Button>
                 <Button
                     fontColor={
