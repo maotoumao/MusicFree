@@ -421,7 +421,8 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
                 return;
             }
             musicQueue = produce(musicQueue, draft => {
-                draft[currentIndex] = track;
+                draft[currentIndex] = {...track};
+                draft[currentIndex].url = _musicItem.url; // todo 这里写的不好
             });
             await replaceTrack(track as Track);
             currentMusicStateMapper.notify();
@@ -437,6 +438,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
                         track as IMusic.IMusicItem,
                         info,
                     ) as IMusic.IMusicItem;
+                    draft[currentIndex].url = _musicItem.url; // todo 这里写的不好
                 });
                 currentMusicStateMapper.notify();
             }
