@@ -47,6 +47,7 @@ const getExtensionName = (url: string) => {
     const regResult = url.match(
         /^https?\:\/\/.+\.([^\?\.]+?$)|(?:([^\.]+?)\?.+$)/,
     );
+    console.log('match!', url, regResult?.[1], regResult?.[2]);
     if (regResult) {
         return regResult[1] ?? regResult[2] ?? 'mp3';
     } else {
@@ -154,43 +155,41 @@ async function downloadNext() {
     });
     downloadingQueueStateMapper.notify();
     const quality = nextDownloadItem.quality;
-    if (!url || !url?.startsWith('http')) {
-        // 插件播放
-        try {
-            const plugin = PluginManager.getByName(musicItem.platform);
-            if (plugin) {
-                const qualityOrder = getQualityOrder(
-                    quality ??
-                        Config.get('setting.basic.defaultDownloadQuality') ??
-                        'standard',
-                    Config.get('setting.basic.downloadQualityOrder') ?? 'asc',
-                );
-                let data: IPlugin.IMediaSourceResult | null = null;
-                for (let quality of qualityOrder) {
-                    try {
-                        data = await plugin.methods.getMediaSource(
-                            musicItem,
-                            quality,
-                            1,
-                            true,
-                        );
-                        if (!data?.url) {
-                            continue;
-                        }
-                        break;
-                    } catch {}
-                }
-                url = data?.url ?? url;
-                headers = data?.headers;
+    // 插件播放
+    try {
+        const plugin = PluginManager.getByName(musicItem.platform);
+        if (plugin) {
+            const qualityOrder = getQualityOrder(
+                quality ??
+                    Config.get('setting.basic.defaultDownloadQuality') ??
+                    'standard',
+                Config.get('setting.basic.downloadQualityOrder') ?? 'asc',
+            );
+            let data: IPlugin.IMediaSourceResult | null = null;
+            for (let quality of qualityOrder) {
+                try {
+                    data = await plugin.methods.getMediaSource(
+                        musicItem,
+                        quality,
+                        1,
+                        true,
+                    );
+                    if (!data?.url) {
+                        continue;
+                    }
+                    break;
+                } catch {}
             }
-            if (!url) {
-                throw new Error('empty');
-            }
-        } catch {
-            /** 无法下载，跳过 */
-            removeFromDownloadingQueue(nextDownloadItem);
-            return;
+            url = data?.url ?? url;
+            headers = data?.headers;
         }
+        if (!url) {
+            throw new Error('empty');
+        }
+    } catch {
+        /** 无法下载，跳过 */
+        removeFromDownloadingQueue(nextDownloadItem);
+        return;
     }
     /** 预处理完成，接下来去下载音乐 */
     downloadNextAfterInteraction();
