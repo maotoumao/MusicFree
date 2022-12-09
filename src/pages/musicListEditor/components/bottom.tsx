@@ -69,7 +69,9 @@ export default function Bottom() {
                 onPress={() => {
                     if (selectedItems.length) {
                         Download.downloadMusic(selectedItems);
-                        Toast.success('开始下载');
+                        Toast.success(
+                            '开始下载；全部下载完成之前请不要关闭应用',
+                        );
                         resetSelectedIndices();
                     }
                 }}

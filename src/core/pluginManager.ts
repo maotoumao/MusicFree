@@ -210,6 +210,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         musicItem: IMusic.IMusicItemBase,
         quality: IMusic.IQualityKey = 'standard',
         retryCount = 1,
+        notUpdateCache = false,
     ): Promise<IPlugin.IMediaSourceResult | null> {
         // 1. 本地搜索 其实直接读mediameta就好了
         const localPath =
@@ -266,7 +267,10 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 userAgent: headers?.['user-agent'],
             } as IPlugin.IMediaSourceResult;
 
-            if (pluginCacheControl !== CacheControl.NoStore) {
+            if (
+                pluginCacheControl !== CacheControl.NoStore &&
+                !notUpdateCache
+            ) {
                 Cache.update(musicItem, [
                     ['headers', result.headers],
                     ['userAgent', result.userAgent],

@@ -54,6 +54,24 @@ export async function addMusic(
     localSheetStateMapper.notify();
 }
 
+function addMusicDraft(musicItem: IMusic.IMusicItem | IMusic.IMusicItem[]) {
+    if (!Array.isArray(musicItem)) {
+        musicItem = [musicItem];
+    }
+    let newSheet = [...localSheet];
+    musicItem.forEach(mi => {
+        if (localSheet.findIndex(_ => isSameMediaItem(mi, _)) === -1) {
+            newSheet.push(mi);
+        }
+    });
+    localSheet = newSheet;
+    localSheetStateMapper.notify();
+}
+
+async function saveLocalSheet() {
+    await setStorage(StorageKeys.LocalMusicSheet, localSheet);
+}
+
 export async function removeMusic(
     musicItem: IMusic.IMusicItem,
     deleteOriginalFile = false,
@@ -94,7 +112,8 @@ function localMediaFilter(_: FileStat) {
         _.filename.endsWith('.ogg') ||
         _.filename.endsWith('.acc') ||
         _.filename.endsWith('.aac') ||
-        _.filename.endsWith('.ape')
+        _.filename.endsWith('.ape') ||
+        _.filename.endsWith('.m4s')
     );
 }
 
@@ -212,6 +231,8 @@ const LocalMusicSheet = {
     setup,
     addMusic,
     removeMusic,
+    addMusicDraft,
+    saveLocalSheet,
     importLocal,
     cancelImportLocal,
     isLocalMusic,

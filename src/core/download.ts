@@ -1,10 +1,12 @@
 import {internalSerializeKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
+import {errorLog} from '@/utils/log';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import {getQualityOrder} from '@/utils/qualities';
 import StateMapper from '@/utils/stateMapper';
 import Toast from '@/utils/toast';
 import produce from 'immer';
+import {InteractionManager} from 'react-native';
 import {downloadFile} from 'react-native-fs';
 
 import Config from './config';
@@ -13,18 +15,23 @@ import MediaMeta from './mediaMeta';
 import Network from './network';
 import PluginManager from './pluginManager';
 
+/** 队列中的元素 */
 interface IDownloadMusicOptions {
+    /** 要下载的音乐 */
     musicItem: IMusic.IMusicItem;
+    /** 目标文件名 */
     filename: string;
+    /** 下载id */
     jobId?: number;
+    /** 下载音质 */
+    quality?: IMusic.IQualityKey;
 }
-// todo： 直接把下载信息写在meta里面就好了
+
 /** 下载中 */
 let downloadingMusicQueue: IDownloadMusicOptions[] = [];
 /** 队列中 */
 let pendingMusicQueue: IDownloadMusicOptions[] = [];
-
-/** 进度 */
+/** 下载进度 */
 let downloadingProgress: Record<string, {progress: number; size: number}> = {};
 
 const downloadingQueueStateMapper = new StateMapper(
@@ -35,6 +42,19 @@ const downloadingProgressStateMapper = new StateMapper(
     () => downloadingProgress,
 );
 
+/** 匹配文件后缀 */
+const getExtensionName = (url: string) => {
+    const regResult = url.match(
+        /^https?\:\/\/.+\.([^\?\.]+?$)|(?:([^\.]+?)\?.+$)/,
+    );
+    if (regResult) {
+        return regResult[1] ?? regResult[2] ?? 'mp3';
+    } else {
+        return 'mp3';
+    }
+};
+
+/** 生成下载文件 */
 const getDownloadPath = (fileName?: string) => {
     const dlPath =
         Config.get('setting.basic.downloadPath') ?? pathConst.downloadMusicPath;
@@ -46,18 +66,28 @@ const getDownloadPath = (fileName?: string) => {
 
 /** 从待下载中移除 */
 function removeFromPendingQueue(item: IDownloadMusicOptions) {
-    pendingMusicQueue = pendingMusicQueue.filter(
-        _ => !isSameMediaItem(_.musicItem, item.musicItem),
+    const targetIndex = pendingMusicQueue.findIndex(_ =>
+        isSameMediaItem(_.musicItem, item.musicItem),
     );
-    pendingMusicQueueStateMapper.notify();
+    if (targetIndex !== -1) {
+        pendingMusicQueue = pendingMusicQueue
+            .slice(0, targetIndex)
+            .concat(pendingMusicQueue.slice(targetIndex + 1));
+        pendingMusicQueueStateMapper.notify();
+    }
 }
 
 /** 从下载中队列移除 */
 function removeFromDownloadingQueue(item: IDownloadMusicOptions) {
-    downloadingMusicQueue = downloadingMusicQueue.filter(
-        _ => !isSameMediaItem(_.musicItem, item.musicItem),
+    const targetIndex = downloadingMusicQueue.findIndex(_ =>
+        isSameMediaItem(_.musicItem, item.musicItem),
     );
-    downloadingQueueStateMapper.notify();
+    if (targetIndex !== -1) {
+        downloadingMusicQueue = downloadingMusicQueue
+            .slice(0, targetIndex)
+            .concat(downloadingMusicQueue.slice(targetIndex + 1));
+        downloadingQueueStateMapper.notify();
+    }
 }
 
 /** 防止高频同步 */
@@ -71,23 +101,21 @@ function startNotifyProgress() {
         progressNotifyTimer = null;
         downloadingProgressStateMapper.notify();
         startNotifyProgress();
-    }, 400);
+    }, 500);
 }
 
 function stopNotifyProgress() {
     if (progressNotifyTimer) {
-        clearInterval(progressNotifyTimer);
+        clearTimeout(progressNotifyTimer);
     }
     progressNotifyTimer = null;
 }
 
 /** 生成下载文件名 */
 function generateFilename(musicItem: IMusic.IMusicItem) {
-    return (
-        `${musicItem.platform}@${musicItem.id}@${musicItem.title}@${musicItem.artist}`.slice(
-            0,
-            200,
-        ) + '.mp3'
+    return `${musicItem.platform}@${musicItem.id}@${musicItem.title}@${musicItem.artist}`.slice(
+        0,
+        200,
     );
 }
 
@@ -106,7 +134,7 @@ function generateFilename(musicItem: IMusic.IMusicItem) {
 // }
 
 let maxDownload = 3;
-/** 从队列取出下一个要下载的 */
+/** 队列下载*/
 async function downloadNext() {
     // todo 最大同时下载3个，可设置
     if (
@@ -115,22 +143,25 @@ async function downloadNext() {
     ) {
         return;
     }
-    let nextItem = pendingMusicQueue[0];
-    const musicItem = nextItem.musicItem;
+    // 下一个下载的为pending的第一个
+    let nextDownloadItem = pendingMusicQueue[0];
+    const musicItem = nextDownloadItem.musicItem;
     let url = musicItem.url;
     let headers = musicItem.headers;
-    removeFromPendingQueue(nextItem);
+    removeFromPendingQueue(nextDownloadItem);
     downloadingMusicQueue = produce(downloadingMusicQueue, draft => {
-        draft.push(nextItem);
+        draft.push(nextDownloadItem);
     });
     downloadingQueueStateMapper.notify();
+    const quality = nextDownloadItem.quality;
     if (!url || !url?.startsWith('http')) {
         // 插件播放
-        const plugin = PluginManager.getByName(musicItem.platform);
-        if (plugin) {
-            try {
+        try {
+            const plugin = PluginManager.getByName(musicItem.platform);
+            if (plugin) {
                 const qualityOrder = getQualityOrder(
-                    Config.get('setting.basic.defaultDownloadQuality') ??
+                    quality ??
+                        Config.get('setting.basic.defaultDownloadQuality') ??
                         'standard',
                     Config.get('setting.basic.downloadQualityOrder') ?? 'asc',
                 );
@@ -140,6 +171,8 @@ async function downloadNext() {
                         data = await plugin.methods.getMediaSource(
                             musicItem,
                             quality,
+                            1,
+                            true,
                         );
                         if (!data?.url) {
                             continue;
@@ -149,23 +182,31 @@ async function downloadNext() {
                 }
                 url = data?.url ?? url;
                 headers = data?.headers;
-            } catch {
-                /** 无法下载，跳过 */
-                removeFromDownloadingQueue(nextItem);
-                return;
             }
+            if (!url) {
+                throw new Error('empty');
+            }
+        } catch {
+            /** 无法下载，跳过 */
+            removeFromDownloadingQueue(nextDownloadItem);
+            return;
         }
     }
-
-    downloadNext();
+    /** 预处理完成，接下来去下载音乐 */
+    downloadNextAfterInteraction();
+    const extension = getExtensionName(url);
+    /** 目标下载地址 */
+    const targetDownloadPath = getDownloadPath(
+        `${nextDownloadItem.filename}.${extension}`,
+    );
     const {promise, jobId} = downloadFile({
         fromUrl: url ?? '',
-        toFile: getDownloadPath(nextItem.filename),
+        toFile: targetDownloadPath,
         headers: headers,
         background: true,
         begin(res) {
             downloadingProgress = produce(downloadingProgress, _ => {
-                _[nextItem.filename] = {
+                _[nextDownloadItem.filename] = {
                     progress: 0,
                     size: res.contentLength,
                 };
@@ -174,51 +215,64 @@ async function downloadNext() {
         },
         progress(res) {
             downloadingProgress = produce(downloadingProgress, _ => {
-                _[nextItem.filename] = {
+                _[nextDownloadItem.filename] = {
                     progress: res.bytesWritten,
                     size: res.contentLength,
                 };
             });
         },
     });
-    nextItem = {...nextItem, jobId};
+    nextDownloadItem = {...nextDownloadItem, jobId};
     try {
         await promise;
-        LocalMusicSheet.addMusic({
+        /** 下载完成 */
+        LocalMusicSheet.addMusicDraft({
             ...musicItem,
             [internalSerializeKey]: {
-                localPath: getDownloadPath(nextItem.filename),
+                localPath: targetDownloadPath,
             },
         });
-        removeFromDownloadingQueue(nextItem);
         MediaMeta.update({
             ...musicItem,
             [internalSerializeKey]: {
                 downloaded: true,
                 local: {
-                    localUrl: getDownloadPath(nextItem.filename),
+                    localUrl: targetDownloadPath,
                 },
             },
         });
-        if (downloadingMusicQueue.length === 0) {
-            stopNotifyProgress();
-            Toast.success('下载完成');
-            downloadingMusicQueue = [];
-            pendingMusicQueue = [];
-            downloadingQueueStateMapper.notify();
-            pendingMusicQueueStateMapper.notify();
+    } catch (e: any) {
+        /** 下载出错 */
+        errorLog('下载出错', e?.message);
+    }
+    removeFromDownloadingQueue(nextDownloadItem);
+    downloadingProgress = produce(downloadingProgress, draft => {
+        if (draft[nextDownloadItem.filename]) {
+            delete draft[nextDownloadItem.filename];
         }
-        delete downloadingProgress[nextItem.filename];
-        downloadNext();
-    } catch {
-        downloadingMusicQueue = produce(downloadingMusicQueue, _ =>
-            _.filter(item => !isSameMediaItem(item.musicItem, musicItem)),
-        );
+    });
+    downloadNextAfterInteraction();
+    if (downloadingMusicQueue.length === 0) {
+        stopNotifyProgress();
+        LocalMusicSheet.saveLocalSheet();
+        console.log('下载结束');
+        Toast.success('下载完成');
+        downloadingMusicQueue = [];
+        pendingMusicQueue = [];
+        downloadingQueueStateMapper.notify();
+        pendingMusicQueueStateMapper.notify();
     }
 }
 
-/** 下载音乐 */
-function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
+async function downloadNextAfterInteraction() {
+    InteractionManager.runAfterInteractions(downloadNext);
+}
+
+/** 加入下载队列 */
+function downloadMusic(
+    musicItems: IMusic.IMusicItem | IMusic.IMusicItem[],
+    quality?: IMusic.IQualityKey,
+) {
     if (Network.isOffline()) {
         Toast.warn('当前无网络，无法下载');
         return;
@@ -247,12 +301,13 @@ function downloadMusic(musicItems: IMusic.IMusicItem | IMusic.IMusicItem[]) {
     const enqueueData = musicItems.map(_ => ({
         musicItem: _,
         filename: generateFilename(_),
+        quality,
     }));
     if (enqueueData.length) {
         pendingMusicQueue = pendingMusicQueue.concat(enqueueData);
         pendingMusicQueueStateMapper.notify();
         maxDownload = +(Config.get('setting.basic.maxDownload') ?? 3);
-        downloadNext();
+        downloadNextAfterInteraction();
     }
 }
 
