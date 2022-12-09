@@ -255,7 +255,6 @@ async function downloadNext() {
     if (downloadingMusicQueue.length === 0) {
         stopNotifyProgress();
         LocalMusicSheet.saveLocalSheet();
-        console.log('下载结束');
         Toast.success('下载完成');
         downloadingMusicQueue = [];
         pendingMusicQueue = [];

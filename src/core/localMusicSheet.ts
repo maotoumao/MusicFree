@@ -79,9 +79,13 @@ export async function removeMusic(
     const idx = localSheet.findIndex(_ => isSameMediaItem(_, musicItem));
     let newSheet = [...localSheet];
     if (idx !== -1) {
+        const localMusicItem = localSheet[idx];
         newSheet.splice(idx, 1);
-        if (deleteOriginalFile && musicItem[internalSerializeKey]?.localPath) {
-            await FileSystem.unlink(musicItem[internalSerializeKey].localPath);
+        const localPath =
+            musicItem[internalSerializeKey]?.localPath ??
+            localMusicItem[internalSerializeKey]?.localPath;
+        if (deleteOriginalFile && localPath) {
+            await FileSystem.unlink(localPath);
         }
     }
     localSheet = newSheet;
