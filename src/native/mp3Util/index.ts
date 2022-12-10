@@ -8,12 +8,19 @@ export interface IBasicMeta {
     title?: string;
 }
 
+export interface IWritableMeta extends IBasicMeta {
+    lyric?: string;
+    comment?: string;
+}
+
 interface IMp3Util {
     getBasicMeta: (fileName: string) => Promise<IBasicMeta>;
     getMediaMeta: (fileNames: string[]) => Promise<IBasicMeta[]>;
     getMediaCoverImg: (mediaPath: string) => Promise<string>;
     /** 读取内嵌歌词 */
     getLyric: (mediaPath: string) => Promise<string>;
+    /** 写入meta信息 */
+    setMediaMeta: (filePath: string, meta: IWritableMeta) => Promise<void>;
 }
 
 const Mp3Util = NativeModules.Mp3Util;

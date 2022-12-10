@@ -193,6 +193,8 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
                 String title = meta.getString("title");
                 String artist = meta.getString("artist");
                 String album = meta.getString("album");
+                String lyric = meta.getString("lyric");
+                String comment = meta.getString("comment");
                 if (title != null) {
                     tag.setField(FieldKey.TITLE, title);
                 }
@@ -202,9 +204,14 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
                 if (album != null) {
                     tag.setField(FieldKey.ALBUM, album);
                 }
+                if(lyric != null) {
+                    tag.setField(FieldKey.LYRICS, lyric);
+                }
 
-                tag.setField(FieldKey.COMMENT, meta.getString("meta"));
+                tag.setField(FieldKey.COMMENT, comment);
+                audioFile.commit();
             }
+            promise.resolve(true);
         } catch (Exception e) {
             promise.reject("Error", e.getMessage());
         }

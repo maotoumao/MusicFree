@@ -47,7 +47,6 @@ const getExtensionName = (url: string) => {
     const regResult = url.match(
         /^https?\:\/\/.+\.([^\?\.]+?$)|(?:([^\.]+?)\?.+$)/,
     );
-    console.log('match!', url, regResult?.[1], regResult?.[2]);
     if (regResult) {
         return regResult[1] ?? regResult[2] ?? 'mp3';
     } else {
@@ -155,9 +154,9 @@ async function downloadNext() {
     });
     downloadingQueueStateMapper.notify();
     const quality = nextDownloadItem.quality;
+    const plugin = PluginManager.getByName(musicItem.platform);
     // 插件播放
     try {
-        const plugin = PluginManager.getByName(musicItem.platform);
         if (plugin) {
             const qualityOrder = getQualityOrder(
                 quality ??
@@ -240,7 +239,30 @@ async function downloadNext() {
                 },
             },
         });
+        // const primaryKey = plugin?.instance.primaryKey ?? [];
+        // if (!primaryKey.includes('id')) {
+        //     primaryKey.push('id');
+        // }
+        // const stringifyMeta: Record<string, any> = {
+        //     title: musicItem.title,
+        //     artist: musicItem.artist,
+        //     album: musicItem.album,
+        //     lrc: musicItem.lrc,
+        //     platform: musicItem.platform,
+        // };
+        // primaryKey.forEach(_ => {
+        //     stringifyMeta[_] = musicItem[_];
+        // });
+
+        // await Mp3Util.setMediaMeta(targetDownloadPath, {
+        //     title: musicItem.title,
+        //     artist: musicItem.artist,
+        //     album: musicItem.album,
+        //     lyric: musicItem.rawLrc,
+        //     comment: JSON.stringify(stringifyMeta),
+        // });
     } catch (e: any) {
+        console.log(e, 'downloaderror');
         /** 下载出错 */
         errorLog('下载出错', e?.message);
     }
