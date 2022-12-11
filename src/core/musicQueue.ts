@@ -559,8 +559,10 @@ const changeQuality = async (newQuality: IMusic.IQualityKey) => {
             throw new Error();
         }
         if (isSameMediaItem(musicItem, musicQueue[currentIndex])) {
+            const playingState = await TrackPlayer.getState();
             await replaceTrack(
                 mergeProps(musicItem, newSource) as unknown as Track,
+                !musicIsPaused(playingState),
             );
             await TrackPlayer.seekTo(position);
             currentQuality = newQuality;

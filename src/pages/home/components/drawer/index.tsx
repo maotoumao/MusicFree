@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
@@ -10,7 +10,11 @@ import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';
 import NativeUtils from '@/native/utils';
 import MusicQueue from '@/core/musicQueue';
+import {useTimingClose} from '@/utils/timingClose';
+import usePanel from '@/components/panels/usePanel';
+import timeformat from '@/utils/timeformat';
 
+const ITEM_HEIGHT = rpx(108);
 export default function HomeDrawer(props: any) {
     const navigate = useNavigate();
     function navigateToSetting(settingType: string) {
@@ -41,6 +45,9 @@ export default function HomeDrawer(props: any) {
                 navigateToSetting('theme');
             },
         },
+    ] as const;
+
+    const otherSetting = [
         {
             icon: 'backup-restore',
             title: '备份与恢复',
@@ -76,7 +83,33 @@ export default function HomeDrawer(props: any) {
                     <Card.Content style={style.cardContent}>
                         {basicSetting.map(item => (
                             <ListItem
-                                itemHeight={rpx(110)}
+                                itemHeight={ITEM_HEIGHT}
+                                key={item.title}
+                                left={{
+                                    icon: {
+                                        name: item.icon,
+                                        size: 'normal',
+                                        fontColor: 'normal',
+                                    },
+                                    width: rpx(48),
+                                }}
+                                title={item.title}
+                                onPress={item.onPress}
+                            />
+                        ))}
+                    </Card.Content>
+                </Card>
+                <Card style={style.card}>
+                    <Card.Title
+                        title={
+                            <ThemeText fontSize="description">其他</ThemeText>
+                        }
+                    />
+                    <Card.Content style={style.cardContent}>
+                        <CountDownItem />
+                        {otherSetting.map(item => (
+                            <ListItem
+                                itemHeight={ITEM_HEIGHT}
                                 key={item.title}
                                 left={{
                                     icon: {
@@ -125,6 +158,7 @@ const style = StyleSheet.create({
     },
     card: {
         backgroundColor: '#eeeeee22',
+        marginBottom: rpx(24),
     },
     cardContent: {
         paddingHorizontal: 0,
@@ -135,4 +169,39 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-end',
     },
+    /** 倒计时 */
+    countDownText: {
+        height: ITEM_HEIGHT,
+        textAlignVertical: 'center',
+    },
 });
+
+function _CountDownItem() {
+    const countDown = useTimingClose();
+    const {showPanel} = usePanel();
+
+    return (
+        <ListItem
+            title="定时关闭"
+            onPress={() => {
+                showPanel('TimingClose');
+            }}
+            left={{
+                icon: {
+                    name: 'timer-outline',
+                    size: 'normal',
+                    fontColor: 'normal',
+                },
+                width: rpx(48),
+            }}
+            itemHeight={ITEM_HEIGHT}
+            right={() => (
+                <ThemeText style={style.countDownText} fontSize="subTitle">
+                    {countDown ? timeformat(countDown) : ''}
+                </ThemeText>
+            )}
+        />
+    );
+}
+
+const CountDownItem = memo(_CountDownItem, () => true);
