@@ -19,6 +19,8 @@ interface IConfig {
             downloadPath: string;
             /** 同时播放 */
             notInterrupt: boolean;
+            /** 打断时 */
+            tempRemoteDuck: '暂停' | '降低音量';
             /** 播放错误时自动停止 */
             autoStopWhenError: boolean;
             /** 插件缓存策略 todo */

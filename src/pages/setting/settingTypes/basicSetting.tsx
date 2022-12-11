@@ -104,6 +104,12 @@ export default function BasicSetting() {
                     'setting.basic.notInterrupt',
                     basicSetting?.notInterrupt ?? false,
                 ),
+                createRadio(
+                    '播放被暂时打断时',
+                    'setting.basic.tempRemoteDuck',
+                    ['暂停', '降低音量'],
+                    basicSetting?.tempRemoteDuck ?? '暂停',
+                ),
                 createSwitch(
                     '播放失败时自动暂停',
                     'setting.basic.autoStopWhenError',

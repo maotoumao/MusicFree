@@ -22,11 +22,22 @@ module.exports = async function () {
             if (permanent) {
                 return MusicQueue.pause();
             }
-            if (paused) {
-                resumeState = await TrackPlayer.getState();
-                return MusicQueue.pause();
-            } else if (!musicIsPaused(resumeState)) {
-                return MusicQueue.play();
+            const tempRemoteDuckConf = Config.get(
+                'setting.basic.tempRemoteDuck',
+            );
+            if (tempRemoteDuckConf === '降低音量') {
+                if (paused) {
+                    return TrackPlayer.setVolume(0.5);
+                } else {
+                    return TrackPlayer.setVolume(1);
+                }
+            } else {
+                if (paused) {
+                    resumeState = await TrackPlayer.getState();
+                    return MusicQueue.pause();
+                } else if (!musicIsPaused(resumeState)) {
+                    return MusicQueue.play();
+                }
             }
         },
     );
