@@ -13,6 +13,8 @@ interface IConfig {
             useCelluarNetworkDownload: boolean;
             /** 最大同时下载 */
             maxDownload: number | string;
+            /** 播放歌曲行为 */
+            clickMusicInSearch: '播放歌曲' | '播放歌曲并替换播放列表';
             /** 点击专辑单曲 */
             clickMusicInAlbum: '播放专辑' | '播放单曲';
             /** 下载文件夹 */
