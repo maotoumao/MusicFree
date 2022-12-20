@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useState} from 'react';
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {Text} from 'react-native';
 import rpx from '@/utils/rpx';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
@@ -25,12 +25,19 @@ function getResultComponent(
               () => {
                   const searchResults = useAtomValue(searchResultsAtom);
                   const pluginSearchResult = searchResults[tab][pluginHash];
+                  const pluginSearchResultRef = useRef(pluginSearchResult);
+
+                  useEffect(() => {
+                      pluginSearchResultRef.current = pluginSearchResult;
+                  }, [pluginSearchResult]);
+
                   return (
                       <ResultWrapper
                           tab={tab}
                           searchResult={pluginSearchResult}
                           pluginHash={pluginHash}
                           pluginName={pluginName}
+                          pluginSearchResultRef={pluginSearchResultRef}
                       />
                   );
               },

@@ -117,7 +117,7 @@ export default function BasicSetting() {
                 ),
                 createRadio(
                     '点击搜索结果内单曲时',
-                    'setting.basic.clickMusicInAlbum',
+                    'setting.basic.clickMusicInSearch',
                     ['播放歌曲', '播放歌曲并替换播放列表'],
                     basicSetting?.clickMusicInSearch ?? '播放歌曲',
                 ),

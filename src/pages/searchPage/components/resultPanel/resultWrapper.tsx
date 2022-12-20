@@ -17,9 +17,10 @@ interface IResultWrapperProps<
     pluginHash: string;
     pluginName: string;
     searchResult: ISearchResult<T>;
+    pluginSearchResultRef: React.MutableRefObject<ISearchResult<T>>;
 }
 function ResultWrapper(props: IResultWrapperProps) {
-    const {tab, pluginHash, searchResult} = props;
+    const {tab, pluginHash, searchResult, pluginSearchResultRef} = props;
     const search = useSearch();
     const [searchState, setSearchState] = useState<RequestStateCode>(
         searchResult?.state ?? RequestStateCode.IDLE,
@@ -40,7 +41,12 @@ function ResultWrapper(props: IResultWrapperProps) {
     }, [searchResult]);
 
     const renderItem = ({item, index}: any) => (
-        <ResultComponent item={item} index={index} pluginHash={pluginHash} />
+        <ResultComponent
+            item={item}
+            index={index}
+            pluginHash={pluginHash}
+            pluginSearchResultRef={pluginSearchResultRef}
+        />
     );
 
     return searchState === RequestStateCode.PENDING_FP ? (
