@@ -336,7 +336,11 @@ const getFakeNextTrack = () => {
     }
 };
 
-/** 播放音乐 */
+/** 播放音乐
+ * musicItem有值：播放音乐
+ * musicItem为空，且forcePlay为false或空：继续播放
+ * musicItem为空，且forcePlay为true：强制从头开始播放
+ */
 const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
     try {
         trace('播放', musicItem);
@@ -344,7 +348,9 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
         if (
             Network.isCellular() &&
             !Config.get('setting.basic.useCelluarNetworkPlay') &&
-            !LocalMusicSheet.isLocalMusic(musicItem ?? null)
+            !LocalMusicSheet.isLocalMusic(
+                musicItem ?? musicQueue[currentIndex] ?? null,
+            )
         ) {
             Toast.warn('当前设置移动网络不可播放，可在侧边栏基本设置中打开');
             await TrackPlayer.reset();
