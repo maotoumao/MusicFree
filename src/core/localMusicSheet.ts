@@ -1,5 +1,5 @@
 import {internalSerializeKey, StorageKeys} from '@/constants/commonConst';
-import mp3Util from '@/native/mp3Util';
+import mp3Util, {IBasicMeta} from '@/native/mp3Util';
 import {
     getInternalData,
     InternalDataType,
@@ -156,13 +156,25 @@ function cancelImportLocal() {
 }
 
 // 导入本地音乐
+const groupNum = 200;
 async function importLocal(_folderPaths: string[]) {
     const folderPaths = [..._folderPaths];
     const {musicList, token} = await getMusicStats(folderPaths);
     if (token !== importToken) {
         throw new Error('Import Broken');
     }
-    const metas = await mp3Util.getMediaMeta(musicList.map(_ => _.path));
+    // 分组请求，不然序列化可能出问题
+    let metas: IBasicMeta[] = [];
+    const groups = Math.ceil(musicList.length / groupNum);
+    for (let i = 0; i < groups; ++i) {
+        metas = metas.concat(
+            await mp3Util.getMediaMeta(
+                musicList
+                    .slice(i * groupNum, (i + 1) * groupNum)
+                    .map(_ => _.path),
+            ),
+        );
+    }
     if (token !== importToken) {
         throw new Error('Import Broken');
     }
