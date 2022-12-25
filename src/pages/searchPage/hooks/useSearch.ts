@@ -1,4 +1,4 @@
-import {errorLog, trace} from '@/utils/log';
+import {devLog, errorLog, trace} from '@/utils/log';
 import {RequestStateCode} from '@/constants/commonConst';
 import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
@@ -147,6 +147,14 @@ export default function useSearch() {
                     );
                 } catch (e: any) {
                     errorLog('搜索失败', e?.message);
+                    devLog(
+                        'error',
+                        '搜索失败',
+                        `Plugin: ${plugin.name} Query: ${query} Page: ${page}`,
+                        e,
+                        e?.message,
+                    );
+
                     setPageStatus(PageStatus.RESULT);
                     setSearchResults(
                         produce(draft => {

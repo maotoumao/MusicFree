@@ -2,6 +2,7 @@ import {logger, fileAsyncTransport} from 'react-native-logs';
 import RNFS from 'react-native-fs';
 import pathConst from '@/constants/pathConst';
 import Config from '../core/config';
+import {addLog} from '@/lib/react-native-vdebug/src/log';
 
 const config = {
     transport: fileAsyncTransport,
@@ -50,6 +51,15 @@ export function errorLog(desc: string, message: any) {
             message,
         });
         trace(desc, message, 'error');
+    }
+}
+
+export function devLog(
+    method: 'log' | 'error' | 'warn' | 'info',
+    ...args: any[]
+) {
+    if (Config.get('setting.basic.debug.devLog')) {
+        addLog(method, args);
     }
 }
 

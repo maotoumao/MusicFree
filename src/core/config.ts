@@ -40,6 +40,7 @@ interface IConfig {
             debug: {
                 errorLog: boolean;
                 traceLog: boolean;
+                devLog: boolean;
             };
         };
 

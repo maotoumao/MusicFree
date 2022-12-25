@@ -317,7 +317,7 @@ export default function BasicSetting() {
             ],
         },
         {
-            title: '错误日志',
+            title: '开发选项',
             data: [
                 createSwitch(
                     '记录错误日志',
@@ -328,6 +328,11 @@ export default function BasicSetting() {
                     '记录详细日志',
                     'setting.basic.debug.traceLog',
                     basicSetting?.debug?.traceLog ?? false,
+                ),
+                createSwitch(
+                    '调试面板',
+                    'setting.basic.debug.devLog',
+                    basicSetting?.debug?.devLog ?? false,
                 ),
             ],
         },

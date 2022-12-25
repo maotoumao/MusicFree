@@ -15,6 +15,7 @@ import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import toastConfig from '@/components/base/toast';
 import useBootstrap from './useBootstrap';
+import Debug from '@/components/debug';
 
 /**
  * 字体颜色
@@ -68,6 +69,7 @@ export default function Pages() {
                         <Dialogs />
                         <Share />
                         <Toast config={toastConfig} />
+                        <Debug />
                     </NavigationContainer>
                 </SafeAreaProvider>
             </PaperProvider>

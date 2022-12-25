@@ -18,7 +18,7 @@ import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
 import MediaMeta from './mediaMeta';
 import {nanoid} from 'nanoid';
-import {errorLog, trace} from '../utils/log';
+import {devLog, errorLog, trace} from '../utils/log';
 import Cache from './cache';
 import {
     getInternalData,
@@ -285,6 +285,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 return this.getMediaSource(musicItem, quality, --retryCount);
             }
             errorLog('获取真实源失败', e?.message);
+            devLog('error', '获取真实源失败', e, e?.message);
             return null;
         }
     }
@@ -302,7 +303,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                     resetMediaItem(musicItem, undefined, true),
                 ) ?? null
             );
-        } catch (e) {
+        } catch (e: any) {
+            devLog('error', '获取音乐详情失败', e, e?.message);
             return null;
         }
     }
@@ -393,6 +395,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 lrcUrl = lrcSource?.lrc;
             } catch (e: any) {
                 trace('插件获取歌词失败', e?.message, 'error');
+                devLog('error', '插件获取歌词失败', e, e?.message);
             }
         }
         // 5. 最后一次请求
@@ -429,6 +432,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 return res;
             }
         }
+        devLog('warn', '无歌词');
 
         return null;
     }
@@ -461,6 +465,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return {...albumItem, ...result};
         } catch (e: any) {
             trace('获取专辑信息失败', e?.message);
+            devLog('error', '获取专辑信息失败', e, e?.message);
+
             return {...albumItem, musicList: []};
         }
     }
@@ -496,6 +502,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         } catch (e: any) {
             trace('查询作者信息失败', e?.message);
+            devLog('error', '查询作者信息失败', e, e?.message);
+
             throw e;
         }
     }
@@ -507,8 +515,10 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 (await this.plugin.instance?.importMusicSheet?.(urlLike)) ?? [];
             result.forEach(_ => resetMediaItem(_, this.plugin.name));
             return result;
-        } catch (e) {
+        } catch (e: any) {
             console.log(e);
+            devLog('error', '导入歌单失败', e, e?.message);
+
             return [];
         }
     }
@@ -523,7 +533,9 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             }
             resetMediaItem(result, this.plugin.name);
             return result;
-        } catch {
+        } catch (e: any) {
+            devLog('error', '导入单曲失败', e, e?.message);
+
             return null;
         }
     }
@@ -696,6 +708,7 @@ async function installPluginFromUrl(url: string) {
             throw new Error('插件无法解析!');
         }
     } catch (e: any) {
+        devLog('error', 'URL安装插件失败', e, e?.message);
         errorLog('URL安装插件失败', e);
         throw new Error(e?.message ?? '');
     }
