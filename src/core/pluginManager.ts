@@ -539,6 +539,40 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return null;
         }
     }
+    /** 获取榜单 */
+    async getTopLists(): Promise<IMusic.IMusicTopListGroupItem[]> {
+        try {
+            const result = await this.plugin.instance?.getTopLists?.();
+            if (!result) {
+                throw new Error();
+            }
+            return result;
+        } catch (e: any) {
+            devLog('error', '获取榜单失败', e, e?.message);
+            return [];
+        }
+    }
+    /** 获取榜单详情 */
+    async getTopListDetail(
+        topListItem: IMusic.IMusicTopListItem,
+    ): Promise<ICommon.WithMusicList<IMusic.IMusicTopListItem>> {
+        try {
+            const result = await this.plugin.instance?.getTopListDetail?.(
+                topListItem,
+            );
+            if (!result) {
+                throw new Error();
+            }
+            // resetMediaItem(result, this.plugin.name);
+            return result;
+        } catch (e: any) {
+            devLog('error', '获取榜单详情失败', e, e?.message);
+            return {
+                ...topListItem,
+                musicList: [],
+            };
+        }
+    }
 }
 //#endregion
 

@@ -36,7 +36,7 @@ export default function Operations() {
             iconName: 'trophy-outline',
             title: '榜单',
             action() {
-                console.log('!!');
+                navigate(ROUTE_PATH.TOP_LIST);
             },
         },
     ];

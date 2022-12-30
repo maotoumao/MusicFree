@@ -80,6 +80,12 @@ declare namespace IPlugin {
         importMusicItem?: (
             urlLike: string,
         ) => Promise<IMusic.IMusicItem | null>;
+        /** 获取榜单 */
+        getTopLists?: () => Promise<IMusic.IMusicTopListGroupItem[]>;
+        /** 获取榜单详情 */
+        getTopListDetail?: (
+            topListItem: IMusic.IMusicTopListItem,
+        ) => Promise<ICommon.WithMusicList<IMusic.IMusicTopListItem>>;
     }
 
     export interface IPluginInstance extends IPluginDefine {

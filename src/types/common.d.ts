@@ -36,4 +36,8 @@ declare namespace ICommon {
         [k: string]: any;
         [k: symbol]: any;
     };
+
+    export type WithMusicList<T> = T & {
+        musicList: IMusic.IMusicItem[];
+    };
 }
