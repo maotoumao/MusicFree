@@ -39,6 +39,13 @@ export default function Operations() {
                 navigate(ROUTE_PATH.DOWNLOADING);
             },
         },
+        {
+            iconName: 'trophy-outline',
+            title: '榜单',
+            action() {
+                console.log('!!');
+            },
+        },
     ];
 
     return (
