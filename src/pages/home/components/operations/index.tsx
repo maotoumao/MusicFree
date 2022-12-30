@@ -25,13 +25,6 @@ export default function Operations() {
                 navigate(ROUTE_PATH.LOCAL);
             },
         },
-        // {
-        //   iconName: 'ios-time-sharp',
-        //   title: '最近播放',
-        //   action(){
-        //     console.log('最近');
-        //   }
-        // },
         {
             iconName: 'download',
             title: '下载列表',
@@ -64,6 +57,7 @@ const style = StyleSheet.create({
         height: rpx(144),
         justifyContent: 'space-between',
         paddingHorizontal: rpx(24),
-        marginTop: rpx(24),
+        marginTop: rpx(20),
+        marginBottom: rpx(20),
     },
 });
