@@ -563,7 +563,11 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             if (!result) {
                 throw new Error();
             }
-            // resetMediaItem(result, this.plugin.name);
+            if (result.musicList) {
+                result.musicList.forEach(_ =>
+                    resetMediaItem(_, this.plugin.name),
+                );
+            }
             return result;
         } catch (e: any) {
             devLog('error', '获取榜单详情失败', e, e?.message);

@@ -35,6 +35,8 @@ export const ROUTE_PATH = {
     ARTIST_DETAIL: 'artist-detail',
     /** 榜单页 */
     TOP_LIST: 'top-list',
+    /** 榜单详情页 */
+    TOP_LIST_DETAIL: 'top-list-detail',
     /** 设置页 */
     SETTING: 'setting',
     /** 本地音乐 */
@@ -152,6 +154,10 @@ interface RouterParams extends RouterParamsBase {
             }[],
         ) => Promise<boolean>; // true会自动关闭，false会停在当前页面
         matchExtension?: (path: string) => boolean;
+    };
+    'top-list-detail': {
+        pluginHash: string;
+        topList: IMusic.IMusicTopListItem;
     };
 }
 
