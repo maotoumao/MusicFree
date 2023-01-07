@@ -14,6 +14,7 @@ import Setting from '../pages/setting';
 import SheetDetail from '../pages/sheetDetail';
 import {LogBox} from 'react-native';
 import TopList from '@/pages/topList';
+import TopListDetail from '@/pages/topListDetail';
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -71,6 +72,10 @@ export const routes: Array<IRoutes> = [
     {
         path: ROUTE_PATH.TOP_LIST,
         component: TopList,
+    },
+    {
+        path: ROUTE_PATH.TOP_LIST_DETAIL,
+        component: TopListDetail,
     },
     {
         path: ROUTE_PATH.SEARCH_PAGE,

@@ -9,14 +9,15 @@ import TopListItem from '@/components/mediaItem/topListItem';
 import ThemeText from '@/components/base/themeText';
 
 interface IBoardPanelProps {
+    hash: string;
     topListData: IPluginTopListResult;
 }
 function BoardPanel(props: IBoardPanelProps) {
-    const {topListData} = props ?? {};
+    const {hash, topListData} = props ?? {};
 
     const renderItem: SectionListProps<IMusic.IMusicTopListItem>['renderItem'] =
         ({item}) => {
-            return <TopListItem topListItem={item} />;
+            return <TopListItem topListItem={item} pluginHash={hash} />;
         };
 
     const renderSectionHeader: SectionListProps<IMusic.IMusicTopListItem>['renderSectionHeader'] =

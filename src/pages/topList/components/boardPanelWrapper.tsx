@@ -17,5 +17,5 @@ export default function BoardPanelWrapper(props: IBoardPanelProps) {
         getTopList(hash);
     }, []);
 
-    return <BoardPanel topListData={topListData} />;
+    return <BoardPanel topListData={topListData} hash={hash} />;
 }
