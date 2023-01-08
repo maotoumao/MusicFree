@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {FlatList, StyleSheet, ListRenderItem} from 'react-native';
 import MusicSheet from '@/core/musicSheet';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import useDialog from '@/components/dialogs/useDialog';
@@ -15,14 +15,9 @@ export default function MySheets() {
     const navigate = useNavigate();
     const {showDialog} = useDialog();
 
-    return (
-        <FlatList
-            overScrollMode="never"
-            ListHeaderComponent={sheetHeader}
-            style={style.wrapper}
-            data={musicSheets ?? []}
-            keyExtractor={sheet => sheet.id}
-            renderItem={({item: sheet}) => (
+    const renderMySheetItem: ListRenderItem<IMusic.IMusicSheetItem> =
+        function ({item: sheet}) {
+            return (
                 <ListItem
                     key={`${sheet.id}`}
                     title={sheet.title}
@@ -54,7 +49,17 @@ export default function MySheets() {
                     )}
                     desc={`${sheet.musicList.length ?? '-'}首`}
                 />
-            )}
+            );
+        };
+
+    return (
+        <FlatList
+            overScrollMode="never"
+            ListHeaderComponent={sheetHeader}
+            style={style.wrapper}
+            data={musicSheets ?? []}
+            keyExtractor={sheet => sheet.id}
+            renderItem={renderMySheetItem}
         />
     );
 }

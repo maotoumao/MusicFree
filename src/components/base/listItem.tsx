@@ -117,6 +117,7 @@ export default function ListItem(props: IListItemProps) {
         itemPaddingLeft,
         itemPaddingRight,
     } = props;
+
     return (
         <List.Item
             onLongPress={onLongPress}

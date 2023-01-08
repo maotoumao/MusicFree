@@ -15,7 +15,7 @@ import usePanel from '@/components/panels/usePanel';
 import timeformat from '@/utils/timeformat';
 
 const ITEM_HEIGHT = rpx(108);
-export default function HomeDrawer(props: any) {
+function HomeDrawer(props: any) {
     const navigate = useNavigate();
     function navigateToSetting(settingType: string) {
         navigate(ROUTE_PATH.SETTING, {
@@ -138,6 +138,8 @@ export default function HomeDrawer(props: any) {
         </>
     );
 }
+
+export default memo(HomeDrawer, () => true);
 
 const style = StyleSheet.create({
     wrapper: {
