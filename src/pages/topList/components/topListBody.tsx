@@ -9,7 +9,7 @@ import {useTheme} from 'react-native-paper';
 import BoardPanelWrapper from './boardPanelWrapper';
 
 export default function TopListBody() {
-    const routes = PluginManager.getSortedSearchablePlugins().map(_ => ({
+    const routes = PluginManager.getSortedTopListsablePlugins().map(_ => ({
         key: _.hash,
         title: _.name,
     }));

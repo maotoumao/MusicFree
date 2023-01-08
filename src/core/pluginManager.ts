@@ -841,6 +841,20 @@ function getSortedSearchablePlugins() {
     );
 }
 
+function getTopListsablePlugins() {
+    return plugins.filter(_ => _.state === 'enabled' && _.instance.getTopLists);
+}
+
+function getSortedTopListsablePlugins() {
+    return getTopListsablePlugins().sort((a, b) =>
+        (PluginMeta.getPluginMeta(a).order ?? Infinity) -
+            (PluginMeta.getPluginMeta(b).order ?? Infinity) <
+        0
+            ? -1
+            : 1,
+    );
+}
+
 function useSortedPlugins() {
     const _plugins = pluginStateMapper.useMappedState();
     const _pluginMetaAll = PluginMeta.usePluginMetaAll();
@@ -884,6 +898,8 @@ const PluginManager = {
     getValidPlugins,
     getSearchablePlugins,
     getSortedSearchablePlugins,
+    getTopListsablePlugins,
+    getSortedTopListsablePlugins,
     usePlugins: pluginStateMapper.useMappedState,
     useSortedPlugins,
     uninstallAllPlugins,
