@@ -51,14 +51,15 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
         // 判断是否相同
         if (coverImg === musicSheet?.coverImg && title === musicSheet?.title) {
             hideDialog();
+            return;
         }
 
         let _coverImg = coverImg;
         if (_coverImg) {
             _coverImg = addFileScheme(
-                `${pathConst.dataPath}background${_coverImg.substring(
-                    _coverImg.lastIndexOf('.'),
-                )}`,
+                `${pathConst.dataPath}sheet${
+                    musicSheet.id
+                }${_coverImg.substring(_coverImg.lastIndexOf('.'))}`,
             );
             await copyFile(coverImg!, _coverImg);
         }
