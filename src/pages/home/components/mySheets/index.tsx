@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {FlatList, StyleSheet, ListRenderItem} from 'react-native';
 import MusicSheet from '@/core/musicSheet';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
@@ -10,7 +10,7 @@ import Toast from '@/utils/toast';
 import sheetHeader from './sheetHeader';
 import rpx from '@/utils/rpx';
 
-export default function MySheets() {
+function MySheets() {
     const musicSheets = MusicSheet.useUserSheets();
     const navigate = useNavigate();
     const {showDialog} = useDialog();
@@ -63,6 +63,8 @@ export default function MySheets() {
         />
     );
 }
+
+export default memo(MySheets, () => true);
 
 const style = StyleSheet.create({
     wrapper: {

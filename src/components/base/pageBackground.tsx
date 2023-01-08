@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Config from '@/core/config';
 import {useTheme} from 'react-native-paper';
 import {ImgAsset} from '@/constants/assetsConst';
 import Image from './image';
 
-export default function PageBackground() {
+function PageBackground() {
     const themeConfig = Config.useConfig('setting.theme');
     const theme = useTheme();
 
@@ -35,6 +35,7 @@ export default function PageBackground() {
         </>
     );
 }
+export default memo(PageBackground, () => true);
 
 const style = StyleSheet.create({
     wrapper: {

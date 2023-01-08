@@ -42,6 +42,6 @@ module.exports = async function () {
         },
     );
     TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
-        Config.set('status.music.progress', evt.position);
+        Config.set('status.music.progress', evt.position, false);
     });
 };

@@ -156,7 +156,7 @@ function cancelImportLocal() {
 }
 
 // 导入本地音乐
-const groupNum = 200;
+const groupNum = 50;
 async function importLocal(_folderPaths: string[]) {
     const folderPaths = [..._folderPaths];
     const {musicList, token} = await getMusicStats(folderPaths);
