@@ -1,4 +1,5 @@
 import DownloadDialog from './downloadDialog';
+import EditSheetDetailDialog from './editSheetDetail';
 import LoadingDialog from './loadingDialog';
 import RadioDialog from './radioDialog';
 import SimpleDialog from './simpleDialog';
@@ -10,6 +11,7 @@ const dialogs = {
     DownloadDialog,
     SubscribePluginDialog,
     LoadingDialog,
+    EditSheetDetailDialog,
 };
 
 export default dialogs;

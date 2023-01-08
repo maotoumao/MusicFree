@@ -47,6 +47,15 @@ export default function () {
                         });
                     },
                 },
+                {
+                    icon: 'square-edit-outline',
+                    title: '编辑歌单信息',
+                    onPress() {
+                        showDialog('EditSheetDetailDialog', {
+                            musicSheet: musicSheet,
+                        });
+                    },
+                },
             ]}
         />
     );

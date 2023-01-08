@@ -133,10 +133,18 @@ async function addMusic(
         item => musicList.findIndex(_ => isSameMediaItem(_, item)) === -1,
     );
     const newMusicList = musicList.concat(musicItem);
-    updateAndSaveSheet(sheetId, {
-        basic: {
+    let basic;
+    if (
+        !musicSheets
+            .find(_ => _.id === sheetId)
+            ?.coverImg?.startsWith('file://')
+    ) {
+        basic = {
             coverImg: newMusicList[newMusicList.length - 1]?.artwork,
-        },
+        };
+    }
+    updateAndSaveSheet(sheetId, {
+        basic: basic,
         musicList: newMusicList,
     });
     notifyMusicSheets();
