@@ -1,7 +1,7 @@
 declare namespace IMusic {
     export interface IMusicSheetItemBase {
         /** 封面图 */
-        coverImg?: string;
+        coverImg?: string | null;
         /** 标题 */
         title: string;
         /** 歌单id */

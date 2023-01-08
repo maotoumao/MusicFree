@@ -13,7 +13,7 @@ export default function (props: INavBarProps) {
 
     return (
         <ComplexAppBar
-            title="专辑"
+            title="榜单"
             onSearchPress={() => {
                 navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                     musicList: musicList,
@@ -27,7 +27,7 @@ export default function (props: INavBarProps) {
                         navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                             musicList: musicList,
                             musicSheet: {
-                                title: '专辑',
+                                title: '榜单',
                             },
                         });
                     },

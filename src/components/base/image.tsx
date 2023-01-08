@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, ImageProps} from 'react-native';
 
 interface IImageProps extends ImageProps {
-    uri?: string;
+    uri?: string | null;
     emptySrc: any;
 }
 export default function (props: Omit<IImageProps, 'source'>) {

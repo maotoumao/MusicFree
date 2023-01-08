@@ -10,9 +10,10 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {launchImageLibrary} from 'react-native-image-picker';
 import pathConst from '@/constants/pathConst';
 import Image from '@/components/base/image';
-import {copyFile} from 'react-native-fs';
+import {copyFile, exists, unlink} from 'react-native-fs';
 import MusicSheet from '@/core/musicSheet';
-import {addFileScheme} from '@/utils/fileUtils';
+import {addFileScheme, addRandomHash} from '@/utils/fileUtils';
+import Toast from '@/utils/toast';
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
@@ -55,24 +56,33 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
         }
 
         let _coverImg = coverImg;
-        if (_coverImg) {
+        if (_coverImg && _coverImg !== musicSheet?.coverImg) {
             _coverImg = addFileScheme(
                 `${pathConst.dataPath}sheet${
                     musicSheet.id
                 }${_coverImg.substring(_coverImg.lastIndexOf('.'))}`,
             );
-            await copyFile(coverImg!, _coverImg);
+            try {
+                if (await exists(_coverImg)) {
+                    await unlink(_coverImg);
+                }
+                await copyFile(coverImg!, _coverImg);
+            } catch (e) {
+                console.log(e);
+            }
         }
         let _title = title;
-        if (!title?.length) {
+        if (!_title?.length) {
             _title = musicSheet.title;
         }
         // 更新歌单信息
         MusicSheet.updateAndSaveSheet(musicSheet.id, {
             basic: {
-                coverImg: _coverImg,
+                coverImg: _coverImg ? addRandomHash(_coverImg) : null,
                 title: _title,
             },
+        }).then(() => {
+            Toast.success('更新歌单信息成功~');
         });
         hideDialog();
     }

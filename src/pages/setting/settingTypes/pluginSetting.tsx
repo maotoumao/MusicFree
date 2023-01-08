@@ -21,6 +21,7 @@ import {PluginMeta} from '@/core/pluginMeta';
 import produce from 'immer';
 import objectPath from 'object-path';
 import SortableFlatList from '@/components/base/SortableFlatList';
+import {addRandomHash} from '@/utils/fileUtils';
 
 const ITEM_HEIGHT = rpx(96);
 const ITEM_HEIGHT_BIG = rpx(120);
@@ -376,13 +377,6 @@ function PluginView(props: IPluginViewProps) {
             )}
         </List.Accordion>
     );
-}
-
-function addRandomHash(url: string) {
-    if (url.indexOf('#') === -1) {
-        return `${url}#${Date.now()}`;
-    }
-    return url;
 }
 
 async function installPluginFromUrl(text: string) {
