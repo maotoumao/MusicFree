@@ -17,13 +17,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import {
-    LayoutRectangle,
-    Pressable,
-    StyleSheet,
-    View,
-    ViewToken,
-} from 'react-native';
+import {LayoutRectangle, Pressable, StyleSheet, View} from 'react-native';
 import {
     runOnJS,
     useDerivedValue,
@@ -74,8 +68,6 @@ export default function SortableFlatList<T extends any = any>(
     // 是否处在激活状态, -1表示无，其他表示当前激活的下标
     const activeRef = useRef(-1);
     const [activeItem, setActiveItem] = useState<T | null>(null);
-
-    const viewableItemsRef = useRef<ViewToken[] | null>(null);
 
     const layoutRef = useRef<LayoutRectangle>();
     // listref
@@ -160,9 +152,6 @@ export default function SortableFlatList<T extends any = any>(
 
     //#endregion
 
-    const onViewRef = useRef((vi: any) => {
-        viewableItemsRef.current = vi.viewableItems;
-    });
     return (
         <View style={style.flex1}>
             {/* 纯展示 */}
@@ -176,7 +165,6 @@ export default function SortableFlatList<T extends any = any>(
             />
             <FlashList
                 scrollEnabled={scrollEnabled}
-                onViewableItemsChanged={onViewRef.current}
                 ref={_ => {
                     listRef.current = _;
                 }}

@@ -1,4 +1,4 @@
-import React, {memo, useCallback} from 'react';
+import React, {memo, useCallback, useEffect} from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicItem from '@/components/mediaItem/musicItem';
@@ -30,6 +30,14 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
             }),
         );
     }, [index]);
+
+    useEffect(() => {
+        console.log('render-flashlistitem', index);
+        return () => {
+            console.log('destroy', index);
+        };
+    }, []);
+
     return (
         <MusicItem
             itemWidth={ITEM_WIDTH}
