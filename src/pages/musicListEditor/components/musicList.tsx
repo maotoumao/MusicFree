@@ -1,28 +1,30 @@
 import React, {memo, useCallback} from 'react';
-import {StatusBar, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicItem from '@/components/mediaItem/musicItem';
 import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
 import {Checkbox} from 'react-native-paper';
+import DraggableFlatList from 'react-native-draggable-flatlist';
 import {
     editingMusicListAtom,
     IEditorMusicItem,
     musicListChangedAtom,
 } from '../store/atom';
-import SortableFlatList from '@/components/base/SortableFlatList';
+import {RenderItem} from 'react-native-draggable-flatlist/lib/typescript/types';
 
 const ITEM_HEIGHT = rpx(120);
-const ITEM_WIDTH = rpx(646);
 
 interface IMusicEditorItemProps {
-    index: number;
+    getIndex: () => number | undefined;
     editorMusicItem: IEditorMusicItem;
+    drag: () => void;
+    isActive: boolean;
 }
 function _MusicEditorItem(props: IMusicEditorItemProps) {
-    const {index, editorMusicItem} = props;
+    const {getIndex, editorMusicItem, drag, isActive} = props;
     const setEditingMusicList = useSetAtom(editingMusicListAtom);
-
+    const index = getIndex()!;
     const onPress = useCallback(() => {
         setEditingMusicList(
             produce(draft => {
@@ -30,10 +32,12 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
             }),
         );
     }, [index]);
+
     return (
         <MusicItem
-            itemWidth={ITEM_WIDTH}
             musicItem={editorMusicItem.musicItem}
+            itemBackgroundColor={isActive ? '#999999' : undefined}
+            onItemLongPress={drag}
             left={{
                 component: () => (
                     <View style={style.checkBox}>
@@ -48,8 +52,6 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
                     </View>
                 ),
             }}
-            right={() => <></>}
-            itemPaddingRight={0}
             onItemPress={onPress}
         />
     );
@@ -59,34 +61,43 @@ const MusicEditorItem = memo(
     _MusicEditorItem,
     (prev, curr) =>
         prev.editorMusicItem === curr.editorMusicItem &&
-        prev.index === curr.index,
+        prev.isActive === curr.isActive,
 );
 
-/** 音乐列表 */
-const marginTop = rpx(88) * 2 + (StatusBar.currentHeight ?? 0);
 export default function MusicList() {
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
-    const renderItem = useCallback(
-        ({index, item}: any) => {
-            return <MusicEditorItem editorMusicItem={item} index={index!} />;
+    const renderItem: RenderItem<IEditorMusicItem> = useCallback(
+        ({item, getIndex, drag, isActive}) => {
+            return (
+                <MusicEditorItem
+                    editorMusicItem={item}
+                    getIndex={getIndex}
+                    drag={drag}
+                    isActive={isActive}
+                />
+            );
         },
         [editingMusicList],
     );
 
     return editingMusicList?.length ? (
-        <SortableFlatList
-            activeBackgroundColor="rgba(33,33,33,0.8)"
-            marginTop={marginTop}
-            data={editingMusicList}
-            renderItem={renderItem}
-            itemHeight={ITEM_HEIGHT}
-            onSortEnd={newData => {
-                setEditingMusicList(newData);
+        <DraggableFlatList
+            style={style.wrapper}
+            keyExtractor={item => item.musicItem.id}
+            getItemLayout={(_, index) => ({
+                length: ITEM_HEIGHT,
+                offset: ITEM_HEIGHT * index,
+                index,
+            })}
+            onDragEnd={params => {
+                setEditingMusicList([...params.data]);
                 setMusicListChanged(true);
             }}
+            data={editingMusicList}
+            renderItem={renderItem}
         />
     ) : (
         <View style={style.wrapper} />
@@ -101,5 +112,8 @@ const style = StyleSheet.create({
     checkBox: {
         height: '100%',
         justifyContent: 'center',
+    },
+    iconRight: {
+        textAlignVertical: 'center',
     },
 });
