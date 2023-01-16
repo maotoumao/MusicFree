@@ -1,5 +1,6 @@
 import {internalSerializeKey} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
+import {addFileScheme} from '@/utils/fileUtils';
 import {errorLog} from '@/utils/log';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import {getQualityOrder} from '@/utils/qualities';
@@ -194,8 +195,8 @@ async function downloadNext() {
     downloadNextAfterInteraction();
     const extension = getExtensionName(url);
     /** 目标下载地址 */
-    const targetDownloadPath = getDownloadPath(
-        `${nextDownloadItem.filename}.${extension}`,
+    const targetDownloadPath = addFileScheme(
+        getDownloadPath(`${nextDownloadItem.filename}.${extension}`),
     );
     const {promise, jobId} = downloadFile({
         fromUrl: url ?? '',
