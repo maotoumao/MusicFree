@@ -117,7 +117,8 @@ function localMediaFilter(_: FileStat) {
         _.filename.endsWith('.acc') ||
         _.filename.endsWith('.aac') ||
         _.filename.endsWith('.ape') ||
-        _.filename.endsWith('.m4s')
+        _.filename.endsWith('.m4s') ||
+        _.filename.endsWith('.opus')
     );
 }
 
