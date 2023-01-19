@@ -55,6 +55,22 @@ export enum PluginStateCode {
     CannotParse = 'CANNOT PARSE',
 }
 
+const packages: Record<string, any> = {
+    cheerio,
+    'crypto-js': CryptoJs,
+    axios,
+    dayjs,
+    'big-integer': bigInt,
+    qs,
+    he,
+    '@react-native-cookies/cookies': {
+        flush: CookieManager.flush,
+        get: CookieManager.get,
+    },
+};
+
+const _require = (packageName: string) => packages[packageName];
+
 //#region 插件类
 export class Plugin {
     /** 插件名 */
@@ -82,29 +98,17 @@ export class Plugin {
     ) {
         this.state = 'enabled';
         let _instance: IPlugin.IPluginInstance;
+        const _module = {exports: {}};
         try {
             if (typeof funcCode === 'string') {
                 // eslint-disable-next-line no-new-func
                 _instance = Function(`
-            'use strict';
-            try {
-              return ${funcCode};
-            } catch(e) {
-              return null;
-            }
-          `)()({
-                    CryptoJs,
-                    axios,
-                    dayjs,
-                    cheerio,
-                    bigInt,
-                    qs,
-                    he,
-                    CookieManager: {
-                        flush: CookieManager.flush,
-                        get: CookieManager.get,
-                    },
-                });
+                    'use strict';
+                    return function(require, __musicfree_require, module, exports) {
+                        ${funcCode}
+                    }
+                `)()(_require, _require, _module, _module.exports);
+                _instance = _module.exports as IPlugin.IPluginInstance;
             } else {
                 _instance = funcCode();
             }
