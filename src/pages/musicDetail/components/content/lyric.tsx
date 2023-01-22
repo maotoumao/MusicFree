@@ -81,7 +81,7 @@ function useLyric() {
     return {lyric, currentLrcItem, meta, loading} as const;
 }
 
-const ITEM_HEIGHT = rpx(72);
+const ITEM_HEIGHT = rpx(92);
 
 function Empty() {
     return <View style={style.empty} />;
@@ -223,6 +223,7 @@ const style = StyleSheet.create({
     item: {
         fontSize: rpx(28),
         color: '#aaaaaa',
+        paddingHorizontal: rpx(64),
         width: rpx(750),
         height: ITEM_HEIGHT,
         textAlign: 'center',
@@ -232,6 +233,7 @@ const style = StyleSheet.create({
         fontSize: rpx(32),
         color: 'white',
         width: rpx(750),
+        paddingHorizontal: rpx(64),
         height: ITEM_HEIGHT,
         textAlign: 'center',
         textAlignVertical: 'center',
@@ -248,7 +250,7 @@ const style = StyleSheet.create({
         height: ITEM_HEIGHT,
         top: '40%',
         marginTop: rpx(48),
-        paddingHorizontal: rpx(28),
+        paddingHorizontal: rpx(18),
         left: 0,
         flexDirection: 'row',
         alignItems: 'center',
