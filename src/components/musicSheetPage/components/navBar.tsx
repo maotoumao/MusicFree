@@ -4,16 +4,17 @@ import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 
 interface INavBarProps {
+    navTitle: string;
     musicList: IMusic.IMusicItem[] | null;
 }
 
 export default function (props: INavBarProps) {
     const navigate = useNavigate();
-    const {musicList = []} = props;
+    const {navTitle, musicList = []} = props;
 
     return (
         <ComplexAppBar
-            title="榜单"
+            title={navTitle}
             onSearchPress={() => {
                 navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                     musicList: musicList,
@@ -27,7 +28,7 @@ export default function (props: INavBarProps) {
                         navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                             musicList: musicList,
                             musicSheet: {
-                                title: '榜单',
+                                title: navTitle,
                             },
                         });
                     },

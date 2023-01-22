@@ -36,7 +36,7 @@ export default function Header(props: IHeaderProps) {
                 <View style={style.content}>
                     <FastImage
                         style={style.coverImg}
-                        uri={topListDetail?.coverImg}
+                        uri={topListDetail?.artwork ?? topListDetail?.coverImg}
                         emptySrc={ImgAsset.albumDefault}
                     />
                     <View style={style.details}>

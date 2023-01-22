@@ -9,11 +9,11 @@ import Config from '@/core/config';
 import MusicQueue from '@/core/musicQueue';
 
 interface IMusicListProps {
-    topListDetail: IMusic.IMusicTopListItem | null;
+    sheetInfo: IMusic.IMusicSheetItemBase | null;
     musicList?: IMusic.IMusicItem[] | null;
 }
-export default function TopListMusicList(props: IMusicListProps) {
-    const {topListDetail, musicList} = props;
+export default function AlbumMusicList(props: IMusicListProps) {
+    const {sheetInfo: topListDetail, musicList} = props;
 
     return (
         <View style={style.wrapper}>

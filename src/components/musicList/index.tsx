@@ -23,6 +23,8 @@ interface IMusicListProps {
     ) => void;
 }
 const ITEM_HEIGHT = rpx(120);
+
+/** 音乐列表 */
 export default function MusicList(props: IMusicListProps) {
     const {Header, musicList, musicSheet, showIndex, onItemPress} = props;
 
