@@ -262,7 +262,7 @@ const style = StyleSheet.create({
         width: rpx(90),
     },
     singleLine: {
-        width: rpx(458),
+        width: rpx(500),
         height: 1,
         backgroundColor: '#cccccc',
         opacity: 0.4,
