@@ -1,4 +1,5 @@
 import {internalSerializeKey, StorageKeys} from '@/constants/commonConst';
+import {addFileScheme} from '@/utils/fileUtils';
 import {trace} from '@/utils/log';
 import {getMediaKey} from '@/utils/mediaItem';
 import {getStorage, setStorage} from '@/utils/storage';
@@ -30,9 +31,7 @@ const cache = new LRUCache<string, ICommon.IMediaMeta>({
             for (let [k, fp] of Object.entries(localFiles)) {
                 if (!localMeta?.[k] && fp) {
                     trace('清理缓存', fp);
-                    if (!fp.startsWith('file')) {
-                        fp = 'file://' + fp;
-                    }
+                    fp = addFileScheme(fp);
                     if (await exists(fp)) {
                         unlink(fp);
                     }
