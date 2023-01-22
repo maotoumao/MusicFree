@@ -25,6 +25,7 @@ import LocalMusicSheet from '@/core/localMusicSheet';
 import {localMusicSheetId} from '@/constants/commonConst';
 import {ROUTE_PATH} from '@/entry/router';
 import usePanel from '../usePanel';
+import useDialog from '@/components/dialogs/useDialog';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -40,6 +41,7 @@ const ITEM_HEIGHT = rpx(96);
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
     const {showPanel, unmountPanel} = usePanel();
+    const {showDialog} = useDialog();
     const primaryColor = usePrimaryColor();
 
     const {musicItem, musicSheet, from} = props ?? {};
@@ -132,9 +134,15 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'delete-forever-outline',
             title: '删除本地下载',
             show: !!downloaded,
-            onPress: async () => {
-                await LocalMusicSheet.removeMusic(musicItem, true);
-                Toast.success('已删除本地下载');
+            onPress: () => {
+                showDialog('SimpleDialog', {
+                    title: '删除本地下载',
+                    content: '将会删除已下载的本地文件，确定继续吗？',
+                    async onOk() {
+                        await LocalMusicSheet.removeMusic(musicItem, true);
+                        Toast.success('已删除本地下载');
+                    },
+                });
                 closePanel();
             },
         },
