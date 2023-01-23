@@ -6,8 +6,8 @@ import MusicQueue from '@/core/musicQueue';
 import {useNavigation} from '@react-navigation/native';
 import Tag from '@/components/base/tag';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-// import useShare from '@/components/share/useShare';
-import Toast from '@/utils/toast';
+import Share from 'react-native-share';
+import {B64Asset} from '@/constants/assetsConst';
 
 export default function NavBar() {
     const navigation = useNavigation();
@@ -41,19 +41,16 @@ export default function NavBar() {
                 icon="share"
                 color="white"
                 size={rpx(48)}
-                onPress={() => {
-                    Toast.warn('还没做好...再等等吧');
-                    // showShare({
-                    //     content: {
-                    //         type: 'ShareMusic',
-                    //         track: {
-                    //             id: musicItem?.id,
-                    //             platform: musicItem?.platform,
-                    //         },
-                    //     },
-                    //     title: musicItem?.title,
-                    //     desc: musicItem?.artist,
-                    // });
+                onPress={async () => {
+                    try {
+                        await Share.open({
+                            type: 'image/jpeg',
+                            title: 'MusicFree-一个插件化的免费音乐播放器',
+                            message: 'MusicFree-一个插件化的免费音乐播放器',
+                            url: B64Asset.share,
+                            subject: 'MusicFree分享',
+                        });
+                    } catch {}
                 }}
             />
         </View>

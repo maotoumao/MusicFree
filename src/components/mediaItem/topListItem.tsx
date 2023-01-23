@@ -20,7 +20,7 @@ export default function TopListItem(props: ITopListResultsProps) {
                 fallback: ImgAsset.albumDefault,
             }}
             title={topListItem.title}
-            desc={`${topListItem.description}`}
+            desc={`${topListItem.description ?? ''}`}
             onPress={() => {
                 navigate(ROUTE_PATH.TOP_LIST_DETAIL, {
                     pluginHash: pluginHash,

@@ -63,10 +63,7 @@ const packages: Record<string, any> = {
     'big-integer': bigInt,
     qs,
     he,
-    '@react-native-cookies/cookies': {
-        flush: CookieManager.flush,
-        get: CookieManager.get,
-    },
+    '@react-native-cookies/cookies': CookieManager,
 };
 
 const _require = (packageName: string) => {
@@ -102,7 +99,7 @@ export class Plugin {
     ) {
         this.state = 'enabled';
         let _instance: IPlugin.IPluginInstance;
-        const _module = {exports: {}};
+        const _module: any = {exports: {}};
         try {
             if (typeof funcCode === 'string') {
                 // eslint-disable-next-line no-new-func
@@ -112,8 +109,12 @@ export class Plugin {
                         ${funcCode}
                     }
                 `)()(_require, _require, _module, _module.exports);
-                console.log(_module);
-                _instance = _module.exports as IPlugin.IPluginInstance;
+                if (_module.exports.default) {
+                    _instance = _module.exports
+                        .default as IPlugin.IPluginInstance;
+                } else {
+                    _instance = _module.exports as IPlugin.IPluginInstance;
+                }
             } else {
                 _instance = funcCode();
             }

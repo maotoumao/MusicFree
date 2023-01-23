@@ -10,7 +10,6 @@ import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
 import {CustomTheme, DefaultTheme} from './theme';
 import Config from '@/core/config';
-import Share from '@/components/share';
 import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import toastConfig from '@/components/base/toast';
@@ -67,7 +66,6 @@ export default function Pages() {
 
                         <Panels />
                         <Dialogs />
-                        <Share />
                         <Toast config={toastConfig} />
                         <Debug />
                     </NavigationContainer>
