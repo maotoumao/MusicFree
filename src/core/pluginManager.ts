@@ -69,7 +69,11 @@ const packages: Record<string, any> = {
     },
 };
 
-const _require = (packageName: string) => packages[packageName];
+const _require = (packageName: string) => {
+    let pkg = packages[packageName];
+    pkg.default = pkg;
+    return pkg;
+};
 
 //#region 插件类
 export class Plugin {
@@ -108,12 +112,14 @@ export class Plugin {
                         ${funcCode}
                     }
                 `)()(_require, _require, _module, _module.exports);
+                console.log(_module);
                 _instance = _module.exports as IPlugin.IPluginInstance;
             } else {
                 _instance = funcCode();
             }
             this.checkValid(_instance);
         } catch (e: any) {
+            console.log(e);
             this.state = 'error';
             this.stateCode = PluginStateCode.CannotParse;
             if (e?.stateCode) {
