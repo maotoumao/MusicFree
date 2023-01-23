@@ -1,4 +1,8 @@
-import {internalSerializeKey, StorageKeys} from '@/constants/commonConst';
+import {
+    internalSerializeKey,
+    StorageKeys,
+    supportLocalMediaType,
+} from '@/constants/commonConst';
 import mp3Util, {IBasicMeta} from '@/native/mp3Util';
 import {
     getInternalData,
@@ -107,19 +111,7 @@ function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
 }
 
 function localMediaFilter(_: FileStat) {
-    return (
-        _.filename.endsWith('.mp3') ||
-        _.filename.endsWith('.flac') ||
-        _.filename.endsWith('.wma') ||
-        _.filename.endsWith('.wav') ||
-        _.filename.endsWith('.m4a') ||
-        _.filename.endsWith('.ogg') ||
-        _.filename.endsWith('.acc') ||
-        _.filename.endsWith('.aac') ||
-        _.filename.endsWith('.ape') ||
-        _.filename.endsWith('.m4s') ||
-        _.filename.endsWith('.opus')
-    );
+    return supportLocalMediaType.some(ext => _.filename.endsWith(ext));
 }
 
 let importToken: string | null = null;

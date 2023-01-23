@@ -1,4 +1,7 @@
-import {internalSerializeKey} from '@/constants/commonConst';
+import {
+    internalSerializeKey,
+    supportLocalMediaType,
+} from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
 import {addFileScheme} from '@/utils/fileUtils';
 import {errorLog} from '@/utils/log';
@@ -193,7 +196,11 @@ async function downloadNext() {
     }
     /** 预处理完成，接下来去下载音乐 */
     downloadNextAfterInteraction();
-    const extension = getExtensionName(url);
+    let extension = getExtensionName(url);
+    const extensionWithDot = `.${extension}`;
+    if (supportLocalMediaType.every(_ => _ !== extensionWithDot)) {
+        extension = 'mp3';
+    }
     /** 目标下载地址 */
     const targetDownloadPath = addFileScheme(
         getDownloadPath(`${nextDownloadItem.filename}.${extension}`),
