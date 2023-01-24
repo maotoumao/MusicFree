@@ -12,7 +12,7 @@ interface IMusicListProps {
     sheetInfo: IMusic.IMusicSheetItemBase | null;
     musicList?: IMusic.IMusicItem[] | null;
 }
-export default function AlbumMusicList(props: IMusicListProps) {
+export default function SheetMusicList(props: IMusicListProps) {
     const {sheetInfo: topListDetail, musicList} = props;
 
     return (

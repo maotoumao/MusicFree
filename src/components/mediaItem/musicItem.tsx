@@ -56,7 +56,8 @@ export default function MusicItem(props: IMusicItemProps) {
                         />
                     )}
                     <Text>
-                        {musicItem.artist} - {musicItem.album}
+                        {musicItem.artist}
+                        {musicItem.album ? ` - ${musicItem.album}` : ''}
                     </Text>
                 </>
             }

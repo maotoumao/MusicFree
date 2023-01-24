@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
-import AlbumMusicList from './components/albumMusicList';
+import SheetMusicList from './components/sheetMusicList';
 import StatusBar from '@/components/base/statusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
@@ -22,7 +22,7 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
                 musicList={sheetInfo?.musicList ?? []}
                 navTitle={navTitle}
             />
-            <AlbumMusicList
+            <SheetMusicList
                 sheetInfo={sheetInfo}
                 musicList={sheetInfo?.musicList}
             />
