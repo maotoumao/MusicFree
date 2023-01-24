@@ -71,12 +71,12 @@ function useLyric() {
     }, [musicItem]);
 
     useEffect(() => {
-        if (lrcManagerRef.current) {
+        if (lrcManagerRef.current && lyric[lyric.length - 1]?.time > 1) {
             setCurentLrcItem(
                 lrcManagerRef.current.getPosition(progress.position),
             );
         }
-    }, [progress]);
+    }, [progress, lyric]);
 
     return {lyric, currentLrcItem, meta, loading} as const;
 }
@@ -100,7 +100,8 @@ export default function Lyric() {
         if (
             lyric.length === 0 ||
             draggingIndex !== undefined ||
-            (draggingIndex === undefined && musicIsPaused(musicState))
+            (draggingIndex === undefined && musicIsPaused(musicState)) ||
+            lyric[lyric.length - 1].time < 1
         ) {
             return;
         }

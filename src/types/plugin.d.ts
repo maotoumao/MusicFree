@@ -82,6 +82,7 @@ declare namespace IPlugin {
         ) => Promise<IMusic.IMusicItem | null>;
         /** 获取榜单 */
         getTopLists?: () => Promise<IMusic.IMusicTopListGroupItem[]>;
+        // todo:分页
         /** 获取榜单详情 */
         getTopListDetail?: (
             topListItem: IMusic.IMusicTopListItem,
