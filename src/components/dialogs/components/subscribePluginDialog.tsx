@@ -5,39 +5,57 @@ import useColors from '@/hooks/useColors';
 import {StyleSheet, View} from 'react-native';
 import ThemeText from '@/components/base/themeText';
 import Button from '@/components/base/button';
-import Config from '@/core/config';
-import Toast from '@/utils/toast';
 import useDialog from '../useDialog';
-
+interface ISubscribeItem {
+    name: string;
+    url: string;
+}
 interface ISubscribePluginDialogProps {
-    onUpdatePlugins: (hideDialog: () => void) => void;
+    subscribeItem?: ISubscribeItem;
+    onSubmit: (
+        subscribeItem: ISubscribeItem,
+        hideDialog: () => void,
+        editingIndex?: number,
+    ) => void;
+    editingIndex?: number;
+    onDelete?: (editingIndex: number, hideDialog: () => void) => void;
 }
 
 export default function SubscribePluginDialog(
     props: ISubscribePluginDialogProps,
 ) {
-    const {onUpdatePlugins} = props;
+    const {subscribeItem, onSubmit, editingIndex, onDelete} = props;
+    const [name, setName] = useState(subscribeItem?.name ?? '');
+    const [url, setUrl] = useState(subscribeItem?.url ?? '');
     const {hideDialog} = useDialog();
     const colors = useColors();
-    const [text, setText] = useState(Config.get('setting.plugin.subscribeUrl'));
-    const subscribeUrl = Config.useConfig('setting.plugin.subscribeUrl');
     return (
         <Dialog
             visible={true}
             onDismiss={hideDialog}
             style={{backgroundColor: colors.primary}}>
-            <Dialog.Title>插件订阅</Dialog.Title>
+            <Dialog.Title>订阅</Dialog.Title>
             <Dialog.Content>
+                <View style={style.headerWrapper}>
+                    <ThemeText>名称: </ThemeText>
+                    <TextInput
+                        style={style.textInput}
+                        value={name}
+                        onChangeText={t => {
+                            setName(t);
+                        }}
+                    />
+                </View>
                 <View style={style.headerWrapper}>
                     <ThemeText>URL: </ThemeText>
                     <TextInput
                         style={style.textInput}
-                        value={text ?? ''}
+                        value={url}
                         onChangeText={t => {
-                            setText(t);
+                            setUrl(t);
                         }}
                     />
-                    <Button
+                    {/* <Button
                         fontColor={
                             subscribeUrl && subscribeUrl === text
                                 ? 'secondary'
@@ -57,17 +75,31 @@ export default function SubscribePluginDialog(
                             }
                         }}>
                         保存
-                    </Button>
+                    </Button> */}
                 </View>
                 <View style={style.options}>
                     <Button
                         fontColor="highlight"
                         onPress={() => {
-                            onUpdatePlugins(hideDialog);
+                            onSubmit(
+                                {
+                                    name,
+                                    url,
+                                },
+                                hideDialog,
+                                editingIndex,
+                            );
                         }}>
-                        更新插件
+                        保存
                     </Button>
-                    <Button onPress={hideDialog}>关闭</Button>
+                    {editingIndex !== undefined ? (
+                        <Button
+                            onPress={() => {
+                                onDelete?.(editingIndex, hideDialog);
+                            }}>
+                            删除
+                        </Button>
+                    ) : null}
                 </View>
             </Dialog.Content>
         </Dialog>
@@ -87,6 +119,7 @@ const style = StyleSheet.create({
     },
     options: {
         marginTop: rpx(32),
-        flexDirection: 'row',
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
     },
 });

@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {Appbar, Menu} from 'react-native-paper';
+import ThemeText from './themeText';
 
 interface IMenuOption {
     icon: string;
@@ -37,7 +38,12 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
                     navigation.goBack();
                 }}
             />
-            <Appbar.Content title={title} />
+            <ThemeText
+                style={style.header}
+                fontSize="title"
+                fontWeight="semibold">
+                {title ?? ''}
+            </ThemeText>
             {onSearchPress ? (
                 <Appbar.Action icon="magnify" onPress={onSearchPress} />
             ) : null}
@@ -88,6 +94,7 @@ const style = StyleSheet.create({
     header: {
         backgroundColor: 'transparent',
         shadowColor: 'transparent',
+        flex: 1,
     },
     menuContent: {
         marginTop: rpx(28),

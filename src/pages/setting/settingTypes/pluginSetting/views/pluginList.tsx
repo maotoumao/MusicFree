@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {FlatList, StatusBar, StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import {FlatList, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {FAB, List, Portal} from 'react-native-paper';
+import {FAB, List} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import Loading from '@/components/base/loading';
 import ListItem from '@/components/base/listItem';
@@ -14,54 +14,58 @@ import {trace} from '@/utils/log';
 import usePanel from '@/components/panels/usePanel';
 import Toast from '@/utils/toast';
 import axios from 'axios';
-import Config from '@/core/config';
-import ThemeText from '@/components/base/themeText';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {PluginMeta} from '@/core/pluginMeta';
-import produce from 'immer';
-import objectPath from 'object-path';
-import SortableFlatList from '@/components/base/SortableFlatList';
 import {addRandomHash} from '@/utils/fileUtils';
+import ComplexAppBar from '@/components/base/ComplexAppBar';
+import {useNavigation} from '@react-navigation/native';
+import Clipboard from '@react-native-clipboard/clipboard';
+import Config from '@/core/config';
+import Empty from '@/components/base/empty';
 
-const ITEM_HEIGHT = rpx(96);
 const ITEM_HEIGHT_BIG = rpx(120);
-const marginTop = rpx(88 + 64) + (StatusBar.currentHeight ?? 0);
 
-export default function PluginSetting() {
+export default function PluginList() {
     const plugins = PluginManager.useSortedPlugins();
     const [loading, setLoading] = useState(false);
     const [fabOpen, setFabOpen] = useState(false);
     const colors = useColors();
     const {showPanel} = usePanel();
     const {showDialog} = useDialog();
-    const [pageState, setPageState] = useState<'normal' | 'sort'>('normal');
-    const [sortingPlugins, setSortingPlugins] = useState([...plugins]);
 
-    const fabActions = [
+    const navigator = useNavigation<any>();
+
+    const menuOptions = [
         {
-            icon: 'menu',
-            label: '插件排序',
-            onPress() {
-                setPageState('sort');
+            icon: 'book-plus-multiple-outline',
+            title: '订阅设置',
+            async onPress() {
+                navigator.navigate('/pluginsetting/subscribe');
             },
         },
         {
-            icon: 'book-plus-multiple-outline',
-            label: '订阅设置',
-            async onPress() {
-                showDialog('SubscribePluginDialog', {
-                    async onUpdatePlugins(hideDialog) {
-                        const url = Config.get('setting.plugin.subscribeUrl');
+            icon: 'menu',
+            title: '插件排序',
+            onPress() {
+                navigator.navigate('/pluginsetting/sort');
+            },
+        },
+        {
+            icon: 'trash-can-outline',
+            title: '卸载全部插件',
+            onPress() {
+                showDialog('SimpleDialog', {
+                    title: '卸载插件',
+                    content: '确认卸载全部插件吗？此操作不可恢复！',
+                    async onOk() {
                         setLoading(true);
-                        if (url) {
-                            await installPluginFromUrl(url);
-                        }
+                        await PluginManager.uninstallAllPlugins();
                         setLoading(false);
-                        hideDialog();
                     },
                 });
             },
         },
+    ];
+
+    const fabActions = [
         {
             icon: 'file-plus',
             label: '从本地安装插件',
@@ -100,49 +104,77 @@ export default function PluginSetting() {
                     async onOk(text, closePanel) {
                         setLoading(true);
                         closePanel();
-                        await installPluginFromUrl(text.trim());
+                        const result = await installPluginFromUrl(text.trim());
+                        if (result.code === 'success') {
+                            Toast.success('插件安装成功');
+                        } else {
+                            Toast.warn(
+                                `部分插件安装失败: ${result.message ?? ''}`,
+                            );
+                        }
                         setLoading(false);
                     },
                 });
             },
         },
         {
-            icon: 'trash-can-outline',
-            label: '卸载全部插件',
-            onPress() {
-                showDialog('SimpleDialog', {
-                    title: '卸载插件',
-                    content: '确认卸载全部插件吗？此操作不可恢复！',
-                    async onOk() {
-                        setLoading(true);
-                        await PluginManager.uninstallAllPlugins();
-                        setLoading(false);
-                    },
-                });
+            icon: 'update',
+            label: '更新订阅',
+            async onPress() {
+                const urls = Config.get('setting.plugin.subscribeUrl');
+                if (!urls) {
+                    Toast.warn('暂无订阅');
+                }
+                setLoading(true);
+                try {
+                    const urlItems = JSON.parse(urls!);
+                    let code = 'success';
+                    if (Array.isArray(urlItems)) {
+                        for (let i = 0; i < urlItems.length; ++i) {
+                            const result = await installPluginFromUrl(
+                                urlItems[i].url,
+                            );
+                            if (result.code === 'fail') {
+                                code = result.message ?? 'fail';
+                            }
+                        }
+                    } else {
+                        throw new Error();
+                    }
+                    if (code !== 'success') {
+                        Toast.warn(`部分插件安装失败: ${code ?? ''}`);
+                    } else {
+                        Toast.success('插件安装成功');
+                    }
+                } catch {
+                    if (urls?.length) {
+                        const result = await installPluginFromUrl(urls);
+                        if (result.code === 'success') {
+                            Toast.success('插件安装成功');
+                        } else {
+                            Toast.warn(
+                                `部分插件安装失败: ${result.message ?? ''}`,
+                            );
+                        }
+                    } else {
+                        Toast.warn('订阅无效');
+                    }
+                }
+                setLoading(false);
             },
         },
     ];
 
-    useEffect(() => {
-        setSortingPlugins([...plugins]);
-    }, [plugins]);
-
-    function renderSortingItem({item}: {item: Plugin}) {
-        return (
-            <View style={style.sortItem}>
-                <ThemeText>{item.name}</ThemeText>
-            </View>
-        );
-    }
-
     return (
-        <View style={style.wrapper}>
-            {pageState === 'normal' ? (
+        <>
+            <ComplexAppBar title="插件设置" menuOptions={menuOptions} />
+            <View style={style.wrapper}>
                 <>
                     {loading ? (
                         <Loading />
                     ) : (
                         <FlatList
+                            ListEmptyComponent={Empty}
                             data={plugins ?? []}
                             keyExtractor={_ => _.hash}
                             renderItem={({item: plugin}) => (
@@ -150,61 +182,20 @@ export default function PluginSetting() {
                             )}
                         />
                     )}
-                    <Portal>
-                        <FAB.Group
-                            visible
-                            open={fabOpen}
-                            icon={fabOpen ? 'close' : 'plus'}
-                            color={colors.text}
-                            fabStyle={{backgroundColor: colors.primary}}
-                            actions={fabActions}
-                            onStateChange={({open}) => {
-                                setFabOpen(open);
-                            }}
-                        />
-                    </Portal>
-                </>
-            ) : (
-                <>
-                    <View style={style.sortWrapper}>
-                        <ThemeText fontWeight="bold">插件排序</ThemeText>
-                        <TouchableOpacity
-                            onPress={async () => {
-                                await PluginMeta.setPluginMetaAll(
-                                    produce(
-                                        PluginMeta.getPluginMetaAll(),
-                                        draft => {
-                                            sortingPlugins.forEach(
-                                                (plg, idx) => {
-                                                    objectPath.set(
-                                                        draft,
-                                                        `${plg.name}.order`,
-                                                        idx,
-                                                    );
-                                                },
-                                            );
-                                        },
-                                    ),
-                                );
-                                setPageState('normal');
-                            }}>
-                            <ThemeText>完成</ThemeText>
-                        </TouchableOpacity>
-                    </View>
-                    <SortableFlatList
-                        data={sortingPlugins}
-                        activeBackgroundColor="rgba(33,33,33,0.8)"
-                        marginTop={marginTop}
-                        renderItem={renderSortingItem}
-                        itemHeight={ITEM_HEIGHT}
-                        itemJustifyContent={'space-between'}
-                        onSortEnd={data => {
-                            setSortingPlugins(data);
+                    <FAB.Group
+                        visible
+                        open={fabOpen}
+                        icon={fabOpen ? 'close' : 'plus'}
+                        color={colors.text}
+                        fabStyle={{backgroundColor: colors.primary}}
+                        actions={fabActions}
+                        onStateChange={({open}) => {
+                            setFabOpen(open);
                         }}
                     />
                 </>
-            )}
-        </View>
+            </View>
+        </>
     );
 }
 
@@ -216,20 +207,6 @@ const style = StyleSheet.create({
     },
     header: {
         marginBottom: rpx(24),
-    },
-    sortWrapper: {
-        width: rpx(702),
-        marginHorizontal: rpx(24),
-        justifyContent: 'space-between',
-        height: rpx(64),
-        alignItems: 'center',
-        flexDirection: 'row',
-    },
-    sortItem: {
-        height: ITEM_HEIGHT,
-        width: rpx(500),
-        paddingLeft: rpx(24),
-        justifyContent: 'center',
     },
 });
 
@@ -316,6 +293,19 @@ function PluginView(props: IPluginViewProps) {
             show: !!plugin.instance.srcUrl,
         },
         {
+            title: '分享插件',
+            icon: 'share',
+            async onPress() {
+                try {
+                    Clipboard.setString(plugin.instance.srcUrl!);
+                    Toast.success('已复制到剪切板');
+                } catch (e: any) {
+                    Toast.warn(e?.message ?? '分享失败');
+                }
+            },
+            show: !!plugin.instance.srcUrl,
+        },
+        {
             title: '卸载插件',
             icon: 'trash-can-outline',
             show: true,
@@ -379,7 +369,11 @@ function PluginView(props: IPluginViewProps) {
     );
 }
 
-async function installPluginFromUrl(text: string) {
+interface IInstallResult {
+    code: 'success' | 'fail';
+    message?: string;
+}
+async function installPluginFromUrl(text: string): Promise<IInstallResult> {
     try {
         let urls: string[] = [];
         const iptUrl = addRandomHash(text.trim());
@@ -410,8 +404,13 @@ async function installPluginFromUrl(text: string) {
         if (failedPlugins.length) {
             throw new Error(failedPlugins.join('\n'));
         }
-        Toast.success('插件安装成功~');
+        return {
+            code: 'success',
+        };
     } catch (e: any) {
-        Toast.warn(`部分插件安装失败: ${e?.message ?? ''}`);
+        return {
+            code: 'fail',
+            message: e?.message,
+        };
     }
 }

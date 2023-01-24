@@ -149,7 +149,10 @@ export class Plugin {
         this.instance = _instance;
         this.path = pluginPath;
         this.name = _instance.platform;
-        if (this.instance.platform === '') {
+        if (
+            this.instance.platform === '' ||
+            this.instance.platform === undefined
+        ) {
             this.hash = '';
         } else {
             if (typeof funcCode === 'string') {

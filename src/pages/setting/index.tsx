@@ -14,7 +14,9 @@ export default function Setting() {
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
-            <SimpleAppBar title={settingItem?.title} />
+            {settingItem.showNav === false ? null : (
+                <SimpleAppBar title={settingItem?.title} />
+            )}
             <settingItem.component />
         </SafeAreaView>
     );

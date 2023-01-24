@@ -10,6 +10,7 @@ const settingTypes: Record<
     {
         title: string;
         component: (...args: any) => JSX.Element;
+        showNav?: boolean;
     }
 > = {
     basic: {
@@ -19,6 +20,7 @@ const settingTypes: Record<
     plugin: {
         title: '插件设置',
         component: PluginSetting,
+        showNav: false,
     },
     theme: {
         title: '主题设置',

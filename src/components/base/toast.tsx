@@ -14,7 +14,9 @@ function ToastBase(props: IToastBaseProps) {
     return (
         <View style={styles.toastBasic}>
             <Icon style={styles.icon} name={iconName} color={iconColor} />
-            <Text style={styles.text}>{text}</Text>
+            <Text style={styles.text} numberOfLines={2}>
+                {text}
+            </Text>
         </View>
     );
 }
