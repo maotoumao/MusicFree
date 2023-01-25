@@ -225,6 +225,7 @@ function PluginView(props: IPluginViewProps) {
             onPress() {
                 showPanel('SimpleInput', {
                     placeholder: '输入目标歌曲',
+                    hints: plugin.instance.hints?.importMusicItem,
                     maxLength: 1000,
                     async onOk(text) {
                         const result = await plugin.methods.importMusicItem(
@@ -254,6 +255,7 @@ function PluginView(props: IPluginViewProps) {
             onPress() {
                 showPanel('SimpleInput', {
                     placeholder: '输入目标歌单',
+                    hints: plugin.instance.hints?.importMusicSheet,
                     maxLength: 1000,
                     async onOk(text, closePanel) {
                         Toast.success('正在导入中...');
