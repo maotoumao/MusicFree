@@ -14,20 +14,16 @@ assignees: maotoumao
 ---
 
 **问题描述**
-A clear and concise description of what the bug is.
+简要描述一下问题的现象（在xx场景下，进行xx操作，产生xx现象，而不是xx）
 
 **详细的复现步骤**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+按步骤详细描述一下触发bug的特定行为：
 
 **预期行为**
-A clear and concise description of what you expected to happen.
+描述一下预期正确的行为是什么样的
 
 **截图**
-If applicable, add screenshots to help explain your problem.
+附带一些截图/录屏吧
 
 **其他信息:**
  - OS: [e.g. Android12]
