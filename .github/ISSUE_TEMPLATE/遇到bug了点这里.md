@@ -1,7 +1,7 @@
 ---
-name: BUG标题
-about: Create a report to help us improve
-title: "[BUG]"
+name: 遇到bug了点这里
+about: bug
+title: "[BUG] xxxxxx"
 labels: ''
 assignees: maotoumao
 
