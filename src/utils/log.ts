@@ -44,6 +44,19 @@ export function trace(
     }
 }
 
+export async function clearLog() {
+    const files = await RNFS.readDir(pathConst.logPath);
+    await Promise.all(
+        files.map(async file => {
+            if (file.isFile()) {
+                try {
+                    await RNFS.unlink(file.path);
+                } catch {}
+            }
+        }),
+    );
+}
+
 export function errorLog(desc: string, message: any) {
     if (Config.get('setting.basic.debug.errorLog')) {
         log.error({

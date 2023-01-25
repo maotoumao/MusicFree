@@ -13,6 +13,7 @@ import pathConst from '@/constants/pathConst';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import {readdir} from 'react-native-fs';
 import {qualityKeys, qualityText} from '@/utils/qualities';
+import {clearLog} from '@/utils/log';
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -334,6 +335,16 @@ export default function BasicSetting() {
                     'setting.basic.debug.devLog',
                     basicSetting?.debug?.devLog ?? false,
                 ),
+                {
+                    title: '清空日志',
+                    right: undefined,
+                    async onPress() {
+                        try {
+                            await clearLog();
+                            Toast.success('日志已清空');
+                        } catch {}
+                    },
+                },
             ],
         },
     ];
