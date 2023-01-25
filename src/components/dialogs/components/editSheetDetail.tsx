@@ -78,7 +78,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
         // 更新歌单信息
         MusicSheet.updateAndSaveSheet(musicSheet.id, {
             basic: {
-                coverImg: _coverImg ? addRandomHash(_coverImg) : null,
+                coverImg: _coverImg ? addRandomHash(_coverImg) : undefined,
                 title: _title,
             },
         }).then(() => {

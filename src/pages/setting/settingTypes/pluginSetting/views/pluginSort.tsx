@@ -8,6 +8,7 @@ import objectPath from 'object-path';
 import rpx from '@/utils/rpx';
 import PluginManager, {Plugin} from '@/core/pluginManager';
 import SimpleAppBar from '@/components/base/simpleAppBar';
+import Toast from '@/utils/toast';
 
 const ITEM_HEIGHT = rpx(96);
 const marginTop = rpx(188) + (StatusBar.currentHeight ?? 0);
@@ -41,6 +42,7 @@ export default function PluginSort() {
                                 });
                             }),
                         );
+                        Toast.success('已保存');
                     }}>
                     <ThemeText>完成</ThemeText>
                 </TouchableOpacity>

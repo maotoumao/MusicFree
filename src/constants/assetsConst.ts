@@ -4,6 +4,7 @@ export const ImgAsset = {
     addBackground: require('@/assets/imgs/add-image.png'),
     add: require('@/assets/imgs/add.png'),
     logo: require('@/assets/imgs/logo.jpg'),
+    logoTransparent: require('@/assets/imgs/logo-transparent.png'),
     wechatChannel: require('@/assets/imgs/wechat_channel.jpg'),
     // 音质
     quality: {
