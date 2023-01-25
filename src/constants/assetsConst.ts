@@ -13,6 +13,15 @@ export const ImgAsset = {
         high: require('@/assets/imgs/high-quality.png'),
         super: require('@/assets/imgs/super-quality.png'),
     },
+    rate: {
+        50: require('@/assets/imgs/50x.png'),
+        75: require('@/assets/imgs/75x.png'),
+        100: require('@/assets/imgs/100x.png'),
+        125: require('@/assets/imgs/125x.png'),
+        150: require('@/assets/imgs/150x.png'),
+        175: require('@/assets/imgs/175x.png'),
+        200: require('@/assets/imgs/200x.png'),
+    } as any,
     standardQuality: require('@/assets/imgs/standard-quality.png'),
     lowQuality: require,
 } as const;

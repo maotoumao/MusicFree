@@ -11,6 +11,8 @@ import LocalMusicSheet from '@/core/localMusicSheet';
 import {ROUTE_PATH} from '@/entry/router';
 import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
+import Config from '@/core/config';
+import TrackPlayer from 'react-native-track-player';
 
 export default function Opertions() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -19,6 +21,7 @@ export default function Opertions() {
     const currentQuality = MusicQueue.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
     const {showPanel} = usePanel();
+    const rate = Config.useConfig('status.music.rate') ?? 100;
 
     const musicIndexInFav =
         favoriteMusicSheet?.musicList.findIndex(_ =>
@@ -88,6 +91,24 @@ export default function Opertions() {
                     }
                 }}
             />
+            <Pressable
+                onPress={() => {
+                    if (!musicItem) {
+                        return;
+                    }
+                    showPanel('PlayRate', {
+                        async onRatePress(newRate) {
+                            if (rate !== newRate) {
+                                try {
+                                    await TrackPlayer.setRate(newRate / 100);
+                                    Config.set('status.music.rate', newRate);
+                                } catch {}
+                            }
+                        },
+                    });
+                }}>
+                <Image source={ImgAsset.rate[rate]} style={style.quality} />
+            </Pressable>
             <Icon
                 name="dots-vertical"
                 size={rpx(48)}

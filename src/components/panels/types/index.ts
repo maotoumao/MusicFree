@@ -4,6 +4,7 @@ import MusicItemOptions from './musicItemOptions';
 import MusicQuality from './musicQuality';
 import NewMusicSheet from './newMusicSheet';
 import PlayList from './playList';
+import PlayRate from './playRate';
 import SimpleInput from './simpleInput';
 import TimingClose from './timingClose';
 
@@ -24,4 +25,6 @@ export default {
     TimingClose: TimingClose,
     /** 音质选择 */
     MusicQuality: MusicQuality,
+    /** 播放速度 */
+    PlayRate: PlayRate,
 };

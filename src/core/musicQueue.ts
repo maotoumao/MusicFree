@@ -63,6 +63,9 @@ const setup = async () => {
     /** 状态恢复 */
     try {
         const config = Config.get('status.music');
+        if (config?.rate) {
+            await TrackPlayer.setRate(+config.rate / 100);
+        }
         if (config?.repeatMode) {
             repeatMode = config.repeatMode as MusicRepeatMode;
         }

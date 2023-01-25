@@ -73,6 +73,8 @@ interface IConfig {
             repeatMode: string;
             /** 列表 */
             musicQueue: IMusic.IMusicItem[];
+            /** 速度 */
+            rate: number;
         };
     };
 }

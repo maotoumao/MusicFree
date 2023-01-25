@@ -126,6 +126,11 @@ export default function PluginSubscribe() {
                         />
                     );
                 }}
+                getItemLayout={(_, index) => ({
+                    length: ITEM_HEIGHT,
+                    offset: ITEM_HEIGHT * index,
+                    index,
+                })}
             />
             <FAB
                 icon={'plus'}
