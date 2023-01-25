@@ -18,7 +18,7 @@ export default function AlbumItem(props: IAlbumResultsProps) {
                 fallback: ImgAsset.albumDefault,
             }}
             title={albumItem.title}
-            desc={`${albumItem.artist}    ${albumItem.date}`}
+            desc={`${albumItem.artist ?? ''}    ${albumItem.date ?? ''}`}
             tag={albumItem.platform}
             onPress={() => {
                 navigate(ROUTE_PATH.ALBUM_DETAIL, {
