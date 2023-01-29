@@ -23,7 +23,7 @@ assignees: maotoumao
 描述一下预期正确的行为是什么样的
 
 **截图**
-附带一些截图/录屏吧
+附带一些截图/录屏吧，如果方便的话打开侧边栏-基本设置-记录详细日志，复现之后贴一下Android/data/fun.upup.musicfree/files/log/trace-log.log下的日志（完成之后记得删掉，不然时间长了会卡）
 
 **其他信息:**
  - OS: [e.g. Android12]
