@@ -72,6 +72,24 @@ const _require = (packageName: string) => {
     return pkg;
 };
 
+const _consoleBind = function (
+    method: 'log' | 'error' | 'info' | 'warn',
+    ...args: any
+) {
+    const fn = console[method];
+    if (fn) {
+        fn(...args);
+        devLog(method, ...args);
+    }
+};
+
+const _console = {
+    log: _consoleBind.bind(null, 'log'),
+    warn: _consoleBind.bind(null, 'warn'),
+    info: _consoleBind.bind(null, 'info'),
+    error: _consoleBind.bind(null, 'error'),
+};
+
 //#region 插件类
 export class Plugin {
     /** 插件名 */
@@ -105,10 +123,10 @@ export class Plugin {
                 // eslint-disable-next-line no-new-func
                 _instance = Function(`
                     'use strict';
-                    return function(require, __musicfree_require, module, exports) {
+                    return function(require, __musicfree_require, module, exports, console) {
                         ${funcCode}
                     }
-                `)()(_require, _require, _module, _module.exports);
+                `)()(_require, _require, _module, _module.exports, _console);
                 if (_module.exports.default) {
                     _instance = _module.exports
                         .default as IPlugin.IPluginInstance;
