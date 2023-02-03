@@ -1,6 +1,8 @@
+import BackgroundTimer from 'react-native-background-timer';
+
 export default function (millsecond: number) {
     return new Promise<void>(resolve => {
-        setTimeout(() => {
+        BackgroundTimer.setTimeout(() => {
             resolve();
         }, millsecond);
     });
