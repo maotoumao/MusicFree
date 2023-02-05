@@ -116,3 +116,15 @@ export function getInternalData<T>(
     }
     return objectPath.get(mediaItem, `${internalSerializeKey}.${key}`);
 }
+
+export function trimInternalData(
+    mediaItem: ICommon.IMediaBase | null | undefined,
+) {
+    if (!mediaItem) {
+        return undefined;
+    }
+    return {
+        ...mediaItem,
+        [internalSerializeKey]: undefined,
+    };
+}

@@ -23,6 +23,10 @@ function notifyMusicSheets() {
         cb();
     });
 }
+const getSheets = () => ({
+    musicSheets,
+    sheetMusicMap,
+});
 
 async function setup() {
     try {
@@ -105,6 +109,57 @@ async function addSheet(title: string) {
     });
     notifyMusicSheets();
     return newId;
+}
+
+async function resumeSheets(
+    sheets: ICommon.WithMusicList<IMusic.IMusicSheetItemBase>[],
+) {
+    let newSheets = [...musicSheets];
+    let newSheetMusicMap: Record<string, IMusic.IMusicItem[]> = {
+        ...sheetMusicMap,
+    };
+    const needUpdatedIds = [];
+    for (let i = 0; i < sheets.length; ++i) {
+        const musicSheet = sheets[i];
+        if (musicSheet.id === 'favorite') {
+            needUpdatedIds.push('favorite');
+            const originalMusicList = sheetMusicMap[musicSheet.id] ?? [];
+            newSheetMusicMap[musicSheet.id] = originalMusicList.concat(
+                musicSheet.musicList?.filter(
+                    item =>
+                        originalMusicList.findIndex(_ =>
+                            isSameMediaItem(_, item),
+                        ) === -1,
+                ) ?? [],
+            );
+        } else {
+            const newId = nanoid();
+            needUpdatedIds.push(newId);
+
+            newSheets = [
+                ...newSheets,
+                {
+                    id: newId,
+                    title: musicSheet.title,
+                    coverImg: musicSheet.coverImg?.startsWith('http')
+                        ? musicSheet.coverImg
+                        : (musicSheet.musicList ?? [])[
+                              (musicSheet.musicList?.length ?? 0) - 1
+                          ]?.artwork,
+                },
+            ];
+            newSheetMusicMap[newId] = musicSheet.musicList ?? [];
+        }
+    }
+    await setStorage('music-sheets', newSheets);
+
+    await Promise.all(
+        needUpdatedIds.map(k => setStorage(k, newSheetMusicMap[k] ?? [])),
+    );
+
+    musicSheets = newSheets;
+    sheetMusicMap = newSheetMusicMap;
+    notifyMusicSheets();
 }
 
 async function removeSheet(sheetId: string) {
@@ -223,8 +278,10 @@ const MusicSheet = {
     setup,
     addSheet,
     addMusic,
+    getSheets,
     useSheets,
     removeSheet,
+    resumeSheets,
     removeMusicByIndex,
     updateAndSaveSheet,
     removeMusic,
