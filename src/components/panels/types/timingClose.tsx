@@ -8,7 +8,7 @@ import usePrimaryColor from '@/hooks/usePrimaryColor';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import {setTimingClose, useTimingClose} from '@/utils/timingClose';
-import ThemeSwitch from '@/components/base/swtich';
+import ThemeSwitch from '@/components/base/switch';
 import timeformat from '@/utils/timeformat';
 import usePanel from '../usePanel';
 

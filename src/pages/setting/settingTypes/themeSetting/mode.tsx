@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import Config from '@/core/config';
 import {List} from 'react-native-paper';
-import ThemeSwitch from '@/components/base/swtich';
+import ThemeSwitch from '@/components/base/switch';
 
 export default function Mode() {
     const mode = Config.useConfig('setting.theme.mode') ?? 'dark';

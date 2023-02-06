@@ -5,7 +5,7 @@ import Config, {IConfigPaths} from '@/core/config';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import useDialog from '@/components/dialogs/useDialog';
-import ThemeSwitch from '@/components/base/swtich';
+import ThemeSwitch from '@/components/base/switch';
 import {clearCache, getCacheSize, sizeFormatter} from '@/utils/fileUtils';
 import usePanel from '@/components/panels/usePanel';
 import Toast from '@/utils/toast';
