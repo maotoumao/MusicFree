@@ -20,7 +20,8 @@ interface IMp3Util {
     /** 读取内嵌歌词 */
     getLyric: (mediaPath: string) => Promise<string>;
     /** 写入meta信息 */
-    setMediaMeta: (filePath: string, meta: IWritableMeta) => Promise<void>;
+    setMediaTag: (filePath: string, meta: IWritableMeta) => Promise<void>;
+    getMediaTag: (filePath: string) => Promise<IWritableMeta>;
 }
 
 const Mp3Util = NativeModules.Mp3Util;

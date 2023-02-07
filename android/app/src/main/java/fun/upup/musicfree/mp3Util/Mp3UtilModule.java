@@ -184,7 +184,7 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setMediaMeta(String filePath, ReadableMap meta, Promise promise) {
+    public void setMediaTag(String filePath, ReadableMap meta, Promise promise) {
         try {
             File file = new File(filePath);
             if (file.exists()) {
@@ -210,6 +210,8 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
 
                 tag.setField(FieldKey.COMMENT, comment);
                 audioFile.commit();
+            } else {
+                promise.reject("Error", "File Not Exist");
             }
             promise.resolve(true);
         } catch (Exception e) {
@@ -217,4 +219,31 @@ public class Mp3UtilModule extends ReactContextBaseJavaModule {
         }
     }
 
+    @ReactMethod
+    public void getMediaTag(String filePath, Promise promise) {
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                AudioFile audioFile = AudioFileIO.read(file);
+                Tag tag = audioFile.getTag();
+                String title = tag.getFirst(FieldKey.TITLE);
+                String artist = tag.getFirst(FieldKey.ARTIST);
+                String album = tag.getFirst(FieldKey.ALBUM);
+                String lyric = tag.getFirst(FieldKey.LYRICS);
+                String comment = tag.getFirst(FieldKey.COMMENT);
+
+                WritableMap properties = Arguments.createMap();
+                properties.putString("title", title);
+                properties.putString("artist", artist);
+                properties.putString("album", album);
+                properties.putString("lyric", lyric);
+                properties.putString("comment", comment);
+                promise.resolve(properties);
+            } else{
+                promise.reject("Error", "File Not Found");
+            }
+        } catch (Exception e) {
+            promise.reject("Error", e.getMessage());
+        }
+    }
 }

@@ -263,13 +263,9 @@ async function downloadNext() {
         //     stringifyMeta[_] = musicItem[_];
         // });
 
-        // await Mp3Util.setMediaMeta(targetDownloadPath, {
-        //     title: musicItem.title,
-        //     artist: musicItem.artist,
-        //     album: musicItem.album,
-        //     lyric: musicItem.rawLrc,
-        //     comment: JSON.stringify(stringifyMeta),
-        // });
+        // await Mp3Util.getMediaTag(filePath).then(_ => {
+        //     console.log(_);
+        // }).catch(console.log);
     } catch (e: any) {
         console.log(e, 'downloaderror');
         /** 下载出错 */
