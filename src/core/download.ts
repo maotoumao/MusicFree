@@ -117,10 +117,11 @@ function stopNotifyProgress() {
 
 /** 生成下载文件名 */
 function generateFilename(musicItem: IMusic.IMusicItem) {
-    return `${musicItem.platform}@${musicItem.id}@${musicItem.title}@${musicItem.artist}`.slice(
-        0,
-        200,
-    );
+    return `${encodeURIComponent(musicItem.platform)}@${encodeURIComponent(
+        musicItem.id,
+    )}@${encodeURIComponent(musicItem.title)}@${encodeURIComponent(
+        musicItem.artist,
+    )}`.slice(0, 200);
 }
 
 /** todo 可以配置一个说明文件 */
