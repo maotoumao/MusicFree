@@ -14,6 +14,7 @@ import {getStorage, setStorage} from '@/utils/storage';
 import {nanoid} from 'nanoid';
 import {useEffect, useState} from 'react';
 import {FileStat, FileSystem} from 'react-native-file-access';
+import {unlink} from 'react-native-fs';
 
 let localSheet: IMusic.IMusicItem[] = [];
 const localSheetStateMapper = new StateMapper(() => localSheet);
@@ -89,7 +90,7 @@ export async function removeMusic(
             musicItem[internalSerializeKey]?.localPath ??
             localMusicItem[internalSerializeKey]?.localPath;
         if (deleteOriginalFile && localPath) {
-            await FileSystem.unlink(localPath);
+            await unlink(localPath);
         }
     }
     localSheet = newSheet;

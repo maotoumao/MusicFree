@@ -139,8 +139,12 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     title: '删除本地下载',
                     content: '将会删除已下载的本地文件，确定继续吗？',
                     async onOk() {
-                        await LocalMusicSheet.removeMusic(musicItem, true);
-                        Toast.success('已删除本地下载');
+                        try {
+                            await LocalMusicSheet.removeMusic(musicItem, true);
+                            Toast.success('已删除本地下载');
+                        } catch (e: any) {
+                            Toast.warn(`删除失败 ${e?.message ?? e}`);
+                        }
                     },
                 });
                 closePanel();
