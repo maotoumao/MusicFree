@@ -222,7 +222,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                         {musicItem?.title}
                     </ThemeText>
                     <ThemeText fontColor="secondary" fontSize="description">
-                        {musicItem?.artist} - {musicItem?.album}
+                        {musicItem?.artist}{' '}
+                        {musicItem?.album ? `- ${musicItem.album}` : ''}
                     </ThemeText>
                 </View>
             </View>
