@@ -18,6 +18,21 @@ import LocalMusicSheet from './localMusicSheet';
 import MediaMeta from './mediaMeta';
 import Network from './network';
 import PluginManager from './pluginManager';
+// import PQueue from 'p-queue/dist';
+// import PriorityQueue from 'p-queue/dist/priority-queue';
+
+// interface IDownloadProgress {
+//     progress: number;
+//     size: number;
+// }
+
+// const downloadQueue = new PQueue({
+//     concurrency: 3
+// });
+
+// const downloadProgress = new Map<string, IDownloadProgress>();
+// downloadQueue.concurrency = 3;
+// console.log(downloadQueue.concurrency);
 
 /** 队列中的元素 */
 interface IDownloadMusicOptions {
