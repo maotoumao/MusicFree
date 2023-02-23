@@ -97,7 +97,8 @@ export default function Lyric() {
 
     const [layout, setLayout] = useState<LayoutRectangle>();
     const emptyHeight = useMemo(() => {
-        return ((layout?.height ?? vh(80)) + 0) / 2;
+        const height = Math.max(layout?.height ?? vh(60), vh(60));
+        return height / 2;
     }, [layout]);
 
     useEffect(() => {
@@ -138,7 +139,10 @@ export default function Lyric() {
     const onScroll = (e: any) => {
         if (drag) {
             setDraggingIndex(
-                Math.floor(e.nativeEvent.contentOffset.y / ITEM_HEIGHT),
+                Math.min(
+                    Math.floor(e.nativeEvent.contentOffset.y / ITEM_HEIGHT),
+                    lyric.length - 1,
+                ),
             );
         }
     };
@@ -169,9 +173,11 @@ export default function Lyric() {
                         index,
                     })}
                     ListEmptyComponent={
-                        <ThemeText style={style.highlightItem}>
-                            暂无歌词
-                        </ThemeText>
+                        <View style={{flex: 1}}>
+                            <ThemeText style={style.highlightItem}>
+                                暂无歌词
+                            </ThemeText>
+                        </View>
                     }
                     onLayout={e => {
                         setLayout(e.nativeEvent.layout);
