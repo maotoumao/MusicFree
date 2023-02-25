@@ -10,21 +10,28 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 interface IMusicSheetPageProps {
     navTitle: string;
     sheetInfo: ICommon.WithMusicList<IMusic.IMusicSheetItemBase> | null;
+    musicList?: IMusic.IMusicItem[] | null;
+    onEndReached?: () => void;
+    loadMore?: 'loading' | 'done' | 'none';
 }
 
 export default function MusicSheetPage(props: IMusicSheetPageProps) {
-    const {navTitle, sheetInfo} = props;
+    const {navTitle, sheetInfo, musicList, onEndReached, loadMore} = props;
 
     return (
         <SafeAreaView style={style.wrapper}>
             <StatusBar />
             <NavBar
-                musicList={sheetInfo?.musicList ?? []}
+                musicList={musicList ?? sheetInfo?.musicList ?? []}
                 navTitle={navTitle}
             />
             <SheetMusicList
                 sheetInfo={sheetInfo}
-                musicList={sheetInfo?.musicList}
+                musicList={musicList ?? sheetInfo?.musicList}
+                onEndReached={() => {
+                    onEndReached?.();
+                }}
+                loadMore={loadMore}
             />
             <MusicBar />
         </SafeAreaView>

@@ -33,6 +33,12 @@ declare namespace IPlugin {
         name: string;
     }
 
+    interface IAlbumInfoResult {
+        isEnd?: boolean;
+        albumItem?: IAlbum.IAlbumItemBase;
+        musicList?: IMusic.IMusicItem[];
+    }
+
     interface IPluginDefine {
         /** 来源名 */
         platform: string;
@@ -67,10 +73,11 @@ declare namespace IPlugin {
         getLyric?: (
             musicItem: IMusic.IMusicItemBase,
         ) => Promise<ILyric.ILyricSource | null>;
-        /** 获取专辑信息，里面的歌曲不要分页 */
+        /** 获取专辑信息，里面的歌曲分页 */
         getAlbumInfo?: (
             albumItem: IAlbum.IAlbumItemBase,
-        ) => Promise<IAlbum.IAlbumItem | null>;
+            page: number,
+        ) => Promise<IAlbumInfoResult | null>;
         /** 获取作品，有分页 */
         getArtistWorks?: IGetArtistWorksFunc;
         /** 导入歌单 */

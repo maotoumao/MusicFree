@@ -4,8 +4,19 @@ import {useParams} from '@/entry/router';
 import MusicSheetPage from '@/components/musicSheetPage';
 
 export default function AlbumDetail() {
-    const {albumItem} = useParams<'album-detail'>();
-    const albumDetail = useAlbumDetail(albumItem);
+    const {albumItem: originalAlbumItem} = useParams<'album-detail'>();
+    const [loadMore, albumItem, musicList, getAlbumDetail] =
+        useAlbumDetail(originalAlbumItem);
 
-    return <MusicSheetPage navTitle="专辑" sheetInfo={albumDetail} />;
+    return (
+        <MusicSheetPage
+            navTitle="专辑"
+            sheetInfo={albumItem}
+            loadMore={loadMore}
+            musicList={musicList}
+            onEndReached={() => {
+                getAlbumDetail();
+            }}
+        />
+    );
 }

@@ -6,19 +6,24 @@ import ThemeText from './themeText';
 
 interface ILoadingProps {
     text?: string;
+    showText?: boolean;
+    height?: number;
 }
 export default function Loading(props: ILoadingProps) {
     const {colors} = useTheme();
+    const {showText = true, height, text} = props;
 
     return (
-        <View style={style.wrapper}>
+        <View style={[style.wrapper, {height}]}>
             <ActivityIndicator animating color={colors.text} />
-            <ThemeText
-                fontSize="title"
-                fontWeight="semibold"
-                style={style.text}>
-                {props?.text ?? '加载中...'}
-            </ThemeText>
+            {showText ? (
+                <ThemeText
+                    fontSize="title"
+                    fontWeight="semibold"
+                    style={style.text}>
+                    {text ?? '加载中...'}
+                </ThemeText>
+            ) : null}
         </View>
     );
 }
