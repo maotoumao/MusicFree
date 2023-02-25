@@ -3,7 +3,7 @@ import {
     supportLocalMediaType,
 } from '@/constants/commonConst';
 import pathConst from '@/constants/pathConst';
-import {addFileScheme} from '@/utils/fileUtils';
+import {addFileScheme, escapeCharacter} from '@/utils/fileUtils';
 import {errorLog} from '@/utils/log';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import {getQualityOrder} from '@/utils/qualities';
@@ -132,9 +132,9 @@ function stopNotifyProgress() {
 
 /** 生成下载文件名 */
 function generateFilename(musicItem: IMusic.IMusicItem) {
-    return `${encodeURIComponent(musicItem.platform)}@${encodeURIComponent(
+    return `${escapeCharacter(musicItem.platform)}@${escapeCharacter(
         musicItem.id,
-    )}@${encodeURIComponent(musicItem.title)}@${encodeURIComponent(
+    )}@${escapeCharacter(musicItem.title)}@${escapeCharacter(
         musicItem.artist,
     )}`.slice(0, 200);
 }

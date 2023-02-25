@@ -105,9 +105,9 @@ function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
     }
     return {
         id,
-        platform: decodeURIComponent(platform),
-        title: decodeURIComponent(title ?? ''),
-        artist: decodeURIComponent(artist ?? ''),
+        platform: platform,
+        title: title ?? '',
+        artist: artist ?? '',
     };
 }
 
