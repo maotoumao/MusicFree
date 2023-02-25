@@ -66,7 +66,6 @@ async function _bootstrap() {
     await TrackPlayer.updateOptions({
         icon: ImgAsset.logoTransparent,
         progressUpdateEventInterval: 1,
-        alwaysPauseOnInterruption: true,
         capabilities: [
             Capability.Play,
             Capability.Pause,

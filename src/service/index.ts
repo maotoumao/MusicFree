@@ -3,7 +3,7 @@ import musicIsPaused from '@/utils/musicIsPaused';
 import TrackPlayer, {Event, State} from 'react-native-track-player';
 import MusicQueue from '../core/musicQueue';
 
-let resumeState: State;
+let resumeState: State | null;
 module.exports = async function () {
     TrackPlayer.addEventListener(Event.RemotePlay, () => MusicQueue.play());
     TrackPlayer.addEventListener(Event.RemotePause, () => MusicQueue.pause());
@@ -35,8 +35,12 @@ module.exports = async function () {
                 if (paused) {
                     resumeState = await TrackPlayer.getState();
                     return MusicQueue.pause();
-                } else if (!musicIsPaused(resumeState)) {
-                    return MusicQueue.play();
+                } else {
+                    if (resumeState && !musicIsPaused(resumeState)) {
+                        resumeState = null;
+                        return MusicQueue.play();
+                    }
+                    resumeState = null;
                 }
             }
         },
