@@ -314,7 +314,7 @@ function PluginView(props: IPluginViewProps) {
             onPress() {
                 showDialog('SimpleDialog', {
                     title: '卸载插件',
-                    content: `确认卸载插件${plugin.name}吗`,
+                    content: `确认卸载插件「${plugin.name}」吗`,
                     async onOk() {
                         try {
                             await PluginManager.uninstallPlugin(plugin.hash);
