@@ -5,6 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
     <style name='BootTheme' parent='Theme.SplashScreen'>
         <item name="windowSplashScreenBackground">@color/bootsplash_background</item>

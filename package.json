@@ -17,7 +17,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx src --fix",
     "lint-staged": "lint-staged",
     "connect-mumu": "adb kill-server & adb connect localhost:7555",
-    "build-android": "cd ./android && ./gradlew assembleRelease",
+    "build-android": "cd .\\android && .\\gradlew assembleRelease",
     "prepare": "husky install"
   },
   "dependencies": {
