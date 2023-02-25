@@ -5,6 +5,8 @@ declare namespace IAlbum {
         date?: string;
         artist?: string;
         description: string;
+        /** 专辑内有多少作品 */
+        worksNum?: number;
     }
 
     export interface IAlbumItem extends IAlbumItemBase {

@@ -498,6 +498,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             }
             result?.musicList?.forEach(_ => {
                 resetMediaItem(_, this.plugin.name);
+                _.album = albumItem.title;
             });
 
             if (page <= 1) {

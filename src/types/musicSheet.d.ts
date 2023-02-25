@@ -9,6 +9,8 @@ declare namespace IMusic {
         id: string;
         /** 描述 */
         description?: string;
+        /** 作品总数 */
+        worksNum?: number;
     }
     /** 歌单项 */
     export interface IMusicSheetItem extends IMusicSheetItemBase {

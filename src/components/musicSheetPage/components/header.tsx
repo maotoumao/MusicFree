@@ -15,7 +15,6 @@ import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
 interface IHeaderProps {
     topListDetail: IMusic.IMusicTopListItem | null;
-
     musicList: IMusic.IMusicItem[] | null;
 }
 export default function Header(props: IHeaderProps) {
@@ -52,7 +51,10 @@ export default function Header(props: IHeaderProps) {
                     <View style={style.details}>
                         <ThemeText>{topListDetail?.title}</ThemeText>
                         <ThemeText fontColor="secondary" fontSize="description">
-                            共{musicList ? musicList.length ?? 0 : '-'}首{' '}
+                            共
+                            {topListDetail?.worksNum ??
+                                (musicList ? musicList.length ?? 0 : '-')}
+                            首{' '}
                         </ThemeText>
                     </View>
                 </View>
