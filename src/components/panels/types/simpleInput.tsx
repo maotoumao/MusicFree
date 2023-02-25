@@ -13,6 +13,7 @@ import useColors from '@/hooks/useColors';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import usePanel from '../usePanel';
 import ThemeText from '@/components/base/themeText';
+import {ScrollView} from 'react-native-gesture-handler';
 
 interface ISimpleInputProps {
     onOk: (text: string, closePanel: () => void) => void;
@@ -87,18 +88,20 @@ export default function SimpleInput(props: ISimpleInputProps) {
                 placeholder={placeholder ?? ''}
                 maxLength={maxLength}
             />
-            {hints?.length ? (
-                <View style={style.hints}>
-                    {hints.map(_ => (
-                        <ThemeText
-                            style={style.hintLine}
-                            fontSize="subTitle"
-                            fontColor="secondary">
-                            ￮ {_}
-                        </ThemeText>
-                    ))}
-                </View>
-            ) : null}
+            <ScrollView>
+                {hints?.length ? (
+                    <View style={style.hints}>
+                        {hints.map(_ => (
+                            <ThemeText
+                                style={style.hintLine}
+                                fontSize="subTitle"
+                                fontColor="secondary">
+                                ￮ {_}
+                            </ThemeText>
+                        ))}
+                    </View>
+                ) : null}
+            </ScrollView>
         </BottomSheet>
     );
 }

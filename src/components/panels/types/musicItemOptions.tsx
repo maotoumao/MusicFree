@@ -81,6 +81,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
         },
         {
             icon: 'album',
+            show: !!musicItem.album,
             title: `专辑: ${musicItem.album}`,
             onPress: () => {
                 Clipboard.setString(musicItem.album);
