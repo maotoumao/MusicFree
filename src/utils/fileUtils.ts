@@ -128,6 +128,6 @@ export function trimHash(url: string) {
     return url.substring(0, index);
 }
 
-export function escapeCharacter(str: string) {
-    return str.replace(/\//g, '_');
+export function escapeCharacter(str?: string) {
+    return str !== undefined ? `${str}`.replace(/\//g, '_') : '';
 }

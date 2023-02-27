@@ -338,11 +338,14 @@ function downloadMusic(
             ) === -1 &&
             !LocalMusicSheet.isLocalMusic(musicItem),
     );
-    const enqueueData = musicItems.map(_ => ({
-        musicItem: _,
-        filename: generateFilename(_),
-        quality,
-    }));
+    const enqueueData = musicItems.map(_ => {
+        console.log('fuck!!', _, generateFilename(_));
+        return {
+            musicItem: _,
+            filename: generateFilename(_),
+            quality,
+        };
+    });
     if (enqueueData.length) {
         pendingMusicQueue = pendingMusicQueue.concat(enqueueData);
         pendingMusicQueueStateMapper.notify();
