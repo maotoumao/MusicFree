@@ -201,7 +201,7 @@ export default function PluginList() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         paddingTop: rpx(36),
         flex: 1,
     },

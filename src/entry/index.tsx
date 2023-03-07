@@ -15,6 +15,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import toastConfig from '@/components/base/toast';
 import useBootstrap from './useBootstrap';
 import Debug from '@/components/debug';
+import useOrientation from '@/hooks/useOrientation';
 
 /**
  * 字体颜色
@@ -39,6 +40,9 @@ export default function Pages() {
         : theme;
 
     useBootstrap();
+
+    const orientation = useOrientation();
+    console.log(orientation);
 
     return (
         <GestureHandlerRootView style={{flex: 1}}>

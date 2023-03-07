@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import {Divider} from 'react-native-paper';
@@ -17,8 +17,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import useColors from '@/hooks/useColors';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import useOrientation from '@/hooks/useOrientation';
 
-const LIST_HEIGHT = vh(60);
 const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 250;
 
@@ -35,7 +35,11 @@ export default function () {
     const [loading, setLoading] = useState(true);
     const timerRef = useRef<any>();
     const safeAreaInsets = useSafeAreaInsets();
-    console.log(safeAreaInsets);
+    const orientation = useOrientation();
+    const useAnimatedBase = useMemo(
+        () => (orientation === 'horizonal' ? rpx(750) : vh(60)),
+        [orientation],
+    );
 
     useEffect(() => {
         snapPoint.value = withTiming(1, timingConfig);
@@ -63,15 +67,22 @@ export default function () {
     const panelAnimated = useAnimatedStyle(() => {
         return {
             transform: [
-                {
-                    translateY: withTiming(
-                        (1 - snapPoint.value) * LIST_HEIGHT,
-                        timingConfig,
-                    ),
-                },
+                orientation === 'vertical'
+                    ? {
+                          translateY: withTiming(
+                              (1 - snapPoint.value) * useAnimatedBase,
+                              timingConfig,
+                          ),
+                      }
+                    : {
+                          translateX: withTiming(
+                              (1 - snapPoint.value) * useAnimatedBase,
+                              timingConfig,
+                          ),
+                      },
             ],
         };
-    });
+    }, [orientation]);
 
     const mountPanel = useCallback(() => {
         setLoading(false);
@@ -104,7 +115,14 @@ export default function () {
             <Animated.View
                 style={[
                     style.wrapper,
-                    {backgroundColor: colors.primary},
+                    {
+                        backgroundColor: colors.primary,
+                        height:
+                            orientation === 'horizonal'
+                                ? vh(100) - safeAreaInsets.top
+                                : vh(60),
+                        right: 0,
+                    },
                     panelAnimated,
                 ]}>
                 <Header />
@@ -132,6 +150,7 @@ const style = StyleSheet.create({
     wrapper: {
         position: 'absolute',
         height: vh(60),
+        width: rpx(750),
         bottom: 0,
         borderTopLeftRadius: rpx(28),
         borderTopRightRadius: rpx(28),

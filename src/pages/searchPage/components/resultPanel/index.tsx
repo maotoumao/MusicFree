@@ -3,7 +3,7 @@
  */
 import React, {memo, useState} from 'react';
 import {Text} from 'react-native';
-import rpx from '@/utils/rpx';
+import rpx, {vw} from '@/utils/rpx';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import ResultSubPanel from './resultSubPanel';
 import results from './results';
@@ -71,7 +71,7 @@ function ResultPanel() {
             }}
             renderScene={renderScene}
             onIndexChange={setIndex}
-            initialLayout={{width: rpx(750)}}
+            initialLayout={{width: vw(100)}}
         />
     );
 }

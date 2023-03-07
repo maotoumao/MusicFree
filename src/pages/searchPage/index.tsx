@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
 import NavBar from './components/navBar';
 import {useAtom, useSetAtom} from 'jotai';
 import {
@@ -31,15 +30,17 @@ export default function () {
     }, []);
 
     return (
-        <SafeAreaView style={style.wrapper}>
+        <SafeAreaView edges={['bottom', 'top']} style={style.wrapper}>
             <StatusBar />
             <NavBar />
-            <View style={style.flex1}>
-                {pageStatus === PageStatus.EDITING && <HistoryPanel />}
-                {pageStatus === PageStatus.SEARCHING && <Loading />}
-                {pageStatus === PageStatus.RESULT && <ResultPanel />}
-                {pageStatus === PageStatus.NO_PLUGIN && <NoPlugin />}
-            </View>
+            <SafeAreaView edges={['left', 'right']} style={style.wrapper}>
+                <View style={style.flex1}>
+                    {pageStatus === PageStatus.EDITING && <HistoryPanel />}
+                    {pageStatus === PageStatus.SEARCHING && <Loading />}
+                    {pageStatus === PageStatus.RESULT && <ResultPanel />}
+                    {pageStatus === PageStatus.NO_PLUGIN && <NoPlugin />}
+                </View>
+            </SafeAreaView>
             <MusicBar />
         </SafeAreaView>
     );
@@ -47,7 +48,7 @@ export default function () {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         flex: 1,
     },
     flex1: {

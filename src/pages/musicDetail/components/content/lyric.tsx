@@ -237,7 +237,7 @@ export default function Lyric() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         marginVertical: rpx(48),
         flex: 1,
     },
@@ -272,7 +272,7 @@ const style = StyleSheet.create({
         top: '40%',
         marginTop: rpx(48),
         paddingHorizontal: rpx(18),
-        left: 0,
+        right: 0,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',

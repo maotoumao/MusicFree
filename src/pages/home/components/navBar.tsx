@@ -64,7 +64,7 @@ const style = StyleSheet.create({
         backgroundColor: 'transparent',
         shadowColor: 'transparent',
         flexDirection: 'row',
-        width: rpx(750),
+        width: '100%',
     },
     searchBar: {
         marginHorizontal: rpx(24),

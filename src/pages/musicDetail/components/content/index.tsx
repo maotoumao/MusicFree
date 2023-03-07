@@ -4,11 +4,16 @@ import rpx from '@/utils/rpx';
 import AlbumCover from './albumCover';
 import Lyric from './lyric';
 import {TapGestureHandler} from 'react-native-gesture-handler';
+import useOrientation from '@/hooks/useOrientation';
 
 export default function Content() {
     const [tab, selectTab] = useState<'album' | 'lyric'>('album');
+    const orientation = useOrientation();
 
     const onPress = () => {
+        if (orientation === 'horizonal') {
+            return;
+        }
         if (tab === 'album') {
             selectTab('lyric');
         } else {
@@ -19,7 +24,11 @@ export default function Content() {
     return (
         <TapGestureHandler onActivated={onPress}>
             <View style={style.wrapper}>
-                {tab === 'album' ? <AlbumCover /> : <Lyric />}
+                {tab === 'album' || orientation === 'horizonal' ? (
+                    <AlbumCover />
+                ) : (
+                    <Lyric />
+                )}
             </View>
         </TapGestureHandler>
     );

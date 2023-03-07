@@ -4,10 +4,20 @@ import rpx from '@/utils/rpx';
 import SeekBar from './seekBar';
 import PlayControl from './playControl';
 import Opertions from './operations';
+import useOrientation from '@/hooks/useOrientation';
 
 export default function Bottom() {
+    const orientation = useOrientation();
     return (
-        <View style={style.wrapper}>
+        <View
+            style={[
+                style.wrapper,
+                orientation === 'horizonal'
+                    ? {
+                          height: rpx(236),
+                      }
+                    : undefined,
+            ]}>
             <Opertions />
             <SeekBar />
             <PlayControl />

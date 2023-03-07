@@ -13,6 +13,7 @@ import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
 import Config from '@/core/config';
 import TrackPlayer from 'react-native-track-player';
+import useOrientation from '@/hooks/useOrientation';
 
 export default function Opertions() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -22,6 +23,7 @@ export default function Opertions() {
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
     const {showPanel} = usePanel();
     const rate = Config.useConfig('status.music.rate') ?? 100;
+    const orientation = useOrientation();
 
     const musicIndexInFav =
         favoriteMusicSheet?.musicList.findIndex(_ =>
@@ -29,7 +31,15 @@ export default function Opertions() {
         ) ?? -1;
 
     return (
-        <View style={style.wrapper}>
+        <View
+            style={[
+                style.wrapper,
+                orientation === 'horizonal'
+                    ? {
+                          marginBottom: 0,
+                      }
+                    : null,
+            ]}>
             {musicIndexInFav !== -1 ? (
                 <Icon
                     name="heart"

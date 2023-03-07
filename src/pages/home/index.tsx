@@ -9,18 +9,36 @@ import {Divider} from 'react-native-paper';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import HomeDrawer from './components/drawer';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import rpx from '@/utils/rpx';
 import StatusBar from '@/components/base/statusBar';
+import useOrientation from '@/hooks/useOrientation';
 
 function Home() {
     return (
-        <SafeAreaView style={styles.appWrapper}>
+        <SafeAreaView edges={['top', 'bottom']} style={styles.appWrapper}>
             <StatusBar backgroundColor="transparent" />
             <NavBar />
             <Divider />
+            <Body />
+            <MusicBar />
+        </SafeAreaView>
+    );
+}
+
+function Body() {
+    const orientation = useOrientation();
+    return (
+        <SafeAreaView
+            edges={['left', 'right']}
+            style={[
+                styles.appWrapper,
+                orientation === 'horizonal'
+                    ? {
+                          flexDirection: 'row',
+                      }
+                    : null,
+            ]}>
             <Operations />
             <MySheets />
-            <MusicBar />
         </SafeAreaView>
     );
 }
@@ -32,7 +50,7 @@ export default function App() {
             screenOptions={{
                 headerShown: false,
                 drawerStyle: {
-                    width: rpx(600),
+                    width: '80%',
                 },
             }}
             initialRouteName="HOME-MAIN"
@@ -45,6 +63,6 @@ export default function App() {
 const styles = StyleSheet.create({
     appWrapper: {
         flexDirection: 'column',
-        height: '100%',
+        flex: 1,
     },
 });

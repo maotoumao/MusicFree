@@ -64,7 +64,6 @@ export default function PluginSort() {
 
 const style = StyleSheet.create({
     sortWrapper: {
-        width: rpx(702),
         marginHorizontal: rpx(24),
         marginTop: rpx(36),
         justifyContent: 'space-between',

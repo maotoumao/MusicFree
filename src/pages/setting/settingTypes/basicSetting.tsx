@@ -375,7 +375,7 @@ export default function BasicSetting() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         paddingVertical: rpx(24),
         flex: 1,
     },

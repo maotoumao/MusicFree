@@ -25,7 +25,6 @@ import {
 } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const WINDOW_WIDTH = rpx(750);
 const defaultZIndex = 10;
 
 interface ISortableFlatListProps<T> {
@@ -346,7 +345,7 @@ function _SortableFlatListItem(props: ISortableFlatListItemProps) {
         StyleSheet.create({
             viewWrapper: {
                 height: itemHeight,
-                width: WINDOW_WIDTH,
+                width: '100%',
                 flexDirection: 'row',
                 justifyContent: itemJustifyContent ?? 'flex-end',
                 zIndex: defaultZIndex,
@@ -407,7 +406,7 @@ const FakeFlatListItem = forwardRef(function (
         StyleSheet.create({
             viewWrapper: {
                 height: itemHeight,
-                width: WINDOW_WIDTH,
+                width: '100%',
                 flexDirection: 'row',
                 justifyContent: itemJustifyContent ?? 'flex-end',
                 zIndex: defaultZIndex,
@@ -445,7 +444,7 @@ const FakeFlatListItem = forwardRef(function (
 const style = StyleSheet.create({
     flex1: {
         flex: 1,
-        width: WINDOW_WIDTH,
+        width: '100%',
     },
     activeItemDefault: {
         opacity: 0,

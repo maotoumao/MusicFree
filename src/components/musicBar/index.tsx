@@ -1,4 +1,4 @@
-import React, {Fragment, memo, useEffect, useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {Keyboard, Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,6 +12,7 @@ import usePanel from '../panels/usePanel';
 import Color from 'color';
 import ThemeText from '../base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 function CircularPlayBtn() {
     const progress = MusicQueue.useProgress();
@@ -59,6 +60,7 @@ function MusicBar() {
     const {showPanel} = usePanel();
     const navigate = useNavigate();
     const {colors} = useTheme();
+    const safeAreaInsets = useSafeAreaInsets();
 
     useEffect(() => {
         const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -75,7 +77,7 @@ function MusicBar() {
     }, []);
 
     return (
-        <Fragment>
+        <>
             {musicItem && !showKeyboard && (
                 <Pressable
                     style={[
@@ -84,6 +86,7 @@ function MusicBar() {
                             backgroundColor: Color(colors.primary)
                                 .alpha(0.66)
                                 .toString(),
+                            paddingLeft: safeAreaInsets.left + rpx(24),
                         },
                     ]}
                     onPress={() => {
@@ -131,7 +134,7 @@ function MusicBar() {
                     </View>
                 </Pressable>
             )}
-        </Fragment>
+        </>
     );
 }
 
@@ -139,7 +142,7 @@ export default memo(MusicBar, () => true);
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         height: rpx(120),
         flexDirection: 'row',
         alignItems: 'center',
@@ -151,7 +154,7 @@ const style = StyleSheet.create({
     },
     textWrapper: {
         flexGrow: 1,
-        maxWidth: rpx(382),
+        flexShrink: 1,
     },
     actionGroup: {
         width: rpx(200),

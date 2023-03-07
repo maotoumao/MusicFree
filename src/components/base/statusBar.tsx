@@ -1,7 +1,7 @@
 import React from 'react';
 import {StatusBar, StatusBarProps, View} from 'react-native';
 import useColors from '@/hooks/useColors';
-import rpx from '@/utils/rpx';
+import {sw} from '@/utils/rpx';
 
 interface IStatusBarProps extends StatusBarProps {}
 
@@ -16,7 +16,7 @@ export default function (props: IStatusBarProps) {
                 position: 'absolute',
                 top: 0,
                 backgroundColor: backgroundColor ?? colors.primary,
-                width: rpx(750),
+                width: sw(100),
                 height: StatusBar.currentHeight,
             }}
         />

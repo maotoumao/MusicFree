@@ -82,8 +82,8 @@ export default function () {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
-        maxWidth: rpx(750),
+        width: '100%',
+        maxWidth: '100%',
         flexDirection: 'column',
         padding: rpx(24),
         flex: 1,
@@ -96,7 +96,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
     },
     historyContent: {
-        width: rpx(750),
+        width: '100%',
         flex: 1,
     },
     historyContentConainer: {
