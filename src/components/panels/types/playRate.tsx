@@ -11,6 +11,7 @@ import usePrimaryColor from '@/hooks/usePrimaryColor';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import usePanel from '../usePanel';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface IPlayRateProps {
     /** 点击回调 */
@@ -23,6 +24,7 @@ export default function PlayRate(props: IPlayRateProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
     const {unmountPanel} = usePanel();
     const primaryColor = usePrimaryColor();
+    const safeAreaInsets = useSafeAreaInsets();
 
     const {onRatePress} = props ?? {};
 
@@ -51,7 +53,8 @@ export default function PlayRate(props: IPlayRateProps) {
                     播放速度
                 </ThemeText>
             </View>
-            <BottomSheetScrollView style={style.body}>
+            <BottomSheetScrollView
+                style={[style.body, {marginBottom: safeAreaInsets.bottom}]}>
                 {rates.map(key => {
                     return (
                         <Fragment key={`frag-${key}`}>

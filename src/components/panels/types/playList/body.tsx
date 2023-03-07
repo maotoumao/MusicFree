@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Pressable, StyleSheet, Text} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import MusicQueue from '@/core/musicQueue';
 import {FlatList} from 'react-native-gesture-handler';
@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import IconButton from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const ITEM_HEIGHT = rpx(108);
 const ITEM_WIDTH = rpx(750);
@@ -25,6 +26,7 @@ interface IPlayListProps {
 function _PlayListItem(props: IPlayListProps) {
     const {colors} = useTheme();
     const {item, index, currentIndex} = props;
+
     // console.log('rerender', index, currentIndex, item);
     return (
         <Pressable
@@ -91,6 +93,7 @@ export default function Body(props: IBodyProps) {
     const currentMusicItem = MusicQueue.useCurrentMusicItem();
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
     const listRef = useRef<FlatList<IMusic.IMusicItem> | null>();
+    const safeAreaInsets = useSafeAreaInsets();
 
     const initIndex = useMemo(() => {
         const id = musicQueue.findIndex(_ =>
@@ -140,26 +143,30 @@ export default function Body(props: IBodyProps) {
     return loading ? (
         <Loading />
     ) : (
-        <FlatList
-            ref={_ => {
-                listRef.current = _;
-            }}
-            style={style.playListWrapper}
-            getItemLayout={(_, index) => ({
-                length: ITEM_HEIGHT,
-                offset: ITEM_HEIGHT * index,
-                index,
-            })}
-            data={musicQueue}
-            initialScrollIndex={initIndex}
-            renderItem={renderItem}
-        />
+        <View style={style.playList}>
+            <FlatList
+                ref={_ => {
+                    listRef.current = _;
+                }}
+                style={[
+                    style.playListWrapper,
+                    {marginBottom: safeAreaInsets.bottom},
+                ]}
+                getItemLayout={(_, index) => ({
+                    length: ITEM_HEIGHT,
+                    offset: ITEM_HEIGHT * index,
+                    index,
+                })}
+                data={musicQueue}
+                initialScrollIndex={initIndex}
+                renderItem={renderItem}
+            />
+        </View>
     );
 }
 
 const style = StyleSheet.create({
     playListWrapper: {
-        minHeight: WRAPPER_HEIGHT,
         minWidth: rpx(750),
         width: rpx(750),
         height: WRAPPER_HEIGHT,

@@ -1,7 +1,10 @@
 import React, {Fragment, useRef} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
+import BottomSheet, {
+    BottomSheetBackdrop,
+    BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 import usePrimaryColor from '@/hooks/usePrimaryColor';
@@ -10,6 +13,7 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import usePanel from '../usePanel';
 import {qualityKeys, qualityText} from '@/utils/qualities';
 import {sizeFormatter} from '@/utils/fileUtils';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface IMusicQualityProps {
     /** 歌曲信息 */
@@ -25,6 +29,7 @@ export default function MusicQuality(props: IMusicQualityProps) {
     const sheetRef = useRef<BottomSheetMethods | null>();
     const {unmountPanel} = usePanel();
     const primaryColor = usePrimaryColor();
+    const safeAreaInsets = useSafeAreaInsets();
 
     const {musicItem, onQualityPress} = props ?? {};
 
@@ -53,7 +58,13 @@ export default function MusicQuality(props: IMusicQualityProps) {
                     音质选择
                 </ThemeText>
             </View>
-            <View style={style.body}>
+            <BottomSheetScrollView
+                style={[
+                    style.body,
+                    {
+                        marginBottom: safeAreaInsets.bottom,
+                    },
+                ]}>
                 {qualityKeys.map(key => {
                     return (
                         <Fragment key={`frag-${key}`}>
@@ -78,7 +89,7 @@ export default function MusicQuality(props: IMusicQualityProps) {
                     );
                 })}
                 <Divider />
-            </View>
+            </BottomSheetScrollView>
         </BottomSheet>
     );
 }

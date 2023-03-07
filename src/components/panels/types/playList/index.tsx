@@ -16,10 +16,8 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import useColors from '@/hooks/useColors';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-const ITEM_HEIGHT = rpx(108);
-const ITEM_WIDTH = rpx(750);
-const WRAPPER_HEIGHT = vh(60) - rpx(104);
 const LIST_HEIGHT = vh(60);
 const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 250;
@@ -36,6 +34,8 @@ export default function () {
     const colors = useColors();
     const [loading, setLoading] = useState(true);
     const timerRef = useRef<any>();
+    const safeAreaInsets = useSafeAreaInsets();
+    console.log(safeAreaInsets);
 
     useEffect(() => {
         snapPoint.value = withTiming(1, timingConfig);
@@ -135,30 +135,5 @@ const style = StyleSheet.create({
         bottom: 0,
         borderTopLeftRadius: rpx(28),
         borderTopRightRadius: rpx(28),
-    },
-    playListWrapper: {
-        minHeight: WRAPPER_HEIGHT,
-        minWidth: rpx(750),
-        width: rpx(750),
-        height: WRAPPER_HEIGHT,
-        flex: 1,
-    },
-    playList: {
-        width: rpx(750),
-        height: WRAPPER_HEIGHT,
-        flex: 1,
-    },
-    currentPlaying: {
-        marginRight: rpx(6),
-    },
-    musicItem: {
-        width: ITEM_WIDTH,
-        height: ITEM_HEIGHT,
-        paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    musicItemTitle: {
-        flex: 1,
     },
 });

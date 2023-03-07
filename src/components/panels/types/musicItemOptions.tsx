@@ -26,6 +26,7 @@ import {localMusicSheetId} from '@/constants/commonConst';
 import {ROUTE_PATH} from '@/entry/router';
 import usePanel from '../usePanel';
 import useDialog from '@/components/dialogs/useDialog';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -43,6 +44,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const {showPanel, unmountPanel} = usePanel();
     const {showDialog} = useDialog();
     const primaryColor = usePrimaryColor();
+    const safeAreaInsets = useSafeAreaInsets();
 
     const {musicItem, musicSheet, from} = props ?? {};
 
@@ -229,35 +231,42 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 </View>
             </View>
             <Divider />
-            <BottomSheetFlatList
-                data={options}
-                getItemLayout={(_, index) => ({
-                    length: ITEM_HEIGHT,
-                    offset: ITEM_HEIGHT * index,
-                    index,
-                })}
-                ListFooterComponent={<View style={style.footer} />}
-                style={style.listWrapper}
-                keyExtractor={_ => _.title}
-                renderItem={({item}) =>
-                    item.show !== false ? (
-                        <ListItem
-                            left={{
-                                icon: {
-                                    name: item.icon,
-                                    size: 'small',
-                                    fontColor: 'normal',
-                                },
-                                width: rpx(48),
-                            }}
-                            itemPaddingHorizontal={0}
-                            itemHeight={ITEM_HEIGHT}
-                            title={item.title}
-                            onPress={item.onPress}
-                        />
-                    ) : null
-                }
-            />
+            <View style={style.wrapper}>
+                <BottomSheetFlatList
+                    data={options}
+                    getItemLayout={(_, index) => ({
+                        length: ITEM_HEIGHT,
+                        offset: ITEM_HEIGHT * index,
+                        index,
+                    })}
+                    ListFooterComponent={<View style={style.footer} />}
+                    style={[
+                        style.listWrapper,
+                        {
+                            marginBottom: safeAreaInsets.bottom,
+                        },
+                    ]}
+                    keyExtractor={_ => _.title}
+                    renderItem={({item}) =>
+                        item.show !== false ? (
+                            <ListItem
+                                left={{
+                                    icon: {
+                                        name: item.icon,
+                                        size: 'small',
+                                        fontColor: 'normal',
+                                    },
+                                    width: rpx(48),
+                                }}
+                                itemPaddingHorizontal={0}
+                                itemHeight={ITEM_HEIGHT}
+                                title={item.title}
+                                onPress={item.onPress}
+                            />
+                        ) : null
+                    }
+                />
+            </View>
         </BottomSheet>
     );
 }

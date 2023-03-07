@@ -38,11 +38,7 @@ export default function Body() {
             renderTabBar={props => (
                 <TabBar
                     {...props}
-                    style={{
-                        backgroundColor: 'transparent',
-                        shadowColor: 'transparent',
-                        borderColor: 'transparent',
-                    }}
+                    style={style.transparentColor}
                     tabStyle={{
                         width: rpx(200),
                     }}
@@ -86,5 +82,10 @@ export function BodyContentWrapper(props: any) {
 const style = StyleSheet.create({
     wrapper: {
         zIndex: 100,
+    },
+    transparentColor: {
+        backgroundColor: 'transparent',
+        shadowColor: 'transparent',
+        borderColor: 'transparent',
     },
 });
