@@ -274,7 +274,7 @@ function PluginView(props: IPluginViewProps) {
                                 },
                             });
                         } else {
-                            Toast.warn('目标歌单是空的哦');
+                            Toast.warn('链接有误或目标歌单为空');
                         }
                     },
                 });

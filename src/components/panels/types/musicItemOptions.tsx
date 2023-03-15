@@ -1,19 +1,13 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import BottomSheet, {
-    BottomSheetBackdrop,
-    BottomSheetFlatList,
-} from '@gorhom/bottom-sheet';
 import {Divider} from 'react-native-paper';
 import MusicQueue from '@/core/musicQueue';
 import MusicSheet from '@/core/musicSheet';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
-import usePrimaryColor from '@/hooks/usePrimaryColor';
 import Download from '@/core/download';
 import {ImgAsset} from '@/constants/assetsConst';
-import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 import MediaMeta from '@/core/mediaMeta';
@@ -27,6 +21,8 @@ import {ROUTE_PATH} from '@/entry/router';
 import usePanel from '../usePanel';
 import useDialog from '@/components/dialogs/useDialog';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import PanelBase from '../base/panelBase';
+import {FlatList} from 'react-native-gesture-handler';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -40,20 +36,15 @@ interface IMusicItemOptionsProps {
 const ITEM_HEIGHT = rpx(96);
 
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
-    const sheetRef = useRef<BottomSheetMethods | null>();
-    const {showPanel, unmountPanel} = usePanel();
-    const {showDialog} = useDialog();
-    const primaryColor = usePrimaryColor();
-    const safeAreaInsets = useSafeAreaInsets();
-
     const {musicItem, musicSheet, from} = props ?? {};
 
+    const {showPanel, hidePanel} = usePanel();
+    const {showDialog} = useDialog();
+    const safeAreaInsets = useSafeAreaInsets();
+
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
-    function closePanel() {
-        sheetRef.current?.close();
-    }
-    // 关联歌词
     const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
+
     const options = [
         {
             icon: 'id-card',
@@ -95,7 +86,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '下一首播放',
             onPress: () => {
                 MusicQueue.addNext(musicItem);
-                closePanel();
+                hidePanel();
             },
         },
         {
@@ -111,7 +102,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             show: !downloaded,
             onPress: async () => {
                 Download.downloadMusic(musicItem);
-                closePanel();
+                hidePanel();
             },
         },
         {
@@ -130,7 +121,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     await MusicSheet.removeMusic(musicSheet!.id, musicItem);
                 }
                 Toast.success('已删除');
-                closePanel();
+                hidePanel();
             },
         },
         {
@@ -150,7 +141,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                         }
                     },
                 });
-                closePanel();
+                hidePanel();
             },
         },
         {
@@ -173,7 +164,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     associatedLrc: undefined,
                 });
                 Toast.success('已解除关联歌词');
-                closePanel();
+                hidePanel();
             },
         },
         {
@@ -195,79 +186,67 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     ];
 
     return (
-        <BottomSheet
-            ref={_ => (sheetRef.current = _)}
-            backdropComponent={props => {
-                return (
-                    <BottomSheetBackdrop
-                        disappearsOnIndex={-1}
-                        pressBehavior={'close'}
-                        opacity={0.5}
-                        {...props}
-                    />
-                );
-            }}
-            backgroundStyle={{backgroundColor: primaryColor}}
-            handleComponent={null}
-            index={0}
-            snapPoints={['60%']}
-            enablePanDownToClose
-            enableOverDrag={false}
-            onClose={unmountPanel}>
-            <View style={style.header}>
-                <FastImage
-                    style={style.artwork}
-                    uri={musicItem?.artwork}
-                    emptySrc={ImgAsset.albumDefault}
-                />
-                <View style={style.content}>
-                    <ThemeText numberOfLines={2} style={style.title}>
-                        {musicItem?.title}
-                    </ThemeText>
-                    <ThemeText fontColor="secondary" fontSize="description">
-                        {musicItem?.artist}{' '}
-                        {musicItem?.album ? `- ${musicItem.album}` : ''}
-                    </ThemeText>
-                </View>
-            </View>
-            <Divider />
-            <View style={style.wrapper}>
-                <BottomSheetFlatList
-                    data={options}
-                    getItemLayout={(_, index) => ({
-                        length: ITEM_HEIGHT,
-                        offset: ITEM_HEIGHT * index,
-                        index,
-                    })}
-                    ListFooterComponent={<View style={style.footer} />}
-                    style={[
-                        style.listWrapper,
-                        {
-                            marginBottom: safeAreaInsets.bottom,
-                        },
-                    ]}
-                    keyExtractor={_ => _.title}
-                    renderItem={({item}) =>
-                        item.show !== false ? (
-                            <ListItem
-                                left={{
-                                    icon: {
-                                        name: item.icon,
-                                        size: 'small',
-                                        fontColor: 'normal',
-                                    },
-                                    width: rpx(48),
-                                }}
-                                itemPaddingHorizontal={0}
-                                itemHeight={ITEM_HEIGHT}
-                                title={item.title}
-                                onPress={item.onPress}
-                            />
-                        ) : null
-                    }
-                />
-            </View>
-        </BottomSheet>
+        <PanelBase
+            renderBody={() => (
+                <>
+                    <View style={style.header}>
+                        <FastImage
+                            style={style.artwork}
+                            uri={musicItem?.artwork}
+                            emptySrc={ImgAsset.albumDefault}
+                        />
+                        <View style={style.content}>
+                            <ThemeText numberOfLines={2} style={style.title}>
+                                {musicItem?.title}
+                            </ThemeText>
+                            <ThemeText
+                                fontColor="secondary"
+                                fontSize="description">
+                                {musicItem?.artist}{' '}
+                                {musicItem?.album ? `- ${musicItem.album}` : ''}
+                            </ThemeText>
+                        </View>
+                    </View>
+                    <Divider />
+                    <View style={style.wrapper}>
+                        <FlatList
+                            data={options}
+                            getItemLayout={(_, index) => ({
+                                length: ITEM_HEIGHT,
+                                offset: ITEM_HEIGHT * index,
+                                index,
+                            })}
+                            ListFooterComponent={<View style={style.footer} />}
+                            style={[
+                                style.listWrapper,
+                                {
+                                    marginBottom: safeAreaInsets.bottom,
+                                },
+                            ]}
+                            keyExtractor={_ => _.title}
+                            renderItem={({item}) =>
+                                item.show !== false ? (
+                                    <ListItem
+                                        left={{
+                                            icon: {
+                                                name: item.icon,
+                                                size: 'small',
+                                                fontColor: 'normal',
+                                            },
+                                            width: rpx(48),
+                                        }}
+                                        itemPaddingHorizontal={0}
+                                        itemHeight={ITEM_HEIGHT}
+                                        title={item.title}
+                                        onPress={item.onPress}
+                                    />
+                                ) : null
+                            }
+                        />
+                    </View>
+                </>
+            )}
+        />
     );
 }
 

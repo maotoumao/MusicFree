@@ -1,5 +1,6 @@
 import {GlobalState} from '@/utils/stateMapper';
 import {useCallback} from 'react';
+import {DeviceEventEmitter} from 'react-native';
 import panels from './types';
 
 type IPanel = typeof panels;
@@ -22,19 +23,25 @@ export default function usePanel() {
         name: T,
         payload?: Parameters<IPanel[T]>[0],
     ) {
-        panelInfoStore.setValue({
-            name,
-            payload,
-        });
+        if (panelInfoStore.getValue().name) {
+            DeviceEventEmitter.emit('hidePanel', () => {
+                panelInfoStore.setValue({
+                    name,
+                    payload,
+                });
+            });
+        } else {
+            panelInfoStore.setValue({
+                name,
+                payload,
+            });
+        }
     },
     []);
 
-    const unmountPanel = useCallback(() => {
-        panelInfoStore.setValue({
-            name: null,
-            payload: null,
-        });
+    const hidePanel = useCallback(() => {
+        DeviceEventEmitter.emit('hidePanel');
     }, []);
 
-    return {showPanel, unmountPanel};
+    return {showPanel, hidePanel};
 }

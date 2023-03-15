@@ -1,18 +1,15 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import BottomSheet, {
-    BottomSheetBackdrop,
-    BottomSheetTextInput,
-} from '@gorhom/bottom-sheet';
+import rpx, {vmax} from '@/utils/rpx';
 import {Divider} from 'react-native-paper';
 import MusicSheet from '@/core/musicSheet';
 import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
-import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import usePanel from '../usePanel';
+import PanelBase from '../base/panelBase';
+import {TextInput} from 'react-native-gesture-handler';
 
 interface INewMusicSheetProps {
     onSheetCreated?: (sheetId: string) => void;
@@ -21,71 +18,57 @@ interface INewMusicSheetProps {
 
 export default function NewMusicSheet(props: INewMusicSheetProps) {
     const {onSheetCreated, onCancel} = props;
-
-    const sheetRef = useRef<BottomSheetMethods | null>();
-    const {unmountPanel} = usePanel();
+    const {hidePanel} = usePanel();
     const [input, setInput] = useState('');
     const colors = useColors();
-    const snap = useRef(['30%']);
 
     return (
-        <BottomSheet
-            ref={_ => (sheetRef.current = _)}
-            backgroundStyle={{backgroundColor: colors.primary}}
-            backdropComponent={props => {
-                return (
-                    <BottomSheetBackdrop
-                        disappearsOnIndex={-1}
-                        pressBehavior={'close'}
-                        opacity={0.5}
-                        {...props}
+        <PanelBase
+            height={vmax(30)}
+            renderBody={() => (
+                <>
+                    <View style={style.opeartions}>
+                        <Button
+                            onPress={() => {
+                                onCancel ? onCancel() : hidePanel();
+                            }}>
+                            取消
+                        </Button>
+                        <Button
+                            onPress={async () => {
+                                if (input) {
+                                    const sheetId = await MusicSheet.addSheet(
+                                        input,
+                                    );
+                                    onSheetCreated?.(sheetId);
+                                    hidePanel();
+                                }
+                            }}>
+                            确认
+                        </Button>
+                    </View>
+                    <Divider />
+                    <TextInput
+                        value={input}
+                        onChangeText={_ => {
+                            setInput(_);
+                        }}
+                        style={[
+                            style.input,
+                            {
+                                color: colors.text,
+                                backgroundColor: Color(colors.primary)
+                                    .lighten(0.7)
+                                    .toString(),
+                            },
+                        ]}
+                        placeholderTextColor={colors.textSecondary}
+                        placeholder={'新建歌单'}
+                        maxLength={12}
                     />
-                );
-            }}
-            handleComponent={null}
-            index={0}
-            snapPoints={snap.current}
-            enablePanDownToClose
-            enableOverDrag={false}
-            onClose={unmountPanel}>
-            <View style={style.opeartions}>
-                <Button
-                    onPress={() => {
-                        onCancel ? onCancel() : unmountPanel();
-                    }}>
-                    取消
-                </Button>
-                <Button
-                    onPress={async () => {
-                        if (input) {
-                            const sheetId = await MusicSheet.addSheet(input);
-                            onSheetCreated?.(sheetId);
-                            unmountPanel();
-                        }
-                    }}>
-                    确认
-                </Button>
-            </View>
-            <Divider />
-            <BottomSheetTextInput
-                value={input}
-                onChangeText={_ => {
-                    setInput(_);
-                }}
-                style={[
-                    style.input,
-                    {
-                        color: colors.text,
-                        backgroundColor: Color(colors.primary)
-                            .lighten(0.7)
-                            .toString(),
-                    },
-                ]}
-                placeholderTextColor={colors.textSecondary}
-                placeholder={'新建歌单'}
-                maxLength={12}
-            />
-        </BottomSheet>
+                </>
+            )}
+        />
     );
 }
 
