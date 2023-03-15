@@ -21,7 +21,6 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@gorhom/bottom-sheet": "^4",
     "@react-native-async-storage/async-storage": "^1.17.7",
     "@react-native-clipboard/clipboard": "^1.11.0",
     "@react-native-community/netinfo": "^9.3.0",
