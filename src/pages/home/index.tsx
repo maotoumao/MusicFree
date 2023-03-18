@@ -11,14 +11,20 @@ import HomeDrawer from './components/drawer';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import useOrientation from '@/hooks/useOrientation';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import globalStyle from '@/constants/globalStyle';
 
 function Home() {
     return (
         <SafeAreaView edges={['top', 'bottom']} style={styles.appWrapper}>
             <StatusBar backgroundColor="transparent" />
-            <NavBar />
-            <Divider />
-            <Body />
+            <HorizonalSafeAreaView style={globalStyle.flex1}>
+                <>
+                    <NavBar />
+                    <Divider />
+                    <Body />
+                </>
+            </HorizonalSafeAreaView>
             <MusicBar />
         </SafeAreaView>
     );

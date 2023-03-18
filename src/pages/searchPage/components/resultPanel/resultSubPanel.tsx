@@ -1,6 +1,6 @@
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {Text} from 'react-native';
-import rpx from '@/utils/rpx';
+import rpx, {vw} from '@/utils/rpx';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import DefaultResults from './results/defaultResults';
 import {renderMap} from './results';
@@ -106,7 +106,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                 props.tab,
             ])}
             onIndexChange={setIndex}
-            initialLayout={{width: rpx(750)}}
+            initialLayout={{width: vw(100)}}
         />
     );
 }

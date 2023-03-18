@@ -20,7 +20,6 @@ export default function MusicResultItem(props: IMusicResultsProps) {
                 const clickBehavior = Config.get(
                     'setting.basic.clickMusicInSearch',
                 );
-                console.log('!!', clickBehavior, pluginSearchResultRef.current);
                 if (clickBehavior === '播放歌曲并替换播放列表') {
                     MusicQueue.playWithReplaceQueue(
                         musicItem,

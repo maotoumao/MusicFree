@@ -10,6 +10,6 @@ const globalStyle = StyleSheet.create({
         width: '100%',
         flex: 1,
     },
-});
+} as const);
 
 export default globalStyle;

@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {Appbar, Menu} from 'react-native-paper';
 import ThemeText from './themeText';
-import HorizonalSafeAreaView from './horizonalSafeArea';
+import HorizonalSafeAreaView from './horizonalSafeAreaView';
 
 interface IMenuOption {
     icon: string;
@@ -49,7 +49,11 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
                         {title ?? ''}
                     </ThemeText>
                     {onSearchPress ? (
-                        <Appbar.Action icon="magnify" onPress={onSearchPress} />
+                        <Appbar.Action
+                            icon="magnify"
+                            color={colors.text}
+                            onPress={onSearchPress}
+                        />
                     ) : null}
                     {menuOptions.length !== 0 ? (
                         <Menu
@@ -61,7 +65,7 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
                             visible={isMenuVisible}
                             anchor={
                                 <Appbar.Action
-                                    color="white"
+                                    color={colors.text}
                                     icon="dots-vertical"
                                     onPress={onShowMenu}
                                 />

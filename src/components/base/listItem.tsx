@@ -94,7 +94,7 @@ interface IListItemProps {
     itemPaddingHorizontal?: number;
     itemPaddingLeft?: number;
     itemPaddingRight?: number;
-    itemWidth?: number;
+    itemWidth?: number | string;
     itemHeight?: number;
     itemBackgroundColor?: string;
     onPress?: () => void;
@@ -143,7 +143,7 @@ export default function ListItem(props: IListItemProps) {
                         marginRight: right ? rpx(18) : 0,
                     }}>
                     <View style={style.titleWrapper}>
-                        <ThemeText numberOfLines={1} style={style.textWidth}>
+                        <ThemeText numberOfLines={1} style={style.titleText}>
                             {title}
                         </ThemeText>
                         {tag ? <Tag tagName={tag} /> : null}
@@ -153,7 +153,7 @@ export default function ListItem(props: IListItemProps) {
                             fontColor="secondary"
                             fontSize="description"
                             numberOfLines={1}
-                            style={[style.textWidth, {marginTop: rpx(18)}]}>
+                            style={style.descText}>
                             {desc}
                         </ThemeText>
                     ) : null}
@@ -179,8 +179,12 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
     },
-    textWidth: {
-        maxWidth: rpx(450),
+    titleText: {
+        flex: 1,
+        paddingRight: rpx(12),
+    },
+    descText: {
+        marginTop: rpx(18),
     },
     artworkWrapper: {
         width: rpx(76),

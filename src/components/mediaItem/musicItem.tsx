@@ -16,7 +16,7 @@ interface IMusicItemProps {
     musicSheet?: IMusic.IMusicSheetItem;
     onItemPress?: (musicItem: IMusic.IMusicItem) => void;
     onItemLongPress?: () => void;
-    itemWidth?: number;
+    itemWidth?: number | string;
     itemBackgroundColor?: string;
     itemPaddingRight?: number;
 }

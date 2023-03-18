@@ -20,7 +20,7 @@ import {useNavigation} from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Config from '@/core/config';
 import Empty from '@/components/base/empty';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeArea';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 
 const ITEM_HEIGHT_BIG = rpx(120);
 

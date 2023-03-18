@@ -9,7 +9,7 @@ import rpx from '@/utils/rpx';
 import PluginManager, {Plugin} from '@/core/pluginManager';
 import SimpleAppBar from '@/components/base/simpleAppBar';
 import Toast from '@/utils/toast';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeArea';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 
 const ITEM_HEIGHT = rpx(96);

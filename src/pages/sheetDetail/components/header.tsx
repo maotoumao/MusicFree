@@ -41,17 +41,18 @@ export default function Header() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         height: rpx(300),
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
+        paddingHorizontal: rpx(24),
     },
     content: {
-        width: rpx(702),
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
+        flex: 1,
     },
     coverImg: {
         width: rpx(210),
@@ -59,7 +60,8 @@ const style = StyleSheet.create({
         borderRadius: rpx(24),
     },
     details: {
-        width: rpx(456),
+        paddingHorizontal: rpx(36),
+        flex: 1,
         height: rpx(140),
         justifyContent: 'space-between',
     },

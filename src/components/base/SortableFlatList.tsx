@@ -4,6 +4,7 @@
  * 点击会出现
  */
 
+import globalStyle from '@/constants/globalStyle';
 import {iconSizeConst} from '@/constants/uiConst';
 import useTextColor from '@/hooks/useTextColor';
 import rpx from '@/utils/rpx';
@@ -155,7 +156,7 @@ export default function SortableFlatList<T extends any = any>(
     //#endregion
 
     return (
-        <View style={style.flex1}>
+        <View style={globalStyle.fwflex1}>
             {/* 纯展示 */}
             <FakeFlatListItem
                 ref={_ => (fakeItemRef.current = _)}
@@ -355,9 +356,13 @@ function _SortableFlatListItem(props: ISortableFlatListItemProps) {
             },
             btn: {
                 height: itemHeight,
-                paddingHorizontal: rpx(28),
                 justifyContent: 'center',
                 alignItems: 'center',
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: rpx(100),
+                textAlignVertical: 'center',
             },
         }),
     );
@@ -419,6 +424,11 @@ const FakeFlatListItem = forwardRef(function (
                 paddingHorizontal: rpx(28),
                 justifyContent: 'center',
                 alignItems: 'center',
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: rpx(100),
+                textAlignVertical: 'center',
             },
         }),
     );
@@ -445,10 +455,6 @@ const FakeFlatListItem = forwardRef(function (
 });
 
 const style = StyleSheet.create({
-    flex1: {
-        flex: 1,
-        width: '100%',
-    },
     activeItemDefault: {
         opacity: 0,
         zIndex: -1,

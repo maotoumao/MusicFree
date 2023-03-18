@@ -131,15 +131,15 @@ export default function Header(props: IHeaderProps) {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
-        paddingVertical: rpx(24),
+        width: '100%',
+        padding: rpx(24),
         justifyContent: 'center',
         alignItems: 'center',
     },
     content: {
-        width: rpx(702),
+        flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
     },
     coverImg: {
@@ -148,8 +148,9 @@ const style = StyleSheet.create({
         borderRadius: rpx(24),
     },
     details: {
-        width: rpx(456),
+        flex: 1,
         height: rpx(140),
+        paddingHorizontal: rpx(36),
         justifyContent: 'space-between',
     },
     divider: {

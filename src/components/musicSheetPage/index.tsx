@@ -1,11 +1,10 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
 import SheetMusicList from './components/sheetMusicList';
 import StatusBar from '@/components/base/statusBar';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import globalStyle from '@/constants/globalStyle';
+import VerticalSafeAreaView from '../base/verticalSafeAreaView';
 
 interface IMusicSheetPageProps {
     navTitle: string;
@@ -19,7 +18,7 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
     const {navTitle, sheetInfo, musicList, onEndReached, loadMore} = props;
 
     return (
-        <SafeAreaView style={style.wrapper}>
+        <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
             <NavBar
                 musicList={musicList ?? sheetInfo?.musicList ?? []}
@@ -34,13 +33,6 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
                 loadMore={loadMore}
             />
             <MusicBar />
-        </SafeAreaView>
+        </VerticalSafeAreaView>
     );
 }
-
-const style = StyleSheet.create({
-    wrapper: {
-        width: rpx(750),
-        flex: 1,
-    },
-});

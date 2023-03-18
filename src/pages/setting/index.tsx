@@ -5,7 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import SimpleAppBar from '@/components/base/simpleAppBar';
 import {useParams} from '@/entry/router';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeArea';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 
 export default function Setting() {
     const {type} = useParams<'setting'>();

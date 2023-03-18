@@ -1,12 +1,13 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
+import {View} from 'react-native';
 
 import Loading from '@/components/base/loading';
 import Header from './header';
 import MusicList from '@/components/musicList';
 import Config from '@/core/config';
 import MusicQueue from '@/core/musicQueue';
+import globalStyle from '@/constants/globalStyle';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 
 interface IMusicListProps {
     sheetInfo: IMusic.IMusicSheetItemBase | null;
@@ -18,49 +19,41 @@ export default function SheetMusicList(props: IMusicListProps) {
     const {sheetInfo: topListDetail, musicList, onEndReached, loadMore} = props;
 
     return (
-        <View style={style.wrapper}>
+        <View style={globalStyle.fwflex1}>
             {!musicList ? (
                 <Loading />
             ) : (
-                <MusicList
-                    showIndex
-                    loadMore={loadMore}
-                    Header={
-                        <Header
-                            topListDetail={topListDetail}
-                            musicList={musicList}
-                        />
-                    }
-                    musicList={musicList}
-                    onItemPress={(musicItem, musicList) => {
-                        if (
-                            Config.get('setting.basic.clickMusicInAlbum') ===
-                            '播放单曲'
-                        ) {
-                            MusicQueue.play(musicItem);
-                        } else {
-                            MusicQueue.playWithReplaceQueue(
-                                musicItem,
-                                musicList ?? [musicItem],
-                            );
+                <HorizonalSafeAreaView style={globalStyle.fwflex1}>
+                    <MusicList
+                        showIndex
+                        loadMore={loadMore}
+                        Header={
+                            <Header
+                                topListDetail={topListDetail}
+                                musicList={musicList}
+                            />
                         }
-                    }}
-                    onEndReached={() => {
-                        onEndReached?.();
-                    }}
-                />
+                        musicList={musicList}
+                        onItemPress={(musicItem, musicList) => {
+                            if (
+                                Config.get(
+                                    'setting.basic.clickMusicInAlbum',
+                                ) === '播放单曲'
+                            ) {
+                                MusicQueue.play(musicItem);
+                            } else {
+                                MusicQueue.playWithReplaceQueue(
+                                    musicItem,
+                                    musicList ?? [musicItem],
+                                );
+                            }
+                        }}
+                        onEndReached={() => {
+                            onEndReached?.();
+                        }}
+                    />
+                </HorizonalSafeAreaView>
             )}
         </View>
     );
 }
-
-const style = StyleSheet.create({
-    wrapper: {
-        width: rpx(750),
-        flex: 1,
-    },
-    topBtn: {
-        width: rpx(750),
-        height: rpx(80),
-    },
-});

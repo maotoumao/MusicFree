@@ -1,26 +1,21 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import SimpleAppBar from '@/components/base/simpleAppBar';
 import TopListBody from './components/topListBody';
 import MusicBar from '@/components/musicBar';
+import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
+import globalStyle from '@/constants/globalStyle';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 
 export default function TopList() {
     return (
-        <SafeAreaView style={style.wrapper}>
+        <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
             <SimpleAppBar title="榜单" />
-            <TopListBody />
+            <HorizonalSafeAreaView style={globalStyle.flex1}>
+                <TopListBody />
+            </HorizonalSafeAreaView>
             <MusicBar />
-        </SafeAreaView>
+        </VerticalSafeAreaView>
     );
 }
-
-const style = StyleSheet.create({
-    wrapper: {
-        width: rpx(750),
-        flex: 1,
-    },
-});

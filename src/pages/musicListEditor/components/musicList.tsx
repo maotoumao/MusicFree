@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect} from 'react';
+import React, {memo, useCallback} from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicItem from '@/components/mediaItem/musicItem';
@@ -11,9 +11,10 @@ import {
     musicListChangedAtom,
 } from '../store/atom';
 import SortableFlatList from '@/components/base/SortableFlatList';
+import globalStyle from '@/constants/globalStyle';
 
 const ITEM_HEIGHT = rpx(120);
-const ITEM_WIDTH = rpx(646);
+const ITEM_WIDTH = '100%';
 
 interface IMusicEditorItemProps {
     index: number;
@@ -30,13 +31,6 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
             }),
         );
     }, [index]);
-
-    useEffect(() => {
-        console.log('render-flashlistitem', index);
-        return () => {
-            console.log('destroy', index);
-        };
-    }, []);
 
     return (
         <MusicItem
@@ -57,7 +51,7 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
                 ),
             }}
             right={() => <></>}
-            itemPaddingRight={0}
+            itemPaddingRight={rpx(100)}
             onItemPress={onPress}
         />
     );
@@ -97,15 +91,11 @@ export default function MusicList() {
             }}
         />
     ) : (
-        <View style={style.wrapper} />
+        <View style={globalStyle.fwflex1} />
     );
 }
 
 const style = StyleSheet.create({
-    wrapper: {
-        width: rpx(750),
-        flex: 1,
-    },
     checkBox: {
         height: '100%',
         justifyContent: 'center',

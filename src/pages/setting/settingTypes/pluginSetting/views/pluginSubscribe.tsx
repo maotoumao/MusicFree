@@ -12,7 +12,7 @@ import useDialog from '@/components/dialogs/useDialog';
 import Toast from '@/utils/toast';
 import IconButton from '@/components/base/iconButton';
 import Clipboard from '@react-native-clipboard/clipboard';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeArea';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 
 interface ISubscribeItem {

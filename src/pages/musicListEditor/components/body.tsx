@@ -10,6 +10,8 @@ import MusicList from './musicList';
 import {useParams} from '@/entry/router';
 import {localMusicSheetId} from '@/constants/commonConst';
 import LocalMusicSheet from '@/core/localMusicSheet';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import globalStyle from '@/constants/globalStyle';
 
 export default function Body() {
     const {musicSheet} = useParams<'music-list-editor'>();
@@ -22,7 +24,7 @@ export default function Body() {
         [editingMusicList],
     );
     return (
-        <>
+        <HorizonalSafeAreaView style={globalStyle.flex1}>
             <View style={style.header}>
                 <Button
                     onPress={() => {
@@ -83,7 +85,7 @@ export default function Body() {
                 </Button>
             </View>
             <MusicList />
-        </>
+        </HorizonalSafeAreaView>
     );
 }
 

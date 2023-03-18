@@ -87,6 +87,7 @@ function MusicBar() {
                                 .alpha(0.66)
                                 .toString(),
                             paddingLeft: safeAreaInsets.left + rpx(24),
+                            paddingRight: safeAreaInsets.right + rpx(24),
                         },
                     ]}
                     onPress={() => {

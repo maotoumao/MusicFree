@@ -4,7 +4,7 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {Appbar} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 import rpx from '@/utils/rpx';
-import HorizonalSafeAreaView from './horizonalSafeArea';
+import HorizonalSafeAreaView from './horizonalSafeAreaView';
 
 interface ISimpleAppBarProps {
     title?: string;

@@ -1,14 +1,13 @@
 import React, {useEffect} from 'react';
-import {StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 import StatusBar from '@/components/base/statusBar';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Bottom from './components/bottom';
 import Body from './components/body';
 import {useSetAtom} from 'jotai';
 import {editingMusicListAtom, musicListChangedAtom} from './store/atom';
 import {useParams} from '@/entry/router';
+import globalStyle from '@/constants/globalStyle';
+import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 
 export default function MusicListEditor() {
     const {musicSheet, musicList} = useParams<'music-list-editor'>();
@@ -27,18 +26,11 @@ export default function MusicListEditor() {
     }, []);
 
     return (
-        <SafeAreaView style={style.wrapper}>
+        <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
             <ComplexAppBar title={musicSheet?.title ?? '歌单'} />
             <Body />
             <Bottom />
-        </SafeAreaView>
+        </VerticalSafeAreaView>
     );
 }
-
-const style = StyleSheet.create({
-    wrapper: {
-        width: rpx(750),
-        flex: 1,
-    },
-});
