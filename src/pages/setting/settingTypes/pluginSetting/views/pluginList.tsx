@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {FAB, List} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
@@ -20,6 +20,7 @@ import {useNavigation} from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Config from '@/core/config';
 import Empty from '@/components/base/empty';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeArea';
 
 const ITEM_HEIGHT_BIG = rpx(120);
 
@@ -168,7 +169,7 @@ export default function PluginList() {
     return (
         <>
             <ComplexAppBar title="插件设置" menuOptions={menuOptions} />
-            <View style={style.wrapper}>
+            <HorizonalSafeAreaView style={style.wrapper}>
                 <>
                     {loading ? (
                         <Loading />
@@ -194,7 +195,7 @@ export default function PluginList() {
                         }}
                     />
                 </>
-            </View>
+            </HorizonalSafeAreaView>
         </>
     );
 }

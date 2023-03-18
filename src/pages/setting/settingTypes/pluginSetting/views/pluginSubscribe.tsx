@@ -12,6 +12,8 @@ import useDialog from '@/components/dialogs/useDialog';
 import Toast from '@/utils/toast';
 import IconButton from '@/components/base/iconButton';
 import Clipboard from '@react-native-clipboard/clipboard';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeArea';
+import globalStyle from '@/constants/globalStyle';
 
 interface ISubscribeItem {
     name: string;
@@ -81,57 +83,59 @@ export default function PluginSubscribe() {
     return (
         <>
             <SimpleAppBar title="订阅设置" />
-            <FlatList
-                style={style.listWrapper}
-                ListEmptyComponent={Empty}
-                data={subscribes}
-                renderItem={({item, index}) => {
-                    return (
-                        <ListItem
-                            onPress={() => {
-                                showDialog('SubscribePluginDialog', {
-                                    subscribeItem: item,
-                                    onSubmit,
-                                    editingIndex: index,
-                                    onDelete(editingIndex, hideDialog) {
-                                        Config.set(
-                                            'setting.plugin.subscribeUrl',
-                                            JSON.stringify([
-                                                ...subscribes.slice(
-                                                    0,
-                                                    editingIndex,
-                                                ),
-                                                ...subscribes.slice(
-                                                    editingIndex + 1,
-                                                ),
-                                            ]),
-                                        );
-                                        hideDialog();
-                                        Toast.success('删除成功');
-                                    },
-                                });
-                            }}
-                            itemHeight={ITEM_HEIGHT}
-                            title={item.name}
-                            desc={item.url}
-                            right={() => (
-                                <IconButton
-                                    onPress={() => {
-                                        Clipboard.setString(item.url);
-                                        Toast.success('已复制到剪切板');
-                                    }}
-                                    name="share"
-                                />
-                            )}
-                        />
-                    );
-                }}
-                getItemLayout={(_, index) => ({
-                    length: ITEM_HEIGHT,
-                    offset: ITEM_HEIGHT * index,
-                    index,
-                })}
-            />
+            <HorizonalSafeAreaView style={globalStyle.flex1}>
+                <FlatList
+                    style={style.listWrapper}
+                    ListEmptyComponent={Empty}
+                    data={subscribes}
+                    renderItem={({item, index}) => {
+                        return (
+                            <ListItem
+                                onPress={() => {
+                                    showDialog('SubscribePluginDialog', {
+                                        subscribeItem: item,
+                                        onSubmit,
+                                        editingIndex: index,
+                                        onDelete(editingIndex, hideDialog) {
+                                            Config.set(
+                                                'setting.plugin.subscribeUrl',
+                                                JSON.stringify([
+                                                    ...subscribes.slice(
+                                                        0,
+                                                        editingIndex,
+                                                    ),
+                                                    ...subscribes.slice(
+                                                        editingIndex + 1,
+                                                    ),
+                                                ]),
+                                            );
+                                            hideDialog();
+                                            Toast.success('删除成功');
+                                        },
+                                    });
+                                }}
+                                itemHeight={ITEM_HEIGHT}
+                                title={item.name}
+                                desc={item.url}
+                                right={() => (
+                                    <IconButton
+                                        onPress={() => {
+                                            Clipboard.setString(item.url);
+                                            Toast.success('已复制到剪切板');
+                                        }}
+                                        name="share"
+                                    />
+                                )}
+                            />
+                        );
+                    }}
+                    getItemLayout={(_, index) => ({
+                        length: ITEM_HEIGHT,
+                        offset: ITEM_HEIGHT * index,
+                        index,
+                    })}
+                />
+            </HorizonalSafeAreaView>
             <FAB
                 icon={'plus'}
                 onPress={() => {

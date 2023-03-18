@@ -14,6 +14,7 @@ import {trace} from '@/utils/log';
 import Loading from '@/components/base/loading';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import PluginManager from '@/core/pluginManager';
+import globalStyle from '@/constants/globalStyle';
 
 interface ICurrentLyricItem {
     lrc?: ILyric.IParsedLrcItem;
@@ -173,7 +174,7 @@ export default function Lyric() {
                         index,
                     })}
                     ListEmptyComponent={
-                        <View style={{flex: 1}}>
+                        <View style={globalStyle.flex1}>
                             <ThemeText style={style.highlightItem}>
                                 暂无歌词
                             </ThemeText>

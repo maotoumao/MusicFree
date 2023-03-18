@@ -9,6 +9,8 @@ import rpx from '@/utils/rpx';
 import PluginManager, {Plugin} from '@/core/pluginManager';
 import SimpleAppBar from '@/components/base/simpleAppBar';
 import Toast from '@/utils/toast';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeArea';
+import globalStyle from '@/constants/globalStyle';
 
 const ITEM_HEIGHT = rpx(96);
 const marginTop = rpx(188) + (StatusBar.currentHeight ?? 0);
@@ -27,37 +29,44 @@ export default function PluginSort() {
     return (
         <>
             <SimpleAppBar title="插件排序" />
-            <View style={style.sortWrapper}>
-                <ThemeText fontWeight="bold">插件排序</ThemeText>
-                <TouchableOpacity
-                    onPress={async () => {
-                        await PluginMeta.setPluginMetaAll(
-                            produce(PluginMeta.getPluginMetaAll(), draft => {
-                                sortingPlugins.forEach((plg, idx) => {
-                                    objectPath.set(
-                                        draft,
-                                        `${plg.name}.order`,
-                                        idx,
-                                    );
-                                });
-                            }),
-                        );
-                        Toast.success('已保存');
-                    }}>
-                    <ThemeText>完成</ThemeText>
-                </TouchableOpacity>
-            </View>
-            <SortableFlatList
-                data={sortingPlugins}
-                activeBackgroundColor="rgba(33,33,33,0.8)"
-                marginTop={marginTop}
-                renderItem={renderSortingItem}
-                itemHeight={ITEM_HEIGHT}
-                itemJustifyContent={'space-between'}
-                onSortEnd={data => {
-                    setSortingPlugins(data);
-                }}
-            />
+            <HorizonalSafeAreaView style={style.sortWrapper}>
+                <>
+                    <ThemeText fontWeight="bold">插件排序</ThemeText>
+                    <TouchableOpacity
+                        onPress={async () => {
+                            await PluginMeta.setPluginMetaAll(
+                                produce(
+                                    PluginMeta.getPluginMetaAll(),
+                                    draft => {
+                                        sortingPlugins.forEach((plg, idx) => {
+                                            objectPath.set(
+                                                draft,
+                                                `${plg.name}.order`,
+                                                idx,
+                                            );
+                                        });
+                                    },
+                                ),
+                            );
+                            Toast.success('已保存');
+                        }}>
+                        <ThemeText>完成</ThemeText>
+                    </TouchableOpacity>
+                </>
+            </HorizonalSafeAreaView>
+            <HorizonalSafeAreaView style={globalStyle.flex1}>
+                <SortableFlatList
+                    data={sortingPlugins}
+                    activeBackgroundColor="rgba(33,33,33,0.8)"
+                    marginTop={marginTop}
+                    renderItem={renderSortingItem}
+                    itemHeight={ITEM_HEIGHT}
+                    itemJustifyContent={'space-between'}
+                    onSortEnd={data => {
+                        setSortingPlugins(data);
+                    }}
+                />
+            </HorizonalSafeAreaView>
         </>
     );
 }

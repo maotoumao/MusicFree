@@ -5,6 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import SimpleAppBar from '@/components/base/simpleAppBar';
 import {useParams} from '@/entry/router';
+import HorizonalSafeAreaView from '@/components/base/horizonalSafeArea';
 
 export default function Setting() {
     const {type} = useParams<'setting'>();
@@ -16,9 +17,14 @@ export default function Setting() {
             {settingItem.showNav === false ? null : (
                 <SimpleAppBar title={settingItem?.title} />
             )}
-            <SafeAreaView edges={['left', 'right']} style={style.wrapper}>
+
+            {type === 'plugin' ? (
                 <settingItem.component />
-            </SafeAreaView>
+            ) : (
+                <HorizonalSafeAreaView style={style.wrapper}>
+                    <settingItem.component />
+                </HorizonalSafeAreaView>
+            )}
         </SafeAreaView>
     );
 }

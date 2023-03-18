@@ -91,7 +91,10 @@ export default function SortableFlatList<T extends any = any>(
     const scrollingRef = useRef(false);
 
     // 列表整体的高度
-    const listContentHeight = useMemo(() => itemHeight * data.length, [data]);
+    const listContentHeight = useMemo(
+        () => itemHeight * data.length,
+        [data, itemHeight],
+    );
 
     function scrollToTarget(forceScroll = false) {
         // 未选中

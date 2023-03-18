@@ -31,12 +31,7 @@ export default function AboutSetting() {
             <View
                 style={[
                     style.header,
-                    orientation === 'horizonal'
-                        ? {
-                              width: rpx(600),
-                              height: '100%',
-                          }
-                        : null,
+                    orientation === 'horizonal' ? style.horizonalSize : null,
                 ]}>
                 <TouchableOpacity
                     onPress={() => {
@@ -112,6 +107,10 @@ const style = StyleSheet.create({
         height: rpx(350),
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    horizonalSize: {
+        width: rpx(600),
+        height: '100%',
     },
     image: {
         width: rpx(150),
