@@ -63,9 +63,10 @@ export default function Header(props: IHeaderProps) {
                     <Pressable onPress={toggleShowMore}>
                         <View
                             style={style.albumDesc}
-                            onLayout={evt => {
-                                console.log(evt.nativeEvent.layout);
-                            }}>
+                            // onLayout={evt => {
+                            //     console.log(evt.nativeEvent.layout);
+                            // }}
+                        >
                             <ThemeText
                                 fontColor="secondary"
                                 fontSize="description"
@@ -134,7 +135,7 @@ const style = StyleSheet.create({
         width: '100%',
         padding: rpx(24),
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
     },
     content: {
         flex: 1,
@@ -158,7 +159,8 @@ const style = StyleSheet.create({
     },
 
     albumDesc: {
-        width: rpx(702),
+        width: '100%',
+        paddingHorizontal: rpx(24),
     },
     /** playall */
     topWrapper: {

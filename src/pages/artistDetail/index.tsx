@@ -1,7 +1,5 @@
 import React, {useEffect} from 'react';
-import {StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {StyleSheet, View} from 'react-native';
 import StatusBar from '@/components/base/statusBar';
 import MusicBar from '@/components/musicBar';
 import Header from './components/header';
@@ -10,12 +8,16 @@ import {useAtom, useSetAtom} from 'jotai';
 import {initQueryResult, queryResultAtom, scrollToTopAtom} from './store/atoms';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 import {ROUTE_PATH, useNavigate, useParams} from '@/entry/router';
+import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
+import globalStyle from '@/constants/globalStyle';
+import useOrientation from '@/hooks/useOrientation';
 
 export default function ArtistDetail() {
     const [queryResult, setQueryResult] = useAtom(queryResultAtom);
     const {artistItem} = useParams<'artist-detail'>();
     const setScrollToTopState = useSetAtom(scrollToTopAtom);
     const navigate = useNavigate();
+    const orientation = useOrientation();
 
     useEffect(() => {
         return () => {
@@ -25,7 +27,7 @@ export default function ArtistDetail() {
     }, []);
 
     return (
-        <SafeAreaView style={style.wrapper}>
+        <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
             <ComplexAppBar
                 title="作者"
@@ -44,19 +46,24 @@ export default function ArtistDetail() {
                     },
                 ]}
             />
-            <Header />
-            <Body />
+            <View
+                style={
+                    orientation === 'horizonal'
+                        ? style.horizonal
+                        : globalStyle.flex1
+                }>
+                <Header neverFold={orientation === 'horizonal'} />
+                <Body />
+            </View>
+
             <MusicBar />
-        </SafeAreaView>
+        </VerticalSafeAreaView>
     );
 }
 
 const style = StyleSheet.create({
-    wrapper: {
-        width: rpx(750),
-        flex: 1,
-    },
-    body: {
+    horizonal: {
+        flexDirection: 'row',
         flex: 1,
     },
 });

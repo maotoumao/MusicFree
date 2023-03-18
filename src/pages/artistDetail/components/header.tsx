@@ -14,7 +14,14 @@ import Tag from '@/components/base/tag';
 import {useParams} from '@/entry/router';
 
 const headerHeight = rpx(350);
-export default function Header() {
+
+interface IHeaderProps {
+    neverFold?: boolean;
+}
+
+export default function Header(props: IHeaderProps) {
+    const {neverFold} = props;
+
     const {artistItem} = useParams<'artist-detail'>();
 
     const heightValue = useSharedValue(headerHeight);
@@ -34,6 +41,11 @@ export default function Header() {
 
     /** 折叠 */
     useEffect(() => {
+        if (neverFold) {
+            heightValue.value = withTiming(headerHeight);
+            opacityValue.value = withTiming(1);
+            return;
+        }
         if (scrollToTopState) {
             heightValue.value = withTiming(headerHeight);
             opacityValue.value = withTiming(1);
@@ -41,7 +53,7 @@ export default function Header() {
             heightValue.value = withTiming(0);
             opacityValue.value = withTiming(0);
         }
-    }, [scrollToTopState]);
+    }, [scrollToTopState, neverFold]);
 
     return (
         <Animated.View style={[style.wrapper, heightStyle]}>
