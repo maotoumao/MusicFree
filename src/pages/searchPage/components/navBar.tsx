@@ -81,11 +81,11 @@ const style = StyleSheet.create({
         borderRadius: rpx(64),
         height: '72%',
         color: '#666666',
+        alignItems: 'center',
     },
     input: {
         padding: 0,
         color: '#666666',
-        height: rpx(64),
         fontSize: fontSizeConst.subTitle,
         textAlignVertical: 'center',
         includeFontPadding: false,
