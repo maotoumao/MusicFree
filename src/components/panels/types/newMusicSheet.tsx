@@ -12,12 +12,13 @@ import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
 
 interface INewMusicSheetProps {
+    defaultName?: string;
     onSheetCreated?: (sheetId: string) => void;
     onCancel?: () => void;
 }
 
 export default function NewMusicSheet(props: INewMusicSheetProps) {
-    const {onSheetCreated, onCancel} = props;
+    const {onSheetCreated, onCancel, defaultName = '新建歌单'} = props;
     const {hidePanel} = usePanel();
     const [input, setInput] = useState('');
     const colors = useColors();
@@ -36,13 +37,11 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
                         </Button>
                         <Button
                             onPress={async () => {
-                                if (input) {
-                                    const sheetId = await MusicSheet.addSheet(
-                                        input,
-                                    );
-                                    onSheetCreated?.(sheetId);
-                                    hidePanel();
-                                }
+                                const sheetId = await MusicSheet.addSheet(
+                                    input || defaultName,
+                                );
+                                onSheetCreated?.(sheetId);
+                                hidePanel();
                             }}>
                             确认
                         </Button>
@@ -63,7 +62,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
                             },
                         ]}
                         placeholderTextColor={colors.textSecondary}
-                        placeholder={'新建歌单'}
+                        placeholder={defaultName}
                         maxLength={12}
                     />
                 </>

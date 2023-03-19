@@ -71,7 +71,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         flex: 1,
-        height: rpx(64),
+        height: '72%',
         borderRadius: rpx(36),
         paddingHorizontal: rpx(28),
     },

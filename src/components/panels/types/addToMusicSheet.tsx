@@ -13,12 +13,14 @@ import {FlatList} from 'react-native-gesture-handler';
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
+    // 如果是新建歌单，可以传入一个默认的名称
+    newSheetDefaultName?: string;
 }
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
     const sheets = MusicSheet.useSheets();
     const {showPanel, hidePanel} = usePanel();
-    const {musicItem = []} = props ?? {};
+    const {musicItem = [], newSheetDefaultName} = props ?? {};
     const safeAreaInsets = useSafeAreaInsets();
 
     return (
@@ -56,6 +58,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                     }}
                                     onPress={() => {
                                         showPanel('NewMusicSheet', {
+                                            defaultName: newSheetDefaultName,
                                             async onSheetCreated(sheetId) {
                                                 try {
                                                     await MusicSheet.addMusic(
@@ -74,6 +77,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                             onCancel() {
                                                 showPanel('AddToMusicSheet', {
                                                     musicItem: musicItem,
+                                                    newSheetDefaultName,
                                                 });
                                             },
                                         });

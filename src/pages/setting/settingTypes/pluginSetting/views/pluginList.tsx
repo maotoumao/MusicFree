@@ -239,6 +239,7 @@ function PluginView(props: IPluginViewProps) {
                                 onOk() {
                                     showPanel('AddToMusicSheet', {
                                         musicItem: result,
+                                        newSheetDefaultName: `${plugin.name}导入歌曲`,
                                     });
                                 },
                             });

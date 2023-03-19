@@ -79,7 +79,7 @@ const style = StyleSheet.create({
         minWidth: rpx(375),
         flex: 1,
         borderRadius: rpx(64),
-        height: rpx(64),
+        height: '72%',
         color: '#666666',
     },
     input: {

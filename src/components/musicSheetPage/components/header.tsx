@@ -110,6 +110,7 @@ export default function Header(props: IHeaderProps) {
                     onPress={async () => {
                         showPanel('AddToMusicSheet', {
                             musicItem: musicList ?? [],
+                            newSheetDefaultName: topListDetail?.title,
                         });
                     }}
                 />
