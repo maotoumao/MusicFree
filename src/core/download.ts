@@ -52,6 +52,8 @@ let downloadingMusicQueue: IDownloadMusicOptions[] = [];
 let pendingMusicQueue: IDownloadMusicOptions[] = [];
 /** 下载进度 */
 let downloadingProgress: Record<string, {progress: number; size: number}> = {};
+/** 错误信息 */
+let hasError: boolean = false;
 
 const downloadingQueueStateMapper = new StateMapper(
     () => downloadingMusicQueue,
@@ -205,8 +207,18 @@ async function downloadNext() {
         if (!url) {
             throw new Error('empty');
         }
-    } catch {
+    } catch (e: any) {
         /** 无法下载，跳过 */
+        errorLog('下载失败-无法获取下载链接', {
+            item: {
+                id: nextDownloadItem.musicItem.id,
+                title: nextDownloadItem.musicItem.title,
+                platform: nextDownloadItem.musicItem.platform,
+                quality: nextDownloadItem.quality,
+            },
+            reason: e?.message ?? e,
+        });
+        hasError = true;
         removeFromDownloadingQueue(nextDownloadItem);
         return;
     }
@@ -284,7 +296,16 @@ async function downloadNext() {
     } catch (e: any) {
         console.log(e, 'downloaderror');
         /** 下载出错 */
-        errorLog('下载出错', e?.message);
+        errorLog('下载失败', {
+            item: {
+                id: nextDownloadItem.musicItem.id,
+                title: nextDownloadItem.musicItem.title,
+                platform: nextDownloadItem.musicItem.platform,
+                quality: nextDownloadItem.quality,
+            },
+            reason: e?.message ?? e,
+        });
+        hasError = true;
     }
     removeFromDownloadingQueue(nextDownloadItem);
     downloadingProgress = produce(downloadingProgress, draft => {
@@ -296,7 +317,14 @@ async function downloadNext() {
     if (downloadingMusicQueue.length === 0) {
         stopNotifyProgress();
         LocalMusicSheet.saveLocalSheet();
-        Toast.success('下载完成');
+        if (hasError) {
+            Toast.success(
+                '部分下载失败，如果重复出现此现象请打开“侧边栏-记录错误日志”辅助排查',
+            );
+        } else {
+            Toast.success('下载完成');
+        }
+        hasError = false;
         downloadingMusicQueue = [];
         pendingMusicQueue = [];
         downloadingQueueStateMapper.notify();
@@ -328,6 +356,7 @@ function downloadMusic(
     if (!Array.isArray(musicItems)) {
         musicItems = [musicItems];
     }
+    hasError = false;
     musicItems = musicItems.filter(
         musicItem =>
             pendingMusicQueue.findIndex(_ =>
@@ -339,7 +368,6 @@ function downloadMusic(
             !LocalMusicSheet.isLocalMusic(musicItem),
     );
     const enqueueData = musicItems.map(_ => {
-        console.log('fuck!!', _, generateFilename(_));
         return {
             musicItem: _,
             filename: generateFilename(_),
