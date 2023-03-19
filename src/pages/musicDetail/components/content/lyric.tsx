@@ -79,7 +79,7 @@ function useLyric() {
         }
     }, [progress, lyric]);
 
-    return {lyric, currentLrcItem, meta, loading} as const;
+    return {lyric, currentLrcItem, meta, loading, progress} as const;
 }
 
 const ITEM_HEIGHT = rpx(92);
@@ -89,7 +89,7 @@ function Empty(props: {height?: number}) {
 }
 
 export default function Lyric() {
-    const {lyric, currentLrcItem, meta, loading} = useLyric();
+    const {lyric, currentLrcItem, meta, loading, progress} = useLyric();
     const [drag, setDrag] = useState(false);
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
         useDelayFalsy<number | undefined>(undefined, 2000);
@@ -218,8 +218,11 @@ export default function Lyric() {
                     ]}>
                     <Text style={style.draggingTimeText}>
                         {timeformat(
-                            (lyric[draggingIndex]?.time ?? 0) +
-                                (meta?.offset ?? 0),
+                            Math.min(
+                                (lyric[draggingIndex]?.time ?? 0) +
+                                    (meta?.offset ?? 0),
+                                progress.duration ?? 0,
+                            ),
                         )}
                     </Text>
                     <View style={style.singleLine} />
