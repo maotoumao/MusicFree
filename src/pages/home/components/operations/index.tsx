@@ -1,11 +1,17 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import ActionButton from './ActionButton';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ScrollView} from 'react-native-gesture-handler';
 
-export default function Operations() {
+interface IOperationsProps {
+    orientation?: 'horizonal' | 'vertical';
+}
+
+export default function Operations(props: IOperationsProps) {
     const navigate = useNavigate();
+    const {orientation} = props;
 
     const actionButtons = [
         {
@@ -42,22 +48,36 @@ export default function Operations() {
     ];
 
     return (
-        <View style={style.wrapper}>
+        <ScrollView
+            style={style.wrapper}
+            horizontal={orientation === 'vertical'}
+            contentContainerStyle={
+                orientation === 'vertical'
+                    ? style.contentWrapper
+                    : style.horizonalContentWrapper
+            }>
             {actionButtons.map(action => (
                 <ActionButton key={action.title} {...action} />
             ))}
-        </View>
+        </ScrollView>
     );
 }
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
-        flexDirection: 'row',
-        height: rpx(144),
-        justifyContent: 'space-between',
-        paddingHorizontal: rpx(24),
         marginTop: rpx(20),
         marginBottom: rpx(20),
+        flexGrow: 0,
+        flexShrink: 0,
+    },
+    contentWrapper: {
+        flexDirection: 'row',
+        height: rpx(144),
+        paddingHorizontal: rpx(24),
+    },
+    horizonalContentWrapper: {
+        width: rpx(170),
+        flexDirection: 'column',
+        paddingVertical: rpx(24),
     },
 });

@@ -18,8 +18,9 @@ import useHardwareBack from '@/hooks/useHardwareBack';
 import {useNavigation} from '@react-navigation/native';
 import Loading from '@/components/base/loading';
 import {useParams} from '@/entry/router';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
+import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
+import globalStyle from '@/constants/globalStyle';
 
 interface IPathItem {
     path: string;
@@ -185,7 +186,7 @@ export default function FileSelector() {
     );
 
     return (
-        <SafeAreaView style={style.wrapper}>
+        <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
             <View style={[style.header, {backgroundColor: colors.primary}]}>
                 <IconButton
@@ -211,7 +212,7 @@ export default function FileSelector() {
                 <>
                     <FlatList
                         ListEmptyComponent={Empty}
-                        style={style.wrapper}
+                        style={globalStyle.fwflex1}
                         data={filesData}
                         getItemLayout={(_, index) => ({
                             length: ITEM_HEIGHT,
@@ -251,7 +252,7 @@ export default function FileSelector() {
                     </ThemeText>
                 </View>
             </Pressable>
-        </SafeAreaView>
+        </VerticalSafeAreaView>
     );
 }
 
@@ -260,18 +261,14 @@ const style = StyleSheet.create({
         height: rpx(88),
         flexDirection: 'row',
         alignItems: 'center',
-        width: rpx(750),
+        width: '100%',
         paddingHorizontal: rpx(24),
     },
     headerPath: {
         marginLeft: rpx(28),
     },
-    wrapper: {
-        width: rpx(750),
-        flex: 1,
-    },
     scanBtn: {
-        width: rpx(750),
+        width: '100%',
         height: rpx(120),
         alignItems: 'center',
         justifyContent: 'center',

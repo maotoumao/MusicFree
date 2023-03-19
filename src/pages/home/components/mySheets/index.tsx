@@ -9,8 +9,10 @@ import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
 import sheetHeader from './sheetHeader';
 import rpx from '@/utils/rpx';
+import useOrientation from '@/hooks/useOrientation';
 
 function MySheets() {
+    const orientation = useOrientation();
     const musicSheets = MusicSheet.useUserSheets();
     const navigate = useNavigate();
     const {showDialog} = useDialog();
@@ -56,7 +58,12 @@ function MySheets() {
         <FlatList
             overScrollMode="never"
             ListHeaderComponent={sheetHeader}
-            style={style.wrapper}
+            style={[
+                style.wrapper,
+                orientation === 'horizonal'
+                    ? style.horizonalWrapper
+                    : undefined,
+            ]}
             data={musicSheets ?? []}
             keyExtractor={sheet => sheet.id}
             renderItem={renderMySheetItem}
@@ -69,12 +76,14 @@ export default memo(MySheets, () => true);
 const style = StyleSheet.create({
     wrapper: {
         flexGrow: 1,
-        width: rpx(702),
-        marginLeft: rpx(24),
+        marginHorizontal: rpx(24),
         paddingHorizontal: rpx(24),
         paddingBottom: rpx(64),
         backgroundColor: '#eeeeee22',
         marginBottom: rpx(24),
         borderRadius: rpx(24),
+    },
+    horizonalWrapper: {
+        marginTop: rpx(12),
     },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import NavBar from './components/navBar';
 import Operations from './components/operations';
@@ -33,19 +33,14 @@ function Home() {
 function Body() {
     const orientation = useOrientation();
     return (
-        <SafeAreaView
-            edges={['left', 'right']}
+        <View
             style={[
                 styles.appWrapper,
-                orientation === 'horizonal'
-                    ? {
-                          flexDirection: 'row',
-                      }
-                    : null,
+                orientation === 'horizonal' ? styles.flexRow : null,
             ]}>
-            <Operations />
+            <Operations orientation={orientation} />
             <MySheets />
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -70,5 +65,8 @@ const styles = StyleSheet.create({
     appWrapper: {
         flexDirection: 'column',
         flex: 1,
+    },
+    flexRow: {
+        flexDirection: 'row',
     },
 });

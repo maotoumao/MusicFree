@@ -38,7 +38,7 @@ export default function ActionButton(props: IActionButtonProps) {
 const style = StyleSheet.create({
     wrapper: {
         width: rpx(170),
-        height: '100%',
+        height: rpx(144),
         flexGrow: 1,
         flexShrink: 0,
         flexDirection: 'column',

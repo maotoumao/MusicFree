@@ -71,7 +71,7 @@ export default memo(
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         height: ITEM_HEIGHT,
         paddingHorizontal: rpx(24),
         flexDirection: 'row',
