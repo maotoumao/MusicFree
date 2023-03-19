@@ -54,14 +54,14 @@ export default function SeekBar() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         height: rpx(40),
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
     },
     slider: {
-        width: rpx(550),
+        width: '73%',
         height: rpx(40),
     },
     text: {

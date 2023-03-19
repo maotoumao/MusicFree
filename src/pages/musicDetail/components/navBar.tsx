@@ -29,7 +29,7 @@ export default function NavBar() {
                     {musicItem?.title ?? '无音乐'}
                 </Text>
                 <View style={style.headerDesc}>
-                    <Text style={style.headerArtistText}>
+                    <Text style={style.headerArtistText} numberOfLines={1}>
                         {musicItem?.artist}
                     </Text>
                     {musicItem?.platform ? (
@@ -59,7 +59,7 @@ export default function NavBar() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         height: rpx(150),
         flexDirection: 'row',
         alignItems: 'center',
@@ -70,7 +70,6 @@ const style = StyleSheet.create({
         height: rpx(150),
         justifyContent: 'center',
         alignItems: 'center',
-        maxWidth: rpx(640),
     },
     headerTitleText: {
         color: 'white',
@@ -83,11 +82,11 @@ const style = StyleSheet.create({
         height: rpx(32),
         flexDirection: 'row',
         alignItems: 'center',
+        paddingHorizontal: rpx(40),
     },
     headerArtistText: {
         color: 'white',
         fontSize: fontSizeConst.subTitle,
         includeFontPadding: false,
-        maxWidth: rpx(540),
     },
 });

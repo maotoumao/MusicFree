@@ -138,7 +138,7 @@ export default function Opertions() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         height: rpx(80),
         marginBottom: rpx(24),
         flexDirection: 'row',

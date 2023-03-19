@@ -80,7 +80,7 @@ export default function () {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         marginTop: rpx(36),
         height: rpx(100),
         flexDirection: 'row',

@@ -1,4 +1,5 @@
 import StatusBar from '@/components/base/statusBar';
+import globalStyle from '@/constants/globalStyle';
 import useOrientation from '@/hooks/useOrientation';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
@@ -14,10 +15,10 @@ export default function MusicDetail() {
     return (
         <>
             <Background />
-            <SafeAreaView style={style.wrapper}>
+            <SafeAreaView style={globalStyle.fwflex1}>
                 <StatusBar backgroundColor={'transparent'} />
                 <View style={style.bodyWrapper}>
-                    <View style={style.container}>
+                    <View style={globalStyle.flex1}>
                         <NavBar />
                         <Content />
                         <Bottom />
@@ -30,15 +31,9 @@ export default function MusicDetail() {
 }
 
 const style = StyleSheet.create({
-    wrapper: {
+    bodyWrapper: {
         width: '100%',
         flex: 1,
-    },
-    bodyWrapper: {
-        flex: 1,
         flexDirection: 'row',
-    },
-    container: {
-        flex: 1,
     },
 });
