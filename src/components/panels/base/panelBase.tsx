@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
     BackHandler,
     DeviceEventEmitter,
+    KeyboardAvoidingView,
     NativeEventSubscription,
     Pressable,
     StyleSheet,
@@ -156,20 +157,22 @@ export default function (props: IPanelBaseProps) {
                     style={[style.maskWrapper, style.mask, maskAnimated]}
                 />
             </Pressable>
-            <Animated.View
-                style={[
-                    style.wrapper,
-                    {
-                        backgroundColor: colors.primary,
-                        height:
-                            orientation === 'horizonal'
-                                ? vh(100) - safeAreaInsets.top
-                                : height,
-                    },
-                    panelAnimated,
-                ]}>
-                {renderBody(loading)}
-            </Animated.View>
+            <KeyboardAvoidingView behavior="position">
+                <Animated.View
+                    style={[
+                        style.wrapper,
+                        {
+                            backgroundColor: colors.primary,
+                            height:
+                                orientation === 'horizonal'
+                                    ? vh(100) - safeAreaInsets.top
+                                    : height,
+                        },
+                        panelAnimated,
+                    ]}>
+                    {renderBody(loading)}
+                </Animated.View>
+            </KeyboardAvoidingView>
         </>
     );
 }
