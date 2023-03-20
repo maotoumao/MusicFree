@@ -76,6 +76,10 @@ interface IConfig {
             /** 速度 */
             rate: number;
         };
+        app: {
+            /** 跳过特定版本 */
+            skipVersion: string;
+        };
     };
 }
 

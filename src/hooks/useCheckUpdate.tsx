@@ -1,17 +1,28 @@
 import useDialog from '@/components/dialogs/useDialog';
+import Config from '@/core/config';
 import checkUpdate from '@/utils/checkUpdate';
 import Toast from '@/utils/toast';
+import {compare} from 'compare-versions';
 import {useEffect} from 'react';
 
 export default function (callOnMount = true) {
     const {showDialog} = useDialog();
 
-    const checkAndShowResult = (showToast = false) => {
+    const checkAndShowResult = (showToast = false, checkSkip = false) => {
         checkUpdate().then(updateInfo => {
             if (updateInfo?.needUpdate) {
                 const {data} = updateInfo;
+                const skipVersion = Config.get('status.app.skipVersion');
+                console.log(skipVersion, data);
+                if (
+                    checkSkip &&
+                    skipVersion &&
+                    compare(skipVersion, data.version, '>=')
+                ) {
+                    return;
+                }
                 showDialog('DownloadDialog', {
-                    title: `发现新版本(${data.version})`,
+                    version: data.version,
                     content: data.changeLog,
                     fromUrl: data.download[0],
                 });
@@ -25,7 +36,7 @@ export default function (callOnMount = true) {
 
     useEffect(() => {
         if (callOnMount) {
-            checkAndShowResult();
+            checkAndShowResult(false, true);
         }
     }, []);
 
