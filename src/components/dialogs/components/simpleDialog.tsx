@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Dialog, Paragraph} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import useDialog from '../useDialog';
+import {vh} from '@/utils/rpx';
 
 interface ISimpleDialogProps {
     title: string;
@@ -18,7 +19,10 @@ export default function SimpleDialog(props: ISimpleDialogProps) {
             onDismiss={hideDialog}
             style={{backgroundColor: colors.primary}}>
             <Dialog.Title>{title}</Dialog.Title>
-            <Dialog.Content>
+            <Dialog.Content
+                style={{
+                    maxHeight: vh(65),
+                }}>
                 {typeof content === 'string' ? (
                     <Paragraph>{content}</Paragraph>
                 ) : (

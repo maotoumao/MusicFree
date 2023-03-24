@@ -1,5 +1,5 @@
 import {logger, fileAsyncTransport} from 'react-native-logs';
-import RNFS from 'react-native-fs';
+import RNFS, {readDir, readFile} from 'react-native-fs';
 import pathConst from '@/constants/pathConst';
 import Config from '../core/config';
 import {addLog} from '@/lib/react-native-vdebug/src/log';
@@ -55,6 +55,45 @@ export async function clearLog() {
             }
         }),
     );
+}
+
+export async function getErrorLogContent() {
+    try {
+        const files = await readDir(pathConst.logPath);
+        console.log(files);
+        const today = new Date();
+        // 两天的错误日志
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        const todayLog = files.find(
+            _ =>
+                _.isFile() &&
+                _.path.endsWith(
+                    `error-log-${today.getDate()}-${
+                        today.getMonth() + 1
+                    }-${today.getFullYear()}.log`,
+                ),
+        );
+        const yesterdayLog = files.find(
+            _ =>
+                _.isFile() &&
+                _.path.endsWith(
+                    `error-log-${yesterday.getDate()}-${
+                        yesterday.getMonth() + 1
+                    }-${yesterday.getFullYear()}.log`,
+                ),
+        );
+        let logContent = '';
+        if (todayLog) {
+            logContent += await readFile(todayLog.path, 'utf8');
+        }
+        if (yesterdayLog) {
+            logContent += await readFile(yesterdayLog.path, 'utf8');
+        }
+        return logContent;
+    } catch {
+        return '';
+    }
 }
 
 export function errorLog(desc: string, message: any) {

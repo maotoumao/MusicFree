@@ -13,7 +13,9 @@ import pathConst from '@/constants/pathConst';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import {readdir} from 'react-native-fs';
 import {qualityKeys, qualityText} from '@/utils/qualities';
-import {clearLog} from '@/utils/log';
+import {clearLog, getErrorLogContent} from '@/utils/log';
+import {ScrollView} from 'react-native-gesture-handler';
+import {Paragraph} from 'react-native-paper';
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -335,6 +337,22 @@ export default function BasicSetting() {
                     'setting.basic.debug.devLog',
                     basicSetting?.debug?.devLog ?? false,
                 ),
+                {
+                    title: '查看错误日志',
+                    right: undefined,
+                    async onPress() {
+                        // 获取日志文件夹
+                        const errorLogContent = await getErrorLogContent();
+                        showDialog('SimpleDialog', {
+                            title: '错误日志',
+                            content: (
+                                <ScrollView>
+                                    <Paragraph>{errorLogContent}</Paragraph>
+                                </ScrollView>
+                            ),
+                        });
+                    },
+                },
                 {
                     title: '清空日志',
                     right: undefined,
