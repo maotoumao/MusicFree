@@ -347,7 +347,9 @@ export default function BasicSetting() {
                             title: '错误日志',
                             content: (
                                 <ScrollView>
-                                    <Paragraph>{errorLogContent}</Paragraph>
+                                    <Paragraph>
+                                        {errorLogContent || '暂无记录'}
+                                    </Paragraph>
                                 </ScrollView>
                             ),
                         });
