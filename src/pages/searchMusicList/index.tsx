@@ -17,7 +17,9 @@ function filterMusic(query: string, musicList: IMusic.IMusicItem[]) {
         return musicList;
     }
     return musicList.filter(_ =>
-        `${_.title} ${_.artist} ${_.album} ${_.platform}`.includes(query),
+        `${_.title} ${_.artist} ${_.album} ${_.platform}`
+            .toLowerCase()
+            .includes(query.toLowerCase()),
     );
 }
 
@@ -31,6 +33,7 @@ export default function SearchMusicList() {
 
     const onChangeSearch = (_: string) => {
         setQuery(_);
+        // useTransition做优化
         setResult(filterMusic(_.trim(), musicList ?? []));
     };
 
