@@ -77,12 +77,23 @@ const setup = async () => {
                 repeatMode === MusicRepeatMode.SHUFFLE,
             );
         }
+        currentQuality =
+            Config.get('setting.basic.defaultPlayQuality') ?? 'standard';
         if (config?.track) {
             currentIndex = findMusicIndex(config.track);
             // todo： 想想是在这里还是加在下边的play
             if (currentIndex !== -1) {
+                // todo: 这样写不好，简介引入了setup里面musicQueue和pluginManager的初始化时序关系 并且阻塞启动时间，因此这里如果失败不重试
+                const newSource = await PluginManager.getByMedia(
+                    config.track,
+                )?.methods.getMediaSource(config.track, currentQuality, 0);
+                // 重新初始化 获取最新的链接
                 musicQueue = produce(musicQueue, draft => {
-                    draft[currentIndex] = config.track as IMusic.IMusicItem;
+                    const musicItem = {
+                        ...config.track,
+                        ...(newSource ?? {}),
+                    } as IMusic.IMusicItem;
+                    draft[currentIndex] = musicItem;
                 });
             }
             // todo： 判空，理论上不会发生
@@ -92,12 +103,12 @@ const setup = async () => {
         if (config?.progress) {
             await TrackPlayer.seekTo(config.progress);
         }
-        currentQuality =
-            Config.get('setting.basic.defaultPlayQuality') ?? 'standard';
+
         trace('状态恢复', config);
     } catch (e) {
         errorLog('状态恢复失败', e);
     }
+
     // 不要依赖playbackchanged，不稳定,
     // 一首歌结束了
     TrackPlayer.addEventListener(Event.PlaybackQueueEnded, async () => {
