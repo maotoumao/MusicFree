@@ -15,6 +15,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import toastConfig from '@/components/base/toast';
 import useBootstrap from './useBootstrap';
 import Debug from '@/components/debug';
+import {ImageViewComponent} from '@/components/imageViewer';
 
 /**
  * 字体颜色
@@ -66,6 +67,7 @@ export default function Pages() {
 
                         <Panels />
                         <Dialogs />
+                        <ImageViewComponent />
                         <Toast config={toastConfig} />
                         <Debug />
                     </NavigationContainer>

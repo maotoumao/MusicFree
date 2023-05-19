@@ -4,6 +4,7 @@ import {Button} from 'react-native-paper';
 import ThemeText from './themeText';
 
 interface IButtonProps {
+    style?: any;
     children: string;
     fontColor?: ColorKey;
     onPress?: () => void;
