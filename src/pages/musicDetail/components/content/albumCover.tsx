@@ -4,6 +4,8 @@ import MusicQueue from '@/core/musicQueue';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import useOrientation from '@/hooks/useOrientation';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import imageViewer from '@/components/imageViewer';
 
 export default function AlbumCover() {
     const musicItem = MusicQueue.useCurrentMusicItem();
@@ -23,11 +25,19 @@ export default function AlbumCover() {
         }
     }, [orientation]);
 
+    const longPress = Gesture.LongPress()
+        .onStart(() => {
+            imageViewer.show(musicItem.artwork);
+        })
+        .runOnJS(true);
+
     return (
-        <FastImage
-            style={artworkStyle}
-            uri={musicItem?.artwork}
-            emptySrc={ImgAsset.albumDefault}
-        />
+        <GestureDetector gesture={longPress}>
+            <FastImage
+                style={artworkStyle}
+                uri={musicItem?.artwork}
+                emptySrc={ImgAsset.albumDefault}
+            />
+        </GestureDetector>
     );
 }
