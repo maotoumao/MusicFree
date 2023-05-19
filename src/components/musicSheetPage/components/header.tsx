@@ -2,16 +2,12 @@ import React, {useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import LinearGradient from 'react-native-linear-gradient';
-import {Divider, IconButton, useTheme} from 'react-native-paper';
-import MusicQueue from '@/core/musicQueue';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import usePanel from '@/components/panels/usePanel';
-import {iconSizeConst} from '@/constants/uiConst';
+import {Divider, useTheme} from 'react-native-paper';
 import Color from 'color';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import PlayAllBar from '@/components/base/playAllBar';
 
 interface IHeaderProps {
     topListDetail: IMusic.IMusicTopListItem | null;
@@ -19,7 +15,6 @@ interface IHeaderProps {
 }
 export default function Header(props: IHeaderProps) {
     const {topListDetail, musicList} = props;
-    const {showPanel} = usePanel();
     const {colors} = useTheme();
 
     const [maxLines, setMaxLines] = useState<number | undefined>(6);
@@ -31,8 +26,6 @@ export default function Header(props: IHeaderProps) {
             setMaxLines(6);
         }
     };
-
-    const navigate = useNavigate();
 
     return (
         <>
@@ -77,56 +70,10 @@ export default function Header(props: IHeaderProps) {
                     </Pressable>
                 ) : null}
             </LinearGradient>
-            <View
-                style={[
-                    style.topWrapper,
-                    {
-                        backgroundColor: Color(colors.primary)
-                            .alpha(0.15)
-                            .toString(),
-                    },
-                ]}>
-                <Pressable
-                    style={style.playAll}
-                    onPress={() => {
-                        if (musicList) {
-                            MusicQueue.playWithReplaceQueue(
-                                musicList[0],
-                                musicList,
-                            );
-                        }
-                    }}>
-                    <Icon
-                        name="play-circle-outline"
-                        style={style.playAllIcon}
-                        size={iconSizeConst.normal}
-                        color={colors.text}
-                    />
-                    <ThemeText fontWeight="bold">播放全部</ThemeText>
-                </Pressable>
-                <IconButton
-                    icon={'plus-box-multiple-outline'}
-                    size={rpx(48)}
-                    onPress={async () => {
-                        showPanel('AddToMusicSheet', {
-                            musicItem: musicList ?? [],
-                            newSheetDefaultName: topListDetail?.title,
-                        });
-                    }}
-                />
-                <IconButton
-                    icon="playlist-edit"
-                    size={rpx(48)}
-                    onPress={async () => {
-                        navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
-                            musicList: musicList,
-                            musicSheet: {
-                                title: topListDetail?.title,
-                            },
-                        });
-                    }}
-                />
-            </View>
+            <PlayAllBar
+                sheetName={topListDetail?.title}
+                musicList={musicList}
+            />
         </>
     );
 }
@@ -162,20 +109,5 @@ const style = StyleSheet.create({
     albumDesc: {
         width: '100%',
         paddingHorizontal: rpx(24),
-    },
-    /** playall */
-    topWrapper: {
-        height: rpx(72),
-        paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    playAll: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    playAllIcon: {
-        marginRight: rpx(12),
     },
 });

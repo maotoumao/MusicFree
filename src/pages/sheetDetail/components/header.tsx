@@ -9,6 +9,7 @@ import {useTheme} from 'react-native-paper';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import {useParams} from '@/entry/router';
+import PlayAllBar from '@/components/base/playAllBar';
 
 export default function Header() {
     const {id = 'favorite'} = useParams<'sheet-detail'>();
@@ -16,26 +17,29 @@ export default function Header() {
     const {colors} = useTheme();
 
     return (
-        <LinearGradient
-            colors={[
-                Color(colors.primary).alpha(0.8).toString(),
-                Color(colors.primary).alpha(0.15).toString(),
-            ]}
-            style={style.wrapper}>
-            <View style={style.content}>
-                <FastImage
-                    style={style.coverImg}
-                    uri={sheet?.coverImg}
-                    emptySrc={ImgAsset.albumDefault}
-                />
-                <View style={style.details}>
-                    <ThemeText fontSize="title">{sheet?.title}</ThemeText>
-                    <ThemeText fontColor="secondary" fontSize="subTitle">
-                        共{sheet?.musicList.length ?? 0}首
-                    </ThemeText>
+        <View>
+            <LinearGradient
+                colors={[
+                    Color(colors.primary).alpha(0.8).toString(),
+                    Color(colors.primary).alpha(0.15).toString(),
+                ]}
+                style={style.wrapper}>
+                <View style={style.content}>
+                    <FastImage
+                        style={style.coverImg}
+                        uri={sheet?.coverImg}
+                        emptySrc={ImgAsset.albumDefault}
+                    />
+                    <View style={style.details}>
+                        <ThemeText fontSize="title">{sheet?.title}</ThemeText>
+                        <ThemeText fontColor="secondary" fontSize="subTitle">
+                            共{sheet?.musicList.length ?? 0}首
+                        </ThemeText>
+                    </View>
                 </View>
-            </View>
-        </LinearGradient>
+            </LinearGradient>
+            <PlayAllBar musicList={sheet.musicList} sheetName={sheet.title} />
+        </View>
     );
 }
 
