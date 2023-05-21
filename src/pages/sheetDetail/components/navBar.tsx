@@ -56,6 +56,43 @@ export default function () {
                         });
                     },
                 },
+                {
+                    icon: 'sort',
+                    title: '排序',
+                    onPress() {
+                        showDialog('RadioDialog', {
+                            content: [
+                                {
+                                    value: 'random',
+                                    key: '随机顺序',
+                                },
+                                {
+                                    value: 'a2z',
+                                    key: '歌曲名A-Z',
+                                },
+                                {
+                                    value: 'z2a',
+                                    key: '歌曲名Z-A',
+                                },
+                                {
+                                    value: 'arta2z',
+                                    key: '作者名A-Z',
+                                },
+                                {
+                                    value: 'artz2a',
+                                    key: '作者名Z-A',
+                                },
+                            ],
+                            title: '排序',
+                            async onOk(value) {
+                                MusicSheet.sortMusicList(
+                                    value as any,
+                                    musicSheet,
+                                );
+                            },
+                        });
+                    },
+                },
             ]}
         />
     );

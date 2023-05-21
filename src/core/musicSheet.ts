@@ -7,6 +7,7 @@ import {useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
 import {getStorage, setStorage} from '@/utils/storage';
 import {isSameMediaItem} from '@/utils/mediaItem';
+import shuffle from 'lodash.shuffle';
 
 const defaultSheet: IMusic.IMusicSheetItemBase = {
     id: 'favorite',
@@ -250,6 +251,28 @@ function getSheetItems(): IMusic.IMusicSheetItem[] {
     });
 }
 
+function sortMusicList(
+    type: undefined | 'a2z' | 'z2a' | 'random' | 'arta2z' | 'artz2a',
+    musicSheet: IMusic.IMusicSheetItem,
+) {
+    let musicList = [...(musicSheet.musicList ?? [])];
+    if (type === 'a2z') {
+        musicList.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (type === 'z2a') {
+        musicList.sort((b, a) => a.title.localeCompare(b.title));
+    } else if (type === 'random') {
+        musicList = shuffle(musicList);
+    } else if (type === 'arta2z') {
+        musicList.sort((a, b) => a.artist?.localeCompare?.(b.artist));
+    } else if (type === 'artz2a') {
+        musicList.sort((b, a) => a.artist?.localeCompare?.(b.artist));
+    }
+
+    updateAndSaveSheet(musicSheet.id, {
+        musicList: type ? musicList : undefined,
+    });
+}
+
 function useSheets(): IMusic.IMusicSheet;
 function useSheets(sheetId: string): IMusic.IMusicSheetItem;
 function useSheets(sheetId?: string) {
@@ -286,6 +309,7 @@ const MusicSheet = {
     updateAndSaveSheet,
     removeMusic,
     useUserSheets,
+    sortMusicList,
 };
 
 export default MusicSheet;
