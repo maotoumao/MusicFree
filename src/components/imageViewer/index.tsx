@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
+    BackHandler,
     Image,
     StyleSheet,
     TouchableOpacity,
@@ -20,6 +21,22 @@ export function ImageViewComponent() {
     const currentImgSrc = currentImgSrcState.useValue();
 
     const orientation = useOrientation();
+
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            () => {
+                if (currentImgSrcState.getValue()) {
+                    currentImgSrcState.setValue(null);
+                    return true;
+                }
+                return false;
+            },
+        );
+        return () => {
+            backHandler.remove();
+        };
+    }, []);
 
     return currentImgSrc ? (
         <TouchableWithoutFeedback
@@ -102,6 +119,6 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(18),
         paddingVertical: rpx(12),
         borderRadius: rpx(8),
-        backgroundColor: '#20232a',
+        backgroundColor: '#20232a ',
     },
 });
