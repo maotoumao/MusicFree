@@ -12,7 +12,7 @@ import {useParams} from '@/entry/router';
 import PlayAllBar from '@/components/base/playAllBar';
 
 export default function Header() {
-    const {id = 'favorite'} = useParams<'sheet-detail'>();
+    const {id = 'favorite'} = useParams<'local-sheet-detail'>();
     const sheet = MusicSheet.useSheets(id);
     const {colors} = useTheme();
 

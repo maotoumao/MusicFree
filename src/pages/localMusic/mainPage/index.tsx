@@ -67,6 +67,13 @@ export default function MainPage() {
                             });
                         },
                     },
+                    {
+                        icon: 'download',
+                        title: '下载列表',
+                        async onPress() {
+                            navigate(ROUTE_PATH.DOWNLOADING);
+                        },
+                    },
                 ]}
             />
             <LocalMusicList />

@@ -13,7 +13,7 @@ interface IMusicListProps {
     sheetInfo: IMusic.IMusicSheetItemBase | null;
     musicList?: IMusic.IMusicItem[] | null;
     onEndReached?: () => void;
-    loadMore?: 'loading' | 'done' | 'none';
+    loadMore?: 'loading' | 'done' | 'idle';
 }
 export default function SheetMusicList(props: IMusicListProps) {
     const {sheetInfo: topListDetail, musicList, onEndReached, loadMore} = props;

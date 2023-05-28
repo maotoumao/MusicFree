@@ -8,7 +8,7 @@ import Toast from '@/utils/toast';
 
 export default function () {
     const navigation = useNavigation<any>();
-    const {id = 'favorite'} = useParams<'sheet-detail'>();
+    const {id = 'favorite'} = useParams<'local-sheet-detail'>();
     const musicSheet = MusicSheet.useSheets(id);
     const {showDialog} = useDialog();
 

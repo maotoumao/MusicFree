@@ -19,7 +19,7 @@ export default function Operations(props: IOperationsProps) {
             iconColor: 'red',
             title: '我喜欢',
             action() {
-                navigate(ROUTE_PATH.SHEET_DETAIL, {
+                navigate(ROUTE_PATH.LOCAL_SHEET_DETAIL, {
                     id: 'favorite',
                 });
             },
@@ -32,10 +32,10 @@ export default function Operations(props: IOperationsProps) {
             },
         },
         {
-            iconName: 'download',
-            title: '下载列表',
+            iconName: 'fire',
+            title: '推荐歌单',
             action() {
-                navigate(ROUTE_PATH.DOWNLOADING);
+                navigate(ROUTE_PATH.RECOMMEND_SHEETS);
             },
         },
         {

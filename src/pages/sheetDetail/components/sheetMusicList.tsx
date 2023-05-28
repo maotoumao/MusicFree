@@ -7,7 +7,7 @@ import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 
 export default function SheetMusicList() {
-    const {id = 'favorite'} = useParams<'sheet-detail'>();
+    const {id = 'favorite'} = useParams<'local-sheet-detail'>();
     const musicSheet = MusicSheet.useSheets(id);
 
     return (

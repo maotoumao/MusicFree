@@ -11,7 +11,7 @@ interface IMusicSheetPageProps {
     sheetInfo: ICommon.WithMusicList<IMusic.IMusicSheetItemBase> | null;
     musicList?: IMusic.IMusicItem[] | null;
     onEndReached?: () => void;
-    loadMore?: 'loading' | 'done' | 'none';
+    loadMore?: 'loading' | 'done' | 'idle';
 }
 
 export default function MusicSheetPage(props: IMusicSheetPageProps) {

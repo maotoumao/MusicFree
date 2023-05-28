@@ -15,6 +15,8 @@ import SheetDetail from '../pages/sheetDetail';
 import {LogBox} from 'react-native';
 import TopList from '@/pages/topList';
 import TopListDetail from '@/pages/topListDetail';
+import RecommendSheets from '@/pages/recommendSheets';
+import PluginSheetDetail from '@/pages/pluginSheetDetail';
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -28,8 +30,8 @@ export const ROUTE_PATH = {
     MUSIC_DETAIL: 'music-detail',
     /** 搜索页 */
     SEARCH_PAGE: 'search-page',
-    /** 歌单页 */
-    SHEET_DETAIL: 'sheet-detail',
+    /** 本地歌单页 */
+    LOCAL_SHEET_DETAIL: 'local-sheet-detail',
     /** 专辑页 */
     ALBUM_DETAIL: 'album-detail',
     /** 歌手页 */
@@ -50,6 +52,10 @@ export const ROUTE_PATH = {
     MUSIC_LIST_EDITOR: 'music-list-editor',
     /** 选择文件夹 */
     FILE_SELECTOR: 'file-selector',
+    /** 推荐歌单 */
+    RECOMMEND_SHEETS: 'recommend-sheets',
+    /** 歌单详情 */
+    PLUGIN_SHEET_DETAIL: 'plugin-sheet-detail',
 } as const;
 
 type Valueof<T> = T[keyof T];
@@ -82,7 +88,7 @@ export const routes: Array<IRoutes> = [
         component: SearchPage,
     },
     {
-        path: ROUTE_PATH.SHEET_DETAIL,
+        path: ROUTE_PATH.LOCAL_SHEET_DETAIL,
         component: SheetDetail,
     },
     {
@@ -117,6 +123,14 @@ export const routes: Array<IRoutes> = [
         path: ROUTE_PATH.FILE_SELECTOR,
         component: FileSelector,
     },
+    {
+        path: ROUTE_PATH.RECOMMEND_SHEETS,
+        component: RecommendSheets,
+    },
+    {
+        path: ROUTE_PATH.PLUGIN_SHEET_DETAIL,
+        component: PluginSheetDetail,
+    },
 ];
 
 type RouterParamsBase = Record<RoutePaths, any>;
@@ -125,7 +139,7 @@ interface RouterParams extends RouterParamsBase {
     home: undefined;
     'music-detail': undefined;
     'search-page': undefined;
-    'sheet-detail': {
+    'local-sheet-detail': {
         id: string;
     };
     'album-detail': {
@@ -162,7 +176,11 @@ interface RouterParams extends RouterParamsBase {
     };
     'top-list-detail': {
         pluginHash: string;
-        topList: IMusic.IMusicTopListItem;
+        topList: IMusic.IMusicSheetItemBase;
+    };
+    'plugin-sheet-detail': {
+        pluginHash: string;
+        sheetInfo: IMusic.IMusicSheetItemBase;
     };
 }
 

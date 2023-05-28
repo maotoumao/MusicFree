@@ -5,8 +5,8 @@ export default function useAlbumDetail(
     originalAlbumItem: IAlbum.IAlbumItem | null,
 ) {
     const currentPageRef = useRef(1);
-    const [loadMore, setLoadMore] = useState<'none' | 'loading' | 'done'>(
-        'none',
+    const [loadMore, setLoadMore] = useState<'idle' | 'loading' | 'done'>(
+        'idle',
     );
     const [albumItem, setAlbumItem] = useState<IAlbum.IAlbumItemBase | null>(
         originalAlbumItem,
@@ -17,7 +17,7 @@ export default function useAlbumDetail(
 
     const getAlbumDetail = useCallback(
         async function () {
-            if (originalAlbumItem === null || loadMore !== 'none') {
+            if (originalAlbumItem === null || loadMore !== 'idle') {
                 return;
             }
 
@@ -48,10 +48,10 @@ export default function useAlbumDetail(
                         }
                     });
                 }
-                setLoadMore(result.isEnd ? 'done' : 'none');
+                setLoadMore(result.isEnd ? 'done' : 'idle');
                 currentPageRef.current += 1;
             } catch {
-                setLoadMore('none');
+                setLoadMore('idle');
             }
         },
         [loadMore],

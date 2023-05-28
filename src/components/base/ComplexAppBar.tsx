@@ -43,6 +43,7 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
                         }}
                     />
                     <ThemeText
+                        numberOfLines={1}
                         style={style.header}
                         fontSize="title"
                         fontWeight="semibold">

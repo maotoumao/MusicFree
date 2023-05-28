@@ -11,6 +11,7 @@ declare namespace IMusic {
         description?: string;
         /** 作品总数 */
         worksNum?: number;
+        platform: string;
     }
     /** 歌单项 */
     export interface IMusicSheetItem extends IMusicSheetItemBase {

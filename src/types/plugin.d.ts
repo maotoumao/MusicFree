@@ -39,9 +39,11 @@ declare namespace IPlugin {
         musicList?: IMusic.IMusicItem[];
     }
 
-    // interface IRecommendSheetsResult {
-    //     sticky:
-    // }
+    interface IGetRecommendSheetTagsResult {
+        // 固定的tag
+        pinned?: IMusic.IMusicSheetItemBase[];
+        data?: IMusic.IMusicSheetGroupItem[];
+    }
 
     interface IPluginDefine {
         /** 来源名 */
@@ -100,6 +102,13 @@ declare namespace IPlugin {
         getTopListDetail?: (
             topListItem: IMusic.IMusicSheetItemBase,
         ) => Promise<ICommon.WithMusicList<IMusic.IMusicSheetItemBase>>;
+        /** 获取热门歌单tag */
+        getRecommendSheetTags?: () => Promise<IGetRecommendSheetTagsResult>;
+        /** 歌单列表 */
+        getRecommendSheetsByTag?: (
+            tag: ICommon.IUnique,
+            page?: number,
+        ) => Promise<ICommon.PaginationResponse<IMusic.IMusicSheetItemBase>>;
     }
 
     export interface IPluginInstance extends IPluginDefine {

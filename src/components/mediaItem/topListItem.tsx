@@ -6,7 +6,7 @@ import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
 interface ITopListResultsProps {
     pluginHash: string;
-    topListItem: IMusic.IMusicTopListItem;
+    topListItem: IMusic.IMusicSheetItemBase;
 }
 
 export default function TopListItem(props: ITopListResultsProps) {

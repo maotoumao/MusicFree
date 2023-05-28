@@ -9,6 +9,11 @@ declare namespace ICommon {
         artist: IArtist.IArtistItemBase;
     };
 
+    export type IUnique = {
+        id: string;
+        [k: string | symbol]: any;
+    };
+
     export type IMediaBase = {
         id: string;
         platform: string;
@@ -39,5 +44,10 @@ declare namespace ICommon {
 
     export type WithMusicList<T> = T & {
         musicList?: IMusic.IMusicItem[];
+    };
+
+    export type PaginationResponse<T> = {
+        isEnd?: boolean;
+        data?: T[];
     };
 }

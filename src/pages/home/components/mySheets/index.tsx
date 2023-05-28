@@ -29,7 +29,7 @@ function MySheets() {
                         fallback: ImgAsset.albumDefault,
                     }}
                     onPress={() => {
-                        navigate(ROUTE_PATH.SHEET_DETAIL, {
+                        navigate(ROUTE_PATH.LOCAL_SHEET_DETAIL, {
                             id: sheet.id,
                         });
                     }}

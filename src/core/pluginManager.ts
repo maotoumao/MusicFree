@@ -628,6 +628,54 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         }
     }
+
+    /** 获取推荐歌单 */
+    async getRecommendSheetTags(): Promise<IPlugin.IGetRecommendSheetTagsResult> {
+        try {
+            const result =
+                await this.plugin.instance?.getRecommendSheetTags?.();
+            if (!result) {
+                throw new Error();
+            }
+            return result;
+        } catch (e: any) {
+            devLog('error', '获取推荐歌单失败', e, e?.message);
+            return {
+                data: [],
+            };
+        }
+    }
+    /** 获取歌单 */
+    async getRecommendSheetsByTag(
+        tagItem: ICommon.IUnique,
+        page?: number,
+    ): Promise<ICommon.PaginationResponse<IMusic.IMusicSheetItemBase>> {
+        try {
+            const result =
+                await this.plugin.instance?.getRecommendSheetsByTag?.(
+                    tagItem,
+                    page ?? 1,
+                );
+            if (!result) {
+                throw new Error();
+            }
+            if (result.isEnd !== false) {
+                result.isEnd = true;
+            }
+            if (!result.data) {
+                result.data = [];
+            }
+            result.data.forEach(item => resetMediaItem(item, this.plugin.name));
+
+            return result;
+        } catch (e: any) {
+            devLog('error', '获取推荐歌单详情失败', e, e?.message);
+            return {
+                isEnd: true,
+                data: [],
+            };
+        }
+    }
 }
 //#endregion
 
@@ -906,6 +954,22 @@ function getSortedTopListsablePlugins() {
     );
 }
 
+function getRecommendSheetablePlugins() {
+    return plugins.filter(
+        _ => _.state === 'enabled' && _.instance.getRecommendSheetsByTag,
+    );
+}
+
+function getSortedRecommendSheetablePlugins() {
+    return getRecommendSheetablePlugins().sort((a, b) =>
+        (PluginMeta.getPluginMeta(a).order ?? Infinity) -
+            (PluginMeta.getPluginMeta(b).order ?? Infinity) <
+        0
+            ? -1
+            : 1,
+    );
+}
+
 function useSortedPlugins() {
     const _plugins = pluginStateMapper.useMappedState();
     const _pluginMetaAll = PluginMeta.usePluginMetaAll();
@@ -950,6 +1014,7 @@ const PluginManager = {
     getSearchablePlugins,
     getSortedSearchablePlugins,
     getTopListsablePlugins,
+    getSortedRecommendSheetablePlugins,
     getSortedTopListsablePlugins,
     usePlugins: pluginStateMapper.useMappedState,
     useSortedPlugins,

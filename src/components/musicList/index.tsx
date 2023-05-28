@@ -23,7 +23,7 @@ interface IMusicListProps {
         musicItem: IMusic.IMusicItem,
         musicList?: IMusic.IMusicItem[],
     ) => void;
-    loadMore?: 'loading' | 'done' | 'none';
+    loadMore?: 'loading' | 'done' | 'idle';
     onEndReached?: () => void;
 }
 const ITEM_HEIGHT = rpx(120);
@@ -37,7 +37,7 @@ export default function MusicList(props: IMusicListProps) {
         showIndex,
         onItemPress,
         onEndReached,
-        loadMore = 'none',
+        loadMore = 'idle',
     } = props;
 
     return (
