@@ -591,7 +591,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
     }
     /** 获取榜单 */
-    async getTopLists(): Promise<IMusic.IMusicTopListGroupItem[]> {
+    async getTopLists(): Promise<IMusic.IMusicSheetGroupItem[]> {
         try {
             const result = await this.plugin.instance?.getTopLists?.();
             if (!result) {
@@ -605,8 +605,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     }
     /** 获取榜单详情 */
     async getTopListDetail(
-        topListItem: IMusic.IMusicTopListItem,
-    ): Promise<ICommon.WithMusicList<IMusic.IMusicTopListItem>> {
+        topListItem: IMusic.IMusicSheetItemBase,
+    ): Promise<ICommon.WithMusicList<IMusic.IMusicSheetItemBase>> {
         try {
             const result = await this.plugin.instance?.getTopListDetail?.(
                 topListItem,

@@ -39,6 +39,10 @@ declare namespace IPlugin {
         musicList?: IMusic.IMusicItem[];
     }
 
+    // interface IRecommendSheetsResult {
+    //     sticky:
+    // }
+
     interface IPluginDefine {
         /** 来源名 */
         platform: string;
@@ -90,12 +94,12 @@ declare namespace IPlugin {
             urlLike: string,
         ) => Promise<IMusic.IMusicItem | null>;
         /** 获取榜单 */
-        getTopLists?: () => Promise<IMusic.IMusicTopListGroupItem[]>;
+        getTopLists?: () => Promise<IMusic.IMusicSheetGroupItem[]>;
         // todo:分页
         /** 获取榜单详情 */
         getTopListDetail?: (
-            topListItem: IMusic.IMusicTopListItem,
-        ) => Promise<ICommon.WithMusicList<IMusic.IMusicTopListItem>>;
+            topListItem: IMusic.IMusicSheetItemBase,
+        ) => Promise<ICommon.WithMusicList<IMusic.IMusicSheetItemBase>>;
     }
 
     export interface IPluginInstance extends IPluginDefine {

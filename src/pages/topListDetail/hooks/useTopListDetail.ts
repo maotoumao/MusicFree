@@ -2,11 +2,11 @@ import PluginManager from '@/core/pluginManager';
 import {useEffect, useState} from 'react';
 
 export default function useTopListDetail(
-    topListItem: IMusic.IMusicTopListItem | null,
+    topListItem: IMusic.IMusicSheetItemBase | null,
     pluginHash: string,
 ) {
     const [mergedTopListItem, setMergedTopListItem] =
-        useState<ICommon.WithMusicList<IMusic.IMusicTopListItem> | null>(
+        useState<ICommon.WithMusicList<IMusic.IMusicSheetItemBase> | null>(
             topListItem,
         );
     useEffect(() => {

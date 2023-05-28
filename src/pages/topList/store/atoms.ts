@@ -3,7 +3,7 @@ import {atom} from 'jotai';
 
 export interface IPluginTopListResult {
     state: RequestStateCode;
-    data: IMusic.IMusicTopListGroupItem[];
+    data: IMusic.IMusicSheetGroupItem[];
 }
 
 const pluginsTopListAtom = atom<Record<string, IPluginTopListResult>>({});
