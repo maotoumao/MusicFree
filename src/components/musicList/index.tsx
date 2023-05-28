@@ -43,7 +43,7 @@ export default function MusicList(props: IMusicListProps) {
     return (
         <FlashList
             ListHeaderComponent={Header}
-            ListEmptyComponent={Empty}
+            ListEmptyComponent={loadMore !== 'loading' ? Empty : null}
             ListFooterComponent={
                 loadMore === 'done'
                     ? ListReachEnd

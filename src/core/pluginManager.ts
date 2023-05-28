@@ -522,6 +522,51 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
     }
 
+    /** 获取歌单信息 */
+    async getMusicSheetInfo(
+        sheetItem: IMusic.IMusicSheetItem,
+        page: number = 1,
+    ): Promise<IPlugin.ISheetInfoResult | null> {
+        if (!this.plugin.instance.getAlbumInfo) {
+            return {
+                sheetItem,
+                musicList: sheetItem?.musicList ?? [],
+                isEnd: true,
+            };
+        }
+        try {
+            const result = await this.plugin.instance?.getMusicSheetInfo?.(
+                resetMediaItem(sheetItem, undefined, true),
+                page,
+            );
+            if (!result) {
+                throw new Error();
+            }
+            result?.musicList?.forEach(_ => {
+                resetMediaItem(_, this.plugin.name);
+            });
+
+            if (page <= 1) {
+                // 合并信息
+                return {
+                    sheetItem: {...sheetItem, ...(result?.sheetItem ?? {})},
+                    isEnd: result.isEnd === false ? false : true,
+                    musicList: result.musicList,
+                };
+            } else {
+                return {
+                    isEnd: result.isEnd === false ? false : true,
+                    musicList: result.musicList,
+                };
+            }
+        } catch (e: any) {
+            trace('获取歌单信息失败', e, e?.message);
+            devLog('error', '获取歌单信息失败', e, e?.message);
+
+            return null;
+        }
+    }
+
     /** 查询作者信息 */
     async getArtistWorks<T extends IArtist.ArtistMediaType>(
         artistItem: IArtist.IArtistItem,
@@ -629,7 +674,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
     }
 
-    /** 获取推荐歌单 */
+    /** 获取推荐歌单的tag */
     async getRecommendSheetTags(): Promise<IPlugin.IGetRecommendSheetTagsResult> {
         try {
             const result =
@@ -645,7 +690,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         }
     }
-    /** 获取歌单 */
+    /** 获取某个tag的推荐歌单 */
     async getRecommendSheetsByTag(
         tagItem: ICommon.IUnique,
         page?: number,

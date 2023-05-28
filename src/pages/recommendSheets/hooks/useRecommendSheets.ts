@@ -9,7 +9,6 @@ export default function (pluginHash: string, tag: ICommon.IUnique) {
     const pageRef = useRef(0);
 
     const query = useCallback(async () => {
-        console.log(currentTagRef, tag, pageRef.current, status);
         if (
             (status === 'loading' || status === 'done') &&
             currentTagRef.current === tag.id

@@ -39,6 +39,12 @@ declare namespace IPlugin {
         musicList?: IMusic.IMusicItem[];
     }
 
+    interface ISheetInfoResult {
+        isEnd?: boolean;
+        sheetItem?: IMusic.IMusicSheetItemBase;
+        musicList?: IMusic.IMusicItem[];
+    }
+
     interface IGetRecommendSheetTagsResult {
         // 固定的tag
         pinned?: IMusic.IMusicSheetItemBase[];
@@ -84,6 +90,11 @@ declare namespace IPlugin {
             albumItem: IAlbum.IAlbumItemBase,
             page: number,
         ) => Promise<IAlbumInfoResult | null>;
+        /** 获取歌单信息，有分页 */
+        getMusicSheetInfo?: (
+            sheetItem: IMusic.IMusicSheetItem,
+            page: number,
+        ) => Promise<ISheetInfoResult | null>;
         /** 获取作品，有分页 */
         getArtistWorks?: IGetArtistWorksFunc;
         /** 导入歌单 */
