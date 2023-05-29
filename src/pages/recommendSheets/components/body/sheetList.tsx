@@ -6,6 +6,7 @@ import Empty from '@/components/base/empty';
 import ListLoading from '@/components/base/listLoading';
 import ListReachEnd from '@/components/base/listReachEnd';
 import SheetItem from '@/components/mediaItem/sheetItem';
+import useOrientation from '@/hooks/useOrientation';
 
 interface ISheetListProps {
     tag: ICommon.IUnique;
@@ -20,10 +21,11 @@ function SheetList(props: ISheetListProps) {
     function renderItem({item}: {item: IMusic.IMusicSheetItemBase}) {
         return <SheetItem sheetInfo={item} pluginHash={pluginHash} />;
     }
+    const orientation = useOrientation();
 
     return (
         <FlashList
-            ListEmptyComponent={Empty}
+            ListEmptyComponent={status !== 'loading' ? Empty : null}
             ListFooterComponent={
                 status === 'loading' ? (
                     <ListLoading />
@@ -38,7 +40,7 @@ function SheetList(props: ISheetListProps) {
             }}
             onEndReachedThreshold={0.1}
             estimatedItemSize={rpx(306)}
-            numColumns={3}
+            numColumns={orientation === 'vertical' ? 3 : 4}
             renderItem={renderItem}
             data={sheets}
         />
