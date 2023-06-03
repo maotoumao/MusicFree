@@ -234,25 +234,45 @@ const addAll = (
     notCache?: boolean,
     shouldShuffle?: boolean,
 ) => {
-    const _musicItems = musicItems
-        .map(item =>
-            produce(item, draft => {
-                if (draft[internalSymbolKey]) {
-                    draft[internalSymbolKey].globalId = ++globalId;
-                } else {
-                    draft[internalSymbolKey] = {
-                        globalId: ++globalId,
-                    };
-                }
-            }),
-        )
-        .filter(_ => findMusicIndex(_) === -1);
+    const _musicItems = musicItems.map(item =>
+        produce(item, draft => {
+            if (draft[internalSymbolKey]) {
+                draft[internalSymbolKey].globalId = ++globalId;
+            } else {
+                draft[internalSymbolKey] = {
+                    globalId: ++globalId,
+                };
+            }
+        }),
+    );
     if (beforeIndex === undefined) {
-        musicQueue = musicQueue.concat(_musicItems);
+        musicQueue = musicQueue.concat(
+            _musicItems.filter(_ => findMusicIndex(_) === -1),
+        );
     } else {
-        musicQueue = produce(musicQueue, draft => {
-            draft.splice(beforeIndex, 0, ..._musicItems);
-        });
+        let currentMusic: IMusic.IMusicItem | null = null;
+        const beforeDraft = musicQueue
+            .slice(0, beforeIndex)
+            .filter(
+                item =>
+                    _musicItems.findIndex(mi => isSameMediaItem(mi, item)) ===
+                    -1,
+            );
+        const afterDraft = musicQueue
+            .slice(beforeIndex)
+            .filter(
+                item =>
+                    _musicItems.findIndex(mi => isSameMediaItem(mi, item)) ===
+                    -1,
+            );
+
+        if (beforeDraft.length < beforeIndex) {
+            currentMusic = musicQueue[currentIndex];
+        }
+        musicQueue = [...beforeDraft, ...musicItems, ...afterDraft];
+        if (currentMusic) {
+            currentIndex = findMusicIndex(currentMusic);
+        }
     }
     // 播放列表上限，太多无法缓存状态
     musicQueue = shrinkMusicQueueToSize(
