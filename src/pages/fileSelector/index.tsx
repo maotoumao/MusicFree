@@ -21,6 +21,7 @@ import {useParams} from '@/entry/router';
 import StatusBar from '@/components/base/statusBar';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
+import Button from '@/components/base/button';
 
 interface IPathItem {
     path: string;
@@ -149,19 +150,31 @@ export default function FileSelector() {
         return true;
     });
 
-    const selectPath = useCallback((item: IFileItem, nextChecked: boolean) => {
-        if (multi) {
-            setCheckedItems(prev => {
-                if (nextChecked) {
-                    return [...prev, item];
-                } else {
-                    return prev.filter(_ => _ !== item);
+    const selectPath = useCallback(
+        (item: IFileItem | IFileItem[], nextChecked: boolean) => {
+            if (multi) {
+                if (!Array.isArray(item)) {
+                    item = [item];
                 }
-            });
-        } else {
-            setCheckedItems(nextChecked ? [item] : []);
-        }
-    }, []);
+                setCheckedItems(prev => {
+                    const itemPaths = (item as IFileItem[]).map(_ => _.path);
+                    const newCheckedItem = prev.filter(
+                        _ => !itemPaths.includes(_.path),
+                    );
+                    if (nextChecked) {
+                        return [...newCheckedItem, ...(item as IFileItem[])];
+                    } else {
+                        return newCheckedItem;
+                    }
+                });
+            } else {
+                setCheckedItems(
+                    nextChecked ? (Array.isArray(item) ? item : [item]) : [],
+                );
+            }
+        },
+        [],
+    );
 
     const renderItem = ({item}: {item: IFileItem}) => (
         <FileItem
@@ -184,6 +197,30 @@ export default function FileSelector() {
             }}
         />
     );
+
+    const currentPageAllChecked = useMemo(() => {
+        return (
+            filesData.length &&
+            filesData.every(file => checkedPaths.includes(file.path))
+        );
+    }, [filesData, checkedPaths]);
+
+    const renderHeader = () => {
+        return multi ? (
+            <View style={style.selectAll}>
+                <Button
+                    onPress={() => {
+                        if (currentPageAllChecked) {
+                            selectPath(filesData, false);
+                        } else {
+                            selectPath(filesData, true);
+                        }
+                    }}>
+                    {currentPageAllChecked ? '全不选' : '全选'}
+                </Button>
+            </View>
+        ) : null;
+    };
 
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
@@ -211,6 +248,7 @@ export default function FileSelector() {
             ) : (
                 <>
                     <FlatList
+                        ListHeaderComponent={renderHeader}
                         ListEmptyComponent={Empty}
                         style={globalStyle.fwflex1}
                         data={filesData}
@@ -272,5 +310,12 @@ const style = StyleSheet.create({
         height: rpx(120),
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    selectAll: {
+        width: '100%',
+        height: ITEM_HEIGHT,
+        paddingHorizontal: rpx(24),
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });
