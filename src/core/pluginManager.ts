@@ -804,7 +804,7 @@ async function setup() {
                 );
                 if (_pluginIndex !== -1) {
                     // 重复插件，直接忽略
-                    return;
+                    continue;
                 }
                 plugin.hash !== '' && _plugins.push(plugin);
             }

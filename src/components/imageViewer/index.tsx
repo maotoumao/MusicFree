@@ -10,7 +10,7 @@ import {
 import rpx, {vh, vw} from '@/utils/rpx';
 import {GlobalState} from '@/utils/stateMapper';
 import useOrientation from '@/hooks/useOrientation';
-import {saveToGallery} from '@/utils/fileUtils';
+import {galleryBasePath, saveToGallery} from '@/utils/fileUtils';
 import Toast from '@/utils/toast';
 import {errorLog} from '@/utils/log';
 import ThemeText from '../base/themeText';
@@ -72,7 +72,9 @@ export function ImageViewComponent() {
                         if (src) {
                             saveToGallery(src)
                                 .then(() => {
-                                    Toast.success('保存成功~');
+                                    Toast.success(
+                                        `图片已保存到 ${galleryBasePath}`,
+                                    );
                                 })
                                 .catch(e => {
                                     errorLog('保存失败', e?.message ?? e);

@@ -12,11 +12,12 @@ import {
 } from 'react-native-fs';
 import {errorLog} from './log';
 
-const basePath = `${PicturesDirectoryPath}/MusicFree/`;
+export const galleryBasePath = `${PicturesDirectoryPath}/MusicFree/`;
+
 export async function saveToGallery(src: string) {
-    const fileName = `${basePath}${Date.now()}.png`;
-    if (!(await exists(basePath))) {
-        await mkdir(basePath);
+    const fileName = `${galleryBasePath}${Date.now()}.png`;
+    if (!(await exists(galleryBasePath))) {
+        await mkdir(galleryBasePath);
     }
     if (await exists(src)) {
         try {
