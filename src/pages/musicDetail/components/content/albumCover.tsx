@@ -27,7 +27,7 @@ export default function AlbumCover() {
 
     const longPress = Gesture.LongPress()
         .onStart(() => {
-            imageViewer.show(musicItem.artwork);
+            imageViewer.show(musicItem?.artwork);
         })
         .runOnJS(true);
 
