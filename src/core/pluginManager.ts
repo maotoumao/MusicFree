@@ -527,7 +527,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         sheetItem: IMusic.IMusicSheetItem,
         page: number = 1,
     ): Promise<IPlugin.ISheetInfoResult | null> {
-        if (!this.plugin.instance.getAlbumInfo) {
+        if (!this.plugin.instance.getMusicSheetInfo) {
             return {
                 sheetItem,
                 musicList: sheetItem?.musicList ?? [],

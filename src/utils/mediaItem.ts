@@ -53,7 +53,7 @@ export function includesMedia(
 }
 
 /** 获取复位的mediaItem */
-export function resetMediaItem<T extends ICommon.IMediaBase>(
+export function resetMediaItem<T extends Partial<ICommon.IMediaBase>>(
     mediaItem: T,
     platform?: string,
     newObj?: boolean,
