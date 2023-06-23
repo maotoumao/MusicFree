@@ -10,7 +10,7 @@ import FastImage from '@/components/base/fastImage';
 import PlayAllBar from '@/components/base/playAllBar';
 
 interface IHeaderProps {
-    topListDetail: IMusic.IMusicTopListItem | null;
+    topListDetail: IMusic.IMusicSheetItem | null;
     musicList: IMusic.IMusicItem[] | null;
 }
 export default function Header(props: IHeaderProps) {

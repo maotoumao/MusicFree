@@ -2,6 +2,7 @@ import React from 'react';
 import AlbumResultItem from './albumResultItem';
 import ArtistResultItem from './artistResultItem';
 import MusicResultItem from './musicResultItem';
+import MusicSheetResultItem from './musicSheetResultItem';
 
 const results: Array<{
     key: ICommon.SupportMediaType;
@@ -22,6 +23,11 @@ const results: Array<{
         key: 'artist',
         title: '作者',
         component: ArtistResultItem,
+    },
+    {
+        key: 'sheet',
+        title: '歌单',
+        component: MusicSheetResultItem,
     },
 ];
 

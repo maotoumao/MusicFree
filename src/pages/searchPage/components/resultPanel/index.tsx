@@ -39,6 +39,7 @@ function ResultPanel() {
             renderTabBar={props => (
                 <TabBar
                     {...props}
+                    scrollEnabled
                     style={{
                         backgroundColor: Color(colors.primary)
                             .alpha(0.7)

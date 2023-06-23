@@ -20,8 +20,8 @@ export default function SheetItem(props: ISheetItemProps) {
                 style={{
                     marginBottom,
                 }}
-                uri={sheetInfo.artwork}
-                title={sheetInfo.title}
+                uri={sheetInfo?.artwork ?? sheetInfo?.coverImg}
+                title={sheetInfo?.title}
                 onPress={() => {
                     navigate(ROUTE_PATH.PLUGIN_SHEET_DETAIL, {
                         pluginHash,

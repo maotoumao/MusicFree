@@ -25,6 +25,7 @@ export const initSearchResults: ISearchResults = {
     music: {},
     album: {},
     artist: {},
+    sheet: {},
     // lyric: {}
 };
 

@@ -4,11 +4,13 @@ import {ISearchResult, queryAtom} from '../../store/atoms';
 import {renderMap} from './results';
 import useSearch from '../../hooks/useSearch';
 import Loading from '@/components/base/loading';
-import {FlatList, StyleSheet} from 'react-native';
 import {RequestStateCode} from '@/constants/commonConst';
 import ListLoading from '@/components/base/listLoading';
 import Empty from '@/components/base/empty';
 import ListReachEnd from '@/components/base/listReachEnd';
+import useOrientation from '@/hooks/useOrientation';
+import {FlashList} from '@shopify/flash-list';
+import rpx from '@/utils/rpx';
 
 interface IResultWrapperProps<
     T extends ICommon.SupportMediaType = ICommon.SupportMediaType,
@@ -25,6 +27,7 @@ function ResultWrapper(props: IResultWrapperProps) {
     const [searchState, setSearchState] = useState<RequestStateCode>(
         searchResult?.state ?? RequestStateCode.IDLE,
     );
+    const orientation = useOrientation();
     const query = useAtomValue(queryAtom);
 
     const ResultComponent = renderMap[tab]!;
@@ -52,9 +55,8 @@ function ResultWrapper(props: IResultWrapperProps) {
     return searchState === RequestStateCode.PENDING_FP ? (
         <Loading />
     ) : (
-        <FlatList
+        <FlashList
             extraData={searchState}
-            style={style.list}
             ListEmptyComponent={() => <Empty />}
             ListFooterComponent={() =>
                 searchState === RequestStateCode.PENDING ? (
@@ -75,14 +77,13 @@ function ResultWrapper(props: IResultWrapperProps) {
                     searchState === RequestStateCode.IDLE) &&
                     search(undefined, undefined, tab, pluginHash);
             }}
+            estimatedItemSize={tab === 'sheet' ? rpx(306) : rpx(120)}
+            numColumns={
+                tab === 'sheet' ? (orientation === 'vertical' ? 3 : 4) : 1
+            }
             renderItem={renderItem}
         />
     );
 }
-const style = StyleSheet.create({
-    list: {
-        flex: 1,
-    },
-});
 
 export default memo(ResultWrapper);
