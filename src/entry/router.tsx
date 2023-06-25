@@ -17,6 +17,7 @@ import TopList from '@/pages/topList';
 import TopListDetail from '@/pages/topListDetail';
 import RecommendSheets from '@/pages/recommendSheets';
 import PluginSheetDetail from '@/pages/pluginSheetDetail';
+import History from '@/pages/history';
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -56,6 +57,8 @@ export const ROUTE_PATH = {
     RECOMMEND_SHEETS: 'recommend-sheets',
     /** 歌单详情 */
     PLUGIN_SHEET_DETAIL: 'plugin-sheet-detail',
+    /** 历史记录 */
+    HISTORY: 'history',
 } as const;
 
 type Valueof<T> = T[keyof T];
@@ -130,6 +133,10 @@ export const routes: Array<IRoutes> = [
     {
         path: ROUTE_PATH.PLUGIN_SHEET_DETAIL,
         component: PluginSheetDetail,
+    },
+    {
+        path: ROUTE_PATH.HISTORY,
+        component: History,
     },
 ];
 

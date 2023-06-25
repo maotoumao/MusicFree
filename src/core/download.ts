@@ -18,6 +18,7 @@ import LocalMusicSheet from './localMusicSheet';
 import MediaMeta from './mediaMeta';
 import Network from './network';
 import PluginManager from './pluginManager';
+import {PERMISSIONS, check} from 'react-native-permissions';
 // import PQueue from 'p-queue/dist';
 // import PriorityQueue from 'p-queue/dist/priority-queue';
 
@@ -318,9 +319,20 @@ async function downloadNext() {
         stopNotifyProgress();
         LocalMusicSheet.saveLocalSheet();
         if (hasError) {
-            Toast.success(
-                '部分下载失败，如果重复出现此现象请打开“侧边栏-记录错误日志”辅助排查',
-            );
+            try {
+                const perm = await check(
+                    PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+                );
+                if (perm !== 'granted') {
+                    Toast.success('权限不足，请检查是否授予写入文件的权限');
+                } else {
+                    throw new Error();
+                }
+            } catch {
+                Toast.success(
+                    '部分下载失败，如果重复出现此现象请打开“侧边栏-记录错误日志”辅助排查',
+                );
+            }
         } else {
             Toast.success('下载完成');
         }

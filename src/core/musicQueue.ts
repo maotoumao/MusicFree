@@ -22,6 +22,7 @@ import Toast from '@/utils/toast';
 import LocalMusicSheet from './localMusicSheet';
 import {SoundAsset} from '@/constants/assetsConst';
 import {getQualityOrder} from '@/utils/qualities';
+import musicHistory from './musicHistory';
 
 enum MusicRepeatMode {
     /** 随机播放 */
@@ -465,6 +466,9 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
                 draft[currentIndex] = {...track};
                 draft[currentIndex].url = _musicItem.url; // todo 这里写的不好
             });
+
+            musicHistory.addMusic(_musicItem);
+
             await replaceTrack(track as Track);
             currentMusicStateMapper.notify();
 

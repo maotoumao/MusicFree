@@ -1,6 +1,7 @@
 export const internalSymbolKey = Symbol.for('$');
 export const internalSerializeKey = '$';
 export const localMusicSheetId = 'local-music-sheet';
+export const musicHistorySheetId = 'history-music-sheet';
 
 export const localPluginPlatform = '本地';
 export const localPluginHash = 'local-plugin-hash';

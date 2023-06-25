@@ -45,11 +45,22 @@ export default function Operations(props: IOperationsProps) {
                 navigate(ROUTE_PATH.TOP_LIST);
             },
         },
+        {
+            iconName: 'history',
+            title: '播放记录',
+            action() {
+                navigate(ROUTE_PATH.HISTORY);
+            },
+        },
     ];
 
     return (
         <ScrollView
-            style={style.wrapper}
+            style={
+                orientation === 'vertical'
+                    ? style.wrapper
+                    : style.horizonalWrapper
+            }
             horizontal={orientation === 'vertical'}
             contentContainerStyle={
                 orientation === 'vertical'
@@ -65,6 +76,13 @@ export default function Operations(props: IOperationsProps) {
 
 const style = StyleSheet.create({
     wrapper: {
+        marginTop: rpx(20),
+        marginBottom: rpx(20),
+        flexGrow: 0,
+        flexShrink: 0,
+        marginRight: rpx(24),
+    },
+    horizonalWrapper: {
         marginTop: rpx(20),
         marginBottom: rpx(20),
         flexGrow: 0,

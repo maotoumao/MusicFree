@@ -16,13 +16,14 @@ import Cache from '@/core/cache';
 import FastImage from '@/components/base/fastImage';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
-import {localMusicSheetId} from '@/constants/commonConst';
+import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
 import {ROUTE_PATH} from '@/entry/router';
 import usePanel from '../usePanel';
 import useDialog from '@/components/dialogs/useDialog';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
+import musicHistory from '@/core/musicHistory';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -117,6 +118,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             onPress: async () => {
                 if (musicSheet?.id === localMusicSheetId) {
                     await LocalMusicSheet.removeMusic(musicItem);
+                } else if (musicSheet?.id === musicHistorySheetId) {
+                    await musicHistory.removeMusic(musicItem);
                 } else {
                     await MusicSheet.removeMusic(musicSheet!.id, musicItem);
                 }

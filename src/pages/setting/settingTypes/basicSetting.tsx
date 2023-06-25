@@ -147,6 +147,12 @@ export default function BasicSetting() {
                         desc: '播放更低音质',
                     },
                 ),
+                createRadio(
+                    '历史记录最多保存条数',
+                    'setting.basic.maxHistoryLen',
+                    [20, 50, 100, 200, 500],
+                    basicSetting?.maxHistoryLen ?? 50,
+                ),
             ],
         },
         {

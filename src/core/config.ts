@@ -42,6 +42,7 @@ interface IConfig {
                 traceLog: boolean;
                 devLog: boolean;
             };
+            maxHistoryLen: number;
         };
 
         /** 主题 */
