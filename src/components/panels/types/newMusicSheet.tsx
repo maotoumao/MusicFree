@@ -52,6 +52,9 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
                         onChangeText={_ => {
                             setInput(_);
                         }}
+                        accessible
+                        accessibilityLabel="输入框"
+                        accessibilityHint={'新建歌单'}
                         style={[
                             style.input,
                             {

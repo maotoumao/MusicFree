@@ -12,7 +12,11 @@ interface IButtonProps {
 export default function (props: IButtonProps) {
     const {children, onPress, fontColor} = props;
     return (
-        <Button {...props} onPress={onPress}>
+        <Button
+            {...props}
+            onPress={onPress}
+            accessible
+            accessibilityLabel={children}>
             <ThemeText fontColor={fontColor}>{children}</ThemeText>
         </Button>
     );

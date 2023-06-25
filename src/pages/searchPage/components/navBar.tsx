@@ -51,6 +51,9 @@ export default function NavBar() {
                 autoFocus
                 inputStyle={style.input}
                 style={style.searchBar}
+                accessible
+                accessibilityLabel="搜索框"
+                accessibilityHint={'输入要搜索的歌曲'}
                 onFocus={() => {
                     setPageStatus(PageStatus.EDITING);
                 }}

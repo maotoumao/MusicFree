@@ -136,6 +136,8 @@ export default function ListItem(props: IListItemProps) {
             ]}
             title={() => (
                 <View
+                    accessible
+                    accessibilityLabel={`${title}`}
                     style={{
                         alignItems: 'stretch',
                         justifyContent: 'center',

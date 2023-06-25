@@ -51,6 +51,9 @@ export default function SearchMusicList() {
                     style={style.searchBar}
                     inputStyle={style.input}
                     placeholder="在列表中搜索歌曲"
+                    accessible
+                    accessibilityLabel="搜索框"
+                    accessibilityHint={'在列表中搜索歌曲'}
                     value={query}
                     onChangeText={onChangeSearch}
                 />

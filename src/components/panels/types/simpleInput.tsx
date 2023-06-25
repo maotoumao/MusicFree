@@ -48,6 +48,9 @@ export default function SimpleInput(props: ISimpleInputProps) {
                     <Divider />
                     <TextInput
                         value={input}
+                        accessible
+                        accessibilityLabel="输入框"
+                        accessibilityHint={placeholder}
                         onChangeText={_ => {
                             setInput(_);
                         }}
