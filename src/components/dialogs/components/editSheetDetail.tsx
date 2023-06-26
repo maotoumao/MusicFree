@@ -6,7 +6,7 @@ import {StyleSheet, View} from 'react-native';
 import useDialog from '../useDialog';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {TouchableOpacity} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import pathConst from '@/constants/pathConst';
 import Image from '@/components/base/image';

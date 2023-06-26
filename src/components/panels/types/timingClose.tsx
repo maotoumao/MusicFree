@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import rpx from '@/utils/rpx';
 import {Divider, useTheme} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
@@ -8,7 +8,7 @@ import {setTimingClose, useTimingClose} from '@/utils/timingClose';
 import ThemeSwitch from '@/components/base/switch';
 import timeformat from '@/utils/timeformat';
 import PanelBase from '../base/panelBase';
-import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 import Color from 'color';
 import {atom, useAtom, useAtomValue, useSetAtom} from 'jotai';
 import {debounce} from 'lodash';

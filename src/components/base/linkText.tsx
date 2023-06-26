@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, TextProps} from 'react-native';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {TouchableOpacity} from 'react-native';
 import openUrl from '@/utils/openUrl';
 import ThemeText from './themeText';
 
