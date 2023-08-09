@@ -64,6 +64,8 @@ declare namespace IPlugin {
         primaryKey?: string[];
         /** 默认搜索类型 */
         defaultSearchType?: ICommon.SupportMediaType;
+        /** 有效搜索类型 */
+        supportedSearchTypes?: ICommon.SupportMediaType[];
         /** 插件缓存控制 */
         cacheControl?: 'cache' | 'no-cache' | 'no-store';
         /** 用户自定义输入 */

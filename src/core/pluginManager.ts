@@ -971,12 +971,21 @@ function getValidPlugins() {
     return plugins.filter(_ => _.state === 'enabled');
 }
 
-function getSearchablePlugins() {
-    return plugins.filter(_ => _.state === 'enabled' && _.instance.search);
+function getSearchablePlugins(supportedSearchType?: ICommon.SupportMediaType) {
+    return plugins.filter(
+        _ =>
+            _.state === 'enabled' &&
+            _.instance.search &&
+            (supportedSearchType && _.instance.supportedSearchTypes
+                ? _.instance.supportedSearchTypes.includes(supportedSearchType)
+                : true),
+    );
 }
 
-function getSortedSearchablePlugins() {
-    return getSearchablePlugins().sort((a, b) =>
+function getSortedSearchablePlugins(
+    supportedSearchType?: ICommon.SupportMediaType,
+) {
+    return getSearchablePlugins(supportedSearchType).sort((a, b) =>
         (PluginMeta.getPluginMeta(a).order ?? Infinity) -
             (PluginMeta.getPluginMeta(b).order ?? Infinity) <
         0

@@ -10,7 +10,7 @@ import globalStyle from '@/constants/globalStyle';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 
 interface IMusicListProps {
-    sheetInfo: IMusic.IMusicSheetItemBase | null;
+    sheetInfo: IMusic.IMusicSheetItem | null;
     musicList?: IMusic.IMusicItem[] | null;
     onEndReached?: () => void;
     loadMore?: 'loading' | 'done' | 'idle';

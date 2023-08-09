@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
+import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {Text} from 'react-native';
 import rpx, {vw} from '@/utils/rpx';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
@@ -62,10 +62,16 @@ function getSubRouterScene(
 function ResultSubPanel(props: IResultSubPanelProps) {
     const [index, setIndex] = useState(0);
 
-    const routes = PluginManager.getSortedSearchablePlugins().map(_ => ({
-        key: _.hash,
-        title: _.name,
-    }));
+    const routes = PluginManager.getSortedSearchablePlugins(props.tab).map(
+        _ => ({
+            key: _.hash,
+            title: _.name,
+        }),
+    );
+    const renderScene = useMemo(
+        () => getSubRouterScene(props.tab, routes),
+        [props.tab],
+    );
 
     return (
         <TabView
@@ -102,9 +108,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                     )}
                 />
             )}
-            renderScene={useCallback(getSubRouterScene(props.tab, routes), [
-                props.tab,
-            ])}
+            renderScene={renderScene}
             onIndexChange={setIndex}
             initialLayout={{width: vw(100)}}
         />
