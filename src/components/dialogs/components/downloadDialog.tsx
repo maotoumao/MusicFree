@@ -7,7 +7,7 @@ import rpx, {vh} from '@/utils/rpx';
 import openUrl from '@/utils/openUrl';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {ScrollView} from 'react-native-gesture-handler';
-import useDialog from '../useDialog';
+import {hideDialog} from '../useDialog';
 import Config from '@/core/config';
 
 interface IDownloadDialogProps {
@@ -19,7 +19,6 @@ interface IDownloadDialogProps {
 export default function DownloadDialog(props: IDownloadDialogProps) {
     const {content, fromUrl, backUrl, version} = props;
     const colors = useColors();
-    const {hideDialog} = useDialog();
     const [skipState, setSkipState] = useState(false);
 
     return (

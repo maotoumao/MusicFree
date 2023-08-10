@@ -5,7 +5,7 @@ import MusicQueue from '@/core/musicQueue';
 import LyricParser from '@/core/lrcParser';
 import ThemeText from '@/components/base/themeText';
 import useDelayFalsy from '@/hooks/useDelayFalsy';
-import {FlatList} from 'react-native-gesture-handler';
+import {FlatList, TapGestureHandler} from 'react-native-gesture-handler';
 import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
 import {IconButtonWithGesture} from '@/components/base/iconButton';
@@ -163,7 +163,7 @@ export default function Lyric() {
         <View style={globalStyle.fwflex1}>
             {loading ? (
                 <Loading />
-            ) : (
+            ) : lyric?.length ? (
                 <FlatList
                     ref={_ => {
                         listRef.current = _;
@@ -173,13 +173,6 @@ export default function Lyric() {
                         offset: ITEM_HEIGHT * index,
                         index,
                     })}
-                    ListEmptyComponent={
-                        <View style={globalStyle.flex1}>
-                            <ThemeText style={style.highlightItem}>
-                                暂无歌词
-                            </ThemeText>
-                        </View>
-                    }
                     onLayout={e => {
                         setLayout(e.nativeEvent.layout);
                     }}
@@ -207,6 +200,13 @@ export default function Lyric() {
                         </ThemeText>
                     )}
                 />
+            ) : (
+                <View style={globalStyle.fullCenter}>
+                    <ThemeText style={style.highlightItem}>暂无歌词</ThemeText>
+                    <TapGestureHandler onActivated={console.log}>
+                        <Text style={style.searchLyric}>搜索歌词</Text>
+                    </TapGestureHandler>
+                </View>
             )}
             {draggingIndex !== undefined && (
                 <View
@@ -295,5 +295,12 @@ const style = StyleSheet.create({
     playIcon: {
         width: rpx(90),
         textAlign: 'right',
+    },
+    searchLyric: {
+        width: rpx(150),
+        textAlign: 'center',
+        alignSelf: 'center',
+        color: 'blue',
+        textDecorationLine: 'underline',
     },
 });

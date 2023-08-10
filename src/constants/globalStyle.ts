@@ -10,6 +10,13 @@ const globalStyle = StyleSheet.create({
         width: '100%',
         flex: 1,
     },
+    /** 居中 */
+    fullCenter: {
+        width: '100%',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 } as const);
 
 export default globalStyle;

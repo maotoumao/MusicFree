@@ -3,14 +3,13 @@ import {useNavigation} from '@react-navigation/native';
 import ComplexAppBar from '@/components/base/ComplexAppBar';
 import MusicSheet from '@/core/musicSheet';
 import {ROUTE_PATH, useParams} from '@/entry/router';
-import useDialog from '@/components/dialogs/useDialog';
 import Toast from '@/utils/toast';
+import {showDialog} from '@/components/dialogs/useDialog';
 
 export default function () {
     const navigation = useNavigation<any>();
     const {id = 'favorite'} = useParams<'local-sheet-detail'>();
     const musicSheet = MusicSheet.useSheets(id);
-    const {showDialog} = useDialog();
 
     return (
         <ComplexAppBar

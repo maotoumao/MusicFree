@@ -8,12 +8,12 @@ import Empty from '@/components/base/empty';
 import ListItem from '@/components/base/listItem';
 import {FAB} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
-import useDialog from '@/components/dialogs/useDialog';
 import Toast from '@/utils/toast';
 import IconButton from '@/components/base/iconButton';
 import Clipboard from '@react-native-clipboard/clipboard';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
+import {showDialog} from '@/components/dialogs/useDialog';
 
 interface ISubscribeItem {
     name: string;
@@ -26,7 +26,6 @@ export default function PluginSubscribe() {
     const urls = Config.useConfig('setting.plugin.subscribeUrl') ?? '';
     const [subscribes, setSubscribes] = useState<Array<ISubscribeItem>>([]);
     const colors = useColors();
-    const {showDialog} = useDialog();
 
     useEffect(() => {
         try {

@@ -6,7 +6,6 @@ import DocumentPicker from 'react-native-document-picker';
 import Loading from '@/components/base/loading';
 import ListItem from '@/components/base/listItem';
 
-import useDialog from '@/components/dialogs/useDialog';
 import useColors from '@/hooks/useColors';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import PluginManager, {Plugin, PluginStateCode} from '@/core/pluginManager';
@@ -21,6 +20,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import Config from '@/core/config';
 import Empty from '@/components/base/empty';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import {showDialog} from '@/components/dialogs/useDialog';
 
 const ITEM_HEIGHT_BIG = rpx(120);
 
@@ -30,7 +30,6 @@ export default function PluginList() {
     const [fabOpen, setFabOpen] = useState(false);
     const colors = useColors();
     const {showPanel} = usePanel();
-    const {showDialog} = useDialog();
 
     const navigator = useNavigation<any>();
 
@@ -217,7 +216,6 @@ interface IPluginViewProps {
 function PluginView(props: IPluginViewProps) {
     const {plugin} = props;
     const colors = useColors();
-    const {showDialog} = useDialog();
     const {showPanel} = usePanel();
     const options = [
         {

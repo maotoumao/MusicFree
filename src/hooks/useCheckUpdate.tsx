@@ -1,4 +1,4 @@
-import useDialog from '@/components/dialogs/useDialog';
+import {showDialog} from '@/components/dialogs/useDialog';
 import Config from '@/core/config';
 import checkUpdate from '@/utils/checkUpdate';
 import Toast from '@/utils/toast';
@@ -6,8 +6,6 @@ import {compare} from 'compare-versions';
 import {useEffect} from 'react';
 
 export default function (callOnMount = true) {
-    const {showDialog} = useDialog();
-
     const checkAndShowResult = (showToast = false, checkSkip = false) => {
         checkUpdate().then(updateInfo => {
             if (updateInfo?.needUpdate) {

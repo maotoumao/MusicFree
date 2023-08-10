@@ -4,7 +4,7 @@ import useColors from '@/hooks/useColors';
 import Loading from '@/components/base/loading';
 import rpx from '@/utils/rpx';
 import {StyleSheet} from 'react-native';
-import useDialog from '../useDialog';
+import {hideDialog} from '../useDialog';
 
 interface ISimpleDialogProps<T extends any = any> {
     promise: Promise<T>;
@@ -16,7 +16,6 @@ interface ISimpleDialogProps<T extends any = any> {
 export default function LoadingDialog(props: ISimpleDialogProps) {
     const {title, onResolve, onReject, promise, onCancel} = props;
     const colors = useColors();
-    const {hideDialog} = useDialog();
 
     useEffect(() => {
         promise

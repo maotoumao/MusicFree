@@ -7,14 +7,13 @@ import Toast from '@/utils/toast';
 import Backup from '@/core/backup';
 import {readFile, writeFile} from 'react-native-fs';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import useDialog from '@/components/dialogs/useDialog';
 import usePanel from '@/components/panels/usePanel';
 import axios from 'axios';
+import {showDialog} from '@/components/dialogs/useDialog';
 
 export default function BackupSetting() {
     const navigate = useNavigate();
     const {showPanel} = usePanel();
-    const {showDialog} = useDialog();
 
     const onBackupToLocal = async () => {
         navigate(ROUTE_PATH.FILE_SELECTOR, {

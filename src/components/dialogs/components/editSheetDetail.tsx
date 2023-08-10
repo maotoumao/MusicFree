@@ -3,7 +3,6 @@ import {Button, Dialog, TextInput} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
 import {StyleSheet, View} from 'react-native';
-import useDialog from '../useDialog';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 import {TouchableOpacity} from 'react-native';
@@ -14,6 +13,7 @@ import {copyFile, exists, unlink} from 'react-native-fs';
 import MusicSheet from '@/core/musicSheet';
 import {addFileScheme, addRandomHash} from '@/utils/fileUtils';
 import Toast from '@/utils/toast';
+import {hideDialog} from '../useDialog';
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
@@ -21,7 +21,6 @@ interface IEditSheetDetailProps {
 export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
     const {musicSheet} = props;
     const colors = useColors();
-    const {hideDialog} = useDialog();
 
     const [coverImg, setCoverImg] = useState(musicSheet?.coverImg);
     const [title, setTitle] = useState(musicSheet?.title);

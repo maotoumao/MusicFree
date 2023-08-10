@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Dialog, Paragraph} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
-import useDialog from '../useDialog';
+import {hideDialog} from '../useDialog';
 import {vh} from '@/utils/rpx';
 
 interface ISimpleDialogProps {
@@ -12,7 +12,6 @@ interface ISimpleDialogProps {
 export default function SimpleDialog(props: ISimpleDialogProps) {
     const {title, content, onOk} = props;
     const colors = useColors();
-    const {hideDialog} = useDialog();
     return (
         <Dialog
             visible={true}

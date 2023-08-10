@@ -12,6 +12,23 @@ export const dialogInfoStore = new GlobalState<IDialogInfo>({
     payload: null,
 });
 
+export function showDialog<T extends keyof IDialogType>(
+    name: T,
+    payload?: Parameters<IDialogType[T]>[0],
+) {
+    dialogInfoStore.setValue({
+        name,
+        payload,
+    });
+}
+
+export function hideDialog() {
+    dialogInfoStore.setValue({
+        name: null,
+        payload: null,
+    });
+}
+
 export default function useDialog() {
     const showDialog = useCallback(
         <T extends keyof IDialogType>(

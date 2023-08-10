@@ -5,7 +5,7 @@ import useColors from '@/hooks/useColors';
 import {StyleSheet, View} from 'react-native';
 import ThemeText from '@/components/base/themeText';
 import Button from '@/components/base/button';
-import useDialog from '../useDialog';
+import {hideDialog} from '../useDialog';
 interface ISubscribeItem {
     name: string;
     url: string;
@@ -27,7 +27,6 @@ export default function SubscribePluginDialog(
     const {subscribeItem, onSubmit, editingIndex, onDelete} = props;
     const [name, setName] = useState(subscribeItem?.name ?? '');
     const [url, setUrl] = useState(subscribeItem?.url ?? '');
-    const {hideDialog} = useDialog();
     const colors = useColors();
     return (
         <Dialog

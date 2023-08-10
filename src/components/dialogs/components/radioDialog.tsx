@@ -4,7 +4,7 @@ import {Dialog} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import {FlatList} from 'react-native-gesture-handler';
 import ListItem from '@/components/base/listItem';
-import useDialog from '../useDialog';
+import {hideDialog} from '../useDialog';
 
 interface IKV<T extends string | number = string | number> {
     key: T;
@@ -23,7 +23,6 @@ function isObject(v: string | number | IKV): v is IKV {
 
 export default function RadioDialog(props: IRadioDialogProps) {
     const {title, content, onOk} = props;
-    const {hideDialog} = useDialog();
     const colors = useColors();
     return (
         <Dialog
