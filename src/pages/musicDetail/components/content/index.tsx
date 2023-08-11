@@ -4,9 +4,12 @@ import AlbumCover from './albumCover';
 import Lyric from './lyric';
 import {TapGestureHandler} from 'react-native-gesture-handler';
 import useOrientation from '@/hooks/useOrientation';
+import Config from '@/core/config';
 
 export default function Content() {
-    const [tab, selectTab] = useState<'album' | 'lyric'>('album');
+    const [tab, selectTab] = useState<'album' | 'lyric'>(
+        Config.get('setting.basic.musicDetailDefault') || 'album',
+    );
     const orientation = useOrientation();
 
     const onPress = () => {

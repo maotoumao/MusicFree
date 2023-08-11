@@ -152,6 +152,16 @@ export default function BasicSetting() {
                     [20, 50, 100, 200, 500],
                     basicSetting?.maxHistoryLen ?? 50,
                 ),
+                createRadio(
+                    '打开歌曲详情页时',
+                    'setting.basic.musicDetailDefault',
+                    ['album', 'lyric'],
+                    basicSetting?.musicDetailDefault ?? 'album',
+                    {
+                        album: '默认展示歌曲封面',
+                        lyric: '默认展示歌词页',
+                    },
+                ),
             ],
         },
         {
