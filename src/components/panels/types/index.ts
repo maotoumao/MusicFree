@@ -5,6 +5,7 @@ import MusicQuality from './musicQuality';
 import NewMusicSheet from './newMusicSheet';
 import PlayList from './playList';
 import PlayRate from './playRate';
+import SearchLrc from './searchLrc';
 import SheetTags from './sheetTags';
 import SimpleInput from './simpleInput';
 import TimingClose from './timingClose';
@@ -30,4 +31,6 @@ export default {
     PlayRate: PlayRate,
     /** 歌单tag */
     SheetTags: SheetTags,
+    /** 搜索歌词 */
+    SearchLrc,
 };

@@ -15,6 +15,7 @@ import Loading from '@/components/base/loading';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import PluginManager from '@/core/pluginManager';
 import globalStyle from '@/constants/globalStyle';
+import {showPanel} from '@/components/panels/usePanel';
 
 interface ICurrentLyricItem {
     lrc?: ILyric.IParsedLrcItem;
@@ -204,7 +205,12 @@ export default function Lyric() {
                 // TODO 搜索歌词
                 <View style={globalStyle.fullCenter}>
                     <ThemeText style={style.highlightItem}>暂无歌词</ThemeText>
-                    <TapGestureHandler onActivated={console.log}>
+                    <TapGestureHandler
+                        onActivated={() => {
+                            showPanel('SearchLrc', {
+                                musicItem: MusicQueue.getCurrentMusicItem(),
+                            });
+                        }}>
                         <Text style={style.searchLyric}>搜索歌词</Text>
                     </TapGestureHandler>
                 </View>
@@ -298,7 +304,8 @@ const style = StyleSheet.create({
         textAlign: 'right',
     },
     searchLyric: {
-        width: rpx(150),
+        width: rpx(180),
+        paddingVertical: rpx(10),
         textAlign: 'center',
         alignSelf: 'center',
         color: 'blue',

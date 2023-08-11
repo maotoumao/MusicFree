@@ -31,12 +31,13 @@ const timingConfig = {
 };
 
 interface IPanelBaseProps {
+    keyboardAvoidBehavior?: 'height' | 'padding' | 'position';
     height?: number;
     renderBody: (loading: boolean) => JSX.Element;
 }
 
 export default function (props: IPanelBaseProps) {
-    const {height = vh(60), renderBody} = props;
+    const {height = vh(60), renderBody, keyboardAvoidBehavior} = props;
     const snapPoint = useSharedValue(0);
 
     const colors = useColors();
@@ -157,7 +158,8 @@ export default function (props: IPanelBaseProps) {
                     style={[style.maskWrapper, style.mask, maskAnimated]}
                 />
             </Pressable>
-            <KeyboardAvoidingView behavior="position">
+            <KeyboardAvoidingView
+                behavior={keyboardAvoidBehavior || 'position'}>
                 <Animated.View
                     style={[
                         style.wrapper,
