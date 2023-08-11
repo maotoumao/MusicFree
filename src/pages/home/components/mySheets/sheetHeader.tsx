@@ -2,14 +2,13 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicSheet from '@/core/musicSheet';
-import usePanel from '@/components/panels/usePanel';
+
 import IconButton from '@/components/base/iconButton';
 import ThemeText from '@/components/base/themeText';
+import {showPanel} from '@/components/panels/usePanel';
 
 export default function () {
     const musicSheets = MusicSheet.useUserSheets();
-
-    const {showPanel} = usePanel();
 
     return (
         <View style={style.header}>

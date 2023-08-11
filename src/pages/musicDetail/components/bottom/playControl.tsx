@@ -5,13 +5,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicQueue from '@/core/musicQueue';
 import repeatModeConst from '@/constants/repeatModeConst';
 import musicIsPaused from '@/utils/musicIsPaused';
-import usePanel from '@/components/panels/usePanel';
+
 import useOrientation from '@/hooks/useOrientation';
+import {showPanel} from '@/components/panels/usePanel';
 
 export default function () {
     const repeatMode = MusicQueue.useRepeatMode();
     const musicState = MusicQueue.usePlaybackState();
-    const {showPanel} = usePanel();
+
     const orientation = useOrientation();
 
     return (

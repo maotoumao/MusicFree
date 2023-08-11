@@ -6,7 +6,7 @@ import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import ThemeSwitch from '@/components/base/switch';
 import {clearCache, getCacheSize, sizeFormatter} from '@/utils/fileUtils';
-import usePanel from '@/components/panels/usePanel';
+
 import Toast from '@/utils/toast';
 import pathConst from '@/constants/pathConst';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
@@ -16,6 +16,7 @@ import {clearLog, getErrorLogContent} from '@/utils/log';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Paragraph} from 'react-native-paper';
 import {showDialog} from '@/components/dialogs/useDialog';
+import {showPanel} from '@/components/panels/usePanel';
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -55,7 +56,7 @@ function useCacheSize() {
 
 export default function BasicSetting() {
     const basicSetting = Config.useConfig('setting.basic');
-    const {showPanel} = usePanel();
+
     const navigate = useNavigate();
 
     const [cacheSize, refreshCacheSize] = useCacheSize();

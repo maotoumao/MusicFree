@@ -11,8 +11,9 @@ import DeviceInfo from 'react-native-device-info';
 import NativeUtils from '@/native/utils';
 import MusicQueue from '@/core/musicQueue';
 import {useTimingClose} from '@/utils/timingClose';
-import usePanel from '@/components/panels/usePanel';
+
 import timeformat from '@/utils/timeformat';
+import {showPanel} from '@/components/panels/usePanel';
 
 const ITEM_HEIGHT = rpx(108);
 function HomeDrawer(props: any) {
@@ -180,7 +181,6 @@ const style = StyleSheet.create({
 
 function _CountDownItem() {
     const countDown = useTimingClose();
-    const {showPanel} = usePanel();
 
     return (
         <ListItem

@@ -9,7 +9,7 @@ import {IconButton} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
-import usePanel from '../panels/usePanel';
+import {showPanel} from '../panels/usePanel';
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
@@ -19,7 +19,6 @@ export default function (props: IProps) {
     const {musicList, sheetName} = props;
     const colors = useColors();
     const navigate = useNavigate();
-    const {showPanel} = usePanel();
 
     return (
         <View

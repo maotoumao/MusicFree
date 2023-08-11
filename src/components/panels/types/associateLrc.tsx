@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import {Divider} from 'react-native-paper';
-import usePanel from '../usePanel';
+
 import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import Button from '@/components/base/button';
@@ -15,6 +15,7 @@ import Cache from '@/core/cache';
 import Toast from '@/utils/toast';
 import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
+import {hidePanel} from '../usePanel';
 
 interface INewMusicSheetProps {
     musicItem: IMusic.IMusicItem;
@@ -22,7 +23,7 @@ interface INewMusicSheetProps {
 
 export default function AssociateLrc(props: INewMusicSheetProps) {
     const {musicItem} = props;
-    const {hidePanel} = usePanel();
+
     const [input, setInput] = useState('');
     const colors = useColors();
 

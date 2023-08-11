@@ -18,12 +18,13 @@ import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
 import {ROUTE_PATH} from '@/entry/router';
-import usePanel from '../usePanel';
+
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
 import musicHistory from '@/core/musicHistory';
 import {showDialog} from '@/components/dialogs/useDialog';
+import {hidePanel, showPanel} from '../usePanel';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -39,7 +40,6 @@ const ITEM_HEIGHT = rpx(96);
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const {musicItem, musicSheet, from} = props ?? {};
 
-    const {showPanel, hidePanel} = usePanel();
     const safeAreaInsets = useSafeAreaInsets();
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);

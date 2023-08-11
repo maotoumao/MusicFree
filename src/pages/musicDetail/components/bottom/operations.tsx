@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicSheet from '@/core/musicSheet';
 import MusicQueue from '@/core/musicQueue';
-import usePanel from '@/components/panels/usePanel';
+
 import Download from '@/core/download';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import LocalMusicSheet from '@/core/localMusicSheet';
@@ -14,6 +14,7 @@ import Toast from '@/utils/toast';
 import Config from '@/core/config';
 import TrackPlayer from 'react-native-track-player';
 import useOrientation from '@/hooks/useOrientation';
+import {showPanel} from '@/components/panels/usePanel';
 
 export default function Opertions() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -21,7 +22,7 @@ export default function Opertions() {
     const musicItem = MusicQueue.useCurrentMusicItem();
     const currentQuality = MusicQueue.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
-    const {showPanel} = usePanel();
+
     const rate = Config.useConfig('status.music.rate') ?? 100;
     const orientation = useOrientation();
 

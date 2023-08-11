@@ -6,10 +6,11 @@ import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
-import usePanel from '../usePanel';
+
 import ThemeText from '@/components/base/themeText';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import PanelBase from '../base/panelBase';
+import {hidePanel} from '../usePanel';
 
 interface ISimpleInputProps {
     onOk: (text: string, closePanel: () => void) => void;
@@ -21,7 +22,7 @@ interface ISimpleInputProps {
 
 export default function SimpleInput(props: ISimpleInputProps) {
     const {onOk, onCancel, placeholder, maxLength = 80, hints} = props;
-    const {hidePanel} = usePanel();
+
     const [input, setInput] = useState('');
     const colors = useColors();
 

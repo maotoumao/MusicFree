@@ -8,11 +8,12 @@ import {CircularProgressBase} from 'react-native-circular-progress-indicator';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
 import musicIsPaused from '@/utils/musicIsPaused';
-import usePanel from '../panels/usePanel';
+
 import Color from 'color';
 import ThemeText from '../base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {showPanel} from '../panels/usePanel';
 
 function CircularPlayBtn() {
     const progress = MusicQueue.useProgress();
@@ -57,7 +58,7 @@ function MusicBar() {
     const musicItem = MusicQueue.useCurrentMusicItem();
 
     const [showKeyboard, setKeyboardStatus] = useState(false);
-    const {showPanel} = usePanel();
+
     const navigate = useNavigate();
     const {colors} = useTheme();
     const safeAreaInsets = useSafeAreaInsets();

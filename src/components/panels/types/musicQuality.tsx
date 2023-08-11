@@ -3,12 +3,13 @@ import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {Divider} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
-import usePanel from '../usePanel';
+
 import {qualityKeys, qualityText} from '@/utils/qualities';
 import {sizeFormatter} from '@/utils/fileUtils';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {ScrollView} from 'react-native-gesture-handler';
+import {hidePanel} from '../usePanel';
 
 interface IMusicQualityProps {
     /** 歌曲信息 */
@@ -21,7 +22,6 @@ interface IMusicQualityProps {
 }
 
 export default function MusicQuality(props: IMusicQualityProps) {
-    const {hidePanel} = usePanel();
     const safeAreaInsets = useSafeAreaInsets();
 
     const {musicItem, onQualityPress} = props ?? {};

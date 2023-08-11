@@ -6,10 +6,11 @@ import ListItem from '@/components/base/listItem';
 import MusicSheet from '@/core/musicSheet';
 import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
-import usePanel from '../usePanel';
+
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
+import {showPanel, hidePanel} from '../usePanel';
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -19,7 +20,7 @@ interface IAddToMusicSheetProps {
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
     const sheets = MusicSheet.useSheets();
-    const {showPanel, hidePanel} = usePanel();
+
     const {musicItem = [], newSheetDefaultName} = props ?? {};
     const safeAreaInsets = useSafeAreaInsets();
 

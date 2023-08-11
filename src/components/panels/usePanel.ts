@@ -1,5 +1,4 @@
 import {GlobalState} from '@/utils/stateMapper';
-import {useCallback} from 'react';
 import {DeviceEventEmitter} from 'react-native';
 import panels from './types';
 
@@ -17,31 +16,25 @@ export const panelInfoStore = new GlobalState<IPanelInfo>({
     payload: null,
 });
 
-/** 使用浮层的hook */
-export default function usePanel() {
-    const showPanel = useCallback(function <T extends IPanelkeys>(
-        name: T,
-        payload?: Parameters<IPanel[T]>[0],
-    ) {
-        if (panelInfoStore.getValue().name) {
-            DeviceEventEmitter.emit('hidePanel', () => {
-                panelInfoStore.setValue({
-                    name,
-                    payload,
-                });
-            });
-        } else {
+export function showPanel<T extends IPanelkeys>(
+    name: T,
+    payload?: Parameters<IPanel[T]>[0],
+) {
+    if (panelInfoStore.getValue().name) {
+        DeviceEventEmitter.emit('hidePanel', () => {
             panelInfoStore.setValue({
                 name,
                 payload,
             });
-        }
-    },
-    []);
+        });
+    } else {
+        panelInfoStore.setValue({
+            name,
+            payload,
+        });
+    }
+}
 
-    const hidePanel = useCallback(() => {
-        DeviceEventEmitter.emit('hidePanel');
-    }, []);
-
-    return {showPanel, hidePanel};
+export function hidePanel() {
+    DeviceEventEmitter.emit('hidePanel');
 }

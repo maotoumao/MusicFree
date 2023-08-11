@@ -5,8 +5,9 @@ import ListItem, {ILeftProps} from '../base/listItem';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicQueue from '@/core/musicQueue';
 import IconButton from '../base/iconButton';
-import usePanel from '../panels/usePanel';
+
 import LocalMusicSheet from '@/core/localMusicSheet';
+import {showPanel} from '../panels/usePanel';
 
 interface IMusicItemProps {
     index?: string | number;
@@ -34,7 +35,6 @@ export default function MusicItem(props: IMusicItemProps) {
         itemPaddingRight,
         itemBackgroundColor,
     } = props;
-    const {showPanel} = usePanel();
 
     return (
         <ListItem
