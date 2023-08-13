@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
+import {StatusBar, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {Appbar, Menu} from 'react-native-paper';
@@ -58,10 +58,12 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
                     ) : null}
                     {menuOptions.length !== 0 ? (
                         <Menu
-                            contentStyle={[
-                                style.menuContent,
-                                {backgroundColor: colors.primary},
-                            ]}
+                            contentStyle={{
+                                backgroundColor: colors.primary,
+                                marginTop: rpx(
+                                    88 + (StatusBar.currentHeight ?? 0),
+                                ),
+                            }}
                             onDismiss={onDismissMenu}
                             visible={isMenuVisible}
                             anchor={
@@ -107,9 +109,7 @@ const style = StyleSheet.create({
         shadowColor: 'transparent',
         flex: 1,
     },
-    menuContent: {
-        marginTop: rpx(28),
-    },
+
     safeArea: {
         flex: 1,
         flexDirection: 'row',
