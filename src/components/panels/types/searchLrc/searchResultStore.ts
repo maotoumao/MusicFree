@@ -13,7 +13,4 @@ interface ISearchLyricStoreData {
     data: Record<string, ISearchLyricResult>;
 }
 
-const c = new GlobalState<ISearchLyricStoreData>({data: {}});
-export default c;
-// @ts-ignore
-global.ck = c;
+export default new GlobalState<ISearchLyricStoreData>({data: {}});
