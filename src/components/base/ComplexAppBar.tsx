@@ -58,11 +58,12 @@ export default function ComplexAppBar(props: IComplexAppBarProps) {
                     ) : null}
                     {menuOptions.length !== 0 ? (
                         <Menu
+                            statusBarHeight={StatusBar.currentHeight}
+                            style={{
+                                marginTop: rpx(88),
+                            }}
                             contentStyle={{
                                 backgroundColor: colors.primary,
-                                marginTop: rpx(
-                                    88 + (StatusBar.currentHeight ?? 0),
-                                ),
                             }}
                             onDismiss={onDismissMenu}
                             visible={isMenuVisible}

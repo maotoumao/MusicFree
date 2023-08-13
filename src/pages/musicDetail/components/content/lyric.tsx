@@ -330,7 +330,7 @@ const style = StyleSheet.create({
         paddingVertical: rpx(10),
         textAlign: 'center',
         alignSelf: 'center',
-        color: 'blue',
+        color: '#66eeff',
         textDecorationLine: 'underline',
     },
 });

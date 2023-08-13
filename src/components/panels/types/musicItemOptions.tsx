@@ -165,8 +165,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'link-variant-remove',
             title: '解除关联歌词',
             show: !!associatedLrc,
-            onPress: () => {
-                MediaMeta.update(musicItem, {
+            onPress: async () => {
+                await MediaMeta.update(musicItem, {
                     associatedLrc: undefined,
                 });
                 DeviceEventEmitter.emit(EDeviceEvents.REFRESH_LYRIC);
