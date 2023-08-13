@@ -1,5 +1,11 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {LayoutRectangle, StyleSheet, Text, View} from 'react-native';
+import {
+    DeviceEventEmitter,
+    LayoutRectangle,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import MusicQueue from '@/core/musicQueue';
 import LyricParser from '@/core/lrcParser';
@@ -16,6 +22,7 @@ import {isSameMediaItem} from '@/utils/mediaItem';
 import PluginManager from '@/core/pluginManager';
 import globalStyle from '@/constants/globalStyle';
 import {showPanel} from '@/components/panels/usePanel';
+import {EDeviceEvents} from '@/constants/commonConst';
 
 interface ICurrentLyricItem {
     lrc?: ILyric.IParsedLrcItem;
@@ -33,6 +40,36 @@ function useLyric() {
     const [meta, setMeta] = useState<Record<string, any>>({});
     const [currentLrcItem, setCurentLrcItem] = useState<ICurrentLyricItem>();
 
+    async function refreshLyric() {
+        setLoading(true);
+        try {
+            const lrc = await PluginManager.getByMedia(
+                musicItem,
+            )?.methods?.getLyricText(musicItem);
+            setLoading(false);
+            trace(musicItem.title, lrc);
+            if (isSameMediaItem(musicItem, musicItemRef.current)) {
+                if (lrc) {
+                    const parser = new LyricParser(lrc, musicItem);
+                    setLyric(parser.getLyric());
+                    setMeta(parser.getMeta());
+                    lrcManagerRef.current = parser;
+                } else {
+                    setLyric([]);
+                    setMeta({});
+                    lrcManagerRef.current = undefined;
+                }
+            }
+        } catch {
+            if (isSameMediaItem(musicItem, musicItemRef.current)) {
+                setLyric([]);
+                setMeta({});
+                lrcManagerRef.current = undefined;
+            }
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         if (
             !lrcManagerRef.current ||
@@ -41,33 +78,7 @@ function useLyric() {
                 musicItem,
             )
         ) {
-            setLoading(true);
-            PluginManager.getByMedia(musicItem)
-                ?.methods?.getLyricText(musicItem)
-                ?.then(lrc => {
-                    setLoading(false);
-                    trace(musicItem.title, lrc);
-                    if (isSameMediaItem(musicItem, musicItemRef.current)) {
-                        if (lrc) {
-                            const parser = new LyricParser(lrc, musicItem);
-                            setLyric(parser.getLyric());
-                            setMeta(parser.getMeta());
-                            lrcManagerRef.current = parser;
-                        } else {
-                            setLyric([]);
-                            setMeta({});
-                            lrcManagerRef.current = undefined;
-                        }
-                    }
-                })
-                ?.catch(_ => {
-                    if (isSameMediaItem(musicItem, musicItemRef.current)) {
-                        setLyric([]);
-                        setMeta({});
-                        lrcManagerRef.current = undefined;
-                    }
-                    setLoading(false);
-                });
+            refreshLyric();
         }
         musicItemRef.current = musicItem;
     }, [musicItem]);
@@ -79,6 +90,16 @@ function useLyric() {
             );
         }
     }, [progress, lyric]);
+
+    useEffect(() => {
+        const unsubscription = DeviceEventEmitter.addListener(
+            EDeviceEvents.REFRESH_LYRIC,
+            refreshLyric,
+        );
+        return () => {
+            unsubscription.remove();
+        };
+    }, []);
 
     return {lyric, currentLrcItem, meta, loading, progress} as const;
 }
@@ -189,6 +210,7 @@ export default function Lyric() {
                     extraData={currentLrcItem}
                     renderItem={({item, index}) => (
                         <ThemeText
+                            numberOfLines={2}
                             style={[
                                 index === currentLrcItem?.index
                                     ? style.highlightItem

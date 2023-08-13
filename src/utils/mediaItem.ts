@@ -2,6 +2,7 @@ import {
     internalSerializeKey,
     localPluginPlatform,
 } from '@/constants/commonConst';
+import MediaMeta from '@/core/mediaMeta';
 import produce from 'immer';
 import objectPath from 'object-path';
 
@@ -127,4 +128,21 @@ export function trimInternalData(
         ...mediaItem,
         [internalSerializeKey]: undefined,
     };
+}
+
+/** 关联歌词 */
+export async function associateLrc(
+    musicItem: ICommon.IMediaBase,
+    linkto: ICommon.IMediaBase,
+) {
+    if (!musicItem || !linkto) {
+        throw new Error('');
+    }
+    await MediaMeta.update(musicItem, {
+        associatedLrc: linkto,
+    });
+    await MediaMeta.update(linkto, [
+        ['lrc', linkto.lrc],
+        ['$.local.localLrc', linkto.$?.local?.localLrc],
+    ]);
 }

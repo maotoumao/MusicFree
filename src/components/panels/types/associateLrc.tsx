@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {DeviceEventEmitter, StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import {Divider} from 'react-native-paper';
 
@@ -7,15 +7,15 @@ import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
-import MediaMeta from '@/core/mediaMeta';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {errorLog} from '@/utils/log';
-import {parseMediaKey} from '@/utils/mediaItem';
+import {associateLrc, parseMediaKey} from '@/utils/mediaItem';
 import Cache from '@/core/cache';
 import Toast from '@/utils/toast';
 import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
+import {EDeviceEvents} from '@/constants/commonConst';
 
 interface INewMusicSheetProps {
     musicItem: IMusic.IMusicItem;
@@ -60,23 +60,14 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                                 'CLIPBOARD TIMEOUT',
                                             );
                                         }
-                                        // todo 双向记录
-                                        await MediaMeta.update(musicItem, {
-                                            associatedLrc: targetMedia,
+                                        await associateLrc(musicItem, {
+                                            ...targetMedia,
+                                            ...targetCache,
                                         });
-                                        await MediaMeta.update(
-                                            {...targetMedia, ...targetCache},
-                                            [
-                                                ['lrc', targetCache.lrc],
-                                                ['rawLrc', targetCache.rawLrc],
-                                                [
-                                                    '$.local.localLrc',
-                                                    targetCache.$?.local
-                                                        ?.localLrc,
-                                                ],
-                                            ],
-                                        );
                                         Toast.success('关联歌词成功');
+                                        DeviceEventEmitter.emit(
+                                            EDeviceEvents.REFRESH_LYRIC,
+                                        );
                                         hidePanel();
                                     } catch (e: any) {
                                         if (e.message !== 'CLIPBOARD TIMEOUT') {

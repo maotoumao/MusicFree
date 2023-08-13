@@ -50,3 +50,9 @@ export const supportLocalMediaType = [
     '.ape',
     '.opus',
 ];
+
+/** 全局事件 */
+export enum EDeviceEvents {
+    /** 刷新歌词 */
+    REFRESH_LYRIC = 'refresh-lyric',
+}
