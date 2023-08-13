@@ -33,7 +33,7 @@ declare namespace IMusic {
         url?: string;
         /** 歌词URL */
         lrc?: string;
-        /** 歌词 */
+        /** 歌词（有时间戳） */
         rawLrc?: string;
         /** 音质信息 */
         qualities?: IQuality;

@@ -976,8 +976,8 @@ function getSearchablePlugins(supportedSearchType?: ICommon.SupportMediaType) {
         _ =>
             _.state === 'enabled' &&
             _.instance.search &&
-            (supportedSearchType && _.instance.supportedSearchTypes
-                ? _.instance.supportedSearchTypes.includes(supportedSearchType)
+            (supportedSearchType && _.instance.supportedSearchType
+                ? _.instance.supportedSearchType.includes(supportedSearchType)
                 : true),
     );
 }

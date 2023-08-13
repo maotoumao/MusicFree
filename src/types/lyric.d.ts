@@ -1,5 +1,8 @@
 declare namespace ILyric {
-    export interface ILyricItem extends ICommon.IMediaBase {}
+    export interface ILyricItem extends IMusic.IMusicItem {
+        /** 歌词（无时间戳） */
+        rawLrcTxt?: string;
+    }
 
     export interface ILyricSource {
         lrc?: string;

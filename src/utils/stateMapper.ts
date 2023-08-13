@@ -26,6 +26,8 @@ export default class StateMapper<T> {
     };
 }
 
+type UpdateFunc<T> = (prev: T) => T;
+
 export class GlobalState<T> {
     private value: T;
     private stateMapper: StateMapper<T>;
@@ -43,8 +45,15 @@ export class GlobalState<T> {
         return this.stateMapper.useMappedState();
     };
 
-    public setValue = (value: T) => {
-        this.value = value;
+    public setValue = (value: T | UpdateFunc<T>) => {
+        let newValue: T;
+        if (typeof value === 'function') {
+            newValue = (value as UpdateFunc<T>)(this.value);
+        } else {
+            newValue = value;
+        }
+
+        this.value = newValue;
         this.stateMapper.notify();
     };
 }
