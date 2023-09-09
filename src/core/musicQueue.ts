@@ -23,6 +23,7 @@ import LocalMusicSheet from './localMusicSheet';
 import {SoundAsset} from '@/constants/assetsConst';
 import {getQualityOrder} from '@/utils/qualities';
 import musicHistory from './musicHistory';
+import getUrlExt from '@/utils/getUrlExt';
 
 enum MusicRepeatMode {
     /** 随机播放 */
@@ -454,6 +455,10 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
                 };
                 currentQuality = 'standard';
                 currentQualityStateMapper.notify();
+            }
+            if (getUrlExt(source.url) === '.m3u8') {
+                // @ts-ignore
+                source.type = 'hls';
             }
             //#endregion
             // 获取音乐信息

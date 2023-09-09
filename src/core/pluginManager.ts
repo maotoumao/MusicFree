@@ -98,8 +98,6 @@ export class Plugin {
     public hash: string;
     /** 插件状态：激活、关闭、错误 */
     public state: 'enabled' | 'disabled' | 'error';
-    /** 插件支持的搜索类型 */
-    public supportedSearchType?: string;
     /** 插件状态信息 */
     public stateCode?: PluginStateCode;
     /** 插件的实例 */
