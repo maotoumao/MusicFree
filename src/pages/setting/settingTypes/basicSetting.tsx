@@ -163,6 +163,11 @@ export default function BasicSetting() {
                         lyric: '默认展示歌词页',
                     },
                 ),
+                createSwitch(
+                    '处于歌曲详情页时常亮',
+                    'setting.basic.musicDetailAwake',
+                    basicSetting?.musicDetailAwake ?? false,
+                ),
             ],
         },
         {
