@@ -242,7 +242,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                             },
                                             width: rpx(48),
                                         }}
-                                        itemPaddingHorizontal={0}
+                                        itemPaddingHorizontal={12}
                                         itemHeight={ITEM_HEIGHT}
                                         title={item.title}
                                         onPress={item.onPress}
@@ -269,7 +269,6 @@ const style = StyleSheet.create({
         padding: rpx(24),
     },
     listWrapper: {
-        paddingHorizontal: rpx(24),
         paddingTop: rpx(12),
     },
     artwork: {

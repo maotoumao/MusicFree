@@ -29,7 +29,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
             height={vmax(30)}
             renderBody={() => (
                 <>
-                    <View style={style.opeartions}>
+                    <View style={style.operations}>
                         <Button
                             onPress={() => {
                                 onCancel ? onCancel() : hidePanel();
@@ -79,7 +79,7 @@ const style = StyleSheet.create({
     wrapper: {
         width: rpx(750),
     },
-    opeartions: {
+    operations: {
         width: rpx(750),
         paddingHorizontal: rpx(24),
         flexDirection: 'row',
@@ -88,8 +88,7 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
     },
     input: {
-        marginTop: rpx(12),
-        marginBottom: rpx(12),
+        margin: rpx(24),
         borderRadius: rpx(12),
         fontSize: fontSizeConst.content,
         lineHeight: fontSizeConst.content * 1.5,

@@ -31,7 +31,7 @@ export default function PluginSetting() {
                 statusBarTranslucent: true,
                 headerShown: false,
                 animation: 'slide_from_right',
-                animationDuration: 200,
+                animationDuration: 100,
             }}>
             {routes.map(route => (
                 <Stack.Screen

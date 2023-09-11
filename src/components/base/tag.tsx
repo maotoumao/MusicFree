@@ -25,11 +25,11 @@ export default function Tag(props: ITagProps) {
 
 const style = StyleSheet.create({
     tag: {
-        height: rpx(30),
+        height: rpx(32),
         marginLeft: rpx(12),
         paddingHorizontal: rpx(12),
-        paddingVertical: rpx(4),
         borderRadius: rpx(24),
+        justifyContent: 'center',
         alignItems: 'center',
         flexShrink: 0,
     },
