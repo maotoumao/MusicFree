@@ -66,7 +66,7 @@ function CountDownHeader() {
     );
 }
 
-const ITEM_HEIGHT = rpx(72);
+const ITEM_HEIGHT = rpx(82);
 const hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 const minutes = Array(60)
     .fill(0)
@@ -108,6 +108,8 @@ function NumScrollView() {
         <View style={numScrollStyles.customTime}>
             <View style={numScrollStyles.listWrapper}>
                 <FlatList
+                    showsVerticalScrollIndicator={false}
+                    overScrollMode="never"
                     ListHeaderComponent={EmptyItem}
                     ListFooterComponent={EmptyItem}
                     getItemLayout={(_, index) => ({
@@ -143,6 +145,8 @@ function NumScrollView() {
                     ref={ref => {
                         minListRef.current = ref;
                     }}
+                    showsVerticalScrollIndicator={false}
+                    overScrollMode="never"
                     ListHeaderComponent={EmptyItem}
                     ListFooterComponent={EmptyItem}
                     style={[numScrollStyles.list, numScrollStyles.minList]}
@@ -192,6 +196,7 @@ const numScrollStyles = StyleSheet.create({
     },
     listWrapper: {
         flexDirection: 'row',
+        width: '100%',
     },
     emptyItem: {
         width: '100%',
@@ -208,7 +213,7 @@ const numScrollStyles = StyleSheet.create({
     },
     item: {
         height: ITEM_HEIGHT,
-        width: rpx(120),
+        width: '100%',
         textAlign: 'center',
         textAlignVertical: 'center',
     },
@@ -325,7 +330,6 @@ const style = StyleSheet.create({
         width: rpx(750),
         flex: 1,
         marginTop: rpx(64),
-        paddingHorizontal: rpx(24),
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -333,6 +337,7 @@ const style = StyleSheet.create({
     timesGroup: {
         width: rpx(702),
         height: rpx(108),
+        paddingHorizontal: rpx(24),
         // backgroundColor: 'blue',
         flexDirection: 'row',
         alignItems: 'center',

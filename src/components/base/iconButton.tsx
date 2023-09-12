@@ -3,7 +3,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ColorKey, iconSizeConst, colorMap} from '@/constants/uiConst';
 import {useTheme} from 'react-native-paper';
 import {IconProps} from 'react-native-vector-icons/Icon';
-import {TapGestureHandler} from 'react-native-gesture-handler';
+import {
+    TapGestureHandler,
+    TouchableOpacity,
+} from 'react-native-gesture-handler';
 import {StyleSheet} from 'react-native';
 
 interface IIconButtonProps {
@@ -36,13 +39,14 @@ export default function IconButton(props: IIconButtonProps) {
     const textSize = iconSizeConst[size];
     const color = theme.colors[colorMap[fontColor]];
     return (
-        <Icon
-            name={name}
-            color={color}
-            onPress={onPress}
-            style={[{minWidth: textSize}, styles.textCenter, style]}
-            size={textSize}
-        />
+        <TouchableOpacity onPress={onPress}>
+            <Icon
+                name={name}
+                color={color}
+                style={[{minWidth: textSize}, styles.textCenter, style]}
+                size={textSize}
+            />
+        </TouchableOpacity>
     );
 }
 
