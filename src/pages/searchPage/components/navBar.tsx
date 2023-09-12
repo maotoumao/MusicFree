@@ -83,11 +83,13 @@ const style = StyleSheet.create({
         flex: 1,
         borderRadius: rpx(64),
         height: '72%',
+        maxHeight: rpx(64),
         color: '#666666',
         alignItems: 'center',
     },
     input: {
         padding: 0,
+        height: '100%',
         color: '#666666',
         fontSize: fontSizeConst.subTitle,
         textAlignVertical: 'center',

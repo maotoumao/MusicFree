@@ -38,9 +38,8 @@ export default function NavBar() {
                 }}>
                 <Icon
                     name="magnify"
-                    size={rpx(28)}
+                    size={rpx(32)}
                     color={Color(colors.textSecondary).alpha(0.8).toString()}
-                    style={style.searchIcon}
                 />
                 <ThemeText
                     fontSize="subTitle"
@@ -72,10 +71,10 @@ const style = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
         height: '72%',
+        maxHeight: rpx(64),
         borderRadius: rpx(36),
-        paddingHorizontal: rpx(28),
+        paddingHorizontal: rpx(20),
     },
-    searchIcon: {},
     text: {
         marginLeft: rpx(12),
     },
