@@ -3,7 +3,7 @@ import {Keyboard, Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicQueue from '@/core/musicQueue';
-import {Avatar, IconButton, useTheme} from 'react-native-paper';
+import {IconButton, useTheme} from 'react-native-paper';
 import {CircularProgressBase} from 'react-native-circular-progress-indicator';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
@@ -14,6 +14,7 @@ import ThemeText from '../base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {showPanel} from '../panels/usePanel';
+import FastImage from '../base/fastImage';
 
 function CircularPlayBtn() {
     const progress = MusicQueue.useProgress();
@@ -94,15 +95,10 @@ function MusicBar() {
                         navigate(ROUTE_PATH.MUSIC_DETAIL);
                     }}>
                     <View style={style.artworkWrapper}>
-                        <Avatar.Image
-                            size={rpx(96)}
-                            source={
-                                musicItem?.artwork
-                                    ? {
-                                          uri: musicItem.artwork,
-                                      }
-                                    : ImgAsset.albumDefault
-                            }
+                        <FastImage
+                            style={style.artworkImg}
+                            uri={musicItem.artwork}
+                            emptySrc={ImgAsset.albumDefault}
                         />
                     </View>
                     <Text
@@ -167,5 +163,10 @@ const style = StyleSheet.create({
     },
     actionIcon: {
         marginLeft: rpx(36),
+    },
+    artworkImg: {
+        width: rpx(96),
+        height: rpx(96),
+        borderRadius: rpx(48),
     },
 });

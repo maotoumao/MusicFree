@@ -22,7 +22,7 @@ function MySheets() {
                 <ListItem
                     key={`${sheet.id}`}
                     title={sheet.title}
-                    itemPaddingHorizontal={0}
+                    itemPaddingHorizontal={12}
                     left={{
                         artwork: sheet.coverImg,
                         fallback: ImgAsset.albumDefault,
@@ -76,7 +76,6 @@ const style = StyleSheet.create({
     wrapper: {
         flexGrow: 1,
         marginHorizontal: rpx(24),
-        paddingHorizontal: rpx(24),
         paddingBottom: rpx(64),
         backgroundColor: '#eeeeee22',
         marginBottom: rpx(24),
