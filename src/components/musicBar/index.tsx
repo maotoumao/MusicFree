@@ -20,6 +20,8 @@ function CircularPlayBtn() {
     const musicState = MusicQueue.usePlaybackState();
     const {colors} = useTheme();
 
+    const isPaused = musicIsPaused(musicState);
+
     return (
         <CircularProgressBase
             activeStrokeWidth={rpx(4)}
@@ -34,23 +36,18 @@ function CircularPlayBtn() {
             radius={rpx(36)}
             activeStrokeColor={colors.text}
             inActiveStrokeColor={Color(colors.text).alpha(0.5).toString()}>
-            {musicIsPaused(musicState) ? (
-                <IconButton
-                    icon="play"
-                    size={rpx(48)}
-                    onPress={async () => {
+            <IconButton
+                accessibilityLabel={isPaused ? '播放' : '暂停'}
+                icon={isPaused ? 'play' : 'pause'}
+                size={rpx(48)}
+                onPress={async () => {
+                    if (isPaused) {
                         await MusicQueue.play();
-                    }}
-                />
-            ) : (
-                <IconButton
-                    icon="pause"
-                    size={rpx(48)}
-                    onPress={async () => {
+                    } else {
                         await MusicQueue.pause();
-                    }}
-                />
-            )}
+                    }
+                }}
+            />
         </CircularProgressBase>
     );
 }
@@ -91,6 +88,8 @@ function MusicBar() {
                             paddingRight: safeAreaInsets.right + rpx(24),
                         },
                     ]}
+                    accessible
+                    accessibilityLabel={`歌曲: ${musicItem.title} 歌手: ${musicItem.artist}`}
                     onPress={() => {
                         navigate(ROUTE_PATH.MUSIC_DETAIL);
                     }}>
@@ -108,6 +107,7 @@ function MusicBar() {
                     </View>
                     <Text
                         ellipsizeMode="tail"
+                        accessible={false}
                         style={style.textWrapper}
                         numberOfLines={1}>
                         <ThemeText fontSize="content">
@@ -124,8 +124,9 @@ function MusicBar() {
                     </Text>
                     <View style={style.actionGroup}>
                         <CircularPlayBtn />
-
                         <Icon
+                            accessible
+                            accessibilityLabel="播放列表"
                             name="playlist-music"
                             size={rpx(56)}
                             onPress={() => {

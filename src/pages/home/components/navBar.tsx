@@ -33,15 +33,19 @@ export default function NavBar() {
                             .toString(),
                     },
                 ]}
+                accessible
+                accessibilityLabel="点击这里开始搜索"
                 onPress={() => {
                     navigation.navigate(ROUTE_PATH.SEARCH_PAGE);
                 }}>
                 <Icon
+                    accessible={false}
                     name="magnify"
                     size={rpx(32)}
                     color={Color(colors.textSecondary).alpha(0.8).toString()}
                 />
                 <ThemeText
+                    accessible={false}
                     fontSize="subTitle"
                     style={[
                         style.text,

@@ -21,11 +21,13 @@ export default function ActionButton(props: IActionButtonProps) {
         <TouchableOpacity onPress={action} style={style.wrapper}>
             <>
                 <Icon
+                    accessible={false}
                     name={iconName}
                     color={iconColor ?? colors.text}
                     size={rpx(48)}
                 />
                 <ThemeText
+                    accessible={false}
                     fontSize="subTitle"
                     fontWeight="semibold"
                     style={style.text}>

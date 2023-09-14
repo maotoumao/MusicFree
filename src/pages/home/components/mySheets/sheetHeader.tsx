@@ -19,6 +19,7 @@ export default function () {
                 <IconButton
                     name="plus"
                     size="normal"
+                    accessibilityLabel="新建歌单"
                     onPress={() => {
                         showPanel('NewMusicSheet');
                     }}
