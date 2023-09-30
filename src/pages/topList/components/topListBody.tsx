@@ -4,9 +4,8 @@ import rpx from '@/utils/rpx';
 import PluginManager from '@/core/pluginManager';
 import {TabBar, TabView} from 'react-native-tab-view';
 import {fontWeightConst} from '@/constants/uiConst';
-import Color from 'color';
-import {useTheme} from 'react-native-paper';
 import BoardPanelWrapper from './boardPanelWrapper';
+import useColors from '@/hooks/useColors';
 
 export default function TopListBody() {
     const routes = PluginManager.getSortedTopListsablePlugins().map(_ => ({
@@ -14,7 +13,7 @@ export default function TopListBody() {
         title: _.name,
     }));
     const [index, setIndex] = useState(0);
-    const {colors} = useTheme();
+    const colors = useColors();
 
     const renderScene = useCallback(
         (props: {route: {key: string}}) => (
@@ -34,9 +33,7 @@ export default function TopListBody() {
                 <TabBar
                     {...props}
                     style={{
-                        backgroundColor: Color(colors.primary)
-                            .alpha(0.7)
-                            .toString(),
+                        backgroundColor: colors.backdrop,
                         shadowColor: 'transparent',
                         borderColor: 'transparent',
                     }}
@@ -44,19 +41,22 @@ export default function TopListBody() {
                         width: rpx(200),
                     }}
                     scrollEnabled
+                    inactiveColor={colors.text}
+                    activeColor={colors.primary}
                     renderLabel={({route, focused, color}) => (
                         <Text
+                            numberOfLines={1}
                             style={{
                                 fontWeight: focused
                                     ? fontWeightConst.bolder
-                                    : fontWeightConst.bold,
+                                    : fontWeightConst.medium,
                                 color,
                             }}>
                             {route.title}
                         </Text>
                     )}
                     indicatorStyle={{
-                        backgroundColor: colors.text,
+                        backgroundColor: colors.primary,
                         height: rpx(4),
                     }}
                 />

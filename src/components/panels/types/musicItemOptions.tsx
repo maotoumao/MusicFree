@@ -1,10 +1,9 @@
 import React from 'react';
 import {DeviceEventEmitter, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {Divider} from 'react-native-paper';
 import MusicQueue from '@/core/musicQueue';
 import MusicSheet from '@/core/musicSheet';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import ThemeText from '@/components/base/themeText';
 import Download from '@/core/download';
 import {ImgAsset} from '@/constants/assetsConst';
@@ -29,6 +28,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import musicHistory from '@/core/musicHistory';
 import {showDialog} from '@/components/dialogs/useDialog';
 import {hidePanel, showPanel} from '../usePanel';
+import Divider from '@/components/base/divider';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -237,7 +237,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                         left={{
                                             icon: {
                                                 name: item.icon,
-                                                size: 'small',
+                                                sizeType: 'small',
                                                 fontColor: 'normal',
                                             },
                                             width: rpx(48),

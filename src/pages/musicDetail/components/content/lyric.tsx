@@ -258,7 +258,7 @@ export default function Lyric() {
 
                     <IconButtonWithGesture
                         style={style.playIcon}
-                        size="small"
+                        sizeType="small"
                         name="play"
                         onPress={onLyricSeekPress}
                     />

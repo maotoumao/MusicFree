@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import {Button, Card} from 'react-native-paper';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import ThemeText from '@/components/base/themeText';
 import PageBackground from '@/components/base/pageBackground';
@@ -89,7 +89,7 @@ function HomeDrawer(props: any) {
                                 left={{
                                     icon: {
                                         name: item.icon,
-                                        size: 'normal',
+                                        sizeType: 'normal',
                                         fontColor: 'normal',
                                     },
                                     width: rpx(48),
@@ -115,7 +115,7 @@ function HomeDrawer(props: any) {
                                 left={{
                                     icon: {
                                         name: item.icon,
-                                        size: 'normal',
+                                        sizeType: 'normal',
                                         fontColor: 'normal',
                                     },
                                     width: rpx(48),
@@ -191,7 +191,7 @@ function _CountDownItem() {
             left={{
                 icon: {
                     name: 'timer-outline',
-                    size: 'normal',
+                    sizeType: 'normal',
                     fontColor: 'normal',
                 },
                 width: rpx(48),

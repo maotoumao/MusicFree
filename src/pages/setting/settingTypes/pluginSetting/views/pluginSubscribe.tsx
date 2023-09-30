@@ -5,7 +5,7 @@ import SimpleAppBar from '@/components/base/simpleAppBar';
 import Config from '@/core/config';
 import {FlatList} from 'react-native-gesture-handler';
 import Empty from '@/components/base/empty';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import {FAB} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import Toast from '@/utils/toast';

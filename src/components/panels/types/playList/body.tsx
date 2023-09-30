@@ -6,12 +6,12 @@ import {FlatList} from 'react-native-gesture-handler';
 import Tag from '@/components/base/tag';
 import ThemeText from '@/components/base/themeText';
 import {fontSizeConst} from '@/constants/uiConst';
-import {useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import IconButton from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import useColors from '@/hooks/useColors';
 
 const ITEM_HEIGHT = rpx(108);
 const ITEM_WIDTH = rpx(750);
@@ -24,7 +24,7 @@ interface IPlayListProps {
 }
 
 function _PlayListItem(props: IPlayListProps) {
-    const {colors} = useTheme();
+    const colors = useColors();
     const {item, index, currentIndex} = props;
 
     // console.log('rerender', index, currentIndex, item);
@@ -37,7 +37,7 @@ function _PlayListItem(props: IPlayListProps) {
             {currentIndex === index && (
                 <Icon
                     name="music"
-                    color={colors.textHighlight}
+                    color={colors.textHighlight ?? colors.primary}
                     size={fontSizeConst.content}
                     style={style.currentPlaying}
                 />
@@ -48,7 +48,7 @@ function _PlayListItem(props: IPlayListProps) {
                     {
                         color:
                             index === currentIndex
-                                ? colors.textHighlight
+                                ? colors.textHighlight ?? colors.primary
                                 : colors.text,
                     },
                 ]}
@@ -64,7 +64,7 @@ function _PlayListItem(props: IPlayListProps) {
             <IconButton
                 style={{marginLeft: rpx(14)}}
                 name="close"
-                size="small"
+                sizeType="small"
                 onPress={() => {
                     MusicQueue.remove(item);
                 }}

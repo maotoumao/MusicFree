@@ -11,20 +11,41 @@ import {
 const _DefaultTheme = deepmerge(PaperDefaultTheme, NavigationDefaultTheme);
 const _CustomTheme = deepmerge(PaperDarkTheme, NavigationDarkTheme);
 
-const DefaultTheme = {
+const DefaultThemeNew = {
     ..._DefaultTheme,
     colors: {
         ..._DefaultTheme.colors,
-        primary: '#FDEEDC',
+        primary: '#f17d34',
+        background: '#fafafa',
+        divider: 'rgba(0,0,0,0.1)',
         text: '#333333',
-        textSecondary: '#666666',
-        textHighlight: '#E38B29',
-        background: 'transparent',
-        pageBackground: '#FCF8E8',
-        backdrop: 'rgba(0,0,0,0.2)',
-        accent: '#E38B29',
+        listActive: 'rgba(0,0,0,0.1)', // 在手机上表现是ripple
+        mask: 'rgba(51,51,51,0.2)',
+        shadow: 'rgba(0, 0, 0, 0.2)',
+        backdrop: '#f0f0f0',
+        placeholder: '#eaeaea',
+        success: '#08A34C',
+        danger: '#FC5F5F',
+        info: '#0A95C8',
+        musicBar: '#fff',
+        headerText: '#fefefe',
     },
 };
+
+// const DefaultTheme = {
+//     ..._DefaultTheme,
+//     colors: {
+//         ..._DefaultTheme.colors,
+//         primary: '#FDEEDC',
+//         text: '#333333',
+//         textSecondary: '#666666',
+//         textHighlight: '#E38B29',
+//         background: 'transparent',
+//         pageBackground: '#FCF8E8',
+//         backdrop: 'rgba(0,0,0,0.2)',
+//         accent: '#E38B29',
+//     },
+// };
 
 const CustomTheme = {
     ..._CustomTheme,
@@ -41,7 +62,7 @@ const CustomTheme = {
     },
 };
 
-export {DefaultTheme, CustomTheme};
+export {DefaultThemeNew as DefaultTheme, CustomTheme};
 
 /**
  * 所有的颜色:

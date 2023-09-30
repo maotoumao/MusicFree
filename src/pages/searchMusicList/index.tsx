@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useNavigation} from '@react-navigation/native';
 import MusicBar from '@/components/musicBar';
 import SearchResult from './searchResult';
 import StatusBar from '@/components/base/statusBar';
-import {Appbar, Searchbar} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import {fontSizeConst} from '@/constants/uiConst';
 import {useParams} from '@/entry/router';
 import globalStyle from '@/constants/globalStyle';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
+import Input from '@/components/base/input';
+import AppBar from '@/components/base/appBar';
 
 function filterMusic(query: string, musicList: IMusic.IMusicItem[]) {
     if (query?.length === 0) {
@@ -25,7 +25,6 @@ function filterMusic(query: string, musicList: IMusic.IMusicItem[]) {
 
 export default function SearchMusicList() {
     const {musicList} = useParams<'search-music-list'>();
-    const navigation = useNavigation();
     const [result, setResult] = useState<IMusic.IMusicItem[]>(musicList ?? []);
     const [query, setQuery] = useState('');
 
@@ -40,16 +39,10 @@ export default function SearchMusicList() {
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
-            <Appbar.Header
-                style={[style.appbar, {backgroundColor: colors.primary}]}>
-                <Appbar.BackAction
-                    onPress={() => {
-                        navigation.goBack();
-                    }}
-                />
-                <Searchbar
+            <AppBar>
+                <Input
                     style={style.searchBar}
-                    inputStyle={style.input}
+                    fontColor={colors.headerText}
                     placeholder="在列表中搜索歌曲"
                     accessible
                     accessibilityLabel="搜索框"
@@ -57,7 +50,7 @@ export default function SearchMusicList() {
                     value={query}
                     onChangeText={onChangeSearch}
                 />
-            </Appbar.Header>
+            </AppBar>
             <SearchResult result={result} />
             <MusicBar />
         </VerticalSafeAreaView>
@@ -74,7 +67,7 @@ const style = StyleSheet.create({
         flex: 1,
         borderRadius: rpx(64),
         height: rpx(64),
-        color: '#666666',
+        fontSize: rpx(32),
     },
     input: {
         padding: 0,

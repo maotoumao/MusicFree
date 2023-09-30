@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text} from 'react-native';
 import rpx from '@/utils/rpx';
-import ListItem, {ILeftProps} from '../base/listItem';
+import ListItem, {ILeftProps} from '../base/listItem.old';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicQueue from '@/core/musicQueue';
 import IconButton from '../base/iconButton';
@@ -75,7 +75,7 @@ export default function MusicItem(props: IMusicItemProps) {
                     : () => (
                           <IconButton
                               name={'dots-vertical'}
-                              size="normal"
+                              sizeType="normal"
                               fontColor="normal"
                               onPress={() => {
                                   showPanel('MusicItemOptions', {

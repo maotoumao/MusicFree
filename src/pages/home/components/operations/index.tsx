@@ -61,6 +61,7 @@ export default function Operations(props: IOperationsProps) {
                     ? style.wrapper
                     : style.horizonalWrapper
             }
+            showsHorizontalScrollIndicator={false}
             horizontal={orientation === 'vertical'}
             contentContainerStyle={
                 orientation === 'vertical'
@@ -68,7 +69,10 @@ export default function Operations(props: IOperationsProps) {
                     : style.horizonalContentWrapper
             }>
             {actionButtons.map(action => (
-                <ActionButton key={action.title} {...action} />
+                <>
+                    {/* {index !== 0 ? <Divider vertical={orientation === 'vertical'}></Divider> : null} */}
+                    <ActionButton key={action.title} {...action} />
+                </>
             ))}
         </ScrollView>
     );

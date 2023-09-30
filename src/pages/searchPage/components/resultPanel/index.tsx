@@ -8,8 +8,8 @@ import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import ResultSubPanel from './resultSubPanel';
 import results from './results';
 import {fontWeightConst} from '@/constants/uiConst';
-import {useTheme} from 'react-native-paper';
 import Color from 'color';
+import useColors from '@/hooks/useColors';
 
 const routes = results;
 
@@ -27,7 +27,7 @@ const renderScene = getRouterScene(routes);
 
 function ResultPanel() {
     const [index, setIndex] = useState(0);
-    const {colors} = useTheme();
+    const colors = useColors();
 
     return (
         <TabView

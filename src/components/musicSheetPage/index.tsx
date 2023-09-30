@@ -25,7 +25,7 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
                 navTitle={navTitle}
             />
             <SheetMusicList
-                sheetInfo={sheetInfo}
+                sheetInfo={sheetInfo as any}
                 musicList={musicList ?? sheetInfo?.musicList}
                 onEndReached={() => {
                     onEndReached?.();

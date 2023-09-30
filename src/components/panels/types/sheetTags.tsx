@@ -6,9 +6,9 @@ import ThemeText from '@/components/base/themeText';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {ScrollView} from 'react-native-gesture-handler';
-import {Divider} from 'react-native-paper';
 import TypeTag from '@/components/base/typeTag';
 import useColors from '@/hooks/useColors';
+import Divider from '@/components/base/divider';
 
 interface ISheetTagsProps {
     tags: IMusic.IMusicSheetGroupItem[];

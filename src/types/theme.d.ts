@@ -12,5 +12,13 @@ declare module ReactNativePaper {
         backgroundHighlight?: string;
         /** 页面背景 */
         pageBackground?: string;
+        /** 阴影 */
+        shadow?: string;
+        /** 音乐栏颜色 */
+        musicBar?: string;
+        /** 分割线 */
+        divider?: string;
+        /** 标题字体，和primary对比的字体 */
+        headerText?: string;
     }
 }

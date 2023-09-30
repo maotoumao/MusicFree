@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
-import {Divider} from 'react-native-paper';
 import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
 import Button from '@/components/base/button';
@@ -11,6 +10,7 @@ import ThemeText from '@/components/base/themeText';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import PanelBase from '../base/panelBase';
 import {hidePanel} from '../usePanel';
+import Divider from '@/components/base/divider';
 
 interface ISimpleInputProps {
     onOk: (text: string, closePanel: () => void) => void;
@@ -102,8 +102,7 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
     },
     input: {
-        marginTop: rpx(12),
-        marginBottom: rpx(12),
+        margin: rpx(24),
         borderRadius: rpx(12),
         fontSize: fontSizeConst.content,
         lineHeight: fontSizeConst.content * 1.5,

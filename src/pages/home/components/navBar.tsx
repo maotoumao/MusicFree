@@ -28,9 +28,7 @@ export default function NavBar() {
                 style={[
                     style.searchBar,
                     {
-                        backgroundColor: Color(colors.primary)
-                            .alpha(0.7)
-                            .toString(),
+                        backgroundColor: colors.placeholder,
                     },
                 ]}
                 accessible

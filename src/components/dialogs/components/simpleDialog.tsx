@@ -1,8 +1,6 @@
 import React from 'react';
-import {Button, Dialog, Paragraph} from 'react-native-paper';
-import useColors from '@/hooks/useColors';
 import {hideDialog} from '../useDialog';
-import {vh} from '@/utils/rpx';
+import Dialog from './base';
 
 interface ISimpleDialogProps {
     title: string;
@@ -11,36 +9,25 @@ interface ISimpleDialogProps {
 }
 export default function SimpleDialog(props: ISimpleDialogProps) {
     const {title, content, onOk} = props;
-    const colors = useColors();
     return (
-        <Dialog
-            visible={true}
-            onDismiss={hideDialog}
-            style={{backgroundColor: colors.primary}}>
-            <Dialog.Title>{title}</Dialog.Title>
-            <Dialog.Content
-                style={{
-                    maxHeight: vh(65),
-                }}>
-                {typeof content === 'string' ? (
-                    <Paragraph>{content}</Paragraph>
-                ) : (
-                    <>{content}</>
-                )}
-            </Dialog.Content>
-            <Dialog.Actions>
-                <Button color={colors.text} onPress={hideDialog}>
-                    取消
-                </Button>
-                <Button
-                    color={colors.text}
-                    onPress={() => {
-                        onOk?.();
-                        hideDialog();
-                    }}>
-                    确认
-                </Button>
-            </Dialog.Actions>
+        <Dialog onDismiss={hideDialog}>
+            <Dialog.Title withDivider>{title}</Dialog.Title>
+            <Dialog.Content needScroll>{content}</Dialog.Content>
+            <Dialog.Actions
+                actions={[
+                    {
+                        title: '取消',
+                        onPress: hideDialog,
+                    },
+                    {
+                        title: '确认',
+                        onPress() {
+                            onOk?.();
+                            hideDialog();
+                        },
+                    },
+                ]}
+            />
         </Dialog>
     );
 }

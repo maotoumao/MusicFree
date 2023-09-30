@@ -227,7 +227,7 @@ export default function FileSelector() {
             <StatusBar />
             <View style={[style.header, {backgroundColor: colors.primary}]}>
                 <IconButton
-                    size="small"
+                    sizeType="small"
                     name="keyboard-backspace"
                     onPress={() => {
                         // 返回上一级

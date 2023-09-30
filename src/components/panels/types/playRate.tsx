@@ -1,13 +1,13 @@
 import React, {Fragment} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {Divider} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {ScrollView} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
+import Divider from '@/components/base/divider';
 
 interface IPlayRateProps {
     /** 点击回调 */
@@ -39,7 +39,6 @@ export default function PlayRate(props: IPlayRateProps) {
                         {rates.map(key => {
                             return (
                                 <Fragment key={`frag-${key}`}>
-                                    <Divider key={`di-${key}`} />
                                     <Pressable
                                         key={`btn-${key}`}
                                         style={style.item}

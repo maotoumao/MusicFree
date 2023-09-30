@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import DocumentPicker from 'react-native-document-picker';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import Toast from '@/utils/toast';
 import Backup from '@/core/backup';
 import {readFile, writeFile} from 'react-native-fs';

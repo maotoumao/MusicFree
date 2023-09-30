@@ -17,6 +17,14 @@ const globalStyle = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    notShrink: {
+        flexShrink: 0,
+        flexGrow: 0,
+    },
+    grow: {
+        flexShrink: 0,
+        flexGrow: 1,
+    },
 } as const);
 
 export default globalStyle;

@@ -4,13 +4,11 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import repeatModeConst from '@/constants/repeatModeConst';
 import MusicQueue from '@/core/musicQueue';
-import useTextColor from '@/hooks/useTextColor';
-import {Button} from 'react-native-paper';
+import IconTextButton from '@/components/base/iconTextButton';
 
 export default function Header() {
     const repeatMode = MusicQueue.useRepeatMode();
     const musicQueue = MusicQueue.useMusicQueue();
-    const textColor = useTextColor();
 
     return (
         <View style={style.wrapper}>
@@ -24,22 +22,20 @@ export default function Header() {
                     ({musicQueue.length}首)
                 </ThemeText>
             </ThemeText>
-            <Button
-                color={textColor}
+            <IconTextButton
                 onPress={() => {
                     MusicQueue.toggleRepeatMode();
                 }}
                 icon={repeatModeConst[repeatMode].icon}>
                 {repeatModeConst[repeatMode].text}
-            </Button>
-            <Button
-                color={textColor}
+            </IconTextButton>
+            <IconTextButton
+                icon="trash-can-outline"
                 onPress={() => {
                     MusicQueue.clear();
-                }}
-                icon={'trash-can-outline'}>
+                }}>
                 清空
-            </Button>
+            </IconTextButton>
         </View>
     );
 }

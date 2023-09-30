@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
-import {Divider} from 'react-native-paper';
 import MusicSheet from '@/core/musicSheet';
 import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
@@ -11,6 +10,7 @@ import useColors from '@/hooks/useColors';
 import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
+import Divider from '@/components/base/divider';
 
 interface INewMusicSheetProps {
     defaultName?: string;

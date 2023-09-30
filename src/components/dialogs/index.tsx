@@ -1,7 +1,7 @@
 import React from 'react';
-import {Portal} from 'react-native-paper';
 import components from './components';
 import {dialogInfoStore} from './useDialog';
+import Portal from '../base/portal';
 
 export default function () {
     const dialogInfoState = dialogInfoStore.useValue();

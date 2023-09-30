@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Dialog, TextInput} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
 import {StyleSheet, View} from 'react-native';
@@ -14,6 +14,9 @@ import MusicSheet from '@/core/musicSheet';
 import {addFileScheme, addRandomHash} from '@/utils/fileUtils';
 import Toast from '@/utils/toast';
 import {hideDialog} from '../useDialog';
+import Dialog from './base';
+import Input from '@/components/base/input';
+import {fontSizeConst} from '@/constants/uiConst';
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
@@ -87,13 +90,10 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
     }
 
     return (
-        <Dialog
-            visible={true}
-            onDismiss={hideDialog}
-            style={{backgroundColor: colors.primary}}>
+        <Dialog onDismiss={hideDialog}>
             <Dialog.Content style={style.content}>
                 <View style={style.row}>
-                    <ThemeText fontSize="subTitle">封面</ThemeText>
+                    <ThemeText>封面</ThemeText>
                     <TouchableOpacity
                         onPress={onChangeCoverPress}
                         onLongPress={() => {
@@ -107,15 +107,19 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
                     </TouchableOpacity>
                 </View>
                 <View style={style.row}>
-                    <ThemeText fontSize="subTitle">歌单名</ThemeText>
-                    <TextInput
+                    <ThemeText>歌单名</ThemeText>
+                    <Input
+                        numberOfLines={1}
+                        textAlign="right"
                         value={title}
+                        hasHorizonalPadding={false}
                         onChangeText={onTitleChange}
-                        mode="outlined"
-                        outlineColor="transparent"
-                        dense
                         style={{
+                            height: fontSizeConst.content * 2.5,
+                            width: '50%',
+                            borderBottomWidth: 1,
                             includeFontPadding: false,
+                            borderBottomColor: colors.text,
                         }}
                     />
                 </View>
@@ -148,6 +152,5 @@ const style = StyleSheet.create({
         width: rpx(100),
         height: rpx(100),
         borderRadius: rpx(28),
-        marginRight: rpx(16),
     },
 });

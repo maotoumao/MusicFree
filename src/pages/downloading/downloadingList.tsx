@@ -2,7 +2,7 @@ import React from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Download from '@/core/download';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import {sizeFormatter} from '@/utils/fileUtils';
 
 export default function DownloadingList() {

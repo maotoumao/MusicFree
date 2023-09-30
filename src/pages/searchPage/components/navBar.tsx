@@ -11,18 +11,17 @@ import {
     initSearchResults,
 } from '../store/atoms';
 import useSearch from '../hooks/useSearch';
-import {Appbar, Button, Searchbar} from 'react-native-paper';
+import {Appbar, Searchbar} from 'react-native-paper';
 import {addHistory} from '../common/historySearch';
 import {fontSizeConst} from '@/constants/uiConst';
-import useTextColor from '@/hooks/useTextColor';
 import useColors from '@/hooks/useColors';
+import Button from '@/components/base/button';
 
 export default function NavBar() {
     const navigation = useNavigation();
     const search = useSearch();
     const [query, setQuery] = useAtom(queryAtom);
     const setPageStatus = useSetAtom(pageStatusAtom);
-    const textColor = useTextColor();
     const colors = useColors();
     const setSearchResultsState = useSetAtom(searchResultsAtom);
 
@@ -67,7 +66,7 @@ export default function NavBar() {
                 }}
                 value={query}
             />
-            <Button color={textColor} onPress={onSearchSubmit}>
+            <Button style={style.button} onPress={onSearchSubmit}>
                 搜索
             </Button>
         </Appbar>
@@ -77,6 +76,9 @@ export default function NavBar() {
 const style = StyleSheet.create({
     appbar: {
         shadowColor: 'transparent',
+    },
+    button: {
+        paddingHorizontal: rpx(24),
     },
     searchBar: {
         minWidth: rpx(375),

@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import {FAB, List} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import Loading from '@/components/base/loading';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 
 import useColors from '@/hooks/useColors';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';

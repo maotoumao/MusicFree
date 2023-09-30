@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import MusicSheet from '@/core/musicSheet';
 import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';

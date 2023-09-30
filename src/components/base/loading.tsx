@@ -1,8 +1,9 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {ActivityIndicator, useTheme} from 'react-native-paper';
+import {ActivityIndicator} from 'react-native';
 import ThemeText from './themeText';
+import useColors from '@/hooks/useColors';
 
 interface ILoadingProps {
     text?: string;
@@ -10,7 +11,7 @@ interface ILoadingProps {
     height?: number;
 }
 export default function Loading(props: ILoadingProps) {
-    const {colors} = useTheme();
+    const colors = useColors();
     const {showText = true, height, text} = props;
 
     return (

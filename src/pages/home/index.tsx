@@ -5,7 +5,6 @@ import NavBar from './components/navBar';
 import Operations from './components/operations';
 import MySheets from './components/mySheets';
 import MusicBar from '@/components/musicBar';
-import {Divider} from 'react-native-paper';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import HomeDrawer from './components/drawer';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -13,6 +12,7 @@ import StatusBar from '@/components/base/statusBar';
 import useOrientation from '@/hooks/useOrientation';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
+import Divider from '@/components/base/divider';
 
 function Home() {
     return (

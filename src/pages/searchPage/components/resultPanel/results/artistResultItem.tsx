@@ -1,5 +1,5 @@
 import React from 'react';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import {ImgAsset} from '@/constants/assetsConst';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 

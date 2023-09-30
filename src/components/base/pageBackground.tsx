@@ -1,13 +1,13 @@
 import React, {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Config from '@/core/config';
-import {useTheme} from 'react-native-paper';
 import {ImgAsset} from '@/constants/assetsConst';
 import Image from './image';
+import useColors from '@/hooks/useColors';
 
 function PageBackground() {
     const themeConfig = Config.useConfig('setting.theme');
-    const theme = useTheme();
+    const colors = useColors();
 
     return (
         <>
@@ -16,8 +16,7 @@ function PageBackground() {
                     style.wrapper,
                     {
                         backgroundColor:
-                            theme.colors?.pageBackground ??
-                            theme.colors.background,
+                            colors?.pageBackground ?? colors.background,
                     },
                 ]}
             />

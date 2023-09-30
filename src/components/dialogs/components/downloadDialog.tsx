@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
-import {Button, Checkbox, Dialog} from 'react-native-paper';
-import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/base/themeText';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import openUrl from '@/utils/openUrl';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {ScrollView} from 'react-native-gesture-handler';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {hideDialog} from '../useDialog';
 import Config from '@/core/config';
+import Checkbox from '@/components/base/checkbox';
+import Button from '@/components/base/button';
+import Dialog from './base';
 
 interface IDownloadDialogProps {
     version: string;
@@ -18,20 +19,17 @@ interface IDownloadDialogProps {
 }
 export default function DownloadDialog(props: IDownloadDialogProps) {
     const {content, fromUrl, backUrl, version} = props;
-    const colors = useColors();
     const [skipState, setSkipState] = useState(false);
 
     return (
         <Dialog
-            visible={true}
             onDismiss={() => {
                 if (skipState) {
                     Config.set('status.app.skipVersion', version);
                 }
                 hideDialog();
-            }}
-            style={{backgroundColor: colors.primary}}>
-            <Dialog.Title>发现新版本({version})</Dialog.Title>
+            }}>
+            <Dialog.Title stringContent>发现新版本({version})</Dialog.Title>
             <ScrollView style={style.scrollView}>
                 {content?.map?.(_ => (
                     <ThemeText key={_} style={style.item}>
@@ -40,18 +38,20 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                 ))}
             </ScrollView>
             <Dialog.Actions style={style.dialogActions}>
-                <View style={style.checkboxGroup}>
-                    <Checkbox
-                        status={skipState ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setSkipState(state => !state);
-                        }}
-                    />
-                    <ThemeText>跳过此版本</ThemeText>
-                </View>
+                <TouchableOpacity
+                    onPress={() => {
+                        setSkipState(state => !state);
+                    }}>
+                    <View style={style.checkboxGroup}>
+                        <Checkbox checked={skipState} />
+                        <ThemeText style={style.checkboxHint}>
+                            跳过此版本
+                        </ThemeText>
+                    </View>
+                </TouchableOpacity>
                 <View style={style.buttonGroup}>
                     <Button
-                        color={colors.text}
+                        style={style.button}
                         onPress={() => {
                             hideDialog();
                             if (skipState) {
@@ -61,7 +61,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         取消
                     </Button>
                     <Button
-                        color={colors.text}
+                        style={style.button}
                         onPress={async () => {
                             Config.set('status.app.skipVersion', undefined);
                             openUrl(fromUrl);
@@ -71,7 +71,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                     </Button>
                     {backUrl && (
                         <Button
-                            color={colors.text}
+                            style={style.button}
                             onPress={async () => {
                                 openUrl(backUrl);
                                 Clipboard.setString(backUrl);
@@ -99,6 +99,9 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(26),
     },
     dialogActions: {
+        marginTop: rpx(24),
+        height: rpx(120),
+        marginBottom: rpx(12),
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
@@ -112,5 +115,14 @@ const style = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         justifyContent: 'flex-end',
+    },
+    checkboxHint: {
+        marginLeft: rpx(12),
+    },
+    button: {
+        paddingLeft: rpx(28),
+        paddingVertical: rpx(14),
+        marginLeft: rpx(16),
+        alignItems: 'flex-end',
     },
 });

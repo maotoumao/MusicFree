@@ -24,12 +24,11 @@ export default function usePluginSheetMusicList(
             try {
                 setLoadMore('loading');
                 const result = await PluginManager.getByMedia(
-                    originalSheetItem,
+                    originalSheetItem as any,
                 )?.methods?.getMusicSheetInfo?.(
                     originalSheetItem,
                     currentPageRef.current,
                 );
-                console.log(result, 'ddd');
                 if (result === null || result === undefined) {
                     throw new Error();
                 }

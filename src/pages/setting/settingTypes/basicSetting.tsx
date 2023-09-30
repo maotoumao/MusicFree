@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {SectionList, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Config, {IConfigPaths} from '@/core/config';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import ThemeText from '@/components/base/themeText';
 import ThemeSwitch from '@/components/base/switch';
 import {clearCache, getCacheSize, sizeFormatter} from '@/utils/fileUtils';

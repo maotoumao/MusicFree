@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import {FlatList, StyleSheet, ListRenderItem} from 'react-native';
 import MusicSheet from '@/core/musicSheet';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import ListItem from '@/components/base/listItem';
+import ListItem from '@/components/base/listItem.old';
 import IconButton from '@/components/base/iconButton';
 import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
@@ -10,11 +10,13 @@ import sheetHeader from './sheetHeader';
 import rpx from '@/utils/rpx';
 import useOrientation from '@/hooks/useOrientation';
 import {showDialog} from '@/components/dialogs/useDialog';
+import useColors from '@/hooks/useColors';
 
 function MySheets() {
     const orientation = useOrientation();
     const musicSheets = MusicSheet.useUserSheets();
     const navigate = useNavigate();
+    const colors = useColors();
 
     const renderMySheetItem: ListRenderItem<IMusic.IMusicSheetItem> =
         function ({item: sheet}) {
@@ -62,6 +64,9 @@ function MySheets() {
                 orientation === 'horizonal'
                     ? style.horizonalWrapper
                     : undefined,
+                {
+                    backgroundColor: colors.backdrop,
+                },
             ]}
             data={musicSheets ?? []}
             keyExtractor={sheet => sheet.id}
@@ -77,7 +82,6 @@ const style = StyleSheet.create({
         flexGrow: 1,
         marginHorizontal: rpx(24),
         paddingBottom: rpx(64),
-        backgroundColor: '#eeeeee22',
         marginBottom: rpx(24),
         borderRadius: rpx(24),
     },

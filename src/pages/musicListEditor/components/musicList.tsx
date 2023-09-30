@@ -4,7 +4,6 @@ import rpx from '@/utils/rpx';
 import MusicItem from '@/components/mediaItem/musicItem';
 import produce from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
-import {Checkbox} from 'react-native-paper';
 import {
     editingMusicListAtom,
     IEditorMusicItem,
@@ -12,6 +11,8 @@ import {
 } from '../store/atom';
 import SortableFlatList from '@/components/base/SortableFlatList';
 import globalStyle from '@/constants/globalStyle';
+
+import CheckBox from '@/components/base/checkbox';
 
 const ITEM_HEIGHT = rpx(120);
 const ITEM_WIDTH = '100%';
@@ -39,14 +40,7 @@ function _MusicEditorItem(props: IMusicEditorItemProps) {
             left={{
                 component: () => (
                     <View style={style.checkBox}>
-                        <Checkbox
-                            onPress={onPress}
-                            status={
-                                editorMusicItem.checked
-                                    ? 'checked'
-                                    : 'unchecked'
-                            }
-                        />
+                        <CheckBox checked={editorMusicItem.checked} />
                     </View>
                 ),
             }}
@@ -99,5 +93,6 @@ const style = StyleSheet.create({
     checkBox: {
         height: '100%',
         justifyContent: 'center',
+        marginRight: rpx(4),
     },
 });

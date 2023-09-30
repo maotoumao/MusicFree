@@ -8,10 +8,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useAtomValue} from 'jotai';
 import {scrollToTopAtom} from '../store/atoms';
-import {Avatar} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 import Tag from '@/components/base/tag';
 import {useParams} from '@/entry/router';
+import Image from '@/components/base/image';
+import {ImgAsset} from '@/constants/assetsConst';
 
 const headerHeight = rpx(350);
 
@@ -56,14 +57,18 @@ export default function Header(props: IHeaderProps) {
     }, [scrollToTopState, neverFold]);
 
     return (
-        <Animated.View style={[style.wrapper, heightStyle]}>
-            <View style={style.headerWrapper}>
-                <Avatar.Image size={rpx(144)} source={{uri: avatar}} />
-                <View style={style.info}>
-                    <View style={style.title}>
+        <Animated.View style={[styles.wrapper, heightStyle]}>
+            <View style={styles.headerWrapper}>
+                <Image
+                    emptySrc={ImgAsset.albumDefault}
+                    uri={avatar}
+                    style={styles.artist}
+                />
+                <View style={styles.info}>
+                    <View style={styles.title}>
                         <ThemeText
                             fontSize="title"
-                            style={style.titleText}
+                            style={styles.titleText}
                             numberOfLines={1}
                             ellipsizeMode="tail">
                             {artistItem?.name ?? ''}
@@ -82,7 +87,7 @@ export default function Header(props: IHeaderProps) {
             </View>
 
             <ThemeText
-                style={style.description}
+                style={styles.description}
                 numberOfLines={2}
                 ellipsizeMode="tail"
                 fontColor="secondary"
@@ -93,12 +98,17 @@ export default function Header(props: IHeaderProps) {
     );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     wrapper: {
         width: rpx(750),
         height: headerHeight,
         backgroundColor: 'rgba(28, 28, 28, 0.1)',
         zIndex: 1,
+    },
+    artist: {
+        width: rpx(144),
+        height: rpx(144),
+        borderRadius: rpx(16),
     },
     headerWrapper: {
         width: rpx(750),

@@ -1,3 +1,5 @@
+import Animated, {Easing} from 'react-native-reanimated';
+
 export const internalSymbolKey = Symbol.for('$');
 export const internalSerializeKey = '$';
 export const localMusicSheetId = 'local-music-sheet';
@@ -56,3 +58,15 @@ export enum EDeviceEvents {
     /** 刷新歌词 */
     REFRESH_LYRIC = 'refresh-lyric',
 }
+
+const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
+const ANIMATION_DURATION = 150;
+
+const animationFast = {
+    duration: ANIMATION_DURATION,
+    easing: ANIMATION_EASING,
+};
+
+export const timingConfig = {
+    animationFast,
+};

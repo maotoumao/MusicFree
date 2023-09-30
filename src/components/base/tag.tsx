@@ -2,14 +2,14 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
-import {useTheme} from 'react-native-paper';
 import Color from 'color';
+import useColors from '@/hooks/useColors';
 
 interface ITagProps {
     tagName: string;
 }
 export default function Tag(props: ITagProps) {
-    const {colors} = useTheme();
+    const colors = useColors();
     return (
         <View
             style={[

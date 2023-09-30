@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {DeviceEventEmitter, StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
-import {Divider} from 'react-native-paper';
 
 import {fontSizeConst} from '@/constants/uiConst';
 import Color from 'color';
@@ -16,6 +15,7 @@ import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
 import {EDeviceEvents} from '@/constants/commonConst';
+import Divider from '@/components/base/divider';
 
 interface INewMusicSheetProps {
     musicItem: IMusic.IMusicItem;
@@ -118,8 +118,7 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
     },
     input: {
-        marginTop: rpx(12),
-        marginBottom: rpx(12),
+        margin: rpx(24),
         borderRadius: rpx(12),
         fontSize: fontSizeConst.content,
         lineHeight: fontSizeConst.content * 1.5,

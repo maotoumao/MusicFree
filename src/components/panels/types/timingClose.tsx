@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import rpx from '@/utils/rpx';
-import {Divider, useTheme} from 'react-native-paper';
 import ThemeText from '@/components/base/themeText';
 
 import {setTimingClose, useTimingClose} from '@/utils/timingClose';
@@ -12,6 +11,8 @@ import {FlatList} from 'react-native-gesture-handler';
 import Color from 'color';
 import {atom, useAtom, useAtomValue, useSetAtom} from 'jotai';
 import {debounce} from 'lodash';
+import Divider from '@/components/base/divider';
+import useColors from '@/hooks/useColors';
 
 // const hours = Array(24).fill(1).map(_ => _.index);
 // const mins = Array(60).fill(1).map(_ => _.index);
@@ -219,9 +220,9 @@ const numScrollStyles = StyleSheet.create({
     },
     topBanner: {
         position: 'absolute',
-        height: ITEM_HEIGHT,
+        height: rpx(1),
         width: '100%',
-        top: 0,
+        top: ITEM_HEIGHT - rpx(0.5),
         left: 0,
         backgroundColor: '#aaaaaa33',
         borderBottomColor: '#666666',
@@ -229,18 +230,18 @@ const numScrollStyles = StyleSheet.create({
     },
     bottomBanner: {
         position: 'absolute',
-        height: ITEM_HEIGHT,
+        height: rpx(1),
         width: '100%',
         borderTopColor: '#666666',
         borderTopWidth: 1,
-        bottom: 0,
+        bottom: ITEM_HEIGHT + rpx(0.5),
         left: 0,
         backgroundColor: '#aaaaaa33',
     },
 });
 
 export default function TimingClose() {
-    const {colors} = useTheme();
+    const colors = useColors();
     const highlightBgColor = useMemo(
         () => Color(colors.textHighlight).alpha(0.3).toString(),
         [colors],

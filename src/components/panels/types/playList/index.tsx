@@ -1,9 +1,9 @@
 import React from 'react';
-import {Divider} from 'react-native-paper';
 
 import Header from './header';
 import Body from './body';
 import PanelBase from '../../base/panelBase';
+import Divider from '@/components/base/divider';
 
 export default function () {
     return (

@@ -1,23 +1,19 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MusicQueue from '@/core/musicQueue';
+import {ImgAsset} from '@/constants/assetsConst';
 
 export default function Background() {
     const musicItem = MusicQueue.useCurrentMusicItem();
+    const source = musicItem?.artwork
+        ? {
+              uri: musicItem.artwork,
+          }
+        : ImgAsset.albumDefault;
     return (
         <>
-            {musicItem?.artwork && (
-                <>
-                    <View style={style.background} />
-                    <Image
-                        style={style.blur}
-                        blurRadius={50}
-                        source={{
-                            uri: musicItem.artwork,
-                        }}
-                    />
-                </>
-            )}
+            <View style={style.background} />
+            <Image style={style.blur} blurRadius={50} source={source} />
         </>
     );
 }

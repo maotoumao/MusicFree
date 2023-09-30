@@ -2,9 +2,10 @@ import React, {memo} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
-import {Checkbox} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useTextColor from '@/hooks/useTextColor';
+import Checkbox from '@/components/base/checkbox';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -31,19 +32,19 @@ function FileItem(props: IProps) {
     // 返回逻辑
 
     return (
-        <View style={style.wrapper}>
+        <View style={styles.container}>
             <Pressable
                 onPress={() => {
                     onItemPress(checked);
                 }}
-                style={style.pathWrapper}>
+                style={styles.pathWrapper}>
                 <Icon
                     name={type === 'folder' ? 'folder-outline' : 'file-outline'}
                     color={textColor}
-                    style={style.folderIcon}
+                    style={styles.folderIcon}
                 />
                 <ThemeText
-                    style={style.path}
+                    style={styles.path}
                     numberOfLines={1}
                     ellipsizeMode="tail">
                     {path.substring(
@@ -51,12 +52,13 @@ function FileItem(props: IProps) {
                     )}
                 </ThemeText>
             </Pressable>
-            <Checkbox
-                status={checked ? 'checked' : 'unchecked'}
+            <TouchableOpacity
                 onPress={() => {
                     onCheckChange(!checked);
                 }}
-            />
+                style={styles.checkIcon}>
+                <Checkbox checked={checked} />
+            </TouchableOpacity>
         </View>
     );
 }
@@ -69,8 +71,8 @@ export default memo(
         prev.path === curr.path,
 );
 
-const style = StyleSheet.create({
-    wrapper: {
+const styles = StyleSheet.create({
+    container: {
         width: '100%',
         height: ITEM_HEIGHT,
         paddingHorizontal: rpx(24),
@@ -92,5 +94,8 @@ const style = StyleSheet.create({
     path: {
         height: '100%',
         textAlignVertical: 'center',
+    },
+    checkIcon: {
+        padding: rpx(14),
     },
 });

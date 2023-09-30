@@ -5,16 +5,16 @@ import MusicSheet from '@/core/musicSheet';
 import LinearGradient from 'react-native-linear-gradient';
 import ThemeText from '@/components/base/themeText';
 import Color from 'color';
-import {useTheme} from 'react-native-paper';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import {useParams} from '@/entry/router';
 import PlayAllBar from '@/components/base/playAllBar';
+import useColors from '@/hooks/useColors';
 
 export default function Header() {
     const {id = 'favorite'} = useParams<'local-sheet-detail'>();
     const sheet = MusicSheet.useSheets(id);
-    const {colors} = useTheme();
+    const colors = useColors();
 
     return (
         <View>
