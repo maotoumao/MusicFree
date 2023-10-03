@@ -35,6 +35,7 @@ interface IAppBarProps {
     menu?: Array<{
         icon: string;
         title: string;
+        show?: boolean;
         onPress?: () => void;
     }>;
     menuWithStatusBar?: boolean;
@@ -189,16 +190,18 @@ export default function AppBar(props: IAppBarProps) {
                             transformStyle,
                             styles.menu,
                         ]}>
-                        {menu.map(it => (
-                            <IconTextButton
-                                icon={it.icon}
-                                onPress={() => {
-                                    it.onPress?.();
-                                    setShowMenu(false);
-                                }}>
-                                {it.title}
-                            </IconTextButton>
-                        ))}
+                        {menu.map(it =>
+                            it.show !== false ? (
+                                <IconTextButton
+                                    icon={it.icon}
+                                    onPress={() => {
+                                        it.onPress?.();
+                                        setShowMenu(false);
+                                    }}>
+                                    {it.title}
+                                </IconTextButton>
+                            ) : null,
+                        )}
                     </Animated.View>
                 </>
             </Portal>

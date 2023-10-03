@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import ComplexAppBar from '@/components/base/ComplexAppBar';
 import StatusBar from '@/components/base/statusBar';
 import Bottom from './components/bottom';
 import Body from './components/body';
@@ -8,6 +7,7 @@ import {editingMusicListAtom, musicListChangedAtom} from './store/atom';
 import {useParams} from '@/entry/router';
 import globalStyle from '@/constants/globalStyle';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
+import AppBar from '@/components/base/appBar';
 
 export default function MusicListEditor() {
     const {musicSheet, musicList} = useParams<'music-list-editor'>();
@@ -28,7 +28,7 @@ export default function MusicListEditor() {
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
-            <ComplexAppBar title={musicSheet?.title ?? '歌单'} />
+            <AppBar>{musicSheet?.title ?? '歌单'}</AppBar>
             <Body />
             <Bottom />
         </VerticalSafeAreaView>

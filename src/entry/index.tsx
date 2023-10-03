@@ -16,6 +16,7 @@ import toastConfig from '@/components/base/toast';
 import useBootstrap from './useBootstrap';
 import Debug from '@/components/debug';
 import {ImageViewComponent} from '@/components/imageViewer';
+import {PortalHost} from '@/components/base/portal';
 
 /**
  * 字体颜色
@@ -70,6 +71,7 @@ export default function Pages() {
                         <ImageViewComponent />
                         <Toast config={toastConfig} />
                         <Debug />
+                        <PortalHost />
                     </NavigationContainer>
                 </SafeAreaProvider>
             </PaperProvider>

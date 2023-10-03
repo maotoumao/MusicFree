@@ -1,16 +1,15 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
-import StatusBar from '@/components/base/statusBar';
 import MusicBar from '@/components/musicBar';
 import Header from './components/header';
 import Body from './components/body';
 import {useAtom, useSetAtom} from 'jotai';
 import {initQueryResult, queryResultAtom, scrollToTopAtom} from './store/atoms';
-import ComplexAppBar from '@/components/base/ComplexAppBar';
 import {ROUTE_PATH, useNavigate, useParams} from '@/entry/router';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import useOrientation from '@/hooks/useOrientation';
+import AppBar from '@/components/base/appBar';
 
 export default function ArtistDetail() {
     const [queryResult, setQueryResult] = useAtom(queryResultAtom);
@@ -28,10 +27,9 @@ export default function ArtistDetail() {
 
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
-            <StatusBar />
-            <ComplexAppBar
-                title="作者"
-                menuOptions={[
+            <AppBar
+                withStatusBar
+                menu={[
                     {
                         title: '批量编辑单曲',
                         icon: 'playlist-edit',
@@ -44,8 +42,9 @@ export default function ArtistDetail() {
                             });
                         },
                     },
-                ]}
-            />
+                ]}>
+                作者
+            </AppBar>
             <View
                 style={
                     orientation === 'horizonal'

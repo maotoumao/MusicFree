@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import SimpleAppBar from '@/components/base/simpleAppBar';
 import Config from '@/core/config';
 import {FlatList} from 'react-native-gesture-handler';
 import Empty from '@/components/base/empty';
@@ -14,6 +13,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import {showDialog} from '@/components/dialogs/useDialog';
+import AppBar from '@/components/base/appBar';
 
 interface ISubscribeItem {
     name: string;
@@ -81,7 +81,7 @@ export default function PluginSubscribe() {
 
     return (
         <>
-            <SimpleAppBar title="订阅设置" />
+            <AppBar>订阅设置</AppBar>
             <HorizonalSafeAreaView style={globalStyle.flex1}>
                 <FlatList
                     style={style.listWrapper}

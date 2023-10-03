@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import LinearGradient from 'react-native-linear-gradient';
-import {Divider, useTheme} from 'react-native-paper';
 import Color from 'color';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import PlayAllBar from '@/components/base/playAllBar';
+import useColors from '@/hooks/useColors';
 
 interface IHeaderProps {
     topListDetail: IMusic.IMusicSheetItem | null;
@@ -15,7 +15,7 @@ interface IHeaderProps {
 }
 export default function Header(props: IHeaderProps) {
     const {topListDetail, musicList} = props;
-    const {colors} = useTheme();
+    const colors = useColors();
 
     const [maxLines, setMaxLines] = useState<number | undefined>(6);
 
@@ -51,7 +51,6 @@ export default function Header(props: IHeaderProps) {
                         </ThemeText>
                     </View>
                 </View>
-                <Divider style={style.divider} />
                 {topListDetail?.description ? (
                     <Pressable onPress={toggleShowMore}>
                         <View

@@ -3,9 +3,9 @@ import {StyleSheet} from 'react-native';
 import settingTypes from './settingTypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
-import SimpleAppBar from '@/components/base/simpleAppBar';
 import {useParams} from '@/entry/router';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import AppBar from '@/components/base/appBar';
 
 export default function Setting() {
     const {type} = useParams<'setting'>();
@@ -15,7 +15,7 @@ export default function Setting() {
         <SafeAreaView edges={['bottom', 'top']} style={style.wrapper}>
             <StatusBar />
             {settingItem.showNav === false ? null : (
-                <SimpleAppBar title={settingItem?.title} />
+                <AppBar>{settingItem?.title}</AppBar>
             )}
 
             {type === 'plugin' ? (

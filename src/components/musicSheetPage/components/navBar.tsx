@@ -40,28 +40,5 @@ export default function (props: INavBarProps) {
             ]}>
             {navTitle}
         </AppBar>
-
-        // <ComplexAppBar
-        //     title={navTitle}
-        //     onSearchPress={() => {
-        //         navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
-        //             musicList: musicList,
-        //         });
-        //     }}
-        //     menuOptions={[
-        //         {
-        //             icon: 'playlist-edit',
-        //             title: '批量编辑',
-        //             onPress() {
-        //                 navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
-        //                     musicList: musicList,
-        //                     musicSheet: {
-        //                         title: navTitle,
-        //                     },
-        //                 });
-        //             },
-        //         },
-        //     ]}
-        // />
     );
 }

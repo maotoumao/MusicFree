@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import rpx from '@/utils/rpx';
-import {Dialog, TextInput} from 'react-native-paper';
-import useColors from '@/hooks/useColors';
 import {StyleSheet, View} from 'react-native';
 import ThemeText from '@/components/base/themeText';
 import Button from '@/components/base/button';
 import {hideDialog} from '../useDialog';
+import Dialog from './base';
+import Input from '@/components/base/input';
+import useColors from '@/hooks/useColors';
 interface ISubscribeItem {
     name: string;
     url: string;
@@ -27,18 +28,22 @@ export default function SubscribePluginDialog(
     const {subscribeItem, onSubmit, editingIndex, onDelete} = props;
     const [name, setName] = useState(subscribeItem?.name ?? '');
     const [url, setUrl] = useState(subscribeItem?.url ?? '');
+
     const colors = useColors();
+
+    const textColors = {
+        color: colors.text,
+    };
+
     return (
-        <Dialog
-            visible={true}
-            onDismiss={hideDialog}
-            style={{backgroundColor: colors.primary}}>
+        <Dialog onDismiss={hideDialog}>
             <Dialog.Title>订阅</Dialog.Title>
             <Dialog.Content>
                 <View style={style.headerWrapper}>
                     <ThemeText>名称: </ThemeText>
-                    <TextInput
-                        style={style.textInput}
+                    <Input
+                        hasHorizonalPadding={false}
+                        style={[style.textInput, textColors]}
                         value={name}
                         onChangeText={t => {
                             setName(t);
@@ -47,8 +52,9 @@ export default function SubscribePluginDialog(
                 </View>
                 <View style={style.headerWrapper}>
                     <ThemeText>URL: </ThemeText>
-                    <TextInput
-                        style={style.textInput}
+                    <Input
+                        hasHorizonalPadding={false}
+                        style={[style.textInput, textColors]}
                         value={url}
                         onChangeText={t => {
                             setUrl(t);
@@ -113,7 +119,7 @@ const style = StyleSheet.create({
     textInput: {
         flex: 1,
         includeFontPadding: false,
-        borderBottomColor: 'white',
+        marginLeft: rpx(12),
         borderBottomWidth: 1,
     },
     options: {

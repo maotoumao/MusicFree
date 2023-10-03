@@ -3,20 +3,20 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
-import SimpleAppBar from '@/components/base/simpleAppBar';
 import StatusBar from '@/components/base/statusBar';
 import musicHistory from '@/core/musicHistory';
 import MusicList from '@/components/musicList';
 import {musicHistorySheetId} from '@/constants/commonConst';
 import MusicBar from '@/components/musicBar';
 import Button from '@/components/base/button';
+import AppBar from '@/components/base/appBar';
 
 export default function History() {
     const musicHistoryList = musicHistory.useMusicHistory();
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
-            <SimpleAppBar title="播放记录" />
+            <AppBar>播放记录</AppBar>
             <View style={style.opeartions}>
                 <Button
                     onPress={() => {

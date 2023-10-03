@@ -14,7 +14,6 @@ import {trace} from '@/utils/log';
 import Toast from '@/utils/toast';
 import axios from 'axios';
 import {addRandomHash} from '@/utils/fileUtils';
-import ComplexAppBar from '@/components/base/ComplexAppBar';
 import {useNavigation} from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Config from '@/core/config';
@@ -22,6 +21,7 @@ import Empty from '@/components/base/empty';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import {showDialog} from '@/components/dialogs/useDialog';
 import {showPanel} from '@/components/panels/usePanel';
+import AppBar from '@/components/base/appBar';
 
 const ITEM_HEIGHT_BIG = rpx(120);
 
@@ -167,7 +167,7 @@ export default function PluginList() {
 
     return (
         <>
-            <ComplexAppBar title="插件设置" menuOptions={menuOptions} />
+            <AppBar menu={menuOptions}>插件设置</AppBar>
             <HorizonalSafeAreaView style={style.wrapper}>
                 <>
                     {loading ? (

@@ -7,10 +7,10 @@ import produce from 'immer';
 import objectPath from 'object-path';
 import rpx from '@/utils/rpx';
 import PluginManager, {Plugin} from '@/core/pluginManager';
-import SimpleAppBar from '@/components/base/simpleAppBar';
 import Toast from '@/utils/toast';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
+import AppBar from '@/components/base/appBar';
 
 const ITEM_HEIGHT = rpx(96);
 const marginTop = rpx(188) + (StatusBar.currentHeight ?? 0);
@@ -28,7 +28,7 @@ export default function PluginSort() {
     }
     return (
         <>
-            <SimpleAppBar title="插件排序" />
+            <AppBar>插件排序</AppBar>
             <HorizonalSafeAreaView style={style.sortWrapper}>
                 <>
                     <ThemeText fontWeight="bold">插件排序</ThemeText>

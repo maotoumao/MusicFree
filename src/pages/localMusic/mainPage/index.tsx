@@ -1,5 +1,4 @@
 import React from 'react';
-import ComplexAppBar from '@/components/base/ComplexAppBar';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import LocalMusicList from './localMusicList';
@@ -7,19 +6,25 @@ import MusicBar from '@/components/musicBar';
 import {localMusicSheetId} from '@/constants/commonConst';
 import Toast from '@/utils/toast';
 import {showDialog} from '@/components/dialogs/useDialog';
+import AppBar from '@/components/base/appBar';
 
 export default function MainPage() {
     const navigate = useNavigate();
     return (
         <>
-            <ComplexAppBar
-                title="本地音乐"
-                onSearchPress={() => {
-                    navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
-                        musicList: LocalMusicSheet.getMusicList(),
-                    });
-                }}
-                menuOptions={[
+            <AppBar
+                withStatusBar
+                actions={[
+                    {
+                        icon: 'magnify',
+                        onPress() {
+                            navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
+                                musicList: LocalMusicSheet.getMusicList(),
+                            });
+                        },
+                    },
+                ]}
+                menu={[
                     {
                         icon: 'magnify',
                         title: '扫描本地音乐',
@@ -73,8 +78,9 @@ export default function MainPage() {
                             navigate(ROUTE_PATH.DOWNLOADING);
                         },
                     },
-                ]}
-            />
+                ]}>
+                本地音乐
+            </AppBar>
             <LocalMusicList />
             <MusicBar />
         </>
