@@ -2,8 +2,7 @@ import React, {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
-import {Button, Card} from 'react-native-paper';
-import ListItem from '@/components/base/listItem.old';
+import ListItem from '@/components/base/listItem';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import ThemeText from '@/components/base/themeText';
 import PageBackground from '@/components/base/pageBackground';
@@ -14,6 +13,7 @@ import {useTimingClose} from '@/utils/timingClose';
 
 import timeformat from '@/utils/timeformat';
 import {showPanel} from '@/components/panels/usePanel';
+import Divider from '@/components/base/divider';
 
 const ITEM_HEIGHT = rpx(108);
 function HomeDrawer(props: any) {
@@ -75,66 +75,60 @@ function HomeDrawer(props: any) {
                     </ThemeText>
                     {/* <IconButton icon={'qrcode-scan'} size={rpx(36)} /> */}
                 </View>
-                <Card style={style.card}>
-                    <Card.Title
-                        title={
-                            <ThemeText fontSize="description">设置</ThemeText>
-                        }
-                    />
-                    <Card.Content style={style.cardContent}>
-                        {basicSetting.map(item => (
-                            <ListItem
-                                itemHeight={ITEM_HEIGHT}
-                                key={item.title}
-                                left={{
-                                    icon: {
-                                        name: item.icon,
-                                        sizeType: 'normal',
-                                        fontColor: 'normal',
-                                    },
-                                    width: rpx(48),
-                                }}
-                                title={item.title}
-                                onPress={item.onPress}
+                <View style={style.card}>
+                    <ListItem withHorizonalPadding heightType="small">
+                        <ListItem.ListItemText
+                            fontSize="subTitle"
+                            fontWeight="bold">
+                            设置
+                        </ListItem.ListItemText>
+                    </ListItem>
+                    {basicSetting.map(item => (
+                        <ListItem
+                            withHorizonalPadding
+                            key={item.title}
+                            onPress={item.onPress}>
+                            <ListItem.ListItemIcon
+                                icon={item.icon}
+                                width={rpx(48)}
                             />
-                        ))}
-                    </Card.Content>
-                </Card>
-                <Card style={style.card}>
-                    <Card.Title
-                        title={
-                            <ThemeText fontSize="description">其他</ThemeText>
-                        }
-                    />
-                    <Card.Content style={style.cardContent}>
-                        <CountDownItem />
-                        {otherSetting.map(item => (
-                            <ListItem
-                                itemHeight={ITEM_HEIGHT}
-                                key={item.title}
-                                left={{
-                                    icon: {
-                                        name: item.icon,
-                                        sizeType: 'normal',
-                                        fontColor: 'normal',
-                                    },
-                                    width: rpx(48),
-                                }}
-                                title={item.title}
-                                onPress={item.onPress}
-                            />
-                        ))}
-                    </Card.Content>
-                </Card>
-                <View style={style.bottom}>
-                    <Button
-                        onPress={async () => {
-                            await MusicQueue.reset();
-                            NativeUtils.exitApp();
-                        }}>
-                        <ThemeText>退出</ThemeText>
-                    </Button>
+                            <ListItem.Content title={item.title} />
+                        </ListItem>
+                    ))}
                 </View>
+                <View style={style.card}>
+                    <ListItem withHorizonalPadding heightType="small">
+                        <ListItem.ListItemText
+                            fontSize="subTitle"
+                            fontWeight="bold">
+                            其他
+                        </ListItem.ListItemText>
+                    </ListItem>
+                    <CountDownItem />
+                    {otherSetting.map(item => (
+                        <ListItem
+                            withHorizonalPadding
+                            key={item.title}
+                            onPress={item.onPress}>
+                            <ListItem.ListItemIcon
+                                icon={item.icon}
+                                width={rpx(48)}
+                            />
+                            <ListItem.Content title={item.title} />
+                        </ListItem>
+                    ))}
+                </View>
+
+                <Divider />
+                <ListItem
+                    withHorizonalPadding
+                    onPress={async () => {
+                        await MusicQueue.reset();
+                        NativeUtils.exitApp();
+                    }}>
+                    <ListItem.ListItemIcon icon={'power'} width={rpx(48)} />
+                    <ListItem.Content title={'退出应用'} />
+                </ListItem>
             </DrawerContentScrollView>
         </>
     );
@@ -166,12 +160,7 @@ const style = StyleSheet.create({
     cardContent: {
         paddingHorizontal: 0,
     },
-    bottom: {
-        height: rpx(100),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
+
     /** 倒计时 */
     countDownText: {
         height: ITEM_HEIGHT,
@@ -184,25 +173,16 @@ function _CountDownItem() {
 
     return (
         <ListItem
-            title="定时关闭"
+            withHorizonalPadding
             onPress={() => {
                 showPanel('TimingClose');
-            }}
-            left={{
-                icon: {
-                    name: 'timer-outline',
-                    sizeType: 'normal',
-                    fontColor: 'normal',
-                },
-                width: rpx(48),
-            }}
-            itemHeight={ITEM_HEIGHT}
-            right={() => (
-                <ThemeText style={style.countDownText} fontSize="subTitle">
-                    {countDown ? timeformat(countDown) : ''}
-                </ThemeText>
-            )}
-        />
+            }}>
+            <ListItem.ListItemIcon icon="timer-outline" width={rpx(48)} />
+            <ListItem.Content title="定时关闭" />
+            <ListItem.ListItemText position="right" fontSize="subTitle">
+                {countDown ? timeformat(countDown) : ''}
+            </ListItem.ListItemText>
+        </ListItem>
     );
 }
 

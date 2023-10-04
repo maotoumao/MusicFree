@@ -17,7 +17,6 @@ export default function ThemeSetting() {
 const style = StyleSheet.create({
     wrapper: {
         width: '100%',
-        paddingHorizontal: rpx(24),
         marginVertical: rpx(24),
     },
 });

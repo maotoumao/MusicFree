@@ -229,6 +229,7 @@ export default function FileSelector() {
                 <IconButton
                     sizeType="small"
                     name="keyboard-backspace"
+                    color={colors.headerText}
                     onPress={() => {
                         // 返回上一级
                         if (currentPath.parent !== null) {
@@ -239,6 +240,7 @@ export default function FileSelector() {
                 <ThemeText
                     numberOfLines={2}
                     ellipsizeMode="head"
+                    fontColor={'headerText'}
                     style={style.headerPath}>
                     {currentPath.path}
                 </ThemeText>
@@ -280,9 +282,8 @@ export default function FileSelector() {
                         },
                     ]}>
                     <ThemeText
-                        fontColor={
-                            checkedItems.length > 0 ? 'normal' : 'secondary'
-                        }>
+                        fontColor={'headerText'}
+                        opacity={checkedItems.length > 0 ? undefined : 0.6}>
                         {actionText}
                         {multi && checkedItems?.length > 0
                             ? ` (选中${checkedItems.length})`

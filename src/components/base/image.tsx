@@ -3,7 +3,7 @@ import {Image, ImageProps} from 'react-native';
 
 interface IImageProps extends ImageProps {
     uri?: string | null;
-    emptySrc: any;
+    emptySrc?: any;
 }
 export default function (props: Omit<IImageProps, 'source'>) {
     const {uri, emptySrc} = props;

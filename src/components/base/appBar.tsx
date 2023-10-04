@@ -5,6 +5,8 @@ import {
     TouchableWithoutFeedback,
     View,
     StatusBar as OriginalStatusBar,
+    StyleProp,
+    ViewStyle,
 } from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
@@ -21,7 +23,7 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import Portal from './portal';
-import IconTextButton from './iconTextButton';
+import ListItem from './listItem';
 
 interface IAppBarProps {
     backgroundOpacity?: number;
@@ -40,6 +42,8 @@ interface IAppBarProps {
     }>;
     menuWithStatusBar?: boolean;
     children?: string | ReactNode;
+    containerStyle?: StyleProp<ViewStyle>;
+    contentStyle?: StyleProp<ViewStyle>;
 }
 
 const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
@@ -59,6 +63,8 @@ export default function AppBar(props: IAppBarProps) {
         actions = [],
         menu = [],
         menuWithStatusBar = true,
+        containerStyle,
+        contentStyle,
         children,
     } = props;
 
@@ -89,7 +95,12 @@ export default function AppBar(props: IAppBarProps) {
     return (
         <>
             {withStatusBar ? <StatusBar backgroundColor={bgColor} /> : null}
-            <View style={[styles.container, {backgroundColor: bgColor}]}>
+            <View
+                style={[
+                    styles.container,
+                    containerStyle,
+                    {backgroundColor: bgColor},
+                ]}>
                 <IconButton
                     name="arrow-left"
                     sizeType="normal"
@@ -99,7 +110,7 @@ export default function AppBar(props: IAppBarProps) {
                         navigation.goBack();
                     }}
                 />
-                <View style={[globalStyle.grow, styles.content]}>
+                <View style={[globalStyle.grow, styles.content, contentStyle]}>
                     {typeof children === 'string' ? (
                         <ThemeText
                             fontSize="title"
@@ -192,14 +203,16 @@ export default function AppBar(props: IAppBarProps) {
                         ]}>
                         {menu.map(it =>
                             it.show !== false ? (
-                                <IconTextButton
-                                    icon={it.icon}
+                                <ListItem
+                                    withHorizonalPadding
+                                    heightType="small"
                                     onPress={() => {
                                         it.onPress?.();
                                         setShowMenu(false);
                                     }}>
-                                    {it.title}
-                                </IconTextButton>
+                                    <ListItem.ListItemIcon icon={it.icon} />
+                                    <ListItem.Content title={it.title} />
+                                </ListItem>
                             ) : null,
                         )}
                     </Animated.View>

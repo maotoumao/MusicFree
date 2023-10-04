@@ -1,29 +1,35 @@
 import React from 'react';
-import ListItem from '@/components/base/listItem.old';
+import ListItem from '@/components/base/listItem';
 import {ImgAsset} from '@/constants/assetsConst';
-import rpx from '@/utils/rpx';
+import TitleAndTag from './titleAndTag';
 
 interface IAlbumResultsProps {
     lyricItem: ILyric.ILyricItem;
     onPress?: (musicItem: ILyric.ILyricItem) => void;
 }
-const ITEM_HEIGHT = rpx(120);
 export default function LyricItem(props: IAlbumResultsProps) {
     const {lyricItem, onPress} = props;
 
     return (
         <ListItem
-            left={{
-                artwork: lyricItem.artwork,
-                fallback: ImgAsset.albumDefault,
-            }}
-            itemHeight={ITEM_HEIGHT}
-            title={lyricItem.title}
-            desc={lyricItem.artist ?? ''}
-            tag={lyricItem.platform}
+            heightType="big"
+            withHorizonalPadding
             onPress={() => {
                 onPress?.(lyricItem);
-            }}
-        />
+            }}>
+            <ListItem.ListItemImage
+                uri={lyricItem.artwork}
+                fallbackImg={ImgAsset.albumDefault}
+            />
+            <ListItem.Content
+                description={lyricItem.artist ?? ''}
+                title={
+                    <TitleAndTag
+                        title={lyricItem.title}
+                        tag={lyricItem.platform}
+                    />
+                }
+            />
+        </ListItem>
     );
 }

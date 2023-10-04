@@ -3,7 +3,7 @@ import {DeviceEventEmitter, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicQueue from '@/core/musicQueue';
 import MusicSheet from '@/core/musicSheet';
-import ListItem from '@/components/base/listItem.old';
+import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import Download from '@/core/download';
 import {ImgAsset} from '@/constants/assetsConst';
@@ -29,6 +29,7 @@ import musicHistory from '@/core/musicHistory';
 import {showDialog} from '@/components/dialogs/useDialog';
 import {hidePanel, showPanel} from '../usePanel';
 import Divider from '@/components/base/divider';
+import {iconSizeConst} from '@/constants/uiConst';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -234,19 +235,16 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                             renderItem={({item}) =>
                                 item.show !== false ? (
                                     <ListItem
-                                        left={{
-                                            icon: {
-                                                name: item.icon,
-                                                sizeType: 'small',
-                                                fontColor: 'normal',
-                                            },
-                                            width: rpx(48),
-                                        }}
-                                        itemPaddingHorizontal={12}
-                                        itemHeight={ITEM_HEIGHT}
-                                        title={item.title}
-                                        onPress={item.onPress}
-                                    />
+                                        withHorizonalPadding
+                                        heightType="small"
+                                        onPress={item.onPress}>
+                                        <ListItem.ListItemIcon
+                                            width={rpx(48)}
+                                            icon={item.icon}
+                                            iconSize={iconSizeConst.small}
+                                        />
+                                        <ListItem.Content title={item.title} />
+                                    </ListItem>
                                 ) : null
                             }
                         />

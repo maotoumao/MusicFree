@@ -11,6 +11,7 @@ import Toast from '@/utils/toast';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import AppBar from '@/components/base/appBar';
+import useColors from '@/hooks/useColors';
 
 const ITEM_HEIGHT = rpx(96);
 const marginTop = rpx(188) + (StatusBar.currentHeight ?? 0);
@@ -18,6 +19,8 @@ const marginTop = rpx(188) + (StatusBar.currentHeight ?? 0);
 export default function PluginSort() {
     const plugins = PluginManager.useSortedPlugins();
     const [sortingPlugins, setSortingPlugins] = useState([...plugins]);
+
+    const colors = useColors();
 
     function renderSortingItem({item}: {item: Plugin}) {
         return (
@@ -57,7 +60,7 @@ export default function PluginSort() {
             <HorizonalSafeAreaView style={globalStyle.flex1}>
                 <SortableFlatList
                     data={sortingPlugins}
-                    activeBackgroundColor="rgba(33,33,33,0.8)"
+                    activeBackgroundColor={colors.placeholder}
                     marginTop={marginTop}
                     renderItem={renderSortingItem}
                     itemHeight={ITEM_HEIGHT}

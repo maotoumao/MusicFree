@@ -30,11 +30,12 @@ const iconSizeConst = {
     big: rpx(64),
 };
 
-type ColorKey = 'normal' | 'secondary' | 'highlight';
+type ColorKey = 'normal' | 'secondary' | 'highlight' | 'headerText';
 const colorMap: Record<ColorKey, keyof ReactNativePaper.ThemeColors> = {
     normal: 'text',
     secondary: 'textSecondary',
     highlight: 'textHighlight',
+    headerText: 'headerText',
 } as const;
 
 export {fontSizeConst, fontWeightConst, iconSizeConst, colorMap};

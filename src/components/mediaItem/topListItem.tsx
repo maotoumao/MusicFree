@@ -1,6 +1,6 @@
 import React from 'react';
 // import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import ListItem from '@/components/base/listItem.old';
+import ListItem from '@/components/base/listItem';
 import {ImgAsset} from '@/constants/assetsConst';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
@@ -15,18 +15,21 @@ export default function TopListItem(props: ITopListResultsProps) {
 
     return (
         <ListItem
-            left={{
-                artwork: topListItem?.coverImg,
-                fallback: ImgAsset.albumDefault,
-            }}
-            title={topListItem.title}
-            desc={`${topListItem.description ?? ''}`}
+            withHorizonalPadding
             onPress={() => {
                 navigate(ROUTE_PATH.TOP_LIST_DETAIL, {
                     pluginHash: pluginHash,
                     topList: topListItem,
                 });
-            }}
-        />
+            }}>
+            <ListItem.ListItemImage
+                uri={topListItem?.coverImg}
+                fallbackImg={ImgAsset.albumDefault}
+            />
+            <ListItem.Content
+                title={topListItem.title}
+                description={`${topListItem.description ?? ''}`}
+            />
+        </ListItem>
     );
 }

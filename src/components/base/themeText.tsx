@@ -13,6 +13,7 @@ type IThemeTextProps = TextProps & {
     fontColor?: ColorKey;
     fontSize?: keyof typeof fontSizeConst;
     fontWeight?: keyof typeof fontWeightConst;
+    opacity?: number;
 };
 
 export default function ThemeText(props: IThemeTextProps) {
@@ -24,6 +25,7 @@ export default function ThemeText(props: IThemeTextProps) {
         fontSize = 'content',
         fontColor = 'normal',
         fontWeight = 'regular',
+        opacity,
     } = props;
 
     const themeStyle = {
@@ -31,6 +33,7 @@ export default function ThemeText(props: IThemeTextProps) {
         fontSize: fontSizeConst[fontSize],
         fontWeight: fontWeightConst[fontWeight],
         includeFontPadding: false,
+        opacity,
     };
 
     const _style = Array.isArray(style)

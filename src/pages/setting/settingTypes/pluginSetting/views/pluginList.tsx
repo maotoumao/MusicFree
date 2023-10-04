@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import {FAB, List} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import Loading from '@/components/base/loading';
-import ListItem from '@/components/base/listItem.old';
+import ListItem from '@/components/base/listItem';
 
 import useColors from '@/hooks/useColors';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
@@ -359,12 +359,12 @@ function PluginView(props: IPluginViewProps) {
             {options.map(_ =>
                 _.show ? (
                     <ListItem
-                        itemHeight={ITEM_HEIGHT_BIG}
+                        withHorizonalPadding
                         key={`${plugin.hash}${_.title}`}
-                        left={{icon: {name: _.icon}}}
-                        title={_.title}
-                        onPress={_.onPress}
-                    />
+                        onPress={_.onPress}>
+                        <ListItem.ListItemIcon icon={_.icon} />
+                        <ListItem.Content title={_.title} />
+                    </ListItem>
                 ) : null,
             )}
         </List.Accordion>

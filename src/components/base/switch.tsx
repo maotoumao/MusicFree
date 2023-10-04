@@ -11,15 +11,11 @@ export default function ThemeSwitch(props: ISwitchProps) {
         <Switch
             {...props}
             trackColor={{
-                false: Color(colors.textSecondary).alpha(0.8).toString(),
-                true:
-                    Color(colors.textHighlight).alpha(0.8).toString() ??
-                    '#eba0b3',
+                false: Color(colors.placeholder).alpha(0.8).toString(),
+                true: Color(colors.primary).alpha(0.6).toString(),
             }}
             thumbColor={
-                props?.value
-                    ? colors.textHighlight ?? '#eba0b3'
-                    : colors.textSecondary
+                props?.value ? colors.primary ?? '#eba0b3' : colors.placeholder
             }
             onValueChange={props.onValueChange ?? undefined}
         />

@@ -7,6 +7,7 @@ import ResultList from './resultList';
 import {useAtomValue} from 'jotai';
 import {queryResultAtom} from '../store/atoms';
 import content from './content';
+import useColors from '@/hooks/useColors';
 
 const sceneMap: Record<string, React.FC> = {
     album: BodyContentWrapper,
@@ -26,6 +27,7 @@ const routes = [
 
 export default function Body() {
     const [index, setIndex] = useState(0);
+    const colors = useColors();
 
     return (
         <TabView
@@ -40,18 +42,22 @@ export default function Body() {
                     {...props}
                     style={style.transparentColor}
                     tabStyle={{
-                        width: rpx(200),
+                        width: 'auto',
                     }}
                     renderIndicator={() => null}
                     pressColor="transparent"
+                    inactiveColor={colors.text}
+                    activeColor={colors.primary}
                     renderLabel={({route, focused, color}) => (
                         <Text
                             numberOfLines={1}
                             style={{
+                                width: rpx(160),
                                 fontWeight: focused
                                     ? fontWeightConst.bolder
-                                    : fontWeightConst.bold,
+                                    : fontWeightConst.medium,
                                 color,
+                                textAlign: 'center',
                             }}>
                             {route.title}
                         </Text>

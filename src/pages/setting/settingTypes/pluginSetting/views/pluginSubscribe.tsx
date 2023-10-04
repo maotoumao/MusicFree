@@ -4,11 +4,10 @@ import rpx from '@/utils/rpx';
 import Config from '@/core/config';
 import {FlatList} from 'react-native-gesture-handler';
 import Empty from '@/components/base/empty';
-import ListItem from '@/components/base/listItem.old';
+import ListItem from '@/components/base/listItem';
 import {FAB} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import Toast from '@/utils/toast';
-import IconButton from '@/components/base/iconButton';
 import Clipboard from '@react-native-clipboard/clipboard';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
@@ -90,6 +89,7 @@ export default function PluginSubscribe() {
                     renderItem={({item, index}) => {
                         return (
                             <ListItem
+                                withHorizonalPadding
                                 onPress={() => {
                                     showDialog('SubscribePluginDialog', {
                                         subscribeItem: item,
@@ -112,20 +112,20 @@ export default function PluginSubscribe() {
                                             Toast.success('删除成功');
                                         },
                                     });
-                                }}
-                                itemHeight={ITEM_HEIGHT}
-                                title={item.name}
-                                desc={item.url}
-                                right={() => (
-                                    <IconButton
-                                        onPress={() => {
-                                            Clipboard.setString(item.url);
-                                            Toast.success('已复制到剪切板');
-                                        }}
-                                        name="share"
-                                    />
-                                )}
-                            />
+                                }}>
+                                <ListItem.Content
+                                    title={item.name}
+                                    description={item.url}
+                                />
+                                <ListItem.ListItemIcon
+                                    icon="share"
+                                    position="right"
+                                    onPress={() => {
+                                        Clipboard.setString(item.url);
+                                        Toast.success('已复制到剪切板');
+                                    }}
+                                />
+                            </ListItem>
                         );
                     }}
                     getItemLayout={(_, index) => ({

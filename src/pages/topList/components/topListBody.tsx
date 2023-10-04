@@ -38,7 +38,7 @@ export default function TopListBody() {
                         borderColor: 'transparent',
                     }}
                     tabStyle={{
-                        width: rpx(200),
+                        width: 'auto',
                     }}
                     scrollEnabled
                     inactiveColor={colors.text}
@@ -47,10 +47,12 @@ export default function TopListBody() {
                         <Text
                             numberOfLines={1}
                             style={{
+                                width: rpx(160),
                                 fontWeight: focused
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
+                                textAlign: 'center',
                             }}>
                             {route.title}
                         </Text>

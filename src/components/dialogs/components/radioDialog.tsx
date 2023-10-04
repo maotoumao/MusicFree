@@ -1,9 +1,8 @@
 import React from 'react';
-import rpx from '@/utils/rpx';
 import {FlatList} from 'react-native-gesture-handler';
-import ListItem from '@/components/base/listItem.old';
 import {hideDialog} from '../useDialog';
 import Dialog from './base';
+import ListItem from '@/components/base/listItem';
 
 interface IKV<T extends string | number = string | number> {
     key: T;
@@ -29,6 +28,7 @@ export default function RadioDialog(props: IRadioDialogProps) {
                 data={content}
                 renderItem={({item}) => (
                     <ListItem
+                        withHorizonalPadding
                         onPress={() => {
                             if (isObject(item)) {
                                 onOk?.(item.value);
@@ -37,9 +37,11 @@ export default function RadioDialog(props: IRadioDialogProps) {
                             }
                             hideDialog();
                         }}
-                        itemHeight={rpx(96)}
-                        title={isObject(item) ? item.key : item}
-                    />
+                        heightType="small">
+                        <ListItem.Content
+                            title={isObject(item) ? item.key : item}
+                        />
+                    </ListItem>
                 )}
             />
         </Dialog>

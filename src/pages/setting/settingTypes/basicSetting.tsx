@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {SectionList, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Config, {IConfigPaths} from '@/core/config';
-import ListItem from '@/components/base/listItem.old';
+import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import ThemeSwitch from '@/components/base/switch';
 import {clearCache, getCacheSize, sizeFormatter} from '@/utils/fileUtils';
@@ -14,11 +14,9 @@ import {readdir} from 'react-native-fs';
 import {qualityKeys, qualityText} from '@/utils/qualities';
 import {clearLog, getErrorLogContent} from '@/utils/log';
 import {ScrollView} from 'react-native-gesture-handler';
-import {Paragraph} from 'react-native-paper';
 import {showDialog} from '@/components/dialogs/useDialog';
 import {showPanel} from '@/components/panels/usePanel';
-
-const ITEM_HEIGHT = rpx(96);
+import Paragraph from '@/components/base/paragraph';
 
 function createSwitch(title: string, changeKey: IConfigPaths, value: boolean) {
     const onPress = () => {
@@ -396,19 +394,27 @@ export default function BasicSetting() {
                 sections={basicOptions}
                 renderSectionHeader={({section}) => (
                     <View style={style.sectionHeader}>
-                        <ThemeText fontSize="subTitle" fontColor="secondary">
+                        <ThemeText
+                            fontSize="subTitle"
+                            fontColor="secondary"
+                            fontWeight="bold">
                             {section.title}
                         </ThemeText>
                     </View>
                 )}
-                renderItem={({item}) => (
-                    <ListItem
-                        itemHeight={ITEM_HEIGHT}
-                        title={item.title}
-                        right={item.right}
-                        onPress={item.onPress}
-                    />
-                )}
+                renderItem={({item}) => {
+                    const Right = item.right;
+
+                    return (
+                        <ListItem
+                            withHorizonalPadding
+                            heightType="small"
+                            onPress={item.onPress}>
+                            <ListItem.Content title={item.title} />
+                            {Right ? <Right /> : null}
+                        </ListItem>
+                    );
+                }}
             />
         </View>
     );
@@ -425,7 +431,10 @@ const style = StyleSheet.create({
         maxWidth: rpx(400),
     },
     sectionHeader: {
-        paddingHorizontal: rpx(36),
-        marginTop: rpx(48),
+        paddingHorizontal: rpx(24),
+        height: rpx(72),
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: rpx(20),
     },
 });

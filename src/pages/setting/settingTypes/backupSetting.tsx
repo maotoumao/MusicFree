@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import DocumentPicker from 'react-native-document-picker';
-import ListItem from '@/components/base/listItem.old';
+import ListItem from '@/components/base/listItem';
 import Toast from '@/utils/toast';
 import Backup from '@/core/backup';
 import {readFile, writeFile} from 'react-native-fs';
@@ -94,9 +94,15 @@ export default function BackupSetting() {
 
     return (
         <View style={style.wrapper}>
-            <ListItem title={'备份到本地'} onPress={onBackupToLocal} />
-            <ListItem title={'从本地文件恢复'} onPress={onResumeFromLocal} />
-            <ListItem title={'从URL恢复'} onPress={onResumeFromUrl} />
+            <ListItem withHorizonalPadding onPress={onBackupToLocal}>
+                <ListItem.Content title="备份到本地" />
+            </ListItem>
+            <ListItem withHorizonalPadding onPress={onResumeFromLocal}>
+                <ListItem.Content title="从本地文件恢复" />
+            </ListItem>
+            <ListItem withHorizonalPadding onPress={onResumeFromUrl}>
+                <ListItem.Content title="从URL恢复" />
+            </ListItem>
         </View>
     );
 }

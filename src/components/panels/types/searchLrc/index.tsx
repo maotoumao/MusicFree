@@ -119,7 +119,7 @@ function LyricResultBodyWrapper() {
         })(),
     );
 
-    console.log(routes);
+    const colors = useColors();
     return (
         <TabView
             style={globalStyle.fwflex1}
@@ -133,27 +133,34 @@ function LyricResultBodyWrapper() {
                     {..._}
                     scrollEnabled
                     style={{
-                        backgroundColor: 'transparent',
+                        backgroundColor: colors.backdrop,
                         shadowColor: 'transparent',
                         borderColor: 'transparent',
                     }}
                     tabStyle={{
-                        width: rpx(200),
+                        width: 'auto',
                     }}
-                    renderIndicator={() => null}
                     pressColor="transparent"
+                    inactiveColor={colors.text}
+                    activeColor={colors.primary}
                     renderLabel={({route, focused, color}) => (
                         <Text
                             numberOfLines={1}
                             style={{
+                                width: rpx(160),
                                 fontWeight: focused
                                     ? fontWeightConst.bolder
-                                    : fontWeightConst.bold,
+                                    : fontWeightConst.medium,
                                 color,
+                                textAlign: 'center',
                             }}>
                             {route.title ?? '(未命名)'}
                         </Text>
                     )}
+                    indicatorStyle={{
+                        backgroundColor: colors.primary,
+                        height: rpx(4),
+                    }}
                 />
             )}
             renderScene={sceneMap.current}

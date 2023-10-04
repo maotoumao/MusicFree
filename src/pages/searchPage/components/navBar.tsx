@@ -1,7 +1,6 @@
 import React from 'react';
-import {Keyboard, StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {useNavigation} from '@react-navigation/native';
 import {useAtom, useSetAtom} from 'jotai';
 import {
     pageStatusAtom,
@@ -11,14 +10,17 @@ import {
     initSearchResults,
 } from '../store/atoms';
 import useSearch from '../hooks/useSearch';
-import {Appbar, Searchbar} from 'react-native-paper';
 import {addHistory} from '../common/historySearch';
-import {fontSizeConst} from '@/constants/uiConst';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useColors from '@/hooks/useColors';
+import AppBar from '@/components/base/appBar';
+import Input from '@/components/base/input';
+import Color from 'color';
 import Button from '@/components/base/button';
+import IconButton from '@/components/base/iconButton';
+import {iconSizeConst} from '@/constants/uiConst';
 
 export default function NavBar() {
-    const navigation = useNavigation();
     const search = useSearch();
     const [query, setQuery] = useAtom(queryAtom);
     const setPageStatus = useSetAtom(pageStatusAtom);
@@ -37,64 +39,96 @@ export default function NavBar() {
         await addHistory(query);
     };
 
+    const hintTextColor = Color(colors.text).alpha(0.6).toString();
+
     return (
-        <Appbar style={[style.appbar, {backgroundColor: colors.primary}]}>
-            <Appbar.BackAction
-                onPress={() => {
-                    // !!这个组件有bug，输入法拉起的时候返回会默认打开panel
-                    Keyboard.dismiss();
-                    navigation.goBack();
-                }}
-            />
-            <Searchbar
-                autoFocus
-                inputStyle={style.input}
-                style={style.searchBar}
-                accessible
-                accessibilityLabel="搜索框"
-                accessibilityHint={'输入要搜索的歌曲'}
-                onFocus={() => {
-                    setPageStatus(PageStatus.EDITING);
-                }}
-                placeholder="输入要搜索的歌曲"
-                onSubmitEditing={onSearchSubmit}
-                onChangeText={_ => {
-                    if (_ === '') {
+        <AppBar containerStyle={style.appbar} contentStyle={style.appbar}>
+            <View style={style.searchBarContainer}>
+                <Icon
+                    name="magnify"
+                    color={hintTextColor}
+                    size={iconSizeConst.light}
+                    style={style.magnify}
+                />
+                <Input
+                    autoFocus
+                    style={[
+                        style.searchBar,
+                        {
+                            color: colors.text,
+                            backgroundColor: colors.placeholder,
+                        },
+                    ]}
+                    accessible
+                    accessibilityLabel="搜索框"
+                    accessibilityHint={'输入要搜索的歌曲'}
+                    onFocus={() => {
                         setPageStatus(PageStatus.EDITING);
-                    }
-                    setQuery(_);
-                }}
-                value={query}
-            />
-            <Button style={style.button} onPress={onSearchSubmit}>
+                    }}
+                    placeholderTextColor={hintTextColor}
+                    placeholder="输入要搜索的歌曲"
+                    onSubmitEditing={onSearchSubmit}
+                    onChangeText={_ => {
+                        if (_ === '') {
+                            setPageStatus(PageStatus.EDITING);
+                        }
+                        setQuery(_);
+                    }}
+                    value={query}
+                />
+                {query.length ? (
+                    <IconButton
+                        style={style.close}
+                        sizeType="light"
+                        onPress={() => {
+                            setQuery('');
+                        }}
+                        color={hintTextColor}
+                        name="close"
+                    />
+                ) : null}
+            </View>
+            <Button
+                style={[style.button]}
+                hitSlop={0}
+                fontColor={'headerText'}
+                onPress={onSearchSubmit}>
                 搜索
             </Button>
-        </Appbar>
+        </AppBar>
     );
 }
 
 const style = StyleSheet.create({
     appbar: {
-        shadowColor: 'transparent',
+        paddingRight: 0,
     },
     button: {
         paddingHorizontal: rpx(24),
+        height: '100%',
+        justifyContent: 'center',
+    },
+    searchBarContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     searchBar: {
         minWidth: rpx(375),
         flex: 1,
+        paddingHorizontal: rpx(64),
         borderRadius: rpx(64),
-        height: '72%',
+        height: rpx(64),
         maxHeight: rpx(64),
-        color: '#666666',
         alignItems: 'center',
     },
-    input: {
-        padding: 0,
-        height: '100%',
-        color: '#666666',
-        fontSize: fontSizeConst.subTitle,
-        textAlignVertical: 'center',
-        includeFontPadding: false,
+    magnify: {
+        position: 'absolute',
+        left: rpx(16),
+        zIndex: 100,
+    },
+    close: {
+        position: 'absolute',
+        right: rpx(16),
     },
 });

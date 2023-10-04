@@ -116,13 +116,15 @@ function BottomIcon(props: IBottomIconProps) {
             ]}>
             <Icon
                 name={icon}
-                color={colors[color]}
+                color={colors.headerText}
+                style={color === 'textSecondary' ? {opacity: 0.6} : undefined}
                 size={iconSizeConst.big}
                 onPress={onPress}
             />
             <ThemeText
                 fontSize="subTitle"
-                fontColor={color === 'text' ? 'normal' : 'secondary'}
+                fontColor={'headerText'}
+                opacity={color === 'textSecondary' ? 0.6 : undefined}
                 style={style.bottomIconText}>
                 {title}
             </ThemeText>

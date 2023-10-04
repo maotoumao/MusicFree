@@ -20,5 +20,7 @@ declare module ReactNativePaper {
         divider?: string;
         /** 标题字体，和primary对比的字体 */
         headerText?: string;
+        /** 高亮颜色 */
+        listActive?: string;
     }
 }

@@ -1,7 +1,6 @@
 import React, {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Config from '@/core/config';
-import {ImgAsset} from '@/constants/assetsConst';
 import Image from './image';
 import useColors from '@/hooks/useColors';
 
@@ -20,17 +19,18 @@ function PageBackground() {
                     },
                 ]}
             />
-            <Image
-                uri={themeConfig?.background}
-                emptySrc={ImgAsset.backgroundDefault}
-                style={[
-                    style.wrapper,
-                    {
-                        opacity: themeConfig?.backgroundOpacity ?? 0.7,
-                    },
-                ]}
-                blurRadius={themeConfig?.backgroundBlur ?? 20}
-            />
+            {themeConfig?.background ? (
+                <Image
+                    uri={themeConfig?.background}
+                    style={[
+                        style.wrapper,
+                        {
+                            opacity: themeConfig?.backgroundOpacity ?? 0.7,
+                        },
+                    ]}
+                    blurRadius={themeConfig?.backgroundBlur ?? 20}
+                />
+            ) : null}
         </>
     );
 }
