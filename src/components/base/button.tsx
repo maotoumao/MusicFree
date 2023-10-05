@@ -5,6 +5,7 @@ import ThemeText from './themeText';
 import rpx from '@/utils/rpx';
 
 interface IButtonProps {
+    withHorizonalPadding?: boolean;
     style?: any;
     hitSlop?: number;
     children: string;
@@ -12,11 +13,19 @@ interface IButtonProps {
     onPress?: () => void;
 }
 export default function (props: IButtonProps) {
-    const {children, onPress, fontColor, hitSlop} = props;
+    const {children, onPress, fontColor, hitSlop, withHorizonalPadding} = props;
     return (
         <Pressable
             {...props}
-            hitSlop={hitSlop ?? rpx(28)}
+            style={[
+                withHorizonalPadding
+                    ? {
+                          paddingHorizontal: rpx(24),
+                      }
+                    : null,
+                props.style,
+            ]}
+            hitSlop={hitSlop ?? (withHorizonalPadding ? 0 : rpx(28))}
             onPress={onPress}
             accessible
             accessibilityLabel={children}>

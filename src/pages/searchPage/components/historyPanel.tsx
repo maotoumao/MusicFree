@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Loading from '@/components/base/loading';
-import {Chip} from 'react-native-paper';
+import Chip from '@/components/base/chip';
 import useSearch from '../hooks/useSearch';
 import {
     addHistory,
@@ -58,7 +58,7 @@ export default function () {
                         {history.map(_ => (
                             <Chip
                                 key={`search-history-${_}`}
-                                style={style.chip}
+                                containerStyle={style.chip}
                                 onClose={async () => {
                                     await removeHistory(_);
                                     getHistory().then(setHistory);

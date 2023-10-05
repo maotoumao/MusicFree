@@ -1,15 +1,10 @@
-import deepmerge from 'deepmerge';
 import {
     DarkTheme as NavigationDarkTheme,
     DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native';
-import {
-    DarkTheme as PaperDarkTheme,
-    DefaultTheme as PaperDefaultTheme,
-} from 'react-native-paper';
 
-const _DefaultTheme = deepmerge(PaperDefaultTheme, NavigationDefaultTheme);
-const _CustomTheme = deepmerge(PaperDarkTheme, NavigationDarkTheme);
+const _DefaultTheme = NavigationDefaultTheme;
+const _CustomTheme = NavigationDarkTheme;
 
 const DefaultThemeNew = {
     ..._DefaultTheme,

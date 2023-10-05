@@ -179,6 +179,7 @@ export default function (props: IPanelBaseProps) {
                 panelBody
             ) : (
                 <KeyboardAvoidingView
+                    style={style.kbContainer}
                     behavior={keyboardAvoidBehavior || 'position'}>
                     {panelBody}
                 </KeyboardAvoidingView>
@@ -196,6 +197,7 @@ const style = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
+        zIndex: 15000,
     },
     mask: {
         backgroundColor: '#333333',
@@ -208,5 +210,9 @@ const style = StyleSheet.create({
         right: 0,
         borderTopLeftRadius: rpx(28),
         borderTopRightRadius: rpx(28),
+        zIndex: 15010,
+    },
+    kbContainer: {
+        zIndex: 15010,
     },
 });

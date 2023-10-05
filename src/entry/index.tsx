@@ -3,7 +3,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import bootstrap from './bootstrap';
 import {routes} from './router';
-import {Provider as PaperProvider} from 'react-native-paper';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Dialogs from '@/components/dialogs';
 import Toast from 'react-native-toast-message';
@@ -44,37 +43,35 @@ export default function Pages() {
 
     return (
         <GestureHandlerRootView style={{flex: 1}}>
-            <PaperProvider theme={mergedTheme}>
-                <SafeAreaProvider>
-                    <NavigationContainer theme={mergedTheme}>
-                        <PageBackground />
-                        <Stack.Navigator
-                            initialRouteName={routes[0].path}
-                            screenOptions={{
-                                statusBarColor: 'transparent',
-                                statusBarTranslucent: true,
-                                headerShown: false,
-                                animation: 'slide_from_right',
-                                animationDuration: 100,
-                            }}>
-                            {routes.map(route => (
-                                <Stack.Screen
-                                    key={route.path}
-                                    name={route.path}
-                                    component={route.component}
-                                />
-                            ))}
-                        </Stack.Navigator>
+            <SafeAreaProvider>
+                <NavigationContainer theme={mergedTheme}>
+                    <PageBackground />
+                    <Stack.Navigator
+                        initialRouteName={routes[0].path}
+                        screenOptions={{
+                            statusBarColor: 'transparent',
+                            statusBarTranslucent: true,
+                            headerShown: false,
+                            animation: 'slide_from_right',
+                            animationDuration: 100,
+                        }}>
+                        {routes.map(route => (
+                            <Stack.Screen
+                                key={route.path}
+                                name={route.path}
+                                component={route.component}
+                            />
+                        ))}
+                    </Stack.Navigator>
 
-                        <Panels />
-                        <Dialogs />
-                        <ImageViewComponent />
-                        <Toast config={toastConfig} />
-                        <Debug />
-                        <PortalHost />
-                    </NavigationContainer>
-                </SafeAreaProvider>
-            </PaperProvider>
+                    <Panels />
+                    <Dialogs />
+                    <ImageViewComponent />
+                    <Toast config={toastConfig} />
+                    <Debug />
+                    <PortalHost />
+                </NavigationContainer>
+            </SafeAreaProvider>
         </GestureHandlerRootView>
     );
 }

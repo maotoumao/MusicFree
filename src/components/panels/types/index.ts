@@ -8,6 +8,7 @@ import PlayRate from './playRate';
 import SearchLrc from './searchLrc';
 import SheetTags from './sheetTags';
 import SimpleInput from './simpleInput';
+import SimpleSelect from './simpleSelect';
 import TimingClose from './timingClose';
 
 export default {
@@ -33,4 +34,6 @@ export default {
     SheetTags: SheetTags,
     /** 搜索歌词 */
     SearchLrc,
+    /** 简单的选择 */
+    SimpleSelect,
 };

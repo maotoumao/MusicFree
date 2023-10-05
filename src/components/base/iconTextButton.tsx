@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleProp, StyleSheet, ViewProps} from 'react-native';
+import {StyleProp, StyleSheet, ViewStyle} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -10,15 +10,17 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 interface IProps {
     icon: string;
     onPress?: () => void;
-    containerStyle?: StyleProp<ViewProps>;
+    containerStyle?: StyleProp<ViewStyle>;
     children?: string;
 }
 export default function (props: IProps) {
-    const {icon, children, onPress} = props;
+    const {icon, children, onPress, containerStyle} = props;
     const colors = useColors();
 
     return (
-        <TouchableOpacity style={style.container} onPress={onPress}>
+        <TouchableOpacity
+            style={[style.container, containerStyle]}
+            onPress={onPress}>
             <Icon name={icon} size={iconSizeConst.light} color={colors.text} />
             <ThemeText style={style.text} fontSize={'content'}>
                 {children}

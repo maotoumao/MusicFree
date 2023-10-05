@@ -5,14 +5,13 @@ import Config from '@/core/config';
 import {FlatList} from 'react-native-gesture-handler';
 import Empty from '@/components/base/empty';
 import ListItem from '@/components/base/listItem';
-import {FAB} from 'react-native-paper';
-import useColors from '@/hooks/useColors';
 import Toast from '@/utils/toast';
 import Clipboard from '@react-native-clipboard/clipboard';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import {showDialog} from '@/components/dialogs/useDialog';
 import AppBar from '@/components/base/appBar';
+import Fab from '@/components/base/fab';
 
 interface ISubscribeItem {
     name: string;
@@ -24,7 +23,6 @@ const ITEM_HEIGHT = rpx(108);
 export default function PluginSubscribe() {
     const urls = Config.useConfig('setting.plugin.subscribeUrl') ?? '';
     const [subscribes, setSubscribes] = useState<Array<ISubscribeItem>>([]);
-    const colors = useColors();
 
     useEffect(() => {
         try {
@@ -135,14 +133,13 @@ export default function PluginSubscribe() {
                     })}
                 />
             </HorizonalSafeAreaView>
-            <FAB
-                icon={'plus'}
+            <Fab
+                icon="plus"
                 onPress={() => {
                     showDialog('SubscribePluginDialog', {
                         onSubmit,
                     });
                 }}
-                style={[{backgroundColor: colors.primary}, style.fab]}
             />
         </>
     );

@@ -82,6 +82,7 @@ export default function NavBar() {
                         sizeType="light"
                         onPress={() => {
                             setQuery('');
+                            setPageStatus(PageStatus.EDITING);
                         }}
                         color={hintTextColor}
                         name="close"

@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {Button} from 'react-native-paper';
 import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
 import {StyleSheet, View} from 'react-native';
@@ -17,6 +16,7 @@ import {hideDialog} from '../useDialog';
 import Dialog from './base';
 import Input from '@/components/base/input';
 import {fontSizeConst} from '@/constants/uiConst';
+import Button from '@/components/base/button';
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
@@ -125,10 +125,10 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
                 </View>
             </Dialog.Content>
             <Dialog.Actions>
-                <Button color={colors.textHighlight} onPress={onConfirm}>
+                <Button withHorizonalPadding onPress={onConfirm}>
                     确认
                 </Button>
-                <Button color={colors.text} onPress={hideDialog}>
+                <Button withHorizonalPadding onPress={hideDialog}>
                     取消
                 </Button>
             </Dialog.Actions>
