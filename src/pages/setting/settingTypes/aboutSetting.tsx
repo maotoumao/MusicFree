@@ -65,6 +65,15 @@ export default function AboutSetting() {
                     https://github.com/maotoumao/MusicFree
                 </LinkText>
                 <ThemeText style={style.content}>
+                    PC 版本也已开源，代码地址如下：
+                    <LinkText
+                        linkTo={
+                            'https://github.com/maotoumao/MusicFreeDesktop'
+                        }>
+                        https://github.com/maotoumao/MusicFreeDesktop
+                    </LinkText>
+                </ThemeText>
+                <ThemeText style={style.content}>
                     本软件需要通过插件来完成包括播放、搜索在内的大部分功能，如果你是从第三方下载的插件，
                     <ThemeText fontWeight="bold">
                         请一定谨慎识别这些插件的安全性，保护好自己。（注意：插件以及插件可能产生的数据与本软件无关，请使用者合理合法使用。）
