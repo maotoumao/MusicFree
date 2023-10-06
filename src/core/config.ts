@@ -62,6 +62,8 @@ interface IConfig {
                 pageBackground: string;
                 accent: string;
             };
+            followSystem: boolean;
+            selectedTheme: string;
         };
 
         plugin: {

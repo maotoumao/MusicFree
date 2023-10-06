@@ -148,6 +148,8 @@ function ListItemIcon(props: IListItemIconProps) {
         onPress,
     } = props;
 
+    const colors = useColors();
+
     const defaultStyle: StyleProp<ViewStyle> = {
         marginRight: position === 'left' ? defaultPadding : 0,
         marginLeft: position === 'right' ? defaultPadding : 0,
@@ -157,7 +159,12 @@ function ListItemIcon(props: IListItemIconProps) {
 
     const innerContent = (
         <View style={[styles.actionBase, defaultStyle, containerStyle]}>
-            <Icon name={icon} size={iconSize} style={contentStyle} />
+            <Icon
+                name={icon}
+                size={iconSize}
+                style={contentStyle}
+                color={colors.text}
+            />
         </View>
     );
 
@@ -210,12 +217,18 @@ function ListItemImage(props: IListItemImageProps) {
 
 interface IContentProps {
     title?: ReactNode;
+    children?: ReactNode;
     description?: ReactNode;
     containerStyle?: StyleProp<ViewStyle>;
 }
 
 function Content(props: IContentProps) {
-    const {title, description = null, containerStyle} = props;
+    const {
+        children,
+        title = children,
+        description = null,
+        containerStyle,
+    } = props;
 
     let realTitle;
     let realDescription;

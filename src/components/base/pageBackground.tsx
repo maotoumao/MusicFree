@@ -8,6 +8,11 @@ function PageBackground() {
     const themeConfig = Config.useConfig('setting.theme');
     const colors = useColors();
 
+    if (themeConfig) {
+        themeConfig.background =
+            'https://mobile-img-baofun.zhhainiao.com/pcwallpaper_ugc_mobile/static/6f28c334a04e542fed0aca5873995835.jpg';
+    }
+
     return (
         <>
             <View

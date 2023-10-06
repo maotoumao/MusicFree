@@ -40,7 +40,7 @@ export default function NavBar() {
                     accessible={false}
                     name="magnify"
                     size={rpx(32)}
-                    color={Color(colors.textSecondary).alpha(0.6).toString()}
+                    color={Color(colors.text).alpha(0.6).toString()}
                 />
                 <ThemeText
                     accessible={false}

@@ -68,6 +68,7 @@ function Dialog(props: IDialogProps) {
                     scaleStyle,
                     {
                         backgroundColor: colors.backdrop,
+                        shadowColor: colors.shadow,
                     },
                 ]}>
                 {children}
@@ -202,7 +203,6 @@ const styles = StyleSheet.create({
         zIndex: 10310,
         borderRadius: rpx(16),
         backgroundColor: 'red',
-        shadowColor: '#000',
         shadowOffset: {
             width: 0,
             height: 2,

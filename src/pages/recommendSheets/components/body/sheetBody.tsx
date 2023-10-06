@@ -34,6 +34,7 @@ function SheetBody(props: IProps) {
             <ScrollView
                 style={style.headerWrapper}
                 contentContainerStyle={style.header}
+                showsHorizontalScrollIndicator={false}
                 horizontal>
                 <TypeTag
                     title={firstTag.title}

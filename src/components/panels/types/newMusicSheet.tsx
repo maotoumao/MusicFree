@@ -60,7 +60,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
                             style.input,
                             {
                                 color: colors.text,
-                                backgroundColor: Color(colors.primary)
+                                backgroundColor: Color(colors.placeholder)
                                     .lighten(0.7)
                                     .toString(),
                             },

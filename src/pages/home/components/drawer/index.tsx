@@ -154,7 +154,6 @@ const style = StyleSheet.create({
         marginLeft: rpx(24),
     },
     card: {
-        backgroundColor: '#eeeeee22',
         marginBottom: rpx(24),
     },
     cardContent: {

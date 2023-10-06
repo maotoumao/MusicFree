@@ -71,7 +71,9 @@ export default function AppBar(props: IAppBarProps) {
     const colors = useColors();
     const navigation = useNavigation();
 
-    const bgColor = color(colors.primary).alpha(backgroundOpacity).toString();
+    const bgColor = color(colors.appBar ?? colors.primary)
+        .alpha(backgroundOpacity)
+        .toString();
     const contentColor = _color ?? colors.headerText;
 
     const [showMenu, setShowMenu] = useState(false);
@@ -188,7 +190,7 @@ export default function AppBar(props: IAppBarProps) {
                         pointerEvents={showMenu ? 'auto' : 'none'}
                         style={[
                             {
-                                backgroundColor: colors.headerText,
+                                backgroundColor: colors.background,
                                 right: rpx(24),
                                 top:
                                     (menuIconLayoutRef.current?.y ?? 0) +
@@ -197,6 +199,7 @@ export default function AppBar(props: IAppBarProps) {
                                     (menuWithStatusBar
                                         ? OriginalStatusBar.currentHeight ?? 0
                                         : 0),
+                                shadowColor: colors.shadow,
                             },
                             transformStyle,
                             styles.menu,
@@ -262,7 +265,6 @@ const styles = StyleSheet.create({
         zIndex: 10011,
         position: 'absolute',
         opacity: 0,
-        shadowColor: '#000',
         shadowOffset: {
             width: 0,
             height: 2,

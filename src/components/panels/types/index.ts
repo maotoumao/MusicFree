@@ -1,5 +1,6 @@
 import AddToMusicSheet from './addToMusicSheet';
 import AssociateLrc from './associateLrc';
+import ColorPicker from './colorPicker';
 import MusicItemOptions from './musicItemOptions';
 import MusicQuality from './musicQuality';
 import NewMusicSheet from './newMusicSheet';
@@ -36,4 +37,6 @@ export default {
     SearchLrc,
     /** 简单的选择 */
     SimpleSelect,
+    /** 颜色选择器 */
+    ColorPicker,
 };

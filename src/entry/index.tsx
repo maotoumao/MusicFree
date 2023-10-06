@@ -7,7 +7,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Dialogs from '@/components/dialogs';
 import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
-import {CustomTheme, DefaultTheme} from './theme';
+import {DarkTheme, DefaultTheme} from './theme';
 import Config from '@/core/config';
 import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -16,6 +16,7 @@ import useBootstrap from './useBootstrap';
 import Debug from '@/components/debug';
 import {ImageViewComponent} from '@/components/imageViewer';
 import {PortalHost} from '@/components/base/portal';
+import globalStyle from '@/constants/globalStyle';
 
 /**
  * 字体颜色
@@ -27,7 +28,7 @@ const Stack = createNativeStackNavigator<any>();
 export default function Pages() {
     const themeName = Config.useConfig('setting.theme.mode') ?? 'dark';
     const themeColors = Config.useConfig('setting.theme.colors') ?? {};
-    const theme = themeName.includes('dark') ? CustomTheme : DefaultTheme;
+    const theme = true ? DarkTheme : DefaultTheme;
     const isCustom = themeName.includes('custom') ? true : false;
     const mergedTheme = isCustom
         ? {
@@ -42,7 +43,7 @@ export default function Pages() {
     useBootstrap();
 
     return (
-        <GestureHandlerRootView style={{flex: 1}}>
+        <GestureHandlerRootView style={globalStyle.flex1}>
             <SafeAreaProvider>
                 <NavigationContainer theme={mergedTheme}>
                     <PageBackground />

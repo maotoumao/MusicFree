@@ -21,6 +21,7 @@ export default function Fab(props: IFabProps) {
                 styles.container,
                 {
                     backgroundColor: colors.primary,
+                    shadowColor: colors.shadow,
                 },
             ]}>
             {icon ? (
@@ -45,7 +46,6 @@ const styles = StyleSheet.create({
         bottom: rpx(72),
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
         shadowOffset: {
             width: 0,
             height: 5,

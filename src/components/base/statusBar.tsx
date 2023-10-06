@@ -20,7 +20,8 @@ export default function (props: IStatusBarProps) {
                 zIndex: 10000,
                 position: 'absolute',
                 top: 0,
-                backgroundColor: backgroundColor ?? colors.primary,
+                backgroundColor:
+                    backgroundColor ?? colors.appBar ?? colors.primary,
                 width: '100%',
                 height: StatusBar.currentHeight,
             }}

@@ -1,3 +1,4 @@
+import {CustomizedColors} from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
 
 const fontSizeConst = {
@@ -30,12 +31,13 @@ const iconSizeConst = {
     big: rpx(64),
 };
 
-type ColorKey = 'normal' | 'secondary' | 'highlight' | 'headerText';
-const colorMap: Record<ColorKey, string> = {
+type ColorKey = 'normal' | 'secondary' | 'highlight' | 'headerText' | 'primary';
+const colorMap: Record<ColorKey, keyof CustomizedColors> = {
     normal: 'text',
     secondary: 'textSecondary',
     highlight: 'textHighlight',
     headerText: 'headerText',
+    primary: 'primary',
 } as const;
 
 export {fontSizeConst, fontWeightConst, iconSizeConst, colorMap};
