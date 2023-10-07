@@ -152,7 +152,7 @@ export default function (props: IPanelBaseProps) {
             style={[
                 style.wrapper,
                 {
-                    backgroundColor: colors.backdrop,
+                    backgroundColor: colors.background,
                     height:
                         orientation === 'horizonal'
                             ? vh(100) - safeAreaInsets.top

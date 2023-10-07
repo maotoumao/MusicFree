@@ -1,0 +1,30 @@
+import React from 'react';
+import {StyleSheet} from 'react-native';
+import rpx from '@/utils/rpx';
+import AppBar from '@/components/base/appBar';
+import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
+import globalStyle from '@/constants/globalStyle';
+import Button from '@/components/base/button';
+import Body from './body';
+
+export default function SetCustomTheme() {
+    return (
+        <VerticalSafeAreaView style={globalStyle.fwflex1}>
+            <AppBar
+                withStatusBar
+                actionComponent={<Button style={styles.submit}>完成</Button>}>
+                自定义背景
+            </AppBar>
+            <Body />
+        </VerticalSafeAreaView>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        width: rpx(750),
+    },
+    submit: {
+        justifyContent: 'center',
+    },
+});

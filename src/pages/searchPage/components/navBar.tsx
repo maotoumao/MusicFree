@@ -47,7 +47,7 @@ export default function NavBar() {
                 <Icon
                     name="magnify"
                     color={hintTextColor}
-                    size={iconSizeConst.light}
+                    size={iconSizeConst.small}
                     style={style.magnify}
                 />
                 <Input

@@ -4,6 +4,7 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import useColors from '@/hooks/useColors';
 import {TouchableOpacity} from 'react-native';
+import Color from 'color';
 
 interface ITypeTagProps {
     title: string;
@@ -28,13 +29,15 @@ export default function TypeTag(props: ITypeTagProps) {
                 style={[
                     style.wrapper,
                     {
-                        backgroundColor: backgroundColor ?? colors.primary,
+                        backgroundColor:
+                            backgroundColor ??
+                            Color(colors.backdrop).alpha(0.6).toString(),
                     },
                     _style,
                 ]}>
                 <ThemeText
                     fontSize="subTitle"
-                    fontColor={selected ? 'highlight' : 'normal'}>
+                    fontColor={selected ? 'primary' : 'normal'}>
                     {title}
                 </ThemeText>
             </View>

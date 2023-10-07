@@ -1,4 +1,5 @@
 // import {Quality} from '@/constants/commonConst';
+import {CustomizedColors} from '@/hooks/useColors';
 import {getStorage, setStorage} from '@/utils/storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
@@ -51,17 +52,10 @@ interface IConfig {
 
         /** 主题 */
         theme: {
-            mode: 'light' | 'dark' | 'custom-light' | 'custom-dark';
             background: string;
             backgroundOpacity: number;
             backgroundBlur: number;
-            colors: {
-                primary: string;
-                secondary: string;
-                textHighlight: string;
-                pageBackground: string;
-                accent: string;
-            };
+            colors: CustomizedColors;
             followSystem: boolean;
             selectedTheme: string;
         };
@@ -214,6 +208,7 @@ function notify() {
 function useConfig(): PartialConfig;
 function useConfig<T extends IConfigPaths>(key: T): IConfigPathsObj[T];
 function useConfig(key?: string) {
+    // TODO: 应该有性能损失
     const [_cfg, _setCfg] = useState<PartialConfig>(config);
     function setCfg() {
         _setCfg(config);

@@ -7,8 +7,6 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Dialogs from '@/components/dialogs';
 import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
-import {DarkTheme, DefaultTheme} from './theme';
-import Config from '@/core/config';
 import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import toastConfig from '@/components/base/toast';
@@ -17,6 +15,7 @@ import Debug from '@/components/debug';
 import {ImageViewComponent} from '@/components/imageViewer';
 import {PortalHost} from '@/components/base/portal';
 import globalStyle from '@/constants/globalStyle';
+import Theme from '@/core/theme';
 
 /**
  * 字体颜色
@@ -26,26 +25,13 @@ bootstrap();
 const Stack = createNativeStackNavigator<any>();
 
 export default function Pages() {
-    const themeName = Config.useConfig('setting.theme.mode') ?? 'dark';
-    const themeColors = Config.useConfig('setting.theme.colors') ?? {};
-    const theme = true ? DarkTheme : DefaultTheme;
-    const isCustom = themeName.includes('custom') ? true : false;
-    const mergedTheme = isCustom
-        ? {
-              ...theme,
-              colors: {
-                  ...theme.colors,
-                  ...themeColors,
-              },
-          }
-        : theme;
-
+    const theme = Theme.useTheme();
     useBootstrap();
 
     return (
         <GestureHandlerRootView style={globalStyle.flex1}>
             <SafeAreaProvider>
-                <NavigationContainer theme={mergedTheme}>
+                <NavigationContainer theme={theme}>
                     <PageBackground />
                     <Stack.Navigator
                         initialRouteName={routes[0].path}

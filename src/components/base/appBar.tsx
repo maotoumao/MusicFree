@@ -44,6 +44,7 @@ interface IAppBarProps {
     children?: string | ReactNode;
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ViewStyle>;
+    actionComponent?: ReactNode;
 }
 
 const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
@@ -66,6 +67,7 @@ export default function AppBar(props: IAppBarProps) {
         containerStyle,
         contentStyle,
         children,
+        actionComponent,
     } = props;
 
     const colors = useColors();
@@ -140,6 +142,7 @@ export default function AppBar(props: IAppBarProps) {
                         onPress={action.onPress}
                     />
                 ))}
+                {actionComponent ?? null}
                 {menu?.length ? (
                     <IconButton
                         name="dots-vertical"

@@ -325,6 +325,9 @@ const styles = StyleSheet.create({
     showBar: {
         width: rpx(72),
         height: rpx(56),
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: '#ccc',
     },
     showArea: {
         width: '100%',

@@ -1,17 +1,13 @@
 import React, {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
-import Config from '@/core/config';
 import Image from './image';
 import useColors from '@/hooks/useColors';
+import Theme from '@/core/theme';
 
 function PageBackground() {
-    const themeConfig = Config.useConfig('setting.theme');
+    const theme = Theme.useTheme();
+    const background = Theme.useBackground();
     const colors = useColors();
-
-    if (themeConfig) {
-        themeConfig.background =
-            'https://mobile-img-baofun.zhhainiao.com/pcwallpaper_ugc_mobile/static/6f28c334a04e542fed0aca5873995835.jpg';
-    }
 
     return (
         <>
@@ -24,16 +20,16 @@ function PageBackground() {
                     },
                 ]}
             />
-            {themeConfig?.background ? (
+            {!theme.id.startsWith('p-') && background?.url ? (
                 <Image
-                    uri={themeConfig?.background}
+                    uri={background.url}
                     style={[
                         style.wrapper,
                         {
-                            opacity: themeConfig?.backgroundOpacity ?? 0.7,
+                            opacity: background?.opacity ?? 0.6,
                         },
                     ]}
-                    blurRadius={themeConfig?.backgroundBlur ?? 20}
+                    blurRadius={background?.blur ?? 20}
                 />
             ) : null}
         </>

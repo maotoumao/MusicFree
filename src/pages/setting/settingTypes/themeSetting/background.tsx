@@ -8,12 +8,14 @@ import Config from '@/core/config';
 // import {copyFile} from 'react-native-fs';
 // import ImageColors from 'react-native-image-colors';
 // import {launchImageLibrary} from 'react-native-image-picker';
-import Slider from '@react-native-community/slider';
 import ThemeCard from './themeCard';
-import {showPanel} from '@/components/panels/usePanel';
+import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import Theme from '@/core/theme';
 
 export default function Background() {
     const theme = Config.useConfig('setting.theme');
+
+    const navigate = useNavigate();
 
     // const onCustomBgPress = async () => {
     //     try {
@@ -84,23 +86,23 @@ export default function Background() {
                 fontSize="subTitle"
                 fontWeight="bold"
                 style={style.header}>
-                背景设置
+                主题设置
             </ThemeText>
             <View style={style.sectionWrapper}>
                 <ThemeCard
                     preview="#fff"
                     title="浅色模式"
-                    selected={theme?.selectedTheme === 'light'}
+                    selected={theme?.selectedTheme === 'p-light'}
                     onPress={() => {
-                        Config.set('setting.theme.selectedTheme', 'light');
+                        Theme.setTheme('p-light');
                     }}
                 />
                 <ThemeCard
                     preview="#131313"
                     title="深色模式"
-                    selected={theme?.selectedTheme === 'dark'}
+                    selected={theme?.selectedTheme === 'p-dark'}
                     onPress={() => {
-                        Config.set('setting.theme.selectedTheme', 'dark');
+                        Theme.setTheme('p-dark');
                     }}
                 />
 
@@ -108,8 +110,8 @@ export default function Background() {
                     title="自定义背景"
                     selected={false}
                     onPress={() => {
-                        showPanel('ColorPicker');
-                        Config.set('setting.theme.selectedTheme', 'dark');
+                        navigate(ROUTE_PATH.SET_CUSTOM_THEME);
+                        // showPanel('ColorPicker');
                     }}
                 />
 
@@ -126,36 +128,6 @@ export default function Background() {
                     onPress={onCustomBgPress}
                 /> */}
             </View>
-            <View style={style.sliderWrapper}>
-                <ThemeText>模糊度</ThemeText>
-                <Slider
-                    style={style.slider}
-                    minimumTrackTintColor={'#cccccc'}
-                    maximumTrackTintColor={'#999999'}
-                    thumbTintColor={'#dddddd'}
-                    minimumValue={0}
-                    maximumValue={30}
-                    onSlidingComplete={val => {
-                        Config.set('setting.theme.backgroundBlur', val);
-                    }}
-                    value={theme?.backgroundBlur ?? 20}
-                />
-            </View>
-            <View style={style.sliderWrapper}>
-                <ThemeText>透明度</ThemeText>
-                <Slider
-                    style={style.slider}
-                    minimumTrackTintColor={'#cccccc'}
-                    maximumTrackTintColor={'#999999'}
-                    thumbTintColor={'#dddddd'}
-                    minimumValue={0.3}
-                    maximumValue={1}
-                    onSlidingComplete={val => {
-                        Config.set('setting.theme.backgroundOpacity', val);
-                    }}
-                    value={theme?.backgroundOpacity ?? 0.7}
-                />
-            </View>
         </View>
     );
 }
@@ -170,16 +142,5 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         paddingHorizontal: rpx(24),
-    },
-    sliderWrapper: {
-        marginTop: rpx(28),
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    slider: {
-        width: rpx(550),
-        height: rpx(40),
     },
 });
