@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Appearance, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 // import Config from '@/core/config';
 import ListItem from '@/components/base/listItem';
 import ThemeSwitch from '@/components/base/switch';
 import Config from '@/core/config';
+import Theme from '@/core/theme';
 
 export default function Mode() {
     const mode = Config.useConfig('setting.theme.followSystem') ?? true;
@@ -25,6 +26,15 @@ export default function Mode() {
                             <ThemeSwitch
                                 value={mode}
                                 onValueChange={e => {
+                                    if (e) {
+                                        const colorScheme =
+                                            Appearance.getColorScheme();
+                                        if (colorScheme === 'dark') {
+                                            Theme.setTheme('p-dark');
+                                        } else if (colorScheme === 'light') {
+                                            Theme.setTheme('p-light');
+                                        }
+                                    }
                                     Config.set('setting.theme.followSystem', e);
                                 }}
                             />

@@ -94,7 +94,10 @@ export default function Background() {
                     title="浅色模式"
                     selected={theme?.selectedTheme === 'p-light'}
                     onPress={() => {
-                        Theme.setTheme('p-light');
+                        if (theme?.selectedTheme !== 'p-light') {
+                            Theme.setTheme('p-light');
+                            Config.set('setting.theme.followSystem', false);
+                        }
                     }}
                 />
                 <ThemeCard
@@ -102,7 +105,10 @@ export default function Background() {
                     title="深色模式"
                     selected={theme?.selectedTheme === 'p-dark'}
                     onPress={() => {
-                        Theme.setTheme('p-dark');
+                        if (theme?.selectedTheme !== 'p-dark') {
+                            Theme.setTheme('p-dark');
+                            Config.set('setting.theme.followSystem', false);
+                        }
                     }}
                 />
 
@@ -111,6 +117,10 @@ export default function Background() {
                     selected={theme?.selectedTheme === 'custom'}
                     preview={theme?.background}
                     onPress={() => {
+                        if (theme?.selectedTheme !== 'custom') {
+                            Theme.setTheme('custom');
+                            Config.set('setting.theme.followSystem', false);
+                        }
                         navigate(ROUTE_PATH.SET_CUSTOM_THEME);
                         // showPanel('ColorPicker');
                     }}

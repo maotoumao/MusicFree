@@ -48,7 +48,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
                                 style.input,
                                 {
                                     color: colors.text,
-                                    backgroundColor: Color(colors.primary)
+                                    backgroundColor: Color(colors.placeholder)
                                         .lighten(0.7)
                                         .toString(),
                                 },
@@ -58,6 +58,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
                             maxLength={80}
                         />
                         <Button
+                            style={style.searchBtn}
                             onPress={() => {
                                 searchLrc(input, 1);
                             }}>
@@ -98,6 +99,9 @@ const style = StyleSheet.create({
         lineHeight: fontSizeConst.content * 1.5,
         padding: rpx(12),
         flex: 1,
+    },
+    searchBtn: {
+        marginLeft: rpx(12),
     },
 });
 

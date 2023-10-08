@@ -258,6 +258,7 @@ async function downloadNext() {
         },
     });
     nextDownloadItem = {...nextDownloadItem, jobId};
+    // TODO: 检测文件夹是否存在
     try {
         await promise;
         /** 下载完成 */

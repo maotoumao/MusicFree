@@ -157,8 +157,11 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 ? `已关联歌词 ${associatedLrc.platform}@${associatedLrc.id}`
                 : '关联歌词',
             onPress: async () => {
-                showPanel('AssociateLrc', {
-                    musicItem,
+                // showPanel('AssociateLrc', {
+                //     musicItem,
+                // });
+                showPanel('SearchLrc', {
+                    musicItem: MusicQueue.getCurrentMusicItem(),
                 });
             },
         },
