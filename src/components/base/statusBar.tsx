@@ -11,6 +11,8 @@ export default function (props: IStatusBarProps) {
     useEffect(() => {
         if (barStyle) {
             StatusBar.setBarStyle(barStyle);
+        } else {
+            StatusBar.setBarStyle('light-content');
         }
     }, [barStyle]);
 

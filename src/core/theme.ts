@@ -207,6 +207,7 @@ const Theme = {
     setBackground,
     setColors,
     useTheme: themeStore.useValue,
+    getTheme: themeStore.getValue,
     useBackground: backgroundStore.useValue,
     configableColorKey,
     colorDesc,
