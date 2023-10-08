@@ -96,7 +96,7 @@ function setup() {
 function setTheme(
     themeName: string,
     extra?: {
-        colors?: CustomizedColors;
+        colors?: Partial<CustomizedColors>;
         background?: IBackgroundInfo;
     },
 ) {
@@ -120,7 +120,7 @@ function setTheme(
 
     if (extra?.background) {
         const currentBg = backgroundStore.getValue();
-        let newBg = {
+        let newBg: IBackgroundInfo = {
             blur: 20,
             opacity: 0.6,
             ...(currentBg ?? {}),
@@ -131,6 +131,9 @@ function setTheme(
         }
         if (extra.background.opacity) {
             newBg.opacity = extra.background.opacity;
+        }
+        if (extra.background.url) {
+            newBg.url = extra.background.url;
         }
 
         Config.set('setting.theme.background', newBg.url);
@@ -184,7 +187,7 @@ const configableColorKey: Array<keyof CustomizedColors> = [
     'appBar',
     'musicBar',
     'primary',
-    'background',
+    '_background',
     'headerText',
     'text',
 ];
@@ -195,7 +198,7 @@ const colorDesc: Record<string, string> = {
     text: '文字颜色',
     musicBar: '音乐栏背景色',
     primary: '主题色',
-    background: '背景色',
+    _background: '背景色',
 };
 
 const Theme = {

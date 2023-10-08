@@ -6,13 +6,26 @@ import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import Button from '@/components/base/button';
 import Body from './body';
+import Theme from '@/core/theme';
+import {useNavigation} from '@react-navigation/native';
 
 export default function SetCustomTheme() {
+    const navigation = useNavigation();
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <AppBar
                 withStatusBar
-                actionComponent={<Button style={styles.submit}>完成</Button>}>
+                actionComponent={
+                    <Button
+                        style={styles.submit}
+                        onPress={() => {
+                            Theme.setTheme('custom');
+                            navigation.goBack();
+                        }}
+                        fontColor="headerText">
+                        完成
+                    </Button>
+                }>
                 自定义背景
             </AppBar>
             <Body />

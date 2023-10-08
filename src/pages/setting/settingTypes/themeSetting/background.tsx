@@ -108,7 +108,8 @@ export default function Background() {
 
                 <ThemeCard
                     title="自定义背景"
-                    selected={false}
+                    selected={theme?.selectedTheme === 'custom'}
+                    preview={theme?.background}
                     onPress={() => {
                         navigate(ROUTE_PATH.SET_CUSTOM_THEME);
                         // showPanel('ColorPicker');

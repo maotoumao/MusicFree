@@ -33,13 +33,6 @@ export default function Body() {
                 uri.lastIndexOf('.'),
             )}`;
             await copyFile(uri, bgPath);
-            if (theme.id !== 'custom') {
-                Theme.setTheme('custom', {
-                    background: {
-                        url: `file://${bgPath}#${Date.now()}`,
-                    },
-                });
-            }
 
             const colorsResult = await ImageColors.getColors(uri, {
                 fallback: '#ffffff',
@@ -64,6 +57,19 @@ export default function Body() {
                         ? colorsResult.secondary
                         : colorsResult.vibrant,
             };
+            Theme.setTheme('custom', {
+                colors: {
+                    appBar: colors.primary,
+                    primary: Color(
+                        0xffffff - Color(colors.primary).rgbNumber(),
+                        'rgb',
+                    ).toString(),
+                    musicBar: colors.average,
+                },
+                background: {
+                    url: `file://${bgPath}#${Date.now()}`,
+                },
+            });
             console.log(colors);
             // TODO
             // Config.set('setting.theme.colors', {
@@ -90,10 +96,11 @@ export default function Body() {
                 <ThemeText>模糊度</ThemeText>
                 <Slider
                     style={styles.slider}
-                    minimumTrackTintColor={'#cccccc'}
-                    maximumTrackTintColor={'#999999'}
-                    thumbTintColor={'#dddddd'}
+                    minimumTrackTintColor={theme.colors.primary}
+                    maximumTrackTintColor={theme.colors.text ?? '#999999'}
+                    thumbTintColor={theme.colors.primary}
                     minimumValue={0}
+                    step={1}
                     maximumValue={30}
                     onSlidingComplete={val => {
                         Theme.setBackground({
@@ -107,10 +114,11 @@ export default function Body() {
                 <ThemeText>透明度</ThemeText>
                 <Slider
                     style={styles.slider}
-                    minimumTrackTintColor={'#cccccc'}
-                    maximumTrackTintColor={'#999999'}
-                    thumbTintColor={'#dddddd'}
+                    minimumTrackTintColor={theme.colors.primary}
+                    maximumTrackTintColor={theme.colors.text ?? '#999999'}
+                    thumbTintColor={theme.colors.primary}
                     minimumValue={0.3}
+                    step={0.01}
                     maximumValue={1}
                     onSlidingComplete={val => {
                         Theme.setBackground({
@@ -129,6 +137,11 @@ export default function Body() {
                                 showPanel('ColorPicker', {
                                     // @ts-ignore
                                     defaultColor: theme.colors[key],
+                                    onSelected(color) {
+                                        Theme.setColors({
+                                            [key]: color.hexa().toString(),
+                                        });
+                                    },
                                 });
                             }}
                             style={styles.colorItemBlockContainer}>

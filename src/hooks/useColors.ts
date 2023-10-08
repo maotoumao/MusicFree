@@ -33,6 +33,8 @@ export interface CustomizedColors extends IColors {
     placeholder?: string;
     /** 菜单背景色 */
     backdrop?: string;
+    // 真正的背景色
+    _background?: string;
 }
 
 export default function useColors() {
