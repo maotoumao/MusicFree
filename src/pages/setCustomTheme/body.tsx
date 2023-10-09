@@ -60,18 +60,13 @@ export default function Body() {
             Theme.setTheme('custom', {
                 colors: {
                     appBar: colors.primary,
-                    primary: Color(
-                        0xffffff - Color(colors.primary).rgbNumber(),
-                        'rgb',
-                    ).toString(),
-                    musicBar: colors.average,
+                    primary: Color(colors.primary).lighten(2).toString(),
+                    musicBar: colors.primary,
                 },
                 background: {
                     url: `file://${bgPath}#${Date.now()}`,
                 },
             });
-            console.log(colors);
-            // TODO
             // Config.set('setting.theme.colors', {
             //     primary: primaryColor,
             //     textHighlight: textHighlight,

@@ -137,7 +137,7 @@ function LyricResultBodyWrapper() {
                     {..._}
                     scrollEnabled
                     style={{
-                        backgroundColor: colors.backdrop,
+                        backgroundColor: 'transparent',
                         shadowColor: 'transparent',
                         borderColor: 'transparent',
                     }}

@@ -69,9 +69,6 @@ function ResultPanel() {
                     }}
                 />
             )}
-            style={{
-                backgroundColor: colors.background,
-            }}
             renderScene={renderScene}
             onIndexChange={setIndex}
             initialLayout={{width: vw(100)}}

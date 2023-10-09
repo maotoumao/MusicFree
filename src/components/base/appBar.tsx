@@ -172,7 +172,7 @@ export default function AppBar(props: IAppBarProps) {
                         pointerEvents={showMenu ? 'auto' : 'none'}
                         style={[
                             {
-                                borderBottomColor: colors.backdrop,
+                                borderBottomColor: colors.background,
                                 left:
                                     (menuIconLayoutRef.current?.x ?? 0) +
                                     (menuIconLayoutRef.current?.width ?? 0) /

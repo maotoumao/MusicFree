@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
@@ -8,7 +8,6 @@ import ThemeSwitch from '@/components/base/switch';
 import timeformat from '@/utils/timeformat';
 import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
-import Color from 'color';
 import {atom, useAtom, useAtomValue, useSetAtom} from 'jotai';
 import {debounce} from 'lodash';
 import Divider from '@/components/base/divider';
@@ -242,10 +241,10 @@ const numScrollStyles = StyleSheet.create({
 
 export default function TimingClose() {
     const colors = useColors();
-    const highlightBgColor = useMemo(
-        () => Color(colors.textHighlight).alpha(0.3).toString(),
-        [colors],
-    );
+    // const highlightBgColor = useMemo(
+    //     () => Color(colors.textHighlight).alpha(0.3).toString(),
+    //     [colors],
+    // );
 
     const [selectedShortCut, setSelectedShortCut] = useAtom(shortCutAtom);
 
@@ -293,14 +292,14 @@ export default function TimingClose() {
                                             selectedShortCut === time
                                                 ? {
                                                       backgroundColor:
-                                                          highlightBgColor,
+                                                          colors.primary,
                                                   }
                                                 : undefined,
                                         ]}>
                                         <ThemeText
                                             fontColor={
                                                 selectedShortCut === time
-                                                    ? 'highlight'
+                                                    ? 'headerText'
                                                     : 'normal'
                                             }>
                                             {time ? `${time}min` : '自定义'}

@@ -33,7 +33,7 @@ export default function TopListBody() {
                 <TabBar
                     {...props}
                     style={{
-                        backgroundColor: colors.backdrop,
+                        backgroundColor: 'transparent',
                         shadowColor: 'transparent',
                         borderColor: 'transparent',
                     }}
@@ -63,9 +63,6 @@ export default function TopListBody() {
                     }}
                 />
             )}
-            style={{
-                backgroundColor: colors.background,
-            }}
             renderScene={renderScene}
             onIndexChange={setIndex}
             initialLayout={{width: rpx(750)}}

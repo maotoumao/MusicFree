@@ -6,7 +6,6 @@ import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import Button from '@/components/base/button';
 import Body from './body';
-import Theme from '@/core/theme';
 import {useNavigation} from '@react-navigation/native';
 
 export default function SetCustomTheme() {
@@ -19,7 +18,6 @@ export default function SetCustomTheme() {
                     <Button
                         style={styles.submit}
                         onPress={() => {
-                            Theme.setTheme('custom');
                             navigation.goBack();
                         }}
                         fontColor="headerText">

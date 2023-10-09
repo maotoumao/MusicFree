@@ -132,3 +132,11 @@ export function trimHash(url: string) {
 export function escapeCharacter(str?: string) {
     return str !== undefined ? `${str}`.replace(/\//g, '_') : '';
 }
+
+export function getDirectory(path: string) {
+    const lastSlash = path.lastIndexOf('/');
+    if (lastSlash === -1) {
+        return path;
+    }
+    return path.slice(0, lastSlash);
+}

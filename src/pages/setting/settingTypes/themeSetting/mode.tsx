@@ -9,7 +9,7 @@ import Config from '@/core/config';
 import Theme from '@/core/theme';
 
 export default function Mode() {
-    const mode = Config.useConfig('setting.theme.followSystem') ?? true;
+    const mode = Config.useConfig('setting.theme.followSystem') ?? false;
     return (
         <View>
             <ThemeText
