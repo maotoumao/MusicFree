@@ -11,7 +11,6 @@ import rpx from '@/utils/rpx';
 import {StyleSheet, View} from 'react-native';
 import ThemeText from '@/components/base/themeText';
 import IconTextButton from '@/components/base/iconTextButton';
-import Color from 'color';
 
 interface IPluginItemProps {
     plugin: Plugin;
@@ -137,9 +136,7 @@ export default function PluginItem(props: IPluginItemProps) {
             style={[
                 styles.container,
                 {
-                    backgroundColor: Color(colors.backdrop)
-                        .alpha(0.6)
-                        .toString(),
+                    backgroundColor: colors.card,
                 },
             ]}>
             <View style={styles.header}>

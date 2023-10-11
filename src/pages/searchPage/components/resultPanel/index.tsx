@@ -40,7 +40,7 @@ function ResultPanel() {
                     {...props}
                     scrollEnabled
                     style={{
-                        backgroundColor: colors.backdrop,
+                        backgroundColor: colors.tabBar,
                         shadowColor: 'transparent',
                         borderColor: 'transparent',
                     }}

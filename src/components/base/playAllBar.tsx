@@ -4,7 +4,6 @@ import rpx from '@/utils/rpx';
 import {iconSizeConst} from '@/constants/uiConst';
 import MusicQueue from '@/core/musicQueue';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import Color from 'color';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
@@ -21,15 +20,7 @@ export default function (props: IProps) {
     const navigate = useNavigate();
 
     return (
-        <View
-            style={[
-                style.topWrapper,
-                {
-                    backgroundColor: Color(colors.primary)
-                        .alpha(0.15)
-                        .toString(),
-                },
-            ]}>
+        <View style={style.topWrapper}>
             <Pressable
                 style={style.playAll}
                 onPress={() => {

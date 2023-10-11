@@ -79,7 +79,9 @@ export default function Header(props: IHeaderProps) {
                     </View>
 
                     {artistItem.fans ? (
-                        <ThemeText fontSize="subTitle" fontColor="secondary">
+                        <ThemeText
+                            fontSize="subTitle"
+                            fontColor="textSecondary">
                             粉丝数: {artistItem.fans}
                         </ThemeText>
                     ) : null}
@@ -90,7 +92,7 @@ export default function Header(props: IHeaderProps) {
                 style={styles.description}
                 numberOfLines={2}
                 ellipsizeMode="tail"
-                fontColor="secondary"
+                fontColor="textSecondary"
                 fontSize="description">
                 {artistItem?.description ?? ''}
             </ThemeText>

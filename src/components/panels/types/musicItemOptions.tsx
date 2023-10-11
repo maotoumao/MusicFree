@@ -211,7 +211,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                 {musicItem?.title}
                             </ThemeText>
                             <ThemeText
-                                fontColor="secondary"
+                                fontColor="textSecondary"
                                 fontSize="description">
                                 {musicItem?.artist}{' '}
                                 {musicItem?.album ? `- ${musicItem.album}` : ''}

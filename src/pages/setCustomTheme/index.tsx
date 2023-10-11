@@ -20,7 +20,7 @@ export default function SetCustomTheme() {
                         onPress={() => {
                             navigation.goBack();
                         }}
-                        fontColor="headerText">
+                        fontColor="appBarText">
                         完成
                     </Button>
                 }>

@@ -3,7 +3,6 @@ import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import MusicSheet from '@/core/musicSheet';
 import {fontSizeConst} from '@/constants/uiConst';
-import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 
@@ -60,9 +59,7 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
                             style.input,
                             {
                                 color: colors.text,
-                                backgroundColor: Color(colors.placeholder)
-                                    .lighten(0.7)
-                                    .toString(),
+                                backgroundColor: colors.placeholder,
                             },
                         ]}
                         placeholderTextColor={colors.textSecondary}

@@ -1,15 +1,15 @@
-import {ColorKey} from '@/constants/uiConst';
 import React from 'react';
 import {Pressable} from 'react-native';
 import ThemeText from './themeText';
 import rpx from '@/utils/rpx';
+import {CustomizedColors} from '@/hooks/useColors';
 
 interface IButtonProps {
     withHorizonalPadding?: boolean;
     style?: any;
     hitSlop?: number;
     children: string;
-    fontColor?: ColorKey;
+    fontColor?: keyof CustomizedColors;
     onPress?: () => void;
 }
 export default function (props: IButtonProps) {

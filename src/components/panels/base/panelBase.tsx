@@ -152,7 +152,7 @@ export default function (props: IPanelBaseProps) {
             style={[
                 style.wrapper,
                 {
-                    backgroundColor: colors.background,
+                    backgroundColor: colors.backdrop,
                     height:
                         orientation === 'horizonal'
                             ? vh(100) - safeAreaInsets.top
@@ -200,7 +200,7 @@ const style = StyleSheet.create({
         zIndex: 15000,
     },
     mask: {
-        backgroundColor: '#333333',
+        backgroundColor: '#000',
         opacity: 0.5,
     },
     wrapper: {

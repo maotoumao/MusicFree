@@ -1,5 +1,5 @@
 import React, {useMemo, useRef, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import PanelBase from '../base/panelBase';
 import LinearGradient from 'react-native-linear-gradient';
@@ -9,6 +9,7 @@ import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Button from '@/components/base/button';
 import {hidePanel} from '../usePanel';
 import Divider from '@/components/base/divider';
+import {ImgAsset} from '@/constants/assetsConst';
 
 interface IColorPickerProps {
     defaultColor?: string;
@@ -240,19 +241,31 @@ export default function ColorPicker(props: IColorPickerProps) {
                                         },
                                     ]}
                                 />
+                                <Image
+                                    resizeMode="repeat"
+                                    source={ImgAsset.transparentBg}
+                                    style={styles.transparentBg}
+                                />
                             </LinearGradient>
                         </GestureDetector>
                     </View>
                     <View style={styles.showArea}>
-                        <View
-                            style={[
-                                styles.showBar,
-                                {
-                                    backgroundColor:
-                                        currentColorWithAlpha.toString(),
-                                },
-                            ]}
-                        />
+                        <View style={[styles.showBar]}>
+                            <Image
+                                resizeMode="repeat"
+                                source={ImgAsset.transparentBg}
+                                style={styles.transparentBg}
+                            />
+                            <View
+                                style={[
+                                    styles.showBarContent,
+                                    {
+                                        backgroundColor:
+                                            currentColorWithAlpha.toString(),
+                                    },
+                                ]}
+                            />
+                        </View>
                         <ThemeText style={styles.colorStr}>
                             {currentColorWithAlpha.rgb().hexa().toString()}
                         </ThemeText>
@@ -323,11 +336,18 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
     showBar: {
-        width: rpx(72),
-        height: rpx(56),
+        width: rpx(76),
+        height: rpx(50),
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: '#ccc',
+    },
+    showBarContent: {
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        left: 0,
+        top: 0,
     },
     showArea: {
         width: '100%',
@@ -338,5 +358,13 @@ const styles = StyleSheet.create({
     },
     colorStr: {
         marginLeft: rpx(24),
+    },
+    transparentBg: {
+        position: 'absolute',
+        zIndex: -1,
+        width: '100%',
+        height: '100%',
+        left: 0,
+        top: 0,
     },
 });

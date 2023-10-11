@@ -21,8 +21,7 @@ export const ImgAsset = {
         175: require('@/assets/imgs/175x.png'),
         200: require('@/assets/imgs/200x.png'),
     } as any,
-    standardQuality: require('@/assets/imgs/standard-quality.png'),
-    lowQuality: require,
+    transparentBg: require('@/assets/imgs/transparent-bg.png'),
 } as const;
 
 export const SoundAsset = {

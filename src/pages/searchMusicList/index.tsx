@@ -42,7 +42,7 @@ export default function SearchMusicList() {
             <AppBar>
                 <Input
                     style={style.searchBar}
-                    fontColor={colors.headerText}
+                    fontColor={colors.appBarText}
                     placeholder="在列表中搜索歌曲"
                     accessible
                     accessibilityLabel="搜索框"

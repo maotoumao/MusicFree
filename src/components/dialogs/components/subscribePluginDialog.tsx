@@ -84,7 +84,7 @@ export default function SubscribePluginDialog(
                 </View>
                 <View style={style.options}>
                     <Button
-                        fontColor="highlight"
+                        fontColor="primary"
                         onPress={() => {
                             onSubmit(
                                 {

@@ -299,8 +299,8 @@ export default function TimingClose() {
                                         <ThemeText
                                             fontColor={
                                                 selectedShortCut === time
-                                                    ? 'headerText'
-                                                    : 'normal'
+                                                    ? 'appBarText'
+                                                    : 'text'
                                             }>
                                             {time ? `${time}min` : '自定义'}
                                         </ThemeText>

@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
-import Color from 'color';
 import useColors from '@/hooks/useColors';
 
 interface ITagProps {
@@ -13,17 +12,17 @@ export default function Tag(props: ITagProps) {
     return (
         <View
             style={[
-                style.tag,
-                {backgroundColor: Color(colors.text).negate().toString()},
+                styles.tag,
+                {backgroundColor: colors.card, borderColor: colors.divider},
             ]}>
-            <ThemeText style={style.tagText} fontSize="tag">
+            <ThemeText style={styles.tagText} fontSize="tag">
                 {props.tagName}
             </ThemeText>
         </View>
     );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     tag: {
         height: rpx(32),
         marginLeft: rpx(12),
@@ -32,6 +31,8 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flexShrink: 0,
+        borderWidth: 1,
+        borderStyle: 'solid',
     },
     tagText: {
         textAlignVertical: 'center',

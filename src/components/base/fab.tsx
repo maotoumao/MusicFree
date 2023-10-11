@@ -20,14 +20,14 @@ export default function Fab(props: IFabProps) {
             style={[
                 styles.container,
                 {
-                    backgroundColor: colors.primary,
+                    backgroundColor: colors.backdrop,
                     shadowColor: colors.shadow,
                 },
             ]}>
             {icon ? (
                 <Icon
                     name={icon}
-                    color={colors.headerText}
+                    color={colors.text}
                     size={iconSizeConst.normal}
                 />
             ) : null}

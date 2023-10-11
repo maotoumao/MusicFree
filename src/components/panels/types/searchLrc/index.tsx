@@ -3,7 +3,6 @@ import {StyleSheet, Text, View} from 'react-native';
 import rpx, {vmax, vw} from '@/utils/rpx';
 
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 import PanelBase from '../../base/panelBase';
@@ -48,9 +47,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
                                 style.input,
                                 {
                                     color: colors.text,
-                                    backgroundColor: Color(colors.placeholder)
-                                        .lighten(0.7)
-                                        .toString(),
+                                    backgroundColor: colors.placeholder,
                                 },
                             ]}
                             placeholderTextColor={colors.textSecondary}

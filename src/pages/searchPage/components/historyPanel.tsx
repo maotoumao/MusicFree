@@ -45,7 +45,7 @@ export default function () {
                             历史记录
                         </ThemeText>
                         <Button
-                            fontColor="secondary"
+                            fontColor="textSecondary"
                             onPress={async () => {
                                 await removeAllHistory();
                                 getHistory().then(setHistory);

@@ -6,28 +6,33 @@ import {
 } from '@react-navigation/native';
 import {GlobalState} from '@/utils/stateMapper';
 import {CustomizedColors} from '@/hooks/useColors';
+import Color from 'color';
 
 export const lightTheme = {
     id: 'p-light',
     ..._DefaultTheme,
     colors: {
         ..._DefaultTheme.colors,
-        primary: '#f17d34',
         background: 'transparent',
-        _background: '#fafafa',
-        divider: 'rgba(0,0,0,0.1)',
         text: '#333333',
+        textSecondary: Color('#333333').alpha(0.7).toString(),
+        primary: '#f17d34',
+        pageBackground: '#fafafa',
+        shadow: '#000',
+        appBar: '#f17d34',
+        appBarText: '#fefefe',
+        musicBar: '#f2f2f2',
+        musicBarText: '#333333',
+        divider: 'rgba(0,0,0,0.1)',
         listActive: 'rgba(0,0,0,0.1)', // 在手机上表现是ripple
         mask: 'rgba(51,51,51,0.2)',
-        shadow: '#000',
         backdrop: '#f0f0f0',
+        tabBar: '#f0f0f0',
         placeholder: '#eaeaea',
         success: '#08A34C',
         danger: '#FC5F5F',
         info: '#0A95C8',
-        musicBar: '#fff',
-        appBar: '#f17d34',
-        headerText: '#fefefe',
+        card: '#e0e0e033',
     },
 };
 
@@ -36,22 +41,26 @@ export const darkTheme = {
     ..._DarkTheme,
     colors: {
         ..._DarkTheme.colors,
-        primary: '#3FA3B5',
         background: 'transparent',
-        _background: '#202020',
-        divider: 'rgba(255,255,255,0.1)',
         text: '#fcfcfc',
+        textSecondary: Color('#fcfcfc').alpha(0.7).toString(),
+        primary: '#3FA3B5',
+        pageBackground: '#202020',
+        shadow: '#999',
+        appBar: '#262626',
+        appBarText: '#fcfcfc',
+        musicBar: '#262626',
+        musicBarText: '#fcfcfc',
+        divider: 'rgba(255,255,255,0.1)',
         listActive: 'rgba(255,255,255,0.1)', // 在手机上表现是ripple
         mask: 'rgba(33,33,33,0.8)',
-        shadow: '#666',
         backdrop: '#303030',
+        tabBar: '#303030',
         placeholder: '#424242',
         success: '#08A34C',
         danger: '#FC5F5F',
         info: '#0A95C8',
-        appBar: '#262626',
-        musicBar: '#262626',
-        headerText: '#fcfcfc',
+        card: '#33333366',
     },
 };
 
@@ -184,21 +193,29 @@ function setBackground(backgroundInfo: Partial<IBackgroundInfo>) {
 }
 
 const configableColorKey: Array<keyof CustomizedColors> = [
-    'appBar',
-    'musicBar',
-    'primary',
-    '_background',
-    'headerText',
     'text',
+    'primary',
+    'appBar',
+    'appBarText',
+    'musicBar',
+    'musicBarText',
+    'pageBackground',
+    'backdrop',
+    'card',
+    'placeholder',
 ];
 
 const colorDesc: Record<string, string> = {
-    appBar: '标题栏背景色',
-    headerText: '标题栏文字颜色',
     text: '文字颜色',
-    musicBar: '音乐栏背景色',
     primary: '主题色',
-    _background: '背景色',
+    appBar: '标题栏背景色',
+    appBarText: '标题栏文字颜色',
+    musicBar: '音乐栏背景色',
+    musicBarText: '音乐栏文字颜色',
+    pageBackground: '页面背景色',
+    backdrop: '弹窗、浮层背景色',
+    card: '卡片背景色',
+    placeholder: '输入框背景色',
 };
 
 const Theme = {

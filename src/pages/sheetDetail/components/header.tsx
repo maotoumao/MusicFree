@@ -2,9 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicSheet from '@/core/musicSheet';
-import LinearGradient from 'react-native-linear-gradient';
 import ThemeText from '@/components/base/themeText';
-import Color from 'color';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import {useParams} from '@/entry/router';
@@ -17,46 +15,33 @@ export default function Header() {
     const colors = useColors();
 
     return (
-        <View>
-            <LinearGradient
-                colors={[
-                    Color(colors.primary).alpha(0.8).toString(),
-                    Color(colors.primary).alpha(0.15).toString(),
-                ]}
-                style={style.wrapper}>
-                <View style={style.content}>
-                    <FastImage
-                        style={style.coverImg}
-                        uri={sheet?.coverImg}
-                        emptySrc={ImgAsset.albumDefault}
-                    />
-                    <View style={style.details}>
-                        <ThemeText fontSize="title">{sheet?.title}</ThemeText>
-                        <ThemeText fontColor="secondary" fontSize="subTitle">
-                            共{sheet?.musicList.length ?? 0}首
-                        </ThemeText>
-                    </View>
+        <View style={{backgroundColor: colors.card}}>
+            <View style={style.content}>
+                <FastImage
+                    style={style.coverImg}
+                    uri={sheet?.coverImg}
+                    emptySrc={ImgAsset.albumDefault}
+                />
+                <View style={style.details}>
+                    <ThemeText fontSize="title">{sheet?.title}</ThemeText>
+                    <ThemeText fontColor="textSecondary" fontSize="subTitle">
+                        共{sheet?.musicList.length ?? 0}首
+                    </ThemeText>
                 </View>
-            </LinearGradient>
+            </View>
             <PlayAllBar musicList={sheet.musicList} sheetName={sheet.title} />
         </View>
     );
 }
 
 const style = StyleSheet.create({
-    wrapper: {
+    content: {
         width: '100%',
         height: rpx(300),
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
         paddingHorizontal: rpx(24),
-    },
-    content: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        flex: 1,
     },
     coverImg: {
         width: rpx(210),

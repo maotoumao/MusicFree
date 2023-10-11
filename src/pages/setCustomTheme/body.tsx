@@ -14,6 +14,8 @@ import Slider from '@react-native-community/slider';
 import Theme from '@/core/theme';
 import Color from 'color';
 import {showPanel} from '@/components/panels/usePanel';
+import {grayRate} from '@/utils/colorUtil';
+import {CustomizedColors} from '@/hooks/useColors';
 
 export default function Body() {
     const theme = Theme.useTheme();
@@ -57,12 +59,54 @@ export default function Body() {
                         ? colorsResult.secondary
                         : colorsResult.vibrant,
             };
-            Theme.setTheme('custom', {
-                colors: {
+
+            const primaryGrayRate = grayRate(colors.primary!);
+
+            let themeColors: Partial<CustomizedColors>;
+            if (primaryGrayRate < -0.4) {
+                const primaryColor = Color(colors.primary!);
+
+                console.log(
+                    colors.primary,
+                    primaryGrayRate,
+                    primaryColor
+                        .whiten(3 * primaryGrayRate)
+                        .hex()
+                        .toString(),
+                );
+                themeColors = {
                     appBar: colors.primary,
-                    primary: Color(colors.primary).lighten(2).toString(),
+                    primary: primaryColor
+                        .darken(primaryGrayRate * 5)
+                        .toString(),
                     musicBar: colors.primary,
-                },
+                    card: 'rgba(0,0,0,0.2)',
+                    tabBar: primaryColor.alpha(0.2).toString(),
+                };
+            } else if (primaryGrayRate > 0.4) {
+                themeColors = {
+                    appBar: colors.primary,
+                    primary: Color(colors.primary)
+                        .darken(primaryGrayRate * 5)
+                        .toString(),
+                    musicBar: colors.primary,
+                    card: 'rgba(0,0,0,0.2)',
+                };
+            } else {
+                // const primaryColor = Color(colors.primary!);
+
+                themeColors = {
+                    appBar: colors.primary,
+                    primary: Color(colors.primary)
+                        .saturate(Math.abs(primaryGrayRate) * 2 + 2)
+                        .toString(),
+                    musicBar: colors.primary,
+                    card: 'rgba(0,0,0,0.2)',
+                };
+            }
+
+            Theme.setTheme('custom', {
+                colors: themeColors,
                 background: {
                     url: `file://${bgPath}#${Date.now()}`,
                 },
@@ -140,15 +184,22 @@ export default function Body() {
                                 });
                             }}
                             style={styles.colorItemBlockContainer}>
-                            <View
-                                style={[
-                                    {
-                                        /** @ts-ignore */
-                                        backgroundColor: theme.colors[key],
-                                    },
-                                    styles.colorBlock,
-                                ]}
-                            />
+                            <View style={[styles.colorBlockContainer]}>
+                                <Image
+                                    resizeMode="repeat"
+                                    emptySrc={ImgAsset.transparentBg}
+                                    style={styles.transparentBg}
+                                />
+                                <View
+                                    style={[
+                                        {
+                                            /** @ts-ignore */
+                                            backgroundColor: theme.colors[key],
+                                        },
+                                        styles.colorBlock,
+                                    ]}
+                                />
+                            </View>
                             <ThemeText
                                 fontSize="subTitle"
                                 style={styles.colorText}>
@@ -203,12 +254,20 @@ const styles = StyleSheet.create({
         flexBasis: '40%',
         marginBottom: rpx(36),
     },
-    colorBlock: {
+    colorBlockContainer: {
         width: rpx(76),
         height: rpx(50),
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: '#ccc',
+    },
+    colorBlock: {
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 2,
     },
     colorItemBlockContainer: {
         marginTop: rpx(18),
@@ -217,5 +276,13 @@ const styles = StyleSheet.create({
     },
     colorText: {
         marginLeft: rpx(8),
+    },
+    transparentBg: {
+        position: 'absolute',
+        zIndex: -1,
+        width: '100%',
+        height: '100%',
+        left: 0,
+        top: 0,
     },
 });

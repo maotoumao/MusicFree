@@ -79,7 +79,7 @@ export default function MusicItem(props: IMusicItemProps) {
                         <ThemeText
                             numberOfLines={1}
                             fontSize="description"
-                            fontColor="secondary">
+                            fontColor="textSecondary">
                             {musicItem.artist}
                             {musicItem.album ? ` - ${musicItem.album}` : ''}
                         </ThemeText>

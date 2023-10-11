@@ -10,7 +10,7 @@ export default function NoPlugin() {
             <ThemeText
                 style={style.mt}
                 fontSize="subTitle"
-                fontColor="secondary">
+                fontColor="textSecondary">
                 先去侧边栏-插件设置里安装插件吧~
             </ThemeText>
         </View>

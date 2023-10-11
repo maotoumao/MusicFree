@@ -10,7 +10,6 @@ import rpx from '@/utils/rpx';
 import useOrientation from '@/hooks/useOrientation';
 import {showDialog} from '@/components/dialogs/useDialog';
 import useColors from '@/hooks/useColors';
-import Color from 'color';
 
 function MySheets() {
     const orientation = useOrientation();
@@ -65,9 +64,7 @@ function MySheets() {
                     ? style.horizonalWrapper
                     : undefined,
                 {
-                    backgroundColor: Color(colors.backdrop)
-                        .alpha(0.6)
-                        .toString(),
+                    backgroundColor: colors.card,
                 },
             ]}
             data={musicSheets ?? []}

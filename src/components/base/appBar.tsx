@@ -76,7 +76,7 @@ export default function AppBar(props: IAppBarProps) {
     const bgColor = color(colors.appBar ?? colors.primary)
         .alpha(backgroundOpacity)
         .toString();
-    const contentColor = _color ?? colors.headerText;
+    const contentColor = _color ?? colors.appBarText;
 
     const [showMenu, setShowMenu] = useState(false);
     const menuIconLayoutRef = useRef<LayoutRectangle>();

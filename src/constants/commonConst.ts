@@ -67,6 +67,18 @@ const animationFast = {
     easing: ANIMATION_EASING,
 };
 
+const animationNormal = {
+    duration: 250,
+    easing: ANIMATION_EASING,
+};
+
+const animationSlow = {
+    duration: 500,
+    easing: ANIMATION_EASING,
+};
+
 export const timingConfig = {
     animationFast,
+    animationNormal,
+    animationSlow,
 };

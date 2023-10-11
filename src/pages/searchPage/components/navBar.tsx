@@ -56,7 +56,7 @@ export default function NavBar() {
                         style.searchBar,
                         {
                             color: colors.text,
-                            backgroundColor: colors.placeholder,
+                            backgroundColor: colors.pageBackground,
                         },
                     ]}
                     accessible
@@ -92,7 +92,7 @@ export default function NavBar() {
             <Button
                 style={[style.button]}
                 hitSlop={0}
-                fontColor={'headerText'}
+                fontColor={'appBarText'}
                 onPress={onSearchSubmit}>
                 搜索
             </Button>

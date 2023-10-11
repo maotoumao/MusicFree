@@ -5,36 +5,36 @@ import {useMemo} from 'react';
 type IColors = Theme['colors'];
 
 export interface CustomizedColors extends IColors {
-    /** 二级颜色 */
-    secondary?: string;
     /** 普通文字 */
     text: string;
     /** 副标题文字颜色 */
     textSecondary?: string;
-    /** 高亮文本颜色 */
+    /** 高亮文本颜色，也就是主色调 */
     textHighlight?: string;
-    /** 背景高亮颜色 */
-    backgroundHighlight?: string;
     /** 页面背景 */
     pageBackground?: string;
     /** 阴影 */
     shadow?: string;
     /** 标题栏颜色 */
     appBar?: string;
+    /** 标题栏字体颜色 */
+    appBarText?: string;
     /** 音乐栏颜色 */
     musicBar?: string;
+    /** 音乐栏字体颜色 */
+    musicBarText?: string;
     /** 分割线 */
     divider?: string;
-    /** 标题字体，和primary对比的字体 */
-    headerText?: string;
     /** 高亮颜色 */
     listActive?: string;
     /** 输入框背景色 */
     placeholder?: string;
-    /** 菜单背景色 */
+    /** 弹窗、浮层、菜单背景色 */
     backdrop?: string;
-    // 真正的背景色
-    _background?: string;
+    /** 卡片背景色 */
+    card: string;
+    /** paneltabbar 背景色 */
+    tabBar?: string;
 }
 
 export default function useColors() {
@@ -48,7 +48,7 @@ export default function useColors() {
                 colors.textSecondary ??
                 Color(colors.text).alpha(0.6).toString(),
             // @ts-ignore
-            background: colors._background ?? colors.background,
+            background: colors.pageBackground ?? colors.background,
         };
     }, [colors]);
 

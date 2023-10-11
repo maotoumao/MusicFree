@@ -3,6 +3,7 @@ import rpx from '@/utils/rpx';
 import {StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {fontSizeConst} from '@/constants/uiConst';
+import useColors from '@/hooks/useColors';
 
 interface IToastBaseProps {
     text: string;
@@ -11,10 +12,20 @@ interface IToastBaseProps {
 }
 function ToastBase(props: IToastBaseProps) {
     const {text, iconName, iconColor} = props;
+    const colors = useColors();
     return (
         <View style={styles.toastBasic}>
-            <Icon style={styles.icon} name={iconName} color={iconColor} />
-            <Text style={styles.text} numberOfLines={2}>
+            <Icon
+                style={[
+                    styles.icon,
+                    {
+                        backgroundColor: colors.backdrop,
+                    },
+                ]}
+                name={iconName}
+                color={iconColor ?? colors.text}
+            />
+            <Text style={[styles.text, {color: colors.text}]} numberOfLines={2}>
                 {text}
             </Text>
         </View>

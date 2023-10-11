@@ -36,12 +36,13 @@ function CircularPlayBtn() {
             }
             duration={100}
             radius={rpx(36)}
-            activeStrokeColor={colors.text}
-            inActiveStrokeColor={Color(colors.text).alpha(0.5).toString()}>
+            activeStrokeColor={colors.musicBarText}
+            inActiveStrokeColor={colors.textSecondary}>
             <IconButton
                 accessibilityLabel={isPaused ? '播放' : '暂停'}
                 name={isPaused ? 'play' : 'pause'}
                 sizeType={'normal'}
+                color={colors.musicBarText}
                 onPress={async () => {
                     if (isPaused) {
                         await MusicQueue.play();
@@ -105,13 +106,15 @@ function MusicBar() {
                         accessible={false}
                         style={style.textWrapper}
                         numberOfLines={1}>
-                        <ThemeText fontSize="content">
+                        <ThemeText fontSize="content" fontColor="musicBarText">
                             {musicItem?.title}
                         </ThemeText>
                         {musicItem?.artist && (
                             <ThemeText
                                 fontSize="description"
-                                fontColor="secondary">
+                                color={Color(colors.musicBarText)
+                                    .alpha(0.6)
+                                    .toString()}>
                                 {' '}
                                 -{musicItem.artist}
                             </ThemeText>
@@ -127,7 +130,10 @@ function MusicBar() {
                             onPress={() => {
                                 showPanel('PlayList');
                             }}
-                            style={[style.actionIcon, {color: colors.text}]}
+                            style={[
+                                style.actionIcon,
+                                {color: colors.musicBarText},
+                            ]}
                         />
                     </View>
                 </Pressable>

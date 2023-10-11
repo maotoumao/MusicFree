@@ -55,7 +55,7 @@ export default function ThemeCard(props: IThemeCardProps) {
                 numberOfLines={1}
                 fontSize="subTitle"
                 style={styles.title}
-                fontColor={selected ? 'primary' : 'normal'}>
+                fontColor={selected ? 'primary' : 'text'}>
                 {title}
             </ThemeText>
         </View>

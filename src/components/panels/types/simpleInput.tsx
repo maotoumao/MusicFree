@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import {fontSizeConst} from '@/constants/uiConst';
-import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 
@@ -59,9 +58,7 @@ export default function SimpleInput(props: ISimpleInputProps) {
                             style.input,
                             {
                                 color: colors.text,
-                                backgroundColor: Color(colors.primary)
-                                    .lighten(0.7)
-                                    .toString(),
+                                backgroundColor: colors.placeholder,
                             },
                         ]}
                         placeholderTextColor={colors.textSecondary}
@@ -76,7 +73,7 @@ export default function SimpleInput(props: ISimpleInputProps) {
                                         key={`hint-index-${index}`}
                                         style={style.hintLine}
                                         fontSize="subTitle"
-                                        fontColor="secondary">
+                                        fontColor="textSecondary">
                                         ￮ {_}
                                     </ThemeText>
                                 ))}

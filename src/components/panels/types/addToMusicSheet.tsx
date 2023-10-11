@@ -33,13 +33,13 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                             添加到歌单
                             <ThemeText
                                 fontSize="subTitle"
-                                fontColor="secondary">
+                                fontColor="textSecondary">
                                 {' '}
                                 (
                                 {Array.isArray(musicItem)
                                     ? musicItem.length
                                     : 1}
-                                )
+                                首)
                             </ThemeText>
                         </ThemeText>
                     </View>

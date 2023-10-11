@@ -7,7 +7,6 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {ScrollView} from 'react-native-gesture-handler';
 import TypeTag from '@/components/base/typeTag';
-import useColors from '@/hooks/useColors';
 import Divider from '@/components/base/divider';
 
 interface ISheetTagsProps {
@@ -20,9 +19,6 @@ export default function SheetTags(props: ISheetTagsProps) {
     const {tags, onTagPressed} = props ?? {};
 
     const safeAreaInsets = useSafeAreaInsets();
-    const colors = useColors();
-
-    const backgroundColor = colors.backdrop;
 
     return (
         <PanelBase
@@ -40,9 +36,9 @@ export default function SheetTags(props: ISheetTagsProps) {
                         ]}>
                         <View style={style.groupItem}>
                             <TypeTag
-                                backgroundColor={backgroundColor}
+                                // backgroundColor={backgroundColor}
                                 title="默认"
-                                style={style.tagItem}
+                                style={[style.tagItem]}
                                 onPress={() => {
                                     onTagPressed({
                                         title: '默认',
@@ -68,9 +64,9 @@ export default function SheetTags(props: ISheetTagsProps) {
                                     {tagGroupItem.data.map(_ => (
                                         <TypeTag
                                             key={_.id}
-                                            backgroundColor={backgroundColor}
+                                            // backgroundColor={backgroundColor}
                                             title={_.title}
-                                            style={style.tagItem}
+                                            style={[style.tagItem]}
                                             onPress={() => {
                                                 onTagPressed(_);
                                             }}

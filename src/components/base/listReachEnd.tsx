@@ -6,7 +6,7 @@ import ThemeText from './themeText';
 export default function ListReachEnd() {
     return (
         <View style={style.wrapper}>
-            <ThemeText fontSize="content" fontColor="secondary">
+            <ThemeText fontSize="content" fontColor="textSecondary">
                 ~~~ 到底啦 ~~~
             </ThemeText>
         </View>

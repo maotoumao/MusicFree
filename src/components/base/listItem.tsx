@@ -244,7 +244,7 @@ function Content(props: IContentProps) {
             <ThemeText
                 numberOfLines={1}
                 fontSize="description"
-                fontColor="secondary"
+                fontColor="textSecondary"
                 style={styles.contentDesc}>
                 {description}
             </ThemeText>

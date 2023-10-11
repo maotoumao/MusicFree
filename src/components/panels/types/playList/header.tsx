@@ -17,7 +17,7 @@ export default function Header() {
                 fontSize="title"
                 fontWeight="bold">
                 播放列表
-                <ThemeText fontColor="secondary">
+                <ThemeText fontColor="textSecondary">
                     {' '}
                     ({musicQueue.length}首)
                 </ThemeText>
