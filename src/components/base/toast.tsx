@@ -14,14 +14,15 @@ function ToastBase(props: IToastBaseProps) {
     const {text, iconName, iconColor} = props;
     const colors = useColors();
     return (
-        <View style={styles.toastBasic}>
+        <View
+            style={[
+                styles.toastBasic,
+                {
+                    backgroundColor: colors.backdrop,
+                },
+            ]}>
             <Icon
-                style={[
-                    styles.icon,
-                    {
-                        backgroundColor: colors.backdrop,
-                    },
-                ]}
+                style={[styles.icon]}
                 name={iconName}
                 color={iconColor ?? colors.text}
             />
