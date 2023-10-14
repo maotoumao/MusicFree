@@ -31,7 +31,7 @@ interface IListItemProps {
     // height:
     style?: StyleProp<ViewStyle>;
     // 高度类型
-    heightType?: 'big' | 'small' | 'normal' | 'none';
+    heightType?: 'big' | 'small' | 'smallest' | 'normal' | 'none';
     children?: ReactNode;
     onPress?: () => void;
     onLongPress?: () => void;
@@ -44,6 +44,7 @@ const Size = {
     big: rpx(120),
     normal: rpx(108),
     small: rpx(96),
+    smallest: rpx(72),
     none: undefined,
 };
 
@@ -261,6 +262,27 @@ function Content(props: IContentProps) {
     );
 }
 
+export function ListItemHeader(props: {children?: ReactNode}) {
+    const {children} = props;
+    return (
+        <ListItem
+            withHorizonalPadding
+            heightType="smallest"
+            style={styles.listItemHeader}>
+            {typeof children === 'string' ? (
+                <ThemeText
+                    fontSize="subTitle"
+                    fontColor="textSecondary"
+                    fontWeight="bold">
+                    {children}
+                </ThemeText>
+            ) : (
+                children
+            )}
+        </ListItem>
+    );
+}
+
 const styles = StyleSheet.create({
     /** listitem */
     container: {
@@ -291,6 +313,10 @@ const styles = StyleSheet.create({
     },
     contentDesc: {
         marginTop: rpx(16),
+    },
+
+    listItemHeader: {
+        marginTop: rpx(20),
     },
 });
 

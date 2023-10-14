@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import DocumentPicker from 'react-native-document-picker';
-import ListItem from '@/components/base/listItem';
+import ListItem, {ListItemHeader} from '@/components/base/listItem';
 import Toast from '@/utils/toast';
 import Backup from '@/core/backup';
 import {readFile, writeFile} from 'react-native-fs';
@@ -70,6 +70,7 @@ export default function BackupSetting() {
         }
     }
 
+    // const [webDavState, setWebDavState] = useState('');
     async function onResumeFromUrl() {
         showPanel('SimpleInput', {
             placeholder: '输入以json或txt结尾的URL',
@@ -94,6 +95,7 @@ export default function BackupSetting() {
 
     return (
         <View style={style.wrapper}>
+            <ListItemHeader>本地备份</ListItemHeader>
             <ListItem withHorizonalPadding onPress={onBackupToLocal}>
                 <ListItem.Content title="备份到本地" />
             </ListItem>
@@ -101,8 +103,18 @@ export default function BackupSetting() {
                 <ListItem.Content title="从本地文件恢复" />
             </ListItem>
             <ListItem withHorizonalPadding onPress={onResumeFromUrl}>
-                <ListItem.Content title="从URL恢复" />
+                <ListItem.Content title="从远程URL中恢复" />
             </ListItem>
+            {/* <ListItemHeader>Webdav</ListItemHeader>
+            <ListItem withHorizonalPadding onPress={console.log}>
+                <ListItem.Content title="Webdav设置" />
+            </ListItem>
+            <ListItem withHorizonalPadding onPress={console.log}>
+                <ListItem.Content title="同步到云存储" />
+            </ListItem>
+            <ListItem withHorizonalPadding onPress={onResumeFromUrl}>
+                <ListItem.Content title="从云存储中恢复" />
+            </ListItem> */}
         </View>
     );
 }
