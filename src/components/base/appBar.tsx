@@ -133,8 +133,9 @@ export default function AppBar(props: IAppBarProps) {
                         children
                     )}
                 </View>
-                {actions.map(action => (
+                {actions.map((action, index) => (
                     <IconButton
+                        key={index}
                         name={action.icon}
                         sizeType="normal"
                         color={contentColor}
@@ -210,6 +211,7 @@ export default function AppBar(props: IAppBarProps) {
                         {menu.map(it =>
                             it.show !== false ? (
                                 <ListItem
+                                    key={it.title}
                                     withHorizonalPadding
                                     heightType="small"
                                     onPress={() => {

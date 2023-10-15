@@ -496,6 +496,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             }
         } catch (e) {
             // 播放失败
+            console.log(e);
             if (isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
                 await _playFail();
             }

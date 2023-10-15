@@ -193,8 +193,8 @@ function setBackground(backgroundInfo: Partial<IBackgroundInfo>) {
 }
 
 const configableColorKey: Array<keyof CustomizedColors> = [
-    'text',
     'primary',
+    'text',
     'appBar',
     'appBarText',
     'musicBar',
