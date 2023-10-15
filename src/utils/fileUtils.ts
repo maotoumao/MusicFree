@@ -11,6 +11,7 @@ import {
     writeFile,
 } from 'react-native-fs';
 import {errorLog} from './log';
+import path from 'path-browserify';
 
 export const galleryBasePath = `${PicturesDirectoryPath}/MusicFree/`;
 
@@ -139,4 +140,29 @@ export function getDirectory(path: string) {
         return path;
     }
     return path.slice(0, lastSlash);
+}
+
+export async function mkdirR(directory: string) {
+    let folder = directory;
+    const checkStack = [];
+    while (folder.length > 15) {
+        checkStack.push(folder);
+        folder = path.dirname(folder);
+    }
+    let existPos = 0;
+    for (let i = 0; i < checkStack.length; ++i) {
+        const isExist = await exists(checkStack[i]);
+        if (isExist) {
+            existPos = i;
+            break;
+        }
+    }
+
+    for (let j = existPos - 1; j >= 0; --j) {
+        try {
+            await mkdir(checkStack[j]);
+        } catch (e) {
+            console.log('error', e);
+        }
+    }
 }
