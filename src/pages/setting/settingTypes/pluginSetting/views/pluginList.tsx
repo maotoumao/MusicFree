@@ -137,6 +137,33 @@ export default function PluginList() {
         }
         setLoading(false);
     }
+
+    async function onUpdateAllClick() {
+        const plugins = PluginManager.getValidPlugins();
+        setLoading(true);
+        try {
+            let code = 'success';
+            for (let i = 0; i < plugins.length; ++i) {
+                const srcUrl = plugins[i].instance.srcUrl;
+                if (srcUrl) {
+                    const result = await installPluginFromUrl(srcUrl);
+                    if (result.code === 'fail') {
+                        code = result.message ?? 'fail';
+                    }
+                }
+            }
+
+            if (code !== 'success') {
+                Toast.warn(`部分插件安装失败: ${code ?? ''}`);
+            } else {
+                Toast.success('插件更新成功');
+            }
+        } catch (e: any) {
+            Toast.warn(`出现未知错误: ${e.message ?? e}`);
+        }
+        setLoading(false);
+    }
+
     return (
         <>
             <AppBar menu={menuOptions}>插件设置</AppBar>
@@ -169,6 +196,9 @@ export default function PluginList() {
                                         value: '从网络安装插件',
                                     },
                                     {
+                                        value: '更新全部插件',
+                                    },
+                                    {
                                         value: '更新订阅',
                                     },
                                 ],
@@ -181,6 +211,8 @@ export default function PluginList() {
                                         onInstallFromNetworkClick();
                                     } else if (item.value === '更新订阅') {
                                         onSubscribeClick();
+                                    } else if (item.value === '更新全部插件') {
+                                        onUpdateAllClick();
                                     }
                                 },
                             });
