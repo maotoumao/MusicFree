@@ -10,10 +10,10 @@ import {
     musicListChangedAtom,
 } from '../store/atom';
 import SortableFlatList from '@/components/base/SortableFlatList';
-import globalStyle from '@/constants/globalStyle';
 
 import CheckBox from '@/components/base/checkbox';
 import useColors from '@/hooks/useColors';
+import Empty from '@/components/base/empty';
 
 const ITEM_HEIGHT = rpx(120);
 
@@ -83,7 +83,7 @@ export default function MusicList() {
             }}
         />
     ) : (
-        <View style={globalStyle.fwflex1} />
+        <Empty />
     );
 }
 

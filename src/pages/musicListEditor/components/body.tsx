@@ -57,8 +57,8 @@ export default function Body() {
                 <Button
                     fontColor={
                         musicListChanged && musicSheet?.id
-                            ? 'normal'
-                            : 'secondary'
+                            ? 'text'
+                            : 'textSecondary'
                     }
                     onPress={async () => {
                         if (musicListChanged && musicSheet?.id) {

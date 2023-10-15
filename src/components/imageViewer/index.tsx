@@ -14,11 +14,13 @@ import {galleryBasePath, saveToGallery} from '@/utils/fileUtils';
 import Toast from '@/utils/toast';
 import {errorLog} from '@/utils/log';
 import ThemeText from '../base/themeText';
+import useColors from '@/hooks/useColors';
 
 const currentImgSrcState = new GlobalState<string | null>(null);
 
 export function ImageViewComponent() {
     const currentImgSrc = currentImgSrcState.useValue();
+    const colors = useColors();
 
     const orientation = useOrientation();
 
@@ -48,9 +50,9 @@ export function ImageViewComponent() {
                     style={
                         orientation === 'vertical'
                             ? {
-                                  width: vw(80),
-                                  minHeight: vw(80),
-                                  maxHeight: vh(80),
+                                  width: vw(100),
+                                  minHeight: vw(100),
+                                  maxHeight: vh(100),
                                   resizeMode: 'contain',
                               }
                             : {
@@ -82,7 +84,13 @@ export function ImageViewComponent() {
                                 });
                         }
                     }}>
-                    <View style={style.button}>
+                    <View
+                        style={[
+                            style.button,
+                            {
+                                borderColor: colors.divider,
+                            },
+                        ]}>
                         <ThemeText>点击保存</ThemeText>
                     </View>
                 </TouchableOpacity>
@@ -114,13 +122,14 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.6)',
+        backgroundColor: 'rgba(0,0,0,0.8)',
     },
     button: {
         marginTop: rpx(36),
         paddingHorizontal: rpx(18),
         paddingVertical: rpx(12),
         borderRadius: rpx(8),
-        backgroundColor: '#20232a ',
+        borderWidth: 1,
+        borderStyle: 'solid',
     },
 });
