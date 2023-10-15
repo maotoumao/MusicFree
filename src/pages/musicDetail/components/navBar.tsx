@@ -34,7 +34,11 @@ export default function NavBar() {
                         {musicItem?.artist}
                     </Text>
                     {musicItem?.platform ? (
-                        <Tag tagName={musicItem.platform} />
+                        <Tag
+                            tagName={musicItem.platform}
+                            containerStyle={styles.tagBg}
+                            style={styles.tagText}
+                        />
                     ) : null}
                 </View>
             </View>
@@ -93,5 +97,11 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: fontSizeConst.subTitle,
         includeFontPadding: false,
+    },
+    tagBg: {
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    },
+    tagText: {
+        color: 'white',
     },
 });

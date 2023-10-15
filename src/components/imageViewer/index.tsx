@@ -14,13 +14,11 @@ import {galleryBasePath, saveToGallery} from '@/utils/fileUtils';
 import Toast from '@/utils/toast';
 import {errorLog} from '@/utils/log';
 import ThemeText from '../base/themeText';
-import useColors from '@/hooks/useColors';
 
 const currentImgSrcState = new GlobalState<string | null>(null);
 
 export function ImageViewComponent() {
     const currentImgSrc = currentImgSrcState.useValue();
-    const colors = useColors();
 
     const orientation = useOrientation();
 
@@ -84,14 +82,8 @@ export function ImageViewComponent() {
                                 });
                         }
                     }}>
-                    <View
-                        style={[
-                            style.button,
-                            {
-                                borderColor: colors.divider,
-                            },
-                        ]}>
-                        <ThemeText>点击保存</ThemeText>
+                    <View style={style.button}>
+                        <ThemeText color="white">点击保存</ThemeText>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -131,5 +123,6 @@ const style = StyleSheet.create({
         borderRadius: rpx(8),
         borderWidth: 1,
         borderStyle: 'solid',
+        borderColor: 'rgba(255,255,255,0.1)',
     },
 });
