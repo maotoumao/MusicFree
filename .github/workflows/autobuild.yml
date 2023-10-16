@@ -31,6 +31,23 @@ jobs:
         run: echo github.event_name
   manual: 
     runs-on: ubuntu-latest
+    if: "github.event_name == 'workflow_dispatch'"
     steps:
-      - run: echo ${{github.event_name}}
+      - run: |
+          echo ${{github.event.pull_request.body}}
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Env
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 16
+      - name: Install Pkgs
+        run: npm ci
+      - name: Get Version
+        run: node -p -e '`VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+      - name: Build
+        run: | 
+          cd ./android
+          ./gradlew assembleRelease
       
