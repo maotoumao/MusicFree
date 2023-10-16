@@ -1,3 +1,4 @@
+name: 自动构建
 on:
   workflow_dispatch:
   pull_request:
@@ -28,4 +29,8 @@ jobs:
           ./gradlew assembleRelease
       - name: Generate Changelog
         run: echo github.event_name
+  manual: 
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo github.event_name
       
