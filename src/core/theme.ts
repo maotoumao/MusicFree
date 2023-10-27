@@ -177,11 +177,11 @@ function setBackground(backgroundInfo: Partial<IBackgroundInfo>) {
             blur: 20,
         }),
     };
-    if (backgroundInfo.blur) {
+    if (typeof backgroundInfo.blur === 'number') {
         Config.set('setting.theme.backgroundBlur', backgroundInfo.blur);
         newBgInfo.blur = backgroundInfo.blur;
     }
-    if (backgroundInfo.opacity) {
+    if (typeof backgroundInfo.opacity === 'number') {
         Config.set('setting.theme.backgroundOpacity', backgroundInfo.opacity);
         newBgInfo.opacity = backgroundInfo.opacity;
     }
