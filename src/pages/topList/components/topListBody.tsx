@@ -6,6 +6,7 @@ import {TabBar, TabView} from 'react-native-tab-view';
 import {fontWeightConst} from '@/constants/uiConst';
 import BoardPanelWrapper from './boardPanelWrapper';
 import useColors from '@/hooks/useColors';
+import Empty from '@/components/base/empty';
 
 export default function TopListBody() {
     const routes = PluginManager.getSortedTopListsablePlugins().map(_ => ({
@@ -21,6 +22,9 @@ export default function TopListBody() {
         ),
         [],
     );
+    if (!routes?.length) {
+        return <Empty />;
+    }
 
     return (
         <TabView
