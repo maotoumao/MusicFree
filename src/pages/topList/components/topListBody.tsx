@@ -21,6 +21,9 @@ export default function TopListBody() {
         ),
         [],
     );
+    if (!routes?.length) {
+        return null;
+    }
 
     return (
         <TabView

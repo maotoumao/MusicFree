@@ -53,6 +53,9 @@ export default function Body() {
         />
     );
 
+    if (!routes?.length) {
+        return null;
+    }
     return (
         <TabView
             lazy
