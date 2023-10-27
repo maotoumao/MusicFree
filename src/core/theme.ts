@@ -135,10 +135,10 @@ function setTheme(
             ...(currentBg ?? {}),
             url: undefined,
         };
-        if (extra.background.blur) {
+        if (typeof extra.background.blur === 'number') {
             newBg.blur = extra.background.blur;
         }
-        if (extra.background.opacity) {
+        if (typeof extra.background.opacity === 'number') {
             newBg.opacity = extra.background.opacity;
         }
         if (extra.background.url) {
