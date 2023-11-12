@@ -19,6 +19,7 @@ import java.util.List;
 import com.rnfs.RNFSPackage;
 import fun.upup.musicfree.utils.UtilsPackage;
 import fun.upup.musicfree.mp3Util.Mp3UtilPackage;
+import fun.upup.musicfree.lyricUtil.LyricUtilPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
                     // packages.add(new MyReactNativePackage());
                     packages.add(new UtilsPackage());
                     packages.add(new Mp3UtilPackage());
+                    packages.add(new LyricUtilPackage());
                     return packages;
                 }
 
