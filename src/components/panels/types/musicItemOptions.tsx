@@ -106,8 +106,12 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '下载',
             show: !downloaded,
             onPress: async () => {
-                Download.downloadMusic(musicItem);
-                hidePanel();
+                showPanel('MusicQuality', {
+                    musicItem,
+                    async onQualityPress(quality) {
+                        Download.downloadMusic(musicItem, quality);
+                    },
+                });
             },
         },
         {

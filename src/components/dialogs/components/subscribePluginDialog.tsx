@@ -115,6 +115,7 @@ const style = StyleSheet.create({
     headerWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: rpx(14),
     },
     textInput: {
         flex: 1,
