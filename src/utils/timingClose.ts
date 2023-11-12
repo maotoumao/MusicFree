@@ -1,3 +1,4 @@
+import MusicQueue from '@/core/musicQueue';
 import NativeUtils from '@/native/utils';
 import StateMapper from '@/utils/stateMapper';
 import {useEffect, useRef, useState} from 'react';
@@ -15,8 +16,9 @@ function setTimingClose(_deadline: number | null) {
     stateMapper.notify();
     timerId && BackgroundTimer.clearTimeout(timerId);
     if (_deadline) {
-        timerId = BackgroundTimer.setTimeout(() => {
+        timerId = BackgroundTimer.setTimeout(async () => {
             // todo: 播完整首歌再关闭
+            await MusicQueue.reset();
             NativeUtils.exitApp();
             // if(closeAfterPlayEnd) {
             //     TrackPlayer.addEventListener()
