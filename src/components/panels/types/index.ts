@@ -7,6 +7,7 @@ import NewMusicSheet from './newMusicSheet';
 import PlayList from './playList';
 import PlayRate from './playRate';
 import SearchLrc from './searchLrc';
+import SetUserVariables from './setUserVariables';
 import SheetTags from './sheetTags';
 import SimpleInput from './simpleInput';
 import SimpleSelect from './simpleSelect';
@@ -39,4 +40,6 @@ export default {
     SimpleSelect,
     /** 颜色选择器 */
     ColorPicker,
+    /** 设置插件用户变量 */
+    SetUserVariables,
 };

@@ -106,8 +106,6 @@ export class Plugin {
     public path: string;
     /** 插件方法 */
     public methods: PluginMethods;
-    /** TODO 用户输入 */
-    public userEnv?: Record<string, string>;
 
     constructor(
         funcCode: string | (() => IPlugin.IPluginInstance),
@@ -118,13 +116,29 @@ export class Plugin {
         const _module: any = {exports: {}};
         try {
             if (typeof funcCode === 'string') {
+                // 插件的环境变量
+                const env = {
+                    getUserVariables: () => {
+                        return (
+                            PluginMeta.getPluginMeta(this)?.userVariables ?? {}
+                        );
+                    },
+                };
+
                 // eslint-disable-next-line no-new-func
                 _instance = Function(`
                     'use strict';
-                    return function(require, __musicfree_require, module, exports, console) {
+                    return function(require, __musicfree_require, module, exports, console, env) {
                         ${funcCode}
                     }
-                `)()(_require, _require, _module, _module.exports, _console);
+                `)()(
+                    _require,
+                    _require,
+                    _module,
+                    _module.exports,
+                    _console,
+                    env,
+                );
                 if (_module.exports.default) {
                     _instance = _module.exports
                         .default as IPlugin.IPluginInstance;

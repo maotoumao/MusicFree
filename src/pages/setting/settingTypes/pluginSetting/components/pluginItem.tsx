@@ -11,6 +11,7 @@ import rpx from '@/utils/rpx';
 import {StyleSheet, View} from 'react-native';
 import ThemeText from '@/components/base/themeText';
 import IconTextButton from '@/components/base/iconTextButton';
+import {PluginMeta} from '@/core/pluginMeta';
 
 interface IPluginItemProps {
     plugin: Plugin;
@@ -128,6 +129,29 @@ export default function PluginItem(props: IPluginItemProps) {
                 });
             },
             show: !!plugin.instance.importMusicSheet,
+        },
+        {
+            title: '用户变量',
+            icon: 'application-variable-outline',
+            onPress() {
+                if (Array.isArray(plugin.instance.userVariables)) {
+                    showPanel('SetUserVariables', {
+                        async onOk(newValue, closePanel) {
+                            await PluginMeta.setPluginMetaProp(
+                                plugin,
+                                'userVariables',
+                                newValue,
+                            );
+                            Toast.success('设置成功~');
+                            closePanel();
+                        },
+                        variables: plugin.instance.userVariables,
+                        initValues:
+                            PluginMeta.getPluginMeta(plugin)?.userVariables,
+                    });
+                }
+            },
+            show: Array.isArray(plugin.instance.userVariables),
         },
     ];
 
