@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, BackHandler} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import ListItem from '@/components/base/listItem';
@@ -120,6 +120,15 @@ function HomeDrawer(props: any) {
                 </View>
 
                 <Divider />
+                <ListItem
+                    withHorizonalPadding
+                    onPress={() => {
+                        // 仅安卓生效
+                        BackHandler.exitApp();
+                    }}>
+                    <ListItem.ListItemIcon icon={'home-outline'} width={rpx(48)} />
+                    <ListItem.Content title={'返回桌面'} />
+                </ListItem>
                 <ListItem
                     withHorizonalPadding
                     onPress={async () => {
