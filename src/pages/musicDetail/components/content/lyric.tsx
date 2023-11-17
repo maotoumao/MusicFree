@@ -1,14 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {
-    DeviceEventEmitter,
-    LayoutRectangle,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native';
+import {LayoutRectangle, StyleSheet, Text, View} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
 import MusicQueue from '@/core/musicQueue';
-import LyricParser from '@/core/lrcParser';
 import ThemeText from '@/components/base/themeText';
 import useDelayFalsy from '@/hooks/useDelayFalsy';
 import {FlatList, TapGestureHandler} from 'react-native-gesture-handler';
@@ -16,93 +9,10 @@ import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
 import {IconButtonWithGesture} from '@/components/base/iconButton';
 import musicIsPaused from '@/utils/musicIsPaused';
-import {trace} from '@/utils/log';
 import Loading from '@/components/base/loading';
-import {isSameMediaItem} from '@/utils/mediaItem';
-import PluginManager from '@/core/pluginManager';
 import globalStyle from '@/constants/globalStyle';
 import {showPanel} from '@/components/panels/usePanel';
-import {EDeviceEvents} from '@/constants/commonConst';
-
-interface ICurrentLyricItem {
-    lrc?: ILyric.IParsedLrcItem;
-    index: number;
-}
-
-function useLyric() {
-    const musicItem = MusicQueue.useCurrentMusicItem();
-    const musicItemRef = useRef<IMusic.IMusicItem>();
-    const progress = MusicQueue.useProgress();
-    const lrcManagerRef = useRef<LyricParser>();
-    const [loading, setLoading] = useState(true);
-
-    const [lyric, setLyric] = useState<ILyric.IParsedLrc>([]);
-    const [meta, setMeta] = useState<Record<string, any>>({});
-    const [currentLrcItem, setCurentLrcItem] = useState<ICurrentLyricItem>();
-
-    async function refreshLyric() {
-        setLoading(true);
-        try {
-            const lrc = await PluginManager.getByMedia(
-                musicItem,
-            )?.methods?.getLyricText(musicItem);
-            setLoading(false);
-            trace(musicItem.title, lrc);
-            if (isSameMediaItem(musicItem, musicItemRef.current)) {
-                if (lrc) {
-                    const parser = new LyricParser(lrc, musicItem);
-                    setLyric(parser.getLyric());
-                    setMeta(parser.getMeta());
-                    lrcManagerRef.current = parser;
-                } else {
-                    setLyric([]);
-                    setMeta({});
-                    lrcManagerRef.current = undefined;
-                }
-            }
-        } catch {
-            if (isSameMediaItem(musicItem, musicItemRef.current)) {
-                setLyric([]);
-                setMeta({});
-                lrcManagerRef.current = undefined;
-            }
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        if (
-            !lrcManagerRef.current ||
-            !isSameMediaItem(
-                lrcManagerRef.current?.getCurrentMusicItem?.(),
-                musicItem,
-            )
-        ) {
-            refreshLyric();
-        }
-        musicItemRef.current = musicItem;
-    }, [musicItem]);
-
-    useEffect(() => {
-        if (lrcManagerRef.current && lyric[lyric.length - 1]?.time > 1) {
-            setCurentLrcItem(
-                lrcManagerRef.current.getPosition(progress.position),
-            );
-        }
-    }, [progress, lyric]);
-
-    useEffect(() => {
-        const unsubscription = DeviceEventEmitter.addListener(
-            EDeviceEvents.REFRESH_LYRIC,
-            refreshLyric,
-        );
-        return () => {
-            unsubscription.remove();
-        };
-    }, []);
-
-    return {lyric, currentLrcItem, meta, loading, progress} as const;
-}
+import LyricManager from '@/core/lyricManager';
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -111,7 +21,8 @@ function Empty(props: {height?: number}) {
 }
 
 export default function Lyric() {
-    const {lyric, currentLrcItem, meta, loading, progress} = useLyric();
+    const {loading, meta, lyrics: lyric} = LyricManager.useLyricState();
+    const currentLrcItem = LyricManager.useCurrentLyric();
     const [drag, setDrag] = useState(false);
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
         useDelayFalsy<number | undefined>(undefined, 2000);
@@ -126,6 +37,7 @@ export default function Lyric() {
 
     useEffect(() => {
         // 暂停且拖拽才返回
+
         if (
             lyric.length === 0 ||
             draggingIndex !== undefined ||
@@ -141,7 +53,7 @@ export default function Lyric() {
             });
         } else {
             listRef.current?.scrollToIndex({
-                index: currentLrcItem.index ?? 0,
+                index: Math.min(currentLrcItem.index ?? 0, lyric.length - 1),
                 viewPosition: 0,
             });
         }
@@ -172,7 +84,7 @@ export default function Lyric() {
 
     const onLyricSeekPress = async () => {
         if (draggingIndex !== undefined) {
-            const time = lyric[draggingIndex].time + (meta?.offset ?? 0);
+            const time = lyric[draggingIndex].time + +(meta?.offset ?? 0);
             if (time !== undefined && !isNaN(time)) {
                 await MusicQueue.seekTo(time);
                 await MusicQueue.play();
@@ -244,15 +156,12 @@ export default function Lyric() {
                             top: emptyHeight - ITEM_HEIGHT / 2,
                         },
                     ]}>
-                    <Text style={style.draggingTimeText}>
-                        {timeformat(
-                            Math.min(
-                                (lyric[draggingIndex]?.time ?? 0) +
-                                    (meta?.offset ?? 0),
-                                progress.duration ?? 0,
-                            ),
-                        )}
-                    </Text>
+                    <DraggingTime
+                        time={
+                            (lyric[draggingIndex]?.time ?? 0) +
+                            +(meta?.offset ?? 0)
+                        }
+                    />
                     <View style={style.singleLine} />
 
                     <IconButtonWithGesture
@@ -333,3 +242,13 @@ const style = StyleSheet.create({
         textDecorationLine: 'underline',
     },
 });
+
+function DraggingTime(props: {time: number}) {
+    const progress = MusicQueue.useProgress();
+
+    return (
+        <Text style={style.draggingTimeText}>
+            {timeformat(Math.min(props.time, progress.duration ?? 0))}
+        </Text>
+    );
+}

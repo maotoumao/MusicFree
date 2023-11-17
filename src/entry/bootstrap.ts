@@ -16,6 +16,7 @@ import {ImgAsset} from '@/constants/assetsConst';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {StatusBar} from 'react-native';
 import Theme from '@/core/theme';
+import LyricManager from '@/core/lyricManager';
 
 /** app加载前执行
  * 1. 检查权限
@@ -98,6 +99,7 @@ async function _bootstrap() {
     trace('本地音乐初始化完成');
     Theme.setup();
     trace('主题初始化完成');
+    await LyricManager.setup();
 
     StatusBar.setBackgroundColor('transparent');
     StatusBar.setTranslucent(true);

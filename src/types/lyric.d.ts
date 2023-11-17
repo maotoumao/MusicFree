@@ -14,6 +14,8 @@ declare namespace ILyric {
         time: number;
         /** 歌词 */
         lrc: string;
+        /** 下标 */
+        index?: number;
     }
 
     export type IParsedLrc = IParsedLrcItem[];

@@ -2,6 +2,8 @@ import Config from '@/core/config';
 import musicIsPaused from '@/utils/musicIsPaused';
 import TrackPlayer, {Event, State} from 'react-native-track-player';
 import MusicQueue from '../core/musicQueue';
+import LyricManager from '@/core/lyricManager';
+import LyricUtil from '@/native/lyricUtil';
 
 let resumeState: State | null;
 module.exports = async function () {
@@ -45,7 +47,33 @@ module.exports = async function () {
             }
         },
     );
+
+    TrackPlayer.addEventListener(Event.PlaybackTrackChanged, () => {
+        const currentMusicItem = MusicQueue.getCurrentMusicItem();
+        if (currentMusicItem) {
+            LyricUtil.setStatusBarLyricText(
+                `${currentMusicItem.title} - ${currentMusicItem.artist}`,
+            );
+        }
+    });
+
     TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
         Config.set('status.music.progress', evt.position, false);
+
+        // 歌词逻辑
+        const parser = LyricManager.getLyricState().lyricParser;
+        if (parser) {
+            const prevLyricText = LyricManager.getCurrentLyric()?.lrc;
+            const currentLyricItem = parser.getPosition(evt.position).lrc;
+            if (prevLyricText !== currentLyricItem?.lrc) {
+                LyricManager.setCurrentLyric(currentLyricItem ?? null);
+
+                if (Config.get('setting.lyric.showStatusBarLyric')) {
+                    LyricUtil.setStatusBarLyricText(
+                        currentLyricItem?.lrc ?? '',
+                    );
+                }
+            }
+        }
     });
 };

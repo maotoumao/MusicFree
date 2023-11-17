@@ -49,6 +49,17 @@ interface IConfig {
             };
             maxHistoryLen: number;
         };
+        /** 歌词 */
+        lyric: {
+            showStatusBarLyric: boolean;
+            topPercent: number;
+            leftPercent: number;
+            align: number;
+            color: string;
+            backgroundColor: string;
+            widthPercent: number;
+            fontSize: number;
+        };
 
         /** 主题 */
         theme: {

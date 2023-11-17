@@ -49,6 +49,10 @@ export default class LyricParser {
                 lrc: _,
             }));
         }
+
+        for (let i = 0; i < this.lrcItems.length; ++i) {
+            this.lrcItems[i].index = i;
+        }
     }
 
     getPosition(position: number): {

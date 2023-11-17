@@ -42,6 +42,8 @@ public class LyricUtilModule extends ReactContextBaseJavaModule {
     }
 
 
+
+
     @ReactMethod
     public void hideStatusBarLyric(Promise promise) {
         try {
@@ -69,4 +71,91 @@ public class LyricUtilModule extends ReactContextBaseJavaModule {
             promise.reject("Exception", e.getMessage());
         }
     }
+
+    @ReactMethod
+    public void setStatusBarLyricAlign(int alignment, Promise promise) {
+        try {
+            UiThreadUtil.runOnUiThread(() -> {
+                if(lyricView != null) {
+                    lyricView.setAlign(alignment);
+                }
+            });
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("Exception", e.getMessage());
+        }
+    }
+
+    @ReactMethod
+    public void setStatusBarLyricTop(double pct, Promise promise) {
+        try {
+            UiThreadUtil.runOnUiThread(() -> {
+                if(lyricView != null) {
+                    lyricView.setTopPercent(pct);
+                }
+            });
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("Exception", e.getMessage());
+        }
+    }
+
+    @ReactMethod
+    public void setStatusBarLyricLeft(double pct, Promise promise) {
+        try {
+            UiThreadUtil.runOnUiThread(() -> {
+                if(lyricView != null) {
+                    lyricView.setLeftPercent(pct);
+                }
+            });
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("Exception", e.getMessage());
+        }
+    }
+
+    @ReactMethod
+    public void setStatusBarLyricWidth(double pct, Promise promise) {
+        try {
+            UiThreadUtil.runOnUiThread(() -> {
+                if(lyricView != null) {
+                    lyricView.setWidth(pct);
+                }
+            });
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("Exception", e.getMessage());
+        }
+    }
+
+    @ReactMethod
+    public void setStatusBarLyricFontSize(float fontSize, Promise promise) {
+        try {
+            UiThreadUtil.runOnUiThread(() -> {
+                if(lyricView != null) {
+                    lyricView.setFontSize(fontSize);
+                }
+            });
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("Exception", e.getMessage());
+        }
+    }
+
+    @ReactMethod
+    public void setStatusBarColors(String textColor, String backgroundColor, Promise promise) {
+        try {
+            UiThreadUtil.runOnUiThread(() -> {
+                if(lyricView != null) {
+                    lyricView.setColors(textColor, backgroundColor);
+                }
+            });
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("Exception", e.getMessage());
+        }
+    }
+
+
+
 }

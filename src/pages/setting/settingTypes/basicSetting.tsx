@@ -17,10 +17,20 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {showDialog} from '@/components/dialogs/useDialog';
 import {showPanel} from '@/components/panels/usePanel';
 import Paragraph from '@/components/base/paragraph';
+import LyricUtil, {NativeTextAlignment} from '@/native/lyricUtil';
+import Slider from '@react-native-community/slider';
+import useColors from '@/hooks/useColors';
+import ColorBlock from '@/components/base/colorBlock';
 
-function createSwitch(title: string, changeKey: IConfigPaths, value: boolean) {
+function createSwitch(
+    title: string,
+    changeKey: IConfigPaths,
+    value: boolean,
+    callback?: (newValue: boolean) => void,
+) {
     const onPress = () => {
         Config.set(changeKey, !value);
+        callback?.(!value);
     };
     return {
         title,
@@ -28,6 +38,40 @@ function createSwitch(title: string, changeKey: IConfigPaths, value: boolean) {
         right: <ThemeSwitch value={value} onValueChange={onPress} />,
     };
 }
+
+const createRadio = function (
+    title: string,
+    changeKey: IConfigPaths,
+    candidates: Array<string | number>,
+    value: string | number,
+    valueMap?: Record<string | number, string | number>,
+    onChange?: (value: string | number) => void,
+) {
+    const onPress = () => {
+        showDialog('RadioDialog', {
+            title,
+            content: valueMap
+                ? candidates.map(_ => ({
+                      key: valueMap[_],
+                      value: _,
+                  }))
+                : candidates,
+            onOk(val) {
+                Config.set(changeKey, val);
+                onChange?.(val);
+            },
+        });
+    };
+    return {
+        title,
+        right: (
+            <ThemeText style={style.centerText}>
+                {valueMap ? valueMap[value] : value}
+            </ThemeText>
+        ),
+        onPress,
+    };
+};
 
 function useCacheSize() {
     const [cacheSize, setCacheSize] = useState({
@@ -58,39 +102,6 @@ export default function BasicSetting() {
     const navigate = useNavigate();
 
     const [cacheSize, refreshCacheSize] = useCacheSize();
-
-    const createRadio = useCallback(function (
-        title: string,
-        changeKey: IConfigPaths,
-        candidates: Array<string | number>,
-        value: string | number,
-        valueMap?: Record<string | number, string | number>,
-    ) {
-        const onPress = () => {
-            showDialog('RadioDialog', {
-                title,
-                content: valueMap
-                    ? candidates.map(_ => ({
-                          key: valueMap[_],
-                          value: _,
-                      }))
-                    : candidates,
-                onOk(val) {
-                    Config.set(changeKey, val);
-                },
-            });
-        };
-        return {
-            title,
-            right: (
-                <ThemeText style={style.centerText}>
-                    {valueMap ? valueMap[value] : value}
-                </ThemeText>
-            ),
-            onPress,
-        };
-    },
-    []);
 
     useEffect(() => {
         refreshCacheSize();
@@ -243,6 +254,11 @@ export default function BasicSetting() {
                     basicSetting?.useCelluarNetworkDownload ?? false,
                 ),
             ],
+        },
+        {
+            title: '状态栏歌词',
+            data: [],
+            footer: <LyricSetting />,
         },
         {
             title: '缓存',
@@ -402,6 +418,9 @@ export default function BasicSetting() {
                         </ThemeText>
                     </View>
                 )}
+                renderSectionFooter={({section}) => {
+                    return section.footer ?? null;
+                }}
                 renderItem={({item}) => {
                     const Right = item.right;
 
@@ -436,5 +455,222 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: rpx(20),
+    },
+});
+
+function LyricSetting() {
+    const lyricSetting = Config.useConfig('setting.lyric');
+
+    const colors = useColors();
+
+    const openStatusBarLyric = createSwitch(
+        '开启状态栏歌词',
+        'setting.lyric.showStatusBarLyric',
+        lyricSetting?.showStatusBarLyric ?? false,
+        newValue => {
+            if (newValue) {
+                LyricUtil.showStatusBarLyric('初始歌词');
+                // setTimeout(() => {
+                //     // LyricUtil.setStatusBarLyricText(
+                //     //     `xxxxx${Date.now()}`,
+                //     // );
+                //     LyricUtil.setStatusBarLyricTop(-0.1)
+                // }, 2000);
+            } else {
+                LyricUtil.hideStatusBarLyric();
+            }
+        },
+    );
+
+    const alignStatusBarLyric = createRadio(
+        '对齐方式',
+        'setting.lyric.align',
+        [
+            NativeTextAlignment.LEFT,
+            NativeTextAlignment.CENTER,
+            NativeTextAlignment.RIGHT,
+        ],
+        lyricSetting?.align ?? NativeTextAlignment.CENTER,
+        {
+            [NativeTextAlignment.LEFT]: '左对齐',
+            [NativeTextAlignment.CENTER]: '居中对齐',
+            [NativeTextAlignment.RIGHT]: '右对齐',
+        },
+        newVal => {
+            if (lyricSetting?.showStatusBarLyric) {
+                LyricUtil.setStatusBarLyricAlign(newVal as any);
+            }
+        },
+    );
+
+    return (
+        <View>
+            <ListItem
+                withHorizonalPadding
+                heightType="small"
+                onPress={openStatusBarLyric.onPress}>
+                <ListItem.Content title={openStatusBarLyric.title} />
+                {openStatusBarLyric.right}
+            </ListItem>
+            <View style={lyricStyles.sliderContainer}>
+                <ThemeText>左右距离</ThemeText>
+                <Slider
+                    style={lyricStyles.slider}
+                    minimumTrackTintColor={colors.primary}
+                    maximumTrackTintColor={colors.text ?? '#999999'}
+                    thumbTintColor={colors.primary}
+                    minimumValue={0}
+                    step={0.01}
+                    maximumValue={1}
+                    onValueChange={val => {
+                        if (lyricSetting?.showStatusBarLyric) {
+                            LyricUtil.setStatusBarLyricLeft(val);
+                        }
+                    }}
+                    onSlidingComplete={val => {
+                        Config.set('setting.lyric.leftPercent', val);
+                    }}
+                />
+            </View>
+            <View style={lyricStyles.sliderContainer}>
+                <ThemeText>上下距离</ThemeText>
+                <Slider
+                    style={lyricStyles.slider}
+                    minimumTrackTintColor={colors.primary}
+                    maximumTrackTintColor={colors.text ?? '#999999'}
+                    thumbTintColor={colors.primary}
+                    minimumValue={0}
+                    step={0.01}
+                    maximumValue={1}
+                    onValueChange={val => {
+                        if (lyricSetting?.showStatusBarLyric) {
+                            LyricUtil.setStatusBarLyricTop(val);
+                        }
+                    }}
+                    onSlidingComplete={val => {
+                        Config.set('setting.lyric.topPercent', val);
+                    }}
+                />
+            </View>
+            <View style={lyricStyles.sliderContainer}>
+                <ThemeText>歌词宽度</ThemeText>
+                <Slider
+                    style={lyricStyles.slider}
+                    minimumTrackTintColor={colors.primary}
+                    maximumTrackTintColor={colors.text ?? '#999999'}
+                    thumbTintColor={colors.primary}
+                    minimumValue={0}
+                    step={0.01}
+                    maximumValue={1}
+                    onValueChange={val => {
+                        if (lyricSetting?.showStatusBarLyric) {
+                            LyricUtil.setStatusBarLyricWidth(val);
+                        }
+                    }}
+                    onSlidingComplete={val => {
+                        Config.set('setting.lyric.widthPercent', val);
+                    }}
+                />
+            </View>
+            <View style={lyricStyles.sliderContainer}>
+                <ThemeText>字体大小</ThemeText>
+                <Slider
+                    style={lyricStyles.slider}
+                    minimumTrackTintColor={colors.primary}
+                    maximumTrackTintColor={colors.text ?? '#999999'}
+                    thumbTintColor={colors.primary}
+                    minimumValue={6}
+                    step={1}
+                    maximumValue={20}
+                    onValueChange={val => {
+                        if (lyricSetting?.showStatusBarLyric) {
+                            LyricUtil.setStatusBarLyricFontSize(val);
+                        }
+                    }}
+                    onSlidingComplete={val => {
+                        Config.set('setting.lyric.fontSize', val);
+                    }}
+                />
+            </View>
+            <ListItem
+                withHorizonalPadding
+                heightType="small"
+                onPress={alignStatusBarLyric.onPress}>
+                <ListItem.Content title={alignStatusBarLyric.title} />
+                {alignStatusBarLyric.right}
+            </ListItem>
+            <ListItem
+                withHorizonalPadding
+                heightType="small"
+                onPress={() => {
+                    showPanel('ColorPicker', {
+                        closePanelWhenSelected: true,
+                        defaultColor: lyricSetting?.color ?? 'transparent',
+                        onSelected(color) {
+                            if (lyricSetting?.showStatusBarLyric) {
+                                const colorStr = color.hexa();
+                                const argb =
+                                    colorStr.length === 9
+                                        ? `#${colorStr.slice(
+                                              7,
+                                              9,
+                                          )}${colorStr.slice(1, 7)}`
+                                        : colorStr;
+                                LyricUtil.setStatusBarColors(argb, null);
+                                Config.set('setting.lyric.color', colorStr);
+                            }
+                        },
+                    });
+                }}>
+                <ListItem.Content title="文本颜色" />
+                <ColorBlock color={lyricSetting?.color ?? 'transparent'} />
+            </ListItem>
+            <ListItem
+                withHorizonalPadding
+                heightType="small"
+                onPress={() => {
+                    showPanel('ColorPicker', {
+                        closePanelWhenSelected: true,
+                        defaultColor:
+                            lyricSetting?.backgroundColor ?? 'transparent',
+                        onSelected(color) {
+                            if (lyricSetting?.showStatusBarLyric) {
+                                const colorStr = color.hexa();
+                                const argb =
+                                    colorStr.length === 9
+                                        ? `#${colorStr.slice(
+                                              7,
+                                              9,
+                                          )}${colorStr.slice(1, 7)}`
+                                        : colorStr;
+                                LyricUtil.setStatusBarColors(null, argb);
+                                Config.set(
+                                    'setting.lyric.backgroundColor',
+                                    colorStr,
+                                );
+                            }
+                        },
+                    });
+                }}>
+                <ListItem.Content title="文本背景色" />
+                <ColorBlock
+                    color={lyricSetting?.backgroundColor ?? 'transparent'}
+                />
+            </ListItem>
+        </View>
+    );
+}
+
+const lyricStyles = StyleSheet.create({
+    slider: {
+        flex: 1,
+        marginLeft: rpx(24),
+    },
+    sliderContainer: {
+        height: rpx(96),
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: rpx(24),
     },
 });
