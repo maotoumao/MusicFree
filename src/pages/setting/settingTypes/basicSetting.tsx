@@ -21,6 +21,7 @@ import LyricUtil, {NativeTextAlignment} from '@/native/lyricUtil';
 import Slider from '@react-native-community/slider';
 import useColors from '@/hooks/useColors';
 import ColorBlock from '@/components/base/colorBlock';
+import LyricManager from '@/core/lyricManager';
 
 function createSwitch(
     title: string,
@@ -469,7 +470,10 @@ function LyricSetting() {
         lyricSetting?.showStatusBarLyric ?? false,
         newValue => {
             if (newValue) {
-                LyricUtil.showStatusBarLyric('初始歌词');
+                LyricUtil.showStatusBarLyric(
+                    LyricManager.getCurrentLyric()?.lrc ?? 'MusicFree',
+                    lyricSetting ?? {},
+                );
                 // setTimeout(() => {
                 //     // LyricUtil.setStatusBarLyricText(
                 //     //     `xxxxx${Date.now()}`,
@@ -521,6 +525,7 @@ function LyricSetting() {
                     thumbTintColor={colors.primary}
                     minimumValue={0}
                     step={0.01}
+                    value={lyricSetting?.leftPercent ?? 0.5}
                     maximumValue={1}
                     onValueChange={val => {
                         if (lyricSetting?.showStatusBarLyric) {
@@ -540,6 +545,7 @@ function LyricSetting() {
                     maximumTrackTintColor={colors.text ?? '#999999'}
                     thumbTintColor={colors.primary}
                     minimumValue={0}
+                    value={lyricSetting?.topPercent ?? 0}
                     step={0.01}
                     maximumValue={1}
                     onValueChange={val => {
@@ -561,6 +567,7 @@ function LyricSetting() {
                     thumbTintColor={colors.primary}
                     minimumValue={0}
                     step={0.01}
+                    value={lyricSetting?.widthPercent ?? 0.5}
                     maximumValue={1}
                     onValueChange={val => {
                         if (lyricSetting?.showStatusBarLyric) {
@@ -579,9 +586,10 @@ function LyricSetting() {
                     minimumTrackTintColor={colors.primary}
                     maximumTrackTintColor={colors.text ?? '#999999'}
                     thumbTintColor={colors.primary}
-                    minimumValue={6}
-                    step={1}
-                    maximumValue={20}
+                    minimumValue={8}
+                    step={0.5}
+                    maximumValue={24}
+                    value={lyricSetting?.fontSize ?? 14}
                     onValueChange={val => {
                         if (lyricSetting?.showStatusBarLyric) {
                             LyricUtil.setStatusBarLyricFontSize(val);
@@ -609,14 +617,7 @@ function LyricSetting() {
                         onSelected(color) {
                             if (lyricSetting?.showStatusBarLyric) {
                                 const colorStr = color.hexa();
-                                const argb =
-                                    colorStr.length === 9
-                                        ? `#${colorStr.slice(
-                                              7,
-                                              9,
-                                          )}${colorStr.slice(1, 7)}`
-                                        : colorStr;
-                                LyricUtil.setStatusBarColors(argb, null);
+                                LyricUtil.setStatusBarColors(colorStr, null);
                                 Config.set('setting.lyric.color', colorStr);
                             }
                         },
@@ -636,14 +637,7 @@ function LyricSetting() {
                         onSelected(color) {
                             if (lyricSetting?.showStatusBarLyric) {
                                 const colorStr = color.hexa();
-                                const argb =
-                                    colorStr.length === 9
-                                        ? `#${colorStr.slice(
-                                              7,
-                                              9,
-                                          )}${colorStr.slice(1, 7)}`
-                                        : colorStr;
-                                LyricUtil.setStatusBarColors(null, argb);
+                                LyricUtil.setStatusBarColors(null, colorStr);
                                 Config.set(
                                     'setting.lyric.backgroundColor',
                                     colorStr,

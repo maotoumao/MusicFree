@@ -9,6 +9,8 @@ import LyricParser from '@/utils/lrcParser';
 import {GlobalState} from '@/utils/stateMapper';
 import {EDeviceEvents} from '@/constants/commonConst';
 import {DeviceEventEmitter} from 'react-native';
+import Config from './config';
+import LyricUtil from '@/native/lyricUtil';
 
 const lyricStateStore = new GlobalState<{
     loading: boolean;
@@ -73,6 +75,13 @@ async function refreshLyric(fromStart?: boolean) {
 // 获取歌词
 async function setup() {
     DeviceEventEmitter.addListener(EDeviceEvents.REFRESH_LYRIC, refreshLyric);
+
+    if (Config.get('setting.lyric.showStatusBarLyric')) {
+        LyricUtil.showStatusBarLyric(
+            'MusicFree',
+            Config.get('setting.lyric') ?? {},
+        );
+    }
 
     refreshLyric();
 }

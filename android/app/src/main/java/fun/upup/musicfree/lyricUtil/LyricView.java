@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.facebook.react.bridge.ReactContext;
 
+import java.util.Map;
+
 public class LyricView extends Activity implements View.OnTouchListener {
 
     private WindowManager windowManager = null;
@@ -37,7 +39,7 @@ public class LyricView extends Activity implements View.OnTouchListener {
     // 歌词信息
     private double lyricWidthPercent;
 
-    private float fontSize = 15;
+    private float rawfontSize = 15;
 
 
     @Override
@@ -47,7 +49,7 @@ public class LyricView extends Activity implements View.OnTouchListener {
     }
 
     // 展示歌词窗口
-    public void showLyricWindow(String initText) {
+    public void showLyricWindow(String initText, Map<String, Object> options) {
         if (windowManager == null) {
             windowManager = (WindowManager) reactContext.getSystemService(WINDOW_SERVICE);
             layoutParams = new WindowManager.LayoutParams();
@@ -60,13 +62,30 @@ public class LyricView extends Activity implements View.OnTouchListener {
             layoutParams.type = Build.VERSION.SDK_INT < Build.VERSION_CODES.O ?
                     WindowManager.LayoutParams.TYPE_SYSTEM_ALERT :
                     WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            /**
+             * topPercent: number;
+             * leftPercent: number;
+             * align: number;
+             * color: string;
+             * backgroundColor: string;
+             * widthPercent: number;
+             * fontSize: number;
+             */
+            Object topPercent = options.get("topPercent");
+            Object leftPercent = options.get("leftPercent");
+            Object align = options.get("align");
+            Object color = options.get("color");
+            Object backgroundColor = options.get("backgroundColor");
+            Object widthPercent = options.get("widthPercent");
+            Object fontSize = options.get("fontSize");
 
-            layoutParams.width = (int) (0.5 * this.windowWidth);
+            layoutParams.width = (int) ((widthPercent != null ? (double) widthPercent: 0.5) * this.windowWidth);
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
             layoutParams.gravity = Gravity.TOP | Gravity.START;
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //                layoutParams.setFitInsetsTypes(0);
 //            }
+            layoutParams.x = (int) ((double) (leftPercent != null ? leftPercent : 0.5) * (this.windowWidth - layoutParams.width));
             layoutParams.y = 0;
 
 
@@ -78,13 +97,29 @@ public class LyricView extends Activity implements View.OnTouchListener {
             if (initText != null) {
                 tv.setText(initText);
             }
-            tv.setTextSize(fontSize);
-            tv.setTextColor(Color.parseColor("#66ccff"));
-            tv.setBackgroundColor(Color.TRANSPARENT);
+            tv.setTextSize(fontSize != null ?  ((Double) fontSize).floatValue() : 14);
+            tv.setTextColor(color != null ? Color.parseColor(rgba2argb((String) color)) : Color.BLACK);
+            tv.setBackgroundColor(backgroundColor != null ? Color.parseColor(rgba2argb((String) backgroundColor)) : Color.TRANSPARENT);
             tv.setPadding(12, 6, 12, 6);
+            if(align != null) {
+                tv.setGravity((int) align);
+            }
             windowManager.addView(tv, layoutParams);
 
+            if (topPercent != null) {
+                setTopPercent((double) topPercent);
+            }
 
+
+        }
+    }
+
+
+    String rgba2argb(String color) {
+        if (color.length() == 9) {
+            return color.charAt(0) + color.substring(7, 9) + color.substring(1, 7);
+        } else {
+            return color;
         }
     }
 
@@ -135,7 +170,7 @@ public class LyricView extends Activity implements View.OnTouchListener {
             pct = 1;
         }
         if(tv != null) {
-            layoutParams.x = (int) (pct * (windowWidth - tv.getWidth()));
+            layoutParams.x = (int) (pct * (windowWidth - layoutParams.width));
             windowManager.updateViewLayout(tv, layoutParams);
         }
     }
@@ -143,10 +178,10 @@ public class LyricView extends Activity implements View.OnTouchListener {
     public void setColors(String textColor, String backgroundColor) {
         if(tv != null) {
             if(textColor != null) {
-                tv.setTextColor(Color.parseColor(textColor));
+                tv.setTextColor(Color.parseColor(rgba2argb(textColor)));
             }
             if (backgroundColor != null) {
-                ColorDrawable background = new ColorDrawable(Color.parseColor(backgroundColor));
+                ColorDrawable background = new ColorDrawable(Color.parseColor(rgba2argb(backgroundColor)));
                 tv.setBackground(background);
             }
         }

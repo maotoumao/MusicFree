@@ -12,7 +12,10 @@ export enum NativeTextAlignment {
 // 状态栏歌词的工具
 interface ILyricUtil extends NativeModule {
     /** 显示状态栏歌词 */
-    showStatusBarLyric: (initLyric?: string) => Promise<void>;
+    showStatusBarLyric: (
+        initLyric?: string,
+        config?: Record<string, any>,
+    ) => Promise<void>;
     /** 隐藏状态栏歌词 */
     hideStatusBarLyric: () => Promise<void>;
     /** 设置歌词文本 */
