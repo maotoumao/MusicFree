@@ -61,6 +61,7 @@ export default function Operations(props: IOperationsProps) {
                     ? style.wrapper
                     : style.horizonalWrapper
             }
+            scrollEnabled={orientation === 'horizonal'}
             showsHorizontalScrollIndicator={false}
             horizontal={orientation === 'vertical'}
             contentContainerStyle={
@@ -84,7 +85,6 @@ const style = StyleSheet.create({
         marginBottom: rpx(20),
         flexGrow: 0,
         flexShrink: 0,
-        marginRight: rpx(24),
     },
     horizonalWrapper: {
         marginTop: rpx(20),
@@ -101,5 +101,6 @@ const style = StyleSheet.create({
         width: rpx(170),
         flexDirection: 'column',
         paddingVertical: rpx(24),
+        paddingLeft: rpx(15),
     },
 });

@@ -110,24 +110,8 @@ export default function BasicSetting() {
 
     const basicOptions = [
         {
-            title: '播放',
+            title: '常规',
             data: [
-                createSwitch(
-                    '允许与其他应用同时播放',
-                    'setting.basic.notInterrupt',
-                    basicSetting?.notInterrupt ?? false,
-                ),
-                createRadio(
-                    '播放被暂时打断时',
-                    'setting.basic.tempRemoteDuck',
-                    ['暂停', '降低音量'],
-                    basicSetting?.tempRemoteDuck ?? '暂停',
-                ),
-                createSwitch(
-                    '播放失败时自动暂停',
-                    'setting.basic.autoStopWhenError',
-                    basicSetting?.autoStopWhenError ?? false,
-                ),
                 createRadio(
                     '点击搜索结果内单曲时',
                     'setting.basic.clickMusicInSearch',
@@ -139,23 +123,6 @@ export default function BasicSetting() {
                     'setting.basic.clickMusicInAlbum',
                     ['播放单曲', '播放专辑'],
                     basicSetting?.clickMusicInAlbum ?? '播放专辑',
-                ),
-                createRadio(
-                    '默认播放音质',
-                    'setting.basic.defaultPlayQuality',
-                    qualityKeys,
-                    basicSetting?.defaultPlayQuality ?? 'standard',
-                    qualityText,
-                ),
-                createRadio(
-                    '默认播放音质缺失时',
-                    'setting.basic.playQualityOrder',
-                    ['asc', 'desc'],
-                    basicSetting?.playQualityOrder ?? 'asc',
-                    {
-                        asc: '播放更高音质',
-                        desc: '播放更低音质',
-                    },
                 ),
                 createRadio(
                     '历史记录最多保存条数',
@@ -177,6 +144,44 @@ export default function BasicSetting() {
                     '处于歌曲详情页时常亮',
                     'setting.basic.musicDetailAwake',
                     basicSetting?.musicDetailAwake ?? false,
+                ),
+            ],
+        },
+        {
+            title: '播放',
+            data: [
+                createSwitch(
+                    '允许与其他应用同时播放',
+                    'setting.basic.notInterrupt',
+                    basicSetting?.notInterrupt ?? false,
+                ),
+                createRadio(
+                    '播放被暂时打断时',
+                    'setting.basic.tempRemoteDuck',
+                    ['暂停', '降低音量'],
+                    basicSetting?.tempRemoteDuck ?? '暂停',
+                ),
+                createSwitch(
+                    '播放失败时自动暂停',
+                    'setting.basic.autoStopWhenError',
+                    basicSetting?.autoStopWhenError ?? false,
+                ),
+                createRadio(
+                    '默认播放音质',
+                    'setting.basic.defaultPlayQuality',
+                    qualityKeys,
+                    basicSetting?.defaultPlayQuality ?? 'standard',
+                    qualityText,
+                ),
+                createRadio(
+                    '默认播放音质缺失时',
+                    'setting.basic.playQualityOrder',
+                    ['asc', 'desc'],
+                    basicSetting?.playQualityOrder ?? 'asc',
+                    {
+                        asc: '播放更高音质',
+                        desc: '播放更低音质',
+                    },
                 ),
             ],
         },
