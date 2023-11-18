@@ -142,6 +142,20 @@ export function getDirectory(path: string) {
     return path.slice(0, lastSlash);
 }
 
+export function getFileName(path: string, withoutExt?: boolean) {
+    const lastSlash = path.lastIndexOf('/');
+    if (lastSlash === -1) {
+        return path;
+    }
+    const fileName = path.slice(lastSlash);
+    if (withoutExt) {
+        const lastDot = fileName.lastIndexOf('.');
+        return lastDot === -1 ? fileName : fileName.slice(0, lastDot);
+    } else {
+        return fileName;
+    }
+}
+
 export async function mkdirR(directory: string) {
     let folder = directory;
     const checkStack = [];

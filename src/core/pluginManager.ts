@@ -43,6 +43,7 @@ import {FileSystem} from 'react-native-file-access';
 import Mp3Util from '@/native/mp3Util';
 import {PluginMeta} from './pluginMeta';
 import {useEffect, useState} from 'react';
+import {getFileName} from '@/utils/fileUtils';
 
 axios.defaults.timeout = 2000;
 
@@ -263,12 +264,18 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 LocalMusicSheet.isLocalMusic(musicItem),
                 InternalDataType.LOCALPATH,
             );
-        if (localPath && (await FileSystem.exists(localPath))) {
+        if (
+            localPath &&
+            (localPath.startsWith('content://') ||
+                (await FileSystem.exists(localPath)))
+        ) {
             trace('本地播放', localPath);
             return {
                 url: localPath,
             };
         }
+        console.log('BFFF2');
+
         if (musicItem.platform === localPluginPlatform) {
             throw new Error('本地音乐不存在');
         }
@@ -769,7 +776,7 @@ const localFilePlugin = new Plugin(function () {
                 try {
                     rawLrc = await Mp3Util.getLyric(localPath);
                 } catch (e) {
-                    console.log('e', e);
+                    console.log('读取内嵌歌词失败', e);
                 }
                 if (!rawLrc) {
                     // 读取配置歌词
@@ -789,6 +796,25 @@ const localFilePlugin = new Plugin(function () {
                       rawLrc,
                   }
                 : null;
+        },
+        async importMusicItem(urlLike) {
+            let meta: any = {};
+            try {
+                meta = await Mp3Util.getBasicMeta(urlLike);
+            } catch {}
+            const id = await FileSystem.hash(urlLike, 'MD5');
+            return {
+                id: id,
+                platform: '本地',
+                title: meta?.title ?? getFileName(urlLike),
+                artist: meta?.artist ?? '未知歌手',
+                duration: parseInt(meta?.duration ?? '0') / 1000,
+                album: meta?.album ?? '未知专辑',
+                artwork: '',
+                [internalSerializeKey]: {
+                    localPath: urlLike,
+                },
+            };
         },
     };
 }, '');
@@ -852,7 +878,7 @@ async function installPlugin(pluginPath: string) {
         plugin.path = _pluginPath;
         plugins = plugins.concat(plugin);
         pluginStateMapper.notify();
-        return;
+        return plugin;
     }
     throw new Error('插件无法解析');
     // }

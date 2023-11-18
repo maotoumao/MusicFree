@@ -484,8 +484,12 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
 
             await replaceTrack(track as Track);
             currentMusicStateMapper.notify();
+            let info: Partial<IMusic.IMusicItem> | null = null;
+            try {
+                info =
+                    (await plugin?.methods?.getMusicInfo?.(_musicItem)) ?? null;
+            } catch {}
 
-            const info = await plugin?.methods?.getMusicInfo?.(_musicItem);
             if (info && isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
                 await TrackPlayer.updateMetadataForTrack(
                     0,
@@ -494,7 +498,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
                 musicQueue = produce(musicQueue, draft => {
                     draft[currentIndex] = mergeProps(
                         track as IMusic.IMusicItem,
-                        info,
+                        info!,
                     ) as IMusic.IMusicItem;
                     draft[currentIndex].url = _musicItem.url; // todo 这里写的不好
                 });
@@ -511,7 +515,7 @@ const play = async (musicItem?: IMusic.IMusicItem, forcePlay?: boolean) => {
             }
         } catch (e) {
             // 播放失败
-            console.log(e);
+            console.log('播放失败', e);
             if (isSameMediaItem(_musicItem, musicQueue[currentIndex])) {
                 await _playFail();
             }
