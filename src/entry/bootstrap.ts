@@ -17,6 +17,7 @@ import LocalMusicSheet from '@/core/localMusicSheet';
 import {StatusBar} from 'react-native';
 import Theme from '@/core/theme';
 import LyricManager from '@/core/lyricManager';
+import {getStorage, setStorage} from '@/utils/storage';
 
 /** app加载前执行
  * 1. 检查权限
@@ -107,6 +108,7 @@ async function _bootstrap() {
     //     console.log(data);
     // })
 
+    extraMakeup();
     ErrorUtils.setGlobalHandler(error => {
         errorLog('未捕获的错误', error);
     });
@@ -131,9 +133,29 @@ export default async function () {
         await _bootstrap();
     } catch (e) {
         errorLog('初始化出错', e);
-        console.log(e);
     }
     // 隐藏开屏动画
     console.log('HIDE');
     RNBootSplash.hide({fade: true});
+}
+
+/** 不需要阻塞的 */
+async function extraMakeup() {
+    try {
+        if (Config.get('setting.basic.autoUpdatePlugin')) {
+            const lastUpdated =
+                (await getStorage('pluginLastupdatedTime')) || 0;
+            const now = Date.now();
+            if (Math.abs(now - lastUpdated) > 86400000) {
+                setStorage('pluginLastupdatedTime', now);
+                const plugins = PluginManager.getValidPlugins();
+                for (let i = 0; i < plugins.length; ++i) {
+                    const srcUrl = plugins[i].instance.srcUrl;
+                    if (srcUrl) {
+                        await PluginManager.installPluginFromUrl(srcUrl);
+                    }
+                }
+            }
+        }
+    } catch {}
 }

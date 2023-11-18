@@ -145,6 +145,11 @@ export default function BasicSetting() {
                     'setting.basic.musicDetailAwake',
                     basicSetting?.musicDetailAwake ?? false,
                 ),
+                createSwitch(
+                    '启动时自动更新插件',
+                    'setting.basic.autoUpdatePlugin',
+                    basicSetting?.autoUpdatePlugin ?? false,
+                ),
             ],
         },
         {

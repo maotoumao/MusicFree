@@ -47,7 +47,10 @@ interface IConfig {
                 traceLog: boolean;
                 devLog: boolean;
             };
+            /** 最大历史记录条目 */
             maxHistoryLen: number;
+            /** 启动时自动更新插件 */
+            autoUpdatePlugin: boolean;
         };
         /** 歌词 */
         lyric: {

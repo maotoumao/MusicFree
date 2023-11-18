@@ -48,8 +48,7 @@ const showStatusBarLyric: ILyricUtil['showStatusBarLyric'] = async (
     config,
 ) => {
     try {
-        const val = await originalShowStatusBarLyric(initLyric, config);
-        console.log(val);
+        await originalShowStatusBarLyric(initLyric, config);
     } catch (e) {
         Toast.warn('状态栏歌词开启失败，请到手机系统设置打开悬浮窗权限');
         Config.set('setting.lyric.showStatusBarLyric', false);

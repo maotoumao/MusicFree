@@ -34,7 +34,7 @@ function HomeDrawer(props: any) {
         },
         {
             icon: 'language-javascript',
-            title: '插件设置',
+            title: '插件管理',
             onPress: () => {
                 navigateToSetting('plugin');
             },

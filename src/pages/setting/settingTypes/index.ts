@@ -18,7 +18,7 @@ const settingTypes: Record<
         component: BasicSetting,
     },
     plugin: {
-        title: '插件设置',
+        title: '插件管理',
         component: PluginSetting,
         showNav: false,
     },

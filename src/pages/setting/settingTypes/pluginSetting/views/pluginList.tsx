@@ -166,7 +166,7 @@ export default function PluginList() {
 
     return (
         <>
-            <AppBar menu={menuOptions}>插件设置</AppBar>
+            <AppBar menu={menuOptions}>插件管理</AppBar>
             <HorizonalSafeAreaView style={style.wrapper}>
                 <>
                     {loading ? (

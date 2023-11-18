@@ -11,7 +11,7 @@ export default function NoPlugin() {
                 style={style.mt}
                 fontSize="subTitle"
                 fontColor="textSecondary">
-                先去侧边栏-插件设置里安装插件吧~
+                先去 侧边栏-插件管理 里安装插件吧~
             </ThemeText>
         </View>
     );
