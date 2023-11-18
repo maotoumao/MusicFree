@@ -1,17 +1,22 @@
 package fun.upup.musicfree.lyricUtil;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.ReactContext;
 
@@ -20,6 +25,9 @@ import java.util.Map;
 public class LyricView extends Activity implements View.OnTouchListener {
 
     private WindowManager windowManager = null;
+
+    private OrientationEventListener orientationEventListener = null;
+
     private WindowManager.LayoutParams layoutParams = null;
 
     private TextView tv = null;
@@ -35,11 +43,12 @@ public class LyricView extends Activity implements View.OnTouchListener {
 
     private double windowHeight;
 
+    private double widthPercent;
 
-    // 歌词信息
-    private double lyricWidthPercent;
+    private double leftPercent;
 
-    private float rawfontSize = 15;
+    private double topPercent = 0;
+
 
 
     @Override
@@ -50,67 +59,108 @@ public class LyricView extends Activity implements View.OnTouchListener {
 
     // 展示歌词窗口
     public void showLyricWindow(String initText, Map<String, Object> options) {
-        if (windowManager == null) {
-            windowManager = (WindowManager) reactContext.getSystemService(WINDOW_SERVICE);
-            layoutParams = new WindowManager.LayoutParams();
+        try {
+            if (windowManager == null) {
+                windowManager = (WindowManager) reactContext.getSystemService(WINDOW_SERVICE);
+                layoutParams = new WindowManager.LayoutParams();
 
-            DisplayMetrics outMetrics = new DisplayMetrics();
-            windowManager.getDefaultDisplay().getMetrics(outMetrics);
-            this.windowWidth = outMetrics.widthPixels;
-            this.windowHeight = outMetrics.heightPixels;
+                DisplayMetrics outMetrics = new DisplayMetrics();
+                windowManager.getDefaultDisplay().getMetrics(outMetrics);
+                this.windowWidth = outMetrics.widthPixels;
+                this.windowHeight = outMetrics.heightPixels;
 
-            layoutParams.type = Build.VERSION.SDK_INT < Build.VERSION_CODES.O ?
-                    WindowManager.LayoutParams.TYPE_SYSTEM_ALERT :
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-            /**
-             * topPercent: number;
-             * leftPercent: number;
-             * align: number;
-             * color: string;
-             * backgroundColor: string;
-             * widthPercent: number;
-             * fontSize: number;
-             */
-            Object topPercent = options.get("topPercent");
-            Object leftPercent = options.get("leftPercent");
-            Object align = options.get("align");
-            Object color = options.get("color");
-            Object backgroundColor = options.get("backgroundColor");
-            Object widthPercent = options.get("widthPercent");
-            Object fontSize = options.get("fontSize");
+                layoutParams.type = Build.VERSION.SDK_INT < Build.VERSION_CODES.O ?
+                        WindowManager.LayoutParams.TYPE_SYSTEM_ALERT :
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+                /*
+                 * topPercent: number;
+                 * leftPercent: number;
+                 * align: number;
+                 * color: string;
+                 * backgroundColor: string;
+                 * widthPercent: number;
+                 * fontSize: number;
+                 */
+                Object topPercent = options.get("topPercent");
+                Object leftPercent = options.get("leftPercent");
+                Object align = options.get("align");
+                Object color = options.get("color");
+                Object backgroundColor = options.get("backgroundColor");
+                Object widthPercent = options.get("widthPercent");
+                Object fontSize = options.get("fontSize");
 
-            layoutParams.width = (int) ((widthPercent != null ? (double) widthPercent: 0.5) * this.windowWidth);
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            layoutParams.gravity = Gravity.TOP | Gravity.START;
+                this.widthPercent = (widthPercent != null ? (double) widthPercent: 0.5);
+
+                layoutParams.width = (int) (this.widthPercent * this.windowWidth);
+                layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                layoutParams.gravity = Gravity.TOP | Gravity.START;
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //                layoutParams.setFitInsetsTypes(0);
 //            }
-            layoutParams.x = (int) ((double) (leftPercent != null ? leftPercent : 0.5) * (this.windowWidth - layoutParams.width));
-            layoutParams.y = 0;
+                this.leftPercent = (double) (leftPercent != null ? leftPercent : 0.5);
+                layoutParams.x = (int) (this.leftPercent * (this.windowWidth - layoutParams.width));
+                layoutParams.y = 0;
 
 
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                    | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
-            layoutParams.format = PixelFormat.TRANSPARENT;
+                layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+                layoutParams.format = PixelFormat.TRANSPARENT;
 
-            tv = new TextView(reactContext);
-            if (initText != null) {
-                tv.setText(initText);
+                tv = new TextView(reactContext);
+                if (initText != null) {
+                    tv.setText(initText);
+                }
+                tv.setTextSize(fontSize != null ?  ((Double) fontSize).floatValue() : 14);
+                tv.setBackgroundColor(Color.parseColor(rgba2argb(backgroundColor != null ? (String) backgroundColor: "#84888153")));
+                tv.setTextColor(Color.parseColor(rgba2argb(color != null ? (String) color: "#FFE9D2")));
+                tv.setPadding(12, 6, 12, 6);
+                tv.setGravity(align != null ? (int) align: Gravity.CENTER);
+                windowManager.addView(tv, layoutParams);
+
+                if (topPercent != null) {
+                    setTopPercent((double) topPercent);
+                }
+                listenOrientationChange();
+
+
+
             }
-            tv.setTextSize(fontSize != null ?  ((Double) fontSize).floatValue() : 14);
-            tv.setTextColor(color != null ? Color.parseColor(rgba2argb((String) color)) : Color.BLACK);
-            tv.setBackgroundColor(backgroundColor != null ? Color.parseColor(rgba2argb((String) backgroundColor)) : Color.TRANSPARENT);
-            tv.setPadding(12, 6, 12, 6);
-            if(align != null) {
-                tv.setGravity((int) align);
-            }
-            windowManager.addView(tv, layoutParams);
+        } catch(Exception e) {
+            hideLyricWindow();
+            throw e;
+        }
+    }
 
-            if (topPercent != null) {
-                setTopPercent((double) topPercent);
-            }
+    private void listenOrientationChange() {
+        if(windowManager == null) {
+            return;
+        }
+        if (orientationEventListener == null) {
+            orientationEventListener = new OrientationEventListener(reactContext, SensorManager.SENSOR_DELAY_NORMAL) {
+                @Override
+                public void onOrientationChanged(int i) {
+                    if(windowManager != null) {
+                        DisplayMetrics outMetrics = new DisplayMetrics();
+                        windowManager.getDefaultDisplay().getMetrics(outMetrics);
+                        windowWidth = outMetrics.widthPixels;
+                        windowHeight = outMetrics.heightPixels;
+                        layoutParams.width = (int) (widthPercent * windowWidth);
+                        layoutParams.x = (int) (leftPercent * (windowWidth - layoutParams.width));
+                        layoutParams.y = (int) (topPercent * (windowHeight - tv.getHeight()));
+                        windowManager.updateViewLayout(tv, layoutParams);
+                    }
+                }
+            };
+        }
 
+        if(orientationEventListener.canDetectOrientation()) {
+            orientationEventListener.enable();
+        }
+    }
 
+    private void unlistenOrientationChange() {
+        if(orientationEventListener != null) {
+            orientationEventListener.disable();
         }
     }
 
@@ -127,10 +177,13 @@ public class LyricView extends Activity implements View.OnTouchListener {
     // 隐藏歌词窗口
     public void hideLyricWindow() {
         if (windowManager != null) {
-            windowManager.removeView(tv);
-            tv = null;
+            if (tv != null) {
+                windowManager.removeView(tv);
+                tv = null;
+            }
             windowManager = null;
             layoutParams = null;
+            unlistenOrientationChange();
         }
     }
 
@@ -160,6 +213,7 @@ public class LyricView extends Activity implements View.OnTouchListener {
             layoutParams.y = (int) (pct * (windowHeight - tv.getHeight()));
             windowManager.updateViewLayout(tv, layoutParams);
         }
+        this.topPercent = pct;
     }
 
     public void setLeftPercent(double pct) {
@@ -173,6 +227,7 @@ public class LyricView extends Activity implements View.OnTouchListener {
             layoutParams.x = (int) (pct * (windowWidth - layoutParams.width));
             windowManager.updateViewLayout(tv, layoutParams);
         }
+        this.leftPercent = pct;
     }
 
     public void setColors(String textColor, String backgroundColor) {
@@ -210,6 +265,7 @@ public class LyricView extends Activity implements View.OnTouchListener {
             layoutParams.width = width;
             windowManager.updateViewLayout(tv, layoutParams);
         }
+        this.widthPercent = pct;
     }
 
     public void setFontSize(float fontSize) {
@@ -217,5 +273,7 @@ public class LyricView extends Activity implements View.OnTouchListener {
             tv.setTextSize(fontSize);
         }
     }
+
+
 
 }

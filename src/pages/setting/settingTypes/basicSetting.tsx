@@ -624,7 +624,7 @@ function LyricSetting() {
                     });
                 }}>
                 <ListItem.Content title="文本颜色" />
-                <ColorBlock color={lyricSetting?.color ?? 'transparent'} />
+                <ColorBlock color={lyricSetting?.color ?? '#FFE9D2'} />
             </ListItem>
             <ListItem
                 withHorizonalPadding
@@ -648,7 +648,7 @@ function LyricSetting() {
                 }}>
                 <ListItem.Content title="文本背景色" />
                 <ColorBlock
-                    color={lyricSetting?.backgroundColor ?? 'transparent'}
+                    color={lyricSetting?.backgroundColor ?? '#84888153'}
                 />
             </ListItem>
         </View>

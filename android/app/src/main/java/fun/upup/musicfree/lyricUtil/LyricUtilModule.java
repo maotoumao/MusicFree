@@ -1,5 +1,7 @@
 package fun.upup.musicfree.lyricUtil;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Promise;
@@ -72,10 +74,13 @@ public class LyricUtilModule extends ReactContextBaseJavaModule {
                     mapOptions.put("fontSize", options.getDouble("fontSize"));
 
                 }
-
-                lyricView.showLyricWindow(initLyric, mapOptions);
+                try {
+                    lyricView.showLyricWindow(initLyric, mapOptions);
+                    promise.resolve(true);
+                } catch (Exception e) {
+                    promise.reject("Exception", e.getMessage());
+                }
             });
-            promise.resolve(true);
         } catch (Exception e) {
             promise.reject("Exception", e.getMessage());
         }
