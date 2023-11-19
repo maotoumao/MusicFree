@@ -8,6 +8,7 @@ type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[] | IMusic.IQuality;
 interface IConfig {
     setting: {
         basic: {
+            autoPlayWhenAppStart: boolean;
             /** 使用移动网络播放 */
             useCelluarNetworkPlay: boolean;
             /** 使用移动网络下载 */

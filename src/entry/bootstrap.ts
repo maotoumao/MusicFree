@@ -194,4 +194,8 @@ async function extraMakeup() {
     if (initUrl) {
         handleLinkingUrl(initUrl);
     }
+
+    if (Config.get('setting.basic.autoPlayWhenAppStart')) {
+        MusicQueue.play();
+    }
 }

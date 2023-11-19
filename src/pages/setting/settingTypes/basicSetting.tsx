@@ -146,6 +146,11 @@ export default function BasicSetting() {
                     basicSetting?.musicDetailAwake ?? false,
                 ),
                 createSwitch(
+                    '软件启动时自动播放歌曲',
+                    'setting.basic.autoPlayWhenAppStart',
+                    basicSetting?.autoPlayWhenAppStart ?? false,
+                ),
+                createSwitch(
                     '软件启动时自动更新插件',
                     'setting.basic.autoUpdatePlugin',
                     basicSetting?.autoUpdatePlugin ?? false,
