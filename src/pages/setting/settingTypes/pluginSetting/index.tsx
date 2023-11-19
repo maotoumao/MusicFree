@@ -27,8 +27,6 @@ export default function PluginSetting() {
         <Stack.Navigator
             initialRouteName={routes[0].path}
             screenOptions={{
-                statusBarColor: 'transparent',
-                statusBarTranslucent: true,
                 headerShown: false,
                 animation: 'slide_from_right',
                 animationDuration: 100,

@@ -14,7 +14,7 @@ import PluginManager from '@/core/pluginManager';
 import Network from '@/core/network';
 import {ImgAsset} from '@/constants/assetsConst';
 import LocalMusicSheet from '@/core/localMusicSheet';
-import {Linking, StatusBar} from 'react-native';
+import {Linking} from 'react-native';
 import Theme from '@/core/theme';
 import LyricManager from '@/core/lyricManager';
 import {getStorage, setStorage} from '@/utils/storage';
@@ -103,9 +103,6 @@ async function _bootstrap() {
     Theme.setup();
     trace('主题初始化完成');
     await LyricManager.setup();
-
-    StatusBar.setBackgroundColor('transparent');
-    StatusBar.setTranslucent(true);
 
     extraMakeup();
     ErrorUtils.setGlobalHandler(error => {

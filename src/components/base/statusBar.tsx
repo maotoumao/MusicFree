@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {StatusBar, StatusBarProps, View} from 'react-native';
 import useColors from '@/hooks/useColors';
 
@@ -8,25 +8,23 @@ export default function (props: IStatusBarProps) {
     const colors = useColors();
     const {backgroundColor, barStyle} = props;
 
-    useEffect(() => {
-        if (barStyle) {
-            StatusBar.setBarStyle(barStyle);
-        } else {
-            StatusBar.setBarStyle('light-content');
-        }
-    }, [barStyle]);
-
     return (
-        <View
-            style={{
-                zIndex: 10000,
-                position: 'absolute',
-                top: 0,
-                backgroundColor:
-                    backgroundColor ?? colors.appBar ?? colors.primary,
-                width: '100%',
-                height: StatusBar.currentHeight,
-            }}
-        />
+        <>
+            <StatusBar
+                backgroundColor={'rgba(0,0,0,0)'}
+                barStyle={barStyle ?? 'light-content'}
+            />
+            <View
+                style={{
+                    zIndex: 10000,
+                    position: 'absolute',
+                    top: 0,
+                    backgroundColor:
+                        backgroundColor ?? colors.appBar ?? colors.primary,
+                    width: '100%',
+                    height: StatusBar.currentHeight,
+                }}
+            />
+        </>
     );
 }
