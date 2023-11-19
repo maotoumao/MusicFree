@@ -103,7 +103,7 @@ public class LyricView extends Activity implements View.OnTouchListener {
 
 
                 layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE; // 最后一个控制不可点击
                 layoutParams.format = PixelFormat.TRANSPARENT;
 
                 tv = new TextView(reactContext);

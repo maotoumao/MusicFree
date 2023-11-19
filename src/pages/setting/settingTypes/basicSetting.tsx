@@ -639,7 +639,7 @@ function LyricSetting() {
                     });
                 }}>
                 <ListItem.Content title="文本颜色" />
-                <ColorBlock color={lyricSetting?.color ?? '#FFE9D2'} />
+                <ColorBlock color={lyricSetting?.color ?? '#FFE9D2FF'} />
             </ListItem>
             <ListItem
                 withHorizonalPadding
