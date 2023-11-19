@@ -149,6 +149,11 @@ export class Plugin {
             } else {
                 _instance = funcCode();
             }
+            if (Array.isArray(_instance.userVariables)) {
+                _instance.userVariables = _instance.userVariables.filter(
+                    it => it?.key,
+                );
+            }
             this.checkValid(_instance);
         } catch (e: any) {
             console.log(e);
