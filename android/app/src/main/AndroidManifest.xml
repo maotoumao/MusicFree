@@ -34,17 +34,16 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:mimeType="*/*" />
                 <data android:host="*" />
                 <data android:scheme="file"/>
                 <data android:scheme="content"/>
                 <data android:scheme="musicfree" android:host="app"/>
-                <data android:pathPattern=".*\\.js" />
-                <data android:pathPattern=".*\\.mp3" />
-                <data android:pathPattern=".*\\.flac" />
-                <data android:pathPattern=".*\\.m4a" />
-                <data android:pathPattern=".*\\.wav" />
-
+                <data android:mimeType="*/*" />
+                <data android:pathSuffix=".js" />
+                <data android:pathSuffix=".mp3" />
+                <data android:pathSuffix=".flac" />
+                <data android:pathSuffix=".m4a" />
+                <data android:pathSuffix=".wav" />
             </intent-filter>
         </activity>
     </application>

@@ -178,7 +178,11 @@ public class LyricView extends Activity implements View.OnTouchListener {
     public void hideLyricWindow() {
         if (windowManager != null) {
             if (tv != null) {
-                windowManager.removeView(tv);
+               try {
+                   windowManager.removeView(tv);
+               } catch (Exception e) {
+
+                }
                 tv = null;
             }
             windowManager = null;
