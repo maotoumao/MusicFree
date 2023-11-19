@@ -13,9 +13,10 @@ import IconButton from './iconButton';
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
     sheetName?: string;
+    sheetId?: string;
 }
 export default function (props: IProps) {
-    const {musicList, sheetName} = props;
+    const {musicList, sheetName, sheetId} = props;
     const colors = useColors();
     const navigate = useNavigate();
 
@@ -59,6 +60,7 @@ export default function (props: IProps) {
                         musicList: musicList,
                         musicSheet: {
                             title: sheetName,
+                            id: sheetId,
                         },
                     });
                 }}
