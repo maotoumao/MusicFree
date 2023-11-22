@@ -70,10 +70,7 @@ export default function Operations(props: IOperationsProps) {
                     : style.horizonalContentWrapper
             }>
             {actionButtons.map(action => (
-                <>
-                    {/* {index !== 0 ? <Divider vertical={orientation === 'vertical'}></Divider> : null} */}
-                    <ActionButton key={action.title} {...action} />
-                </>
+                <ActionButton key={action.title} {...action} />
             ))}
         </ScrollView>
     );

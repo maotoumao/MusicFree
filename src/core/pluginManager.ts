@@ -124,6 +124,7 @@ export class Plugin {
                             PluginMeta.getPluginMeta(this)?.userVariables ?? {}
                         );
                     },
+                    os: 'android',
                 };
 
                 // eslint-disable-next-line no-new-func

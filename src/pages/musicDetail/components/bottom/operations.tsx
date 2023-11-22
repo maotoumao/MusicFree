@@ -16,7 +16,7 @@ import TrackPlayer from 'react-native-track-player';
 import useOrientation from '@/hooks/useOrientation';
 import {showPanel} from '@/components/panels/usePanel';
 
-export default function Opertions() {
+export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
     const favoriteMusicSheet = MusicSheet.useSheets('favorite');
     const musicItem = MusicQueue.useCurrentMusicItem();

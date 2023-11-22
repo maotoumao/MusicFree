@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import SeekBar from './seekBar';
 import PlayControl from './playControl';
-import Opertions from './operations';
+import Operations from './operations';
 import useOrientation from '@/hooks/useOrientation';
 
 export default function Bottom() {
@@ -18,7 +18,7 @@ export default function Bottom() {
                       }
                     : undefined,
             ]}>
-            <Opertions />
+            <Operations />
             <SeekBar />
             <PlayControl />
         </View>
