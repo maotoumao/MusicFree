@@ -145,15 +145,20 @@ export default function BasicSetting() {
                     'setting.basic.musicDetailAwake',
                     basicSetting?.musicDetailAwake ?? false,
                 ),
-                createSwitch(
-                    '软件启动时自动播放歌曲',
-                    'setting.basic.autoPlayWhenAppStart',
-                    basicSetting?.autoPlayWhenAppStart ?? false,
-                ),
+            ],
+        },
+        {
+            title: '插件',
+            data: [
                 createSwitch(
                     '软件启动时自动更新插件',
                     'setting.basic.autoUpdatePlugin',
                     basicSetting?.autoUpdatePlugin ?? false,
+                ),
+                createSwitch(
+                    '允许低版本插件覆盖高版本插件',
+                    'setting.basic.notCheckPluginVersion',
+                    basicSetting?.notCheckPluginVersion ?? false,
                 ),
             ],
         },
@@ -165,16 +170,21 @@ export default function BasicSetting() {
                     'setting.basic.notInterrupt',
                     basicSetting?.notInterrupt ?? false,
                 ),
-                createRadio(
-                    '播放被暂时打断时',
-                    'setting.basic.tempRemoteDuck',
-                    ['暂停', '降低音量'],
-                    basicSetting?.tempRemoteDuck ?? '暂停',
+                createSwitch(
+                    '软件启动时自动播放歌曲',
+                    'setting.basic.autoPlayWhenAppStart',
+                    basicSetting?.autoPlayWhenAppStart ?? false,
                 ),
                 createSwitch(
                     '播放失败时自动暂停',
                     'setting.basic.autoStopWhenError',
                     basicSetting?.autoStopWhenError ?? false,
+                ),
+                createRadio(
+                    '播放被暂时打断时',
+                    'setting.basic.tempRemoteDuck',
+                    ['暂停', '降低音量'],
+                    basicSetting?.tempRemoteDuck ?? '暂停',
                 ),
                 createRadio(
                     '默认播放音质',
@@ -272,7 +282,7 @@ export default function BasicSetting() {
             ],
         },
         {
-            title: '状态栏歌词',
+            title: '桌面歌词',
             data: [],
             footer: <LyricSetting />,
         },
@@ -480,7 +490,7 @@ function LyricSetting() {
     const colors = useColors();
 
     const openStatusBarLyric = createSwitch(
-        '开启状态栏歌词',
+        '开启桌面歌词',
         'setting.lyric.showStatusBarLyric',
         lyricSetting?.showStatusBarLyric ?? false,
         newValue => {

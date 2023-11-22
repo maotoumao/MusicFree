@@ -12,6 +12,7 @@ import {StyleSheet, View} from 'react-native';
 import ThemeText from '@/components/base/themeText';
 import IconTextButton from '@/components/base/iconTextButton';
 import {PluginMeta} from '@/core/pluginMeta';
+import ThemeSwitch from '@/components/base/switch';
 
 interface IPluginItemProps {
     plugin: Plugin;
@@ -164,10 +165,21 @@ export default function PluginItem(props: IPluginItemProps) {
                 },
             ]}>
             <View style={styles.header}>
-                <ThemeText fontSize="title">{plugin.name}</ThemeText>
+                <ThemeText
+                    style={styles.headerPluginName}
+                    numberOfLines={1}
+                    fontSize="title">
+                    {plugin.name}
+                </ThemeText>
                 <ThemeText style={styles.version} fontSize="subTitle">
                     (版本号: {plugin.instance.version})
                 </ThemeText>
+                <ThemeSwitch
+                    value={plugin.state === 'disabled' ? false : true}
+                    onValueChange={val => {
+                        PluginManager.setPluginEnabled(plugin, val);
+                    }}
+                />
             </View>
             <View style={styles.contents}>
                 {options.map((it, index) =>
@@ -242,8 +254,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
+    headerPluginName: {
+        flexShrink: 1,
+    },
     version: {
-        marginLeft: rpx(24),
+        marginHorizontal: rpx(24),
+        flexShrink: 0,
+        flexGrow: 1,
     },
     contents: {
         flexDirection: 'row',

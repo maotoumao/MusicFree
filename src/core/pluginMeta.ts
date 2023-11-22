@@ -48,7 +48,11 @@ async function setPluginMeta(plugin: Plugin, meta: IPlugin.IPluginMeta) {
     pluginMetaAllStateMapper.notify();
 }
 
-async function setPluginMetaProp(plugin: Plugin, prop: string, value: any) {
+async function setPluginMetaProp<K extends keyof IPlugin.IPluginMeta>(
+    plugin: Plugin,
+    prop: K,
+    value: IPlugin.IPluginMeta[K],
+) {
     const newMeta = produce(pluginMetaAll, draft => {
         objectPath.set(draft, `${plugin.name}.${prop}`, value);
     });

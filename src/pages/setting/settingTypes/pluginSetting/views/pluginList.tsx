@@ -261,7 +261,11 @@ async function installPluginFromUrl(text: string): Promise<IInstallResult> {
         const failedPlugins: Array<string> = [];
         await Promise.all(
             urls.map(url =>
-                PluginManager.installPluginFromUrl(url).catch(e => {
+                PluginManager.installPluginFromUrl(url, {
+                    notCheckVersion: Config.get(
+                        'setting.basic.notCheckPluginVersion',
+                    ),
+                }).catch(e => {
                     failedPlugins.push(e?.message ?? '');
                 }),
             ),

@@ -149,6 +149,7 @@ export class Plugin {
             } else {
                 _instance = funcCode();
             }
+            // 插件初始化后的一些操作
             if (Array.isArray(_instance.userVariables)) {
                 _instance.userVariables = _instance.userVariables.filter(
                     it => it?.key,
@@ -854,9 +855,16 @@ async function setup() {
         }
 
         plugins = _plugins;
-        pluginStateMapper.notify();
         /** 初始化meta信息 */
-        PluginMeta.setupMeta(plugins.map(_ => _.name));
+        await PluginMeta.setupMeta(plugins.map(_ => _.name));
+        /** 查看一下是否有禁用的标记 */
+        const allMeta = PluginMeta.getPluginMetaAll() ?? {};
+        for (let plugin of plugins) {
+            if (allMeta[plugin.name]?.enabled === false) {
+                plugin.state = 'disabled';
+            }
+        }
+        pluginStateMapper.notify();
     } catch (e: any) {
         ToastAndroid.show(
             `插件初始化失败:${e?.message ?? e}`,
@@ -890,7 +898,14 @@ async function installPlugin(pluginPath: string) {
     // throw new Error('插件不存在');
 }
 
-async function installPluginFromUrl(url: string) {
+interface IInstallPluginConfig {
+    notCheckVersion?: boolean;
+}
+
+async function installPluginFromUrl(
+    url: string,
+    config?: IInstallPluginConfig,
+) {
     try {
         const funcCode = (await axios.get(url)).data;
         if (funcCode) {
@@ -901,7 +916,7 @@ async function installPluginFromUrl(url: string) {
                 return;
             }
             const oldVersionPlugin = plugins.find(p => p.name === plugin.name);
-            if (oldVersionPlugin) {
+            if (oldVersionPlugin && !config?.notCheckVersion) {
                 if (
                     compare(
                         oldVersionPlugin.instance.version ?? '',
@@ -1098,6 +1113,16 @@ function useSortedPlugins() {
     return sortedPlugins;
 }
 
+async function setPluginEnabled(plugin: Plugin, enabled?: boolean) {
+    const target = plugins.find(it => it.hash === plugin.hash);
+    if (target) {
+        target.state = enabled ? 'enabled' : 'disabled';
+        plugins = [...plugins];
+        pluginStateMapper.notify();
+        PluginMeta.setPluginMetaProp(plugin, 'enabled', enabled);
+    }
+}
+
 const PluginManager = {
     setup,
     installPlugin,
@@ -1116,6 +1141,7 @@ const PluginManager = {
     usePlugins: pluginStateMapper.useMappedState,
     useSortedPlugins,
     uninstallAllPlugins,
+    setPluginEnabled,
 };
 
 export default PluginManager;

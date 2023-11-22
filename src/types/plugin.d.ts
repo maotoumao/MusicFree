@@ -141,5 +141,6 @@ declare namespace IPlugin {
     export type IPluginMeta = {
         order: number;
         userVariables: Record<string, string>;
+        enabled?: boolean;
     };
 }

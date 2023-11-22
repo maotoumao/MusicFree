@@ -52,6 +52,8 @@ interface IConfig {
             maxHistoryLen: number;
             /** 启动时自动更新插件 */
             autoUpdatePlugin: boolean;
+            // 不检查插件版本号
+            notCheckPluginVersion: boolean;
         };
         /** 歌词 */
         lyric: {
