@@ -87,7 +87,7 @@ export default function BackupSetting() {
                         throw '无效的URL';
                     }
                 } catch (e: any) {
-                    Toast.warn(`备份失败 ${e?.message ?? e}`);
+                    Toast.warn(`恢复失败 ${e?.message ?? e}`);
                 }
             },
         });

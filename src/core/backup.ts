@@ -67,7 +67,7 @@ async function resume(raw: string | Object) {
     /** 恢复歌单 */
     const resumeMusicSheets = MusicSheet.resumeSheets(musicSheets);
 
-    return Promise.all([...resumePlugins, resumeMusicSheets]);
+    return Promise.all([resumePlugins, resumeMusicSheets]);
 }
 
 const Backup = {
