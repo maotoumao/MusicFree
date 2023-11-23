@@ -160,7 +160,11 @@ async function extraMakeup() {
         // 插件
         try {
             if (url.endsWith('.js')) {
-                PluginManager.installPlugin(url)
+                PluginManager.installPlugin(url, {
+                    notCheckVersion: Config.get(
+                        'setting.basic.notCheckPluginVersion',
+                    ),
+                })
                     .then(res => {
                         Toast.success(`插件「${res.name}」安装成功~`);
                     })
