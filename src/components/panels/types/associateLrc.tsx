@@ -3,7 +3,6 @@ import {DeviceEventEmitter, StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 
 import {fontSizeConst} from '@/constants/uiConst';
-import Color from 'color';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -90,9 +89,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                             style.input,
                             {
                                 color: colors.text,
-                                backgroundColor: Color(colors.primary)
-                                    .lighten(0.7)
-                                    .toString(),
+                                backgroundColor: colors.placeholder,
                             },
                         ]}
                         placeholderTextColor={colors.textSecondary}

@@ -54,6 +54,8 @@ interface IConfig {
             autoUpdatePlugin: boolean;
             // 不检查插件版本号
             notCheckPluginVersion: boolean;
+            /** 关联歌词方式 */
+            associateLyricType: 'input' | 'search';
         };
         /** 歌词 */
         lyric: {

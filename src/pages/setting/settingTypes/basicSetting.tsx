@@ -145,6 +145,16 @@ export default function BasicSetting() {
                     'setting.basic.musicDetailAwake',
                     basicSetting?.musicDetailAwake ?? false,
                 ),
+                createRadio(
+                    '关联歌词方式',
+                    'setting.basic.associateLyricType',
+                    ['input', 'search'],
+                    basicSetting?.associateLyricType ?? 'search',
+                    {
+                        input: '输入歌曲ID',
+                        search: '搜索歌词',
+                    },
+                ),
             ],
         },
         {
