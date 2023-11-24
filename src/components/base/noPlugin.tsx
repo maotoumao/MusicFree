@@ -3,10 +3,20 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 
-export default function NoPlugin() {
+interface IProps {
+    notSupportType?: string;
+}
+
+export default function NoPlugin(props: IProps) {
     return (
         <View style={style.wrapper}>
-            <ThemeText fontSize="title">还没有安装插件哦</ThemeText>
+            <ThemeText fontSize="title">
+                还没有安装
+                {props?.notSupportType
+                    ? `支持「${props.notSupportType}」功能的`
+                    : ''}
+                插件哦
+            </ThemeText>
             <ThemeText
                 style={style.mt}
                 fontSize="subTitle"

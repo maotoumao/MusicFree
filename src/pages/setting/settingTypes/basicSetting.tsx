@@ -166,7 +166,7 @@ export default function BasicSetting() {
                     basicSetting?.autoUpdatePlugin ?? false,
                 ),
                 createSwitch(
-                    '允许低版本插件覆盖高版本插件',
+                    '安装插件时不校验版本',
                     'setting.basic.notCheckPluginVersion',
                     basicSetting?.notCheckPluginVersion ?? false,
                 ),

@@ -6,7 +6,7 @@ import PluginManager from '@/core/pluginManager';
 import {fontWeightConst} from '@/constants/uiConst';
 import SheetBody from './sheetBody';
 import useColors from '@/hooks/useColors';
-import Empty from '@/components/base/empty';
+import NoPlugin from '@/components/base/noPlugin';
 
 export default function Body() {
     const [index, setIndex] = useState(0);
@@ -55,7 +55,7 @@ export default function Body() {
     );
 
     if (!routes?.length) {
-        return <Empty />;
+        return <NoPlugin notSupportType="推荐歌单" />;
     }
     return (
         <TabView

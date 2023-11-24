@@ -15,7 +15,7 @@ import MusicBar from '@/components/musicBar';
 import Loading from '@/components/base/loading';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
-import NoPlugin from './components/noPlugin';
+import NoPlugin from '../../components/base/noPlugin';
 
 export default function () {
     const [pageStatus, setPageStatus] = useAtom(pageStatusAtom);
@@ -38,7 +38,9 @@ export default function () {
                     {pageStatus === PageStatus.EDITING && <HistoryPanel />}
                     {pageStatus === PageStatus.SEARCHING && <Loading />}
                     {pageStatus === PageStatus.RESULT && <ResultPanel />}
-                    {pageStatus === PageStatus.NO_PLUGIN && <NoPlugin />}
+                    {pageStatus === PageStatus.NO_PLUGIN && (
+                        <NoPlugin notSupportType="搜索" />
+                    )}
                 </View>
             </SafeAreaView>
             <MusicBar />
