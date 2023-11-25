@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {KeyboardAvoidingView, StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
@@ -11,6 +11,7 @@ import {hidePanel} from '../usePanel';
 import Divider from '@/components/base/divider';
 import ListItem from '@/components/base/listItem';
 import Input from '@/components/base/input';
+import globalStyle from '@/constants/globalStyle';
 
 interface IUserVariablesProps {
     onOk: (values: Record<string, string>, closePanel: () => void) => void;
@@ -29,6 +30,7 @@ export default function SetUserVariables(props: IUserVariablesProps) {
     return (
         <PanelBase
             height={vmax(80)}
+            keyboardAvoidBehavior="none"
             renderBody={() => (
                 <>
                     <View style={styles.opeartions}>
@@ -47,30 +49,40 @@ export default function SetUserVariables(props: IUserVariablesProps) {
                         </Button>
                     </View>
                     <Divider />
-                    <ScrollView>
-                        {variables.map(it => (
-                            <ListItem
-                                withHorizonalPadding
-                                style={styles.listItem}>
-                                <ThemeText
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail"
-                                    style={styles.varName}>
-                                    {it.name ?? it.key}
-                                </ThemeText>
-                                <Input
-                                    defaultValue={initValues[it.key]}
-                                    onChangeText={e => {
-                                        resultRef.current[it.key] = e;
-                                    }}
-                                    style={[
-                                        styles.input,
-                                        {backgroundColor: colors.placeholder},
-                                    ]}
-                                />
-                            </ListItem>
-                        ))}
-                    </ScrollView>
+                    <KeyboardAvoidingView
+                        behavior="padding"
+                        style={globalStyle.flex1}>
+                        <ScrollView
+                            contentContainerStyle={{
+                                paddingBottom: vmax(20), // TODO: 先这样吧，keyboardAvoidingView没用好，之后再优化吧
+                            }}>
+                            {variables.map(it => (
+                                <ListItem
+                                    withHorizonalPadding
+                                    style={styles.listItem}>
+                                    <ThemeText
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
+                                        style={styles.varName}>
+                                        {it.name ?? it.key}
+                                    </ThemeText>
+                                    <Input
+                                        defaultValue={initValues[it.key]}
+                                        onChangeText={e => {
+                                            resultRef.current[it.key] = e;
+                                        }}
+                                        style={[
+                                            styles.input,
+                                            {
+                                                backgroundColor:
+                                                    colors.placeholder,
+                                            },
+                                        ]}
+                                    />
+                                </ListItem>
+                            ))}
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </>
             )}
         />
