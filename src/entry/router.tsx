@@ -170,6 +170,7 @@ interface RouterParams extends RouterParamsBase {
     downloading: undefined;
     'search-music-list': {
         musicList: IMusic.IMusicItem[] | null;
+        musicSheet?: IMusic.IMusicSheetItem;
     };
     'music-list-editor': {
         musicSheet?: Partial<IMusic.IMusicSheetItem>;

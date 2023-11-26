@@ -94,6 +94,7 @@ export default function () {
                         onPress() {
                             navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                                 musicList: musicSheet?.musicList,
+                                musicSheet: musicSheet,
                             });
                         },
                     },
