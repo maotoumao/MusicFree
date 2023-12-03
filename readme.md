@@ -15,11 +15,11 @@
 
 > **桌面版来啦：<https://github.com/maotoumao/MusicFreeDesktop>**
 
-如果需要了解后续进展可以关注~~b 站账号：[不想睡觉猫头猫](https://space.bilibili.com/12866223)~~(不到一天就被吞了！还是关注公众号↓吧)；如果有问题可以在 issue 区或者公众号反馈。
-
-简介视频放在了公众号里：[简介视频](https://mp.weixin.qq.com/s/sH_2vRm7EyBGgWggkJmsdg)
+如果需要了解后续进展可以关注公众号↓；如果有问题可以在 issue 区或者公众号直接留言反馈。
 
 ![微信公众号](./src/assets/imgs/wechat_channel.jpg)
+
+软件下载方式、插件使用说明、插件开发文档可去站点 [https://musicfree.upup.fun](https://musicfree.upup.fun) 查看。
 
 ## 特性
 
@@ -37,7 +37,7 @@
 
 插件本质上是一个满足插件协议的 commonjs 模块。插件中定义了搜索（音乐、专辑、作者）、播放、查看专辑、作者详细信息、导入歌单、获取歌词等基本函数，插件的开发者只需要关心输入输出逻辑，至于分页、缓存等全都交给 MusicFree 控制即可。本软件通过插件来完成播放器的所有功能，这样解耦的设计也可以使得本软件可以专注于做一个功能完善的播放器，我直呼小而美。
 
-插件开发文档可以参考 [这里](http://musicfree.upup.fun/docs/tutorial-plugin/intro)
+插件开发文档可以参考 [这里](https://musicfree.upup.fun/plugin/introduction.html)
 
 需要注意的是：
 
@@ -48,9 +48,11 @@
 ### 插件使用
 
 下载 app 之后，只需要在侧边栏设置-插件设置中安装插件即可。支持安装本地插件和从网络安装插件（支持解析.js 文件和.json 描述文件；已经写了几个示意的插件：[指路这个仓库](https://github.com/maotoumao/MusicFreePlugins)，不过可能功能不是很完善）；
+
+
 你可以直接点击从网络安装插件，然后输入<https://gitee.com/maotoumao/MusicFreePlugins/raw/master/plugins.json> ，点击确认即可安装。
 
-图文版详细使用说明可以参考这里：[MusicFree 插件使用指南](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483875&idx=1&sn=aedf8bb909540634d927de7fd2b4b8b1&chksm=c1a390c4f6d419d233908bb781d418c6b9fd2ca82e9e93291e7c93b8ead3c50ca5ae39668212#rd)
+图文版详细使用说明可以参考公众号：[MusicFree 插件使用指南](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483875&idx=1&sn=aedf8bb909540634d927de7fd2b4b8b1&chksm=c1a390c4f6d419d233908bb781d418c6b9fd2ca82e9e93291e7c93b8ead3c50ca5ae39668212#rd)，或者站点： https://musicfree.upup.fun/usage/mobile/install-plugin.html
 
 ## 下载地址
 
@@ -58,21 +60,22 @@
 
 ## Q&A
 
-使用时遇到的常见问题可以看这里：[MusicFree 使用 Q&A](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483937&idx=1&sn=486c735b1fb78acc75f8f4acdcb9e253&chksm=c1a39306f6d41a101a6f8d3adefcd980092ce94140119bb3cc0eb3aa8c6ae22fe1b97899be21#rd)
+使用时遇到的常见问题可以看这里：[MusicFree 使用 Q&A](https://musicfree.upup.fun/qa/common.html)
 
 技术交流/一起写点有意思的东西/技术向的闲聊欢迎加群：[683467814](https://jq.qq.com/?_wv=1027&k=upVpi2k3)~ （不是答疑群）
 
+闲聊可以到 [QQ 频道](https://pd.qq.com/s/cyxnf0jj1)~
+
 ## WIP
 
-当前开发进度以及问题&需求列表可以看这里：
-[MusicFree 建议&bug](https://docs.qq.com/sheet/DT3djQm1ReWJya2Vo?tab=BB08J2)
+如果有需要讨论的新需求，可以在公众号后台留言/提issue/或者去discussion开个话题。
 
 ## 支持这个项目
 
 如果你喜欢这个项目，或者希望我可以持续维护下去，你可以通过以下任何一种方式支持我;)
 
 1. Star 这个项目，分享给你身边的人；
-2. 关注公众号或 b 站[不想睡觉猫头猫](https://space.bilibili.com/12866223)获取最新信息；
+2. 关注公众号👇或 b 站 [不想睡觉猫头猫](https://space.bilibili.com/12866223) 获取最新信息；
 
 ![微信公众号](./src/assets/imgs/wechat_channel.jpg)
 
