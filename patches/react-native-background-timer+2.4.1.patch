@@ -1,0 +1,124 @@
+diff --git a/node_modules/react-native-background-timer/android/src/main/java/com/ocetnik/timer/BackgroundTimerModule.java b/node_modules/react-native-background-timer/android/src/main/java/com/ocetnik/timer/BackgroundTimerModule.java
+index 1f87803..b484312 100644
+--- a/node_modules/react-native-background-timer/android/src/main/java/com/ocetnik/timer/BackgroundTimerModule.java
++++ b/node_modules/react-native-background-timer/android/src/main/java/com/ocetnik/timer/BackgroundTimerModule.java
+@@ -15,29 +15,14 @@ import java.lang.Runnable;
+ public class BackgroundTimerModule extends ReactContextBaseJavaModule {
+ 
+     private Handler handler;
+-    private ReactContext reactContext;
++    private final ReactContext reactContext;
+     private Runnable runnable;
+-    private PowerManager powerManager;
+-    private PowerManager.WakeLock wakeLock;
+-    private final LifecycleEventListener listener = new LifecycleEventListener(){
+-        @Override
+-        public void onHostResume() {}
+-
+-        @Override
+-        public void onHostPause() {}
+-
+-        @Override
+-        public void onHostDestroy() {
+-            if (wakeLock.isHeld()) wakeLock.release();
+-        }
+-    };
++
++    private int listenerCount = 0;
+ 
+     public BackgroundTimerModule(ReactApplicationContext reactContext) {
+         super(reactContext);
+         this.reactContext = reactContext;
+-        this.powerManager = (PowerManager) getReactApplicationContext().getSystemService(reactContext.POWER_SERVICE);
+-        this.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "rohit_bg_wakelock");
+-        reactContext.addLifecycleEventListener(listener);
+     }
+ 
+     @Override
+@@ -46,52 +31,60 @@ public class BackgroundTimerModule extends ReactContextBaseJavaModule {
+     }
+ 
+     @ReactMethod
+-    public void start(final int delay) {
+-        if (!wakeLock.isHeld()) wakeLock.acquire();
++    public void addListener(String eventName) {
++        if (listenerCount == 0) {
++            // Set up any upstream listeners or background tasks as necessary
++        }
+ 
++        listenerCount += 1;
++    }
++
++    @ReactMethod
++    public void removeListeners(Integer count) {
++        listenerCount -= count;
++        if (listenerCount == 0) {
++            // Remove upstream listeners, stop unnecessary background tasks
++        }
++    }
++
++    @ReactMethod
++    public void start(final int delay) {
+         handler = new Handler();
+-        runnable = new Runnable() {
+-            @Override
+-            public void run() {
+-                sendEvent(reactContext, "backgroundTimer");
+-            }
+-        };
++        runnable = () -> sendEvent(reactContext, "backgroundTimer");
+ 
+         handler.post(runnable);
+     }
+ 
+     @ReactMethod
+     public void stop() {
+-        if (wakeLock.isHeld()) wakeLock.release();
+-
+         // avoid null pointer exceptio when stop is called without start
+-        if (handler != null) handler.removeCallbacks(runnable);
++        if (handler != null)
++            handler.removeCallbacks(runnable);
+     }
+ 
+     private void sendEvent(ReactContext reactContext, String eventName) {
+         reactContext
+-        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+-        .emit(eventName, null);
++                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
++                .emit(eventName, null);
+     }
+ 
+     @ReactMethod
+     public void setTimeout(final int id, final double timeout) {
+         Handler handler = new Handler();
+-        handler.postDelayed(new Runnable(){
+-            @Override
+-            public void run(){
+-                if (getReactApplicationContext().hasActiveCatalystInstance()) {
+-                    getReactApplicationContext()
++        handler.postDelayed(() -> {
++            if (reactContext.hasActiveReactInstance()) {
++                reactContext
+                         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                         .emit("backgroundTimer.timeout", id);
+-                }
+-           }
++            }
+         }, (long) timeout);
+     }
+ 
+-    /*@ReactMethod
+-    public void clearTimeout(final int id) {
+-        // todo one day..
+-        // not really neccessary to have
+-    }*/
++    /*
++     * @ReactMethod
++     * public void clearTimeout(final int id) {
++     * // todo one day..
++     * // not really neccessary to have
++     * }
++     */
+ }
+\ No newline at end of file

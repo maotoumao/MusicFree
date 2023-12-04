@@ -18,7 +18,8 @@
     "lint-staged": "lint-staged",
     "connect-mumu": "adb kill-server & adb connect localhost:7555",
     "build-android": "cd .\\android\\ && .\\gradlew assembleRelease",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.7",
@@ -48,6 +49,7 @@
     "nanoid": "^4.0.2",
     "object-path": "^0.11.8",
     "p-queue": "^7.4.1",
+    "patch-package": "^8.0.0",
     "path-browserify": "^1.0.1",
     "qrcode-generator": "^1.4.4",
     "qs": "^6.11.2",
