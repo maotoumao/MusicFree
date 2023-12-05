@@ -68,3 +68,5 @@ keystore.properties
 .vscode/
 tmp/
 scripts/
+
+*.log
