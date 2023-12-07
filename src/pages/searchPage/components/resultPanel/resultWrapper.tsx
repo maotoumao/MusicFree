@@ -11,6 +11,7 @@ import ListReachEnd from '@/components/base/listReachEnd';
 import useOrientation from '@/hooks/useOrientation';
 import {FlashList} from '@shopify/flash-list';
 import rpx from '@/utils/rpx';
+import {StyleSheet, View} from 'react-native';
 
 interface IResultWrapperProps<
     T extends ICommon.SupportMediaType = ICommon.SupportMediaType,
@@ -58,15 +59,17 @@ function ResultWrapper(props: IResultWrapperProps) {
         <FlashList
             extraData={searchState}
             ListEmptyComponent={() => <Empty />}
-            ListFooterComponent={() =>
-                searchState === RequestStateCode.PENDING ? (
-                    <ListLoading />
-                ) : searchState === RequestStateCode.FINISHED ? (
-                    <ListReachEnd />
-                ) : (
-                    <></>
-                )
-            }
+            ListFooterComponent={() => (
+                <View style={style.wrapper}>
+                    {searchState === RequestStateCode.PENDING ? (
+                        <ListLoading />
+                    ) : searchState === RequestStateCode.FINISHED ? (
+                        <ListReachEnd />
+                    ) : (
+                        <></>
+                    )}
+                </View>
+            )}
             data={data}
             refreshing={false}
             onRefresh={() => {
@@ -87,3 +90,11 @@ function ResultWrapper(props: IResultWrapperProps) {
 }
 
 export default memo(ResultWrapper);
+const style = StyleSheet.create({
+    wrapper: {
+        width: '100%',
+        height: rpx(140),
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
