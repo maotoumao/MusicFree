@@ -26,7 +26,6 @@ import Portal from './portal';
 import ListItem from './listItem';
 
 interface IAppBarProps {
-    backgroundOpacity?: number;
     titleTextOpacity?: number;
     withStatusBar?: boolean;
     color?: string;
@@ -57,7 +56,6 @@ const timingConfig = {
 
 export default function AppBar(props: IAppBarProps) {
     const {
-        backgroundOpacity = 1,
         titleTextOpacity = 1,
         withStatusBar,
         color: _color,
@@ -73,9 +71,7 @@ export default function AppBar(props: IAppBarProps) {
     const colors = useColors();
     const navigation = useNavigation();
 
-    const bgColor = color(colors.appBar ?? colors.primary)
-        .alpha(backgroundOpacity)
-        .toString();
+    const bgColor = color(colors.appBar ?? colors.primary).toString();
     const contentColor = _color ?? colors.appBarText;
 
     const [showMenu, setShowMenu] = useState(false);

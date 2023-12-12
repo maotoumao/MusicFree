@@ -510,7 +510,11 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         if (!this.plugin.instance.getAlbumInfo) {
             return {
                 albumItem,
-                musicList: albumItem?.musicList ?? [],
+                musicList: (albumItem?.musicList ?? []).map(
+                    resetMediaItem,
+                    this.plugin.name,
+                    true,
+                ),
                 isEnd: true,
             };
         }
