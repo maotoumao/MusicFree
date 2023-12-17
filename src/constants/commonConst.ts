@@ -16,15 +16,17 @@ export {emptyFunction};
 
 export enum RequestStateCode {
     /** 空闲 */
-    IDLE = 0,
-    /** 检索首页 */
-    PENDING_FP = 1,
+    IDLE = 0b00000000,
+    PENDING_FIRST_PAGE = 0b00000010,
+    LOADING = 0b00000010,
     /** 检索中 */
-    PENDING = 2,
+    PENDING_REST_PAGE = 0b00000011,
     /** 部分结束 */
-    PARTLY_DONE = 4,
+    PARTLY_DONE = 0b00000100,
     /** 全部结束 */
-    FINISHED = 5,
+    FINISHED = 0b0001000,
+    /** 出错了 */
+    ERROR = 0b10000000,
 }
 
 export const StorageKeys = {

@@ -53,7 +53,7 @@ function ResultWrapper(props: IResultWrapperProps) {
         />
     );
 
-    return searchState === RequestStateCode.PENDING_FP ? (
+    return searchState === RequestStateCode.PENDING_FIRST_PAGE ? (
         <Loading />
     ) : (
         <FlashList
@@ -61,7 +61,7 @@ function ResultWrapper(props: IResultWrapperProps) {
             ListEmptyComponent={() => <Empty />}
             ListFooterComponent={() => (
                 <View style={style.wrapper}>
-                    {searchState === RequestStateCode.PENDING ? (
+                    {searchState === RequestStateCode.PENDING_REST_PAGE ? (
                         <ListLoading />
                     ) : searchState === RequestStateCode.FINISHED ? (
                         <ListReachEnd />

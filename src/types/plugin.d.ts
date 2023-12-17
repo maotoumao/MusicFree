@@ -49,6 +49,12 @@ declare namespace IPlugin {
         musicList?: IMusic.IMusicItem[];
     }
 
+    interface ITopListInfoResult {
+        isEnd?: boolean;
+        topListItem?: IMusic.IMusicSheetItem;
+        musicList?: IMusic.IMusicItem[];
+    }
+
     interface IGetRecommendSheetTagsResult {
         // 固定的tag
         pinned?: IMusic.IMusicSheetItemBase[];
@@ -116,11 +122,11 @@ declare namespace IPlugin {
         ) => Promise<IMusic.IMusicItem | null>;
         /** 获取榜单 */
         getTopLists?: () => Promise<IMusic.IMusicSheetGroupItem[]>;
-        // todo:分页
         /** 获取榜单详情 */
         getTopListDetail?: (
             topListItem: IMusic.IMusicSheetItemBase,
-        ) => Promise<ICommon.WithMusicList<IMusic.IMusicSheetItemBase>>;
+            page: number,
+        ) => Promise<ITopListInfoResult>;
         /** 获取热门歌单tag */
         getRecommendSheetTags?: () => Promise<IGetRecommendSheetTagsResult>;
         /** 歌单列表 */

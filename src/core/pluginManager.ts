@@ -681,10 +681,12 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     /** 获取榜单详情 */
     async getTopListDetail(
         topListItem: IMusic.IMusicSheetItemBase,
-    ): Promise<ICommon.WithMusicList<IMusic.IMusicSheetItemBase>> {
+        page: number,
+    ): Promise<IPlugin.ITopListInfoResult> {
         try {
             const result = await this.plugin.instance?.getTopListDetail?.(
                 topListItem,
+                page,
             );
             if (!result) {
                 throw new Error();
@@ -694,11 +696,15 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                     resetMediaItem(_, this.plugin.name),
                 );
             }
+            if (result.isEnd !== false) {
+                result.isEnd = true;
+            }
             return result;
         } catch (e: any) {
             devLog('error', '获取榜单详情失败', e, e?.message);
             return {
-                ...topListItem,
+                isEnd: true,
+                topListItem: topListItem as IMusic.IMusicSheetItem,
                 musicList: [],
             };
         }

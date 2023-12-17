@@ -15,7 +15,7 @@ export default function useGetTopList() {
                 if (
                     pluginsTopList[pluginHash]?.data?.length ||
                     pluginsTopList[pluginHash]?.state ===
-                        RequestStateCode.PENDING
+                        RequestStateCode.PENDING_REST_PAGE
                 ) {
                     return;
                 }
@@ -28,7 +28,7 @@ export default function useGetTopList() {
                 setPluginsTopList(
                     produce(draft => {
                         draft[pluginHash] = {
-                            state: RequestStateCode.PENDING,
+                            state: RequestStateCode.PENDING_REST_PAGE,
                             data: [],
                         };
                     }),

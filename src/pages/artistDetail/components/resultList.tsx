@@ -55,7 +55,7 @@ export default function ResultList(props: IResultListProps) {
             }}
             ListEmptyComponent={<Empty />}
             ListFooterComponent={
-                queryState === RequestStateCode.PENDING ? (
+                queryState === RequestStateCode.PENDING_REST_PAGE ? (
                     <ListLoading />
                 ) : queryState === RequestStateCode.FINISHED &&
                   data.data?.length !== 0 ? (

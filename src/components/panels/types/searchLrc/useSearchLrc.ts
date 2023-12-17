@@ -55,7 +55,8 @@ export default function useSearchLrc() {
                 searchResultStore.getValue().data[plugin.hash];
             /** 上一份搜索还没返回/已经结束 */
             if (
-                (prevPluginResult?.state === RequestStateCode.PENDING ||
+                (prevPluginResult?.state ===
+                    RequestStateCode.PENDING_REST_PAGE ||
                     prevPluginResult?.state === RequestStateCode.FINISHED) &&
                 undefined === query
             ) {
@@ -81,8 +82,8 @@ export default function useSearchLrc() {
                         const prevMediaResult = draft.data;
                         prevMediaResult[_hash] = {
                             state: newSearch
-                                ? RequestStateCode.PENDING_FP
-                                : RequestStateCode.PENDING,
+                                ? RequestStateCode.PENDING_FIRST_PAGE
+                                : RequestStateCode.PENDING_REST_PAGE,
                             // @ts-ignore
                             data: newSearch
                                 ? []

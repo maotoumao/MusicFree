@@ -19,7 +19,7 @@ export default function useQueryArtist(pluginHash: string) {
 
             const prevResult = queryResults[type];
             if (
-                prevResult?.state === RequestStateCode.PENDING ||
+                prevResult?.state === RequestStateCode.PENDING_REST_PAGE ||
                 prevResult?.state === RequestStateCode.FINISHED
             ) {
                 return;
@@ -28,7 +28,7 @@ export default function useQueryArtist(pluginHash: string) {
             try {
                 setQueryResults(
                     produce(draft => {
-                        draft[type].state = RequestStateCode.PENDING;
+                        draft[type].state = RequestStateCode.PENDING_REST_PAGE;
                     }),
                 );
                 const result = await plugin?.methods?.getArtistWorks?.(
