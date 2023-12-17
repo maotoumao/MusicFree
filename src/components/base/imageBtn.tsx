@@ -40,11 +40,11 @@ const style = StyleSheet.create({
         height: rpx(290),
         flexGrow: 0,
         flexShrink: 0,
-        justifyContent: 'space-between',
     },
     image: {
         width: rpx(210),
         height: rpx(210),
         borderRadius: rpx(12),
+        marginBottom: rpx(16),
     },
 });
