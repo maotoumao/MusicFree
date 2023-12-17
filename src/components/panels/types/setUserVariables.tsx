@@ -78,6 +78,7 @@ export default function SetUserVariables(props: IUserVariablesProps) {
                                                     colors.placeholder,
                                             },
                                         ]}
+                                        placeholder={it.hint}
                                     />
                                 </ListItem>
                             ))}

@@ -33,6 +33,8 @@ declare namespace IPlugin {
         key: string;
         /** 名称 */
         name?: string;
+        /** 提示文案 */
+        hint?: string;
     }
 
     interface IAlbumInfoResult {
