@@ -2,7 +2,6 @@ import React from 'react';
 import {Appearance, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
-// import Config from '@/core/config';
 import ListItem from '@/components/base/listItem';
 import ThemeSwitch from '@/components/base/switch';
 import Config from '@/core/config';

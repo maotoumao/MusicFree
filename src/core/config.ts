@@ -82,6 +82,11 @@ interface IConfig {
         plugin: {
             subscribeUrl: string;
         };
+        webdav: {
+            url: string;
+            username: string;
+            password: string;
+        };
     };
     status: {
         music: {
