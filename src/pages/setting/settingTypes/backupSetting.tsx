@@ -18,6 +18,7 @@ import Config from '@/core/config';
 export default function BackupSetting() {
     const navigate = useNavigate();
     const webdavConfig = Config.useConfig('setting.webdav');
+    const backupConfig = Config.useConfig('setting.backup');
 
     const onBackupToLocal = async () => {
         navigate(ROUTE_PATH.FILE_SELECTOR, {
@@ -121,7 +122,10 @@ export default function BackupSetting() {
                     format: 'text',
                 },
             );
-            await Backup.resume(resumeData);
+            await Backup.resume(
+                resumeData,
+                Config.get('setting.backup.resumeMode') === 'overwrite',
+            );
             Toast.success('恢复成功~');
         } catch (e: any) {
             Toast.warn(`恢复失败: ${e?.message ?? e}`);
@@ -161,6 +165,38 @@ export default function BackupSetting() {
 
     return (
         <View style={style.wrapper}>
+            <ListItemHeader>备份&恢复设置</ListItemHeader>
+
+            <ListItem
+                withHorizonalPadding
+                onPress={() => {
+                    showDialog('RadioDialog', {
+                        title: '设置恢复方式',
+                        content: [
+                            {
+                                key: '追加到歌单末尾',
+                                value: 'append',
+                            },
+                            {
+                                key: '覆盖歌单',
+                                value: 'overwrite',
+                            },
+                        ],
+                        onOk(value) {
+                            Config.set(
+                                'setting.backup.resumeMode',
+                                value as any,
+                            );
+                        },
+                    });
+                }}>
+                <ListItem.Content title="恢复方式" />
+                <ListItem.ListItemText>
+                    {backupConfig?.resumeMode === 'overwrite'
+                        ? '覆盖歌单'
+                        : '追加到歌单末尾'}
+                </ListItem.ListItemText>
+            </ListItem>
             <ListItemHeader>本地备份</ListItemHeader>
             <ListItem withHorizonalPadding onPress={onBackupToLocal}>
                 <ListItem.Content title="备份到本地" />

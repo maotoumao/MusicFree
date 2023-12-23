@@ -114,25 +114,35 @@ async function addSheet(title: string) {
 
 async function resumeSheets(
     sheets: ICommon.WithMusicList<IMusic.IMusicSheetItemBase>[],
+    overwrite?: boolean,
 ) {
-    let newSheets = [...musicSheets];
-    let newSheetMusicMap: Record<string, IMusic.IMusicItem[]> = {
-        ...sheetMusicMap,
-    };
+    let newSheets = overwrite ? [{...defaultSheet}] : [...musicSheets];
+    let newSheetMusicMap: Record<string, IMusic.IMusicItem[]> = overwrite
+        ? {}
+        : {
+              ...sheetMusicMap,
+          };
     const needUpdatedIds = [];
     for (let i = 0; i < sheets.length; ++i) {
         const musicSheet = sheets[i];
         if (musicSheet.id === 'favorite') {
             needUpdatedIds.push('favorite');
-            const originalMusicList = sheetMusicMap[musicSheet.id] ?? [];
-            newSheetMusicMap[musicSheet.id] = originalMusicList.concat(
-                musicSheet.musicList?.filter(
-                    item =>
-                        originalMusicList.findIndex(_ =>
-                            isSameMediaItem(_, item),
-                        ) === -1,
-                ) ?? [],
-            );
+
+            if (!overwrite) {
+                const originalMusicList = sheetMusicMap[musicSheet.id] ?? [];
+                newSheetMusicMap[musicSheet.id] = originalMusicList.concat(
+                    musicSheet.musicList?.filter(
+                        item =>
+                            originalMusicList.findIndex(_ =>
+                                isSameMediaItem(_, item),
+                            ) === -1,
+                    ) ?? [],
+                );
+            } else {
+                newSheetMusicMap[musicSheet.id] = [
+                    ...(musicSheet.musicList || []),
+                ];
+            }
         } else {
             const newId = nanoid();
             needUpdatedIds.push(newId);

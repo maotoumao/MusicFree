@@ -37,7 +37,7 @@ function backup() {
     });
 }
 
-async function resume(raw: string | Object) {
+async function resume(raw: string | Object, overwrite?: boolean) {
     let obj: IBackJson;
     if (typeof raw === 'string') {
         obj = JSON.parse(raw);
@@ -65,7 +65,7 @@ async function resume(raw: string | Object) {
         return PluginManager.installPluginFromUrl(_.srcUrl);
     });
     /** 恢复歌单 */
-    const resumeMusicSheets = MusicSheet.resumeSheets(musicSheets);
+    const resumeMusicSheets = MusicSheet.resumeSheets(musicSheets, overwrite);
 
     return Promise.all([...(resumePlugins ?? []), resumeMusicSheets]);
 }

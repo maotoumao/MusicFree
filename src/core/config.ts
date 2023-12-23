@@ -79,6 +79,10 @@ interface IConfig {
             selectedTheme: string;
         };
 
+        backup: {
+            resumeMode: 'append' | 'overwrite';
+        };
+
         plugin: {
             subscribeUrl: string;
         };

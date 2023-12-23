@@ -45,6 +45,8 @@ import Mp3Util from '@/native/mp3Util';
 import {PluginMeta} from './pluginMeta';
 import {useEffect, useState} from 'react';
 import {getFileName} from '@/utils/fileUtils';
+import {URL} from 'react-native-url-polyfill';
+import Base64 from '@/utils/base64';
 
 axios.defaults.timeout = 2000;
 
@@ -92,6 +94,34 @@ const _console = {
     info: _consoleBind.bind(null, 'info'),
     error: _consoleBind.bind(null, 'error'),
 };
+
+function formatAuthUrl(url: string) {
+    const urlObj = new URL(url);
+
+    try {
+        if (urlObj.username && urlObj.password) {
+            const auth = `Basic ${Base64.btoa(
+                `${decodeURIComponent(urlObj.username)}:${decodeURIComponent(
+                    urlObj.password,
+                )}`,
+            )}`;
+            urlObj.username = '';
+            urlObj.password = '';
+
+            return {
+                url: urlObj.toString(),
+                auth,
+            };
+        }
+    } catch (e) {
+        return {
+            url,
+        };
+    }
+    return {
+        url,
+    };
+}
 
 //#region 插件类
 export class Plugin {
@@ -283,7 +313,6 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 url: localPath,
             };
         }
-        console.log('BFFF2');
 
         if (musicItem.platform === localPluginPlatform) {
             throw new Error('本地音乐不存在');
@@ -310,7 +339,17 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
         // 3. 插件解析
         if (!this.plugin.instance.getMediaSource) {
-            return {url: musicItem?.qualities?.[quality]?.url ?? musicItem.url};
+            const {url, auth} = formatAuthUrl(
+                musicItem?.qualities?.[quality]?.url ?? musicItem.url,
+            );
+            return {
+                url: url,
+                headers: auth
+                    ? {
+                          Authorization: auth,
+                      }
+                    : undefined,
+            };
         }
         try {
             const {url, headers} = (await this.plugin.instance.getMediaSource(
@@ -326,6 +365,14 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 headers,
                 userAgent: headers?.['user-agent'],
             } as IPlugin.IMediaSourceResult;
+            const authFormattedResult = formatAuthUrl(result.url!);
+            if (authFormattedResult.auth) {
+                result.url = authFormattedResult.url;
+                result.headers = {
+                    ...(result.headers ?? {}),
+                    Authorization: authFormattedResult.auth,
+                };
+            }
 
             if (
                 pluginCacheControl !== CacheControl.NoStore &&
@@ -337,7 +384,6 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                     [`qualities.${quality}.url`, url],
                 ]);
             }
-
             return result;
         } catch (e: any) {
             if (retryCount > 0 && e?.message !== 'NOT RETRY') {
