@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fbeee2',
         flexDirection: 'row',
         alignItems: 'center',
+        zIndex: 20000,
     },
     text: {
         fontSize: fontSizeConst.content,
