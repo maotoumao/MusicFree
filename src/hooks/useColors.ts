@@ -43,10 +43,7 @@ export default function useColors() {
     const cColors: CustomizedColors = useMemo(() => {
         return {
             ...colors,
-            textSecondary:
-                // @ts-ignore
-                colors.textSecondary ??
-                Color(colors.text).alpha(0.6).toString(),
+            textSecondary: Color(colors.text).alpha(0.7).toString(),
             // @ts-ignore
             background: colors.pageBackground ?? colors.background,
         };
