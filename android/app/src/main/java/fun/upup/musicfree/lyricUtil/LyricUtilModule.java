@@ -1,8 +1,14 @@
 package fun.upup.musicfree.lyricUtil;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -28,6 +34,34 @@ public class LyricUtilModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return "LyricUtil";
+    }
+
+    @ReactMethod
+    public void checkSystemAlertPermission(Promise promise){
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                promise.resolve(Settings.canDrawOverlays(reactContext));
+            }
+            promise.resolve(true);
+        } catch(Exception e) {
+            promise.reject("Error", e.getMessage());
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @ReactMethod
+    public void requestSystemAlertPermission(Promise promise){
+        try {
+           Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+           intent.setData(Uri.parse("package:" + getReactApplicationContext().getPackageName()));
+            Activity currentActivity = getCurrentActivity();
+            if (currentActivity != null) {
+                currentActivity.startActivity(intent);
+            }
+            promise.resolve(true);
+        } catch(Exception e) {
+            promise.reject("Error", e.getMessage());
+        }
     }
 
 

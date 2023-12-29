@@ -37,6 +37,10 @@ interface ILyricUtil extends NativeModule {
         textColor: string | null,
         backgroundColor: string | null,
     ) => Promise<void>;
+    /** 检查权限 */
+    checkSystemAlertPermission: () => Promise<boolean>;
+    /** 请求悬浮窗 */
+    requestSystemAlertPermission: () => Promise<boolean>;
 }
 
 const LyricUtil: ILyricUtil = NativeModules.LyricUtil;

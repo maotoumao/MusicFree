@@ -232,7 +232,7 @@ const addAll = (
 
         newPlayList = [...beforeDraft, ..._musicItems, ...afterDraft];
     }
-    console.log(newPlayList, 'nnnn');
+
     // 如果太长了
     if (newPlayList.length > maxMusicQueueLength) {
         newPlayList = shrinkPlayListToSize(
