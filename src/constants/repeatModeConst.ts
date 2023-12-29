@@ -1,14 +1,15 @@
-import MusicQueue from '@/core/musicQueue';
+import {MusicRepeatMode} from '@/core/trackPlayer';
+
 export default {
-    [MusicQueue.MusicRepeatMode.QUEUE]: {
+    [MusicRepeatMode.QUEUE]: {
         icon: 'repeat',
         text: '列表循环',
     },
-    [MusicQueue.MusicRepeatMode.SINGLE]: {
+    [MusicRepeatMode.SINGLE]: {
         icon: 'repeat-once',
         text: '单曲循环',
     },
-    [MusicQueue.MusicRepeatMode.SHUFFLE]: {
+    [MusicRepeatMode.SHUFFLE]: {
         icon: 'shuffle-variant',
         text: '随机播放',
     },

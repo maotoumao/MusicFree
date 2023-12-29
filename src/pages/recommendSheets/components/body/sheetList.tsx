@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useCallback} from 'react';
 import rpx from '@/utils/rpx';
 import {FlashList} from '@shopify/flash-list';
 import useRecommendSheets from '../../hooks/useRecommendSheets';
@@ -23,6 +23,11 @@ function SheetList(props: ISheetListProps) {
     }
     const orientation = useOrientation();
 
+    const keyExtractor = useCallback(
+        (item: any, i: number) => `${i}-${item.platform}-${item.id}`,
+        [],
+    );
+
     return (
         <FlashList
             ListEmptyComponent={status !== 'loading' ? Empty : null}
@@ -43,6 +48,7 @@ function SheetList(props: ISheetListProps) {
             numColumns={orientation === 'vertical' ? 3 : 4}
             renderItem={renderItem}
             data={sheets}
+            keyExtractor={keyExtractor}
         />
     );
 }

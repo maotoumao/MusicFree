@@ -2,11 +2,8 @@ import React, {memo, useEffect, useState} from 'react';
 import {Keyboard, Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicQueue from '@/core/musicQueue';
 import {CircularProgressBase} from 'react-native-circular-progress-indicator';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
-
-import musicIsPaused from '@/utils/musicIsPaused';
 
 import Color from 'color';
 import ThemeText from '../base/themeText';
@@ -16,10 +13,12 @@ import {showPanel} from '../panels/usePanel';
 import FastImage from '../base/fastImage';
 import useColors from '@/hooks/useColors';
 import IconButton from '../base/iconButton';
+import TrackPlayer from '@/core/trackPlayer';
+import {musicIsPaused} from '@/utils/trackUtils';
 
 function CircularPlayBtn() {
-    const progress = MusicQueue.useProgress();
-    const musicState = MusicQueue.usePlaybackState();
+    const progress = TrackPlayer.useProgress();
+    const musicState = TrackPlayer.useMusicState();
     const colors = useColors();
 
     const isPaused = musicIsPaused(musicState);
@@ -45,9 +44,9 @@ function CircularPlayBtn() {
                 color={colors.musicBarText}
                 onPress={async () => {
                     if (isPaused) {
-                        await MusicQueue.play();
+                        await TrackPlayer.play();
                     } else {
-                        await MusicQueue.pause();
+                        await TrackPlayer.pause();
                     }
                 }}
             />
@@ -55,7 +54,7 @@ function CircularPlayBtn() {
     );
 }
 function MusicBar() {
-    const musicItem = MusicQueue.useCurrentMusicItem();
+    const musicItem = TrackPlayer.useCurrentMusic();
 
     const [showKeyboard, setKeyboardStatus] = useState(false);
 

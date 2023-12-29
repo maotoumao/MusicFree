@@ -1,7 +1,6 @@
 import React from 'react';
 import {DeviceEventEmitter, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicQueue from '@/core/musicQueue';
 import MusicSheet from '@/core/musicSheet';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
@@ -31,6 +30,7 @@ import {hidePanel, showPanel} from '../usePanel';
 import Divider from '@/components/base/divider';
 import {iconSizeConst} from '@/constants/uiConst';
 import Config from '@/core/config';
+import TrackPlayer from '@/core/trackPlayer';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -91,7 +91,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'motion-play-outline',
             title: '下一首播放',
             onPress: () => {
-                MusicQueue.addNext(musicItem);
+                TrackPlayer.addNext(musicItem);
                 hidePanel();
             },
         },
@@ -170,7 +170,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     });
                 } else {
                     showPanel('SearchLrc', {
-                        musicItem: MusicQueue.getCurrentMusicItem(),
+                        musicItem,
                     });
                 }
             },

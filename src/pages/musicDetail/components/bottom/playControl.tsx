@@ -2,16 +2,16 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicQueue from '@/core/musicQueue';
 import repeatModeConst from '@/constants/repeatModeConst';
-import musicIsPaused from '@/utils/musicIsPaused';
 
 import useOrientation from '@/hooks/useOrientation';
 import {showPanel} from '@/components/panels/usePanel';
+import TrackPlayer from '@/core/trackPlayer';
+import {musicIsPaused} from '@/utils/trackUtils';
 
 export default function () {
-    const repeatMode = MusicQueue.useRepeatMode();
-    const musicState = MusicQueue.usePlaybackState();
+    const repeatMode = TrackPlayer.useRepeatMode();
+    const musicState = TrackPlayer.useMusicState();
 
     const orientation = useOrientation();
 
@@ -31,7 +31,7 @@ export default function () {
                     name={repeatModeConst[repeatMode].icon}
                     size={rpx(56)}
                     onPress={() => {
-                        MusicQueue.toggleRepeatMode();
+                        TrackPlayer.toggleRepeatMode();
                     }}
                 />
                 <Icon
@@ -39,7 +39,7 @@ export default function () {
                     name={'skip-previous'}
                     size={rpx(56)}
                     onPress={() => {
-                        MusicQueue.skipToPrevious();
+                        TrackPlayer.skipToPrevious();
                     }}
                 />
                 <Icon
@@ -52,9 +52,9 @@ export default function () {
                     size={rpx(96)}
                     onPress={() => {
                         if (musicIsPaused(musicState)) {
-                            MusicQueue.play();
+                            TrackPlayer.play();
                         } else {
-                            MusicQueue.pause();
+                            TrackPlayer.pause();
                         }
                     }}
                 />
@@ -63,7 +63,7 @@ export default function () {
                     name={'skip-next'}
                     size={rpx(56)}
                     onPress={() => {
-                        MusicQueue.skipToNext();
+                        TrackPlayer.skipToNext();
                     }}
                 />
                 <Icon

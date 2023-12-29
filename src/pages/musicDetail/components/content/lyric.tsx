@@ -1,18 +1,18 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {LayoutRectangle, StyleSheet, Text, View} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
-import MusicQueue from '@/core/musicQueue';
 import ThemeText from '@/components/base/themeText';
 import useDelayFalsy from '@/hooks/useDelayFalsy';
 import {FlatList, TapGestureHandler} from 'react-native-gesture-handler';
 import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
 import {IconButtonWithGesture} from '@/components/base/iconButton';
-import musicIsPaused from '@/utils/musicIsPaused';
 import Loading from '@/components/base/loading';
 import globalStyle from '@/constants/globalStyle';
 import {showPanel} from '@/components/panels/usePanel';
 import LyricManager from '@/core/lyricManager';
+import TrackPlayer from '@/core/trackPlayer';
+import {musicIsPaused} from '@/utils/trackUtils';
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -27,7 +27,7 @@ export default function Lyric() {
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
         useDelayFalsy<number | undefined>(undefined, 2000);
     const listRef = useRef<FlatList<ILyric.IParsedLrcItem> | null>();
-    const musicState = MusicQueue.usePlaybackState();
+    const musicState = TrackPlayer.useMusicState();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
     const emptyHeight = useMemo(() => {
@@ -86,8 +86,8 @@ export default function Lyric() {
         if (draggingIndex !== undefined) {
             const time = lyric[draggingIndex].time + +(meta?.offset ?? 0);
             if (time !== undefined && !isNaN(time)) {
-                await MusicQueue.seekTo(time);
-                await MusicQueue.play();
+                await TrackPlayer.seekTo(time);
+                await TrackPlayer.play();
                 setDraggingIndexImmi(undefined);
             }
         }
@@ -141,7 +141,7 @@ export default function Lyric() {
                     <TapGestureHandler
                         onActivated={() => {
                             showPanel('SearchLrc', {
-                                musicItem: MusicQueue.getCurrentMusicItem(),
+                                musicItem: TrackPlayer.getCurrentMusic(),
                             });
                         }}>
                         <Text style={style.searchLyric}>搜索歌词</Text>
@@ -244,7 +244,7 @@ const style = StyleSheet.create({
 });
 
 function DraggingTime(props: {time: number}) {
-    const progress = MusicQueue.useProgress();
+    const progress = TrackPlayer.useProgress();
 
     return (
         <Text style={style.draggingTimeText}>

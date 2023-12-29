@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx, {vh} from '@/utils/rpx';
-import MusicQueue from '@/core/musicQueue';
 import {FlatList} from 'react-native-gesture-handler';
 import Tag from '@/components/base/tag';
 import ThemeText from '@/components/base/themeText';
@@ -12,6 +11,7 @@ import IconButton from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import useColors from '@/hooks/useColors';
+import TrackPlayer from '@/core/trackPlayer';
 
 const ITEM_HEIGHT = rpx(108);
 const ITEM_WIDTH = rpx(750);
@@ -31,7 +31,7 @@ function _PlayListItem(props: IPlayListProps) {
     return (
         <Pressable
             onPress={() => {
-                MusicQueue.play(item);
+                TrackPlayer.play(item);
             }}
             style={style.musicItem}>
             {currentIndex === index && (
@@ -66,7 +66,7 @@ function _PlayListItem(props: IPlayListProps) {
                 name="close"
                 sizeType="small"
                 onPress={() => {
-                    MusicQueue.remove(item);
+                    TrackPlayer.remove(item);
                 }}
             />
         </Pressable>
@@ -89,14 +89,14 @@ interface IBodyProps {
 }
 export default function Body(props: IBodyProps) {
     const {loading} = props;
-    const musicQueue = MusicQueue.useMusicQueue();
-    const currentMusicItem = MusicQueue.useCurrentMusicItem();
+    const playList = TrackPlayer.usePlayList();
+    const currentMusicItem = TrackPlayer.useCurrentMusic();
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
     const listRef = useRef<FlatList<IMusic.IMusicItem> | null>();
     const safeAreaInsets = useSafeAreaInsets();
 
     const initIndex = useMemo(() => {
-        const id = musicQueue.findIndex(_ =>
+        const id = playList.findIndex(_ =>
             isSameMediaItem(currentMusicItem, _),
         );
 
@@ -108,23 +108,9 @@ export default function Body(props: IBodyProps) {
 
     useEffect(() => {
         setCurrentIndex(
-            musicQueue.findIndex(_ => isSameMediaItem(currentMusicItem, _)),
+            playList.findIndex(_ => isSameMediaItem(currentMusicItem, _)),
         );
-    }, [musicQueue, currentMusicItem]);
-
-    // useEffect(() => {
-    //     const id = musicQueue.findIndex(_ =>
-    //         isSameMediaItem(currentMusicItem, _),
-    //     );
-    //     if (id !== -1 && id) {
-    //         listRef.current?.scrollToIndex({
-    //             index: id,
-    //             viewPosition: 0,
-    //             viewOffset: ITEM_HEIGHT * 3,
-
-    //         });
-    //     }
-    // }, []);
+    }, [playList, currentMusicItem]);
 
     const renderItem = useCallback(
         ({item, index}: {item: IMusic.IMusicItem; index: number}) => {
@@ -157,7 +143,7 @@ export default function Body(props: IBodyProps) {
                     offset: ITEM_HEIGHT * index,
                     index,
                 })}
-                data={musicQueue}
+                data={playList}
                 initialScrollIndex={initIndex}
                 renderItem={renderItem}
             />

@@ -7,13 +7,13 @@ import {iconSizeConst} from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
 import {useAtom, useSetAtom} from 'jotai';
 import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
-import MusicQueue from '@/core/musicQueue';
 import Toast from '@/utils/toast';
 import Download from '@/core/download';
 
 import produce from 'immer';
 import {useParams} from '@/entry/router';
 import {showPanel} from '@/components/panels/usePanel';
+import TrackPlayer from '@/core/trackPlayer';
 
 export default function Bottom() {
     const {musicSheet} = useParams<'music-list-editor'>();
@@ -46,7 +46,7 @@ export default function Bottom() {
                 icon="motion-play-outline"
                 title="下一首播放"
                 onPress={async () => {
-                    MusicQueue.addNext(selectedItems);
+                    TrackPlayer.addNext(selectedItems);
                     resetSelectedIndices();
                     Toast.success('已添加到下一首播放');
                 }}

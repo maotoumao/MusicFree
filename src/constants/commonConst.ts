@@ -1,6 +1,10 @@
 import Animated, {Easing} from 'react-native-reanimated';
 
 export const internalSymbolKey = Symbol.for('$');
+// 加入播放列表/歌单的时间
+export const timeStampSymbol = Symbol.for('time-stamp');
+// 加入播放列表的辅助顺序
+export const sortIndexSymbol = Symbol.for('sort-index');
 export const internalSerializeKey = '$';
 export const localMusicSheetId = 'local-music-sheet';
 export const musicHistorySheetId = 'history-music-sheet';

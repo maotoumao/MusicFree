@@ -15,18 +15,20 @@ import globalStyle from '@/constants/globalStyle';
 import NoPlugin from '@/components/base/noPlugin';
 
 interface INewMusicSheetProps {
-    musicItem: IMusic.IMusicItem;
+    musicItem?: IMusic.IMusicItem | null;
 }
 
 export default function SearchLrc(props: INewMusicSheetProps) {
     const {musicItem} = props;
-    const [input, setInput] = useState(musicItem.title);
+    const [input, setInput] = useState(musicItem?.title ?? '');
     const colors = useColors();
 
     const searchLrc = useSearchLrc();
 
     useEffect(() => {
-        searchLrc(musicItem.title, 1);
+        if (musicItem) {
+            searchLrc(musicItem.title, 1);
+        }
     }, []);
 
     return (
