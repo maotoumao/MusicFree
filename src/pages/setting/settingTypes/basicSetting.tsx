@@ -30,8 +30,11 @@ function createSwitch(
     callback?: (newValue: boolean) => void,
 ) {
     const onPress = () => {
-        Config.set(changeKey, !value);
-        callback?.(!value);
+        if (callback) {
+            callback(!value);
+        } else {
+            Config.set(changeKey, !value);
+        }
     };
     return {
         title,
@@ -503,21 +506,28 @@ function LyricSetting() {
         '开启桌面歌词',
         'setting.lyric.showStatusBarLyric',
         lyricSetting?.showStatusBarLyric ?? false,
-        newValue => {
-            if (newValue) {
-                LyricUtil.showStatusBarLyric(
-                    LyricManager.getCurrentLyric()?.lrc ?? 'MusicFree',
-                    lyricSetting ?? {},
-                );
-                // setTimeout(() => {
-                //     // LyricUtil.setStatusBarLyricText(
-                //     //     `xxxxx${Date.now()}`,
-                //     // );
-                //     LyricUtil.setStatusBarLyricTop(-0.1)
-                // }, 2000);
-            } else {
-                LyricUtil.hideStatusBarLyric();
-            }
+        async newValue => {
+            try {
+                if (newValue) {
+                    const hasPermission =
+                        await LyricUtil.checkSystemAlertPermission();
+
+                    if (hasPermission) {
+                        LyricUtil.showStatusBarLyric(
+                            LyricManager.getCurrentLyric()?.lrc ?? 'MusicFree',
+                            lyricSetting ?? {},
+                        );
+                        Config.set('setting.lyric.showStatusBarLyric', true);
+                    } else {
+                        LyricUtil.requestSystemAlertPermission().finally(() => {
+                            Toast.warn('无悬浮窗权限');
+                        });
+                    }
+                } else {
+                    LyricUtil.hideStatusBarLyric();
+                    Config.set('setting.lyric.showStatusBarLyric', false);
+                }
+            } catch {}
         },
     );
 
