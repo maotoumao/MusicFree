@@ -130,7 +130,7 @@ const style = StyleSheet.create({
     },
     header: {
         paddingHorizontal: rpx(24),
-        marginTop: rpx(24),
+        marginTop: rpx(36),
         marginBottom: rpx(36),
     },
 });

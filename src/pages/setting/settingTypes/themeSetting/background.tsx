@@ -118,7 +118,11 @@ export default function Background() {
                     preview={theme?.background}
                     onPress={() => {
                         if (theme?.selectedTheme !== 'custom') {
-                            Theme.setTheme('custom');
+                            Theme.setTheme('custom', {
+                                colors: Config.get(
+                                    'setting.theme.customColors',
+                                ),
+                            });
                             Config.set('setting.theme.followSystem', false);
                         }
                         navigate(ROUTE_PATH.SET_CUSTOM_THEME);

@@ -75,6 +75,7 @@ interface IConfig {
             backgroundOpacity: number;
             backgroundBlur: number;
             colors: CustomizedColors;
+            customColors?: CustomizedColors;
             followSystem: boolean;
             selectedTheme: string;
         };

@@ -53,9 +53,9 @@ export default function Pages() {
                         <Panels />
                         <Dialogs />
                         <ImageViewComponent />
-                        <Toast config={toastConfig} />
                         <Debug />
                         <PortalHost />
+                        <Toast config={toastConfig} />
                     </NavigationContainer>
                 </SafeAreaProvider>
             </GestureHandlerRootView>

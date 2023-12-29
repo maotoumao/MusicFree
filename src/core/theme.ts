@@ -163,7 +163,7 @@ function setColors(colors: Partial<CustomizedColors>) {
                 ...colors,
             },
         };
-
+        Config.set('setting.theme.customColors', newTheme.colors);
         Config.set('setting.theme.colors', newTheme.colors);
         themeStore.setValue(newTheme);
     }
