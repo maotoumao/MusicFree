@@ -1,14 +1,14 @@
 import React, {useMemo} from 'react';
 import rpx from '@/utils/rpx';
-import MusicQueue from '@/core/musicQueue';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import useOrientation from '@/hooks/useOrientation';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import imageViewer from '@/components/imageViewer';
+import TrackPlayer from '@/core/trackPlayer';
 
 export default function AlbumCover() {
-    const musicItem = MusicQueue.useCurrentMusicItem();
+    const musicItem = TrackPlayer.useCurrentMusic();
     const orientation = useOrientation();
 
     const artworkStyle = useMemo(() => {
@@ -27,7 +27,9 @@ export default function AlbumCover() {
 
     const longPress = Gesture.LongPress()
         .onStart(() => {
-            imageViewer.show(musicItem?.artwork);
+            if (musicItem?.artwork) {
+                imageViewer.show(musicItem.artwork);
+            }
         })
         .runOnJS(true);
 

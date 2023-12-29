@@ -1,13 +1,13 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {FlatListProps} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicQueue from '@/core/musicQueue';
 
 import MusicItem from '../mediaItem/musicItem';
 import Empty from '../base/empty';
 import {FlashList} from '@shopify/flash-list';
 import ListLoading from '../base/listLoading';
 import ListReachEnd from '../base/listReachEnd';
+import TrackPlayer from '@/core/trackPlayer';
 
 interface IMusicListProps {
     /** 顶部 */
@@ -40,6 +40,11 @@ export default function MusicList(props: IMusicListProps) {
         loadMore = 'idle',
     } = props;
 
+    const keyExtractor = useCallback(
+        (item: any, i: number) => `${i}-${item.platform}-${item.id}`,
+        [],
+    );
+
     return (
         <FlashList
             ListHeaderComponent={Header}
@@ -52,9 +57,7 @@ export default function MusicList(props: IMusicListProps) {
                     : null
             }
             data={musicList ?? []}
-            keyExtractor={musicItem =>
-                `ml-${musicItem.id}${musicItem.platform}`
-            }
+            keyExtractor={keyExtractor}
             estimatedItemSize={ITEM_HEIGHT}
             renderItem={({index, item: musicItem}) => {
                 return (
@@ -65,9 +68,9 @@ export default function MusicList(props: IMusicListProps) {
                             if (onItemPress) {
                                 onItemPress(musicItem, musicList);
                             } else {
-                                MusicQueue.playWithReplaceQueue(
+                                TrackPlayer.playWithReplacePlayList(
                                     musicItem,
-                                    musicList ?? [],
+                                    musicList ?? [musicItem],
                                 );
                             }
                         }}

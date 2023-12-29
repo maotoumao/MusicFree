@@ -1,6 +1,8 @@
 import {
     internalSerializeKey,
     localPluginPlatform,
+    sortIndexSymbol,
+    timeStampSymbol,
 } from '@/constants/commonConst';
 import MediaMeta from '@/core/mediaMeta';
 import produce from 'immer';
@@ -145,4 +147,17 @@ export async function associateLrc(
         ['lrc', linkto.lrc],
         ['$.local.localLrc', linkto.$?.local?.localLrc],
     ]);
+}
+
+export function sortByTimestampAndIndex(array: any[], newArray = false) {
+    if (newArray) {
+        array = [...array];
+    }
+    return array.sort((a, b) => {
+        const ts = a[timeStampSymbol] - b[timeStampSymbol];
+        if (ts !== 0) {
+            return ts;
+        }
+        return a[sortIndexSymbol] - b[sortIndexSymbol];
+    });
 }

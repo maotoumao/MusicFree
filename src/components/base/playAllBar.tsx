@@ -2,13 +2,13 @@ import React from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {iconSizeConst} from '@/constants/uiConst';
-import MusicQueue from '@/core/musicQueue';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
 import {showPanel} from '../panels/usePanel';
 import IconButton from './iconButton';
+import TrackPlayer from '@/core/trackPlayer';
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
@@ -26,7 +26,7 @@ export default function (props: IProps) {
                 style={style.playAll}
                 onPress={() => {
                     if (musicList) {
-                        MusicQueue.playWithReplaceQueue(
+                        TrackPlayer.playWithReplacePlayList(
                             musicList[0],
                             musicList,
                         );

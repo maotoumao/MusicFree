@@ -1,7 +1,9 @@
-import MusicQueue from '@/core/musicQueue';
 import MusicSheet from '@/core/musicSheet';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
-import TrackPlayer, {Capability} from 'react-native-track-player';
+import RNTrackPlayer, {
+    AppKilledPlaybackBehavior,
+    Capability,
+} from 'react-native-track-player';
 import 'react-native-get-random-values';
 import Config from '@/core/config';
 import RNBootSplash from 'react-native-bootsplash';
@@ -20,6 +22,8 @@ import LyricManager from '@/core/lyricManager';
 import {getStorage, setStorage} from '@/utils/storage';
 import Toast from '@/utils/toast';
 import {localPluginHash, supportLocalMediaType} from '@/constants/commonConst';
+import TrackPlayer from '@/core/trackPlayer';
+import musicHistory from '@/core/musicHistory';
 
 /** app加载前执行
  * 1. 检查权限
@@ -52,11 +56,12 @@ async function _bootstrap() {
         MediaMeta.setup(),
         MusicSheet.setup(),
         Network.setup(),
+        musicHistory.setupMusicHistory(),
     ]);
     trace('配置初始化完成');
     // 加载插件
     try {
-        await TrackPlayer.setupPlayer({
+        await RNTrackPlayer.setupPlayer({
             maxCacheSize:
                 Config.get('setting.basic.maxCacheSize') ?? 1024 * 1024 * 512,
         });
@@ -68,10 +73,14 @@ async function _bootstrap() {
             throw e;
         }
     }
-    await TrackPlayer.updateOptions({
+    await RNTrackPlayer.updateOptions({
         icon: ImgAsset.logoTransparent,
-        alwaysPauseOnInterruption: true,
         progressUpdateEventInterval: 1,
+        android: {
+            alwaysPauseOnInterruption: true,
+            appKilledPlaybackBehavior:
+                AppKilledPlaybackBehavior.ContinuePlayback,
+        },
         capabilities: [
             Capability.Play,
             Capability.Pause,
@@ -96,7 +105,7 @@ async function _bootstrap() {
     trace('缓存初始化完成');
     await PluginManager.setup();
     trace('插件初始化完成');
-    await MusicQueue.setup();
+    await TrackPlayer.setupTrackPlayer();
     trace('播放列表初始化完成');
     await LocalMusicSheet.setup();
     trace('本地音乐初始化完成');
@@ -179,7 +188,7 @@ async function extraMakeup() {
                 )?.instance?.importMusicItem?.(url);
                 console.log(musicItem);
                 if (musicItem) {
-                    MusicQueue.play(musicItem);
+                    TrackPlayer.play(musicItem);
                 }
             }
         } catch {}
@@ -197,6 +206,6 @@ async function extraMakeup() {
     }
 
     if (Config.get('setting.basic.autoPlayWhenAppStart')) {
-        MusicQueue.play();
+        TrackPlayer.play();
     }
 }

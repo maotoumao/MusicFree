@@ -3,12 +3,12 @@ import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import rpx from '@/utils/rpx';
 import ListItem from '../base/listItem';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicQueue from '@/core/musicQueue';
 
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {showPanel} from '../panels/usePanel';
 import TitleAndTag from './titleAndTag';
 import ThemeText from '../base/themeText';
+import TrackPlayer from '@/core/trackPlayer';
 
 interface IMusicItemProps {
     index?: string | number;
@@ -46,7 +46,7 @@ export default function MusicItem(props: IMusicItemProps) {
                 if (onItemPress) {
                     onItemPress(musicItem);
                 } else {
-                    MusicQueue.play(musicItem);
+                    TrackPlayer.play(musicItem);
                 }
             }}>
             {Left ? <Left /> : null}

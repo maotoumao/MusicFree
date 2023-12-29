@@ -5,9 +5,9 @@ import Loading from '@/components/base/loading';
 import Header from './header';
 import MusicList from '@/components/musicList';
 import Config from '@/core/config';
-import MusicQueue from '@/core/musicQueue';
 import globalStyle from '@/constants/globalStyle';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import TrackPlayer from '@/core/trackPlayer';
 
 interface IMusicListProps {
     sheetInfo: IMusic.IMusicSheetItem | null;
@@ -40,9 +40,9 @@ export default function SheetMusicList(props: IMusicListProps) {
                                     'setting.basic.clickMusicInAlbum',
                                 ) === '播放单曲'
                             ) {
-                                MusicQueue.play(musicItem);
+                                TrackPlayer.play(musicItem);
                             } else {
-                                MusicQueue.playWithReplaceQueue(
+                                TrackPlayer.playWithReplacePlayList(
                                     musicItem,
                                     musicList ?? [musicItem],
                                 );

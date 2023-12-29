@@ -76,7 +76,7 @@
     "react-native-svg": "^12.4.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-toast-message": "^2.1.5",
-    "react-native-track-player": "3.2.0",
+    "react-native-track-player": "^4.0.1",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vector-icons": "^10.0.0",
     "react-native-view-shot": "^3.4.0",

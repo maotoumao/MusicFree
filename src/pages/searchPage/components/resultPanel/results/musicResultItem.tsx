@@ -1,8 +1,8 @@
 import React from 'react';
 import MusicItem from '@/components/mediaItem/musicItem';
 import Config from '@/core/config';
-import MusicQueue from '@/core/musicQueue';
 import {ISearchResult} from '@/pages/searchPage/store/atoms';
+import TrackPlayer from '@/core/trackPlayer';
 
 interface IMusicResultsProps {
     item: IMusic.IMusicItem;
@@ -21,14 +21,14 @@ export default function MusicResultItem(props: IMusicResultsProps) {
                     'setting.basic.clickMusicInSearch',
                 );
                 if (clickBehavior === '播放歌曲并替换播放列表') {
-                    MusicQueue.playWithReplaceQueue(
+                    TrackPlayer.playWithReplacePlayList(
                         musicItem,
                         (pluginSearchResultRef?.current?.data ?? [
                             musicItem,
                         ]) as IMusic.IMusicItem[],
                     );
                 } else {
-                    MusicQueue.play(musicItem);
+                    TrackPlayer.play(musicItem);
                 }
             }}
         />

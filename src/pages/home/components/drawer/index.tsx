@@ -8,12 +8,11 @@ import ThemeText from '@/components/base/themeText';
 import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';
 import NativeUtils from '@/native/utils';
-import MusicQueue from '@/core/musicQueue';
 import {useTimingClose} from '@/utils/timingClose';
-
 import timeformat from '@/utils/timeformat';
 import {showPanel} from '@/components/panels/usePanel';
 import Divider from '@/components/base/divider';
+import TrackPlayer from '@/core/trackPlayer';
 
 const ITEM_HEIGHT = rpx(108);
 function HomeDrawer(props: any) {
@@ -135,7 +134,7 @@ function HomeDrawer(props: any) {
                 <ListItem
                     withHorizonalPadding
                     onPress={async () => {
-                        await MusicQueue.reset();
+                        await TrackPlayer.reset();
                         NativeUtils.exitApp();
                     }}>
                     <ListItem.ListItemIcon icon={'power'} width={rpx(48)} />

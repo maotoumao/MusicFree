@@ -9,9 +9,9 @@ import ListReachEnd from '@/components/base/listReachEnd';
 import {FlatList} from 'react-native-gesture-handler';
 import Toast from '@/utils/toast';
 import {associateLrc} from '@/utils/mediaItem';
-import MusicQueue from '@/core/musicQueue';
 import {hidePanel} from '../../usePanel';
 import {DeviceEventEmitter} from 'react-native';
+import TrackPlayer from '@/core/trackPlayer';
 
 interface ILyricListWrapperProps {
     route: {
@@ -48,10 +48,11 @@ function LyricListImpl(props: ILyricListProps) {
                     lyricItem={item}
                     onPress={async () => {
                         try {
-                            await associateLrc(
-                                MusicQueue.getCurrentMusicItem(),
-                                item,
-                            );
+                            const currentMusic = TrackPlayer.getCurrentMusic();
+                            if (!currentMusic) {
+                                return;
+                            }
+                            await associateLrc(currentMusic, item);
                             DeviceEventEmitter.emit(
                                 EDeviceEvents.REFRESH_LYRIC,
                             );

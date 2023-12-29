@@ -3,7 +3,6 @@
  */
 
 import {isSameMediaItem} from '@/utils/mediaItem';
-import MusicQueue from './musicQueue';
 import PluginManager from './pluginManager';
 import LyricParser from '@/utils/lrcParser';
 import {GlobalState} from '@/utils/stateMapper';
@@ -11,6 +10,7 @@ import {EDeviceEvents} from '@/constants/commonConst';
 import {DeviceEventEmitter} from 'react-native';
 import Config from './config';
 import LyricUtil from '@/native/lyricUtil';
+import TrackPlayer from './trackPlayer';
 
 const lyricStateStore = new GlobalState<{
     loading: boolean;
@@ -26,8 +26,22 @@ const currentLyricStore = new GlobalState<ILyric.IParsedLrcItem | null>(null);
 
 // 重新获取歌词
 async function refreshLyric(fromStart?: boolean) {
-    const musicItem = MusicQueue.getCurrentMusicItem();
+    const musicItem = TrackPlayer.getCurrentMusic();
     try {
+        if (!musicItem) {
+            lyricStateStore.setValue({
+                loading: false,
+                lyrics: [],
+            });
+
+            currentLyricStore.setValue({
+                lrc: 'MusicFree',
+                time: 0,
+            });
+
+            return;
+        }
+
         lyricStateStore.setValue({
             loading: true,
             lyrics: [],
@@ -37,7 +51,7 @@ async function refreshLyric(fromStart?: boolean) {
         const lrc = await PluginManager.getByMedia(
             musicItem,
         )?.methods?.getLyricText(musicItem);
-        const realtimeMusicItem = MusicQueue.getCurrentMusicItem();
+        const realtimeMusicItem = TrackPlayer.getCurrentMusic();
         if (isSameMediaItem(musicItem, realtimeMusicItem)) {
             if (lrc) {
                 const parser = new LyricParser(lrc, musicItem);
@@ -50,7 +64,9 @@ async function refreshLyric(fromStart?: boolean) {
                 // 更新当前状态的歌词
                 const currentLyric = fromStart
                     ? parser.getLyric()[0]
-                    : parser.getPosition(await MusicQueue.getPosition()).lrc;
+                    : parser.getPosition(
+                          (await TrackPlayer.getProgress()).position,
+                      ).lrc;
                 currentLyricStore.setValue(currentLyric || null);
             } else {
                 // 没有歌词
@@ -61,7 +77,7 @@ async function refreshLyric(fromStart?: boolean) {
             }
         }
     } catch {
-        const realtimeMusicItem = MusicQueue.getCurrentMusicItem();
+        const realtimeMusicItem = TrackPlayer.getCurrentMusic();
         if (isSameMediaItem(musicItem, realtimeMusicItem)) {
             // 异常情况
             lyricStateStore.setValue({

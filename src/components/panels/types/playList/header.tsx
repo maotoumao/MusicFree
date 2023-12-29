@@ -3,12 +3,12 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import repeatModeConst from '@/constants/repeatModeConst';
-import MusicQueue from '@/core/musicQueue';
 import IconTextButton from '@/components/base/iconTextButton';
+import TrackPlayer from '@/core/trackPlayer';
 
 export default function Header() {
-    const repeatMode = MusicQueue.useRepeatMode();
-    const musicQueue = MusicQueue.useMusicQueue();
+    const repeatMode = TrackPlayer.useRepeatMode();
+    const playList = TrackPlayer.usePlayList();
 
     return (
         <View style={style.wrapper}>
@@ -19,12 +19,12 @@ export default function Header() {
                 播放列表
                 <ThemeText fontColor="textSecondary">
                     {' '}
-                    ({musicQueue.length}首)
+                    ({playList.length}首)
                 </ThemeText>
             </ThemeText>
             <IconTextButton
                 onPress={() => {
-                    MusicQueue.toggleRepeatMode();
+                    TrackPlayer.toggleRepeatMode();
                 }}
                 icon={repeatModeConst[repeatMode].icon}>
                 {repeatModeConst[repeatMode].text}
@@ -32,7 +32,7 @@ export default function Header() {
             <IconTextButton
                 icon="trash-can-outline"
                 onPress={() => {
-                    MusicQueue.clear();
+                    TrackPlayer.clear();
                 }}>
                 清空
             </IconTextButton>

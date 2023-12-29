@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useState} from 'react';
+import React, {memo, useCallback, useEffect, useState} from 'react';
 import {useAtomValue} from 'jotai';
 import {ISearchResult, queryAtom} from '../../store/atoms';
 import {renderMap} from './results';
@@ -33,6 +33,11 @@ function ResultWrapper(props: IResultWrapperProps) {
 
     const ResultComponent = renderMap[tab]!;
     const data: any = searchResult?.data ?? [];
+
+    const keyExtractor = useCallback(
+        (item: any, i: number) => `${i}-${item.platform}-${item.id}`,
+        [],
+    );
 
     useEffect(() => {
         if (searchState === RequestStateCode.IDLE) {
@@ -85,6 +90,7 @@ function ResultWrapper(props: IResultWrapperProps) {
                 tab === 'sheet' ? (orientation === 'vertical' ? 3 : 4) : 1
             }
             renderItem={renderItem}
+            keyExtractor={keyExtractor}
         />
     );
 }

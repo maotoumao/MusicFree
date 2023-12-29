@@ -1,46 +1,50 @@
 import Config from '@/core/config';
-import musicIsPaused from '@/utils/musicIsPaused';
-import TrackPlayer, {Event, State} from 'react-native-track-player';
-import MusicQueue from '../core/musicQueue';
+import RNTrackPlayer, {Event, State} from 'react-native-track-player';
 import LyricManager from '@/core/lyricManager';
 import LyricUtil from '@/native/lyricUtil';
+import TrackPlayer from '@/core/trackPlayer';
+import {musicIsPaused} from '@/utils/trackUtils';
 
 let resumeState: State | null;
 module.exports = async function () {
-    TrackPlayer.addEventListener(Event.RemotePlay, () => MusicQueue.play());
-    TrackPlayer.addEventListener(Event.RemotePause, () => MusicQueue.pause());
-    TrackPlayer.addEventListener(Event.RemotePrevious, () =>
-        MusicQueue.skipToPrevious(),
+    RNTrackPlayer.addEventListener(Event.RemotePlay, () => TrackPlayer.play());
+    RNTrackPlayer.addEventListener(Event.RemotePause, () =>
+        TrackPlayer.pause(),
     );
-    TrackPlayer.addEventListener(Event.RemoteNext, () =>
-        MusicQueue.skipToNext(),
+    RNTrackPlayer.addEventListener(Event.RemotePrevious, () =>
+        TrackPlayer.skipToPrevious(),
     );
-    TrackPlayer.addEventListener(
+    RNTrackPlayer.addEventListener(Event.RemoteNext, () =>
+        TrackPlayer.skipToNext(),
+    );
+    RNTrackPlayer.addEventListener(
         Event.RemoteDuck,
         async ({paused, permanent}) => {
             if (Config.get('setting.basic.notInterrupt')) {
                 return;
             }
             if (permanent) {
-                return MusicQueue.pause();
+                return TrackPlayer.pause();
             }
             const tempRemoteDuckConf = Config.get(
                 'setting.basic.tempRemoteDuck',
             );
             if (tempRemoteDuckConf === '降低音量') {
                 if (paused) {
-                    return TrackPlayer.setVolume(0.5);
+                    return RNTrackPlayer.setVolume(0.5);
                 } else {
-                    return TrackPlayer.setVolume(1);
+                    return RNTrackPlayer.setVolume(1);
                 }
             } else {
                 if (paused) {
-                    resumeState = await TrackPlayer.getState();
-                    return MusicQueue.pause();
+                    resumeState =
+                        (await RNTrackPlayer.getPlaybackState()).state ??
+                        State.Paused;
+                    return TrackPlayer.pause();
                 } else {
                     if (resumeState && !musicIsPaused(resumeState)) {
                         resumeState = null;
-                        return MusicQueue.play();
+                        return TrackPlayer.play();
                     }
                     resumeState = null;
                 }
@@ -48,8 +52,8 @@ module.exports = async function () {
         },
     );
 
-    TrackPlayer.addEventListener(Event.PlaybackTrackChanged, () => {
-        const currentMusicItem = MusicQueue.getCurrentMusicItem();
+    RNTrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, () => {
+        const currentMusicItem = TrackPlayer.getCurrentMusic();
         if (currentMusicItem) {
             LyricUtil.setStatusBarLyricText(
                 `${currentMusicItem.title} - ${currentMusicItem.artist}`,
@@ -57,7 +61,7 @@ module.exports = async function () {
         }
     });
 
-    TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
+    RNTrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
         Config.set('status.music.progress', evt.position, false);
 
         // 歌词逻辑
