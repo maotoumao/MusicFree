@@ -12,7 +12,7 @@ import shuffle from 'lodash.shuffle';
 const defaultSheet: IMusic.IMusicSheetItemBase = {
     id: 'favorite',
     coverImg: undefined,
-    title: '我喜欢',
+    title: '我喜欢的音乐',
 };
 
 let musicSheets = [defaultSheet];

@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import ActionButton from './ActionButton';
+import ActionButton from '../ActionButton';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import {ScrollView} from 'react-native-gesture-handler';
 
@@ -17,7 +17,7 @@ export default function Operations(props: IOperationsProps) {
         {
             iconName: 'heart',
             iconColor: 'red',
-            title: '我喜欢',
+            title: '我喜欢的音乐',
             action() {
                 navigate(ROUTE_PATH.LOCAL_SHEET_DETAIL, {
                     id: 'favorite',
