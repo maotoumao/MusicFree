@@ -9,13 +9,11 @@ import sheetHeader from './sheetHeader';
 import rpx from '@/utils/rpx';
 import useOrientation from '@/hooks/useOrientation';
 import {showDialog} from '@/components/dialogs/useDialog';
-import useColors from '@/hooks/useColors';
 
 function MySheets() {
     const orientation = useOrientation();
     const musicSheets = MusicSheet.useUserSheets();
     const navigate = useNavigate();
-    const colors = useColors();
 
     const renderMySheetItem: ListRenderItem<IMusic.IMusicSheetItem> =
         function ({item: sheet}) {
@@ -63,9 +61,6 @@ function MySheets() {
                 orientation === 'horizonal'
                     ? style.horizonalWrapper
                     : undefined,
-                {
-                    backgroundColor: colors.card,
-                },
             ]}
             data={musicSheets ?? []}
             keyExtractor={sheet => sheet.id}
