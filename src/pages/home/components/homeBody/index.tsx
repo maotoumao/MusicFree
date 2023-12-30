@@ -9,6 +9,7 @@ export default function HomeBody() {
     return (
         <ScrollView
             style={globalStyle.fwflex1}
+            contentContainerStyle={globalStyle.fwflex1}
             showsVerticalScrollIndicator={false}>
             <Operations />
             <FavoriteMusicList />
