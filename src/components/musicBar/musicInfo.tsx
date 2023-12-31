@@ -118,6 +118,7 @@ function skipMusicItem(direction: number) {
 export default function MusicInfo(props: IMusicInfoProps) {
     const {musicItem} = props;
     const navigate = useNavigate();
+    const playLists = TrackPlayer.usePlayList();
     const siblingMusicItems = useMemo(() => {
         if (!musicItem) {
             return {
@@ -129,7 +130,7 @@ export default function MusicInfo(props: IMusicInfoProps) {
             prev: TrackPlayer.getPreviousMusic(),
             next: TrackPlayer.getNextMusic(),
         };
-    }, [musicItem]);
+    }, [musicItem, playLists]);
 
     // +- 1
     const transformSharedValue = useSharedValue(0);
