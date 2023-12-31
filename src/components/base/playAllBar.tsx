@@ -9,16 +9,24 @@ import useColors from '@/hooks/useColors';
 import {showPanel} from '../panels/usePanel';
 import IconButton from './iconButton';
 import TrackPlayer from '@/core/trackPlayer';
+import MusicSheet from '@/core/musicSheet';
+import Toast from '@/utils/toast';
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
-    sheetName?: string;
-    sheetId?: string;
+    canStar?: boolean;
+    musicSheet?: IMusic.IMusicSheetItem | null;
 }
 export default function (props: IProps) {
-    const {musicList, sheetName, sheetId} = props;
+    const {musicList, canStar, musicSheet} = props;
+
+    const sheetName = musicSheet?.title;
+    const sheetId = musicSheet?.id;
+
     const colors = useColors();
     const navigate = useNavigate();
+
+    const starred = MusicSheet.useSheetStarred(musicSheet);
 
     return (
         <View style={style.topWrapper}>
@@ -40,6 +48,23 @@ export default function (props: IProps) {
                 />
                 <ThemeText fontWeight="bold">播放全部</ThemeText>
             </Pressable>
+            {canStar && musicSheet ? (
+                <IconButton
+                    name={starred ? 'heart' : 'heart-outline'}
+                    sizeType={'normal'}
+                    color={starred ? '#e31639' : undefined}
+                    style={style.optionButton}
+                    onPress={async () => {
+                        if (!starred) {
+                            MusicSheet.starMusicSheet(musicSheet);
+                            Toast.success('收藏歌单成功');
+                        } else {
+                            MusicSheet.unstarMusicSheet(musicSheet);
+                            Toast.success('已取消收藏歌单');
+                        }
+                    }}
+                />
+            ) : null}
             <IconButton
                 name={'plus-box-multiple-outline'}
                 sizeType={'normal'}

@@ -5,6 +5,8 @@ declare namespace IMusic {
         artwork?: string;
         /** 标题 */
         title?: string;
+        /** 作者 */
+        artist?: string;
         /** 歌单id */
         id: string;
         /** 描述 */

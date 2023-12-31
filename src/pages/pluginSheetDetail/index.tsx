@@ -10,6 +10,7 @@ export default function PluginSheetDetail() {
         usePluginSheetMusicList(sheetInfo as IMusic.IMusicSheetItem);
     return (
         <MusicSheetPage
+            canStar
             sheetInfo={sheetItem}
             navTitle={sheetInfo?.title ?? '歌单'}
             musicList={musicList}

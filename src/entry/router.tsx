@@ -194,7 +194,7 @@ interface RouterParams extends RouterParamsBase {
         topList: IMusic.IMusicSheetItemBase;
     };
     'plugin-sheet-detail': {
-        pluginHash: string;
+        pluginHash?: string;
         sheetInfo: IMusic.IMusicSheetItemBase;
     };
 }

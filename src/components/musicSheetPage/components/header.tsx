@@ -8,11 +8,12 @@ import PlayAllBar from '@/components/base/playAllBar';
 import useColors from '@/hooks/useColors';
 
 interface IHeaderProps {
-    topListDetail: IMusic.IMusicSheetItem | null;
+    musicSheet: IMusic.IMusicSheetItem | null;
     musicList: IMusic.IMusicItem[] | null;
+    canStar?: boolean;
 }
 export default function Header(props: IHeaderProps) {
-    const {topListDetail, musicList} = props;
+    const {musicSheet, musicList, canStar} = props;
     const colors = useColors();
 
     const [maxLines, setMaxLines] = useState<number | undefined>(6);
@@ -31,22 +32,22 @@ export default function Header(props: IHeaderProps) {
                 <View style={style.content}>
                     <FastImage
                         style={style.coverImg}
-                        uri={topListDetail?.artwork ?? topListDetail?.coverImg}
+                        uri={musicSheet?.artwork ?? musicSheet?.coverImg}
                         emptySrc={ImgAsset.albumDefault}
                     />
                     <View style={style.details}>
-                        <ThemeText>{topListDetail?.title}</ThemeText>
+                        <ThemeText>{musicSheet?.title}</ThemeText>
                         <ThemeText
                             fontColor="textSecondary"
                             fontSize="description">
                             共
-                            {topListDetail?.worksNum ??
+                            {musicSheet?.worksNum ??
                                 (musicList ? musicList.length ?? 0 : '-')}
                             首{' '}
                         </ThemeText>
                     </View>
                 </View>
-                {topListDetail?.description ? (
+                {musicSheet?.description ? (
                     <Pressable onPress={toggleShowMore}>
                         <View
                             style={style.albumDesc}
@@ -58,15 +59,16 @@ export default function Header(props: IHeaderProps) {
                                 fontColor="textSecondary"
                                 fontSize="description"
                                 numberOfLines={maxLines}>
-                                {topListDetail.description}
+                                {musicSheet.description}
                             </ThemeText>
                         </View>
                     </Pressable>
                 ) : null}
             </View>
             <PlayAllBar
-                sheetName={topListDetail?.title}
+                canStar={canStar}
                 musicList={musicList}
+                musicSheet={musicSheet}
             />
         </View>
     );

@@ -29,11 +29,7 @@ export default function Header() {
                     </ThemeText>
                 </View>
             </View>
-            <PlayAllBar
-                musicList={sheet.musicList}
-                sheetName={sheet.title}
-                sheetId={sheet.id}
-            />
+            <PlayAllBar musicList={sheet.musicList} musicSheet={sheet} />
         </View>
     );
 }

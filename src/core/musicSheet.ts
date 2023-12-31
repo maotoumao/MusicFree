@@ -8,6 +8,7 @@ import {nanoid} from 'nanoid';
 import {getStorage, setStorage} from '@/utils/storage';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import shuffle from 'lodash.shuffle';
+import {GlobalState} from '@/utils/stateMapper';
 
 const defaultSheet: IMusic.IMusicSheetItemBase = {
     id: 'favorite',
@@ -45,6 +46,7 @@ async function setup() {
             });
         }
         musicSheets = _musicSheets;
+        setupStarredMusicSheets();
     } catch (e: any) {
         if (e.message === 'not exist') {
             await setStorage('music-sheets', [defaultSheet]);
@@ -307,6 +309,52 @@ function useUserSheets(): IMusic.IMusicSheet {
     return sheets?.filter(_ => _.id !== 'favorite') ?? [];
 }
 
+const starredMusicSheetsStore = new GlobalState<IMusic.IMusicSheetItem[]>([]);
+
+async function setupStarredMusicSheets() {
+    const starredSheets: IMusic.IMusicSheetItem[] =
+        (await getStorage('starred-sheets')) || [];
+    starredMusicSheetsStore.setValue(starredSheets);
+}
+
+async function starMusicSheet(musicSheet: IMusic.IMusicSheetItem) {
+    const newVal = [...starredMusicSheetsStore.getValue(), musicSheet];
+
+    starredMusicSheetsStore.setValue(newVal);
+    await setStorage('starred-sheets', newVal);
+}
+
+async function unstarMusicSheet(musicSheet: IMusic.IMusicSheetItem) {
+    const newVal = starredMusicSheetsStore
+        .getValue()
+        .filter(it => it.id !== musicSheet.id);
+    starredMusicSheetsStore.setValue(newVal);
+    await setStorage('starred-sheets', newVal);
+}
+
+function useSheetStarred(
+    musicSheet: IMusic.IMusicSheetItem | null | undefined,
+) {
+    // TODO: 类型有问题
+    const [starred, setStarred] = useState(
+        starredMusicSheetsStore
+            .getValue()
+            .findIndex(it => isSameMediaItem(musicSheet as any, it as any)) !==
+            -1,
+    );
+    const allStarredSheet = starredMusicSheetsStore.useValue();
+
+    useEffect(() => {
+        setStarred(
+            allStarredSheet.findIndex(it =>
+                isSameMediaItem(musicSheet as any, it as any),
+            ) !== -1,
+        );
+    }, [allStarredSheet]);
+
+    return starred;
+}
+
 const MusicSheet = {
     setup,
     addSheet,
@@ -320,6 +368,10 @@ const MusicSheet = {
     removeMusic,
     useUserSheets,
     sortMusicList,
+    starMusicSheet,
+    unstarMusicSheet,
+    useStarredMusicSheet: starredMusicSheetsStore.useValue,
+    useSheetStarred,
 };
 
 export default MusicSheet;
