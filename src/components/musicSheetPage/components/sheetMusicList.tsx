@@ -14,9 +14,11 @@ interface IMusicListProps {
     musicList?: IMusic.IMusicItem[] | null;
     onEndReached?: () => void;
     loadMore?: 'loading' | 'done' | 'idle';
+    // 是否可收藏
+    canStar?: boolean;
 }
 export default function SheetMusicList(props: IMusicListProps) {
-    const {sheetInfo: topListDetail, musicList, onEndReached, loadMore} = props;
+    const {sheetInfo, musicList, onEndReached, loadMore, canStar} = props;
 
     return (
         <View style={globalStyle.fwflex1}>
@@ -29,7 +31,8 @@ export default function SheetMusicList(props: IMusicListProps) {
                         loadMore={loadMore}
                         Header={
                             <Header
-                                topListDetail={topListDetail}
+                                canStar={canStar}
+                                musicSheet={sheetInfo}
                                 musicList={musicList}
                             />
                         }

@@ -1,15 +1,15 @@
 interface IIndexMap {
     getIndexMap: () => Record<string, Record<string, number>>;
-    getIndex: (musicItem: IMusic.IMusicItem) => number;
-    has: (mediaItem: IMusic.IMusicItem) => boolean;
+    getIndex: (musicItem: ICommon.IMediaBase) => number;
+    has: (mediaItem: ICommon.IMediaBase) => boolean;
 }
 
 export function createMediaIndexMap(
-    musicItems: IMusic.IMusicItem[],
+    mediaItems: ICommon.IMediaBase[],
 ): IIndexMap {
     const indexMap: Record<string, Record<string, number>> = {};
 
-    musicItems.forEach((item, index) => {
+    mediaItems.forEach((item, index) => {
         // 映射中不存在
         if (!indexMap[item.platform]) {
             indexMap[item.platform] = {
@@ -25,19 +25,19 @@ export function createMediaIndexMap(
         return indexMap;
     }
 
-    function getIndex(musicItem: IMusic.IMusicItem) {
-        if (!musicItem) {
+    function getIndex(mediaItem: ICommon.IMediaBase) {
+        if (!mediaItem) {
             return -1;
         }
-        return indexMap[musicItem.platform]?.[musicItem.id] ?? -1;
+        return indexMap[mediaItem.platform]?.[mediaItem.id] ?? -1;
     }
 
-    function has(musicItem: IMusic.IMusicItem) {
-        if (!musicItem) {
+    function has(mediaItem: ICommon.IMediaBase) {
+        if (!mediaItem) {
             return false;
         }
 
-        return indexMap[musicItem.platform]?.[musicItem.id] > -1;
+        return indexMap[mediaItem.platform]?.[mediaItem.id] > -1;
     }
 
     return {

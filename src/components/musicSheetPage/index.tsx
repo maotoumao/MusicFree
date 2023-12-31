@@ -12,10 +12,13 @@ interface IMusicSheetPageProps {
     musicList?: IMusic.IMusicItem[] | null;
     onEndReached?: () => void;
     loadMore?: 'loading' | 'done' | 'idle';
+    // 是否可收藏
+    canStar?: boolean;
 }
 
 export default function MusicSheetPage(props: IMusicSheetPageProps) {
-    const {navTitle, sheetInfo, musicList, onEndReached, loadMore} = props;
+    const {navTitle, sheetInfo, musicList, onEndReached, loadMore, canStar} =
+        props;
 
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
@@ -25,6 +28,7 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
                 navTitle={navTitle}
             />
             <SheetMusicList
+                canStar={canStar}
                 sheetInfo={sheetInfo as any}
                 musicList={musicList ?? sheetInfo?.musicList}
                 onEndReached={() => {
