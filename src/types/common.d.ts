@@ -57,4 +57,9 @@ declare namespace ICommon {
         isEnd?: boolean;
         data?: T[];
     };
+
+    export interface IPoint {
+        x: number;
+        y: number;
+    }
 }

@@ -43,6 +43,7 @@ import {
 import {createMediaIndexMap} from '@/utils/mediaIndexMap';
 import PluginManager from '../pluginManager';
 import {musicIsPaused} from '@/utils/trackUtils';
+import Toast from '@/utils/toast';
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -80,7 +81,6 @@ const shrinkPlayListToSize = (
 
 async function setupTrackPlayer() {
     const config = Config.get('status.music') ?? {};
-    console.log('config!!', config);
     const {rate, repeatMode, musicQueue, progress, track} = config;
 
     // 状态恢复
@@ -376,12 +376,11 @@ const pause = async () => {
 
 const setCurrentMusic = (musicItem?: IMusic.IMusicItem | null) => {
     if (!musicItem) {
-        currentMusicStore.setValue(null);
         currentIndex = -1;
+        currentMusicStore.setValue(null);
     }
-
-    currentMusicStore.setValue(musicItem!);
     currentIndex = getMusicIndex(musicItem);
+    currentMusicStore.setValue(musicItem!);
 };
 
 /**
@@ -544,6 +543,9 @@ const play = async (
             await ReactNativeTrackPlayer.setupPlayer();
             play(musicItem, forcePlay);
         } else if (message === PlayFailReason.FORBID_CELLUAR_NETWORK_PLAY) {
+            Toast.warn(
+                '当前禁止移动网络播放音乐，如需播放请去侧边栏-基本设置中修改',
+            );
         } else if (message === PlayFailReason.INVALID_SOURCE) {
             await failToPlay('无效源');
         } else if (message === PlayFailReason.PLAY_LIST_IS_EMPTY) {
@@ -664,6 +666,24 @@ function useMusicState() {
     return playbackState.state;
 }
 
+function getPreviousMusic() {
+    const currentMusicItem = currentMusicStore.getValue();
+    if (!currentMusicItem) {
+        return null;
+    }
+
+    return getPlayListMusicAt(currentIndex - 1);
+}
+
+function getNextMusic() {
+    const currentMusicItem = currentMusicStore.getValue();
+    if (!currentMusicItem) {
+        return null;
+    }
+
+    return getPlayListMusicAt(currentIndex + 1);
+}
+
 const TrackPlayer = {
     setupTrackPlayer,
     usePlayList,
@@ -694,6 +714,8 @@ const TrackPlayer = {
     setRate: ReactNativeTrackPlayer.setRate,
     useMusicState,
     reset: ReactNativeTrackPlayer.reset,
+    getPreviousMusic,
+    getNextMusic,
 };
 
 export default TrackPlayer;
