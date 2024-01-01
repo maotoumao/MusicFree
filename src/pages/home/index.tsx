@@ -11,15 +11,23 @@ import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import Theme from '@/core/theme';
 import HomeBody from './components/homeBody';
+import HomeBodyHorizonal from './components/homeBodyHorizonal';
+import useOrientation from '@/hooks/useOrientation';
 
 function Home() {
+    const orientation = useOrientation();
+
     return (
         <SafeAreaView edges={['top', 'bottom']} style={styles.appWrapper}>
             <HomeStatusBar />
             <HorizonalSafeAreaView style={globalStyle.flex1}>
                 <>
                     <NavBar />
-                    <HomeBody />
+                    {orientation === 'vertical' ? (
+                        <HomeBody />
+                    ) : (
+                        <HomeBodyHorizonal />
+                    )}
                 </>
             </HorizonalSafeAreaView>
             <MusicBar />

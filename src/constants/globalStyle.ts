@@ -10,6 +10,12 @@ const globalStyle = StyleSheet.create({
         width: '100%',
         flex: 1,
     },
+    /** row 满宽度 flex1 */
+    rowfwflex1: {
+        width: '100%',
+        flex: 1,
+        flexDirection: 'row',
+    },
     /** 居中 */
     fullCenter: {
         width: '100%',
