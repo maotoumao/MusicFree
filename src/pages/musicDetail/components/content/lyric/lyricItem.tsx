@@ -3,6 +3,8 @@ import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import useColors from '@/hooks/useColors';
+import Config from '@/core/config';
+import {fontSizeConst} from '@/constants/uiConst';
 
 interface ILyricItemComponentProps {
     // 行号
@@ -17,10 +19,18 @@ interface ILyricItemComponentProps {
     onLayout?: (index: number, height: number) => void;
 }
 
+const fontSizeMap = {
+    0: fontSizeConst.description,
+    1: fontSizeConst.content,
+    2: fontSizeConst.appbar,
+    3: rpx(40),
+} as Record<number, number>;
+
 function _LyricItemComponent(props: ILyricItemComponentProps) {
     const {light, highlight, text, onLayout, index} = props;
 
     const colors = useColors();
+    const detailFontSize = Config.useConfig('setting.lyric.detailFontSize');
 
     return (
         <ThemeText
@@ -31,6 +41,11 @@ function _LyricItemComponent(props: ILyricItemComponentProps) {
             }}
             style={[
                 lyricStyles.item,
+                {
+                    fontSize:
+                        fontSizeMap[detailFontSize ?? 1] ||
+                        fontSizeConst.content,
+                },
                 highlight
                     ? [
                           lyricStyles.highlightItem,
@@ -62,7 +77,6 @@ const lyricStyles = StyleSheet.create({
         opacity: 1,
     },
     item: {
-        fontSize: rpx(32),
         color: 'white',
         opacity: 0.6,
         paddingHorizontal: rpx(64),

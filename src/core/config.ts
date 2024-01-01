@@ -67,6 +67,8 @@ interface IConfig {
             backgroundColor: string;
             widthPercent: number;
             fontSize: number;
+            // 详情页的字体大小
+            detailFontSize: number;
         };
 
         /** 主题 */

@@ -126,7 +126,7 @@ async function setupTrackPlayer() {
                         await play(null, true);
                     } else {
                         // 当前生效的歌曲是下一曲的标记
-                        await skipToNext('队列结尾');
+                        await skipToNext();
                     }
                 }
             },
@@ -174,12 +174,12 @@ const getFakeNextTrack = () => {
 };
 
 /** 播放失败时的情况 */
-async function failToPlay(reason?: string) {
+async function failToPlay() {
     // 如果自动跳转下一曲, 500s后自动跳转
     if (!Config.get('setting.basic.autoStopWhenError')) {
         await ReactNativeTrackPlayer.reset();
         await delay(500);
-        await skipToNext('播放失败' + reason);
+        await skipToNext();
     }
 }
 
@@ -439,7 +439,8 @@ const play = async (
                 if (forcePlay) {
                     // 2.1.1 强制重新开始
                     await ReactNativeTrackPlayer.seekTo(0);
-                } else if (
+                }
+                if (
                     (await ReactNativeTrackPlayer.getPlaybackState()).state !==
                     State.Playing
                 ) {
@@ -557,7 +558,7 @@ const play = async (
                 '当前禁止移动网络播放音乐，如需播放请去侧边栏-基本设置中修改',
             );
         } else if (message === PlayFailReason.INVALID_SOURCE) {
-            await failToPlay('无效源');
+            await failToPlay();
         } else if (message === PlayFailReason.PLAY_LIST_IS_EMPTY) {
             // 队列是空的，不应该出现这种情况
         }
@@ -596,12 +597,7 @@ const playWithReplacePlayList = async (
     }
 };
 
-const skipToNext = async (reason?: string) => {
-    console.log(
-        'SkipToNext',
-        reason,
-        await ReactNativeTrackPlayer.getActiveTrack(),
-    );
+const skipToNext = async () => {
     if (isPlayListEmpty()) {
         setCurrentMusic(null);
         return;
@@ -616,7 +612,10 @@ const skipToPrevious = async () => {
         return;
     }
 
-    await play(getPlayListMusicAt(currentIndex === -1 ? 0 : currentIndex - 1));
+    await play(
+        getPlayListMusicAt(currentIndex === -1 ? 0 : currentIndex - 1),
+        true,
+    );
 };
 
 /** 修改当前播放的音质 */
