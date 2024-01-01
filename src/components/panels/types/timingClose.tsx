@@ -117,6 +117,7 @@ function NumScrollView() {
                         offset: ITEM_HEIGHT * index,
                         index,
                     })}
+                    fadingEdgeLength={100}
                     onMomentumScrollEnd={e => {
                         selectedHour = `${(
                             e.nativeEvent.contentOffset.y / ITEM_HEIGHT
@@ -147,6 +148,7 @@ function NumScrollView() {
                     }}
                     showsVerticalScrollIndicator={false}
                     overScrollMode="never"
+                    fadingEdgeLength={100}
                     ListHeaderComponent={EmptyItem}
                     ListFooterComponent={EmptyItem}
                     style={[numScrollStyles.list, numScrollStyles.minList]}
