@@ -185,6 +185,7 @@ interface IListItemImageProps {
     fixedWidth?: boolean;
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ImageStyle>;
+    maskIcon?: string | null;
 }
 
 function ListItemImage(props: IListItemImageProps) {
@@ -196,6 +197,7 @@ function ListItemImage(props: IListItemImageProps) {
         width,
         containerStyle,
         contentStyle,
+        maskIcon,
     } = props;
 
     const defaultStyle: StyleProp<ViewStyle> = {
@@ -212,6 +214,15 @@ function ListItemImage(props: IListItemImageProps) {
                 uri={uri}
                 emptySrc={fallbackImg}
             />
+            {maskIcon ? (
+                <View style={[styles.leftImage, styles.imageMask]}>
+                    <Icon
+                        name={maskIcon}
+                        size={iconSizeConst.normal}
+                        color="red"
+                    />
+                </View>
+            ) : null}
         </View>
     );
 }
@@ -305,6 +316,12 @@ const styles = StyleSheet.create({
         width: rpx(80),
         height: rpx(80),
         borderRadius: rpx(16),
+    },
+    imageMask: {
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#00000022',
     },
     itemContentContainer: {
         flex: 1,

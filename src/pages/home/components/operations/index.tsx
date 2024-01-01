@@ -17,7 +17,7 @@ export default function Operations(props: IOperationsProps) {
         {
             iconName: 'heart',
             iconColor: 'red',
-            title: '我喜欢的音乐',
+            title: '我喜欢',
             action() {
                 navigate(ROUTE_PATH.LOCAL_SHEET_DETAIL, {
                     id: 'favorite',

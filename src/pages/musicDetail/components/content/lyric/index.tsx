@@ -42,7 +42,7 @@ export default function Lyric() {
     const blankComponent = useMemo(() => {
         return (
             <View
-                style={style.empty}
+                style={styles.empty}
                 onLayout={evt => {
                     itemHeightsRef.current.blankHeight =
                         evt.nativeEvent.layout.height;
@@ -137,8 +137,6 @@ export default function Lyric() {
         }
     };
 
-    console.log(draggingIndex, 'DD', currentLrcItem?.index);
-
     return (
         <View style={globalStyle.fwflex1}>
             {loading ? (
@@ -169,7 +167,7 @@ export default function Lyric() {
                     onMomentumScrollEnd={onScrollEndDrag}
                     onScroll={onScroll}
                     scrollEventThrottle={32}
-                    style={style.wrapper}
+                    style={styles.wrapper}
                     data={lyric}
                     initialNumToRender={30}
                     overScrollMode="never"
@@ -186,21 +184,21 @@ export default function Lyric() {
                 />
             ) : (
                 <View style={globalStyle.fullCenter}>
-                    <Text style={style.white}>暂无歌词</Text>
+                    <Text style={styles.white}>暂无歌词</Text>
                     <TapGestureHandler
                         onActivated={() => {
                             showPanel('SearchLrc', {
                                 musicItem: TrackPlayer.getCurrentMusic(),
                             });
                         }}>
-                        <Text style={style.searchLyric}>搜索歌词</Text>
+                        <Text style={styles.searchLyric}>搜索歌词</Text>
                     </TapGestureHandler>
                 </View>
             )}
             {draggingIndex !== undefined && (
                 <View
                     style={[
-                        style.draggingTime,
+                        styles.draggingTime,
                         layout?.height
                             ? {
                                   top: (layout.height - ITEM_HEIGHT) / 2,
@@ -213,10 +211,10 @@ export default function Lyric() {
                             +(meta?.offset ?? 0)
                         }
                     />
-                    <View style={style.singleLine} />
+                    <View style={styles.singleLine} />
 
                     <IconButtonWithGesture
-                        style={style.playIcon}
+                        style={styles.playIcon}
                         sizeType="small"
                         name="play"
                         onPress={onLyricSeekPress}
@@ -227,7 +225,7 @@ export default function Lyric() {
     );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     wrapper: {
         width: '100%',
         marginVertical: rpx(48),

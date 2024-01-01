@@ -5,6 +5,7 @@ import Lyric from './lyric';
 import {TapGestureHandler} from 'react-native-gesture-handler';
 import useOrientation from '@/hooks/useOrientation';
 import Config from '@/core/config';
+import Operations from './operations';
 
 export default function Content() {
     const [tab, selectTab] = useState<'album' | 'lyric'>(
@@ -23,16 +24,17 @@ export default function Content() {
         }
     };
 
+    const showAlbumCover = tab === 'album' || orientation === 'horizonal';
+
     return (
-        <TapGestureHandler onActivated={onPress}>
-            <View style={style.wrapper}>
-                {tab === 'album' || orientation === 'horizonal' ? (
-                    <AlbumCover />
-                ) : (
-                    <Lyric />
-                )}
-            </View>
-        </TapGestureHandler>
+        <>
+            <TapGestureHandler onActivated={onPress}>
+                <View style={style.wrapper}>
+                    {showAlbumCover ? <AlbumCover /> : <Lyric />}
+                </View>
+            </TapGestureHandler>
+            {showAlbumCover ? <Operations /> : null}
+        </>
     );
 }
 

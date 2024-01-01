@@ -13,7 +13,7 @@ import {GlobalState} from '@/utils/stateMapper';
 const defaultSheet: IMusic.IMusicSheetItemBase = {
     id: 'favorite',
     coverImg: undefined,
-    title: '我喜欢的音乐',
+    title: '我喜欢',
 };
 
 let musicSheets = [defaultSheet];
@@ -256,11 +256,27 @@ async function removeMusic(
 }
 
 function getSheetItems(): IMusic.IMusicSheetItem[] {
-    return produce(musicSheets as IMusic.IMusicSheetItem[], draft => {
-        draft.forEach(_ => {
+    let favIndex = -1;
+    const result = produce(musicSheets as IMusic.IMusicSheetItem[], draft => {
+        draft.forEach((_, index) => {
+            if (_.id === defaultSheet.id) {
+                favIndex = index;
+            }
             _.musicList = sheetMusicMap[_.id] ?? [];
         });
     });
+
+    if (favIndex === -1) {
+        result.unshift({
+            ...defaultSheet,
+            musicList: [],
+        });
+    } else if (favIndex !== 0) {
+        const favSheet = result.splice(favIndex, 1);
+        result.unshift(favSheet[0]);
+    }
+
+    return result;
 }
 
 function sortMusicList(
@@ -358,6 +374,7 @@ function useSheetStarred(
 const MusicSheet = {
     setup,
     addSheet,
+    defaultSheet,
     addMusic,
     getSheets,
     useSheets,

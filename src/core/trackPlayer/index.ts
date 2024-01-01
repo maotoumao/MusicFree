@@ -79,6 +79,8 @@ const shrinkPlayListToSize = (
     return queue;
 };
 
+let hasSetupListener = false;
+
 async function setupTrackPlayer() {
     const config = Config.get('status.music') ?? {};
     const {rate, repeatMode, musicQueue, progress, track} = config;
@@ -111,31 +113,39 @@ async function setupTrackPlayer() {
         }
     }
 
-    // 初始化事件
-    ReactNativeTrackPlayer.addEventListener(
-        Event.PlaybackActiveTrackChanged,
-        async evt => {
-            if (
-                evt.index === 1 &&
-                evt.lastIndex === 0 &&
-                evt.track?.$ === internalFakeSoundKey
-            ) {
-                if (repeatModeStore.getValue() === MusicRepeatMode.SINGLE) {
-                    await play(null, true);
-                } else {
-                    // 当前生效的歌曲是下一曲的标记
-                    await skipToNext('队列结尾');
+    if (!hasSetupListener) {
+        ReactNativeTrackPlayer.addEventListener(
+            Event.PlaybackActiveTrackChanged,
+            async evt => {
+                if (
+                    evt.index === 1 &&
+                    evt.lastIndex === 0 &&
+                    evt.track?.$ === internalFakeSoundKey
+                ) {
+                    if (repeatModeStore.getValue() === MusicRepeatMode.SINGLE) {
+                        await play(null, true);
+                    } else {
+                        // 当前生效的歌曲是下一曲的标记
+                        await skipToNext('队列结尾');
+                    }
                 }
-            }
-        },
-    );
+            },
+        );
 
-    ReactNativeTrackPlayer.addEventListener(Event.PlaybackError, async () => {
-        // 只关心第一个元素
-        if ((await ReactNativeTrackPlayer.getActiveTrackIndex()) === 0) {
-            failToPlay();
-        }
-    });
+        ReactNativeTrackPlayer.addEventListener(
+            Event.PlaybackError,
+            async () => {
+                // 只关心第一个元素
+                if (
+                    (await ReactNativeTrackPlayer.getActiveTrackIndex()) === 0
+                ) {
+                    failToPlay();
+                }
+            },
+        );
+
+        hasSetupListener = true;
+    }
 }
 
 /**
