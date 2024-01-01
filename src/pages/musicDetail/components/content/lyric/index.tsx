@@ -1,10 +1,8 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {LayoutRectangle, StyleSheet, Text, View} from 'react-native';
-import rpx, {vh} from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
+import rpx from '@/utils/rpx';
 import useDelayFalsy from '@/hooks/useDelayFalsy';
 import {FlatList, TapGestureHandler} from 'react-native-gesture-handler';
-import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
 import {IconButtonWithGesture} from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
@@ -13,31 +11,55 @@ import {showPanel} from '@/components/panels/usePanel';
 import LyricManager from '@/core/lyricManager';
 import TrackPlayer from '@/core/trackPlayer';
 import {musicIsPaused} from '@/utils/trackUtils';
+import delay from '@/utils/delay';
+import DraggingTime from './draggingTime';
+import LyricItemComponent from './lyricItem';
 
 const ITEM_HEIGHT = rpx(92);
 
-function Empty(props: {height?: number}) {
-    return <View style={[style.empty, {paddingTop: props.height}]} />;
+interface IItemHeights {
+    blankHeight?: number;
+    [k: number]: number;
 }
 
 export default function Lyric() {
     const {loading, meta, lyrics: lyric} = LyricManager.useLyricState();
     const currentLrcItem = LyricManager.useCurrentLyric();
-    const [drag, setDrag] = useState(false);
+
+    // 是否展示拖拽
+    const dragShownRef = useRef(false);
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
         useDelayFalsy<number | undefined>(undefined, 2000);
     const listRef = useRef<FlatList<ILyric.IParsedLrcItem> | null>();
     const musicState = TrackPlayer.useMusicState();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
-    const emptyHeight = useMemo(() => {
-        const height = Math.max(layout?.height ?? vh(60), vh(60));
-        return height / 2;
-    }, [layout]);
+
+    // 用来缓存高度
+    const itemHeightsRef = useRef<IItemHeights>({});
+
+    // 设置空白组件，获取组件高度
+    const blankComponent = useMemo(() => {
+        return (
+            <View
+                style={style.empty}
+                onLayout={evt => {
+                    itemHeightsRef.current.blankHeight =
+                        evt.nativeEvent.layout.height;
+                }}
+            />
+        );
+    }, []);
+
+    const handleLyricItemLayout = useCallback(
+        (index: number, height: number) => {
+            itemHeightsRef.current[index] = height;
+        },
+        [],
+    );
 
     useEffect(() => {
         // 暂停且拖拽才返回
-
         if (
             lyric.length === 0 ||
             draggingIndex !== undefined ||
@@ -49,36 +71,48 @@ export default function Lyric() {
         if (currentLrcItem?.index === -1 || !currentLrcItem) {
             listRef.current?.scrollToIndex({
                 index: 0,
-                viewPosition: 0,
+                viewPosition: 0.5,
             });
         } else {
             listRef.current?.scrollToIndex({
                 index: Math.min(currentLrcItem.index ?? 0, lyric.length - 1),
-                viewPosition: 0,
+                viewPosition: 0.5,
             });
         }
         // 音乐暂停状态不应该影响到滑动，所以不放在依赖里，但是这样写不好。。
     }, [currentLrcItem, lyric, draggingIndex]);
 
+    // 开始滚动时拖拽生效
     const onScrollBeginDrag = () => {
-        setDrag(true);
+        dragShownRef.current = true;
     };
 
     const onScrollEndDrag = async () => {
         if (draggingIndex !== undefined) {
             setDraggingIndex(undefined);
         }
-        setDrag(false);
+        dragShownRef.current = false;
     };
 
     const onScroll = (e: any) => {
-        if (drag) {
-            setDraggingIndex(
-                Math.min(
-                    Math.floor(e.nativeEvent.contentOffset.y / ITEM_HEIGHT),
-                    lyric.length - 1,
-                ),
-            );
+        if (dragShownRef.current) {
+            const offset =
+                e.nativeEvent.contentOffset.y +
+                e.nativeEvent.layoutMeasurement.height / 2;
+
+            const itemHeights = itemHeightsRef.current;
+            let height = itemHeights.blankHeight!;
+            if (offset <= height) {
+                setDraggingIndex(0);
+                return;
+            }
+            for (let i = 0; i < lyric.length; ++i) {
+                height += itemHeights[i] ?? 0;
+                if (height > offset) {
+                    setDraggingIndex(i);
+                    return;
+                }
+            }
         }
     };
 
@@ -93,51 +127,56 @@ export default function Lyric() {
         }
     };
 
+    console.log(draggingIndex, 'DD');
+
     return (
         <View style={globalStyle.fwflex1}>
             {loading ? (
-                <Loading />
+                <Loading color="white" />
             ) : lyric?.length ? (
                 <FlatList
                     ref={_ => {
                         listRef.current = _;
                     }}
-                    getItemLayout={(data, index) => ({
-                        length: ITEM_HEIGHT,
-                        offset: ITEM_HEIGHT * index,
-                        index,
-                    })}
                     onLayout={e => {
                         setLayout(e.nativeEvent.layout);
                     }}
-                    ListHeaderComponent={<Empty height={emptyHeight} />}
-                    ListFooterComponent={<Empty height={emptyHeight} />}
-                    onStartShouldSetResponder={() => true}
-                    onStartShouldSetResponderCapture={() => true}
+                    viewabilityConfig={{
+                        itemVisiblePercentThreshold: 100,
+                    }}
+                    onScrollToIndexFailed={({index}) => {
+                        delay(120).then(() => {
+                            listRef.current?.scrollToIndex({
+                                index: Math.min(index ?? 0, lyric.length - 1),
+                                viewPosition: 0.5,
+                            });
+                        });
+                    }}
+                    fadingEdgeLength={120}
+                    ListHeaderComponent={blankComponent}
+                    ListFooterComponent={blankComponent}
                     onScrollBeginDrag={onScrollBeginDrag}
-                    onScrollEndDrag={onScrollEndDrag}
+                    onMomentumScrollEnd={onScrollEndDrag}
                     onScroll={onScroll}
+                    scrollEventThrottle={32}
                     style={style.wrapper}
                     data={lyric}
+                    initialNumToRender={30}
+                    overScrollMode="never"
                     extraData={currentLrcItem}
                     renderItem={({item, index}) => (
-                        <ThemeText
-                            numberOfLines={2}
-                            style={[
-                                index === currentLrcItem?.index
-                                    ? style.highlightItem
-                                    : style.item,
-                                index === draggingIndex
-                                    ? style.draggingItem
-                                    : undefined,
-                            ]}>
-                            {item.lrc}
-                        </ThemeText>
+                        <LyricItemComponent
+                            index={index}
+                            text={item.lrc}
+                            onLayout={handleLyricItemLayout}
+                            light={draggingIndex === index}
+                            highlight={currentLrcItem?.index === index}
+                        />
                     )}
                 />
             ) : (
                 <View style={globalStyle.fullCenter}>
-                    <ThemeText style={style.highlightItem}>暂无歌词</ThemeText>
+                    <Text style={style.white}>暂无歌词</Text>
                     <TapGestureHandler
                         onActivated={() => {
                             showPanel('SearchLrc', {
@@ -152,9 +191,11 @@ export default function Lyric() {
                 <View
                     style={[
                         style.draggingTime,
-                        {
-                            top: emptyHeight - ITEM_HEIGHT / 2,
-                        },
+                        layout?.height
+                            ? {
+                                  top: (layout.height - ITEM_HEIGHT) / 2,
+                              }
+                            : null,
                     ]}>
                     <DraggingTime
                         time={
@@ -182,29 +223,11 @@ const style = StyleSheet.create({
         marginVertical: rpx(48),
         flex: 1,
     },
-    item: {
-        fontSize: rpx(28),
-        color: '#aaaaaa',
-        paddingHorizontal: rpx(64),
-        width: '100%',
-        height: ITEM_HEIGHT,
-        textAlign: 'center',
-        textAlignVertical: 'center',
-    },
-    highlightItem: {
-        fontSize: rpx(32),
-        color: 'white',
-        width: '100%',
-        paddingHorizontal: rpx(64),
-        height: ITEM_HEIGHT,
-        textAlign: 'center',
-        textAlignVertical: 'center',
-    },
-    draggingItem: {
-        color: '#dddddd',
-    },
     empty: {
-        paddingTop: '65%',
+        paddingTop: '70%',
+    },
+    white: {
+        color: 'white',
     },
     draggingTime: {
         position: 'absolute',
@@ -232,9 +255,11 @@ const style = StyleSheet.create({
     playIcon: {
         width: rpx(90),
         textAlign: 'right',
+        color: 'white',
     },
     searchLyric: {
         width: rpx(180),
+        marginTop: rpx(14),
         paddingVertical: rpx(10),
         textAlign: 'center',
         alignSelf: 'center',
@@ -242,13 +267,3 @@ const style = StyleSheet.create({
         textDecorationLine: 'underline',
     },
 });
-
-function DraggingTime(props: {time: number}) {
-    const progress = TrackPlayer.useProgress();
-
-    return (
-        <Text style={style.draggingTimeText}>
-            {timeformat(Math.min(props.time, progress.duration ?? 0))}
-        </Text>
-    );
-}

@@ -9,16 +9,18 @@ interface ILoadingProps {
     text?: string;
     showText?: boolean;
     height?: number;
+    color?: string;
 }
 export default function Loading(props: ILoadingProps) {
     const colors = useColors();
-    const {showText = true, height, text} = props;
+    const {showText = true, height, text, color} = props;
 
     return (
         <View style={[style.wrapper, {height}]}>
-            <ActivityIndicator animating color={colors.text} />
+            <ActivityIndicator animating color={color ?? colors.text} />
             {showText ? (
                 <ThemeText
+                    color={color}
                     fontSize="title"
                     fontWeight="semibold"
                     style={style.text}>

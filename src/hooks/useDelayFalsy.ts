@@ -9,6 +9,7 @@ export default function useDelayFalsy<T extends any = any>(
 
     function setState(st: T) {
         if (st === undefined || st === null || st === false) {
+            timer.current && clearTimeout(timer.current);
             timer.current = setTimeout(() => {
                 _setState(st);
                 timer.current = undefined;
