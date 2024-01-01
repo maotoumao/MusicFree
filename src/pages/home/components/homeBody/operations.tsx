@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: rpx(24),
         marginVertical: rpx(32),
         flexDirection: 'row',
-        flexWrap: 'wrap',
+        flexWrap: 'nowrap',
     },
     actionButtonStyle: {
         width: rpx(157.5),
