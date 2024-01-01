@@ -7,6 +7,7 @@ import NewMusicSheet from './newMusicSheet';
 import PlayList from './playList';
 import PlayRate from './playRate';
 import SearchLrc from './searchLrc';
+import SetFontSize from './setFontSize';
 import SetUserVariables from './setUserVariables';
 import SheetTags from './sheetTags';
 import SimpleInput from './simpleInput';
@@ -42,4 +43,6 @@ export default {
     ColorPicker,
     /** 设置插件用户变量 */
     SetUserVariables,
+    /** 设置字体 */
+    SetFontSize,
 };

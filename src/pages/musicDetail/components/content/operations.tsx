@@ -14,6 +14,7 @@ import Config from '@/core/config';
 import useOrientation from '@/hooks/useOrientation';
 import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
+import {iconSizeConst} from '@/constants/uiConst';
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -43,7 +44,7 @@ export default function Operations() {
             {musicIndexInFav !== -1 ? (
                 <Icon
                     name="heart"
-                    size={rpx(48)}
+                    size={iconSizeConst.normal}
                     color="red"
                     onPress={() => {
                         MusicSheet.removeMusicByIndex(
@@ -55,7 +56,7 @@ export default function Operations() {
             ) : (
                 <Icon
                     name="heart-outline"
-                    size={rpx(48)}
+                    size={iconSizeConst.normal}
                     color="white"
                     onPress={() => {
                         if (musicItem) {
@@ -87,7 +88,7 @@ export default function Operations() {
             </Pressable>
             <Icon
                 name={isDownloaded ? 'check-circle-outline' : 'download'}
-                size={rpx(48)}
+                size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
                     if (musicItem && !isDownloaded) {
@@ -120,7 +121,7 @@ export default function Operations() {
             </Pressable>
             <Icon
                 name="dots-vertical"
-                size={rpx(48)}
+                size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
                     if (musicItem) {

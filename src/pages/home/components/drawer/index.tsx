@@ -136,7 +136,7 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             position="right"
                             fontSize="subTitle">
-                            {deviceInfoModule.getVersion()}
+                            {`当前版本: ${deviceInfoModule.getVersion()}`}
                         </ListItem.ListItemText>
                     </ListItem>
                     <ListItem
