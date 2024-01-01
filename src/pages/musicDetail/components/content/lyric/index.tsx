@@ -82,6 +82,16 @@ export default function Lyric() {
         // 音乐暂停状态不应该影响到滑动，所以不放在依赖里，但是这样写不好。。
     }, [currentLrcItem, lyric, draggingIndex]);
 
+    useEffect(() => {
+        if (currentLrcItem?.index !== undefined && currentLrcItem.index > -1) {
+            listRef.current?.scrollToIndex({
+                index: currentLrcItem.index,
+                viewPosition: 0.5,
+                animated: false,
+            });
+        }
+    }, []);
+
     // 开始滚动时拖拽生效
     const onScrollBeginDrag = () => {
         dragShownRef.current = true;
@@ -127,7 +137,7 @@ export default function Lyric() {
         }
     };
 
-    console.log(draggingIndex, 'DD');
+    console.log(draggingIndex, 'DD', currentLrcItem?.index);
 
     return (
         <View style={globalStyle.fwflex1}>
