@@ -21,7 +21,7 @@ export default function Sheets() {
     const colors = useColors();
     const navigate = useNavigate();
 
-    const allSheets = MusicSheet.useUserSheets();
+    const allSheets = MusicSheet.useSheets();
     const staredSheets = MusicSheet.useStarredMusicSheet();
 
     const selectedTabTextStyle = useMemo(() => {
@@ -117,6 +117,11 @@ export default function Sheets() {
                             <ListItem.ListItemImage
                                 uri={sheet.coverImg ?? sheet.artwork}
                                 fallbackImg={ImgAsset.albumDefault}
+                                maskIcon={
+                                    sheet.id === MusicSheet.defaultSheet.id
+                                        ? 'heart'
+                                        : null
+                                }
                             />
                             <ListItem.Content
                                 title={sheet.title}

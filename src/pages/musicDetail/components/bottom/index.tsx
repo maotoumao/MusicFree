@@ -3,7 +3,6 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import SeekBar from './seekBar';
 import PlayControl from './playControl';
-import Operations from './operations';
 import useOrientation from '@/hooks/useOrientation';
 
 export default function Bottom() {
@@ -14,11 +13,10 @@ export default function Bottom() {
                 style.wrapper,
                 orientation === 'horizonal'
                     ? {
-                          height: rpx(236),
+                          height: rpx(156),
                       }
                     : undefined,
             ]}>
-            <Operations />
             <SeekBar />
             <PlayControl />
         </View>
@@ -28,6 +26,6 @@ export default function Bottom() {
 const style = StyleSheet.create({
     wrapper: {
         width: '100%',
-        height: rpx(320),
+        height: rpx(240),
     },
 });

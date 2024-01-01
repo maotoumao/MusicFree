@@ -32,7 +32,7 @@ export default function FavoriteMusicList() {
                     fallbackImg={ImgAsset.albumDefault}
                 />
                 <ListItem.Content
-                    title="我喜欢的音乐"
+                    title="我喜欢"
                     description={`${favoriteMusicList.musicList.length}首`}
                 />
             </ListItem>
