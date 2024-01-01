@@ -9,7 +9,6 @@ import {
 import rpx from '@/utils/rpx';
 import {ImgAsset} from '@/constants/assetsConst';
 import ThemeText from '@/components/base/themeText';
-import deviceInfoModule from 'react-native-device-info';
 import LinkText from '@/components/base/linkText';
 import useCheckUpdate from '@/hooks/useCheckUpdate';
 import useOrientation from '@/hooks/useOrientation';
@@ -38,13 +37,20 @@ export default function AboutSetting() {
                         checkAndShowResult(true);
                     }}>
                     <Image
-                        source={ImgAsset.logo}
+                        source={ImgAsset.author}
                         style={style.image}
                         resizeMode="contain"
                     />
                 </TouchableOpacity>
+                <ThemeText style={style.margin}>软件作者: 猫头猫</ThemeText>
                 <ThemeText style={style.margin}>
-                    当前版本: {deviceInfoModule.getVersion()} (点击logo检查更新)
+                    公众号: 【一只猫头猫】
+                </ThemeText>
+                <ThemeText style={style.margin}>
+                    B站:{' '}
+                    <LinkText linkTo="https://space.bilibili.com/12866223">
+                        不想睡觉猫头猫
+                    </LinkText>
                 </ThemeText>
             </View>
             <ScrollView
@@ -52,54 +58,66 @@ export default function AboutSetting() {
                 style={style.scrollView}>
                 <ThemeText fontSize="title">开发者的话: </ThemeText>
                 <ThemeText style={style.content}>
-                    首先感谢你使用这款软件。开发这款软件的初衷首先是满足自己日常的需求，顺便分享出来，如果能对更多人有帮助那再好不过。简单的介绍视频可以戳
-                    <LinkText linkTo="https://mp.weixin.qq.com/s/sH_2vRm7EyBGgWggkJmsdg">
-                        这里
+                    软件作者是<ThemeText fontWeight="bold">猫头猫</ThemeText>
+                    🐱，不是猫头鹰🦉，也不是什么其他的奇奇怪怪。软件没有其他版本，如果你下载到了付费版/广告版/挂羊头卖狗肉版，那说明你被坏蛋骗了😒。
+                </ThemeText>
+                <ThemeText style={style.content}>
+                    软件相关信息会发布在公众号【
+                    <ThemeText fontWeight="bold">一只猫头猫</ThemeText>
+                    】中👇，也简单做了个
+                    <LinkText linkTo="https://musicfree.upup.fun">
+                        官方网站
                     </LinkText>
-                    ，是公众号链接，如果要了解后续更新的话，点个关注也行。
-                </ThemeText>
-                <ThemeText style={style.content}>
-                    本软件完全免费，并基于GPL协议开源，仅供学习参考使用，不可用于商业目的。代码地址如下，如果打不开试试把github换成gitee:
-                </ThemeText>
-                <LinkText linkTo={'https://github.com/maotoumao/MusicFree'}>
-                    https://github.com/maotoumao/MusicFree
-                </LinkText>
-                <ThemeText style={style.content}>
-                    PC 版本也已开源，代码地址如下：
-                    <LinkText
-                        linkTo={
-                            'https://github.com/maotoumao/MusicFreeDesktop'
-                        }>
-                        https://github.com/maotoumao/MusicFreeDesktop
-                    </LinkText>
-                </ThemeText>
-                <ThemeText style={style.content}>
-                    本软件需要通过插件来完成包括播放、搜索在内的大部分功能，如果你是从第三方下载的插件，
-                    <ThemeText fontWeight="bold">
-                        请一定谨慎识别这些插件的安全性，保护好自己。（注意：插件以及插件可能产生的数据与本软件无关，请使用者合理合法使用。）
-                    </ThemeText>
-                </ThemeText>
-                <ThemeText style={style.content}>
-                    如果你对这款软件有一些建议，无论是设计（自己设计的实在太丑...）、逻辑还是交互；或者有一些bug需要反馈、了解一些最新进展，请移步Github仓库或直接公众号留言（不一定看得到）。
+                    。（手机版和桌面版的）下载地址、使用方式、插件开发方式、常见问题都在站点中。
                 </ThemeText>
                 <Image
                     source={ImgAsset.wechatChannel}
                     style={style.wcChannel}
                 />
                 <ThemeText style={style.content}>
+                    本软件完全免费，并基于{' '}
+                    <ThemeText fontWeight="bold">GPL3.0 协议</ThemeText>{' '}
+                    开源，仅供学习参考使用，不可用于商业目的。
+                    <ThemeText fontWeight="bold">
+                        二次分发请遵守开源协议，将代码开源并标明出处。
+                    </ThemeText>
+                </ThemeText>
+                <ThemeText style={style.content}>
+                    代码已开源到{' '}
+                    <LinkText linkTo="https://github.com/maotoumao/MusicFree">
+                        Github
+                    </LinkText>
+                    ，如果打不开试试把链接中的 github 换成 gitee。
+                </ThemeText>
+
+                <ThemeText style={style.content}>
+                    本软件需要通过插件来完成包括播放、搜索在内的大部分功能，如果你是从第三方下载的插件，
+                    <ThemeText fontWeight="bold">
+                        请一定谨慎识别这些插件的安全性，保护好自己。（注意：插件以及插件可能产生的数据与本软件无关，请使用者合理合法使用。）
+                    </ThemeText>
+                </ThemeText>
+
+                <ThemeText style={style.content}>
                     <ThemeText fontWeight="bold">
                         还请注意本软件只是个人的业余项目，距离正式版也有很长一段距离。
                     </ThemeText>
                     如果你在找成熟稳定的音乐软件，可以考虑其他优秀的软件。当然我会一直维护，让它变得尽可能的完善一些。业余时间用爱发电，进度慢还请见谅。
                 </ThemeText>
+
                 <ThemeText style={style.content}>
-                    如果是技术交流或者技术向的闲聊的话，欢迎加QQ群(Github
-                    Readme自取)，也可以直接发邮件;)
+                    如果有问题或者建议，可以直接去 Github issue
+                    区留言，也可以去公众号【一只猫头猫】留言，也可以去{' '}
+                    <LinkText linkTo="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&appChannel=share&inviteCode=1XgzeY8LfIa&businessType=9&from=246610&biz=ka&mainSourceId=share&subSourceId=others&jumpsource=shorturl">
+                        QQ 频道
+                    </LinkText>{' '}
+                    发帖。
                 </ThemeText>
 
                 <ThemeText style={style.content}>
-                    最后，如果真的有人看到这里，希望这款软件可以帮到你，这也是这款软件存在的意义。
+                    开发这个软件的最初目的是自用，顺便分享出来给有需要的人。如果这个软件能对你有些帮助，那这就是
+                    MusicFree 存在的意义。
                 </ThemeText>
+
                 <ThemeText style={style.content}>by: 猫头猫</ThemeText>
             </ScrollView>
         </View>
@@ -113,7 +131,7 @@ const style = StyleSheet.create({
     },
     header: {
         width: rpx(750),
-        height: rpx(350),
+        height: rpx(400),
         justifyContent: 'center',
         alignItems: 'center',
     },
