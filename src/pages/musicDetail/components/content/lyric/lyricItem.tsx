@@ -73,5 +73,6 @@ const lyricStyles = StyleSheet.create({
     },
     draggingItem: {
         opacity: 0.9,
+        color: 'white',
     },
 });
