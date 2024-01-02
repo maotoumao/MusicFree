@@ -44,6 +44,7 @@ import {createMediaIndexMap} from '@/utils/mediaIndexMap';
 import PluginManager from '../pluginManager';
 import {musicIsPaused} from '@/utils/trackUtils';
 import Toast from '@/utils/toast';
+import {trace} from '@/utils/log';
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -122,6 +123,7 @@ async function setupTrackPlayer() {
                     evt.lastIndex === 0 &&
                     evt.track?.$ === internalFakeSoundKey
                 ) {
+                    trace('队列末尾，播放下一首');
                     if (repeatModeStore.getValue() === MusicRepeatMode.SINGLE) {
                         await play(null, true);
                     } else {
@@ -134,11 +136,18 @@ async function setupTrackPlayer() {
 
         ReactNativeTrackPlayer.addEventListener(
             Event.PlaybackError,
-            async () => {
-                // 只关心第一个元素
+            async e => {
+                // WARNING: 不稳定，报错的时候有可能track已经变到下一首歌去了
                 if (
-                    (await ReactNativeTrackPlayer.getActiveTrackIndex()) === 0
+                    (await ReactNativeTrackPlayer.getActiveTrackIndex()) ===
+                        0 &&
+                    e.message &&
+                    e.message !== 'android-io-file-not-found'
                 ) {
+                    trace('播放出错', {
+                        message: e.message,
+                        code: e.code,
+                    });
                     failToPlay();
                 }
             },
@@ -518,6 +527,8 @@ const play = async (
         // 8. 新增历史记录
         musicHistory.addMusic(musicItem);
 
+        trace('获取音源成功', track);
+
         // 9. 设置音源
         await setTrackSource(track as Track);
 
@@ -558,6 +569,7 @@ const play = async (
                 '当前禁止移动网络播放音乐，如需播放请去侧边栏-基本设置中修改',
             );
         } else if (message === PlayFailReason.INVALID_SOURCE) {
+            trace('音源为空，播放失败');
             await failToPlay();
         } else if (message === PlayFailReason.PLAY_LIST_IS_EMPTY) {
             // 队列是空的，不应该出现这种情况

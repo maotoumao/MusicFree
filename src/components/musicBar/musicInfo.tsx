@@ -1,4 +1,4 @@
-import React, {memo, useLayoutEffect, useMemo, useRef} from 'react';
+import React, {memo, useLayoutEffect, useMemo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import FastImage from '../base/fastImage';
@@ -135,7 +135,7 @@ export default function MusicInfo(props: IMusicInfoProps) {
     // +- 1
     const transformSharedValue = useSharedValue(0);
 
-    const musicItemWidthRef = useRef(0);
+    const musicItemWidthValue = useSharedValue(0);
 
     const tapGesture = Gesture.Tap()
         .onStart(() => {
@@ -150,11 +150,10 @@ export default function MusicInfo(props: IMusicInfoProps) {
     const panGesture = Gesture.Pan()
         .minPointers(1)
         .maxPointers(1)
-
         .onUpdate(e => {
-            if (musicItemWidthRef.current) {
+            if (musicItemWidthValue.value) {
                 transformSharedValue.value =
-                    e.translationX / musicItemWidthRef.current;
+                    e.translationX / musicItemWidthValue.value;
             }
         })
         .onEnd((e, success) => {
@@ -170,8 +169,8 @@ export default function MusicInfo(props: IMusicInfoProps) {
                 const vX = e.velocityX;
 
                 let skip = 0;
-                if (musicItemWidthRef.current) {
-                    const rate = deltaX / musicItemWidthRef.current;
+                if (musicItemWidthValue.value) {
+                    const rate = deltaX / musicItemWidthValue.value;
 
                     if (Math.abs(rate) > 0.3) {
                         // 先判断距离
@@ -207,7 +206,7 @@ export default function MusicInfo(props: IMusicInfoProps) {
             <View
                 style={musicInfoStyles.infoContainer}
                 onLayout={e => {
-                    musicItemWidthRef.current = e.nativeEvent.layout.width;
+                    musicItemWidthValue.value = e.nativeEvent.layout.width;
                 }}>
                 <BarMusicItem
                     transformSharedValue={transformSharedValue}
