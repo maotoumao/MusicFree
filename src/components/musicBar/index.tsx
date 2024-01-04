@@ -34,7 +34,7 @@ function CircularPlayBtn() {
             activeStrokeColor={colors.musicBarText}
             inActiveStrokeColor={colors.textSecondary}>
             <IconButton
-                accessibilityLabel={isPaused ? '播放' : '暂停'}
+                accessibilityLabel={'播放或暂停歌曲'}
                 name={isPaused ? 'play' : 'pause'}
                 sizeType={'normal'}
                 color={colors.musicBarText}

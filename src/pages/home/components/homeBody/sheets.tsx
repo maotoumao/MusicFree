@@ -38,10 +38,13 @@ export default function Sheets() {
             <View style={styles.subTitleContainer}>
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
+                    accessible
+                    accessibilityLabel={`我的歌单，共${allSheets.length}个`}
                     onPress={() => {
                         setIndex(0);
                     }}>
                     <ThemeText
+                        accessible={false}
                         fontSize="title"
                         style={[
                             styles.tabText,
@@ -50,6 +53,7 @@ export default function Sheets() {
                         我的歌单
                     </ThemeText>
                     <ThemeText
+                        accessible={false}
                         fontColor="textSecondary"
                         fontSize="subTitle"
                         style={styles.tabText}>
@@ -59,11 +63,14 @@ export default function Sheets() {
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
+                    accessible
+                    accessibilityLabel={`收藏歌单，共${staredSheets.length}个`}
                     onPress={() => {
                         setIndex(1);
                     }}>
                     <ThemeText
                         fontSize="title"
+                        accessible={false}
                         style={[
                             styles.tabText,
                             index === 1 ? selectedTabTextStyle : null,
@@ -73,6 +80,7 @@ export default function Sheets() {
                     <ThemeText
                         fontColor="textSecondary"
                         fontSize="subTitle"
+                        accessible={false}
                         style={styles.tabText}>
                         {' '}
                         ({staredSheets.length})
