@@ -103,9 +103,6 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
 }
 
 const style = StyleSheet.create({
-    wrapper: {
-        width: rpx(750),
-    },
     opeartions: {
         width: rpx(750),
         paddingHorizontal: rpx(24),
