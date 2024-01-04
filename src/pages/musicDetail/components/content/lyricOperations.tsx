@@ -10,6 +10,7 @@ import LyricUtil from '@/native/lyricUtil';
 import Toast from '@/utils/toast';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showPanel} from '@/components/panels/usePanel';
+import TrackPlayer from '@/core/trackPlayer';
 
 interface ILyricOperationsProps {}
 
@@ -67,6 +68,29 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
                 color={
                     lyricConfig?.showStatusBarLyric ? colors.primary : 'white'
                 }
+            />
+            <Icon
+                name="link-variant"
+                size={iconSizeConst.normal}
+                color="white"
+                onPress={() => {
+                    const currentMusic = TrackPlayer.getCurrentMusic();
+                    if (!currentMusic) {
+                        return;
+                    }
+                    if (
+                        Config.get('setting.basic.associateLyricType') ===
+                        'input'
+                    ) {
+                        showPanel('AssociateLrc', {
+                            musicItem: currentMusic,
+                        });
+                    } else {
+                        showPanel('SearchLrc', {
+                            musicItem: currentMusic,
+                        });
+                    }
+                }}
             />
         </View>
     );
