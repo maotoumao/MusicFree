@@ -16,6 +16,7 @@ export default function NavBar() {
     return (
         <View style={styles.appbar}>
             <IconButton
+                accessibilityLabel="打开侧边栏"
                 name="menu"
                 style={styles.menu}
                 color={colors.text}
