@@ -83,7 +83,8 @@ export default function PluginList() {
 
     async function onInstallFromNetworkClick() {
         showPanel('SimpleInput', {
-            placeholder: '输入插件URL',
+            title: '安装插件',
+            placeholder: '输入插件URL (以.js或.json结尾)',
             maxLength: 120,
             async onOk(text, closePanel) {
                 setLoading(true);

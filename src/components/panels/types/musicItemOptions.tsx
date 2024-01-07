@@ -1,5 +1,5 @@
 import React from 'react';
-import {DeviceEventEmitter, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicSheet from '@/core/musicSheet';
 import ListItem from '@/components/base/listItem';
@@ -13,11 +13,7 @@ import {getMediaKey} from '@/utils/mediaItem';
 import FastImage from '@/components/base/fastImage';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
-import {
-    EDeviceEvents,
-    localMusicSheetId,
-    musicHistorySheetId,
-} from '@/constants/commonConst';
+import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
 import {ROUTE_PATH} from '@/entry/router';
 
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -31,6 +27,7 @@ import {iconSizeConst} from '@/constants/uiConst';
 import Config from '@/core/config';
 import TrackPlayer from '@/core/trackPlayer';
 import mediaCache from '@/core/mediaCache';
+import LyricManager from '@/core/lyricManager';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -183,7 +180,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 MediaMeta.update(musicItem, {
                     associatedLrc: undefined,
                 });
-                DeviceEventEmitter.emit(EDeviceEvents.REFRESH_LYRIC);
+                LyricManager.refreshLyric(false, true);
                 Toast.success('已解除关联歌词');
                 hidePanel();
             },

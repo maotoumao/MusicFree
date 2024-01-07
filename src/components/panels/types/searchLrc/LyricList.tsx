@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import rpx from '@/utils/rpx';
 import searchResultStore, {ISearchLyricResult} from './searchResultStore';
 import Empty from '@/components/base/empty';
-import {EDeviceEvents, RequestStateCode} from '@/constants/commonConst';
+import {RequestStateCode} from '@/constants/commonConst';
 import Loading from '@/components/base/loading';
 import LyricItem from '@/components/mediaItem/LyricItem';
 import ListReachEnd from '@/components/base/listReachEnd';
@@ -10,8 +10,8 @@ import {FlatList} from 'react-native-gesture-handler';
 import Toast from '@/utils/toast';
 import {associateLrc} from '@/utils/mediaItem';
 import {hidePanel} from '../../usePanel';
-import {DeviceEventEmitter} from 'react-native';
 import TrackPlayer from '@/core/trackPlayer';
+import LyricManager from '@/core/lyricManager';
 
 interface ILyricListWrapperProps {
     route: {
@@ -53,9 +53,7 @@ function LyricListImpl(props: ILyricListProps) {
                                 return;
                             }
                             await associateLrc(currentMusic, item);
-                            DeviceEventEmitter.emit(
-                                EDeviceEvents.REFRESH_LYRIC,
-                            );
+                            LyricManager.refreshLyric(false, true);
                             Toast.success('设置成功~');
                             hidePanel();
                             // 触发刷新歌词

@@ -1,17 +1,16 @@
 import React, {useRef} from 'react';
-import {KeyboardAvoidingView, StyleSheet, View} from 'react-native';
+import {KeyboardAvoidingView, StyleSheet} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
-import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 
 import ThemeText from '@/components/base/themeText';
 import {ScrollView} from 'react-native-gesture-handler';
 import PanelBase from '../base/panelBase';
 import {hidePanel} from '../usePanel';
-import Divider from '@/components/base/divider';
 import ListItem from '@/components/base/listItem';
 import Input from '@/components/base/input';
 import globalStyle from '@/constants/globalStyle';
+import PanelHeader from '../base/panelHeader';
 
 interface IUserVariablesProps {
     onOk: (values: Record<string, string>, closePanel: () => void) => void;
@@ -33,22 +32,16 @@ export default function SetUserVariables(props: IUserVariablesProps) {
             keyboardAvoidBehavior="none"
             renderBody={() => (
                 <>
-                    <View style={styles.opeartions}>
-                        <Button
-                            onPress={() => {
-                                onCancel?.();
-                                hidePanel();
-                            }}>
-                            取消
-                        </Button>
-                        <Button
-                            onPress={async () => {
-                                onOk(resultRef.current, hidePanel);
-                            }}>
-                            确认
-                        </Button>
-                    </View>
-                    <Divider />
+                    <PanelHeader
+                        title="设置用户变量"
+                        onCancel={() => {
+                            onCancel?.();
+                            hidePanel();
+                        }}
+                        onOk={async () => {
+                            onOk(resultRef.current, hidePanel);
+                        }}
+                    />
                     <KeyboardAvoidingView
                         behavior="padding"
                         style={globalStyle.flex1}>

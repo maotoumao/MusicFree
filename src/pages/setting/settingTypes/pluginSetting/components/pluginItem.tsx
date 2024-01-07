@@ -73,6 +73,7 @@ export default function PluginItem(props: IPluginItemProps) {
             icon: 'import',
             onPress() {
                 showPanel('SimpleInput', {
+                    title: '导入单曲',
                     placeholder: '输入目标歌曲',
                     hints: plugin.instance.hints?.importMusicItem,
                     maxLength: 1000,
@@ -104,6 +105,7 @@ export default function PluginItem(props: IPluginItemProps) {
             icon: 'database-import-outline',
             onPress() {
                 showPanel('SimpleInput', {
+                    title: '导入歌单',
                     placeholder: '输入目标歌单',
                     hints: plugin.instance.hints?.importMusicSheet,
                     maxLength: 1000,

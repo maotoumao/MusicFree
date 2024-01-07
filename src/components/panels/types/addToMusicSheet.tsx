@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
 import ListItem from '@/components/base/listItem';
 import MusicSheet from '@/core/musicSheet';
 import {ImgAsset} from '@/constants/assetsConst';
@@ -11,6 +10,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
 import {showPanel, hidePanel} from '../usePanel';
+import PanelHeader from '../base/panelHeader';
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -28,21 +28,12 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
         <PanelBase
             renderBody={() => (
                 <>
-                    <View style={style.header}>
-                        <ThemeText fontSize="title" fontWeight="semibold">
-                            添加到歌单
-                            <ThemeText
-                                fontSize="subTitle"
-                                fontColor="textSecondary">
-                                {' '}
-                                (
-                                {Array.isArray(musicItem)
-                                    ? musicItem.length
-                                    : 1}
-                                首)
-                            </ThemeText>
-                        </ThemeText>
-                    </View>
+                    <PanelHeader
+                        hideButtons
+                        title={`添加到歌单 (${
+                            Array.isArray(musicItem) ? musicItem.length : 1
+                        }首) `}
+                    />
                     <View style={style.wrapper}>
                         <FlatList
                             data={sheets ?? []}

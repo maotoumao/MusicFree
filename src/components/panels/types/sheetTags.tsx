@@ -7,7 +7,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {ScrollView} from 'react-native-gesture-handler';
 import TypeTag from '@/components/base/typeTag';
-import Divider from '@/components/base/divider';
+import PanelHeader from '../base/panelHeader';
 
 interface ISheetTagsProps {
     tags: IMusic.IMusicSheetGroupItem[];
@@ -25,10 +25,7 @@ export default function SheetTags(props: ISheetTagsProps) {
             height={vh(70)}
             renderBody={() => (
                 <>
-                    <View style={style.header}>
-                        <ThemeText fontSize="title">歌单类别</ThemeText>
-                    </View>
-                    <Divider />
+                    <PanelHeader title="歌单类别" hideButtons />
                     <ScrollView
                         style={[
                             style.body,
@@ -65,7 +62,7 @@ export default function SheetTags(props: ISheetTagsProps) {
                                         <TypeTag
                                             key={_.id}
                                             // backgroundColor={backgroundColor}
-                                            title={_.title}
+                                            title={_.title || '未知'}
                                             style={[style.tagItem]}
                                             onPress={() => {
                                                 onTagPressed(_);
