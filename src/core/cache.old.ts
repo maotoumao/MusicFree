@@ -7,7 +7,7 @@ import produce from 'immer';
 import LRUCache from 'lru-cache';
 import objectPath from 'object-path';
 import {exists, unlink} from 'react-native-fs';
-import MediaMeta from './mediaMeta';
+import MediaMeta from './mediaMeta.old';
 import PluginManager from './pluginManager';
 
 /** 缓存一些解析结果、临时的歌词文件等等

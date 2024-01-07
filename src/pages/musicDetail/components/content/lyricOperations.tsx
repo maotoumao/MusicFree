@@ -33,6 +33,12 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
                     });
                 }}
             />
+            <Icon
+                name="arrow-left-right"
+                size={iconSizeConst.normal}
+                color="white"
+                onPress={() => {}}
+            />
             <LyricIcon
                 onPress={async () => {
                     if (!lyricConfig?.showStatusBarLyric) {

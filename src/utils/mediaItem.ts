@@ -4,7 +4,7 @@ import {
     sortIndexSymbol,
     timeStampSymbol,
 } from '@/constants/commonConst';
-import MediaMeta from '@/core/mediaMeta';
+import MediaMeta from '@/core/mediaExtra';
 import produce from 'immer';
 import objectPath from 'object-path';
 
@@ -140,13 +140,10 @@ export async function associateLrc(
     if (!musicItem || !linkto) {
         throw new Error('');
     }
-    await MediaMeta.update(musicItem, {
+
+    MediaMeta.update(musicItem, {
         associatedLrc: linkto,
     });
-    await MediaMeta.update(linkto, [
-        ['lrc', linkto.lrc],
-        ['$.local.localLrc', linkto.$?.local?.localLrc],
-    ]);
 }
 
 export function sortByTimestampAndIndex(array: any[], newArray = false) {

@@ -12,6 +12,7 @@ import {
 import {StorageKeys} from '@/constants/commonConst';
 import objectPath from 'object-path';
 import PluginManager from './pluginManager';
+import MediaMetaNew from './mediaExtra';
 
 // pluginname - tablekey
 let mediaMetaKeys: Record<string, string> = {};
@@ -19,18 +20,57 @@ let mediaMetaKeys: Record<string, string> = {};
 let mediaMetas: Record<string, Record<string, ICommon.IMediaMeta>> = {};
 
 async function setup() {
+    try {
+        await migrate();
+    } catch {}
+    // const metaKeys = (await getStorage(StorageKeys.MediaMetaKeys)) ?? {};
+    // if (!metaKeys) {
+    //     await setStorage(StorageKeys.MediaMetaKeys, {});
+    // }
+    // const kv: [string, string][] = Object.entries(metaKeys);
+    // const metas = await getMultiStorage(kv.map(_ => _[1]));
+    // const newMediaMetas: Record<string, Record<string, any>> = {};
+    // metas.forEach((value, index) => {
+    //     newMediaMetas[kv[index][0]] = value ?? {};
+    // });
+    // mediaMetas = newMediaMetas;
+    // // // todo： setup时校验一下，清空冗余数据
+}
+
+async function migrate() {
     const metaKeys = (await getStorage(StorageKeys.MediaMetaKeys)) ?? {};
     if (!metaKeys) {
-        await setStorage(StorageKeys.MediaMetaKeys, {});
+        return;
     }
     const kv: [string, string][] = Object.entries(metaKeys);
     const metas = await getMultiStorage(kv.map(_ => _[1]));
-    const newMediaMetas: Record<string, Record<string, any>> = {};
-    metas.forEach((value, index) => {
-        newMediaMetas[kv[index][0]] = value ?? {};
+    metas.forEach((platformMeta, index) => {
+        const platform = kv[index][0];
+
+        const entries = Object.entries(platformMeta);
+        for (let entry of entries) {
+            const metaValue = entry[1] as any;
+            MediaMetaNew.set(
+                {
+                    platform,
+                    id: entry[0],
+                },
+                {
+                    associatedLrc: metaValue?.associatedLrc,
+                    downloaded: metaValue?.$?.downloaded,
+                    localPath: metaValue?.$?.local?.localUrl,
+                },
+            );
+        }
     });
-    mediaMetas = newMediaMetas;
-    // todo： setup时校验一下，清空冗余数据
+
+    await Promise.all(
+        kv.map(it => {
+            return removeStorage(it[1]);
+        }),
+    );
+
+    removeStorage(StorageKeys.MediaMetaKeys);
 }
 
 function getMediaMeta(mediaItem: ICommon.IMediaBase) {
@@ -114,6 +154,7 @@ async function updateMediaMeta(
     }
 }
 
+/** @deprecated */
 const MediaMeta = {
     setup,
     get: getMediaMeta,

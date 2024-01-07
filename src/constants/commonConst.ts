@@ -34,6 +34,7 @@ export enum RequestStateCode {
 }
 
 export const StorageKeys = {
+    /** @deprecated */
     MediaMetaKeys: 'media-meta-keys',
     PluginMetaKey: 'plugin-meta',
     MediaCache: 'media-cache',

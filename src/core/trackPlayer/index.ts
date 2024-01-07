@@ -506,14 +506,26 @@ const play = async (
         }
 
         if (!source) {
-            // 5.4 没有返回源
-            if (!musicItem.url) {
-                throw new Error(PlayFailReason.INVALID_SOURCE);
+            // 如果有source
+            if (musicItem.source) {
+                for (let quality of qualityOrder) {
+                    if (musicItem.source[quality]?.url) {
+                        source = musicItem.source[quality]!;
+                        qualityStore.setValue(quality);
+                        break;
+                    }
+                }
             }
-            source = {
-                url: musicItem.url,
-            };
-            qualityStore.setValue('standard');
+
+            // 5.4 没有返回源
+            if (!source && !musicItem.url) {
+                throw new Error(PlayFailReason.INVALID_SOURCE);
+            } else {
+                source = {
+                    url: musicItem.url,
+                };
+                qualityStore.setValue('standard');
+            }
         }
 
         // 6. 特殊类型源

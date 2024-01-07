@@ -31,6 +31,17 @@ declare namespace ICommon {
 
     /** 一些额外信息 */
     export type IMediaMeta = {
+        /** 关联歌词信息 */
+        associatedLrc?: IMediaBase;
+        /** 是否下载过 TODO: 删去 */
+        downloaded?: boolean;
+        /** 本地下载路径 */
+        localPath?: string;
+        /** 补充的音乐信息 */
+        mediaItem?: Partial<IMediaBase>;
+        /** 歌词偏移 */
+        lyricOffset?: number;
+
         lrc?: string;
         associatedLrc?: IMediaBase;
         headers?: Record<string, any>;
