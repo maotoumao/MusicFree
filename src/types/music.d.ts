@@ -14,6 +14,19 @@ declare namespace IMusic {
         }
     >;
 
+    // 音源定义
+    export interface IMediaSource {
+        headers?: Record<string, string>;
+        /** 兜底播放 */
+        url?: string;
+        /** UA */
+        userAgent?: string;
+        /** 音质 */
+        quality?: IMusic.IQualityKey;
+        /** 大小 */
+        size?: number;
+    }
+
     export interface IMusicItem {
         /** 歌曲在平台的唯一编号 */
         id: string;
@@ -31,6 +44,10 @@ declare namespace IMusic {
         artwork: string;
         /** 默认音源 */
         url?: string;
+        /** 音源 */
+        source?: Partial<Record<IQualityKey, IMediaSource>>;
+        /** 歌词 */
+        lyric?: ILyric.ILyricSource;
         /** 歌词URL */
         lrc?: string;
         /** 歌词（有时间戳） */
@@ -41,5 +58,9 @@ declare namespace IMusic {
         [k: string]: any;
         /** 内部信息 */
         [k: symbol]: any;
+    }
+
+    export interface IMusicItemCache extends IMusicItem {
+        $localLyric?: ILyric.ILyricSource;
     }
 }

@@ -8,13 +8,13 @@ import useColors from '@/hooks/useColors';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {errorLog} from '@/utils/log';
 import {associateLrc, parseMediaKey} from '@/utils/mediaItem';
-import Cache from '@/core/cache';
 import Toast from '@/utils/toast';
 import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
 import {EDeviceEvents} from '@/constants/commonConst';
 import Divider from '@/components/base/divider';
+import mediaCache from '@/core/mediaCache';
 
 interface INewMusicSheetProps {
     musicItem: IMusic.IMusicItem;
@@ -49,7 +49,9 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                         );
                                         // 目标也要写进去
                                         const targetCache =
-                                            Cache.get(targetMedia);
+                                            mediaCache.getMediaCache(
+                                                targetMedia,
+                                            );
                                         if (!targetCache) {
                                             Toast.warn(
                                                 '地址失效了，重新复制一下吧~',

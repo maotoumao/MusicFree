@@ -5,8 +5,14 @@ declare namespace ILyric {
     }
 
     export interface ILyricSource {
+        /** 歌词url */
         lrc?: string;
+        /** 纯文本 */
         rawLrc?: string;
+        /** 语言 */
+        lang?: string;
+        /** 其他版本 key: 语言代码 value: 歌词 */
+        versions?: Record<string, Omit<ILyricSource, 'versions'>>;
     }
 
     export interface IParsedLrcItem {

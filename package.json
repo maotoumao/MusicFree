@@ -67,6 +67,7 @@
     "react-native-image-picker": "^4.10.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-logs": "^5.0.1",
+    "react-native-mmkv": "^2.5.1",
     "react-native-pager-view": "^5.4.25",
     "react-native-permissions": "^3.9.0",
     "react-native-reanimated": "^2.9.1",

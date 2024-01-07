@@ -8,9 +8,8 @@ import Download from '@/core/download';
 import {ImgAsset} from '@/constants/assetsConst';
 import Clipboard from '@react-native-clipboard/clipboard';
 
-import MediaMeta from '@/core/mediaMeta';
+import MediaMeta from '@/core/mediaExtra';
 import {getMediaKey} from '@/utils/mediaItem';
-import Cache from '@/core/cache';
 import FastImage from '@/components/base/fastImage';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
@@ -31,6 +30,7 @@ import Divider from '@/components/base/divider';
 import {iconSizeConst} from '@/constants/uiConst';
 import Config from '@/core/config';
 import TrackPlayer from '@/core/trackPlayer';
+import mediaCache from '@/core/mediaCache';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -56,7 +56,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'id-card',
             title: `ID: ${getMediaKey(musicItem)}`,
             onPress: () => {
-                Cache.update(musicItem, []);
+                mediaCache.setMediaCache(musicItem);
                 Clipboard.setString(
                     JSON.stringify(
                         {
@@ -180,7 +180,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '解除关联歌词',
             show: !!associatedLrc,
             onPress: async () => {
-                await MediaMeta.update(musicItem, {
+                MediaMeta.update(musicItem, {
                     associatedLrc: undefined,
                 });
                 DeviceEventEmitter.emit(EDeviceEvents.REFRESH_LYRIC);
@@ -200,7 +200,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'file-remove-outline',
             title: '清除插件缓存(播放异常时使用)',
             onPress: () => {
-                Cache.remove(musicItem);
+                mediaCache.removeMediaCache(musicItem);
                 Toast.success('缓存已清除');
             },
         },

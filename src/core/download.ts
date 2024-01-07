@@ -15,7 +15,7 @@ import {downloadFile, exists} from 'react-native-fs';
 
 import Config from './config';
 import LocalMusicSheet from './localMusicSheet';
-import MediaMeta from './mediaMeta';
+import MediaMeta from './mediaExtra';
 import Network from './network';
 import PluginManager from './pluginManager';
 import {PERMISSIONS, check} from 'react-native-permissions';
@@ -275,14 +275,9 @@ async function downloadNext() {
                 localPath: targetDownloadPath,
             },
         });
-        MediaMeta.update({
-            ...musicItem,
-            [internalSerializeKey]: {
-                downloaded: true,
-                local: {
-                    localUrl: targetDownloadPath,
-                },
-            },
+        MediaMeta.update(musicItem, {
+            downloaded: true,
+            localPath: targetDownloadPath,
         });
         // const primaryKey = plugin?.instance.primaryKey ?? [];
         // if (!primaryKey.includes('id')) {
