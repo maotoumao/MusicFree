@@ -29,6 +29,7 @@ const iconSizeConst = {
     light: rpx(40),
     normal: rpx(48),
     big: rpx(64),
+    large: rpx(88),
 };
 
 type ColorKey = 'normal' | 'secondary' | 'highlight' | 'primary';

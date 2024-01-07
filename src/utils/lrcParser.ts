@@ -1,14 +1,25 @@
 const timeReg = /\[[\d:.]+\]/g;
 const metaReg = /\[(.+)\:(.+)\]/g;
 
+/** 额外的配置 */
+interface IExtra {
+    offset?: number;
+}
+
 export default class LyricParser {
     private lastIndex: number = 0;
     private lrcItems: Array<ILyric.IParsedLrcItem>;
     private meta: Record<string, any>;
     private currentMusicItem?: IMusic.IMusicItem;
+    public readonly raw: string;
 
-    constructor(raw: string, currentMusicItem?: IMusic.IMusicItem) {
+    constructor(
+        raw: string,
+        currentMusicItem?: IMusic.IMusicItem,
+        extra?: IExtra,
+    ) {
         raw = raw.trim();
+        this.raw = raw;
         this.currentMusicItem = currentMusicItem;
         const rawLrcItems: Array<ILyric.IParsedLrcItem> = [];
         const rawLrcs = raw.split(timeReg) ?? [];
@@ -16,6 +27,9 @@ export default class LyricParser {
         const len = rawTimes.length;
 
         this.meta = this.parseMeta(rawLrcs[0].trim());
+        if (extra?.offset) {
+            this.meta.offset = (this.meta.offset ?? 0) + extra.offset;
+        }
         rawLrcs.shift();
 
         let counter = 0;
@@ -117,6 +131,10 @@ export default class LyricParser {
 
     getMeta() {
         return this.meta;
+    }
+
+    setMeta(newMeta: Record<string, any>) {
+        this.meta = newMeta;
     }
 
     parseMeta(metaStr: string) {
