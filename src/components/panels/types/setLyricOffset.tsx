@@ -10,6 +10,7 @@ import PanelHeader from '../base/panelHeader';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {hidePanel} from '../usePanel';
+import useColors from '@/hooks/useColors';
 
 interface IProps {
     musicItem: IMusic.IMusicItem;
@@ -23,6 +24,8 @@ export default function SetLyricOffset(props: IProps) {
     const [offset, setOffset] = useState(
         MediaExtra.get(musicItem)?.lyricOffset ?? 0,
     );
+
+    const colors = useColors();
 
     let titleStr =
         offset === 0
@@ -50,7 +53,11 @@ export default function SetLyricOffset(props: IProps) {
                             onPress={() => {
                                 setOffset(prev => prev - 0.2);
                             }}>
-                            <Icon name="minus" size={iconSizeConst.big} />
+                            <Icon
+                                name="minus"
+                                size={iconSizeConst.big}
+                                color={colors.text}
+                            />
                             <ThemeText>-0.2s</ThemeText>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -61,6 +68,7 @@ export default function SetLyricOffset(props: IProps) {
                             <Icon
                                 name="arrow-u-left-top"
                                 size={iconSizeConst.big}
+                                color={colors.text}
                             />
                             <ThemeText>重置</ThemeText>
                         </TouchableOpacity>
@@ -69,7 +77,11 @@ export default function SetLyricOffset(props: IProps) {
                             onPress={() => {
                                 setOffset(prev => prev + 0.2);
                             }}>
-                            <Icon name="plus" size={iconSizeConst.big} />
+                            <Icon
+                                name="plus"
+                                size={iconSizeConst.big}
+                                color={colors.text}
+                            />
                             <ThemeText>+0.2s</ThemeText>
                         </TouchableOpacity>
                     </View>

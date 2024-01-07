@@ -57,6 +57,13 @@ function HomeDrawer(props: any) {
                 navigateToSetting('backup');
             },
         },
+        {
+            icon: 'cellphone-key',
+            title: '权限管理',
+            onPress: () => {
+                navigate(ROUTE_PATH.PERMISSIONS);
+            },
+        },
     ] as const;
 
     return (

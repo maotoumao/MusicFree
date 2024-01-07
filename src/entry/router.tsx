@@ -19,6 +19,7 @@ import RecommendSheets from '@/pages/recommendSheets';
 import PluginSheetDetail from '@/pages/pluginSheetDetail';
 import History from '@/pages/history';
 import SetCustomTheme from '@/pages/setCustomTheme';
+import Permissions from '@/pages/permissions';
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -62,6 +63,8 @@ export const ROUTE_PATH = {
     HISTORY: 'history',
     /** 自定义主题 */
     SET_CUSTOM_THEME: 'set-custom-theme',
+    /** 权限管理 */
+    PERMISSIONS: 'permissions',
 } as const;
 
 type Valueof<T> = T[keyof T];
@@ -144,6 +147,10 @@ export const routes: Array<IRoutes> = [
     {
         path: ROUTE_PATH.SET_CUSTOM_THEME,
         component: SetCustomTheme,
+    },
+    {
+        path: ROUTE_PATH.PERMISSIONS,
+        component: Permissions,
     },
 ];
 
