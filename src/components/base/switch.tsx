@@ -53,6 +53,7 @@ export default function ThemeSwitch(props: ISwitchProps) {
                             ? colors.primary
                             : colors.textSecondary,
                     },
+                    props?.style,
                 ]}>
                 <Animated.View style={[styles.thumb, thumbStyle]} />
             </View>

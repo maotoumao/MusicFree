@@ -41,6 +41,7 @@ function CountDownHeader() {
     return (
         <View style={style.header}>
             <PanelHeader
+                hideDivider
                 hideButtons
                 title={
                     countDown === null
@@ -51,6 +52,7 @@ function CountDownHeader() {
 
             <ThemeSwitch
                 value={countDown !== null}
+                style={style.switch}
                 onValueChange={val => {
                     if (val === true) {
                         if (shortCutValue) {
@@ -339,6 +341,10 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
+    },
+    switch: {
+        position: 'absolute',
+        right: rpx(32),
     },
     timesGroup: {
         width: rpx(702),
