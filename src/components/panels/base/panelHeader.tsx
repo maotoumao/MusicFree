@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import rpx from '@/utils/rpx';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import ThemeText from '@/components/base/themeText';
@@ -13,6 +13,7 @@ interface IPanelHeaderProps {
     onOk?: () => void;
     hideButtons?: boolean;
     hideDivider?: boolean;
+    style?: StyleProp<ViewStyle>;
 }
 export default function PanelHeader(props: IPanelHeaderProps) {
     const {
@@ -23,11 +24,12 @@ export default function PanelHeader(props: IPanelHeaderProps) {
         onCancel,
         hideButtons,
         hideDivider,
+        style,
     } = props;
 
     return (
         <>
-            <View style={styles.header}>
+            <View style={[styles.header, style]}>
                 {hideButtons ? null : (
                     <TouchableOpacity style={styles.button} onPress={onCancel}>
                         <ThemeText fontWeight="medium">
