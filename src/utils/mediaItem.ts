@@ -141,8 +141,9 @@ export async function associateLrc(
         throw new Error('');
     }
 
+    // 如果相同直接断链
     MediaMeta.update(musicItem, {
-        associatedLrc: linkto,
+        associatedLrc: isSameMediaItem(musicItem, linkto) ? undefined : linkto,
     });
 }
 

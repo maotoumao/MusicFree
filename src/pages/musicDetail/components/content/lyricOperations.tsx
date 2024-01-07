@@ -9,8 +9,9 @@ import LyricManager from '@/core/lyricManager';
 import LyricUtil from '@/native/lyricUtil';
 import Toast from '@/utils/toast';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {showPanel} from '@/components/panels/usePanel';
+import {hidePanel, showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
+import MediaExtra from '@/core/mediaExtra';
 
 interface ILyricOperationsProps {}
 
@@ -37,7 +38,22 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
                 name="arrow-left-right"
                 size={iconSizeConst.normal}
                 color="white"
-                onPress={() => {}}
+                onPress={() => {
+                    const currentMusicItem = TrackPlayer.getCurrentMusic();
+
+                    if (currentMusicItem) {
+                        showPanel('SetLyricOffset', {
+                            musicItem: currentMusicItem,
+                            onSubmit(offset) {
+                                MediaExtra.update(currentMusicItem, {
+                                    lyricOffset: offset,
+                                });
+                                LyricManager.refreshLyric();
+                                hidePanel();
+                            },
+                        });
+                    }
+                }}
             />
             <LyricIcon
                 onPress={async () => {

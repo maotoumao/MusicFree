@@ -11,6 +11,7 @@ import {DeviceEventEmitter} from 'react-native';
 import Config from './config';
 import LyricUtil from '@/native/lyricUtil';
 import TrackPlayer from './trackPlayer';
+import MediaExtra from './mediaExtra';
 
 const lyricStateStore = new GlobalState<{
     loading: boolean;
@@ -42,19 +43,32 @@ async function refreshLyric(fromStart?: boolean) {
             return;
         }
 
-        lyricStateStore.setValue({
-            loading: true,
-            lyrics: [],
-        });
-        currentLyricStore.setValue(null);
+        const currentParserMusicItem = lyricStateStore
+            .getValue()
+            ?.lyricParser?.getCurrentMusicItem();
 
-        const lrc = await PluginManager.getByMedia(
-            musicItem,
-        )?.methods?.getLyricText(musicItem);
+        let rawLrc: string | undefined;
+        if (!isSameMediaItem(currentParserMusicItem, musicItem)) {
+            lyricStateStore.setValue({
+                loading: true,
+                lyrics: [],
+            });
+            currentLyricStore.setValue(null);
+
+            rawLrc = await PluginManager.getByMedia(
+                musicItem,
+            )?.methods?.getLyricText(musicItem);
+        } else {
+            rawLrc = lyricStateStore.getValue().lyricParser!.raw;
+        }
+
         const realtimeMusicItem = TrackPlayer.getCurrentMusic();
         if (isSameMediaItem(musicItem, realtimeMusicItem)) {
-            if (lrc) {
-                const parser = new LyricParser(lrc, musicItem);
+            if (rawLrc) {
+                const mediaExtra = MediaExtra.get(musicItem);
+                const parser = new LyricParser(rawLrc, musicItem, {
+                    offset: (mediaExtra?.lyricOffset || 0) * -1,
+                });
                 lyricStateStore.setValue({
                     loading: false,
                     lyricParser: parser,
@@ -109,6 +123,7 @@ const LyricManager = {
     useCurrentLyric: currentLyricStore.useValue,
     getCurrentLyric: currentLyricStore.getValue,
     setCurrentLyric: currentLyricStore.setValue,
+    refreshLyric,
 };
 
 export default LyricManager;
