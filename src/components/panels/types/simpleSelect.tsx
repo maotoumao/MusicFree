@@ -1,12 +1,11 @@
 import React, {Fragment} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {hidePanel} from '../usePanel';
 import ListItem from '@/components/base/listItem';
-import Divider from '@/components/base/divider';
+import PanelHeader from '../base/panelHeader';
 
 interface ICandidateItem {
     title?: string;
@@ -21,7 +20,12 @@ interface ISimpleSelectProps {
 }
 
 export default function SimpleSelect(props: ISimpleSelectProps) {
-    const {height = rpx(520), header, candidates = [], onPress} = props ?? {};
+    const {
+        height = rpx(520),
+        header = '',
+        candidates = [],
+        onPress,
+    } = props ?? {};
 
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -30,12 +34,8 @@ export default function SimpleSelect(props: ISimpleSelectProps) {
             height={height}
             renderBody={() => (
                 <>
-                    <View style={styles.header}>
-                        <ThemeText fontWeight="bold" fontSize="title">
-                            {header}
-                        </ThemeText>
-                    </View>
-                    <Divider />
+                    <PanelHeader title={header} hideButtons />
+
                     <ScrollView
                         style={[
                             styles.body,

@@ -12,6 +12,7 @@ import {atom, useAtom, useAtomValue, useSetAtom} from 'jotai';
 import {debounce} from 'lodash';
 import Divider from '@/components/base/divider';
 import useColors from '@/hooks/useColors';
+import PanelHeader from '../base/panelHeader';
 
 // const hours = Array(24).fill(1).map(_ => _.index);
 // const mins = Array(60).fill(1).map(_ => _.index);
@@ -39,11 +40,15 @@ function CountDownHeader() {
 
     return (
         <View style={style.header}>
-            <ThemeText fontWeight="medium">
-                {countDown === null
-                    ? '定时关闭'
-                    : `倒计时 ${timeformat(countDown)}`}
-            </ThemeText>
+            <PanelHeader
+                hideButtons
+                title={
+                    countDown === null
+                        ? '定时关闭'
+                        : `倒计时 ${timeformat(countDown)}`
+                }
+            />
+
             <ThemeSwitch
                 value={countDown !== null}
                 onValueChange={val => {
@@ -320,7 +325,6 @@ export default function TimingClose() {
 
 const style = StyleSheet.create({
     header: {
-        marginTop: rpx(36),
         width: rpx(750),
         paddingHorizontal: rpx(24),
         height: rpx(90),

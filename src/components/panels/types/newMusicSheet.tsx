@@ -1,15 +1,14 @@
 import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import MusicSheet from '@/core/musicSheet';
 import {fontSizeConst} from '@/constants/uiConst';
-import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 
 import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
-import Divider from '@/components/base/divider';
+import PanelHeader from '../base/panelHeader';
 
 interface INewMusicSheetProps {
     defaultName?: string;
@@ -28,25 +27,19 @@ export default function NewMusicSheet(props: INewMusicSheetProps) {
             height={vmax(30)}
             renderBody={() => (
                 <>
-                    <View style={style.operations}>
-                        <Button
-                            onPress={() => {
-                                onCancel ? onCancel() : hidePanel();
-                            }}>
-                            取消
-                        </Button>
-                        <Button
-                            onPress={async () => {
-                                const sheetId = await MusicSheet.addSheet(
-                                    input || defaultName,
-                                );
-                                onSheetCreated?.(sheetId);
-                                hidePanel();
-                            }}>
-                            确认
-                        </Button>
-                    </View>
-                    <Divider />
+                    <PanelHeader
+                        title="新建歌单"
+                        onCancel={() => {
+                            onCancel ? onCancel() : hidePanel();
+                        }}
+                        onOk={async () => {
+                            const sheetId = await MusicSheet.addSheet(
+                                input || defaultName,
+                            );
+                            onSheetCreated?.(sheetId);
+                            hidePanel();
+                        }}
+                    />
                     <TextInput
                         value={input}
                         onChangeText={_ => {

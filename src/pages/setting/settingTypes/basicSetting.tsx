@@ -313,6 +313,7 @@ export default function BasicSetting() {
                     ),
                     onPress() {
                         showPanel('SimpleInput', {
+                            title: '设置缓存',
                             placeholder: '输入缓存占用上限，100M-8192M，单位M',
                             onOk(text, closePanel) {
                                 let val = parseInt(text);

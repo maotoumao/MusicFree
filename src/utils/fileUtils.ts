@@ -50,21 +50,21 @@ export function sizeFormatter(bytes: number | string) {
     return (bytes / Math.pow(k, i)).toFixed(1) + sizes[i];
 }
 
-export async function checkAndCreateDir(path: string) {
-    const filePath = path;
+export async function checkAndCreateDir(dirPath: string) {
+    const filePath = dirPath;
     try {
         if (!(await exists(filePath))) {
             await mkdir(filePath);
         }
     } catch (e) {
-        errorLog('无法初始化目录', {path, e});
+        errorLog('无法初始化目录', {path: dirPath, e});
     }
 }
 
-async function getFolderSize(path: string): Promise<number> {
+async function getFolderSize(dirPath: string): Promise<number> {
     let size = 0;
     try {
-        const fns = await readDir(path);
+        const fns = await readDir(dirPath);
         for (let fn of fns) {
             if (fn.isFile()) {
                 size += fn.size;
@@ -134,20 +134,20 @@ export function escapeCharacter(str?: string) {
     return str !== undefined ? `${str}`.replace(/\//g, '_') : '';
 }
 
-export function getDirectory(path: string) {
-    const lastSlash = path.lastIndexOf('/');
+export function getDirectory(dirPath: string) {
+    const lastSlash = dirPath.lastIndexOf('/');
     if (lastSlash === -1) {
-        return path;
+        return dirPath;
     }
-    return path.slice(0, lastSlash);
+    return dirPath.slice(0, lastSlash);
 }
 
-export function getFileName(path: string, withoutExt?: boolean) {
-    const lastSlash = path.lastIndexOf('/');
+export function getFileName(filePath: string, withoutExt?: boolean) {
+    const lastSlash = filePath.lastIndexOf('/');
     if (lastSlash === -1) {
-        return path;
+        return filePath;
     }
-    const fileName = path.slice(lastSlash);
+    const fileName = filePath.slice(lastSlash);
     if (withoutExt) {
         const lastDot = fileName.lastIndexOf('.');
         return lastDot === -1 ? fileName : fileName.slice(0, lastDot);

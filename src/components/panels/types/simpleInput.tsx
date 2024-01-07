@@ -2,16 +2,16 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import {fontSizeConst} from '@/constants/uiConst';
-import Button from '@/components/base/button';
 import useColors from '@/hooks/useColors';
 
 import ThemeText from '@/components/base/themeText';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import PanelBase from '../base/panelBase';
 import {hidePanel} from '../usePanel';
-import Divider from '@/components/base/divider';
+import PanelHeader from '../base/panelHeader';
 
 interface ISimpleInputProps {
+    title?: string;
     onOk: (text: string, closePanel: () => void) => void;
     hints?: string[];
     onCancel?: () => void;
@@ -20,7 +20,7 @@ interface ISimpleInputProps {
 }
 
 export default function SimpleInput(props: ISimpleInputProps) {
-    const {onOk, onCancel, placeholder, maxLength = 80, hints} = props;
+    const {onOk, onCancel, placeholder, maxLength = 80, hints, title} = props;
 
     const [input, setInput] = useState('');
     const colors = useColors();
@@ -30,22 +30,17 @@ export default function SimpleInput(props: ISimpleInputProps) {
             height={vmax(30)}
             renderBody={() => (
                 <>
-                    <View style={style.opeartions}>
-                        <Button
-                            onPress={() => {
-                                onCancel?.();
-                                hidePanel();
-                            }}>
-                            取消
-                        </Button>
-                        <Button
-                            onPress={async () => {
-                                onOk(input, hidePanel);
-                            }}>
-                            确认
-                        </Button>
-                    </View>
-                    <Divider />
+                    <PanelHeader
+                        title={title || ''}
+                        onCancel={() => {
+                            onCancel?.();
+                            hidePanel();
+                        }}
+                        onOk={async () => {
+                            onOk(input, hidePanel);
+                        }}
+                    />
+
                     <TextInput
                         value={input}
                         accessible

@@ -6,10 +6,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import Color from 'color';
 import ThemeText from '@/components/base/themeText';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import Button from '@/components/base/button';
 import {hidePanel} from '../usePanel';
-import Divider from '@/components/base/divider';
 import {ImgAsset} from '@/constants/assetsConst';
+import PanelHeader from '../base/panelHeader';
 
 interface IColorPickerProps {
     defaultColor?: string;
@@ -119,24 +118,17 @@ export default function ColorPicker(props: IColorPickerProps) {
             height={rpx(750)}
             renderBody={() => (
                 <>
-                    <View style={styles.opeartions}>
-                        <Button
-                            onPress={() => {
+                    <PanelHeader
+                        onCancel={hidePanel}
+                        onOk={async () => {
+                            onSelected?.(currentColorWithAlpha);
+                            if (closePanelWhenSelected) {
                                 hidePanel();
-                            }}>
-                            取消
-                        </Button>
-                        <Button
-                            onPress={async () => {
-                                await onSelected?.(currentColorWithAlpha);
-                                if (closePanelWhenSelected) {
-                                    hidePanel();
-                                }
-                            }}>
-                            确认
-                        </Button>
-                    </View>
-                    <Divider />
+                            }
+                        }}
+                        title="选择颜色"
+                    />
+
                     <View style={styles.container}>
                         <GestureDetector gesture={slComposed}>
                             <View

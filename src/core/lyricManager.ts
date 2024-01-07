@@ -26,7 +26,7 @@ const lyricStateStore = new GlobalState<{
 const currentLyricStore = new GlobalState<ILyric.IParsedLrcItem | null>(null);
 
 // 重新获取歌词
-async function refreshLyric(fromStart?: boolean) {
+async function refreshLyric(fromStart?: boolean, forceRequest = false) {
     const musicItem = TrackPlayer.getCurrentMusic();
     try {
         if (!musicItem) {
@@ -48,7 +48,10 @@ async function refreshLyric(fromStart?: boolean) {
             ?.lyricParser?.getCurrentMusicItem();
 
         let rawLrc: string | undefined;
-        if (!isSameMediaItem(currentParserMusicItem, musicItem)) {
+        if (
+            forceRequest ||
+            !isSameMediaItem(currentParserMusicItem, musicItem)
+        ) {
             lyricStateStore.setValue({
                 loading: true,
                 lyrics: [],

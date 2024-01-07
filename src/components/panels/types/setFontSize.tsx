@@ -6,6 +6,7 @@ import ThemeText from '@/components/base/themeText';
 import PanelBase from '../base/panelBase';
 import Slider from '@react-native-community/slider';
 import useColors from '@/hooks/useColors';
+import PanelHeader from '../base/panelHeader';
 
 interface IProps {
     defaultSelect?: number;
@@ -24,11 +25,7 @@ export default function SetFontSize(props: IProps) {
             keyboardAvoidBehavior="none"
             renderBody={() => (
                 <>
-                    <View style={styles.header}>
-                        <ThemeText fontWeight="bold" fontSize="title">
-                            设置字体大小
-                        </ThemeText>
-                    </View>
+                    <PanelHeader title="设置字体大小" hideButtons />
                     <View style={styles.container}>
                         <Slider
                             style={styles.sliderContainer}
@@ -70,6 +67,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: rpx(24),
         width: '100%',
+        marginTop: rpx(88),
     },
     sliderContainer: {
         height: rpx(80),

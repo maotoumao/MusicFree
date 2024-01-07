@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 
@@ -8,6 +8,7 @@ import PanelBase from '../base/panelBase';
 import {ScrollView} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
 import Divider from '@/components/base/divider';
+import PanelHeader from '../base/panelHeader';
 
 interface IPlayRateProps {
     /** 点击回调 */
@@ -26,11 +27,7 @@ export default function PlayRate(props: IPlayRateProps) {
             height={rpx(520)}
             renderBody={() => (
                 <>
-                    <View style={style.header}>
-                        <ThemeText fontWeight="bold" fontSize="title">
-                            播放速度
-                        </ThemeText>
-                    </View>
+                    <PanelHeader title="播放速度" hideButtons />
                     <ScrollView
                         style={[
                             style.body,

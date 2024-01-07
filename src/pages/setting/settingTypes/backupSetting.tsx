@@ -78,6 +78,7 @@ export default function BackupSetting() {
     // const [webDavState, setWebDavState] = useState('');
     async function onResumeFromUrl() {
         showPanel('SimpleInput', {
+            title: '恢复数据',
             placeholder: '输入以json或txt结尾的URL',
             maxLength: 1024,
             async onOk(text, closePanel) {
