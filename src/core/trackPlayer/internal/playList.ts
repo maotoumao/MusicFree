@@ -1,4 +1,4 @@
-import Config from '@/core/config';
+import PersistStatus from '@/core/persistStatus';
 import {GlobalState} from '@/utils/stateMapper';
 
 /** 音乐队列 */
@@ -30,7 +30,7 @@ export function setPlayList(
     });
     playListIndexMap = newIndexMap;
     if (shouldSave) {
-        Config.set('status.music.musicQueue', newPlayList);
+        PersistStatus.set('music.playList', newPlayList);
     }
 }
 
