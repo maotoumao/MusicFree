@@ -10,11 +10,11 @@ import LocalMusicSheet from '@/core/localMusicSheet';
 import {ROUTE_PATH} from '@/entry/router';
 import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
-import Config from '@/core/config';
 import useOrientation from '@/hooks/useOrientation';
 import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import {iconSizeConst} from '@/constants/uiConst';
+import PersistStatus from '@/core/persistStatus';
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -23,7 +23,7 @@ export default function Operations() {
     const currentQuality = TrackPlayer.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
-    const rate = Config.useConfig('status.music.rate') ?? 100;
+    const [rate, setRate] = PersistStatus.useState('music.rate', 100);
     const orientation = useOrientation();
 
     const musicIndexInFav =
@@ -111,13 +111,13 @@ export default function Operations() {
                             if (rate !== newRate) {
                                 try {
                                     await TrackPlayer.setRate(newRate / 100);
-                                    Config.set('status.music.rate', newRate);
+                                    setRate(newRate);
                                 } catch {}
                             }
                         },
                     });
                 }}>
-                <Image source={ImgAsset.rate[rate]} style={style.quality} />
+                <Image source={ImgAsset.rate[rate!]} style={style.quality} />
             </Pressable>
             <Icon
                 name="dots-vertical"

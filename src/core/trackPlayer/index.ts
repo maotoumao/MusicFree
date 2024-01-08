@@ -45,6 +45,7 @@ import PluginManager from '../pluginManager';
 import {musicIsPaused} from '@/utils/trackUtils';
 import Toast from '@/utils/toast';
 import {trace} from '@/utils/log';
+import PersistStatus from '../persistStatus';
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -82,9 +83,33 @@ const shrinkPlayListToSize = (
 
 let hasSetupListener = false;
 
-async function setupTrackPlayer() {
-    const config = Config.get('status.music') ?? {};
+// TODO: 删除
+function migrate() {
+    const config = Config.get('status.music');
+    if (!config) {
+        return;
+    }
     const {rate, repeatMode, musicQueue, progress, track} = config;
+    PersistStatus.set('music.rate', rate);
+    PersistStatus.set('music.repeatMode', repeatMode);
+    PersistStatus.set('music.playList', musicQueue);
+    PersistStatus.set('music.progress', progress);
+    PersistStatus.set('music.musicItem', track);
+    Config.set('status.music', undefined);
+}
+
+async function setupTrackPlayer() {
+    migrate();
+
+    const rate = PersistStatus.get('music.rate');
+    const musicQueue = PersistStatus.get('music.playList');
+    const repeatMode = PersistStatus.get('music.repeatMode');
+    const progress = PersistStatus.get('music.progress');
+    const track = PersistStatus.get('music.musicItem');
+    const quality =
+        PersistStatus.get('music.quality') ||
+        Config.get('setting.basic.defaultPlayQuality') ||
+        'standard';
 
     // 状态恢复
     if (rate) {
@@ -95,13 +120,10 @@ async function setupTrackPlayer() {
         addAll(musicQueue, undefined, repeatMode === MusicRepeatMode.SHUFFLE);
     }
 
-    const currentQuality =
-        Config.get('setting.basic.defaultPlayQuality') ?? 'standard';
-
     if (track && isInPlayList(track)) {
         const newSource = await PluginManager.getByMedia(
             track,
-        )?.methods.getMediaSource(track, currentQuality, 0);
+        )?.methods.getMediaSource(track, quality, 0);
         // 重新初始化 获取最新的链接
         track.url = newSource?.url || track.url;
         track.headers = newSource?.headers || track.headers;
@@ -109,8 +131,8 @@ async function setupTrackPlayer() {
         await setTrackSource(track as Track, false);
         setCurrentMusic(track);
 
-        if (config?.progress) {
-            await ReactNativeTrackPlayer.seekTo(progress!);
+        if (progress) {
+            await ReactNativeTrackPlayer.seekTo(progress);
         }
     }
 
@@ -209,9 +231,6 @@ const setTrackSource = async (track: Track, autoPlay = true) => {
     if (autoPlay) {
         await ReactNativeTrackPlayer.play();
     }
-    // 写缓存 TODO: MMKV
-    Config.set('status.music.track', track as IMusic.IMusicItem, false);
-    Config.set('status.music.progress', 0, false);
 };
 
 /**
@@ -344,7 +363,6 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
 
     setPlayList(newPlayList);
     setCurrentMusic(currentMusic);
-    Config.set('status.music.musicQueue', playList, false);
     if (shouldPlayCurrent === true) {
         await play(currentMusic, true);
     } else if (shouldPlayCurrent === false) {
@@ -374,7 +392,7 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
     // 更新下一首歌的信息
     ReactNativeTrackPlayer.updateMetadataForTrack(1, getFakeNextTrack());
     // 记录
-    Config.set('status.music.repeatMode', mode, false);
+    PersistStatus.set('music.repeatMode', mode);
 };
 
 /** 清空播放列表 */
@@ -383,9 +401,8 @@ const clear = async () => {
     setCurrentMusic(null);
 
     await ReactNativeTrackPlayer.reset();
-    Config.set('status.music', {
-        repeatMode: repeatModeStore.getValue(),
-    });
+    PersistStatus.set('music.musicItem', undefined);
+    PersistStatus.set('music.progress', 0);
 };
 
 /** 暂停 */
@@ -397,11 +414,21 @@ const setCurrentMusic = (musicItem?: IMusic.IMusicItem | null) => {
     if (!musicItem) {
         currentIndex = -1;
         currentMusicStore.setValue(null);
+        PersistStatus.set('music.musicItem', undefined);
+        PersistStatus.set('music.progress', 0);
+        return;
     }
     currentIndex = getMusicIndex(musicItem);
-    currentMusicStore.setValue(musicItem!);
+    currentMusicStore.setValue(musicItem);
+
+    PersistStatus.set('music.musicItem', musicItem);
+    PersistStatus.set('music.progress', 0);
 };
 
+const setQuality = (quality: IMusic.IQualityKey) => {
+    qualityStore.setValue(quality);
+    PersistStatus.set('music.quality', quality);
+};
 /**
  * 播放
  *
@@ -492,7 +519,8 @@ const play = async (
                     )) ?? null;
                 // 5.3.1 获取到真实源
                 if (source) {
-                    qualityStore.setValue(quality);
+                    setQuality(quality);
+
                     break;
                 }
             } else {
@@ -511,7 +539,8 @@ const play = async (
                 for (let quality of qualityOrder) {
                     if (musicItem.source[quality]?.url) {
                         source = musicItem.source[quality]!;
-                        qualityStore.setValue(quality);
+                        setQuality(quality);
+
                         break;
                     }
                 }
@@ -524,7 +553,7 @@ const play = async (
                 source = {
                     url: musicItem.url,
                 };
-                qualityStore.setValue('standard');
+                setQuality('standard');
             }
         }
 
@@ -674,7 +703,7 @@ const changeQuality = async (newQuality: IMusic.IQualityKey) => {
             );
 
             await ReactNativeTrackPlayer.seekTo(progress.position ?? 0);
-            qualityStore.setValue(newQuality);
+            setQuality(newQuality);
         }
         return true;
     } catch {

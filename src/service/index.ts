@@ -4,6 +4,7 @@ import LyricManager from '@/core/lyricManager';
 import LyricUtil from '@/native/lyricUtil';
 import TrackPlayer from '@/core/trackPlayer';
 import {musicIsPaused} from '@/utils/trackUtils';
+import PersistStatus from '@/core/persistStatus';
 
 let resumeState: State | null;
 module.exports = async function () {
@@ -62,7 +63,7 @@ module.exports = async function () {
     });
 
     RNTrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
-        Config.set('status.music.progress', evt.position, false);
+        PersistStatus.set('music.progress', evt.position);
 
         // 歌词逻辑
         const parser = LyricManager.getLyricState().lyricParser;

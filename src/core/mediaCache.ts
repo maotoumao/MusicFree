@@ -1,6 +1,8 @@
+import {addFileScheme} from '@/utils/fileUtils';
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
 import {getMediaKey} from '@/utils/mediaItem';
 import safeParse from '@/utils/safeParse';
+import {exists, unlink} from 'react-native-fs';
 
 // Internal Method
 const mediaCacheStore = getOrCreateMMKV('cache.MediaCache', true);
@@ -29,6 +31,12 @@ const setMediaCache = (mediaItem: ICommon.IMediaBase) => {
         if (allKeys.length >= maxCacheCount) {
             // TODO: 随机删一半
             for (let i = 0; i < maxCacheCount / 2; ++i) {
+                const rawCacheMedia = mediaCacheStore.getString(allKeys[i]);
+                const cacheData = rawCacheMedia
+                    ? safeParse(rawCacheMedia)
+                    : null;
+                clearLocalCaches(cacheData);
+
                 mediaCacheStore.delete(allKeys[i]);
             }
         }
@@ -39,6 +47,28 @@ const setMediaCache = (mediaItem: ICommon.IMediaBase) => {
 
     return false;
 };
+
+async function clearLocalCaches(cacheData: IMusic.IMusicItemCache) {
+    if (cacheData.$localLyric) {
+        await checkPathAndRemove(cacheData.$localLyric.lrc);
+        const versions = cacheData.$localLyric.versions;
+        if (versions) {
+            for (let v in versions) {
+                await checkPathAndRemove(versions[v].lrc);
+            }
+        }
+    }
+}
+
+async function checkPathAndRemove(filePath?: string) {
+    if (!filePath) {
+        return;
+    }
+    filePath = addFileScheme(filePath);
+    if (await exists(filePath)) {
+        unlink(filePath);
+    }
+}
 
 /** 移除缓存信息 */
 const removeMediaCache = (mediaItem: ICommon.IMediaBase) => {
