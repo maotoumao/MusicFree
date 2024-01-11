@@ -9,17 +9,19 @@ export function BootstrapComp() {
     useListenOrientationChange();
     useCheckUpdate();
 
+    const followSystem = Config.useConfig('setting.theme.followSystem');
+
     const colorScheme = useColorScheme();
 
     useEffect(() => {
-        if (Config.get('setting.theme.followSystem')) {
+        if (followSystem) {
             if (colorScheme === 'dark') {
                 Theme.setTheme('p-dark');
             } else if (colorScheme === 'light') {
                 Theme.setTheme('p-light');
             }
         }
-    }, [colorScheme]);
+    }, [colorScheme, followSystem]);
 
     return null;
 }
