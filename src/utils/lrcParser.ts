@@ -9,26 +9,42 @@ interface IExtra {
 export default class LyricParser {
     private lastIndex: number = 0;
     private lrcItems: Array<ILyric.IParsedLrcItem>;
+    private translationLrcItems: Array<ILyric.IParsedLrcItem>;
     private meta: Record<string, any>;
     private currentMusicItem?: IMusic.IMusicItem;
-    public readonly raw: string;
+    public readonly lrcSource: ILyric.ILyricSource;
 
     constructor(
-        raw: string,
+        source: ILyric.ILyricSource,
         currentMusicItem?: IMusic.IMusicItem,
         extra?: IExtra,
     ) {
-        raw = raw.trim();
-        this.raw = raw;
+        this.lrcSource = source;
         this.currentMusicItem = currentMusicItem;
+        const rawResult = this.parseLrc(source.rawLrc, extra);
+        const translationResult = this.parseLrc(source.translation, extra);
+
+        this.meta = rawResult.meta;
+        this.lrcItems = rawResult.lrcItems;
+        this.translationLrcItems = translationResult.lrcItems;
+    }
+
+    private parseLrc(raw?: string, extra?: IExtra) {
+        if (!raw) {
+            return {
+                lrcItems: [],
+                meta: {},
+            };
+        }
+        raw = raw.trim();
         const rawLrcItems: Array<ILyric.IParsedLrcItem> = [];
         const rawLrcs = raw.split(timeReg) ?? [];
         const rawTimes = raw.match(timeReg) ?? [];
         const len = rawTimes.length;
 
-        this.meta = this.parseMeta(rawLrcs[0].trim());
+        const meta = this.parseMeta(rawLrcs[0].trim());
         if (extra?.offset) {
-            this.meta.offset = (this.meta.offset ?? 0) + extra.offset;
+            meta.offset = (meta.offset ?? 0) + extra.offset;
         }
         rawLrcs.shift();
 
@@ -56,21 +72,27 @@ export default class LyricParser {
             }
             rawLrcs.shift();
         }
-        this.lrcItems = rawLrcItems.sort((a, b) => a.time - b.time);
-        if (this.lrcItems.length === 0 && raw.length) {
-            this.lrcItems = raw.split('\n').map(_ => ({
+        let lrcItems = rawLrcItems.sort((a, b) => a.time - b.time);
+        if (lrcItems.length === 0 && raw.length) {
+            lrcItems = raw.split('\n').map(_ => ({
                 time: 0,
                 lrc: _,
             }));
         }
 
-        for (let i = 0; i < this.lrcItems.length; ++i) {
-            this.lrcItems[i].index = i;
+        for (let i = 0; i < lrcItems.length; ++i) {
+            lrcItems[i].index = i;
         }
+
+        return {
+            lrcItems,
+            meta,
+        };
     }
 
     getPosition(position: number): {
         lrc?: ILyric.IParsedLrcItem;
+        transLrc?: ILyric.IParsedLrcItem;
         index: number;
     } {
         position = position - (this.meta?.offset ?? 0);
@@ -117,6 +139,7 @@ export default class LyricParser {
         this.lastIndex = index;
         return {
             lrc: this.lrcItems[index],
+            transLrc: this.translationLrcItems[index],
             index,
         };
     }
@@ -127,6 +150,10 @@ export default class LyricParser {
 
     getLyric() {
         return this.lrcItems;
+    }
+
+    getTranslationLyric() {
+        return this.translationLrcItems;
     }
 
     getMeta() {
