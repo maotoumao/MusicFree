@@ -23,7 +23,7 @@ export default function Operations() {
     const currentQuality = TrackPlayer.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
-    const [rate, setRate] = PersistStatus.useState('music.rate', 100);
+    const [rate, setRate] = PersistStatus.useLocalState('music.rate', 100);
     const orientation = useOrientation();
 
     const musicIndexInFav =

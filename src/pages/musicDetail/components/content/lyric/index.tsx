@@ -14,6 +14,7 @@ import {musicIsPaused} from '@/utils/trackUtils';
 import delay from '@/utils/delay';
 import DraggingTime from './draggingTime';
 import LyricItemComponent from './lyricItem';
+import Config from '@/core/config';
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -23,8 +24,10 @@ interface IItemHeights {
 }
 
 export default function Lyric() {
-    const {loading, meta, lyrics: lyric} = LyricManager.useLyricState();
+    const {loading, meta, lyrics, translationLyrics, hasTranslation} =
+        LyricManager.useLyricState();
     const currentLrcItem = LyricManager.useCurrentLyric();
+    const showTranslation = Config.useConfig('setting.lyric.showTranslation');
 
     // 是否展示拖拽
     const dragShownRef = useRef(false);
@@ -61,10 +64,10 @@ export default function Lyric() {
     useEffect(() => {
         // 暂停且拖拽才返回
         if (
-            lyric.length === 0 ||
+            lyrics.length === 0 ||
             draggingIndex !== undefined ||
             (draggingIndex === undefined && musicIsPaused(musicState)) ||
-            lyric[lyric.length - 1].time < 1
+            lyrics[lyrics.length - 1].time < 1
         ) {
             return;
         }
@@ -75,12 +78,12 @@ export default function Lyric() {
             });
         } else {
             listRef.current?.scrollToIndex({
-                index: Math.min(currentLrcItem.index ?? 0, lyric.length - 1),
+                index: Math.min(currentLrcItem.index ?? 0, lyrics.length - 1),
                 viewPosition: 0.5,
             });
         }
         // 音乐暂停状态不应该影响到滑动，所以不放在依赖里，但是这样写不好。。
-    }, [currentLrcItem, lyric, draggingIndex]);
+    }, [currentLrcItem, lyrics, draggingIndex]);
 
     useEffect(() => {
         if (currentLrcItem?.index !== undefined && currentLrcItem.index > -1) {
@@ -116,7 +119,7 @@ export default function Lyric() {
                 setDraggingIndex(0);
                 return;
             }
-            for (let i = 0; i < lyric.length; ++i) {
+            for (let i = 0; i < lyrics.length; ++i) {
                 height += itemHeights[i] ?? 0;
                 if (height > offset) {
                     setDraggingIndex(i);
@@ -128,7 +131,7 @@ export default function Lyric() {
 
     const onLyricSeekPress = async () => {
         if (draggingIndex !== undefined) {
-            const time = lyric[draggingIndex].time + +(meta?.offset ?? 0);
+            const time = lyrics[draggingIndex].time + +(meta?.offset ?? 0);
             if (time !== undefined && !isNaN(time)) {
                 await TrackPlayer.seekTo(time);
                 await TrackPlayer.play();
@@ -141,7 +144,7 @@ export default function Lyric() {
         <View style={globalStyle.fwflex1}>
             {loading ? (
                 <Loading color="white" />
-            ) : lyric?.length ? (
+            ) : lyrics?.length ? (
                 <FlatList
                     ref={_ => {
                         listRef.current = _;
@@ -155,7 +158,7 @@ export default function Lyric() {
                     onScrollToIndexFailed={({index}) => {
                         delay(120).then(() => {
                             listRef.current?.scrollToIndex({
-                                index: Math.min(index ?? 0, lyric.length - 1),
+                                index: Math.min(index ?? 0, lyrics.length - 1),
                                 viewPosition: 0.5,
                             });
                         });
@@ -168,19 +171,30 @@ export default function Lyric() {
                     onScroll={onScroll}
                     scrollEventThrottle={32}
                     style={styles.wrapper}
-                    data={lyric}
+                    data={lyrics}
                     initialNumToRender={30}
                     overScrollMode="never"
                     extraData={currentLrcItem}
-                    renderItem={({item, index}) => (
-                        <LyricItemComponent
-                            index={index}
-                            text={item.lrc}
-                            onLayout={handleLyricItemLayout}
-                            light={draggingIndex === index}
-                            highlight={currentLrcItem?.index === index}
-                        />
-                    )}
+                    renderItem={({item, index}) => {
+                        let text = item.lrc;
+
+                        if (showTranslation && hasTranslation) {
+                            const transLrc = translationLyrics?.[index]?.lrc;
+                            if (transLrc) {
+                                text += `\n${transLrc}`;
+                            }
+                        }
+
+                        return (
+                            <LyricItemComponent
+                                index={index}
+                                text={text}
+                                onLayout={handleLyricItemLayout}
+                                light={draggingIndex === index}
+                                highlight={currentLrcItem?.index === index}
+                            />
+                        );
+                    }}
                 />
             ) : (
                 <View style={globalStyle.fullCenter}>
@@ -207,7 +221,7 @@ export default function Lyric() {
                     ]}>
                     <DraggingTime
                         time={
-                            (lyric[draggingIndex]?.time ?? 0) +
+                            (lyrics[draggingIndex]?.time ?? 0) +
                             +(meta?.offset ?? 0)
                         }
                     />

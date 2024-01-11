@@ -98,7 +98,6 @@ declare namespace IPlugin {
         /** 获取歌词 */
         getLyric?: (
             musicItem: IMusic.IMusicItemBase,
-            lang: string, // default / translation
         ) => Promise<ILyric.ILyricSource | null>;
         /** 获取专辑信息，里面的歌曲分页 */
         getAlbumInfo?: (

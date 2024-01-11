@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {iconSizeConst} from '@/constants/uiConst';
 import LyricIcon from '@/assets/icons/lyric.svg';
+import TranslationIcon from '@/assets/icons/translation.svg';
 import Config from '@/core/config';
 import useColors from '@/hooks/useColors';
 import LyricManager from '@/core/lyricManager';
@@ -17,6 +18,8 @@ interface ILyricOperationsProps {}
 
 export default function LyricOperations(_props: ILyricOperationsProps) {
     const lyricConfig = Config.useConfig('setting.lyric');
+
+    const hasTranslation = LyricManager.useLyricState()?.hasTranslation;
     const colors = useColors();
 
     return (
@@ -55,6 +58,30 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
                     }
                 }}
             />
+
+            <Icon
+                name="magnify"
+                size={iconSizeConst.normal}
+                color="white"
+                onPress={() => {
+                    const currentMusic = TrackPlayer.getCurrentMusic();
+                    if (!currentMusic) {
+                        return;
+                    }
+                    // if (
+                    //     Config.get('setting.basic.associateLyricType') ===
+                    //     'input'
+                    // ) {
+                    //     showPanel('AssociateLrc', {
+                    //         musicItem: currentMusic,
+                    //     });
+                    // } else {
+                    showPanel('SearchLrc', {
+                        musicItem: currentMusic,
+                    });
+                    // }
+                }}
+            />
             <LyricIcon
                 onPress={async () => {
                     if (!lyricConfig?.showStatusBarLyric) {
@@ -91,27 +118,31 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
                     lyricConfig?.showStatusBarLyric ? colors.primary : 'white'
                 }
             />
-            <Icon
-                name="link-variant"
-                size={iconSizeConst.normal}
-                color="white"
+            <TranslationIcon
+                width={iconSizeConst.normal}
+                height={iconSizeConst.normal}
+                opacity={
+                    !hasTranslation
+                        ? 0.2
+                        : lyricConfig?.showTranslation
+                        ? 1
+                        : 0.5
+                }
+                color={
+                    lyricConfig?.showTranslation && hasTranslation
+                        ? colors.primary
+                        : 'white'
+                }
+                // style={}
                 onPress={() => {
-                    const currentMusic = TrackPlayer.getCurrentMusic();
-                    if (!currentMusic) {
+                    if (!hasTranslation) {
+                        Toast.warn('当前歌曲无翻译');
                         return;
                     }
-                    if (
-                        Config.get('setting.basic.associateLyricType') ===
-                        'input'
-                    ) {
-                        showPanel('AssociateLrc', {
-                            musicItem: currentMusic,
-                        });
-                    } else {
-                        showPanel('SearchLrc', {
-                            musicItem: currentMusic,
-                        });
-                    }
+                    Config.set(
+                        'setting.lyric.showTranslation',
+                        !lyricConfig?.showTranslation,
+                    );
                 }}
             />
         </View>

@@ -443,10 +443,17 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
     }
 
+    /**
+     *
+     * getLyric(musicItem) => {
+     *      lyric: string;
+     *      trans: string;
+     * }
+     *
+     */
     /** 获取歌词 */
     async getLyric(
         originalMusicItem: IMusic.IMusicItemBase,
-        lang: string, // 语言
     ): Promise<ILyric.ILyricSource | null> {
         // 1.额外存储的meta信息（关联歌词）
         const meta = MediaMeta.get(originalMusicItem);
@@ -462,16 +469,11 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         ) as IMusic.IMusicItemCache | null;
 
         /** 原始歌词文本 */
-        let rawLrc: string | null = null;
-        /** 歌词URL */
-        let lrcUrl: string | null = null;
-
-        // 本地的文件名
-        const filename = `${pathConst.lrcCachePath}${nanoid()}.lrc`;
+        let rawLrc: string | null = musicItem.rawLrc || null;
+        let translation: string | null = null;
 
         // 2. 缓存歌词 / 对象上本身的歌词
         if (musicItemCache?.lyric) {
-            let lyric: ILyric.ILyricSource | null = musicItem.lyric || null;
             // 缓存的远程结果
             let cacheLyric: ILyric.ILyricSource | null =
                 musicItemCache.lyric || null;
@@ -479,82 +481,38 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             let localLyric: ILyric.ILyricSource | null =
                 musicItemCache.$localLyric || null;
 
-            // 如果存在本地歌词，语言非默认
-            if (lang && lang !== 'default') {
-                cacheLyric = cacheLyric?.versions?.[lang] || null;
-                localLyric = localLyric?.versions?.[lang] || null;
-                lyric = lyric?.versions?.[lang] || null;
-            } else {
-                cacheLyric = {
-                    lrc: cacheLyric?.lrc || musicItemCache.lrc,
-                    rawLrc: cacheLyric?.rawLrc || musicItemCache.rawLrc,
-                };
-                lyric = {
-                    lrc: lyric?.lrc || musicItem.lrc,
-                    rawLrc: lyric?.rawLrc ?? musicItem.rawLrc,
-                };
-            }
-
-            // 返回本地歌词
-            if (localLyric?.lrc && (await exists(localLyric.lrc))) {
-                // TODO 清理缓存，不管也行
-                rawLrc = await readFile(localLyric.lrc, 'utf8');
-
-                console.log('本地缓存的歌词');
+            // 优先用缓存的结果
+            if (cacheLyric.rawLrc || cacheLyric.translation) {
                 return {
-                    rawLrc,
-                    lang,
-                    versions: cacheLyric?.versions,
+                    rawLrc: cacheLyric.rawLrc,
+                    translation: cacheLyric.translation,
                 };
             }
 
-            // 缓存的搜索结果
-            if (cacheLyric?.rawLrc || lyric?.rawLrc) {
-                console.log('缓存结果的歌词1');
-                return {
-                    rawLrc: cacheLyric?.rawLrc || lyric?.rawLrc,
-                    lang,
-                    versions: cacheLyric?.versions || lyric?.versions,
-                };
-            }
-
-            if (cacheLyric?.lrc || lyric?.lrc) {
-                // 加载远程歌词
-                rawLrc = (
-                    await axios
-                        .get((cacheLyric?.lrc || lyric?.lrc)!, {timeout: 3000})
-                        .catch(() => null)
-                )?.data;
-
-                if (rawLrc) {
-                    // 写本地歌词缓存
-                    await writeFile(filename, rawLrc, 'utf8');
-                    MediaCache.setMediaCache(
-                        produce(musicItemCache, draft => {
-                            if (!lang || lang === 'default') {
-                                objectPath.set(
-                                    draft,
-                                    '$localLyric.lrc',
-                                    filename,
-                                );
-                            } else {
-                                objectPath.set(
-                                    draft,
-                                    `$localLyric.lrc.versions.${lang}.lrc`,
-                                    filename,
-                                );
-                            }
-                            return draft;
-                        }),
+            // 本地其实是缓存的路径
+            if (localLyric) {
+                let needRefetch = false;
+                if (localLyric.rawLrc && (await exists(localLyric.rawLrc))) {
+                    rawLrc = await readFile(localLyric.rawLrc, 'utf8');
+                } else if (localLyric.rawLrc) {
+                    needRefetch = true;
+                }
+                if (
+                    localLyric.translation &&
+                    (await exists(localLyric.translation))
+                ) {
+                    translation = await readFile(
+                        localLyric.translation,
+                        'utf8',
                     );
+                } else if (localLyric.translation) {
+                    needRefetch = true;
+                }
 
-                    console.log('缓存结果的歌词2');
-
+                if (!needRefetch && (rawLrc || translation)) {
                     return {
-                        rawLrc,
-                        lang,
-                        lrc: cacheLyric?.lrc || lyric?.lrc,
-                        versions: cacheLyric?.versions || lyric?.versions,
+                        rawLrc: rawLrc || undefined,
+                        translation: translation || undefined,
                     };
                 }
             }
@@ -565,72 +523,71 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         if (isSameMediaItem(originalMusicItem, musicItem)) {
             lrcSource =
                 (await this.plugin.instance
-                    ?.getLyric?.(
-                        resetMediaItem(musicItem, undefined, true),
-                        lang,
-                    )
+                    ?.getLyric?.(resetMediaItem(musicItem, undefined, true))
                     ?.catch(() => null)) || null;
         } else {
             lrcSource =
                 (await PluginManager.getByMedia(musicItem)
                     ?.instance?.getLyric?.(
                         resetMediaItem(musicItem, undefined, true),
-                        lang,
                     )
                     ?.catch(() => null)) || null;
         }
 
         if (lrcSource) {
-            rawLrc = lrcSource?.rawLrc || null;
-            lrcUrl = lrcSource?.lrc || null;
+            rawLrc = lrcSource?.rawLrc || rawLrc;
+            translation = lrcSource?.translation || null;
 
-            console.log('远程歌词3');
+            const deprecatedLrcUrl = lrcSource?.lrc || musicItem.lrc;
 
-            // 只返回了个versions
-            if (
-                !rawLrc &&
-                !lrcUrl &&
-                lrcSource?.versions?.[lang || 'default']
-            ) {
-                rawLrc =
-                    lrcSource?.versions?.[lang || 'default']?.rawLrc || null;
-                lrcUrl = lrcSource?.versions?.[lang || 'default']?.lrc || null;
-            }
+            // 本地的文件名
+            let filename: string | undefined = `${
+                pathConst.lrcCachePath
+            }${nanoid()}.lrc`;
+            let filenameTrans: string | undefined = `${
+                pathConst.lrcCachePath
+            }${nanoid()}.lrc`;
 
-            if (!rawLrc && lrcUrl) {
-                rawLrc = (
-                    await axios.get(lrcUrl, {timeout: 3000}).catch(() => null)
-                )?.data;
+            // 旧版本兼容
+            if (!(rawLrc || translation)) {
+                if (deprecatedLrcUrl) {
+                    rawLrc = (
+                        await axios
+                            .get(deprecatedLrcUrl, {timeout: 3000})
+                            .catch(() => null)
+                    )?.data;
+                } else if (musicItem.rawLrc) {
+                    rawLrc = musicItem.rawLrc;
+                }
             }
 
             if (rawLrc) {
                 await writeFile(filename, rawLrc, 'utf8');
+            } else {
+                filename = undefined;
+            }
+            if (translation) {
+                await writeFile(filenameTrans, translation, 'utf8');
+            } else {
+                filenameTrans = undefined;
+            }
+
+            if (rawLrc || translation) {
                 MediaCache.setMediaCache(
                     produce(musicItemCache || musicItem, draft => {
-                        if (!lang || lang === 'default') {
-                            objectPath.set(draft, '$localLyric.lrc', filename);
-                        } else {
-                            objectPath.set(
-                                draft,
-                                `$localLyric.lrc.versions.${lang}.lrc`,
-                                filename,
-                            );
-                        }
-
+                        musicItemCache?.$localLyric?.rawLrc;
+                        objectPath.set(draft, '$localLyric.rawLrc', filename);
                         objectPath.set(
                             draft,
-                            `lyric.versions`,
-                            lrcSource?.versions || draft?.versions,
+                            '$localLyric.translation',
+                            filenameTrans,
                         );
                         return draft;
                     }),
                 );
-
                 return {
-                    rawLrc,
-                    lrc: lrcUrl || undefined,
-                    lang,
-                    versions: lrcSource.versions,
+                    rawLrc: rawLrc || undefined,
+                    translation: translation || undefined,
                 };
             }
         }
@@ -641,10 +598,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             originalMusicItem.platform !== localPluginPlatform &&
             isDownloaded
         ) {
-            const res = await localFilePlugin.instance!.getLyric!(
-                isDownloaded,
-                lang,
-            );
+            const res = await localFilePlugin.instance!.getLyric!(isDownloaded);
 
             console.log('本地文件歌词');
 
@@ -660,9 +614,8 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     /** 获取歌词文本 */
     async getLyricText(
         musicItem: IMusic.IMusicItem,
-        lang = 'default',
     ): Promise<string | undefined> {
-        return (await this.getLyric(musicItem, lang))?.rawLrc;
+        return (await this.getLyric(musicItem))?.rawLrc;
     }
 
     /** 获取专辑信息 */

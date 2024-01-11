@@ -48,9 +48,9 @@ declare namespace IMusic {
         source?: Partial<Record<IQualityKey, IMediaSource>>;
         /** 歌词 */
         lyric?: ILyric.ILyricSource;
-        /** 歌词URL */
+        /** @deprecated 歌词URL */
         lrc?: string;
-        /** 歌词（有时间戳） */
+        /** @deprecated 歌词（原始文本 有时间戳） */
         rawLrc?: string;
         /** 音质信息 */
         qualities?: IQuality;

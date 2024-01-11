@@ -22,6 +22,8 @@ interface IPersistConfig {
     'music.quality': IMusic.IQualityKey;
     /** app */
     'app.skipVersion': string;
+    /** 歌词-是否启用翻译 */
+    'lyric.showTranslation': boolean;
 }
 
 function set<K extends keyof IPersistConfig>(
@@ -62,7 +64,7 @@ function useStateImpl<K extends keyof IPersistConfig>(
 const PersistStatus = {
     get,
     set,
-    useState: useStateImpl,
+    useLocalState: useStateImpl,
 };
 
 export default PersistStatus;

@@ -17,10 +17,13 @@ const lyricStateStore = new GlobalState<{
     loading: boolean;
     lyricParser?: LyricParser;
     lyrics: ILyric.IParsedLrc;
+    translationLyrics?: ILyric.IParsedLrc;
     meta?: Record<string, string>;
+    hasTranslation: boolean;
 }>({
     loading: true,
     lyrics: [],
+    hasTranslation: false,
 });
 
 const currentLyricStore = new GlobalState<ILyric.IParsedLrcItem | null>(null);
@@ -33,6 +36,7 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
             lyricStateStore.setValue({
                 loading: false,
                 lyrics: [],
+                hasTranslation: false,
             });
 
             currentLyricStore.setValue({
@@ -47,7 +51,7 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
             .getValue()
             ?.lyricParser?.getCurrentMusicItem();
 
-        let rawLrc: string | undefined;
+        let lrcSource: ILyric.ILyricSource | null | undefined;
         if (
             forceRequest ||
             !isSameMediaItem(currentParserMusicItem, musicItem)
@@ -55,28 +59,34 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
             lyricStateStore.setValue({
                 loading: true,
                 lyrics: [],
+                hasTranslation: false,
             });
             currentLyricStore.setValue(null);
 
-            rawLrc = await PluginManager.getByMedia(
+            lrcSource = await PluginManager.getByMedia(
                 musicItem,
-            )?.methods?.getLyricText(musicItem);
+            )?.methods?.getLyric(musicItem);
         } else {
-            rawLrc = lyricStateStore.getValue().lyricParser!.raw;
+            lrcSource = lyricStateStore.getValue().lyricParser!.lrcSource;
         }
 
         const realtimeMusicItem = TrackPlayer.getCurrentMusic();
         if (isSameMediaItem(musicItem, realtimeMusicItem)) {
-            if (rawLrc) {
+            if (lrcSource) {
                 const mediaExtra = MediaExtra.get(musicItem);
-                const parser = new LyricParser(rawLrc, musicItem, {
+                const parser = new LyricParser(lrcSource, musicItem, {
                     offset: (mediaExtra?.lyricOffset || 0) * -1,
                 });
+
                 lyricStateStore.setValue({
                     loading: false,
                     lyricParser: parser,
                     lyrics: parser.getLyric(),
+                    translationLyrics: lrcSource.translation
+                        ? parser.getTranslationLyric()
+                        : undefined,
                     meta: parser.getMeta(),
+                    hasTranslation: !!lrcSource.translation,
                 });
                 // 更新当前状态的歌词
                 const currentLyric = fromStart
@@ -90,16 +100,19 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
                 lyricStateStore.setValue({
                     loading: false,
                     lyrics: [],
+                    hasTranslation: false,
                 });
             }
         }
-    } catch {
+    } catch (e) {
+        console.log(e, 'LRC');
         const realtimeMusicItem = TrackPlayer.getCurrentMusic();
         if (isSameMediaItem(musicItem, realtimeMusicItem)) {
             // 异常情况
             lyricStateStore.setValue({
                 loading: false,
                 lyrics: [],
+                hasTranslation: false,
             });
         }
     }
