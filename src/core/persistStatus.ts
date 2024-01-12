@@ -1,6 +1,6 @@
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
 import safeParse from '@/utils/safeParse';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 // Internal Method
 const getStore = () => {
@@ -47,24 +47,34 @@ function get<K extends keyof IPersistConfig>(key: K): IPersistConfig[K] | null {
     return null;
 }
 
-function useStateImpl<K extends keyof IPersistConfig>(
+function useValue<K extends keyof IPersistConfig>(
     key: K,
     defaultValue?: IPersistConfig[K],
-) {
-    const [state, setState] = useState(get(key) ?? defaultValue);
+): IPersistConfig[K] | null {
+    const [state, setState] = useState<IPersistConfig[K] | null>(
+        get(key) ?? defaultValue ?? null,
+    );
 
-    function _setState(newVal: IPersistConfig[K]) {
-        setState(newVal);
-        set(key, newVal);
-    }
+    useEffect(() => {
+        const store = getStore();
+        const sub = store.addOnValueChangedListener(changedKey => {
+            if (key === changedKey) {
+                setState(get(key));
+            }
+        });
 
-    return [state, _setState] as const;
+        return () => {
+            sub.remove();
+        };
+    }, []);
+
+    return state;
 }
 
 const PersistStatus = {
     get,
     set,
-    useLocalState: useStateImpl,
+    useValue,
 };
 
 export default PersistStatus;

@@ -41,7 +41,11 @@ export default function MusicDetail() {
                         <Content />
                         <Bottom />
                     </View>
-                    {orientation === 'horizonal' ? <Lyric /> : null}
+                    {orientation === 'horizonal' ? (
+                        <View style={globalStyle.flex1}>
+                            <Lyric />
+                        </View>
+                    ) : null}
                 </View>
             </SafeAreaView>
         </>

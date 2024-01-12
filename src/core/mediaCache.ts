@@ -50,13 +50,8 @@ const setMediaCache = (mediaItem: ICommon.IMediaBase) => {
 
 async function clearLocalCaches(cacheData: IMusic.IMusicItemCache) {
     if (cacheData.$localLyric) {
-        await checkPathAndRemove(cacheData.$localLyric.lrc);
-        const versions = cacheData.$localLyric.versions;
-        if (versions) {
-            for (let v in versions) {
-                await checkPathAndRemove(versions[v].lrc);
-            }
-        }
+        await checkPathAndRemove(cacheData.$localLyric.rawLrc);
+        await checkPathAndRemove(cacheData.$localLyric.translation);
     }
 }
 

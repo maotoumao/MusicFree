@@ -23,7 +23,7 @@ export default function Operations() {
     const currentQuality = TrackPlayer.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
-    const [rate, setRate] = PersistStatus.useLocalState('music.rate', 100);
+    const rate = PersistStatus.useValue('music.rate', 100);
     const orientation = useOrientation();
 
     const musicIndexInFav =
@@ -111,7 +111,7 @@ export default function Operations() {
                             if (rate !== newRate) {
                                 try {
                                     await TrackPlayer.setRate(newRate / 100);
-                                    setRate(newRate);
+                                    PersistStatus.set('music.rate', newRate);
                                 } catch {}
                             }
                         },
