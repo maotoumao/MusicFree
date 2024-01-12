@@ -20,14 +20,16 @@ interface INewMusicSheetProps {
 
 export default function SearchLrc(props: INewMusicSheetProps) {
     const {musicItem} = props;
-    const [input, setInput] = useState(musicItem?.title ?? '');
+    const [input, setInput] = useState(
+        musicItem?.alias ?? musicItem?.title ?? '',
+    );
     const colors = useColors();
 
     const searchLrc = useSearchLrc();
 
     useEffect(() => {
         if (musicItem) {
-            searchLrc(musicItem.title, 1);
+            searchLrc(musicItem.alias || musicItem.title, 1);
         }
     }, []);
 
