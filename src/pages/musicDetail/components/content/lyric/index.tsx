@@ -2,7 +2,12 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {LayoutRectangle, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import useDelayFalsy from '@/hooks/useDelayFalsy';
-import {FlatList, TapGestureHandler} from 'react-native-gesture-handler';
+import {
+    FlatList,
+    Gesture,
+    GestureDetector,
+    TapGestureHandler,
+} from 'react-native-gesture-handler';
 import {fontSizeConst} from '@/constants/uiConst';
 import {IconButtonWithGesture} from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
@@ -14,7 +19,8 @@ import {musicIsPaused} from '@/utils/trackUtils';
 import delay from '@/utils/delay';
 import DraggingTime from './draggingTime';
 import LyricItemComponent from './lyricItem';
-import Config from '@/core/config';
+import PersistStatus from '@/core/persistStatus';
+import LyricOperations from './lyricOperations';
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -23,11 +29,20 @@ interface IItemHeights {
     [k: number]: number;
 }
 
-export default function Lyric() {
+interface IProps {
+    onTurnPageClick?: () => void;
+}
+
+export default function Lyric(props: IProps) {
+    const {onTurnPageClick} = props;
+
     const {loading, meta, lyrics, translationLyrics, hasTranslation} =
         LyricManager.useLyricState();
     const currentLrcItem = LyricManager.useCurrentLyric();
-    const showTranslation = Config.useConfig('setting.lyric.showTranslation');
+    const showTranslation = PersistStatus.useValue(
+        'lyric.showTranslation',
+        false,
+    );
 
     // 是否展示拖拽
     const dragShownRef = useRef(false);
@@ -37,6 +52,7 @@ export default function Lyric() {
     const musicState = TrackPlayer.useMusicState();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
+    const isMountedRef = useRef(true);
 
     // 用来缓存高度
     const itemHeightsRef = useRef<IItemHeights>({});
@@ -60,6 +76,41 @@ export default function Lyric() {
         },
         [],
     );
+
+    // 滚到当前item
+    const scrollToCurrentLrcItem = useCallback(() => {
+        if (!listRef.current) {
+            return;
+        }
+        const currentLrcItem = LyricManager.getCurrentLyric();
+        const lyrics = LyricManager.getLyricState().lyrics;
+        if (currentLrcItem?.index === -1 || !currentLrcItem) {
+            listRef.current?.scrollToIndex({
+                index: 0,
+                viewPosition: 0.5,
+            });
+        } else {
+            listRef.current?.scrollToIndex({
+                index: Math.min(currentLrcItem.index ?? 0, lyrics.length - 1),
+                viewPosition: 0.5,
+            });
+        }
+    }, []);
+
+    const delayedScrollToCurrentLrcItem = useMemo(() => {
+        let sto: number;
+
+        return () => {
+            if (sto) {
+                clearTimeout(sto);
+            }
+            sto = setTimeout(() => {
+                if (isMountedRef.current) {
+                    scrollToCurrentLrcItem();
+                }
+            }, 200) as any;
+        };
+    }, []);
 
     useEffect(() => {
         // 暂停且拖拽才返回
@@ -86,13 +137,10 @@ export default function Lyric() {
     }, [currentLrcItem, lyrics, draggingIndex]);
 
     useEffect(() => {
-        if (currentLrcItem?.index !== undefined && currentLrcItem.index > -1) {
-            listRef.current?.scrollToIndex({
-                index: currentLrcItem.index,
-                viewPosition: 0.5,
-                animated: false,
-            });
-        }
+        scrollToCurrentLrcItem();
+        return () => {
+            isMountedRef.current = false;
+        };
     }, []);
 
     // 开始滚动时拖拽生效
@@ -140,102 +188,123 @@ export default function Lyric() {
         }
     };
 
+    const tap = Gesture.Tap()
+        .onStart(() => {
+            onTurnPageClick?.();
+        })
+        .runOnJS(true);
+
     return (
-        <View style={globalStyle.fwflex1}>
-            {loading ? (
-                <Loading color="white" />
-            ) : lyrics?.length ? (
-                <FlatList
-                    ref={_ => {
-                        listRef.current = _;
-                    }}
-                    onLayout={e => {
-                        setLayout(e.nativeEvent.layout);
-                    }}
-                    viewabilityConfig={{
-                        itemVisiblePercentThreshold: 100,
-                    }}
-                    onScrollToIndexFailed={({index}) => {
-                        delay(120).then(() => {
-                            listRef.current?.scrollToIndex({
-                                index: Math.min(index ?? 0, lyrics.length - 1),
-                                viewPosition: 0.5,
-                            });
-                        });
-                    }}
-                    fadingEdgeLength={120}
-                    ListHeaderComponent={blankComponent}
-                    ListFooterComponent={blankComponent}
-                    onScrollBeginDrag={onScrollBeginDrag}
-                    onMomentumScrollEnd={onScrollEndDrag}
-                    onScroll={onScroll}
-                    scrollEventThrottle={32}
-                    style={styles.wrapper}
-                    data={lyrics}
-                    initialNumToRender={30}
-                    overScrollMode="never"
-                    extraData={currentLrcItem}
-                    renderItem={({item, index}) => {
-                        let text = item.lrc;
+        <>
+            <GestureDetector gesture={tap}>
+                <View style={globalStyle.fwflex1}>
+                    {loading ? (
+                        <Loading color="white" />
+                    ) : lyrics?.length ? (
+                        <FlatList
+                            ref={_ => {
+                                listRef.current = _;
+                            }}
+                            onLayout={e => {
+                                setLayout(e.nativeEvent.layout);
+                            }}
+                            viewabilityConfig={{
+                                itemVisiblePercentThreshold: 100,
+                            }}
+                            onScrollToIndexFailed={({index}) => {
+                                delay(120).then(() => {
+                                    listRef.current?.scrollToIndex({
+                                        index: Math.min(
+                                            index ?? 0,
+                                            lyrics.length - 1,
+                                        ),
+                                        viewPosition: 0.5,
+                                    });
+                                });
+                            }}
+                            fadingEdgeLength={120}
+                            ListHeaderComponent={blankComponent}
+                            ListFooterComponent={blankComponent}
+                            onScrollBeginDrag={onScrollBeginDrag}
+                            onMomentumScrollEnd={onScrollEndDrag}
+                            onScroll={onScroll}
+                            scrollEventThrottle={32}
+                            style={styles.wrapper}
+                            data={lyrics}
+                            initialNumToRender={30}
+                            overScrollMode="never"
+                            extraData={currentLrcItem}
+                            renderItem={({item, index}) => {
+                                let text = item.lrc;
 
-                        if (showTranslation && hasTranslation) {
-                            const transLrc = translationLyrics?.[index]?.lrc;
-                            if (transLrc) {
-                                text += `\n${transLrc}`;
-                            }
-                        }
+                                if (showTranslation && hasTranslation) {
+                                    const transLrc =
+                                        translationLyrics?.[index]?.lrc;
+                                    if (transLrc) {
+                                        text += `\n${transLrc}`;
+                                    }
+                                }
 
-                        return (
-                            <LyricItemComponent
-                                index={index}
-                                text={text}
-                                onLayout={handleLyricItemLayout}
-                                light={draggingIndex === index}
-                                highlight={currentLrcItem?.index === index}
+                                return (
+                                    <LyricItemComponent
+                                        index={index}
+                                        text={text}
+                                        onLayout={handleLyricItemLayout}
+                                        light={draggingIndex === index}
+                                        highlight={
+                                            currentLrcItem?.index === index
+                                        }
+                                    />
+                                );
+                            }}
+                        />
+                    ) : (
+                        <View style={globalStyle.fullCenter}>
+                            <Text style={styles.white}>暂无歌词</Text>
+                            <TapGestureHandler
+                                onActivated={() => {
+                                    showPanel('SearchLrc', {
+                                        musicItem:
+                                            TrackPlayer.getCurrentMusic(),
+                                    });
+                                }}>
+                                <Text style={styles.searchLyric}>搜索歌词</Text>
+                            </TapGestureHandler>
+                        </View>
+                    )}
+                    {draggingIndex !== undefined && (
+                        <View
+                            style={[
+                                styles.draggingTime,
+                                layout?.height
+                                    ? {
+                                          top:
+                                              (layout.height - ITEM_HEIGHT) / 2,
+                                      }
+                                    : null,
+                            ]}>
+                            <DraggingTime
+                                time={
+                                    (lyrics[draggingIndex]?.time ?? 0) +
+                                    +(meta?.offset ?? 0)
+                                }
                             />
-                        );
-                    }}
-                />
-            ) : (
-                <View style={globalStyle.fullCenter}>
-                    <Text style={styles.white}>暂无歌词</Text>
-                    <TapGestureHandler
-                        onActivated={() => {
-                            showPanel('SearchLrc', {
-                                musicItem: TrackPlayer.getCurrentMusic(),
-                            });
-                        }}>
-                        <Text style={styles.searchLyric}>搜索歌词</Text>
-                    </TapGestureHandler>
-                </View>
-            )}
-            {draggingIndex !== undefined && (
-                <View
-                    style={[
-                        styles.draggingTime,
-                        layout?.height
-                            ? {
-                                  top: (layout.height - ITEM_HEIGHT) / 2,
-                              }
-                            : null,
-                    ]}>
-                    <DraggingTime
-                        time={
-                            (lyrics[draggingIndex]?.time ?? 0) +
-                            +(meta?.offset ?? 0)
-                        }
-                    />
-                    <View style={styles.singleLine} />
+                            <View style={styles.singleLine} />
 
-                    <IconButtonWithGesture
-                        style={styles.playIcon}
-                        sizeType="small"
-                        name="play"
-                        onPress={onLyricSeekPress}
-                    />
+                            <IconButtonWithGesture
+                                style={styles.playIcon}
+                                sizeType="small"
+                                name="play"
+                                onPress={onLyricSeekPress}
+                            />
+                        </View>
+                    )}
                 </View>
-            )}
-        </View>
+            </GestureDetector>
+            <LyricOperations
+                scrollToCurrentLrcItem={delayedScrollToCurrentLrcItem}
+            />
+        </>
     );
 }
 

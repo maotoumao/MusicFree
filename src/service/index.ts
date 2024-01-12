@@ -72,8 +72,8 @@ module.exports = async function () {
             const currentLyricItem = parser.getPosition(evt.position).lrc;
             if (prevLyricText !== currentLyricItem?.lrc) {
                 LyricManager.setCurrentLyric(currentLyricItem ?? null);
-                const showTranslation = Config.get(
-                    'setting.lyric.showTranslation',
+                const showTranslation = PersistStatus.get(
+                    'lyric.showTranslation',
                 );
                 if (Config.get('setting.lyric.showStatusBarLyric')) {
                     LyricUtil.setStatusBarLyricText(

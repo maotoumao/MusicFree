@@ -69,7 +69,6 @@ interface IConfig {
             fontSize: number;
             // 详情页的字体大小
             detailFontSize: number;
-            showTranslation: boolean;
         };
 
         /** 主题 */

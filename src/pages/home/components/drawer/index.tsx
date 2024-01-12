@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {StyleSheet, View, BackHandler} from 'react-native';
+import {StyleSheet, View, BackHandler, Platform} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import ListItem from '@/components/base/listItem';
@@ -57,14 +57,17 @@ function HomeDrawer(props: any) {
                 navigateToSetting('backup');
             },
         },
-        {
+    ];
+
+    if (Platform.OS === 'android') {
+        otherSetting.push({
             icon: 'cellphone-key',
             title: '权限管理',
             onPress: () => {
                 navigate(ROUTE_PATH.PERMISSIONS);
             },
-        },
-    ] as const;
+        });
+    }
 
     return (
         <>

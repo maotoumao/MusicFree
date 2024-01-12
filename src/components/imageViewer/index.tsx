@@ -83,7 +83,9 @@ export function ImageViewComponent() {
                         }
                     }}>
                     <View style={style.button}>
-                        <ThemeText color="white">点击保存</ThemeText>
+                        <ThemeText color="white" fontSize="title">
+                            点击保存
+                        </ThemeText>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -117,10 +119,10 @@ const style = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.8)',
     },
     button: {
-        marginTop: rpx(36),
+        marginTop: rpx(48),
         paddingHorizontal: rpx(18),
         paddingVertical: rpx(12),
-        borderRadius: rpx(8),
+        borderRadius: rpx(12),
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: 'rgba(255,255,255,0.1)',

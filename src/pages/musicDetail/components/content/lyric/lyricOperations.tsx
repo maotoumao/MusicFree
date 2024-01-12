@@ -13,13 +13,22 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {hidePanel, showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import MediaExtra from '@/core/mediaExtra';
+import PersistStatus from '@/core/persistStatus';
 
-interface ILyricOperationsProps {}
+interface ILyricOperationsProps {
+    scrollToCurrentLrcItem: () => void;
+}
 
-export default function LyricOperations(_props: ILyricOperationsProps) {
+export default function LyricOperations(props: ILyricOperationsProps) {
+    const {scrollToCurrentLrcItem} = props;
+
     const lyricConfig = Config.useConfig('setting.lyric');
 
     const hasTranslation = LyricManager.useLyricState()?.hasTranslation;
+    const showTranslation = PersistStatus.useValue(
+        'lyric.showTranslation',
+        false,
+    );
     const colors = useColors();
 
     return (
@@ -33,6 +42,7 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
                         defaultSelect: lyricConfig?.detailFontSize ?? 1,
                         onSelectChange(value) {
                             Config.set('setting.lyric.detailFontSize', value);
+                            scrollToCurrentLrcItem();
                         },
                     });
                 }}
@@ -52,6 +62,7 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
                                     lyricOffset: offset,
                                 });
                                 LyricManager.refreshLyric();
+                                scrollToCurrentLrcItem();
                                 hidePanel();
                             },
                         });
@@ -121,17 +132,9 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
             <TranslationIcon
                 width={iconSizeConst.normal}
                 height={iconSizeConst.normal}
-                opacity={
-                    !hasTranslation
-                        ? 0.2
-                        : lyricConfig?.showTranslation
-                        ? 1
-                        : 0.5
-                }
+                opacity={!hasTranslation ? 0.2 : showTranslation ? 1 : 0.5}
                 color={
-                    lyricConfig?.showTranslation && hasTranslation
-                        ? colors.primary
-                        : 'white'
+                    showTranslation && hasTranslation ? colors.primary : 'white'
                 }
                 // style={}
                 onPress={() => {
@@ -139,10 +142,12 @@ export default function LyricOperations(_props: ILyricOperationsProps) {
                         Toast.warn('当前歌曲无翻译');
                         return;
                     }
-                    Config.set(
-                        'setting.lyric.showTranslation',
-                        !lyricConfig?.showTranslation,
+
+                    PersistStatus.set(
+                        'lyric.showTranslation',
+                        !showTranslation,
                     );
+                    scrollToCurrentLrcItem();
                 }}
             />
         </View>
