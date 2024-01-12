@@ -36,6 +36,8 @@ declare namespace IMusic {
         artist: string;
         /** 标题 */
         title: string;
+        /** 别名 */
+        alias?: string;
         /** 时长(s) */
         duration: number;
         /** 专辑名 */

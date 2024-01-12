@@ -26,7 +26,7 @@ export default function useSearchLrc() {
             const tgtPlugin = PluginManager.getByHash(pluginHash);
             tgtPlugin && (plugins = [tgtPlugin]);
         } else {
-            plugins = PluginManager.getSearchablePlugins();
+            plugins = PluginManager.getSearchablePlugins('lyric');
         }
         if (plugins.length === 0) {
             searchResultStore.setValue(

@@ -69,6 +69,8 @@ interface IConfig {
             fontSize: number;
             // 详情页的字体大小
             detailFontSize: number;
+            // 自动搜索歌词
+            autoSearchLyric: boolean;
         };
 
         /** 主题 */

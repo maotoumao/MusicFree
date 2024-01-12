@@ -27,6 +27,15 @@ const lyricStateStore = new GlobalState<{
 });
 
 const currentLyricStore = new GlobalState<ILyric.IParsedLrcItem | null>(null);
+const loadingState = {
+    loading: true,
+    lyrics: [],
+    hasTranslation: false,
+};
+
+function setLyricLoading() {
+    lyricStateStore.setValue(loadingState);
+}
 
 // 重新获取歌词
 async function refreshLyric(fromStart?: boolean, forceRequest = false) {
@@ -56,11 +65,7 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
             forceRequest ||
             !isSameMediaItem(currentParserMusicItem, musicItem)
         ) {
-            lyricStateStore.setValue({
-                loading: true,
-                lyrics: [],
-                hasTranslation: false,
-            });
+            lyricStateStore.setValue(loadingState);
             currentLyricStore.setValue(null);
 
             lrcSource = await PluginManager.getByMedia(
@@ -68,6 +73,29 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
             )?.methods?.getLyric(musicItem);
         } else {
             lrcSource = lyricStateStore.getValue().lyricParser!.lrcSource;
+        }
+
+        if (!lrcSource && Config.get('setting.lyric.autoSearchLyric')) {
+            const keyword = musicItem.alias || musicItem.title;
+            const plugins = PluginManager.getSearchablePlugins('lyric');
+
+            for (let plugin of plugins) {
+                const realtimeMusicItem = TrackPlayer.getCurrentMusic();
+                if (!isSameMediaItem(musicItem, realtimeMusicItem)) {
+                    return;
+                }
+                const results = await plugin.methods
+                    .search(keyword, 1, 'lyric')
+                    .catch(() => null);
+                if (results?.data[0]) {
+                    lrcSource = await plugin.methods
+                        .getLyric(results.data[0])
+                        .catch(() => null);
+                    if (lrcSource) {
+                        break;
+                    }
+                }
+            }
         }
 
         const realtimeMusicItem = TrackPlayer.getCurrentMusic();
@@ -140,6 +168,7 @@ const LyricManager = {
     getCurrentLyric: currentLyricStore.getValue,
     setCurrentLyric: currentLyricStore.setValue,
     refreshLyric,
+    setLyricLoading,
 };
 
 export default LyricManager;

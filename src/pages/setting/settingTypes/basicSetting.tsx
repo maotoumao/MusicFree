@@ -503,6 +503,12 @@ function LyricSetting() {
 
     const colors = useColors();
 
+    const autoSearchLyric = createSwitch(
+        '歌词缺失时自动搜索歌词',
+        'setting.lyric.autoSearchLyric',
+        lyricSetting?.autoSearchLyric ?? false,
+    );
+
     const openStatusBarLyric = createSwitch(
         '开启桌面歌词',
         'setting.lyric.showStatusBarLyric',
@@ -555,6 +561,13 @@ function LyricSetting() {
 
     return (
         <View>
+            <ListItem
+                withHorizonalPadding
+                heightType="small"
+                onPress={autoSearchLyric.onPress}>
+                <ListItem.Content title={autoSearchLyric.title} />
+                {autoSearchLyric.right}
+            </ListItem>
             <ListItem
                 withHorizonalPadding
                 heightType="small"
