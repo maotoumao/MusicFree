@@ -61,7 +61,7 @@
     "react-native-fast-image": "^8.6.3",
     "react-native-file-access": "^2.5.0",
     "react-native-fs": "^2.20.0",
-    "react-native-gesture-handler": "^2.12.1",
+    "react-native-gesture-handler": "^2.14.1",
     "react-native-get-random-values": "^1.9.0",
     "react-native-image-colors": "^1.5.1",
     "react-native-image-picker": "^4.10.0",

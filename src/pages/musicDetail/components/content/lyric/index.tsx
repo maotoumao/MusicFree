@@ -21,6 +21,7 @@ import DraggingTime from './draggingTime';
 import LyricItemComponent from './lyricItem';
 import PersistStatus from '@/core/persistStatus';
 import LyricOperations from './lyricOperations';
+import MediaExtra from '@/core/mediaExtra';
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -44,14 +45,22 @@ export default function Lyric(props: IProps) {
         false,
     );
 
-    // 是否展示拖拽
-    const dragShownRef = useRef(false);
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
         useDelayFalsy<number | undefined>(undefined, 2000);
-    const listRef = useRef<FlatList<ILyric.IParsedLrcItem> | null>();
     const musicState = TrackPlayer.useMusicState();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
+
+    const listRef = useRef<FlatList<ILyric.IParsedLrcItem> | null>();
+
+    const currentMusicItem = TrackPlayer.useCurrentMusic();
+    const associateMusicItem = currentMusicItem
+        ? MediaExtra.get(currentMusicItem)?.associatedLrc
+        : null;
+    // 是否展示拖拽
+    const dragShownRef = useRef(false);
+
+    // 组件是否挂载
     const isMountedRef = useRef(true);
 
     // 用来缓存高度
@@ -188,15 +197,26 @@ export default function Lyric(props: IProps) {
         }
     };
 
-    const tap = Gesture.Tap()
+    const tapGesture = Gesture.Tap()
         .onStart(() => {
             onTurnPageClick?.();
         })
         .runOnJS(true);
 
+    const unlinkTapGesture = Gesture.Tap()
+        .onStart(() => {
+            if (currentMusicItem) {
+                MediaExtra.update(currentMusicItem, {
+                    associatedLrc: undefined,
+                });
+                LyricManager.refreshLyric(false, true);
+            }
+        })
+        .runOnJS(true);
+
     return (
         <>
-            <GestureDetector gesture={tap}>
+            <GestureDetector gesture={tapGesture}>
                 <View style={globalStyle.fwflex1}>
                     {loading ? (
                         <Loading color="white" />
@@ -223,7 +243,38 @@ export default function Lyric(props: IProps) {
                                 });
                             }}
                             fadingEdgeLength={120}
-                            ListHeaderComponent={blankComponent}
+                            ListHeaderComponent={
+                                <>
+                                    {blankComponent}
+                                    <View style={styles.lyricMeta}>
+                                        {associateMusicItem ? (
+                                            <>
+                                                <Text
+                                                    style={styles.lyricMetaText}
+                                                    ellipsizeMode="middle"
+                                                    numberOfLines={1}>
+                                                    歌词关联自「
+                                                    {
+                                                        associateMusicItem.platform
+                                                    }{' '}
+                                                    -{' '}
+                                                    {associateMusicItem.title ||
+                                                        ''}
+                                                    」
+                                                </Text>
+
+                                                <GestureDetector
+                                                    gesture={unlinkTapGesture}>
+                                                    <Text
+                                                        style={styles.linkText}>
+                                                        解除关联
+                                                    </Text>
+                                                </GestureDetector>
+                                            </>
+                                        ) : null}
+                                    </View>
+                                </>
+                            }
                             ListFooterComponent={blankComponent}
                             onScrollBeginDrag={onScrollBeginDrag}
                             onMomentumScrollEnd={onScrollEndDrag}
@@ -319,6 +370,25 @@ const styles = StyleSheet.create({
     },
     white: {
         color: 'white',
+    },
+    lyricMeta: {
+        position: 'absolute',
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        left: 0,
+        paddingHorizontal: rpx(48),
+        bottom: rpx(48),
+    },
+    lyricMetaText: {
+        color: 'white',
+        opacity: 0.8,
+        maxWidth: '80%',
+    },
+    linkText: {
+        color: '#66ccff',
+        textDecorationLine: 'underline',
     },
     draggingTime: {
         position: 'absolute',
