@@ -34,6 +34,13 @@ interface IProps {
     onTurnPageClick?: () => void;
 }
 
+const fontSizeMap = {
+    0: rpx(24),
+    1: rpx(30),
+    2: rpx(36),
+    3: rpx(42),
+} as Record<number, number>;
+
 export default function Lyric(props: IProps) {
     const {onTurnPageClick} = props;
 
@@ -43,6 +50,13 @@ export default function Lyric(props: IProps) {
     const showTranslation = PersistStatus.useValue(
         'lyric.showTranslation',
         false,
+    );
+    const fontSizeKey = PersistStatus.useValue('lyric.detailFontSize', 1);
+    const fontSizeStyle = useMemo(
+        () => ({
+            fontSize: fontSizeMap[fontSizeKey!],
+        }),
+        [fontSizeKey],
     );
 
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
@@ -250,7 +264,10 @@ export default function Lyric(props: IProps) {
                                         {associateMusicItem ? (
                                             <>
                                                 <Text
-                                                    style={styles.lyricMetaText}
+                                                    style={[
+                                                        styles.lyricMetaText,
+                                                        fontSizeStyle,
+                                                    ]}
                                                     ellipsizeMode="middle"
                                                     numberOfLines={1}>
                                                     歌词关联自「
@@ -266,7 +283,10 @@ export default function Lyric(props: IProps) {
                                                 <GestureDetector
                                                     gesture={unlinkTapGesture}>
                                                     <Text
-                                                        style={styles.linkText}>
+                                                        style={[
+                                                            styles.linkText,
+                                                            fontSizeStyle,
+                                                        ]}>
                                                         解除关联
                                                     </Text>
                                                 </GestureDetector>
@@ -300,6 +320,7 @@ export default function Lyric(props: IProps) {
                                     <LyricItemComponent
                                         index={index}
                                         text={text}
+                                        fontSize={fontSizeStyle.fontSize}
                                         onLayout={handleLyricItemLayout}
                                         light={draggingIndex === index}
                                         highlight={
@@ -311,7 +332,9 @@ export default function Lyric(props: IProps) {
                         />
                     ) : (
                         <View style={globalStyle.fullCenter}>
-                            <Text style={styles.white}>暂无歌词</Text>
+                            <Text style={[styles.white, fontSizeStyle]}>
+                                暂无歌词
+                            </Text>
                             <TapGestureHandler
                                 onActivated={() => {
                                     showPanel('SearchLrc', {
@@ -319,7 +342,10 @@ export default function Lyric(props: IProps) {
                                             TrackPlayer.getCurrentMusic(),
                                     });
                                 }}>
-                                <Text style={styles.searchLyric}>搜索歌词</Text>
+                                <Text
+                                    style={[styles.searchLyric, fontSizeStyle]}>
+                                    搜索歌词
+                                </Text>
                             </TapGestureHandler>
                         </View>
                     )}
