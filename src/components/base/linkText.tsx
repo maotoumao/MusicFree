@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, TextProps} from 'react-native';
+import {GestureResponderEvent, StyleSheet, TextProps} from 'react-native';
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import openUrl from '@/utils/openUrl';
 import ThemeText from './themeText';
@@ -9,6 +9,7 @@ type ILinkTextProps = TextProps & {
     fontSize?: keyof typeof fontSizeConst;
     fontWeight?: keyof typeof fontWeightConst;
     linkTo?: string;
+    onPress?: (event: GestureResponderEvent) => void;
 };
 
 export default function LinkText(props: ILinkTextProps) {
@@ -21,8 +22,12 @@ export default function LinkText(props: ILinkTextProps) {
             onPressIn={() => {
                 setIsPressed(true);
             }}
-            onPress={() => {
-                props?.linkTo && openUrl(props.linkTo);
+            onPress={evt => {
+                if (props.onPress) {
+                    props.onPress(evt);
+                } else {
+                    props?.linkTo && openUrl(props.linkTo);
+                }
             }}
             onPressOut={() => {
                 setIsPressed(false);
