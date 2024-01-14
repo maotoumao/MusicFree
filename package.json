@@ -52,7 +52,7 @@
     "qrcode-generator": "^1.4.4",
     "qs": "^6.11.2",
     "react": "18.0.0",
-    "react-native": "0.69.6",
+    "react-native": "0.69.12",
     "react-native-background-timer": "^2.4.1",
     "react-native-bootsplash": "^4.3.2",
     "react-native-circular-progress-indicator": "^4.4.2",
