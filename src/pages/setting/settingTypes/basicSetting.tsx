@@ -645,10 +645,10 @@ function LyricSetting() {
                     minimumTrackTintColor={colors.primary}
                     maximumTrackTintColor={colors.text ?? '#999999'}
                     thumbTintColor={colors.primary}
-                    minimumValue={8}
+                    minimumValue={Math.round(rpx(8))}
                     step={0.5}
-                    maximumValue={24}
-                    value={lyricSetting?.fontSize ?? 14}
+                    maximumValue={Math.round(rpx(24))}
+                    value={lyricSetting?.fontSize ?? Math.round(rpx(14))}
                     onValueChange={val => {
                         if (lyricSetting?.showStatusBarLyric) {
                             LyricUtil.setStatusBarLyricFontSize(val);
