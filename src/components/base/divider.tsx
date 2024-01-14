@@ -1,10 +1,10 @@
 import React from 'react';
-import {StyleProp, StyleSheet, View, ViewProps} from 'react-native';
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import useColors from '@/hooks/useColors';
 
 interface IDividerProps {
     vertical?: boolean;
-    style?: StyleProp<ViewProps>;
+    style?: StyleProp<ViewStyle>;
 }
 export default function Divider(props: IDividerProps) {
     const {vertical, style} = props;

@@ -12,6 +12,7 @@ import ThemeText from '@/components/base/themeText';
 import LinkText from '@/components/base/linkText';
 import useCheckUpdate from '@/hooks/useCheckUpdate';
 import useOrientation from '@/hooks/useOrientation';
+import Divider from '@/components/base/divider';
 
 export default function AboutSetting() {
     const checkAndShowResult = useCheckUpdate();
@@ -74,13 +75,32 @@ export default function AboutSetting() {
                     source={ImgAsset.wechatChannel}
                     style={style.wcChannel}
                 />
+                <Divider style={style.content} />
+
                 <ThemeText style={style.content}>
                     本软件完全免费，并基于{' '}
                     <ThemeText fontWeight="bold">GPL3.0 协议</ThemeText>{' '}
-                    开源，仅供学习参考使用，不可用于商业目的。
-                    <ThemeText fontWeight="bold">
-                        二次分发请遵守开源协议，将代码开源并标明出处。
-                    </ThemeText>
+                    开源，如果需要使用此代码进行二次开发，请遵守如下约定：
+                </ThemeText>
+
+                <ThemeText style={style.content}>
+                    1. 二次分发版必须同样遵循 GPL 3.0 协议，开源且免费
+                </ThemeText>
+                <ThemeText style={style.content}>
+                    2. 合法合规使用代码，禁止用于商业用途;
+                    修改后的软件造成的任何问题由使用此代码的开发者承担
+                </ThemeText>
+                <ThemeText style={style.content}>
+                    3.
+                    打包、二次分发时请保留代码出处：https://github.com/maotoumao/MusicFree
+                </ThemeText>
+                <ThemeText style={style.content}>
+                    4.
+                    如果使用此代码的开发者不同意以上三条，则视为二次分发版遵守
+                    CC0 协议
+                </ThemeText>
+                <ThemeText style={style.content}>
+                    5. 如果开源协议变更，将在此 Github 仓库更新，不另行通知
                 </ThemeText>
                 <ThemeText style={style.content}>
                     代码已开源到{' '}
@@ -89,6 +109,8 @@ export default function AboutSetting() {
                     </LinkText>
                     ，如果打不开试试把链接中的 github 换成 gitee。
                 </ThemeText>
+
+                <Divider style={style.content} />
 
                 <ThemeText style={style.content}>
                     本软件需要通过插件来完成包括播放、搜索在内的大部分功能，如果你是从第三方下载的插件，
