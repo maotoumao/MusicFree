@@ -1,18 +1,24 @@
-import ToastMessage from 'react-native-toast-message';
+import {showToast, IToastConfig} from '@/components/base/toast';
+
+function success(message: string, config?: IToastConfig) {
+    showToast({
+        message,
+        ...config,
+        type: 'success',
+    });
+}
+
+function warn(message: string, config?: IToastConfig) {
+    showToast({
+        message,
+        ...config,
+        type: 'warn',
+    });
+}
 
 const Toast = {
-    success(msg: string) {
-        ToastMessage.show({
-            type: 'success',
-            text1: msg,
-        });
-    },
-    warn(msg: string) {
-        ToastMessage.show({
-            type: 'warn',
-            text1: msg,
-        });
-    },
+    success,
+    warn,
 };
 
 export default Toast;

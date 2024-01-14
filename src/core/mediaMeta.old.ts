@@ -12,7 +12,7 @@ import {
 import {StorageKeys} from '@/constants/commonConst';
 import objectPath from 'object-path';
 import PluginManager from './pluginManager';
-import MediaMetaNew from './mediaExtra';
+import MediaExtra from './mediaExtra';
 
 // pluginname - tablekey
 let mediaMetaKeys: Record<string, string> = {};
@@ -50,7 +50,7 @@ async function migrate() {
         const entries = Object.entries(platformMeta);
         for (let entry of entries) {
             const metaValue = entry[1] as any;
-            MediaMetaNew.set(
+            MediaExtra.set(
                 {
                     platform,
                     id: entry[0],

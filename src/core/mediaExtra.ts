@@ -3,7 +3,7 @@ import safeParse from '@/utils/safeParse';
 
 // Internal Method
 const getPluginStore = (pluginName: string) => {
-    return getOrCreateMMKV(`MediaMeta.${pluginName}`);
+    return getOrCreateMMKV(`MediaExtra.${pluginName}`);
 };
 
 /** 获取meta信息 */

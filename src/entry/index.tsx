@@ -5,17 +5,16 @@ import bootstrap from './bootstrap';
 import {routes} from './router';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Dialogs from '@/components/dialogs';
-import Toast from 'react-native-toast-message';
 import Panels from '@/components/panels';
 import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import toastConfig from '@/components/base/toast';
 import Debug from '@/components/debug';
 import {ImageViewComponent} from '@/components/imageViewer';
 import {PortalHost} from '@/components/base/portal';
 import globalStyle from '@/constants/globalStyle';
 import Theme from '@/core/theme';
 import {BootstrapComp} from './useBootstrap';
+import {ToastBaseComponent} from '@/components/base/toast';
 
 /**
  * 字体颜色
@@ -55,7 +54,7 @@ export default function Pages() {
                         <ImageViewComponent />
                         <Debug />
                         <PortalHost />
-                        <Toast config={toastConfig} />
+                        <ToastBaseComponent />
                     </NavigationContainer>
                 </SafeAreaProvider>
             </GestureHandlerRootView>

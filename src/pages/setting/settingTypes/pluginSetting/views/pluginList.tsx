@@ -9,7 +9,6 @@ import {trace} from '@/utils/log';
 
 import Toast from '@/utils/toast';
 import axios from 'axios';
-import {addRandomHash} from '@/utils/fileUtils';
 import {useNavigation} from '@react-navigation/native';
 import Config from '@/core/config';
 import Empty from '@/components/base/empty';
@@ -84,13 +83,15 @@ export default function PluginList() {
     async function onInstallFromNetworkClick() {
         showPanel('SimpleInput', {
             title: '安装插件',
-            placeholder: '输入插件URL (以.js或.json结尾)',
+            placeholder: '输入插件URL',
             maxLength: 120,
             async onOk(text, closePanel) {
                 setLoading(true);
                 closePanel();
+
                 const result = await installPluginFromUrl(text.trim());
-                if (result.code === 'success') {
+
+                if (result?.code === 'success') {
                     Toast.success('插件安装成功');
                 } else {
                     Toast.warn(`部分插件安装失败: ${result.message ?? ''}`);
@@ -239,12 +240,23 @@ interface IInstallResult {
     code: 'success' | 'fail';
     message?: string;
 }
+
+const reqHeaders = {
+    'Cache-Control': 'no-cache',
+    Pragma: 'no-cache',
+    Expires: '0',
+};
+
 async function installPluginFromUrl(text: string): Promise<IInstallResult> {
     try {
         let urls: string[] = [];
-        const iptUrl = addRandomHash(text.trim());
+        const iptUrl = text.trim();
         if (text.endsWith('.json')) {
-            const jsonFile = (await axios.get(iptUrl)).data;
+            const jsonFile = (
+                await axios.get(iptUrl, {
+                    headers: reqHeaders,
+                })
+            ).data;
             /**
              * {
              *     plugins: [{
@@ -253,9 +265,7 @@ async function installPluginFromUrl(text: string): Promise<IInstallResult> {
              *      }]
              * }
              */
-            urls = (jsonFile?.plugins ?? []).map((_: any) =>
-                addRandomHash(_.url),
-            );
+            urls = (jsonFile?.plugins ?? []).map((_: any) => _.url);
         } else {
             urls = [iptUrl];
         }
