@@ -139,29 +139,31 @@ export default function Sheets() {
                                         : `${sheet.artist}`
                                 }
                             />
-                            <ListItem.ListItemIcon
-                                position="right"
-                                icon="trash-can-outline"
-                                onPress={() => {
-                                    showDialog('SimpleDialog', {
-                                        title: '删除歌单',
-                                        content: `确定删除歌单「${sheet.title}」吗?`,
-                                        onOk: async () => {
-                                            if (isLocalSheet) {
-                                                await MusicSheet.removeSheet(
-                                                    sheet.id,
-                                                );
-                                                Toast.success('已删除');
-                                            } else {
-                                                await MusicSheet.unstarMusicSheet(
-                                                    sheet,
-                                                );
-                                                Toast.success('已取消收藏');
-                                            }
-                                        },
-                                    });
-                                }}
-                            />
+                            {sheet.id !== MusicSheet.defaultSheet.id ? (
+                                <ListItem.ListItemIcon
+                                    position="right"
+                                    icon="trash-can-outline"
+                                    onPress={() => {
+                                        showDialog('SimpleDialog', {
+                                            title: '删除歌单',
+                                            content: `确定删除歌单「${sheet.title}」吗?`,
+                                            onOk: async () => {
+                                                if (isLocalSheet) {
+                                                    await MusicSheet.removeSheet(
+                                                        sheet.id,
+                                                    );
+                                                    Toast.success('已删除');
+                                                } else {
+                                                    await MusicSheet.unstarMusicSheet(
+                                                        sheet,
+                                                    );
+                                                    Toast.success('已取消收藏');
+                                                }
+                                            },
+                                        });
+                                    }}
+                                />
+                            ) : null}
                         </ListItem>
                     );
                 }}

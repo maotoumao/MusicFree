@@ -497,6 +497,17 @@ const play = async (
 
         // 4. 更新列表状态和当前音乐
         setCurrentMusic(musicItem);
+        await ReactNativeTrackPlayer.reset();
+
+        // 4.1 刷新歌词信息
+        if (
+            !isSameMediaItem(
+                LyricManager.getLyricState()?.lyricParser?.getCurrentMusicItem?.(),
+                musicItem,
+            )
+        ) {
+            DeviceEventEmitter.emit(EDeviceEvents.REFRESH_LYRIC, true);
+        }
 
         // 5. 获取音源
         let track: IMusic.IMusicItem;
@@ -587,16 +598,6 @@ const play = async (
                 0,
                 mergedTrack as TrackMetadataBase,
             );
-        }
-
-        // 12. 刷新歌词信息
-        if (
-            !isSameMediaItem(
-                LyricManager.getLyricState()?.lyricParser?.getCurrentMusicItem?.(),
-                musicItem,
-            )
-        ) {
-            DeviceEventEmitter.emit(EDeviceEvents.REFRESH_LYRIC, true);
         }
     } catch (e: any) {
         const message = e?.message;
