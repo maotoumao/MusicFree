@@ -1054,12 +1054,22 @@ async function installPlugin(
     throw new Error('插件无法识别!');
 }
 
+const reqHeaders = {
+    'Cache-Control': 'no-cache',
+    Pragma: 'no-cache',
+    Expires: '0',
+};
+
 async function installPluginFromUrl(
     url: string,
     config?: IInstallPluginConfig,
 ) {
     try {
-        const funcCode = (await axios.get(url)).data;
+        const funcCode = (
+            await axios.get(url, {
+                headers: reqHeaders,
+            })
+        ).data;
         if (funcCode) {
             const plugin = new Plugin(funcCode, '');
             const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
