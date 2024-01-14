@@ -168,7 +168,18 @@ async function extraMakeup() {
     async function handleLinkingUrl(url: string) {
         // 插件
         try {
-            if (url.endsWith('.js')) {
+            if (url.startsWith('musicfree://install/')) {
+                const plugins = url
+                    .slice(20)
+                    .split(',')
+                    .map(decodeURIComponent);
+                await Promise.all(
+                    plugins.map(it =>
+                        PluginManager.installPluginFromUrl(it).catch(() => {}),
+                    ),
+                );
+                Toast.success('安装成功~');
+            } else if (url.endsWith('.js')) {
                 PluginManager.installPlugin(url, {
                     notCheckVersion: Config.get(
                         'setting.basic.notCheckPluginVersion',
