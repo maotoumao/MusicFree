@@ -96,7 +96,7 @@ export default function AboutSetting() {
                 </ThemeText>
                 <ThemeText style={style.content}>
                     4.
-                    如果使用此代码的开发者不同意以上三条，则视为二次分发版遵守
+                    如果使用此代码的开发者不同意以上三条，则视为二次分发版中修改部分的代码遵守
                     CC0 协议
                 </ThemeText>
                 <ThemeText style={style.content}>
