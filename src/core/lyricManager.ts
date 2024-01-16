@@ -12,6 +12,7 @@ import Config from './config';
 import LyricUtil from '@/native/lyricUtil';
 import TrackPlayer from './trackPlayer';
 import MediaExtra from './mediaExtra';
+import minDistance from '@/utils/minDistance';
 
 const lyricStateStore = new GlobalState<{
     loading: boolean;
@@ -79,22 +80,54 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
             const keyword = musicItem.alias || musicItem.title;
             const plugins = PluginManager.getSearchablePlugins('lyric');
 
+            let distance = Infinity;
+            let minDistanceMusicItem;
+            let targetPlugin;
+
             for (let plugin of plugins) {
                 const realtimeMusicItem = TrackPlayer.getCurrentMusic();
-                if (!isSameMediaItem(musicItem, realtimeMusicItem)) {
+                if (
+                    !isSameMediaItem(musicItem, realtimeMusicItem) ||
+                    plugin.name === musicItem.platform
+                ) {
                     return;
                 }
                 const results = await plugin.methods
                     .search(keyword, 1, 'lyric')
                     .catch(() => null);
-                if (results?.data[0]) {
-                    lrcSource = await plugin.methods
-                        .getLyric(results.data[0])
-                        .catch(() => null);
-                    if (lrcSource) {
+
+                // 取前两个
+                const firstTwo = results?.data?.slice(0, 2) || [];
+
+                for (let item of firstTwo) {
+                    if (
+                        item.title === keyword &&
+                        item.artist === musicItem.artist
+                    ) {
+                        distance = 0;
+                        minDistanceMusicItem = item;
+                        targetPlugin = plugin;
                         break;
+                    } else {
+                        const dist =
+                            minDistance(keyword, musicItem.title) +
+                            minDistance(item.artist, musicItem.artist);
+                        if (dist < distance) {
+                            distance = dist;
+                            minDistanceMusicItem = item;
+                            targetPlugin = plugin;
+                        }
                     }
                 }
+
+                if (distance === 0) {
+                    break;
+                }
+            }
+            if (minDistanceMusicItem && targetPlugin) {
+                lrcSource = await targetPlugin.methods
+                    .getLyric(minDistanceMusicItem)
+                    .catch(() => null);
             }
         }
 

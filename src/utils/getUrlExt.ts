@@ -6,5 +6,14 @@ export default function getUrlExt(url?: string) {
     }
     const ext = path.extname(url);
 
-    return ext || url;
+    const extraTag = ext.indexOf('?');
+
+    if (ext) {
+        if (extraTag !== -1) {
+            return ext.slice(0, extraTag);
+        } else {
+            return ext;
+        }
+    }
+    return url;
 }
