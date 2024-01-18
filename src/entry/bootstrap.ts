@@ -19,11 +19,11 @@ import LocalMusicSheet from '@/core/localMusicSheet';
 import {Linking} from 'react-native';
 import Theme from '@/core/theme';
 import LyricManager from '@/core/lyricManager';
-import {getStorage, setStorage} from '@/utils/storage';
 import Toast from '@/utils/toast';
 import {localPluginHash, supportLocalMediaType} from '@/constants/commonConst';
 import TrackPlayer from '@/core/trackPlayer';
 import musicHistory from '@/core/musicHistory';
+import PersistStatus from '@/core/persistStatus';
 
 /** app加载前执行
  * 1. 检查权限
@@ -149,11 +149,10 @@ async function extraMakeup() {
     // 自动更新
     try {
         if (Config.get('setting.basic.autoUpdatePlugin')) {
-            const lastUpdated =
-                (await getStorage('pluginLastupdatedTime')) || 0;
+            const lastUpdated = PersistStatus.get('app.pluginUpdateTime') || 0;
             const now = Date.now();
             if (Math.abs(now - lastUpdated) > 86400000) {
-                setStorage('pluginLastupdatedTime', now);
+                PersistStatus.set('app.pluginUpdateTime', now);
                 const plugins = PluginManager.getValidPlugins();
                 for (let i = 0; i < plugins.length; ++i) {
                     const srcUrl = plugins[i].instance.srcUrl;

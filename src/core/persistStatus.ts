@@ -22,6 +22,8 @@ interface IPersistConfig {
     'music.quality': IMusic.IQualityKey;
     /** app */
     'app.skipVersion': string;
+    /** 上次更新插件的时间 */
+    'app.pluginUpdateTime': number;
     /** 歌词-是否启用翻译 */
     'lyric.showTranslation': boolean;
     /** 歌词-详情页字体大小 */

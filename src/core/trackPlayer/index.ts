@@ -128,6 +128,8 @@ async function setupTrackPlayer() {
         track.url = newSource?.url || track.url;
         track.headers = newSource?.headers || track.headers;
 
+        // TODO: 播放失败
+
         await setTrackSource(track as Track, false);
         setCurrentMusic(track);
 

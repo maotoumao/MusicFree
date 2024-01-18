@@ -56,6 +56,8 @@ interface IConfig {
             notCheckPluginVersion: boolean;
             /** 关联歌词方式 */
             associateLyricType: 'input' | 'search';
+            // 是否展示退出按钮
+            showExitOnNotification: boolean;
         };
         /** 歌词 */
         lyric: {
