@@ -158,6 +158,11 @@ export default function BasicSetting() {
                         search: '搜索歌词',
                     },
                 ),
+                createSwitch(
+                    '通知栏显示关闭按钮 (重启后生效)',
+                    'setting.basic.showExitOnNotification',
+                    basicSetting?.showExitOnNotification ?? false,
+                ),
             ],
         },
         {

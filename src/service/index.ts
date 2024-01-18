@@ -90,4 +90,12 @@ module.exports = async function () {
             }
         }
     });
+
+    RNTrackPlayer.addEventListener(Event.RemoteStop, async () => {
+        RNTrackPlayer.stop();
+    });
+
+    RNTrackPlayer.addEventListener(Event.RemoteSeek, async evt => {
+        TrackPlayer.seekTo(evt.position);
+    });
 };

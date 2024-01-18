@@ -73,6 +73,21 @@ async function _bootstrap() {
             throw e;
         }
     }
+
+    const capabilities = Config.get('setting.basic.showExitOnNotification')
+        ? [
+              Capability.Play,
+              Capability.Pause,
+              Capability.SkipToNext,
+              Capability.SkipToPrevious,
+              Capability.Stop,
+          ]
+        : [
+              Capability.Play,
+              Capability.Pause,
+              Capability.SkipToNext,
+              Capability.SkipToPrevious,
+          ];
     await RNTrackPlayer.updateOptions({
         icon: ImgAsset.logoTransparent,
         progressUpdateEventInterval: 1,
@@ -81,24 +96,9 @@ async function _bootstrap() {
             appKilledPlaybackBehavior:
                 AppKilledPlaybackBehavior.ContinuePlayback,
         },
-        capabilities: [
-            Capability.Play,
-            Capability.Pause,
-            Capability.SkipToNext,
-            Capability.SkipToPrevious,
-        ],
-        compactCapabilities: [
-            Capability.Play,
-            Capability.Pause,
-            Capability.SkipToNext,
-            Capability.SkipToPrevious,
-        ],
-        notificationCapabilities: [
-            Capability.Play,
-            Capability.Pause,
-            Capability.SkipToNext,
-            Capability.SkipToPrevious,
-        ],
+        capabilities: capabilities,
+        compactCapabilities: capabilities,
+        notificationCapabilities: [...capabilities, Capability.SeekTo],
     });
     trace('播放器初始化完成');
     await Cache.setup();

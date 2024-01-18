@@ -478,10 +478,13 @@ const play = async (
                     // 2.1.1 强制重新开始
                     await ReactNativeTrackPlayer.seekTo(0);
                 }
-                if (
-                    (await ReactNativeTrackPlayer.getPlaybackState()).state !==
-                    State.Playing
-                ) {
+                const currentState = (
+                    await ReactNativeTrackPlayer.getPlaybackState()
+                ).state;
+                if (currentState === State.Stopped) {
+                    await setTrackSource(currentTrack);
+                }
+                if (currentState !== State.Playing) {
                     // 2.1.2 恢复播放
                     await ReactNativeTrackPlayer.play();
                 }
@@ -603,6 +606,7 @@ const play = async (
         }
     } catch (e: any) {
         const message = e?.message;
+        console.log(message);
         if (
             message === 'The player is not initialized. Call setupPlayer first.'
         ) {
