@@ -127,8 +127,9 @@ async function setupTrackPlayer() {
         // 重新初始化 获取最新的链接
         track.url = newSource?.url || track.url;
         track.headers = newSource?.headers || track.headers;
-
-        // TODO: 播放失败
+        if (!Config.get('setting.basic.autoPlayWhenAppStart')) {
+            track.isInit = true;
+        }
 
         await setTrackSource(track as Track, false);
         setCurrentMusic(track);
@@ -162,6 +163,18 @@ async function setupTrackPlayer() {
             Event.PlaybackError,
             async e => {
                 // WARNING: 不稳定，报错的时候有可能track已经变到下一首歌去了
+                const currentTrack =
+                    await ReactNativeTrackPlayer.getActiveTrack();
+                if (currentTrack?.isInit) {
+                    // HACK: 避免初始失败的情况
+                    ReactNativeTrackPlayer.updateMetadataForTrack(0, {
+                        ...currentTrack,
+                        // @ts-ignore
+                        isInit: undefined,
+                    });
+                    return;
+                }
+
                 if (
                     (await ReactNativeTrackPlayer.getActiveTrackIndex()) ===
                         0 &&
@@ -172,6 +185,7 @@ async function setupTrackPlayer() {
                         message: e.message,
                         code: e.code,
                     });
+
                     failToPlay();
                 }
             },
@@ -225,14 +239,6 @@ const _toggleRepeatMapping = {
 /** 切换下一个模式 */
 const toggleRepeatMode = () => {
     setRepeatMode(_toggleRepeatMapping[repeatModeStore.getValue()]);
-};
-
-/** 设置音源 */
-const setTrackSource = async (track: Track, autoPlay = true) => {
-    await ReactNativeTrackPlayer.setQueue([track, getFakeNextTrack()]);
-    if (autoPlay) {
-        await ReactNativeTrackPlayer.play();
-    }
 };
 
 /**
@@ -412,6 +418,16 @@ const pause = async () => {
     await ReactNativeTrackPlayer.pause();
 };
 
+/** 设置音源 */
+const setTrackSource = async (track: Track, autoPlay = true) => {
+    await ReactNativeTrackPlayer.setQueue([track, getFakeNextTrack()]);
+    PersistStatus.set('music.musicItem', track as IMusic.IMusicItem);
+    PersistStatus.set('music.progress', 0);
+    if (autoPlay) {
+        await ReactNativeTrackPlayer.play();
+    }
+};
+
 const setCurrentMusic = (musicItem?: IMusic.IMusicItem | null) => {
     if (!musicItem) {
         currentIndex = -1;
@@ -422,9 +438,6 @@ const setCurrentMusic = (musicItem?: IMusic.IMusicItem | null) => {
     }
     currentIndex = getMusicIndex(musicItem);
     currentMusicStore.setValue(musicItem);
-
-    PersistStatus.set('music.musicItem', musicItem);
-    PersistStatus.set('music.progress', 0);
 };
 
 const setQuality = (quality: IMusic.IQualityKey) => {
