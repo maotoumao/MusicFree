@@ -103,6 +103,8 @@
 
 ## 应用截图
 
+**以下截图仅为 UI 样例，软件内部不提供任何音源，不代表实际使用时表现如下图。**
+
 #### 主界面
 
 ![主界面](./.imgs/main.jpg)
@@ -111,9 +113,6 @@
 
 - 基础设置
 ![基础设置](./.imgs/basic-setting.jpg)
-
-- 插件设置
-![插件设置](./.imgs/plugin-setting.jpg)
 
 - 主题设置
 ![主题设置](./.imgs/theme-setting.jpg)
@@ -132,22 +131,8 @@
 - 歌词页
 ![歌词页](./.imgs/song-lrc.jpg)
 
-- 播放列表页
-![播放列表页](./.imgs/play-list.jpg)
 
 #### 搜索相关
-
-- 搜索单曲
-![搜索单曲](./.imgs/search.jpg)
-
-- 搜索专辑
-![搜索专辑](./.imgs/search-album.jpg)
-
-- 专辑信息
-![专辑信息](./.imgs/album-detail.jpg)
-
-- 搜索作者
-![搜索作者](./.imgs/search-artist.jpg)
 
 - 作者信息
 ![专辑信息](./.imgs/artist-detail.jpg)
