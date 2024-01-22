@@ -420,6 +420,9 @@ const pause = async () => {
 
 /** 设置音源 */
 const setTrackSource = async (track: Track, autoPlay = true) => {
+    if (!track.artwork?.trim()?.length) {
+        track.artwork = undefined;
+    }
     await ReactNativeTrackPlayer.setQueue([track, getFakeNextTrack()]);
     PersistStatus.set('music.musicItem', track as IMusic.IMusicItem);
     PersistStatus.set('music.progress', 0);
@@ -598,9 +601,10 @@ const play = async (
         musicHistory.addMusic(musicItem);
 
         trace('获取音源成功', track);
-
+        console.log('SSS', source, track);
         // 9. 设置音源
         await setTrackSource(track as Track);
+        console.log('DDD', source, track);
 
         // 10. 获取补充信息
         let info: Partial<IMusic.IMusicItem> | null = null;
@@ -619,7 +623,7 @@ const play = async (
         }
     } catch (e: any) {
         const message = e?.message;
-        console.log(message);
+        console.log(message, 'MMM', e);
         if (
             message === 'The player is not initialized. Call setupPlayer first.'
         ) {

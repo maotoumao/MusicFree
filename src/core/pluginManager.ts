@@ -43,7 +43,7 @@ import {FileSystem} from 'react-native-file-access';
 import Mp3Util from '@/native/mp3Util';
 import {PluginMeta} from './pluginMeta';
 import {useEffect, useState} from 'react';
-import {getFileName} from '@/utils/fileUtils';
+import {addFileScheme, getFileName} from '@/utils/fileUtils';
 import {URL} from 'react-native-url-polyfill';
 import Base64 from '@/utils/base64';
 import MediaCache from './mediaCache';
@@ -321,7 +321,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 });
             }
             return {
-                url: localPath,
+                url: addFileScheme(localPath),
             };
         } else if (mediaExtra?.localPath) {
             MediaExtra.update(musicItem, {
@@ -948,6 +948,14 @@ const localFilePlugin = new Plugin(function () {
                     localPath: urlLike,
                 },
             };
+        },
+        async getMediaSource(musicItem, quality) {
+            if (quality === 'standard') {
+                return {
+                    url: addFileScheme(musicItem.$?.localPath || musicItem.url),
+                };
+            }
+            return null;
         },
     };
 }, '');
