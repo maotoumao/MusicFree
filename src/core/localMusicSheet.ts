@@ -101,6 +101,7 @@ export async function removeMusic(
     }
     localSheet = newSheet;
     localSheetStateMapper.notify();
+    saveLocalSheet();
 }
 
 function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {

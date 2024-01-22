@@ -213,6 +213,9 @@ const getFakeNextTrack = () => {
         return produce(track, _ => {
             _.url = SoundAsset.fakeAudio;
             _.$ = internalFakeSoundKey;
+            if (!_.artwork?.trim()?.length) {
+                _.artwork = undefined;
+            }
         });
     } else {
         // 只有列表长度为0时才会出现的特殊情况
@@ -552,7 +555,6 @@ const play = async (
                 // 5.3.1 获取到真实源
                 if (source) {
                     setQuality(quality);
-
                     break;
                 }
             } else {
@@ -601,10 +603,8 @@ const play = async (
         musicHistory.addMusic(musicItem);
 
         trace('获取音源成功', track);
-        console.log('SSS', source, track);
         // 9. 设置音源
         await setTrackSource(track as Track);
-        console.log('DDD', source, track);
 
         // 10. 获取补充信息
         let info: Partial<IMusic.IMusicItem> | null = null;
