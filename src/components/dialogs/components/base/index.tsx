@@ -2,6 +2,7 @@ import React, {ReactNode, useEffect} from 'react';
 import {
     StyleProp,
     StyleSheet,
+    TouchableOpacity,
     TouchableWithoutFeedback,
     View,
     ViewStyle,
@@ -18,7 +19,6 @@ import ThemeText from '@/components/base/themeText';
 import Divider from '@/components/base/divider';
 import {fontSizeConst} from '@/constants/uiConst';
 import {ScrollView} from 'react-native-gesture-handler';
-import Button from '@/components/base/button';
 
 interface IDialogProps {
     onDismiss?: () => void;
@@ -141,6 +141,7 @@ interface IDialogActionsProps {
     children?: ReactNode;
     actions?: Array<{
         title: string;
+        type?: 'normal' | 'primary';
         onPress?: () => void;
     }>;
     style?: StyleProp<ViewStyle>;
@@ -152,12 +153,13 @@ function Actions(props: IDialogActionsProps) {
     const _children = actions?.length ? (
         <>
             {actions.map((it, index) => (
-                <Button
+                <BottomButton
                     key={index}
                     style={index === 0 ? null : styles.actionButton}
-                    onPress={it.onPress}>
-                    {it.title}
-                </Button>
+                    onPress={it.onPress}
+                    text={it.title}
+                    type={it.type}
+                />
             ))}
         </>
     ) : (
@@ -177,7 +179,43 @@ function Actions(props: IDialogActionsProps) {
     );
 }
 
+function BottomButton(props: {
+    type?: 'normal' | 'primary';
+    text: string;
+    style?: StyleProp<ViewStyle>;
+    onPress?: () => void;
+}) {
+    const {type = 'normal', text, style, onPress} = props;
+    const colors = useColors();
+
+    return (
+        <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={onPress}
+            style={[
+                styles.bottomBtn,
+                {
+                    backgroundColor:
+                        type === 'normal' ? colors.placeholder : colors.primary,
+                },
+                style,
+            ]}>
+            <ThemeText color={type === 'normal' ? undefined : 'white'}>
+                {text}
+            </ThemeText>
+        </TouchableOpacity>
+    );
+}
+
 const styles = StyleSheet.create({
+    bottomBtn: {
+        borderRadius: rpx(8),
+        flex: 1,
+        flexShrink: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: rpx(72),
+    },
     backContainer: {
         position: 'absolute',
         zIndex: 10299,
@@ -239,10 +277,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-end',
         paddingHorizontal: rpx(24),
+        marginBottom: rpx(12),
         flexWrap: 'nowrap',
     },
     actionButton: {
-        marginLeft: rpx(48),
+        marginLeft: rpx(24),
     },
 });
 

@@ -21,6 +21,7 @@ export default function SimpleDialog(props: ISimpleDialogProps) {
                     },
                     {
                         title: '确认',
+                        type: 'primary',
                         onPress() {
                             onOk?.();
                             hideDialog();

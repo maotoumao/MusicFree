@@ -46,6 +46,7 @@ import {musicIsPaused} from '@/utils/trackUtils';
 import Toast from '@/utils/toast';
 import {trace} from '@/utils/log';
 import PersistStatus from '../persistStatus';
+import {showDialog} from '@/components/dialogs/useDialog';
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -633,6 +634,11 @@ const play = async (
             await ReactNativeTrackPlayer.setupPlayer();
             play(musicItem, forcePlay);
         } else if (message === PlayFailReason.FORBID_CELLUAR_NETWORK_PLAY) {
+            showDialog('SimpleDialog', {
+                title: '流量提醒',
+                content:
+                    '当前非WIFI环境，打开【使用移动网络播放】功能后可继续使用',
+            });
             Toast.warn(
                 '当前禁止移动网络播放音乐，如需播放请去侧边栏-基本设置中修改',
             );

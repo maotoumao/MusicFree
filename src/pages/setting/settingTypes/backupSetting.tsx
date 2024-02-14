@@ -1,6 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
+import {ScrollView, StyleSheet} from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import ListItem, {ListItemHeader} from '@/components/base/listItem';
 import Toast from '@/utils/toast';
@@ -165,7 +164,7 @@ export default function BackupSetting() {
     }
 
     return (
-        <View style={style.wrapper}>
+        <ScrollView style={style.wrapper}>
             <ListItemHeader>备份&恢复设置</ListItemHeader>
 
             <ListItem
@@ -248,13 +247,13 @@ export default function BackupSetting() {
             <ListItem withHorizonalPadding onPress={onResumeFromWebdav}>
                 <ListItem.Content title="从Webdav中恢复" />
             </ListItem>
-        </View>
+        </ScrollView>
     );
 }
 
 const style = StyleSheet.create({
     wrapper: {
-        width: rpx(750),
+        width: '100%',
         flex: 1,
     },
 });
