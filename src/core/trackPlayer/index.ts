@@ -115,6 +115,9 @@ async function setupTrackPlayer() {
     if (rate) {
         await ReactNativeTrackPlayer.setRate(+rate / 100);
     }
+    if (repeatMode) {
+        repeatModeStore.setValue(repeatMode as MusicRepeatMode);
+    }
 
     if (musicQueue && Array.isArray(musicQueue)) {
         addAll(musicQueue, undefined, repeatMode === MusicRepeatMode.SHUFFLE);
