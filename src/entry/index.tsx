@@ -15,10 +15,14 @@ import globalStyle from '@/constants/globalStyle';
 import Theme from '@/core/theme';
 import {BootstrapComp} from './useBootstrap';
 import {ToastBaseComponent} from '@/components/base/toast';
+import {StatusBar} from 'react-native';
 
 /**
  * 字体颜色
  */
+
+StatusBar.setBackgroundColor('transparent');
+StatusBar.setTranslucent(true);
 
 bootstrap();
 const Stack = createNativeStackNavigator<any>();

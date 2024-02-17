@@ -10,6 +10,7 @@ import {useAtomValue} from 'jotai';
 import {searchResultsAtom} from '../../store/atoms';
 import PluginManager from '@/core/pluginManager';
 import useColors from '@/hooks/useColors';
+import Empty from '@/components/base/empty';
 
 interface IResultSubPanelProps {
     tab: ICommon.SupportMediaType;
@@ -74,6 +75,10 @@ function ResultSubPanel(props: IResultSubPanelProps) {
         () => getSubRouterScene(props.tab, routes),
         [props.tab],
     );
+
+    if (!routes.length) {
+        return <Empty />;
+    }
 
     return (
         <TabView
