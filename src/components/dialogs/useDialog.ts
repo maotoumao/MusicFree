@@ -52,3 +52,7 @@ export default function useDialog() {
 
     return {showDialog, hideDialog};
 }
+
+export function getCurrentDialog() {
+    return dialogInfoStore.getValue();
+}

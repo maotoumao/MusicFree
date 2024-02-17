@@ -20,6 +20,11 @@ import Network from './network';
 import PluginManager from './pluginManager';
 import {PERMISSIONS, check} from 'react-native-permissions';
 import path from 'path-browserify';
+import {
+    getCurrentDialog,
+    hideDialog,
+    showDialog,
+} from '@/components/dialogs/useDialog';
 // import PQueue from 'p-queue/dist';
 // import PriorityQueue from 'p-queue/dist/priority-queue';
 
@@ -333,9 +338,14 @@ async function downloadNext() {
                     throw new Error();
                 }
             } catch {
-                Toast.success(
-                    '部分歌曲下载失败，如果无法下载请检查系统设置中是否授予完整存储权限',
-                );
+                if (getCurrentDialog()?.name !== 'SimpleDialog') {
+                    showDialog('SimpleDialog', {
+                        title: '下载失败',
+                        content:
+                            '部分歌曲下载失败，如果无法下载请检查系统设置中是否授予完整文件读写权限；或者去【侧边栏-权限管理】中查看文件读写权限是否勾选',
+                        onOk: hideDialog,
+                    });
+                }
             }
         } else {
             Toast.success('下载完成');
