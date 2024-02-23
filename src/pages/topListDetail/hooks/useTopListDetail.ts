@@ -19,6 +19,12 @@ export default function useTopListDetail(
             return;
         }
         try {
+            if (
+                requestState & RequestStateCode.LOADING ||
+                requestState === RequestStateCode.FINISHED
+            ) {
+                return;
+            }
             if (pageRef.current === 1) {
                 setRequestState(RequestStateCode.PENDING_FIRST_PAGE);
             } else {
@@ -46,7 +52,7 @@ export default function useTopListDetail(
                     } as IMusic.IMusicSheetItem),
             );
 
-            if (!result.isEnd) {
+            if (result.isEnd === false) {
                 setRequestState(RequestStateCode.IDLE);
             } else {
                 setRequestState(RequestStateCode.FINISHED);
