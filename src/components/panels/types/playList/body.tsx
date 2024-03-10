@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Tag from '@/components/base/tag';
@@ -51,10 +51,12 @@ function _PlayListItem(props: IPlayListProps) {
                 ellipsizeMode="tail"
                 numberOfLines={1}>
                 {item.title}
-                <Text style={{fontSize: fontSizeConst.description}}>
-                    {' '}
-                    - {item.artist}
-                </Text>
+                {item.artist && (
+                    <Text style={{fontSize: fontSizeConst.description}}>
+                        {' '}
+                        - {item.artist}
+                    </Text>
+                )}
             </ThemeText>
             <Tag tagName={item.platform} />
             <IconButton
@@ -97,17 +99,14 @@ export default function Body(props: IBodyProps) {
         return undefined;
     }, []);
 
-    const renderItem = useCallback(
-        ({item}: {item: IMusic.IMusicItem; index: number}) => {
-            return (
-                <PlayListItem
-                    item={item}
-                    isCurrentMusic={!!isSameMediaItem(item, currentMusicItem)}
-                />
-            );
-        },
-        [currentMusicItem],
-    );
+    const renderItem = ({item}: {item: IMusic.IMusicItem; index: number}) => {
+        return (
+            <PlayListItem
+                item={item}
+                isCurrentMusic={!!isSameMediaItem(item, currentMusicItem)}
+            />
+        );
+    };
 
     return loading ? (
         <Loading />
@@ -123,6 +122,7 @@ export default function Body(props: IBodyProps) {
                 ref={_ => {
                     listRef.current = _;
                 }}
+                extraData={{currentMusicItem}}
                 estimatedItemSize={ITEM_HEIGHT}
                 data={playList}
                 initialScrollIndex={initIndex}
