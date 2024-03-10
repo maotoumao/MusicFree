@@ -625,7 +625,10 @@ const play = async (
         let info: Partial<IMusic.IMusicItem> | null = null;
         try {
             info = (await plugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
-            if (typeof info?.url === 'string' && info.url.trim() === '') {
+            if (
+                (typeof info?.url === 'string' && info.url.trim() === '') ||
+                (info?.url && typeof info.url !== 'string')
+            ) {
                 delete info.url;
             }
         } catch {}
