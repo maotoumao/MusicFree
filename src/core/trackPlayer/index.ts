@@ -625,6 +625,9 @@ const play = async (
         let info: Partial<IMusic.IMusicItem> | null = null;
         try {
             info = (await plugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
+            if (typeof info?.url === 'string' && info.url.trim() === '') {
+                delete info.url;
+            }
         } catch {}
 
         // 11. 设置补充信息
