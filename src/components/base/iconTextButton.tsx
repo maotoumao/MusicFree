@@ -19,6 +19,7 @@ export default function (props: IProps) {
 
     return (
         <TouchableOpacity
+            activeOpacity={0.7}
             style={[style.container, containerStyle]}
             onPress={onPress}>
             <Icon name={icon} size={iconSizeConst.light} color={colors.text} />

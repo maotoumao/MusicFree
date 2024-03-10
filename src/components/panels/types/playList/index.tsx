@@ -10,6 +10,7 @@ export default function () {
     return (
         <PanelBase
             height={vh(80)}
+            keyboardAvoidBehavior="none"
             renderBody={loading => (
                 <>
                     <Header />

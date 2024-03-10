@@ -113,7 +113,7 @@ async function setupTrackPlayer() {
 
     // 状态恢复
     if (rate) {
-        await ReactNativeTrackPlayer.setRate(+rate / 100);
+        ReactNativeTrackPlayer.setRate(+rate / 100);
     }
     if (repeatMode) {
         repeatModeStore.setValue(repeatMode as MusicRepeatMode);
@@ -124,21 +124,26 @@ async function setupTrackPlayer() {
     }
 
     if (track && isInPlayList(track)) {
-        const newSource = await PluginManager.getByMedia(
-            track,
-        )?.methods.getMediaSource(track, quality, 0);
-        // 重新初始化 获取最新的链接
-        track.url = newSource?.url || track.url;
-        track.headers = newSource?.headers || track.headers;
         if (!Config.get('setting.basic.autoPlayWhenAppStart')) {
             track.isInit = true;
         }
 
-        await setTrackSource(track as Track, false);
+        // 异步
+        PluginManager.getByMedia(track)
+            ?.methods.getMediaSource(track, quality, 0)
+            .then(async newSource => {
+                track.url = newSource?.url || track.url;
+                track.headers = newSource?.headers || track.headers;
+
+                if (isSameMediaItem(currentMusicStore.getValue(), track)) {
+                    await setTrackSource(track as Track, false);
+                }
+            });
         setCurrentMusic(track);
 
         if (progress) {
-            await ReactNativeTrackPlayer.seekTo(progress);
+            // 异步
+            ReactNativeTrackPlayer.seekTo(progress);
         }
     }
 
@@ -391,15 +396,22 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
 const setRepeatMode = (mode: MusicRepeatMode) => {
     const playList = getPlayList();
     let newPlayList;
-    if (mode === MusicRepeatMode.SHUFFLE) {
-        newPlayList = shuffle(playList);
-    } else {
-        newPlayList = produce(playList, draft => {
-            return sortByTimestampAndIndex(draft);
-        });
+    const prevMode = repeatModeStore.getValue();
+
+    if (
+        (prevMode === MusicRepeatMode.SHUFFLE &&
+            mode !== MusicRepeatMode.SHUFFLE) ||
+        (mode === MusicRepeatMode.SHUFFLE &&
+            prevMode !== MusicRepeatMode.SHUFFLE)
+    ) {
+        if (mode === MusicRepeatMode.SHUFFLE) {
+            newPlayList = shuffle(playList);
+        } else {
+            newPlayList = sortByTimestampAndIndex(playList, true);
+        }
+        setPlayList(newPlayList);
     }
 
-    setPlayList(newPlayList);
     const currentMusicItem = currentMusicStore.getValue();
     currentIndex = getMusicIndex(currentMusicItem);
     repeatModeStore.setValue(mode);

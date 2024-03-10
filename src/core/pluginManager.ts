@@ -165,7 +165,7 @@ export class Plugin {
                 // eslint-disable-next-line no-new-func
                 _instance = Function(`
                     'use strict';
-                    return function(require, __musicfree_require, module, exports, console, env) {
+                    return function(require, __musicfree_require, module, exports, console, env, URL) {
                         ${funcCode}
                     }
                 `)()(
@@ -175,6 +175,7 @@ export class Plugin {
                     _module.exports,
                     _console,
                     env,
+                    URL,
                 );
                 if (_module.exports.default) {
                     _instance = _module.exports

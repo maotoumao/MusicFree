@@ -5,10 +5,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
-import {getStorage, setStorage} from '@/utils/storage';
 import {isSameMediaItem} from '@/utils/mediaItem';
 import shuffle from 'lodash.shuffle';
 import {GlobalState} from '@/utils/stateMapper';
+import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
+import safeParse from '@/utils/safeParse';
+import {InteractionManager} from 'react-native';
+import safeStringify from '@/utils/safeStringify';
+import {createMediaIndexMap} from '@/utils/mediaIndexMap';
 
 const defaultSheet: IMusic.IMusicSheetItemBase = {
     id: 'favorite',
@@ -29,6 +33,19 @@ const getSheets = () => ({
     musicSheets,
     sheetMusicMap,
 });
+
+function getStorage(key: string) {
+    const mmkv = getOrCreateMMKV(`LocalSheet.${key}`);
+
+    return safeParse(mmkv.getString('data'));
+}
+
+async function setStorage(key: string, value: any) {
+    return InteractionManager.runAfterInteractions(() => {
+        const mmkv = getOrCreateMMKV(`LocalSheet.${key}`);
+        mmkv.set('data', safeStringify(value));
+    });
+}
 
 async function setup() {
     try {
@@ -197,9 +214,9 @@ async function addMusic(
         musicItem = [musicItem];
     }
     const musicList = sheetMusicMap[sheetId] ?? [];
-    musicItem = musicItem.filter(
-        item => musicList.findIndex(_ => isSameMediaItem(_, item)) === -1,
-    );
+    const indexMap = createMediaIndexMap(musicList);
+
+    musicItem = musicItem.filter(item => !indexMap.has(item));
     const newMusicList = musicList.concat(musicItem);
     let basic;
     if (
