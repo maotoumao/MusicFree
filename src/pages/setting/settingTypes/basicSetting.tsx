@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {SectionList, StyleSheet, View} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SectionList, StyleSheet, TouchableOpacity, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Config, {IConfigPaths} from '@/core/config';
 import ListItem from '@/components/base/listItem';
@@ -13,7 +13,7 @@ import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import {readdir} from 'react-native-fs';
 import {qualityKeys, qualityText} from '@/utils/qualities';
 import {clearLog, getErrorLogContent} from '@/utils/log';
-import {ScrollView} from 'react-native-gesture-handler';
+import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {showDialog} from '@/components/dialogs/useDialog';
 import {showPanel} from '@/components/panels/usePanel';
 import Paragraph from '@/components/base/paragraph';
@@ -69,7 +69,7 @@ const createRadio = function (
     return {
         title,
         right: (
-            <ThemeText style={style.centerText}>
+            <ThemeText style={styles.centerText}>
                 {valueMap ? valueMap[value] : value}
             </ThemeText>
         ),
@@ -107,6 +107,9 @@ export default function BasicSetting() {
 
     const [cacheSize, refreshCacheSize] = useCacheSize();
 
+    const sectionListRef = useRef<SectionList | null>(null);
+    // const titleListRef = useRef<FlatList | null>(null);
+
     useEffect(() => {
         refreshCacheSize();
     }, []);
@@ -115,18 +118,6 @@ export default function BasicSetting() {
         {
             title: '常规',
             data: [
-                createRadio(
-                    '点击搜索结果内单曲时',
-                    'setting.basic.clickMusicInSearch',
-                    ['播放歌曲', '播放歌曲并替换播放列表'],
-                    basicSetting?.clickMusicInSearch ?? '播放歌曲',
-                ),
-                createRadio(
-                    '点击专辑内单曲时',
-                    'setting.basic.clickMusicInAlbum',
-                    ['播放单曲', '播放专辑'],
-                    basicSetting?.clickMusicInAlbum ?? '播放专辑',
-                ),
                 createRadio(
                     '历史记录最多保存条数',
                     'setting.basic.maxHistoryLen',
@@ -162,6 +153,43 @@ export default function BasicSetting() {
                     '通知栏显示关闭按钮 (重启后生效)',
                     'setting.basic.showExitOnNotification',
                     basicSetting?.showExitOnNotification ?? false,
+                ),
+            ],
+        },
+        {
+            title: '歌单&专辑',
+            data: [
+                createRadio(
+                    '点击搜索结果内单曲时',
+                    'setting.basic.clickMusicInSearch',
+                    ['播放歌曲', '播放歌曲并替换播放列表'],
+                    basicSetting?.clickMusicInSearch ?? '播放歌曲',
+                ),
+                createRadio(
+                    '点击专辑内单曲时',
+                    'setting.basic.clickMusicInAlbum',
+                    ['播放单曲', '播放专辑'],
+                    basicSetting?.clickMusicInAlbum ?? '播放专辑',
+                ),
+                createRadio(
+                    '打开歌曲详情页时',
+                    'setting.basic.musicDetailDefault',
+                    ['album', 'lyric'],
+                    basicSetting?.musicDetailDefault ?? 'album',
+                    {
+                        album: '默认展示歌曲封面',
+                        lyric: '默认展示歌词页',
+                    },
+                ),
+                createRadio(
+                    '本地歌单添加歌曲顺序',
+                    'setting.basic.musicOrderInLocalSheet',
+                    ['start', 'end'],
+                    basicSetting?.musicOrderInLocalSheet ?? 'end',
+                    {
+                        start: '添加到歌单开头',
+                        end: '添加到歌单末尾',
+                    },
                 ),
             ],
         },
@@ -231,7 +259,7 @@ export default function BasicSetting() {
                     right: (
                         <ThemeText
                             fontSize="subTitle"
-                            style={style.centerText}
+                            style={styles.centerText}
                             numberOfLines={3}>
                             {basicSetting?.downloadPath ??
                                 pathConst.downloadMusicPath}
@@ -300,7 +328,7 @@ export default function BasicSetting() {
             ],
         },
         {
-            title: '桌面歌词',
+            title: '歌词',
             data: [],
             footer: <LyricSetting />,
         },
@@ -310,7 +338,7 @@ export default function BasicSetting() {
                 {
                     title: '音乐缓存上限',
                     right: (
-                        <ThemeText style={style.centerText}>
+                        <ThemeText style={styles.centerText}>
                             {basicSetting?.maxCacheSize
                                 ? sizeFormatter(basicSetting.maxCacheSize)
                                 : '512M'}
@@ -343,7 +371,7 @@ export default function BasicSetting() {
                 {
                     title: '清除音乐缓存',
                     right: (
-                        <ThemeText style={style.centerText}>
+                        <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.music)}
                         </ThemeText>
                     ),
@@ -362,7 +390,7 @@ export default function BasicSetting() {
                 {
                     title: '清除歌词缓存',
                     right: (
-                        <ThemeText style={style.centerText}>
+                        <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.lyric)}
                         </ThemeText>
                     ),
@@ -381,7 +409,7 @@ export default function BasicSetting() {
                 {
                     title: '清除图片缓存',
                     right: (
-                        <ThemeText style={style.centerText}>
+                        <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.image)}
                         </ThemeText>
                     ),
@@ -450,11 +478,30 @@ export default function BasicSetting() {
     ];
 
     return (
-        <View style={style.wrapper}>
+        <View style={styles.wrapper}>
+            <FlatList
+                style={styles.headerContainer}
+                contentContainerStyle={styles.headerContentContainer}
+                horizontal
+                data={basicOptions.map(it => it.title)}
+                renderItem={({item, index}) => (
+                    <TouchableOpacity
+                        onPress={() => {
+                            sectionListRef.current?.scrollToLocation({
+                                sectionIndex: index,
+                                itemIndex: 0,
+                            });
+                        }}
+                        activeOpacity={0.7}
+                        style={styles.headerItemStyle}>
+                        <ThemeText fontWeight="bold">{item}</ThemeText>
+                    </TouchableOpacity>
+                )}
+            />
             <SectionList
                 sections={basicOptions}
                 renderSectionHeader={({section}) => (
-                    <View style={style.sectionHeader}>
+                    <View style={styles.sectionHeader}>
                         <ThemeText
                             fontSize="subTitle"
                             fontColor="textSecondary"
@@ -463,6 +510,7 @@ export default function BasicSetting() {
                         </ThemeText>
                     </View>
                 )}
+                ref={sectionListRef}
                 renderSectionFooter={({section}) => {
                     return section.footer ?? null;
                 }}
@@ -484,10 +532,10 @@ export default function BasicSetting() {
     );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     wrapper: {
         width: '100%',
-        paddingVertical: rpx(24),
+        paddingBottom: rpx(24),
         flex: 1,
     },
     centerText: {
@@ -500,6 +548,20 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: rpx(20),
+    },
+    headerContainer: {
+        height: rpx(80),
+    },
+    headerContentContainer: {
+        height: rpx(80),
+        alignItems: 'center',
+        paddingHorizontal: rpx(24),
+    },
+    headerItemStyle: {
+        paddingHorizontal: rpx(36),
+        height: rpx(80),
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

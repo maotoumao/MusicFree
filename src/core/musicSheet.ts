@@ -13,6 +13,7 @@ import safeParse from '@/utils/safeParse';
 import {InteractionManager} from 'react-native';
 import safeStringify from '@/utils/safeStringify';
 import {createMediaIndexMap} from '@/utils/mediaIndexMap';
+import Config from './config';
 
 const defaultSheet: IMusic.IMusicSheetItemBase = {
     id: 'favorite',
@@ -217,7 +218,15 @@ async function addMusic(
     const indexMap = createMediaIndexMap(musicList);
 
     musicItem = musicItem.filter(item => !indexMap.has(item));
-    const newMusicList = musicList.concat(musicItem);
+    // TODO: 改成MMKV
+    const pendAtStart =
+        Config.get('setting.basic.musicOrderInLocalSheet') === 'start';
+    let newMusicList = [];
+    if (pendAtStart) {
+        newMusicList = musicItem.concat(musicList);
+    } else {
+        newMusicList = musicList.concat(musicItem);
+    }
     let basic;
     if (
         !musicSheets

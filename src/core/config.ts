@@ -58,6 +58,8 @@ interface IConfig {
             associateLyricType: 'input' | 'search';
             // 是否展示退出按钮
             showExitOnNotification: boolean;
+            // 本地歌单添加歌曲顺序
+            musicOrderInLocalSheet: 'start' | 'end';
         };
         /** 歌词 */
         lyric: {
