@@ -58,10 +58,9 @@ async function removeStorage(key: string) {
 }
 
 async function setup() {
+    // 升级逻辑
+    const dbUpdated = getAppMeta('MusicSheetVersion') === '1';
     try {
-        // 升级逻辑
-        const dbUpdated = getAppMeta('MusicSheetVersion') === '1';
-
         async function getStorageWithMigrate(key: string) {
             if (dbUpdated) {
                 return getStorage(key);
@@ -93,9 +92,6 @@ async function setup() {
             }
         }
 
-        if (!dbUpdated) {
-            setAppMeta('MusicSheetVersion', '1');
-        }
         musicSheets = _musicSheets;
         setupStarredMusicSheets();
     } catch (e: any) {
@@ -105,6 +101,9 @@ async function setup() {
             musicSheets = [defaultSheet];
             sheetMusicMap[defaultSheet.id] = [];
         }
+    }
+    if (!dbUpdated) {
+        setAppMeta('MusicSheetVersion', '1');
     }
     notifyMusicSheets();
 }
