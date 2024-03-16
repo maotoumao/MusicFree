@@ -1,7 +1,6 @@
 /**
  * 歌单管理
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
@@ -14,6 +13,9 @@ import {InteractionManager} from 'react-native';
 import safeStringify from '@/utils/safeStringify';
 import {createMediaIndexMap} from '@/utils/mediaIndexMap';
 import Config from './config';
+import {getAppMeta, setAppMeta} from './appMeta';
+import {getStorage as oldGetStorage} from '@/utils/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultSheet: IMusic.IMusicSheetItemBase = {
     id: 'favorite',
@@ -50,16 +52,36 @@ async function setStorage(key: string, value: any) {
     });
 }
 
+async function removeStorage(key: string) {
+    const mmkv = getOrCreateMMKV(`LocalSheet.${key}`);
+    mmkv.clearAll();
+}
+
 async function setup() {
     try {
-        const _musicSheets: IMusic.IMusicSheetItemBase[] = await getStorage(
-            'music-sheets',
-        );
+        // 升级逻辑
+        const dbUpdated = getAppMeta('MusicSheetVersion') === '1';
+
+        async function getStorageWithMigrate(key: string) {
+            if (dbUpdated) {
+                return getStorage(key);
+            } else {
+                const oldResult = await oldGetStorage(key);
+                setStorage(key, oldResult);
+                AsyncStorage.removeItem(key);
+                return oldResult;
+            }
+        }
+
+        const _musicSheets: IMusic.IMusicSheetItemBase[] =
+            await getStorageWithMigrate('music-sheets');
+
         if (!Array.isArray(_musicSheets)) {
             throw new Error('not exist');
         }
+
         for (let sheet of _musicSheets) {
-            const musicList = await getStorage(sheet.id);
+            const musicList = await getStorageWithMigrate(sheet.id);
             sheetMusicMap = produce(sheetMusicMap, _ => {
                 _[sheet.id] = musicList;
                 return _;
@@ -69,6 +91,10 @@ async function setup() {
                     createMediaIndexMap(musicList || []),
                 );
             }
+        }
+
+        if (!dbUpdated) {
+            setAppMeta('MusicSheetVersion', '1');
         }
         musicSheets = _musicSheets;
         setupStarredMusicSheets();
@@ -205,7 +231,7 @@ async function resumeSheets(
 async function removeSheet(sheetId: string) {
     if (sheetId !== 'favorite') {
         const newSheets = musicSheets.filter(item => item.id !== sheetId);
-        await AsyncStorage.removeItem(sheetId);
+        removeStorage(sheetId);
         await setStorage('music-sheets', newSheets);
         musicSheets = newSheets;
         sheetMusicMap = produce(sheetMusicMap, _ => {
