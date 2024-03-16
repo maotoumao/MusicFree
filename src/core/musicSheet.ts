@@ -24,6 +24,8 @@ const defaultSheet: IMusic.IMusicSheetItemBase = {
 let musicSheets = [defaultSheet];
 let sheetMusicMap: Record<string, IMusic.IMusicItem[]> = {};
 
+const favoriteMusicMapStore = new GlobalState<any>(null);
+
 const sheetsCallBacks: Set<Function> = new Set([]);
 function notifyMusicSheets() {
     sheetsCallBacks.forEach(cb => {
@@ -62,6 +64,11 @@ async function setup() {
                 _[sheet.id] = musicList;
                 return _;
             });
+            if (sheet.id === 'favorite') {
+                favoriteMusicMapStore.setValue(
+                    createMediaIndexMap(musicList || []),
+                );
+            }
         }
         musicSheets = _musicSheets;
         setupStarredMusicSheets();
@@ -107,6 +114,11 @@ async function updateAndSaveSheet(
         sheetMusicMap = produce(sheetMusicMap, _ => {
             _[id] = musicList;
         });
+
+        // 默认歌单
+        if (id === 'favorite' && musicList) {
+            favoriteMusicMapStore.setValue(createMediaIndexMap(musicList));
+        }
     }
     notifyMusicSheets();
 }
@@ -150,13 +162,10 @@ async function resumeSheets(
 
             if (!overwrite) {
                 const originalMusicList = sheetMusicMap[musicSheet.id] ?? [];
+                const indexMap = createMediaIndexMap(originalMusicList);
                 newSheetMusicMap[musicSheet.id] = originalMusicList.concat(
-                    musicSheet.musicList?.filter(
-                        item =>
-                            originalMusicList.findIndex(_ =>
-                                isSameMediaItem(_, item),
-                            ) === -1,
-                    ) ?? [],
+                    musicSheet.musicList?.filter(item => !indexMap.has(item)) ??
+                        [],
                 );
             } else {
                 newSheetMusicMap[musicSheet.id] = [
@@ -241,7 +250,6 @@ async function addMusic(
         basic: basic,
         musicList: newMusicList,
     });
-    notifyMusicSheets();
 }
 
 async function removeMusicByIndex(sheetId: string, indices: number | number[]) {
@@ -261,7 +269,6 @@ async function removeMusicByIndex(sheetId: string, indices: number | number[]) {
         },
         musicList: newMusicList,
     });
-    notifyMusicSheets();
 }
 
 async function removeMusic(
@@ -397,6 +404,17 @@ function useSheetStarred(
     return starred;
 }
 
+/** 是否添加到我喜欢歌单 */
+function useMusicFavIndex(musicItem: IMusic.IMusicItem | null) {
+    const indexMap = favoriteMusicMapStore.useValue();
+
+    if (!musicItem) {
+        return -1;
+    }
+
+    return indexMap?.getIndex?.(musicItem) ?? -1;
+}
+
 const MusicSheet = {
     setup,
     addSheet,
@@ -415,6 +433,7 @@ const MusicSheet = {
     unstarMusicSheet,
     useStarredMusicSheet: starredMusicSheetsStore.useValue,
     useSheetStarred,
+    useMusicFavIndex,
 };
 
 export default MusicSheet;

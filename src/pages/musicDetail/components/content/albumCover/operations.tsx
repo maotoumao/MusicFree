@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MusicSheet from '@/core/musicSheet';
 
 import Download from '@/core/download';
-import {isSameMediaItem} from '@/utils/mediaItem';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {ROUTE_PATH} from '@/entry/router';
 import {ImgAsset} from '@/constants/assetsConst';
@@ -18,7 +17,6 @@ import PersistStatus from '@/core/persistStatus';
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
-    const favoriteMusicSheet = MusicSheet.useSheets('favorite');
     const musicItem = TrackPlayer.useCurrentMusic();
     const currentQuality = TrackPlayer.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
@@ -26,10 +24,9 @@ export default function Operations() {
     const rate = PersistStatus.useValue('music.rate', 100);
     const orientation = useOrientation();
 
-    const musicIndexInFav =
-        favoriteMusicSheet?.musicList.findIndex(_ =>
-            isSameMediaItem(_, musicItem),
-        ) ?? -1;
+    const favIndex = MusicSheet.useMusicFavIndex(musicItem);
+
+    console.log(favIndex);
 
     return (
         <View
@@ -41,16 +38,13 @@ export default function Operations() {
                       }
                     : null,
             ]}>
-            {musicIndexInFav !== -1 ? (
+            {favIndex !== -1 ? (
                 <Icon
                     name="heart"
                     size={iconSizeConst.normal}
                     color="red"
                     onPress={() => {
-                        MusicSheet.removeMusicByIndex(
-                            'favorite',
-                            musicIndexInFav,
-                        );
+                        MusicSheet.removeMusicByIndex('favorite', favIndex);
                     }}
                 />
             ) : (

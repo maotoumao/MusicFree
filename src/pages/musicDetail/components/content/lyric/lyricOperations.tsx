@@ -33,6 +33,9 @@ export default function LyricOperations(props: ILyricOperationsProps) {
 
     return (
         <View style={styles.container}>
+            {/* {
+                orientation === 'vertical' ? <Icon></Icon> : null
+            } */}
             <Icon
                 name="format-font-size-increase"
                 size={iconSizeConst.normal}
