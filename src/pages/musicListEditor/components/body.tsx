@@ -8,10 +8,11 @@ import MusicSheet from '@/core/musicSheet';
 import Toast from '@/utils/toast';
 import MusicList from './musicList';
 import {useParams} from '@/entry/router';
-import {localMusicSheetId} from '@/constants/commonConst';
+import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
+import musicHistory from '@/core/musicHistory';
 
 export default function Body() {
     const {musicSheet} = useParams<'music-list-editor'>();
@@ -57,13 +58,17 @@ export default function Body() {
                 <Button
                     fontColor={
                         musicListChanged && musicSheet?.id
-                            ? 'text'
+                            ? 'primary'
                             : 'textSecondary'
                     }
                     onPress={async () => {
                         if (musicListChanged && musicSheet?.id) {
                             if (musicSheet.id === localMusicSheetId) {
                                 await LocalMusicSheet.updateMusicList(
+                                    editingMusicList.map(_ => _.musicItem),
+                                );
+                            } else if (musicSheet.id === musicHistorySheetId) {
+                                await musicHistory.setHistory(
                                     editingMusicList.map(_ => _.musicItem),
                                 );
                             } else {
