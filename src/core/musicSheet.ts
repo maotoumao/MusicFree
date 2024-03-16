@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import produce from 'immer';
 import {useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
-import {isSameMediaItem} from '@/utils/mediaItem';
+import {isSameMediaItem, sortByTimestampAndIndex} from '@/utils/mediaItem';
 import shuffle from 'lodash.shuffle';
 import {GlobalState} from '@/utils/stateMapper';
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
@@ -313,7 +313,15 @@ function getSheetItems(): IMusic.IMusicSheetItem[] {
 }
 
 function sortMusicList(
-    type: undefined | 'a2z' | 'z2a' | 'random' | 'arta2z' | 'artz2a',
+    type:
+        | undefined
+        | 'a2z'
+        | 'z2a'
+        | 'random'
+        | 'arta2z'
+        | 'artz2a'
+        | 'time'
+        | 'time-rev',
     musicSheet: IMusic.IMusicSheetItem,
 ) {
     let musicList = [...(musicSheet.musicList ?? [])];
@@ -327,6 +335,11 @@ function sortMusicList(
         musicList.sort((a, b) => a.artist?.localeCompare?.(b.artist));
     } else if (type === 'artz2a') {
         musicList.sort((b, a) => a.artist?.localeCompare?.(b.artist));
+    } else if (type === 'time') {
+        sortByTimestampAndIndex(musicList);
+        musicList.reverse();
+    } else if (type === 'time-rev') {
+        sortByTimestampAndIndex(musicList);
     }
 
     updateAndSaveSheet(musicSheet.id, {
