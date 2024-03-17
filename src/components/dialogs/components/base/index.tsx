@@ -1,4 +1,4 @@
-import React, {ReactNode, useEffect} from 'react';
+import React, {ReactNode, useEffect, useMemo} from 'react';
 import {
     StyleProp,
     StyleSheet,
@@ -142,6 +142,7 @@ interface IDialogActionsProps {
     actions?: Array<{
         title: string;
         type?: 'normal' | 'primary';
+        show?: boolean;
         onPress?: () => void;
     }>;
     style?: StyleProp<ViewStyle>;
@@ -150,17 +151,24 @@ interface IDialogActionsProps {
 function Actions(props: IDialogActionsProps) {
     const {children, style, actions} = props;
 
-    const _children = actions?.length ? (
+    const validActions = useMemo(
+        () => actions?.filter(it => it.show !== false),
+        [actions],
+    );
+
+    const _children = validActions?.length ? (
         <>
-            {actions.map((it, index) => (
-                <BottomButton
-                    key={index}
-                    style={index === 0 ? null : styles.actionButton}
-                    onPress={it.onPress}
-                    text={it.title}
-                    type={it.type}
-                />
-            ))}
+            {validActions.map((it, index) =>
+                it.show === false ? null : (
+                    <BottomButton
+                        key={index}
+                        style={index === 0 ? null : styles.actionButton}
+                        onPress={it.onPress}
+                        text={it.title}
+                        type={it.type}
+                    />
+                ),
+            )}
         </>
     ) : (
         children

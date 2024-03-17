@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import rpx from '@/utils/rpx';
 import {StyleSheet, View} from 'react-native';
 import ThemeText from '@/components/base/themeText';
-import Button from '@/components/base/button';
 import {hideDialog} from '../useDialog';
 import Dialog from './base';
 import Input from '@/components/base/input';
@@ -33,6 +32,7 @@ export default function SubscribePluginDialog(
 
     const textColors = {
         color: colors.text,
+        borderBottomColor: colors.textSecondary,
     };
 
     return (
@@ -82,10 +82,21 @@ export default function SubscribePluginDialog(
                         保存
                     </Button> */}
                 </View>
-                <View style={style.options}>
-                    <Button
-                        fontColor="primary"
-                        onPress={() => {
+            </Dialog.Content>
+            <Dialog.Actions
+                actions={[
+                    {
+                        type: 'normal',
+                        title: '删除',
+                        show: editingIndex !== undefined,
+                        onPress() {
+                            onDelete?.(editingIndex!, hideDialog);
+                        },
+                    },
+                    {
+                        type: 'primary',
+                        title: '保存',
+                        onPress() {
                             onSubmit(
                                 {
                                     name,
@@ -94,19 +105,10 @@ export default function SubscribePluginDialog(
                                 hideDialog,
                                 editingIndex,
                             );
-                        }}>
-                        保存
-                    </Button>
-                    {editingIndex !== undefined ? (
-                        <Button
-                            onPress={() => {
-                                onDelete?.(editingIndex, hideDialog);
-                            }}>
-                            删除
-                        </Button>
-                    ) : null}
-                </View>
-            </Dialog.Content>
+                        },
+                    },
+                ]}
+            />
         </Dialog>
     );
 }
@@ -115,17 +117,12 @@ const style = StyleSheet.create({
     headerWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: rpx(14),
+        height: rpx(92),
     },
     textInput: {
         flex: 1,
         includeFontPadding: false,
         marginLeft: rpx(12),
         borderBottomWidth: 1,
-    },
-    options: {
-        marginTop: rpx(32),
-        flexDirection: 'row-reverse',
-        justifyContent: 'space-between',
     },
 });
