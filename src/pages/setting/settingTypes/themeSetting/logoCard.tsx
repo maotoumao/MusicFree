@@ -1,21 +1,17 @@
 import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/base/themeText';
-import Image from '@/components/base/image';
-import {ImgAsset} from '@/constants/assetsConst';
 
-interface IThemeCardProps {
+interface ILogoCardProps {
     selected?: boolean;
-    preview?: string;
+    logo: number;
     onPress?: () => void;
     title?: string;
 }
-export default function ThemeCard(props: IThemeCardProps) {
-    const {selected, preview, onPress, title} = props;
-
-    const isPreviewColor = preview?.startsWith('#') ? true : false;
+export default function LogoCard(props: ILogoCardProps) {
+    const {selected, logo, onPress, title} = props;
 
     const colors = useColors();
 
@@ -33,22 +29,8 @@ export default function ThemeCard(props: IThemeCardProps) {
                           }
                         : null,
                 ]}>
-                <View
-                    style={[
-                        styles.container,
-                        isPreviewColor
-                            ? {
-                                  backgroundColor: preview,
-                              }
-                            : null,
-                    ]}>
-                    {isPreviewColor ? null : (
-                        <Image
-                            style={styles.image}
-                            uri={preview}
-                            emptySrc={ImgAsset.add}
-                        />
-                    )}
+                <View style={styles.imageContainer}>
+                    <Image style={styles.image} source={logo} />
                 </View>
             </Pressable>
             <ThemeText
@@ -71,7 +53,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    container: {
+    imageContainer: {
         width: rpx(136),
         height: rpx(136),
         borderRadius: rpx(12),

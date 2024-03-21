@@ -28,6 +28,8 @@ interface IPersistConfig {
     'lyric.showTranslation': boolean;
     /** 歌词-详情页字体大小 */
     'lyric.detailFontSize': number;
+    /** APP logo */
+    'app.logo': 'Default' | 'Logo1';
 }
 
 function set<K extends keyof IPersistConfig>(
