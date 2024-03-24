@@ -654,7 +654,7 @@ const play = async (
                 showDialog('SimpleDialog', {
                     title: '流量提醒',
                     content:
-                        '当前非WIFI环境，打开【使用移动网络播放】功能后可继续播放',
+                        '当前非WIFI环境，侧边栏设置中打开【使用移动网络播放】功能后可继续播放',
                 });
             }
 

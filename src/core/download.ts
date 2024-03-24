@@ -373,9 +373,14 @@ function downloadMusic(
     }
     if (
         Network.isCellular() &&
-        !Config.get('setting.basic.useCelluarNetworkDownload')
+        !Config.get('setting.basic.useCelluarNetworkDownload') &&
+        getCurrentDialog()?.name !== 'SimpleDialog'
     ) {
-        Toast.warn('当前设置移动网络不可下载，可在侧边栏基本设置修改');
+        showDialog('SimpleDialog', {
+            title: '流量提醒',
+            content:
+                '当前非WIFI环境，侧边栏设置中打开【使用移动网络下载】功能后可继续下载',
+        });
         return;
     }
     // 如果已经在下载中
