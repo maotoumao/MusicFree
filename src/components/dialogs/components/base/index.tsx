@@ -1,5 +1,7 @@
-import React, {ReactNode, useEffect, useMemo} from 'react';
+import React, {ReactNode, useEffect, useMemo, useRef} from 'react';
 import {
+    BackHandler,
+    NativeEventSubscription,
     StyleProp,
     StyleSheet,
     TouchableOpacity,
@@ -29,12 +31,28 @@ function Dialog(props: IDialogProps) {
 
     const sharedShowValue = useSharedValue(0);
     const colors = useColors();
+    const backHandlerRef = useRef<NativeEventSubscription>();
 
     useEffect(() => {
         sharedShowValue.value = withTiming(1, timingConfig.animationFast);
+        if (backHandlerRef.current) {
+            backHandlerRef.current?.remove();
+            backHandlerRef.current = undefined;
+        }
+        backHandlerRef.current = BackHandler.addEventListener(
+            'hardwareBackPress',
+            () => {
+                onDismiss?.();
+                return true;
+            },
+        );
 
         return () => {
             sharedShowValue.value = withTiming(0, timingConfig.animationFast);
+            if (backHandlerRef.current) {
+                backHandlerRef.current?.remove();
+                backHandlerRef.current = undefined;
+            }
         };
     }, []);
 
