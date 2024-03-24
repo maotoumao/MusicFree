@@ -49,6 +49,7 @@ export default function SimpleInput(props: ISimpleInputProps) {
                         onChangeText={_ => {
                             setInput(_);
                         }}
+                        autoFocus
                         style={[
                             style.input,
                             {

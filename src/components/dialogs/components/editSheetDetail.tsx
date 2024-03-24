@@ -16,7 +16,6 @@ import {hideDialog} from '../useDialog';
 import Dialog from './base';
 import Input from '@/components/base/input';
 import {fontSizeConst} from '@/constants/uiConst';
-import Button from '@/components/base/button';
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
@@ -91,7 +90,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
 
     return (
         <Dialog onDismiss={hideDialog}>
-            <Dialog.Content style={style.content}>
+            <Dialog.Content>
                 <View style={style.row}>
                     <ThemeText>封面</ThemeText>
                     <TouchableOpacity
@@ -124,22 +123,25 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
                     />
                 </View>
             </Dialog.Content>
-            <Dialog.Actions>
-                <Button withHorizonalPadding onPress={onConfirm}>
-                    确认
-                </Button>
-                <Button withHorizonalPadding onPress={hideDialog}>
-                    取消
-                </Button>
-            </Dialog.Actions>
+            <Dialog.Actions
+                actions={[
+                    {
+                        title: '取消',
+                        type: 'normal',
+                        onPress: hideDialog,
+                    },
+                    {
+                        title: '确认',
+                        type: 'primary',
+                        onPress: onConfirm,
+                    },
+                ]}
+            />
         </Dialog>
     );
 }
 
 const style = StyleSheet.create({
-    content: {
-        height: rpx(450),
-    },
     row: {
         marginTop: rpx(28),
         height: rpx(120),

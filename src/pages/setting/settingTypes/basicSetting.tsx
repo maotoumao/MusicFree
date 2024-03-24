@@ -481,6 +481,7 @@ export default function BasicSetting() {
         <View style={styles.wrapper}>
             <FlatList
                 style={styles.headerContainer}
+                showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.headerContentContainer}
                 horizontal
                 data={basicOptions.map(it => it.title)}
