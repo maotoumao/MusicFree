@@ -172,6 +172,7 @@ interface RouterParams extends RouterParamsBase {
     };
     setting: {
         type: string;
+        // anchor?: string | number;
     };
     local: undefined;
     downloading: undefined;

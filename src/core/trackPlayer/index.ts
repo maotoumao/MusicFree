@@ -644,7 +644,6 @@ const play = async (
         }
     } catch (e: any) {
         const message = e?.message;
-        console.log(message, 'MMM', e);
         if (
             message === 'The player is not initialized. Call setupPlayer first.'
         ) {
