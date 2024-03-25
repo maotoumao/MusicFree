@@ -89,10 +89,19 @@ export default function Sheets() {
                 <View style={styles.more}>
                     <IconButton
                         name="plus"
+                        style={styles.newSheetButton}
                         sizeType="normal"
                         accessibilityLabel="新建歌单"
                         onPress={() => {
                             showPanel('NewMusicSheet');
+                        }}
+                    />
+                    <IconButton
+                        name="import"
+                        sizeType="normal"
+                        accessibilityLabel="导入歌单"
+                        onPress={() => {
+                            showPanel('ImportMusicSheet');
                         }}
                     />
                 </View>
@@ -201,5 +210,8 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end',
+    },
+    newSheetButton: {
+        marginRight: rpx(24),
     },
 });

@@ -68,7 +68,11 @@ export default function PluginList() {
             await Promise.all(
                 validResult.map(_ => PluginManager.installPlugin(_.uri)),
             );
-            Toast.success('插件安装成功~');
+            if (validResult.length) {
+                Toast.success('插件安装成功~');
+            } else {
+                Toast.warn('安装失败');
+            }
         } catch (e: any) {
             if (e?.message?.startsWith('User')) {
                 setLoading(false);

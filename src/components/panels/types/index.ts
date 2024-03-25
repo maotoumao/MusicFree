@@ -1,6 +1,7 @@
 import AddToMusicSheet from './addToMusicSheet';
 import AssociateLrc from './associateLrc';
 import ColorPicker from './colorPicker';
+import ImportMusicSheet from './importMusicSheet';
 import MusicItemOptions from './musicItemOptions';
 import MusicQuality from './musicQuality';
 import NewMusicSheet from './newMusicSheet';
@@ -22,6 +23,8 @@ export default {
     MusicItemOptions: MusicItemOptions,
     /** 新建歌单 */
     NewMusicSheet: NewMusicSheet,
+    /** 导入歌单 */
+    ImportMusicSheet,
     /** 当前播放列表 */
     PlayList: PlayList,
     /** 关联歌词 */
