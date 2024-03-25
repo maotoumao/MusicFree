@@ -2,7 +2,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import bootstrap from './bootstrap';
-import {routes} from './router';
+import {navigationRef, routes} from './router';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Dialogs from '@/components/dialogs';
 import Panels from '@/components/panels';
@@ -35,7 +35,7 @@ export default function Pages() {
             <BootstrapComp />
             <GestureHandlerRootView style={globalStyle.flex1}>
                 <SafeAreaProvider>
-                    <NavigationContainer theme={theme}>
+                    <NavigationContainer theme={theme} ref={navigationRef}>
                         <PageBackground />
                         <Stack.Navigator
                             initialRouteName={routes[0].path}
