@@ -60,6 +60,8 @@ interface IConfig {
             showExitOnNotification: boolean;
             // 本地歌单添加歌曲顺序
             musicOrderInLocalSheet: 'start' | 'end';
+            // 自动换源
+            tryChangeSourceWhenPlayFail: boolean;
         };
         /** 歌词 */
         lyric: {

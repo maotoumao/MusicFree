@@ -222,6 +222,11 @@ export default function BasicSetting() {
                     basicSetting?.autoPlayWhenAppStart ?? false,
                 ),
                 createSwitch(
+                    '播放失败时尝试更换音源',
+                    'setting.basic.tryChangeSourceWhenPlayFail',
+                    basicSetting?.tryChangeSourceWhenPlayFail ?? false,
+                ),
+                createSwitch(
                     '播放失败时自动暂停',
                     'setting.basic.autoStopWhenError',
                     basicSetting?.autoStopWhenError ?? false,

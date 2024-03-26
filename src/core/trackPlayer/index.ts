@@ -46,6 +46,7 @@ import {musicIsPaused} from '@/utils/trackUtils';
 import {trace} from '@/utils/log';
 import PersistStatus from '../persistStatus';
 import {getCurrentDialog, showDialog} from '@/components/dialogs/useDialog';
+import getSimilarMusic from '@/utils/getSimilarMusic';
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -335,7 +336,7 @@ const addNext = (musicItem: IMusic.IMusicItem | IMusic.IMusicItem[]) => {
     }
 };
 
-const isCurrentMusic = (musicItem: IMusic.IMusicItem) => {
+const isCurrentMusic = (musicItem: IMusic.IMusicItem | null | undefined) => {
     return isSameMediaItem(musicItem, currentMusicStore.getValue()) ?? false;
 };
 
@@ -581,7 +582,6 @@ const play = async (
         if (!isCurrentMusic(musicItem)) {
             return;
         }
-
         if (!source) {
             // 如果有source
             if (musicItem.source) {
@@ -594,10 +594,46 @@ const play = async (
                     }
                 }
             }
-
             // 5.4 没有返回源
             if (!source && !musicItem.url) {
-                throw new Error(PlayFailReason.INVALID_SOURCE);
+                // 插件失效的情况
+                if (Config.get('setting.basic.tryChangeSourceWhenPlayFail')) {
+                    // 重试
+                    const similarMusic = await getSimilarMusic(
+                        musicItem,
+                        'music',
+                        () => !isCurrentMusic(musicItem),
+                    );
+
+                    if (similarMusic) {
+                        const similarMusicPlugin =
+                            PluginManager.getByMedia(similarMusic);
+
+                        for (let quality of qualityOrder) {
+                            if (isCurrentMusic(musicItem)) {
+                                source =
+                                    (await similarMusicPlugin?.methods?.getMediaSource(
+                                        similarMusic,
+                                        quality,
+                                    )) ?? null;
+                                // 5.4.1 获取到真实源
+                                if (source) {
+                                    setQuality(quality);
+                                    break;
+                                }
+                            } else {
+                                // 5.4.2 已经切换到其他歌曲了，
+                                return;
+                            }
+                        }
+                    }
+
+                    if (!source) {
+                        throw new Error(PlayFailReason.INVALID_SOURCE);
+                    }
+                } else {
+                    throw new Error(PlayFailReason.INVALID_SOURCE);
+                }
             } else {
                 source = {
                     url: musicItem.url,
