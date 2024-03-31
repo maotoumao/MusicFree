@@ -1,6 +1,6 @@
 {
   "name": "MusicFree",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "license": "GPL",
   "private": true,
   "author": {
@@ -42,7 +42,7 @@
     "deepmerge": "^4.3.1",
     "he": "^1.2.0",
     "immer": "^9.0.15",
-    "jotai": "^1.7.4",
+    "jotai": "^2.7.0",
     "lodash.shuffle": "^4.2.0",
     "lru-cache": "^7.14.0",
     "nanoid": "^4.0.2",

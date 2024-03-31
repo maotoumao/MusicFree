@@ -121,7 +121,7 @@ const style = StyleSheet.create({
     button: {
         marginTop: rpx(48),
         paddingHorizontal: rpx(18),
-        paddingVertical: rpx(12),
+        paddingVertical: rpx(16),
         borderRadius: rpx(12),
         borderWidth: 1,
         borderStyle: 'solid',

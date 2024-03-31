@@ -14,6 +14,8 @@ import {hidePanel, showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import MediaExtra from '@/core/mediaExtra';
 import PersistStatus from '@/core/persistStatus';
+import useOrientation from '@/hooks/useOrientation';
+import HeartIcon from '../heartIcon';
 
 interface ILyricOperationsProps {
     scrollToCurrentLrcItem: () => void;
@@ -30,9 +32,11 @@ export default function LyricOperations(props: ILyricOperationsProps) {
         false,
     );
     const colors = useColors();
+    const orientation = useOrientation();
 
     return (
         <View style={styles.container}>
+            {orientation === 'vertical' ? <HeartIcon /> : null}
             <Icon
                 name="format-font-size-increase"
                 size={iconSizeConst.normal}

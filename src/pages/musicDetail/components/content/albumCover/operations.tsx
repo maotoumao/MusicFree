@@ -2,10 +2,8 @@ import React from 'react';
 import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MusicSheet from '@/core/musicSheet';
 
 import Download from '@/core/download';
-import {isSameMediaItem} from '@/utils/mediaItem';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {ROUTE_PATH} from '@/entry/router';
 import {ImgAsset} from '@/constants/assetsConst';
@@ -15,21 +13,16 @@ import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import {iconSizeConst} from '@/constants/uiConst';
 import PersistStatus from '@/core/persistStatus';
+import HeartIcon from '../heartIcon';
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
-    const favoriteMusicSheet = MusicSheet.useSheets('favorite');
     const musicItem = TrackPlayer.useCurrentMusic();
     const currentQuality = TrackPlayer.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
     const rate = PersistStatus.useValue('music.rate', 100);
     const orientation = useOrientation();
-
-    const musicIndexInFav =
-        favoriteMusicSheet?.musicList.findIndex(_ =>
-            isSameMediaItem(_, musicItem),
-        ) ?? -1;
 
     return (
         <View
@@ -41,30 +34,7 @@ export default function Operations() {
                       }
                     : null,
             ]}>
-            {musicIndexInFav !== -1 ? (
-                <Icon
-                    name="heart"
-                    size={iconSizeConst.normal}
-                    color="red"
-                    onPress={() => {
-                        MusicSheet.removeMusicByIndex(
-                            'favorite',
-                            musicIndexInFav,
-                        );
-                    }}
-                />
-            ) : (
-                <Icon
-                    name="heart-outline"
-                    size={iconSizeConst.normal}
-                    color="white"
-                    onPress={() => {
-                        if (musicItem) {
-                            MusicSheet.addMusic('favorite', musicItem);
-                        }
-                    }}
-                />
-            )}
+            <HeartIcon />
             <Pressable
                 onPress={() => {
                     if (!musicItem) {

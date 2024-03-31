@@ -5,7 +5,7 @@ import LocalMusic from '@/pages/localMusic';
 import MusicListEditor from '@/pages/musicListEditor';
 import SearchMusicList from '@/pages/searchMusicList';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {useCallback} from 'react';
+import {createRef, useCallback} from 'react';
 import AlbumDetail from '../pages/albumDetail';
 import Home from '../pages/home';
 import MusicDetail from '../pages/musicDetail';
@@ -172,6 +172,7 @@ interface RouterParams extends RouterParamsBase {
     };
     setting: {
         type: string;
+        // anchor?: string | number;
     };
     local: undefined;
     downloading: undefined;
@@ -227,4 +228,14 @@ export function useNavigate() {
     []);
 
     return navigate;
+}
+
+export const navigationRef = createRef<any>();
+
+/** 在 react 组件外使用导航 */
+export function navigate<T extends RoutePaths>(
+    route: T,
+    params?: RouterParams[T],
+) {
+    navigationRef.current?.navigate?.(route, params);
 }

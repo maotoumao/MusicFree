@@ -35,10 +35,16 @@ async function clearMusic() {
     musicHistory.setValue([]);
 }
 
+async function setHistory(newHistory: IMusic.IMusicItem[]) {
+    await setStorage(musicHistorySheetId, newHistory);
+    musicHistory.setValue(newHistory);
+}
+
 export default {
     setupMusicHistory,
     addMusic,
     removeMusic,
     clearMusic,
+    setHistory,
     useMusicHistory: musicHistory.useValue,
 };

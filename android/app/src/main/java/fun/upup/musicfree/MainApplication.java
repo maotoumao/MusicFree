@@ -11,6 +11,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
 
+import fun.upup.musicfree.appIconUtil.AppIconUtilPackage;
 import fun.upup.musicfree.newarchitecture.MainApplicationReactNativeHost;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,6 +40,7 @@ public class MainApplication extends Application implements ReactApplication {
                     packages.add(new UtilsPackage());
                     packages.add(new Mp3UtilPackage());
                     packages.add(new LyricUtilPackage());
+                    packages.add(new AppIconUtilPackage(getPackageName()));
                     return packages;
                 }
 

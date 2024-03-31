@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     title: {
         textAlign: 'center',
         marginTop: rpx(12),
+        width: rpx(160),
     },
     image: {
         width: '100%',

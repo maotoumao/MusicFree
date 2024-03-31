@@ -17,10 +17,19 @@ interface ISimpleInputProps {
     onCancel?: () => void;
     maxLength?: number;
     placeholder?: string;
+    autoFocus?: boolean;
 }
 
 export default function SimpleInput(props: ISimpleInputProps) {
-    const {onOk, onCancel, placeholder, maxLength = 80, hints, title} = props;
+    const {
+        onOk,
+        onCancel,
+        placeholder,
+        maxLength = 80,
+        hints,
+        title,
+        autoFocus = true,
+    } = props;
 
     const [input, setInput] = useState('');
     const colors = useColors();
@@ -44,6 +53,7 @@ export default function SimpleInput(props: ISimpleInputProps) {
                     <TextInput
                         value={input}
                         accessible
+                        autoFocus={autoFocus}
                         accessibilityLabel="输入框"
                         accessibilityHint={placeholder}
                         onChangeText={_ => {

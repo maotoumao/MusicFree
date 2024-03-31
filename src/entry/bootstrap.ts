@@ -24,13 +24,16 @@ import {localPluginHash, supportLocalMediaType} from '@/constants/commonConst';
 import TrackPlayer from '@/core/trackPlayer';
 import musicHistory from '@/core/musicHistory';
 import PersistStatus from '@/core/persistStatus';
+import {perfLogger} from '@/utils/perfLogger';
 
 /** app加载前执行
  * 1. 检查权限
  * 2. 数据初始化
  * 3.
  */
+
 async function _bootstrap() {
+    const logger = perfLogger();
     // 1. 检查权限
     const [readStoragePermission, writeStoragePermission] = await Promise.all([
         check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE),
@@ -45,20 +48,32 @@ async function _bootstrap() {
         await request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
         await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
     }
+    logger.mark('权限检查完成');
 
     // 2. 数据初始化
     /** 初始化路径 */
     await setupFolder();
     trace('文件夹初始化完成');
+    logger.mark('文件夹初始化完成');
+
     // 加载配置
     await Promise.all([
-        Config.setup(),
-        MediaMeta.setup(),
-        MusicSheet.setup(),
-        Network.setup(),
-        musicHistory.setupMusicHistory(),
+        Config.setup().then(() => {
+            logger.mark('Config');
+        }),
+        MediaMeta.setup().then(() => {
+            logger.mark('MediaMeta');
+        }),
+        MusicSheet.setup().then(() => {
+            logger.mark('MusicSheet');
+        }),
+        musicHistory.setupMusicHistory().then(() => {
+            logger.mark('musicHistory');
+        }),
     ]);
     trace('配置初始化完成');
+    logger.mark('配置初始化完成');
+
     // 加载插件
     try {
         await RNTrackPlayer.setupPlayer({
@@ -73,6 +88,7 @@ async function _bootstrap() {
             throw e;
         }
     }
+    logger.mark('加载播放器');
 
     const capabilities = Config.get('setting.basic.showExitOnNotification')
         ? [
@@ -100,18 +116,31 @@ async function _bootstrap() {
         compactCapabilities: capabilities,
         notificationCapabilities: [...capabilities, Capability.SeekTo],
     });
+    logger.mark('播放器初始化完成');
     trace('播放器初始化完成');
     await Cache.setup();
+    logger.mark('缓存初始化完成');
+
     trace('缓存初始化完成');
     await PluginManager.setup();
+    logger.mark('插件初始化完成');
+
     trace('插件初始化完成');
     await TrackPlayer.setupTrackPlayer();
     trace('播放列表初始化完成');
+    logger.mark('播放列表初始化完成');
+
     await LocalMusicSheet.setup();
     trace('本地音乐初始化完成');
+    logger.mark('本地音乐初始化完成');
+
     Theme.setup();
     trace('主题初始化完成');
+    logger.mark('主题初始化完成');
+
     await LyricManager.setup();
+
+    logger.mark('歌词初始化完成');
 
     extraMakeup();
     ErrorUtils.setGlobalHandler(error => {
@@ -148,6 +177,9 @@ export default async function () {
 async function extraMakeup() {
     // 自动更新
     try {
+        // 初始化网络状态
+        Network.setup();
+
         if (Config.get('setting.basic.autoUpdatePlugin')) {
             const lastUpdated = PersistStatus.get('app.pluginUpdateTime') || 0;
             const now = Date.now();

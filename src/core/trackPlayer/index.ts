@@ -43,9 +43,10 @@ import {
 import {createMediaIndexMap} from '@/utils/mediaIndexMap';
 import PluginManager from '../pluginManager';
 import {musicIsPaused} from '@/utils/trackUtils';
-import Toast from '@/utils/toast';
 import {trace} from '@/utils/log';
 import PersistStatus from '../persistStatus';
+import {getCurrentDialog, showDialog} from '@/components/dialogs/useDialog';
+import getSimilarMusic from '@/utils/getSimilarMusic';
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -113,7 +114,10 @@ async function setupTrackPlayer() {
 
     // 状态恢复
     if (rate) {
-        await ReactNativeTrackPlayer.setRate(+rate / 100);
+        ReactNativeTrackPlayer.setRate(+rate / 100);
+    }
+    if (repeatMode) {
+        repeatModeStore.setValue(repeatMode as MusicRepeatMode);
     }
 
     if (musicQueue && Array.isArray(musicQueue)) {
@@ -121,21 +125,26 @@ async function setupTrackPlayer() {
     }
 
     if (track && isInPlayList(track)) {
-        const newSource = await PluginManager.getByMedia(
-            track,
-        )?.methods.getMediaSource(track, quality, 0);
-        // 重新初始化 获取最新的链接
-        track.url = newSource?.url || track.url;
-        track.headers = newSource?.headers || track.headers;
         if (!Config.get('setting.basic.autoPlayWhenAppStart')) {
             track.isInit = true;
         }
 
-        await setTrackSource(track as Track, false);
+        // 异步
+        PluginManager.getByMedia(track)
+            ?.methods.getMediaSource(track, quality, 0)
+            .then(async newSource => {
+                track.url = newSource?.url || track.url;
+                track.headers = newSource?.headers || track.headers;
+
+                if (isSameMediaItem(currentMusicStore.getValue(), track)) {
+                    await setTrackSource(track as Track, false);
+                }
+            });
         setCurrentMusic(track);
 
         if (progress) {
-            await ReactNativeTrackPlayer.seekTo(progress);
+            // 异步
+            ReactNativeTrackPlayer.seekTo(progress);
         }
     }
 
@@ -327,7 +336,7 @@ const addNext = (musicItem: IMusic.IMusicItem | IMusic.IMusicItem[]) => {
     }
 };
 
-const isCurrentMusic = (musicItem: IMusic.IMusicItem) => {
+const isCurrentMusic = (musicItem: IMusic.IMusicItem | null | undefined) => {
     return isSameMediaItem(musicItem, currentMusicStore.getValue()) ?? false;
 };
 
@@ -388,15 +397,22 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
 const setRepeatMode = (mode: MusicRepeatMode) => {
     const playList = getPlayList();
     let newPlayList;
-    if (mode === MusicRepeatMode.SHUFFLE) {
-        newPlayList = shuffle(playList);
-    } else {
-        newPlayList = produce(playList, draft => {
-            return sortByTimestampAndIndex(draft);
-        });
+    const prevMode = repeatModeStore.getValue();
+
+    if (
+        (prevMode === MusicRepeatMode.SHUFFLE &&
+            mode !== MusicRepeatMode.SHUFFLE) ||
+        (mode === MusicRepeatMode.SHUFFLE &&
+            prevMode !== MusicRepeatMode.SHUFFLE)
+    ) {
+        if (mode === MusicRepeatMode.SHUFFLE) {
+            newPlayList = shuffle(playList);
+        } else {
+            newPlayList = sortByTimestampAndIndex(playList, true);
+        }
+        setPlayList(newPlayList);
     }
 
-    setPlayList(newPlayList);
     const currentMusicItem = currentMusicStore.getValue();
     currentIndex = getMusicIndex(currentMusicItem);
     repeatModeStore.setValue(mode);
@@ -566,7 +582,6 @@ const play = async (
         if (!isCurrentMusic(musicItem)) {
             return;
         }
-
         if (!source) {
             // 如果有source
             if (musicItem.source) {
@@ -579,10 +594,46 @@ const play = async (
                     }
                 }
             }
-
             // 5.4 没有返回源
             if (!source && !musicItem.url) {
-                throw new Error(PlayFailReason.INVALID_SOURCE);
+                // 插件失效的情况
+                if (Config.get('setting.basic.tryChangeSourceWhenPlayFail')) {
+                    // 重试
+                    const similarMusic = await getSimilarMusic(
+                        musicItem,
+                        'music',
+                        () => !isCurrentMusic(musicItem),
+                    );
+
+                    if (similarMusic) {
+                        const similarMusicPlugin =
+                            PluginManager.getByMedia(similarMusic);
+
+                        for (let quality of qualityOrder) {
+                            if (isCurrentMusic(musicItem)) {
+                                source =
+                                    (await similarMusicPlugin?.methods?.getMediaSource(
+                                        similarMusic,
+                                        quality,
+                                    )) ?? null;
+                                // 5.4.1 获取到真实源
+                                if (source) {
+                                    setQuality(quality);
+                                    break;
+                                }
+                            } else {
+                                // 5.4.2 已经切换到其他歌曲了，
+                                return;
+                            }
+                        }
+                    }
+
+                    if (!source) {
+                        throw new Error(PlayFailReason.INVALID_SOURCE);
+                    }
+                } else {
+                    throw new Error(PlayFailReason.INVALID_SOURCE);
+                }
             } else {
                 source = {
                     url: musicItem.url,
@@ -610,6 +661,12 @@ const play = async (
         let info: Partial<IMusic.IMusicItem> | null = null;
         try {
             info = (await plugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
+            if (
+                (typeof info?.url === 'string' && info.url.trim() === '') ||
+                (info?.url && typeof info.url !== 'string')
+            ) {
+                delete info.url;
+            }
         } catch {}
 
         // 11. 设置补充信息
@@ -623,16 +680,23 @@ const play = async (
         }
     } catch (e: any) {
         const message = e?.message;
-        console.log(message, 'MMM', e);
         if (
             message === 'The player is not initialized. Call setupPlayer first.'
         ) {
             await ReactNativeTrackPlayer.setupPlayer();
             play(musicItem, forcePlay);
         } else if (message === PlayFailReason.FORBID_CELLUAR_NETWORK_PLAY) {
-            Toast.warn(
-                '当前禁止移动网络播放音乐，如需播放请去侧边栏-基本设置中修改',
-            );
+            if (getCurrentDialog()?.name !== 'SimpleDialog') {
+                showDialog('SimpleDialog', {
+                    title: '流量提醒',
+                    content:
+                        '当前非WIFI环境，侧边栏设置中打开【使用移动网络播放】功能后可继续播放',
+                });
+            }
+
+            // Toast.warn(
+            //     '当前禁止移动网络播放音乐，如需播放请去侧边栏-基本设置中修改',
+            // );
         } else if (message === PlayFailReason.INVALID_SOURCE) {
             trace('音源为空，播放失败');
             await failToPlay();

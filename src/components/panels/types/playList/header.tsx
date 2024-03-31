@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {InteractionManager, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import repeatModeConst from '@/constants/repeatModeConst';
@@ -24,7 +24,9 @@ export default function Header() {
             </ThemeText>
             <IconTextButton
                 onPress={() => {
-                    TrackPlayer.toggleRepeatMode();
+                    InteractionManager.runAfterInteractions(() => {
+                        TrackPlayer.toggleRepeatMode();
+                    });
                 }}
                 icon={repeatModeConst[repeatMode].icon}>
                 {repeatModeConst[repeatMode].text}
