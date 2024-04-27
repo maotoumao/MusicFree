@@ -10,8 +10,10 @@ jobs:
     if: "github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'release: ')"
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo ${{github.event.pull_request.body}}
+      - env: 
+          REQBODY: ${{github.event.pull_request.body}}
+        run: |
+          echo "${REQBODY}"
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -33,8 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     if: "github.event_name == 'workflow_dispatch'"
     steps:
-      - run: |
-          echo ${{github.event.pull_request.body}}
+      - env: 
+          REQBODY: ${{github.event.pull_request.body}}
+        run: |
+          echo "${REQBODY}"
       - name: Checkout
         uses: actions/checkout@v3
 
