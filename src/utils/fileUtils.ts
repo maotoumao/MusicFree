@@ -131,7 +131,7 @@ export function trimHash(url: string) {
 }
 
 export function escapeCharacter(str?: string) {
-    return str !== undefined ? `${str}`.replace(/\//g, '_') : '';
+    return str !== undefined ? `${str}`.replace(/[\/|\\?*"<>:]+/g, '_') : '';
 }
 
 export function getDirectory(dirPath: string) {
