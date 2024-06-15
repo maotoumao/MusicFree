@@ -71,8 +71,12 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'account-music-outline',
             title: `作者: ${musicItem.artist}`,
             onPress: () => {
-                Clipboard.setString(musicItem.artist);
-                Toast.success('已复制到剪切板');
+                try {
+                    Clipboard.setString(musicItem.artist.toString());
+                    Toast.success('已复制到剪切板');
+                } catch {
+                    Toast.warn('复制失败');
+                }
             },
         },
         {
@@ -80,8 +84,12 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             show: !!musicItem.album,
             title: `专辑: ${musicItem.album}`,
             onPress: () => {
-                Clipboard.setString(musicItem.album);
-                Toast.success('已复制到剪切板');
+                try {
+                    Clipboard.setString(musicItem.album.toString());
+                    Toast.success('已复制到剪切板');
+                } catch {
+                    Toast.warn('复制失败');
+                }
             },
         },
         {
