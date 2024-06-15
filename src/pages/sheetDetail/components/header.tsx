@@ -25,11 +25,11 @@ export default function Header() {
                 <View style={style.details}>
                     <ThemeText fontSize="title">{sheet?.title}</ThemeText>
                     <ThemeText fontColor="textSecondary" fontSize="subTitle">
-                        共{sheet?.musicList.length ?? 0}首
+                        共{sheet?.musicList?.length ?? 0}首
                     </ThemeText>
                 </View>
             </View>
-            <PlayAllBar musicList={sheet.musicList} musicSheet={sheet} />
+            <PlayAllBar musicList={sheet?.musicList} musicSheet={sheet} />
         </View>
     );
 }
