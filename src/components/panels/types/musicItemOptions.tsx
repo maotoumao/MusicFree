@@ -214,7 +214,13 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                             emptySrc={ImgAsset.albumDefault}
                         />
                         <View style={style.content}>
-                            <ThemeText numberOfLines={2} style={style.title}>
+                            <ThemeText
+                                numberOfLines={2}
+                                style={style.title}
+                                onPress={() => {
+                                    Clipboard.setString(musicItem.title);
+                                    Toast.success('已复制到剪切板');
+                                }}>
                                 {musicItem?.title}
                             </ThemeText>
                             <ThemeText
