@@ -26,7 +26,9 @@ export default function Chip(props: IChipProps) {
                 containerStyle,
             ]}>
             {typeof children === 'string' ? (
-                <ThemeText fontSize="subTitle">{children}</ThemeText>
+                <ThemeText fontSize="subTitle" numberOfLines={1}>
+                    {children}
+                </ThemeText>
             ) : (
                 children
             )}

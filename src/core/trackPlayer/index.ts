@@ -60,7 +60,7 @@ const qualityStore = new GlobalState<IMusic.IQualityKey>('standard');
 let currentIndex = -1;
 
 // TODO: 下个版本最大限制调大一些
-const maxMusicQueueLength = 1500; // 当前播放最大限制
+const maxMusicQueueLength = 3000; // 当前播放最大限制
 const halfMaxMusicQueueLength = Math.floor(maxMusicQueueLength / 2);
 const shrinkPlayListToSize = (
     queue: IMusic.IMusicItem[],
@@ -542,7 +542,7 @@ const play = async (
         // 4.1 刷新歌词信息
         if (
             !isSameMediaItem(
-                LyricManager.getLyricState()?.lyricParser?.getCurrentMusicItem?.(),
+                LyricManager.getLyricState()?.lyricParser?.musicItem,
                 musicItem,
             )
         ) {
