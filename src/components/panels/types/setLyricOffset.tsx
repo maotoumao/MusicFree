@@ -31,8 +31,8 @@ export default function SetLyricOffset(props: IProps) {
         offset === 0
             ? '正常'
             : offset < 0
-            ? `提前${(-offset).toFixed(1)}s`
-            : `延后${offset.toFixed(1)}s`;
+            ? `延后${(-offset).toFixed(1)}s`
+            : `提前${offset.toFixed(1)}s`;
 
     return (
         <PanelBase

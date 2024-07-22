@@ -45,7 +45,7 @@ export default function NavBar() {
             <IconButton
                 name="share"
                 color="white"
-                sizeType={'normal'}
+                sizeType="normal"
                 style={styles.button}
                 onPress={async () => {
                     try {
