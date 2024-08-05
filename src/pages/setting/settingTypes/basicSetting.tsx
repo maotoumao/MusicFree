@@ -525,7 +525,7 @@ export default function BasicSetting() {
 
                     return (
                         <ListItem
-                            withHorizonalPadding
+                            withHorizontalPadding
                             heightType="small"
                             onPress={item.onPress}>
                             <ListItem.Content title={item.title} />
@@ -635,14 +635,14 @@ function LyricSetting() {
     return (
         <View>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={autoSearchLyric.onPress}>
                 <ListItem.Content title={autoSearchLyric.title} />
                 {autoSearchLyric.right}
             </ListItem>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={openStatusBarLyric.onPress}>
                 <ListItem.Content title={openStatusBarLyric.title} />
@@ -733,14 +733,14 @@ function LyricSetting() {
                 />
             </View>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={alignStatusBarLyric.onPress}>
                 <ListItem.Content title={alignStatusBarLyric.title} />
                 {alignStatusBarLyric.right}
             </ListItem>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={() => {
                     showPanel('ColorPicker', {
@@ -759,7 +759,7 @@ function LyricSetting() {
                 <ColorBlock color={lyricSetting?.color ?? '#FFE9D2FF'} />
             </ListItem>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={() => {
                     showPanel('ColorPicker', {

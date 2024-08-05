@@ -1,4 +1,4 @@
-import {logger, fileAsyncTransport} from 'react-native-logs';
+import {fileAsyncTransport, logger} from 'react-native-logs';
 import RNFS, {readDir, readFile} from 'react-native-fs';
 import pathConst from '@/constants/pathConst';
 import Config from '../core/config';
@@ -9,7 +9,7 @@ const config = {
     transportOptions: {
         FS: RNFS,
         filePath: pathConst.logPath,
-        fileName: `error-log-{date-today}.log`,
+        fileName: 'error-log-{date-today}.log',
     },
     dateFormat: 'local',
 };
@@ -19,7 +19,7 @@ const traceConfig = {
     transportOptions: {
         FS: RNFS,
         filePath: pathConst.logPath,
-        fileName: `trace-log.log`,
+        fileName: 'trace-log.log',
     },
     dateFormat: 'local',
 };

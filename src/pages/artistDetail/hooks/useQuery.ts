@@ -1,6 +1,6 @@
 import {errorLog} from '@/utils/log';
 import {RequestStateCode} from '@/constants/commonConst';
-import produce from 'immer';
+import {produce} from 'immer';
 import {useAtom} from 'jotai';
 import {useCallback} from 'react';
 import {queryResultAtom} from '../store/atoms';

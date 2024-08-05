@@ -9,7 +9,7 @@ import Toast from '@/utils/toast';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
-import {showPanel, hidePanel} from '../usePanel';
+import {hidePanel, showPanel} from '../usePanel';
 import PanelHeader from '../base/panelHeader';
 
 interface IAddToMusicSheetProps {
@@ -43,7 +43,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                             }}
                             ListHeaderComponent={
                                 <ListItem
-                                    withHorizonalPadding
+                                    withHorizontalPadding
                                     key="new"
                                     onPress={() => {
                                         showPanel('NewMusicSheet', {
@@ -79,7 +79,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                             }
                             renderItem={({item: sheet}) => (
                                 <ListItem
-                                    withHorizonalPadding
+                                    withHorizontalPadding
                                     key={`${sheet.id}`}
                                     onPress={async () => {
                                         try {

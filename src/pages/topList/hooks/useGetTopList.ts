@@ -1,6 +1,6 @@
 import {RequestStateCode} from '@/constants/commonConst';
 import PluginManager from '@/core/pluginManager';
-import produce from 'immer';
+import {produce} from 'immer';
 import {useAtom} from 'jotai';
 import {useCallback} from 'react';
 import {pluginsTopListAtom} from '../store/atoms';

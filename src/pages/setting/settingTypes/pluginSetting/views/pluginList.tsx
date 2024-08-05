@@ -18,6 +18,13 @@ import {showPanel} from '@/components/panels/usePanel';
 import AppBar from '@/components/base/appBar';
 import Fab from '@/components/base/fab';
 import PluginItem from '../components/pluginItem';
+import {IIconName} from '@/components/base/icon.tsx';
+
+interface IOption {
+    icon: IIconName;
+    title: string;
+    onPress?: () => void;
+}
 
 export default function PluginList() {
     const plugins = PluginManager.useSortedPlugins();
@@ -25,23 +32,23 @@ export default function PluginList() {
 
     const navigator = useNavigation<any>();
 
-    const menuOptions = [
+    const menuOptions: IOption[] = [
         {
-            icon: 'book-plus-multiple-outline',
+            icon: 'bookmark-square',
             title: '订阅设置',
             async onPress() {
                 navigator.navigate('/pluginsetting/subscribe');
             },
         },
         {
-            icon: 'menu',
+            icon: 'bars-3',
             title: '插件排序',
             onPress() {
                 navigator.navigate('/pluginsetting/sort');
             },
         },
         {
-            icon: 'trash-can-outline',
+            icon: 'trash-outline',
             title: '卸载全部插件',
             onPress() {
                 showDialog('SimpleDialog', {
@@ -59,11 +66,13 @@ export default function PluginList() {
 
     async function onInstallFromLocalClick() {
         try {
-            const result = await DocumentPicker.pickMultiple();
+            const result = await DocumentPicker.pick({
+                allowMultiSelection: true,
+            });
             setLoading(true);
             // 初步过滤
             const validResult = result?.filter(
-                _ => _.uri.endsWith('.js') || _.name?.endsWith('.js'),
+                it => it.uri.endsWith('.js') || it.name?.endsWith('.js'),
             );
             await Promise.all(
                 validResult.map(_ => PluginManager.installPlugin(_.uri)),

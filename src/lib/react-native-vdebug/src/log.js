@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {
-    TextInput,
+    Alert,
     FlatList,
-    Text,
     StyleSheet,
-    View,
+    Text,
+    TextInput,
     TouchableOpacity,
     TouchableWithoutFeedback,
-    Alert,
+    View,
 } from 'react-native';
 import event from './event';
 import {debounce} from './tool';

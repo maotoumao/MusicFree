@@ -24,7 +24,7 @@ import {
     useDerivedValue,
     useSharedValue,
 } from 'react-native-reanimated';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@/components/base/icon.tsx';
 
 const defaultZIndex = 10;
 
@@ -384,7 +384,7 @@ function _SortableFlatListItem(props: ISortableFlatListItemProps) {
                 }}
                 style={styleRef.current.btn}>
                 <Icon
-                    name="menu"
+                    name="bars-3"
                     size={iconSizeConst.normal}
                     color={textColor}
                 />
@@ -445,7 +445,7 @@ const FakeFlatListItem = forwardRef(function (
             {item ? renderItem({item, index: -1}) : null}
             <Pressable style={styleRef.current.btn}>
                 <Icon
-                    name="menu"
+                    name="bars-3"
                     size={iconSizeConst.normal}
                     color={textColor}
                 />

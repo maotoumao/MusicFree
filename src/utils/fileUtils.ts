@@ -43,7 +43,9 @@ export function sizeFormatter(bytes: number | string) {
     if (typeof bytes === 'string') {
         return bytes;
     }
-    if (bytes === 0) return '0B';
+    if (bytes === 0) {
+        return '0B';
+    }
     let k = 1024,
         sizes = ['B', 'KB', 'MB', 'GB'],
         i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -131,7 +133,7 @@ export function trimHash(url: string) {
 }
 
 export function escapeCharacter(str?: string) {
-    return str !== undefined ? `${str}`.replace(/[\/|\\?*"<>:]+/g, '_') : '';
+    return str !== undefined ? `${str}`.replace(/[/|\\?*"<>:]+/g, '_') : '';
 }
 
 export function getDirectory(dirPath: string) {
@@ -158,7 +160,7 @@ export function getFileName(filePath: string, withoutExt?: boolean) {
 
 export async function mkdirR(directory: string) {
     let folder = directory;
-    const checkStack = [];
+    const checkStack: string[] = [];
     while (folder.length > 15) {
         checkStack.push(folder);
         folder = path.dirname(folder);

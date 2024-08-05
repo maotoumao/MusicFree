@@ -1,7 +1,6 @@
 import React from 'react';
 import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Download from '@/core/download';
 import LocalMusicSheet from '@/core/localMusicSheet';
@@ -14,6 +13,7 @@ import TrackPlayer from '@/core/trackPlayer';
 import {iconSizeConst} from '@/constants/uiConst';
 import PersistStatus from '@/core/persistStatus';
 import HeartIcon from '../heartIcon';
+import Icon from '@/components/base/icon.tsx';
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -57,7 +57,7 @@ export default function Operations() {
                 />
             </Pressable>
             <Icon
-                name={isDownloaded ? 'check-circle-outline' : 'download'}
+                name={isDownloaded ? 'check-circle-outline' : 'arrow-down-tray'}
                 size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
@@ -90,7 +90,7 @@ export default function Operations() {
                 <Image source={ImgAsset.rate[rate!]} style={style.quality} />
             </Pressable>
             <Icon
-                name="dots-vertical"
+                name="ellipsis-vertical"
                 size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {

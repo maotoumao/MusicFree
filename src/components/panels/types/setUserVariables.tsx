@@ -51,7 +51,7 @@ export default function SetUserVariables(props: IUserVariablesProps) {
                             }}>
                             {variables.map(it => (
                                 <ListItem
-                                    withHorizonalPadding
+                                    withHorizontalPadding
                                     style={styles.listItem}>
                                     <ThemeText
                                         numberOfLines={1}

@@ -1,13 +1,13 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import repeatModeConst from '@/constants/repeatModeConst';
 
 import useOrientation from '@/hooks/useOrientation';
 import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import {musicIsPaused} from '@/utils/trackUtils';
+import Icon from '@/components/base/icon.tsx';
 
 export default function () {
     const repeatMode = TrackPlayer.useRepeatMode();
@@ -36,7 +36,7 @@ export default function () {
                 />
                 <Icon
                     color={'white'}
-                    name={'skip-previous'}
+                    name={'skip-left'}
                     size={rpx(56)}
                     onPress={() => {
                         TrackPlayer.skipToPrevious();
@@ -60,7 +60,7 @@ export default function () {
                 />
                 <Icon
                     color={'white'}
-                    name={'skip-next'}
+                    name={'skip-right'}
                     size={rpx(56)}
                     onPress={() => {
                         TrackPlayer.skipToNext();
@@ -68,7 +68,7 @@ export default function () {
                 />
                 <Icon
                     color={'white'}
-                    name={'playlist-music'}
+                    name={'playlist'}
                     size={rpx(56)}
                     onPress={() => {
                         showPanel('PlayList');

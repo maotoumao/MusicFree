@@ -5,7 +5,7 @@ import {
     timeStampSymbol,
 } from '@/constants/commonConst';
 import MediaMeta from '@/core/mediaExtra';
-import produce from 'immer';
+import {produce} from 'immer';
 import objectPath from 'object-path';
 
 /** 获取mediakey */
@@ -41,6 +41,7 @@ export function isSameMediaItem(
     a: ICommon.IMediaBase | null | undefined,
     b: ICommon.IMediaBase | null | undefined,
 ) {
+    // eslint-disable-next-line eqeqeq
     return a && b && a.id == b.id && a.platform === b.platform;
 }
 

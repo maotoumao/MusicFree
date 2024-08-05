@@ -1,7 +1,7 @@
 /**
  * 歌单管理
  */
-import produce from 'immer';
+import {produce} from 'immer';
 import {useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
 import {isSameMediaItem, sortByTimestampAndIndex} from '@/utils/mediaItem';
@@ -179,7 +179,7 @@ async function resumeSheets(
         : {
               ...sheetMusicMap,
           };
-    const needUpdatedIds = [];
+    const needUpdatedIds: string[] = [];
     for (let i = 0; i < sheets.length; ++i) {
         const musicSheet = sheets[i];
         if (musicSheet.id === 'favorite') {
@@ -255,7 +255,7 @@ async function addMusic(
     // TODO: 改成MMKV
     const pendAtStart =
         Config.get('setting.basic.musicOrderInLocalSheet') === 'start';
-    let newMusicList = [];
+    let newMusicList: IMusic.IMusicItem[] = [];
     if (pendAtStart) {
         newMusicList = musicItem.concat(musicList);
     } else {

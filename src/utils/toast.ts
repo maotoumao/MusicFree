@@ -1,4 +1,4 @@
-import {showToast, IToastConfig} from '@/components/base/toast';
+import {IToastConfig, showToast} from '@/components/base/toast';
 
 function success(message: string, config?: IToastConfig) {
     showToast({

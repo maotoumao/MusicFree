@@ -2,13 +2,13 @@ import React from 'react';
 import {StyleProp, StyleSheet, ViewStyle} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {iconSizeConst} from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import Icon, {IIconName} from '@/components/base/icon.tsx';
 
 interface IProps {
-    icon: string;
+    icon: IIconName;
     onPress?: () => void;
     containerStyle?: StyleProp<ViewStyle>;
     children?: string;

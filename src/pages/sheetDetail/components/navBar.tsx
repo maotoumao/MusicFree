@@ -16,7 +16,7 @@ export default function () {
             <AppBar
                 menu={[
                     {
-                        icon: 'trash-can-outline',
+                        icon: 'trash-outline',
                         title: '删除歌单',
                         show: id !== 'favorite',
                         onPress() {
@@ -32,7 +32,7 @@ export default function () {
                         },
                     },
                     {
-                        icon: 'playlist-edit',
+                        icon: 'pencil-square',
                         title: '批量编辑',
                         onPress() {
                             navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
@@ -42,7 +42,7 @@ export default function () {
                         },
                     },
                     {
-                        icon: 'square-edit-outline',
+                        icon: 'pencil-outline',
                         title: '编辑歌单信息',
                         onPress() {
                             showDialog('EditSheetDetailDialog', {
@@ -51,7 +51,7 @@ export default function () {
                         },
                     },
                     {
-                        icon: 'sort',
+                        icon: 'sort-outline',
                         title: '排序',
                         onPress() {
                             showDialog('RadioDialog', {
@@ -98,7 +98,7 @@ export default function () {
                 ]}
                 actions={[
                     {
-                        icon: 'magnify',
+                        icon: 'magnifying-glass',
                         onPress() {
                             navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                                 musicList: musicSheet?.musicList,

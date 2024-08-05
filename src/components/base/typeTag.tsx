@@ -1,9 +1,15 @@
 import React from 'react';
-import {ColorValue, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import {
+    ColorValue,
+    StyleProp,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+    ViewStyle,
+} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import useColors from '@/hooks/useColors';
-import {TouchableOpacity} from 'react-native';
 
 interface ITypeTagProps {
     title: string;

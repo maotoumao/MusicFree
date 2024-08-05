@@ -46,7 +46,7 @@ export default function SimpleSelect(props: ISimpleSelectProps) {
                                 <Fragment key={`frag-${index}`}>
                                     <ListItem
                                         heightType="small"
-                                        withHorizonalPadding
+                                        withHorizontalPadding
                                         onPress={() => {
                                             onPress?.(it);
                                             hidePanel();

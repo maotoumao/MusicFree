@@ -32,7 +32,7 @@ export default function Header() {
                 {repeatModeConst[repeatMode].text}
             </IconTextButton>
             <IconTextButton
-                icon="trash-can-outline"
+                icon="trash-outline"
                 onPress={() => {
                     TrackPlayer.clear();
                 }}>

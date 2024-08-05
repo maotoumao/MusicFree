@@ -25,11 +25,11 @@ const fontWeightConst = {
 } as const;
 
 const iconSizeConst = {
-    small: rpx(32),
-    light: rpx(40),
-    normal: rpx(48),
-    big: rpx(64),
-    large: rpx(88),
+    small: rpx(30),
+    light: rpx(36),
+    normal: rpx(42),
+    big: rpx(60),
+    large: rpx(72),
 };
 
 type ColorKey = 'normal' | 'secondary' | 'highlight' | 'primary';

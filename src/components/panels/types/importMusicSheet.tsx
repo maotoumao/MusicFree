@@ -37,7 +37,7 @@ export default function ImportMusicSheet() {
                                 }}
                                 renderItem={({item: plugin}) => (
                                     <ListItem
-                                        withHorizonalPadding
+                                        withHorizontalPadding
                                         key={`${plugin.hash}`}
                                         onPress={async () => {
                                             showPanel('SimpleInput', {

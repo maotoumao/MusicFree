@@ -3,7 +3,6 @@ import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {iconSizeConst} from '@/constants/uiConst';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
 import {showPanel} from '../panels/usePanel';
@@ -11,6 +10,7 @@ import IconButton from './iconButton';
 import TrackPlayer from '@/core/trackPlayer';
 import MusicSheet from '@/core/musicSheet';
 import Toast from '@/utils/toast';
+import Icon from '@/components/base/icon.tsx';
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
@@ -41,7 +41,7 @@ export default function (props: IProps) {
                     }
                 }}>
                 <Icon
-                    name="play-circle-outline"
+                    name="play-circle"
                     style={style.playAllIcon}
                     size={iconSizeConst.normal}
                     color={colors.text}
@@ -66,7 +66,7 @@ export default function (props: IProps) {
                 />
             ) : null}
             <IconButton
-                name={'plus-box-multiple-outline'}
+                name="folder-plus"
                 sizeType={'normal'}
                 style={style.optionButton}
                 onPress={async () => {
@@ -77,7 +77,7 @@ export default function (props: IProps) {
                 }}
             />
             <IconButton
-                name="playlist-edit"
+                name="pencil-square"
                 sizeType={'normal'}
                 style={style.optionButton}
                 onPress={async () => {

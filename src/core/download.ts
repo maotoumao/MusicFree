@@ -9,7 +9,7 @@ import {isSameMediaItem} from '@/utils/mediaItem';
 import {getQualityOrder} from '@/utils/qualities';
 import StateMapper from '@/utils/stateMapper';
 import Toast from '@/utils/toast';
-import produce from 'immer';
+import {produce} from 'immer';
 import {InteractionManager} from 'react-native';
 import {downloadFile, exists} from 'react-native-fs';
 
@@ -18,28 +18,13 @@ import LocalMusicSheet from './localMusicSheet';
 import MediaMeta from './mediaExtra';
 import Network from './network';
 import PluginManager from './pluginManager';
-import {PERMISSIONS, check} from 'react-native-permissions';
+import {check, PERMISSIONS} from 'react-native-permissions';
 import path from 'path-browserify';
 import {
     getCurrentDialog,
     hideDialog,
     showDialog,
 } from '@/components/dialogs/useDialog';
-// import PQueue from 'p-queue/dist';
-// import PriorityQueue from 'p-queue/dist/priority-queue';
-
-// interface IDownloadProgress {
-//     progress: number;
-//     size: number;
-// }
-
-// const downloadQueue = new PQueue({
-//     concurrency: 3
-// });
-
-// const downloadProgress = new Map<string, IDownloadProgress>();
-// downloadQueue.concurrency = 3;
-// console.log(downloadQueue.concurrency);
 
 /** 队列中的元素 */
 interface IDownloadMusicOptions {

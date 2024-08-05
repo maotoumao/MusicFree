@@ -1,9 +1,9 @@
-import {View, TouchableOpacity, StyleSheet, StatusBar} from 'react-native';
+import {StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import SortableFlatList from '@/components/base/SortableFlatList';
 import ThemeText from '@/components/base/themeText';
 import {PluginMeta} from '@/core/pluginMeta';
-import produce from 'immer';
+import {produce} from 'immer';
 import objectPath from 'object-path';
 import rpx from '@/utils/rpx';
 import PluginManager, {Plugin} from '@/core/pluginManager';

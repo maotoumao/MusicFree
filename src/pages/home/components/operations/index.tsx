@@ -4,16 +4,24 @@ import rpx from '@/utils/rpx';
 import ActionButton from '../ActionButton';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import {ScrollView} from 'react-native-gesture-handler';
+import {IIconName} from '@/components/base/icon.tsx';
 
 interface IOperationsProps {
     orientation?: 'horizonal' | 'vertical';
+}
+
+interface IActionOption {
+    iconName: IIconName;
+    iconColor?: string;
+    title: string;
+    action?: () => void;
 }
 
 export default function Operations(props: IOperationsProps) {
     const navigate = useNavigate();
     const {orientation} = props;
 
-    const actionButtons = [
+    const actionButtons: IActionOption[] = [
         {
             iconName: 'heart',
             iconColor: 'red',
@@ -39,14 +47,14 @@ export default function Operations(props: IOperationsProps) {
             },
         },
         {
-            iconName: 'trophy-outline',
+            iconName: 'trophy',
             title: '榜单',
             action() {
                 navigate(ROUTE_PATH.TOP_LIST);
             },
         },
         {
-            iconName: 'history',
+            iconName: 'clock-outline',
             title: '播放记录',
             action() {
                 navigate(ROUTE_PATH.HISTORY);

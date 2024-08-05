@@ -1,7 +1,7 @@
 // import {Quality} from '@/constants/commonConst';
 import {CustomizedColors} from '@/hooks/useColors';
 import {getStorage, setStorage} from '@/utils/storage';
-import produce from 'immer';
+import {produce} from 'immer';
 import {useEffect, useState} from 'react';
 
 type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[] | IMusic.IQuality;

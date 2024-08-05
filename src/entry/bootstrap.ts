@@ -6,12 +6,10 @@ import RNTrackPlayer, {
 } from 'react-native-track-player';
 import 'react-native-get-random-values';
 import Config from '@/core/config';
-import RNBootSplash from 'react-native-bootsplash';
 import pathConst from '@/constants/pathConst';
 import {checkAndCreateDir} from '@/utils/fileUtils';
 import {errorLog, trace} from '@/utils/log';
 import MediaMeta from '@/core/mediaMeta.old';
-import Cache from '@/core/cache.old';
 import PluginManager from '@/core/pluginManager';
 import Network from '@/core/network';
 import {ImgAsset} from '@/constants/assetsConst';
@@ -25,6 +23,7 @@ import TrackPlayer from '@/core/trackPlayer';
 import musicHistory from '@/core/musicHistory';
 import PersistStatus from '@/core/persistStatus';
 import {perfLogger} from '@/utils/perfLogger';
+import * as SplashScreen from 'expo-splash-screen';
 
 /** app加载前执行
  * 1. 检查权限
@@ -33,6 +32,13 @@ import {perfLogger} from '@/utils/perfLogger';
  */
 
 async function _bootstrap() {
+    await SplashScreen.preventAutoHideAsync()
+        .then(result =>
+            console.log(
+                `SplashScreen.preventAutoHideAsync() succeeded: ${result}`,
+            ),
+        )
+        .catch(console.warn); // it's good to explicitly catch and inspect any error
     const logger = perfLogger();
     // 1. 检查权限
     const [readStoragePermission, writeStoragePermission] = await Promise.all([
@@ -118,10 +124,7 @@ async function _bootstrap() {
     });
     logger.mark('播放器初始化完成');
     trace('播放器初始化完成');
-    await Cache.setup();
-    logger.mark('缓存初始化完成');
 
-    trace('缓存初始化完成');
     await PluginManager.setup();
     logger.mark('插件初始化完成');
 
@@ -170,7 +173,8 @@ export default async function () {
     }
     // 隐藏开屏动画
     console.log('HIDE');
-    RNBootSplash.hide({fade: true});
+    await SplashScreen.hideAsync();
+    // RNBootSplash.hide({fade: true});
 }
 
 /** 不需要阻塞的 */

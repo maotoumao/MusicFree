@@ -87,7 +87,7 @@ export default function PluginSubscribe() {
                     renderItem={({item, index}) => {
                         return (
                             <ListItem
-                                withHorizonalPadding
+                                withHorizontalPadding
                                 onPress={() => {
                                     showDialog('SubscribePluginDialog', {
                                         subscribeItem: item,
