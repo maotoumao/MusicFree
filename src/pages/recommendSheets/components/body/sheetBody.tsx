@@ -7,7 +7,7 @@ import TypeTag from '../../../../components/base/typeTag';
 
 import useRecommendList from '../../hooks/useRecommendListTags';
 import SheetList from './sheetList';
-import {showPanel, hidePanel} from '@/components/panels/usePanel';
+import {hidePanel, showPanel} from '@/components/panels/usePanel';
 
 interface IProps {
     hash: string;

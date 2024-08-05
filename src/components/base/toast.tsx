@@ -19,7 +19,7 @@ import Animated, {
     withDelay,
     withTiming,
 } from 'react-native-reanimated';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@/components/base/icon.tsx';
 
 export interface IToastConfig {
     /** 类型 */
@@ -50,10 +50,10 @@ const typeConfig = {
         color: '#457236',
     },
     warn: {
-        name: 'alert-circle',
+        name: 'exclamation-circle',
         color: '#de7622',
     },
-};
+} as const;
 
 export function ToastBaseComponent() {
     const activeToast = activeToastStore.useValue();
@@ -126,7 +126,7 @@ export function ToastBaseComponent() {
                         toastAnimStyle,
                     ]}>
                     <Icon
-                        style={styles.icon}
+                        size={fontSizeConst.appbar}
                         name={typeConfig[activeToast.type].name}
                         color={typeConfig[activeToast.type].color}
                     />
@@ -179,10 +179,6 @@ const styles = StyleSheet.create({
 
         elevation: 2,
     },
-    icon: {
-        fontSize: fontSizeConst.appbar,
-        includeFontPadding: false,
-    },
     text: {
         fontSize: fontSizeConst.content,
         includeFontPadding: false,
@@ -197,7 +193,7 @@ const styles = StyleSheet.create({
     actionTextContainer: {
         marginLeft: rpx(24),
         width: rpx(120),
-        paddingHorizonal: rpx(12),
+        paddingHorizontal: rpx(12),
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

@@ -1,14 +1,14 @@
-import React, {ReactNode} from 'react';
+import React from 'react';
 import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import rpx from '@/utils/rpx';
 import ListItem from '../base/listItem';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {showPanel} from '../panels/usePanel';
 import TitleAndTag from './titleAndTag';
 import ThemeText from '../base/themeText';
 import TrackPlayer from '@/core/trackPlayer';
+import Icon from '@/components/base/icon.tsx';
 
 interface IMusicItemProps {
     index?: string | number;
@@ -18,7 +18,7 @@ interface IMusicItemProps {
     onItemPress?: (musicItem: IMusic.IMusicItem) => void;
     onItemLongPress?: () => void;
     itemPaddingRight?: number;
-    left?: () => ReactNode;
+    left?: () => JSX.Element;
     containerStyle?: StyleProp<ViewStyle>;
 }
 export default function MusicItem(props: IMusicItemProps) {
@@ -38,7 +38,7 @@ export default function MusicItem(props: IMusicItemProps) {
         <ListItem
             heightType="big"
             style={containerStyle}
-            withHorizonalPadding
+            withHorizontalPadding
             leftPadding={index !== undefined ? 0 : undefined}
             rightPadding={itemPaddingRight}
             onLongPress={onItemLongPress}
@@ -90,7 +90,7 @@ export default function MusicItem(props: IMusicItemProps) {
                 <ListItem.ListItemIcon
                     width={rpx(48)}
                     position="none"
-                    icon="dots-vertical"
+                    icon="ellipsis-vertical"
                     onPress={() => {
                         showPanel('MusicItemOptions', {
                             musicItem,

@@ -14,7 +14,7 @@ export default function ArtistResultItem(props: IArtistResultsProps) {
     const navigate = useNavigate();
     return (
         <ListItem
-            withHorizonalPadding
+            withHorizontalPadding
             heightType="big"
             onPress={() => {
                 navigate(ROUTE_PATH.ARTIST_DETAIL, {

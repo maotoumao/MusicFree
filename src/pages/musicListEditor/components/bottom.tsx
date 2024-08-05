@@ -1,7 +1,6 @@
 import React, {useMemo} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ThemeText from '@/components/base/themeText';
 import {iconSizeConst} from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
@@ -10,10 +9,11 @@ import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import Toast from '@/utils/toast';
 import Download from '@/core/download';
 
-import produce from 'immer';
 import {useParams} from '@/entry/router';
 import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
+import {produce} from 'immer';
+import Icon, {IIconName} from '@/components/base/icon.tsx';
 
 export default function Bottom() {
     const {musicSheet} = useParams<'music-list-editor'>();
@@ -43,7 +43,7 @@ export default function Bottom() {
     return (
         <View style={style.wrapper}>
             <BottomIcon
-                icon="motion-play-outline"
+                icon="motion-play"
                 title="下一首播放"
                 onPress={async () => {
                     TrackPlayer.addNext(selectedItems);
@@ -52,7 +52,7 @@ export default function Bottom() {
                 }}
             />
             <BottomIcon
-                icon="music-note-plus"
+                icon="folder-plus"
                 title="加入歌单"
                 onPress={() => {
                     if (selectedItems.length) {
@@ -64,7 +64,7 @@ export default function Bottom() {
                 }}
             />
             <BottomIcon
-                icon="arrow-down-bold-circle-outline"
+                icon="arrow-down-tray"
                 title="下载"
                 onPress={() => {
                     if (selectedItems.length) {
@@ -77,7 +77,7 @@ export default function Bottom() {
                 }}
             />
             <BottomIcon
-                icon="trash-can-outline"
+                icon="trash-outline"
                 title="删除"
                 color={
                     selectedItems.length && musicSheet?.id
@@ -99,7 +99,7 @@ export default function Bottom() {
 }
 
 interface IBottomIconProps {
-    icon: string;
+    icon: IIconName;
     title: string;
     color?: 'text' | 'textSecondary';
     onPress: () => void;

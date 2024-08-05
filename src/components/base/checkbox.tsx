@@ -2,8 +2,8 @@ import React from 'react';
 import {StyleProp, StyleSheet, View, ViewProps} from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import Icon from '@/components/base/icon.tsx';
 
 interface ICheckboxProps {
     checked?: boolean;

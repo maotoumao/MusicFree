@@ -61,7 +61,7 @@ export default function ColorPicker(props: IColorPickerProps) {
     const slPan = Gesture.Pan()
         .onUpdate(event => {
             const newTimeStamp = Date.now();
-            if (newTimeStamp - lastTimestampRef.current > 33) {
+            if (newTimeStamp - lastTimestampRef.current > 60) {
                 lastTimestampRef.current = newTimeStamp;
             } else {
                 return;

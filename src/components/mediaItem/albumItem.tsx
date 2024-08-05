@@ -14,7 +14,7 @@ export default function AlbumItem(props: IAlbumResultsProps) {
 
     return (
         <ListItem
-            withHorizonalPadding
+            withHorizontalPadding
             heightType="big"
             onPress={() => {
                 navigate(ROUTE_PATH.ALBUM_DETAIL, {

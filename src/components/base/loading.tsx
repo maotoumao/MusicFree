@@ -1,7 +1,6 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import {ActivityIndicator} from 'react-native';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
 

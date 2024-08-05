@@ -2,7 +2,7 @@ import React, {memo, useCallback} from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicItem from '@/components/mediaItem/musicItem';
-import produce from 'immer';
+import {produce} from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
 import {
     editingMusicListAtom,

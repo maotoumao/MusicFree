@@ -34,7 +34,7 @@ export default function Chip(props: IChipProps) {
             )}
             <IconButton
                 onPress={onClose}
-                name="close"
+                name="x-mark"
                 sizeType="small"
                 style={styles.icon}
             />

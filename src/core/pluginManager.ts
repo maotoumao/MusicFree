@@ -17,7 +17,7 @@ import pathConst from '@/constants/pathConst';
 import {compare, satisfies} from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
-import MediaMeta from './mediaExtra';
+import MediaExtra from './mediaExtra';
 import {nanoid} from 'nanoid';
 import {devLog, errorLog, trace} from '../utils/log';
 import {
@@ -47,8 +47,7 @@ import {addFileScheme, getFileName} from '@/utils/fileUtils';
 import {URL} from 'react-native-url-polyfill';
 import Base64 from '@/utils/base64';
 import MediaCache from './mediaCache';
-import produce from 'immer';
-import MediaExtra from './mediaExtra';
+import {produce} from 'immer';
 import objectPath from 'object-path';
 
 axios.defaults.timeout = 2000;
@@ -457,7 +456,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         originalMusicItem: IMusic.IMusicItemBase,
     ): Promise<ILyric.ILyricSource | null> {
         // 1.额外存储的meta信息（关联歌词）
-        const meta = MediaMeta.get(originalMusicItem);
+        const meta = MediaExtra.get(originalMusicItem);
         let musicItem: IMusic.IMusicItem;
         if (meta && meta.associatedLrc) {
             musicItem = meta.associatedLrc as IMusic.IMusicItem;
@@ -1136,7 +1135,7 @@ async function uninstallPlugin(hash: string) {
             pluginStateMapper.notify();
             // 防止其他重名
             if (plugins.every(_ => _.name !== pluginName)) {
-                MediaMeta.removeAll(pluginName);
+                MediaExtra.removeAll(pluginName);
             }
         } catch {}
     }
@@ -1148,7 +1147,7 @@ async function uninstallAllPlugins() {
             try {
                 const pluginName = plugin.name;
                 await unlink(plugin.path);
-                MediaMeta.removeAll(pluginName);
+                MediaExtra.removeAll(pluginName);
             } catch (e) {}
         }),
     );

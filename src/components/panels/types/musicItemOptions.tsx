@@ -28,6 +28,7 @@ import Config from '@/core/config';
 import TrackPlayer from '@/core/trackPlayer';
 import mediaCache from '@/core/mediaCache';
 import LyricManager from '@/core/lyricManager';
+import {IIconName} from '@/components/base/icon.tsx';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -40,6 +41,13 @@ interface IMusicItemOptionsProps {
 
 const ITEM_HEIGHT = rpx(96);
 
+interface IOption {
+    icon: IIconName;
+    title: string;
+    onPress?: () => void;
+    show?: boolean;
+}
+
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const {musicItem, musicSheet, from} = props ?? {};
 
@@ -48,9 +56,9 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
     const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
 
-    const options = [
+    const options: IOption[] = [
         {
-            icon: 'id-card',
+            icon: 'identification',
             title: `ID: ${getMediaKey(musicItem)}`,
             onPress: () => {
                 mediaCache.setMediaCache(musicItem);
@@ -68,7 +76,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'account-music-outline',
+            icon: 'user',
             title: `作者: ${musicItem.artist}`,
             onPress: () => {
                 try {
@@ -80,7 +88,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'album',
+            icon: 'album-outline',
             show: !!musicItem.album,
             title: `专辑: ${musicItem.album}`,
             onPress: () => {
@@ -93,7 +101,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'motion-play-outline',
+            icon: 'motion-play',
             title: '下一首播放',
             onPress: () => {
                 TrackPlayer.addNext(musicItem);
@@ -101,14 +109,14 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'plus-box-multiple-outline',
+            icon: 'folder-plus',
             title: '添加到歌单',
             onPress: () => {
                 showPanel('AddToMusicSheet', {musicItem});
             },
         },
         {
-            icon: 'download',
+            icon: 'arrow-down-tray',
             title: '下载',
             show: !downloaded,
             onPress: async () => {
@@ -126,7 +134,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             show: !!downloaded,
         },
         {
-            icon: 'trash-can-outline',
+            icon: 'trash-outline',
             title: '删除',
             show: !!musicSheet,
             onPress: async () => {
@@ -142,7 +150,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'delete-forever-outline',
+            icon: 'trash-outline',
             title: '删除本地下载',
             show: !!downloaded,
             onPress: () => {
@@ -162,7 +170,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'link-variant',
+            icon: 'link',
             title: associatedLrc
                 ? `已关联歌词 ${associatedLrc.platform}@${associatedLrc.id}`
                 : '关联歌词',
@@ -181,7 +189,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'link-variant-remove',
+            icon: 'link-slash',
             title: '解除关联歌词',
             show: !!associatedLrc,
             onPress: async () => {
@@ -194,7 +202,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'timer-outline',
+            icon: 'alarm-outline',
             title: '定时关闭',
             show: from === ROUTE_PATH.MUSIC_DETAIL,
             onPress: () => {
@@ -202,7 +210,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'file-remove-outline',
+            icon: 'archive-box-x-mark',
             title: '清除插件缓存(播放异常时使用)',
             onPress: () => {
                 mediaCache.removeMediaCache(musicItem);
@@ -253,7 +261,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                             renderItem={({item}) =>
                                 item.show !== false ? (
                                     <ListItem
-                                        withHorizonalPadding
+                                        withHorizontalPadding
                                         heightType="small"
                                         onPress={item.onPress}>
                                         <ListItem.ListItemIcon

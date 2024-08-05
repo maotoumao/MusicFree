@@ -16,14 +16,14 @@ export default function Operations() {
             },
         },
         {
-            iconName: 'trophy-outline',
+            iconName: 'trophy',
             title: '榜单',
             action() {
                 navigate(ROUTE_PATH.TOP_LIST);
             },
         },
         {
-            iconName: 'history',
+            iconName: 'clock-outline',
             title: '播放记录',
             action() {
                 navigate(ROUTE_PATH.HISTORY);
@@ -36,7 +36,7 @@ export default function Operations() {
                 navigate(ROUTE_PATH.LOCAL);
             },
         },
-    ];
+    ] as const;
 
     return (
         <View style={styles.container}>

@@ -1,7 +1,7 @@
 /**
  * 歌单管理
  */
-import produce from 'immer';
+import {produce} from 'immer';
 import {nanoid} from 'nanoid';
 import {
     getMultiStorage,

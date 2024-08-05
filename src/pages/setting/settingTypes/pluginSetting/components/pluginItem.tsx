@@ -13,19 +13,27 @@ import ThemeText from '@/components/base/themeText';
 import IconTextButton from '@/components/base/iconTextButton';
 import {PluginMeta} from '@/core/pluginMeta';
 import ThemeSwitch from '@/components/base/switch';
+import {IIconName} from '@/components/base/icon.tsx';
 
 interface IPluginItemProps {
     plugin: Plugin;
+}
+
+interface IOption {
+    title: string;
+    icon: IIconName;
+    onPress?: () => void;
+    show?: boolean;
 }
 
 export default function PluginItem(props: IPluginItemProps) {
     const {plugin} = props;
     const colors = useColors();
 
-    const options = [
+    const options: IOption[] = [
         {
             title: '更新插件',
-            icon: 'update',
+            icon: 'arrow-path',
             async onPress() {
                 try {
                     await PluginManager.updatePlugin(plugin);
@@ -51,7 +59,7 @@ export default function PluginItem(props: IPluginItemProps) {
         },
         {
             title: '卸载插件',
-            icon: 'trash-can-outline',
+            icon: 'trash-outline',
             show: true,
             onPress() {
                 showDialog('SimpleDialog', {
@@ -70,7 +78,7 @@ export default function PluginItem(props: IPluginItemProps) {
         },
         {
             title: '导入单曲',
-            icon: 'import',
+            icon: 'arrow-right-end-on-rectangle',
             onPress() {
                 showPanel('SimpleInput', {
                     title: '导入单曲',
@@ -102,7 +110,7 @@ export default function PluginItem(props: IPluginItemProps) {
         },
         {
             title: '导入歌单',
-            icon: 'database-import-outline',
+            icon: 'arrow-right-end-on-rectangle',
             onPress() {
                 showPanel('SimpleInput', {
                     title: '导入歌单',
@@ -135,7 +143,7 @@ export default function PluginItem(props: IPluginItemProps) {
         },
         {
             title: '用户变量',
-            icon: 'application-variable-outline',
+            icon: 'code-bracket-square',
             onPress() {
                 if (Array.isArray(plugin.instance.userVariables)) {
                     showPanel('SetUserVariables', {

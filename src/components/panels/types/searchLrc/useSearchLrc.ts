@@ -1,6 +1,6 @@
 import {devLog, errorLog} from '@/utils/log';
 import {RequestStateCode} from '@/constants/commonConst';
-import produce from 'immer';
+import {produce} from 'immer';
 import {useCallback, useRef} from 'react';
 import PluginManager, {Plugin} from '@/core/pluginManager';
 import searchResultStore from './searchResultStore';

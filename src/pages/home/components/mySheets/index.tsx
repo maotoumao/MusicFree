@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {FlatList, StyleSheet, ListRenderItem} from 'react-native';
+import {FlatList, ListRenderItem, StyleSheet} from 'react-native';
 import MusicSheet from '@/core/musicSheet';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import ListItem from '@/components/base/listItem';
@@ -20,7 +20,7 @@ function MySheets() {
             return (
                 <ListItem
                     key={`${sheet.id}`}
-                    withHorizonalPadding
+                    withHorizontalPadding
                     onPress={() => {
                         navigate(ROUTE_PATH.LOCAL_SHEET_DETAIL, {
                             id: sheet.id,
@@ -36,7 +36,7 @@ function MySheets() {
                     />
                     <ListItem.ListItemIcon
                         position="right"
-                        icon="trash-can-outline"
+                        icon="trash-outline"
                         onPress={() => {
                             showDialog('SimpleDialog', {
                                 title: '删除歌单',

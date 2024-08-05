@@ -151,7 +151,7 @@ export default function BackupSetting() {
             }
             // 临时文件
             await client.putFileContents(
-                `/MusicFree/MusicFreeBackup.json`,
+                '/MusicFree/MusicFreeBackup.json',
                 raw,
                 {
                     overwrite: true,
@@ -168,7 +168,7 @@ export default function BackupSetting() {
             <ListItemHeader>备份&恢复设置</ListItemHeader>
 
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 onPress={() => {
                     showDialog('RadioDialog', {
                         title: '设置恢复方式',
@@ -198,18 +198,18 @@ export default function BackupSetting() {
                 </ListItem.ListItemText>
             </ListItem>
             <ListItemHeader>本地备份</ListItemHeader>
-            <ListItem withHorizonalPadding onPress={onBackupToLocal}>
+            <ListItem withHorizontalPadding onPress={onBackupToLocal}>
                 <ListItem.Content title="备份到本地" />
             </ListItem>
-            <ListItem withHorizonalPadding onPress={onResumeFromLocal}>
+            <ListItem withHorizontalPadding onPress={onResumeFromLocal}>
                 <ListItem.Content title="从本地文件恢复" />
             </ListItem>
-            <ListItem withHorizonalPadding onPress={onResumeFromUrl}>
+            <ListItem withHorizontalPadding onPress={onResumeFromUrl}>
                 <ListItem.Content title="从远程URL中恢复" />
             </ListItem>
             <ListItemHeader>Webdav</ListItemHeader>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 onPress={() => {
                     showPanel('SetUserVariables', {
                         initValues: {
@@ -241,10 +241,10 @@ export default function BackupSetting() {
                 }}>
                 <ListItem.Content title="Webdav设置" />
             </ListItem>
-            <ListItem withHorizonalPadding onPress={onBackupToWebdav}>
+            <ListItem withHorizontalPadding onPress={onBackupToWebdav}>
                 <ListItem.Content title="备份到Webdav" />
             </ListItem>
-            <ListItem withHorizonalPadding onPress={onResumeFromWebdav}>
+            <ListItem withHorizontalPadding onPress={onResumeFromWebdav}>
                 <ListItem.Content title="从Webdav中恢复" />
             </ListItem>
         </ScrollView>

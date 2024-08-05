@@ -1,8 +1,8 @@
 import React from 'react';
 import {iconSizeConst} from '@/constants/uiConst';
 import MusicSheet from '@/core/musicSheet';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import TrackPlayer from '@/core/trackPlayer';
+import Icon from '@/components/base/icon.tsx';
 
 export default function () {
     const musicItem = TrackPlayer.useCurrentMusic();

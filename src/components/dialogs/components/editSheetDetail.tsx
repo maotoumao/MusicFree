@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
 import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
-import {TouchableOpacity} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import pathConst from '@/constants/pathConst';
 import Image from '@/components/base/image';

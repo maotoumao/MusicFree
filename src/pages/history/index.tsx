@@ -20,7 +20,7 @@ export default function History() {
             <AppBar
                 menu={[
                     {
-                        icon: 'trash-can-outline',
+                        icon: 'trash-outline',
                         title: '清空播放记录',
                         onPress() {
                             if (musicHistoryList.length) {
@@ -29,7 +29,7 @@ export default function History() {
                         },
                     },
                     {
-                        icon: 'playlist-edit',
+                        icon: 'pencil-square',
                         title: '编辑',
                         onPress() {
                             navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {

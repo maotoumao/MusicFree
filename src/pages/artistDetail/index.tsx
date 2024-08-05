@@ -32,7 +32,7 @@ export default function ArtistDetail() {
                 menu={[
                     {
                         title: '批量编辑单曲',
-                        icon: 'playlist-edit',
+                        icon: 'pencil-square',
                         onPress() {
                             navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                                 musicList: queryResult?.music?.data ?? [],

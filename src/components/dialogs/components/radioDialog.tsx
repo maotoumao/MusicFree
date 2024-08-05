@@ -35,7 +35,7 @@ export default function RadioDialog(props: IRadioDialogProps) {
                 data={content}
                 renderItem={({item}) => (
                     <ListItem
-                        withHorizonalPadding
+                        withHorizontalPadding
                         onPress={() => {
                             if (isObject(item)) {
                                 onOk?.(item.value);

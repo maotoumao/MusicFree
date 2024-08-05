@@ -15,7 +15,7 @@ export default function TopListItem(props: ITopListResultsProps) {
 
     return (
         <ListItem
-            withHorizonalPadding
+            withHorizontalPadding
             onPress={() => {
                 navigate(ROUTE_PATH.TOP_LIST_DETAIL, {
                     pluginHash: pluginHash,

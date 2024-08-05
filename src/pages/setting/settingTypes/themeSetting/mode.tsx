@@ -18,7 +18,7 @@ export default function Mode() {
                 显示样式
             </ThemeText>
             <View style={styles.sectionWrapper}>
-                <ListItem withHorizonalPadding>
+                <ListItem withHorizontalPadding>
                     <ListItem.Content>
                         <View style={styles.itemRow}>
                             <ThemeText>跟随系统深色设置</ThemeText>

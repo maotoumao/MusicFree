@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 
 // Internal Method
 const getStore = () => {
-    return getOrCreateMMKV(`App.PersistStatus`);
+    return getOrCreateMMKV('App.PersistStatus');
 };
 
 interface IPersistConfig {

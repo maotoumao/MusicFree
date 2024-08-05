@@ -1,11 +1,11 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import {
     LayoutRectangle,
+    StatusBar as OriginalStatusBar,
+    StyleProp,
     StyleSheet,
     TouchableWithoutFeedback,
     View,
-    StatusBar as OriginalStatusBar,
-    StyleProp,
     ViewStyle,
 } from 'react-native';
 import rpx from '@/utils/rpx';
@@ -24,17 +24,18 @@ import Animated, {
 } from 'react-native-reanimated';
 import Portal from './portal';
 import ListItem from './listItem';
+import {IIconName} from '@/components/base/icon.tsx';
 
 interface IAppBarProps {
     titleTextOpacity?: number;
     withStatusBar?: boolean;
     color?: string;
     actions?: Array<{
-        icon: string;
+        icon: IIconName;
         onPress?: () => void;
     }>;
     menu?: Array<{
-        icon: string;
+        icon: IIconName;
         title: string;
         show?: boolean;
         onPress?: () => void;
@@ -143,10 +144,10 @@ export default function AppBar(props: IAppBarProps) {
                 {actionComponent ?? null}
                 {menu?.length ? (
                     <IconButton
-                        name="dots-vertical"
+                        name="ellipsis-vertical"
                         sizeType="normal"
-                        onLayout={e => {
-                            setMenuIconLayout(e.nativeEvent.layout);
+                        onLayout={evt => {
+                            setMenuIconLayout(evt.nativeEvent.layout);
                         }}
                         color={contentColor}
                         style={[globalStyle.notShrink, styles.rightButton]}
@@ -208,7 +209,7 @@ export default function AppBar(props: IAppBarProps) {
                             it.show !== false ? (
                                 <ListItem
                                     key={it.title}
-                                    withHorizonalPadding
+                                    withHorizontalPadding
                                     heightType="small"
                                     onPress={() => {
                                         it.onPress?.();
@@ -232,6 +233,7 @@ const styles = StyleSheet.create({
         zIndex: 10000,
         height: rpx(88),
         flexDirection: 'row',
+        alignItems: 'center',
         paddingHorizontal: rpx(24),
     },
     content: {
