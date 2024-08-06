@@ -44,11 +44,7 @@ export default function () {
                 />
                 <Icon
                     color={'white'}
-                    name={
-                        musicIsPaused(musicState)
-                            ? 'play-circle-outline'
-                            : 'pause-circle-outline'
-                    }
+                    name={musicIsPaused(musicState) ? 'play' : 'pause'}
                     size={rpx(96)}
                     onPress={() => {
                         if (musicIsPaused(musicState)) {
