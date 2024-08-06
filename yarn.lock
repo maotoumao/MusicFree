@@ -5316,7 +5316,7 @@ expo-constants@~16.0.0:
     "@expo/config" "~9.0.0"
     "@expo/env" "~0.3.0"
 
-expo-file-system@~17.0.1:
+expo-file-system@^17.0.1, expo-file-system@~17.0.1:
   version "17.0.1"
   resolved "https://registry.npmmirror.com/expo-file-system/-/expo-file-system-17.0.1.tgz#b9f8af8c1c06ec71d96fd7a0d2567fa9e1c88f15"
   integrity sha512-dYpnZJqTGj6HCYJyXAgpFkQWsiCH3HY1ek2cFZVHFoEc5tLz9gmdEgTF6nFHurvmvfmXqxi7a5CXyVm0aFYJBw==
@@ -8947,11 +8947,6 @@ react-native-fast-image@^8.6.3:
   version "8.6.3"
   resolved "https://registry.npmmirror.com/react-native-fast-image/-/react-native-fast-image-8.6.3.tgz#6edc3f9190092a909d636d93eecbcc54a8822255"
   integrity sha512-Sdw4ESidXCXOmQ9EcYguNY2swyoWmx53kym2zRsvi+VeFCHEdkO+WG1DK+6W81juot40bbfLNhkc63QnWtesNg==
-
-react-native-file-access@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.npmmirror.com/react-native-file-access/-/react-native-file-access-3.1.0.tgz#0e7371bc82a0899e6ad99560a5503c35801dcf4c"
-  integrity sha512-wOpfKpJ8s4Csfjcvf7H4L1EtmejM07HQpndzMRWAianLC50EsPc78iV8TQaw5yI7j18rh9fWMqpevz8f5a1rsA==
 
 react-native-fs@^2.20.0:
   version "2.20.0"

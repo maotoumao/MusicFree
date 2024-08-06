@@ -39,7 +39,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import he from 'he';
 import Network from './network';
 import LocalMusicSheet from './localMusicSheet';
-import {FileSystem} from 'react-native-file-access';
+import {getInfoAsync} from 'expo-file-system';
 import Mp3Util from '@/native/mp3Util';
 import {PluginMeta} from './pluginMeta';
 import {useEffect, useState} from 'react';
@@ -308,11 +308,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 LocalMusicSheet.isLocalMusic(musicItem),
                 InternalDataType.LOCALPATH,
             );
-        if (
-            localPath &&
-            (localPath.startsWith('content://') ||
-                (await FileSystem.exists(localPath)))
-        ) {
+        if (localPath && (await getInfoAsync(localPath)).exists) {
             trace('本地播放', localPath);
             if (mediaExtra && mediaExtra.localPath !== localPath) {
                 // 修正一下本地数据
@@ -935,13 +931,21 @@ const localFilePlugin = new Plugin(function () {
             try {
                 meta = await Mp3Util.getBasicMeta(urlLike);
             } catch {}
-            const id = await FileSystem.hash(urlLike, 'MD5');
+            const stat = await getInfoAsync(urlLike, {
+                md5: true,
+            });
+            let id: string;
+            if (stat.exists) {
+                id = stat.md5 || nanoid();
+            } else {
+                id = nanoid();
+            }
             return {
                 id: id,
                 platform: '本地',
                 title: meta?.title ?? getFileName(urlLike),
                 artist: meta?.artist ?? '未知歌手',
-                duration: parseInt(meta?.duration ?? '0') / 1000,
+                duration: parseInt(meta?.duration ?? '0', 10) / 1000,
                 album: meta?.album ?? '未知专辑',
                 artwork: '',
                 [internalSerializeKey]: {

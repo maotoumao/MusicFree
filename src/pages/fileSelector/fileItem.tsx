@@ -6,6 +6,7 @@ import useTextColor from '@/hooks/useTextColor';
 import Checkbox from '@/components/base/checkbox';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Icon from '@/components/base/icon.tsx';
+import {iconSizeConst} from '@/constants/uiConst.ts';
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -46,6 +47,7 @@ function FileItem(props: IProps) {
                     }
                     color={textColor}
                     style={styles.folderIcon}
+                    size={iconSizeConst.light}
                 />
                 <ThemeText
                     style={styles.path}

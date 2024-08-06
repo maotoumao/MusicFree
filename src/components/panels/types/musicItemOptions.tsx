@@ -267,7 +267,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                         <ListItem.ListItemIcon
                                             width={rpx(48)}
                                             icon={item.icon}
-                                            iconSize={iconSizeConst.small}
+                                            iconSize={iconSizeConst.light}
                                         />
                                         <ListItem.Content title={item.title} />
                                     </ListItem>

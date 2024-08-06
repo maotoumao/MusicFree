@@ -149,7 +149,7 @@ export function getFileName(filePath: string, withoutExt?: boolean) {
     if (lastSlash === -1) {
         return filePath;
     }
-    const fileName = filePath.slice(lastSlash);
+    const fileName = filePath.slice(lastSlash + 1);
     if (withoutExt) {
         const lastDot = fileName.lastIndexOf('.');
         return lastDot === -1 ? fileName : fileName.slice(0, lastDot);
