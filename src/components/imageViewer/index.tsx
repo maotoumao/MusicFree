@@ -21,13 +21,11 @@ export function ImageViewComponent() {
     const currentImgSrc = currentImgSrcState.useValue();
 
     const orientation = useOrientation();
-    console.log('FFF');
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener(
             'hardwareBackPress',
             () => {
-                console.log('HI');
                 if (currentImgSrcState.getValue()) {
                     currentImgSrcState.setValue(null);
                     return true;
@@ -38,7 +36,7 @@ export function ImageViewComponent() {
         return () => {
             backHandler.remove();
         };
-    }, []);
+    }, [currentImgSrc]);
 
     return currentImgSrc ? (
         <TouchableWithoutFeedback

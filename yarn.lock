@@ -2759,11 +2759,6 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@sayem314/react-native-keep-awake@^1.2.4":
-  version "1.2.4"
-  resolved "https://registry.npmmirror.com/@sayem314/react-native-keep-awake/-/react-native-keep-awake-1.2.4.tgz#f7cfb21983c38042f484d2d768f7f41678b3dddc"
-  integrity sha512-I9tRpZ8z693lce4seDbRK0zBzeCkubBnSGmABiRPTRy2ZkMJB1m+vaXiDHl6U3fJa29i2TTaKclH3A8to/Bs9A==
-
 "@segment/loosely-validate-event@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npmmirror.com/@segment/loosely-validate-event/-/loosely-validate-event-2.0.0.tgz#87dfc979e5b4e7b82c5f1d8b722dfd5d77644681"
@@ -5328,7 +5323,7 @@ expo-font@~12.0.9:
   dependencies:
     fontfaceobserver "^2.1.0"
 
-expo-keep-awake@~13.0.2:
+expo-keep-awake@^13.0.2, expo-keep-awake@~13.0.2:
   version "13.0.2"
   resolved "https://registry.npmmirror.com/expo-keep-awake/-/expo-keep-awake-13.0.2.tgz#5ef31311a339671eec9921b934fdd90ab9652b0e"
   integrity sha512-kKiwkVg/bY0AJ5q1Pxnm/GvpeB6hbNJhcFsoOWDh2NlpibhCLaHL826KHUM+WsnJRbVRxJ+K9vbPRHEMvFpVyw==

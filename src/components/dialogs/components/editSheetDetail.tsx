@@ -7,7 +7,6 @@ import {ImgAsset} from '@/constants/assetsConst';
 import {launchImageLibrary} from 'react-native-image-picker';
 import pathConst from '@/constants/pathConst';
 import Image from '@/components/base/image';
-import {copyFile, exists, unlink} from 'react-native-fs';
 import MusicSheet from '@/core/musicSheet';
 import {addFileScheme, addRandomHash} from '@/utils/fileUtils';
 import Toast from '@/utils/toast';
@@ -15,6 +14,7 @@ import {hideDialog} from '../useDialog';
 import Dialog from './base';
 import Input from '@/components/base/input';
 import {fontSizeConst} from '@/constants/uiConst';
+import {copyAsync, deleteAsync, getInfoAsync} from 'expo-file-system';
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
@@ -55,18 +55,23 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
             return;
         }
 
-        let _coverImg = coverImg;
-        if (_coverImg && _coverImg !== musicSheet?.coverImg) {
-            _coverImg = addFileScheme(
-                `${pathConst.dataPath}sheet${
-                    musicSheet.id
-                }${_coverImg.substring(_coverImg.lastIndexOf('.'))}`,
+        let newCoverImg = coverImg;
+        if (coverImg && coverImg !== musicSheet?.coverImg) {
+            newCoverImg = addFileScheme(
+                `${pathConst.dataPath}sheet${musicSheet.id}${coverImg.substring(
+                    coverImg.lastIndexOf('.'),
+                )}`,
             );
             try {
-                if (await exists(_coverImg)) {
-                    await unlink(_coverImg);
+                if ((await getInfoAsync(newCoverImg)).exists) {
+                    await deleteAsync(newCoverImg, {
+                        idempotent: true, // 报错时不抛异常
+                    });
                 }
-                await copyFile(coverImg!, _coverImg);
+                await copyAsync({
+                    from: coverImg,
+                    to: newCoverImg,
+                });
             } catch (e) {
                 console.log(e);
             }
@@ -78,7 +83,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
         // 更新歌单信息
         MusicSheet.updateAndSaveSheet(musicSheet.id, {
             basic: {
-                coverImg: _coverImg ? addRandomHash(_coverImg) : undefined,
+                coverImg: newCoverImg ? addRandomHash(newCoverImg) : undefined,
                 title: _title,
             },
         }).then(() => {

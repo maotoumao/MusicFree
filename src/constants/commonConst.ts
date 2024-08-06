@@ -1,4 +1,4 @@
-import Animated, {Easing} from 'react-native-reanimated';
+import {Easing, EasingFunction} from 'react-native-reanimated';
 
 export const internalSymbolKey = Symbol.for('$');
 // 加入播放列表/歌单的时间
@@ -66,7 +66,7 @@ export enum EDeviceEvents {
     REFRESH_LYRIC = 'refresh-lyric',
 }
 
-const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
+const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 150;
 
 const animationFast = {
