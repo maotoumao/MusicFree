@@ -63,6 +63,7 @@ export default function Operations() {
                 onPress={() => {
                     if (musicItem && !isDownloaded) {
                         showPanel('MusicQuality', {
+                            type: 'download',
                             musicItem,
                             async onQualityPress(quality) {
                                 Download.downloadMusic(musicItem, quality);

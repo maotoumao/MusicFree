@@ -15,7 +15,7 @@ import useColors from '@/hooks/useColors';
 import AppBar from '@/components/base/appBar';
 import Input from '@/components/base/input';
 import Color from 'color';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 import IconButton from '@/components/base/iconButton';
 import {iconSizeConst} from '@/constants/uiConst';
 import Icon from '@/components/base/icon.tsx';

@@ -98,7 +98,7 @@ export default function (props: IPanelBaseProps) {
 
     const maskAnimated = useAnimatedStyle(() => {
         return {
-            opacity: withTiming(snapPoint.value * 0.5, timingConfig),
+            opacity: snapPoint.value * 0.5,
         };
     });
 
@@ -107,16 +107,10 @@ export default function (props: IPanelBaseProps) {
             transform: [
                 orientation === 'vertical'
                     ? {
-                          translateY: withTiming(
-                              (1 - snapPoint.value) * useAnimatedBase,
-                              timingConfig,
-                          ),
+                          translateY: (1 - snapPoint.value) * useAnimatedBase,
                       }
                     : {
-                          translateX: withTiming(
-                              (1 - snapPoint.value) * useAnimatedBase,
-                              timingConfig,
-                          ),
+                          translateX: (1 - snapPoint.value) * useAnimatedBase,
                       },
             ],
         };

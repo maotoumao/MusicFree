@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import AppBar from '@/components/base/appBar';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 import Body from './body';
 import {useNavigation} from '@react-navigation/native';
 

@@ -13,6 +13,7 @@ import Divider from '@/components/base/divider';
 import PanelHeader from '../base/panelHeader';
 
 interface IMusicQualityProps {
+    type?: 'play' | 'download';
     /** 歌曲信息 */
     musicItem: IMusic.IMusicItem;
     /** 点击回调 */
@@ -25,14 +26,17 @@ interface IMusicQualityProps {
 export default function MusicQuality(props: IMusicQualityProps) {
     const safeAreaInsets = useSafeAreaInsets();
 
-    const {musicItem, onQualityPress} = props ?? {};
+    const {musicItem, onQualityPress, type = 'play'} = props ?? {};
 
     return (
         <PanelBase
             height={rpx(520)}
             renderBody={() => (
                 <>
-                    <PanelHeader title="设置播放音质" hideButtons />
+                    <PanelHeader
+                        title={`设置${type === 'play' ? '播放' : '下载'}音质`}
+                        hideButtons
+                    />
                     <Divider />
 
                     <ScrollView

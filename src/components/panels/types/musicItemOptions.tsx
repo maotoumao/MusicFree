@@ -122,6 +122,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             onPress: async () => {
                 showPanel('MusicQuality', {
                     musicItem,
+                    type: 'download',
                     async onQualityPress(quality) {
                         Download.downloadMusic(musicItem, quality);
                     },

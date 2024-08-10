@@ -136,6 +136,9 @@ async function updateMusicSheetBase(
     });
     await storage.setSheets(newMusicSheets);
     getDefaultStore().set(musicSheetsBaseAtom, newMusicSheets);
+    ee.emit('UpdateSheetBasic', {
+        sheetId,
+    });
 }
 
 /**
@@ -339,15 +342,12 @@ async function removeMusic(
     sheetId: string,
     musicItems: IMusic.IMusicItem | IMusic.IMusicItem[],
 ) {
-    const now = Date.now();
-
     if (!Array.isArray(musicItems)) {
         musicItems = [musicItems];
     }
 
     const musicList = getSortedMusicListBySheetId(sheetId);
     musicList.remove(musicItems);
-    console.log('rm1', Date.now() - now);
 
     // Update
     const musicSheets = getDefaultStore().get(musicSheetsBaseAtom);
@@ -364,14 +364,12 @@ async function removeMusic(
     await updateMusicSheetBase(sheetId, {
         coverImg: musicList.at(0)?.artwork,
     });
-    console.log('r2m', Date.now() - now);
 
     await storage.setMusicList(sheetId, musicList.musicList);
     ee.emit('UpdateMusicList', {
         sheetId,
         updateType: 'length',
     });
-    console.log('rm4', Date.now() - now);
 }
 
 async function setSortType(sheetId: string, sortType: SortType) {
@@ -428,10 +426,24 @@ function useSheetItem(sheetId: string) {
                 musicList: musicListMap.get(sheetId)?.musicList || [],
             }));
         };
+
+        const onUpdateSheetBasic = ({sheetId: updatedSheetId}) => {
+            if (updatedSheetId !== sheetId) {
+                return;
+            }
+            setSheetItem(prev => ({
+                ...prev,
+                ...(getDefaultStore()
+                    .get(musicSheetsBaseAtom)
+                    .find(it => it.id === sheetId) || {}),
+            }));
+        };
         ee.on('UpdateMusicList', onUpdateMusicList);
+        ee.on('UpdateSheetBasic', onUpdateSheetBasic);
 
         return () => {
             ee.off('UpdateMusicList', onUpdateMusicList);
+            ee.off('UpdateSheetBasic', onUpdateSheetBasic);
         };
     }, []);
 

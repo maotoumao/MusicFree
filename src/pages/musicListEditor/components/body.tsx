@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 import {useAtom} from 'jotai';
 import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import Toast from '@/utils/toast';

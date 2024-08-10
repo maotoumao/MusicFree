@@ -19,7 +19,7 @@ import {
     searchResultsAtom,
 } from '../store/atoms';
 import ThemeText from '@/components/base/themeText';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 import Empty from '@/components/base/empty';
 
 export default function () {

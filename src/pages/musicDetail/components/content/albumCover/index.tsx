@@ -4,11 +4,11 @@ import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import useOrientation from '@/hooks/useOrientation';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import imageViewer from '@/components/imageViewer';
 import TrackPlayer from '@/core/trackPlayer';
 import globalStyle from '@/constants/globalStyle';
 import {View} from 'react-native';
 import Operations from './operations';
+import {showPanel} from '@/components/panels/usePanel.ts';
 
 interface IProps {
     onTurnPageClick?: () => void;
@@ -37,7 +37,9 @@ export default function AlbumCover(props: IProps) {
     const longPress = Gesture.LongPress()
         .onStart(() => {
             if (musicItem?.artwork) {
-                imageViewer.show(musicItem.artwork);
+                showPanel('ImageViewer', {
+                    url: musicItem.artwork,
+                });
             }
         })
         .runOnJS(true);

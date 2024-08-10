@@ -9,7 +9,6 @@ import Panels from '@/components/panels';
 import PageBackground from '@/components/base/pageBackground';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Debug from '@/components/debug';
-import {ImageViewComponent} from '@/components/imageViewer';
 import {PortalHost} from '@/components/base/portal';
 import globalStyle from '@/constants/globalStyle';
 import Theme from '@/core/theme';
@@ -55,7 +54,6 @@ export default function Pages() {
 
                         <Panels />
                         <Dialogs />
-                        <ImageViewComponent />
                         <Debug />
                         <PortalHost />
                         <ToastBaseComponent />

@@ -20,7 +20,7 @@ import {useParams} from '@/entry/router';
 import StatusBar from '@/components/base/statusBar';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 
 interface IPathItem {
     path: string;

@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import rpx, {vmax, vw} from '@/utils/rpx';
 
 import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 import useColors from '@/hooks/useColors';
 import PanelBase from '../../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';

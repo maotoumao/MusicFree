@@ -8,7 +8,7 @@ import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {hideDialog} from '../useDialog';
 import Config from '@/core/config';
 import Checkbox from '@/components/base/checkbox';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 import Dialog from './base';
 
 interface IDownloadDialogProps {
