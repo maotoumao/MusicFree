@@ -339,39 +339,39 @@ async function removeMusic(
     sheetId: string,
     musicItems: IMusic.IMusicItem | IMusic.IMusicItem[],
 ) {
+    const now = Date.now();
+
     if (!Array.isArray(musicItems)) {
         musicItems = [musicItems];
     }
 
     const musicList = getSortedMusicListBySheetId(sheetId);
     musicList.remove(musicItems);
+    console.log('rm1', Date.now() - now);
 
     // Update
     const musicSheets = getDefaultStore().get(musicSheetsBaseAtom);
+
+    let patchData: Partial<IMusic.IMusicSheetItemBase> = {};
     if (
         !musicSheets
             .find(_ => _.id === sheetId)
             ?.coverImg?.startsWith('file://')
     ) {
-        await updateMusicSheetBase(sheetId, {
-            coverImg: musicList.at(0)?.artwork,
-        });
+        patchData.coverImg = musicList.at(0)?.artwork;
     }
-    // 更新音乐数量
-    getDefaultStore().set(
-        musicSheetsBaseAtom,
-        produce(draft => {
-            const musicSheet = draft.find(it => it.id === sheetId);
-            if (musicSheet) {
-                musicSheet.worksNum = musicList.length;
-            }
-        }),
-    );
+    patchData.worksNum = musicList.length;
+    await updateMusicSheetBase(sheetId, {
+        coverImg: musicList.at(0)?.artwork,
+    });
+    console.log('r2m', Date.now() - now);
+
     await storage.setMusicList(sheetId, musicList.musicList);
     ee.emit('UpdateMusicList', {
         sheetId,
         updateType: 'length',
     });
+    console.log('rm4', Date.now() - now);
 }
 
 async function setSortType(sheetId: string, sortType: SortType) {
