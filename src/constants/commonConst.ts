@@ -1,7 +1,7 @@
 import {Easing, EasingFunction} from 'react-native-reanimated';
 
 export const internalSymbolKey = Symbol.for('$');
-// 加入播放列表/歌单的时间
+// 加入播放列表的时间；app内使用，无法被序列化
 export const timeStampSymbol = Symbol.for('time-stamp');
 // 加入播放列表的辅助顺序
 export const sortIndexSymbol = Symbol.for('sort-index');

@@ -60,7 +60,7 @@ const qualityStore = new GlobalState<IMusic.IQualityKey>('standard');
 let currentIndex = -1;
 
 // TODO: 下个版本最大限制调大一些
-const maxMusicQueueLength = 3000; // 当前播放最大限制
+const maxMusicQueueLength = 10000; // 当前播放最大限制
 const halfMaxMusicQueueLength = Math.floor(maxMusicQueueLength / 2);
 const shrinkPlayListToSize = (
     queue: IMusic.IMusicItem[],
@@ -267,20 +267,19 @@ const addAll = (
     const now = Date.now();
     let newPlayList: IMusic.IMusicItem[] = [];
     let currentPlayList = getPlayList();
-    const _musicItems = musicItems.map((item, index) =>
-        produce(item, draft => {
-            draft[timeStampSymbol] = now;
-            draft[sortIndexSymbol] = index;
-        }),
-    );
+    musicItems.forEach((item, index) => {
+        item[timeStampSymbol] = now;
+        item[sortIndexSymbol] = index;
+    });
+
     if (beforeIndex === undefined || beforeIndex < 0) {
         // 1.1. 添加到歌单末尾，并过滤掉已有的歌曲
         newPlayList = currentPlayList.concat(
-            _musicItems.filter(item => !isInPlayList(item)),
+            musicItems.filter(item => !isInPlayList(item)),
         );
     } else {
         // 1.2. 新的播放列表，插入
-        const indexMap = createMediaIndexMap(_musicItems);
+        const indexMap = createMediaIndexMap(musicItems);
         const beforeDraft = currentPlayList
             .slice(0, beforeIndex)
             .filter(item => !indexMap.has(item));
@@ -288,7 +287,7 @@ const addAll = (
             .slice(beforeIndex)
             .filter(item => !indexMap.has(item));
 
-        newPlayList = [...beforeDraft, ..._musicItems, ...afterDraft];
+        newPlayList = [...beforeDraft, ...musicItems, ...afterDraft];
     }
 
     // 如果太长了
@@ -398,7 +397,6 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
     const playList = getPlayList();
     let newPlayList;
     const prevMode = repeatModeStore.getValue();
-
     if (
         (prevMode === MusicRepeatMode.SHUFFLE &&
             mode !== MusicRepeatMode.SHUFFLE) ||
@@ -723,16 +721,16 @@ const playWithReplacePlayList = async (
                 newPlayList.findIndex(it => isSameMediaItem(it, musicItem)),
             );
         }
-        const playListItems = newPlayList.map((item, index) =>
-            produce(item, draft => {
-                draft[timeStampSymbol] = now;
-                draft[sortIndexSymbol] = index;
-            }),
-        );
+
+        newPlayList.forEach((it, index) => {
+            it[timeStampSymbol] = now;
+            it[sortIndexSymbol] = index;
+        });
+
         setPlayList(
             repeatModeStore.getValue() === MusicRepeatMode.SHUFFLE
-                ? shuffle(playListItems)
-                : playListItems,
+                ? shuffle(newPlayList)
+                : newPlayList,
         );
         await play(musicItem, true);
     }

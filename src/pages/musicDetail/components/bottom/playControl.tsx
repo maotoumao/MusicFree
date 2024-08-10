@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {InteractionManager, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import repeatModeConst from '@/constants/repeatModeConst';
 
@@ -8,6 +8,7 @@ import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import {musicIsPaused} from '@/utils/trackUtils';
 import Icon from '@/components/base/icon.tsx';
+import sleep from '@/utils/sleep.ts';
 
 export default function () {
     const repeatMode = TrackPlayer.useRepeatMode();
@@ -30,8 +31,11 @@ export default function () {
                     color={'white'}
                     name={repeatModeConst[repeatMode].icon}
                     size={rpx(56)}
-                    onPress={() => {
-                        TrackPlayer.toggleRepeatMode();
+                    onPress={async () => {
+                        InteractionManager.runAfterInteractions(async () => {
+                            await sleep(20);
+                            TrackPlayer.toggleRepeatMode();
+                        });
                     }}
                 />
                 <Icon

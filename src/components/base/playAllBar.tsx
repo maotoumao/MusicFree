@@ -7,7 +7,7 @@ import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
 import {showPanel} from '../panels/usePanel';
 import IconButton from './iconButton';
-import TrackPlayer from '@/core/trackPlayer';
+import TrackPlayer, {MusicRepeatMode} from '@/core/trackPlayer';
 import Toast from '@/utils/toast';
 import Icon from '@/components/base/icon.tsx';
 import MusicSheet from '@/core/musicSheet';
@@ -34,8 +34,18 @@ export default function (props: IProps) {
                 style={style.playAll}
                 onPress={() => {
                     if (musicList) {
+                        let defaultPlayMusic = musicList[0];
+                        if (
+                            TrackPlayer.getRepeatMode() ===
+                            MusicRepeatMode.SHUFFLE
+                        ) {
+                            defaultPlayMusic =
+                                musicList[
+                                    Math.floor(Math.random() * musicList.length)
+                                ];
+                        }
                         TrackPlayer.playWithReplacePlayList(
-                            musicList[0],
+                            defaultPlayMusic,
                             musicList,
                         );
                     }
