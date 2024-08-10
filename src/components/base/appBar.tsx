@@ -212,8 +212,11 @@ export default function AppBar(props: IAppBarProps) {
                                     withHorizontalPadding
                                     heightType="small"
                                     onPress={() => {
-                                        it.onPress?.();
                                         setShowMenu(false);
+                                        // async
+                                        setTimeout(() => {
+                                            it.onPress?.();
+                                        }, 20);
                                     }}>
                                     <ListItem.ListItemIcon icon={it.icon} />
                                     <ListItem.Content title={it.title} />

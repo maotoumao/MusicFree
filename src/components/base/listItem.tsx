@@ -135,6 +135,7 @@ interface IListItemIconProps {
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<TextStyle>;
     onPress?: () => void;
+    color?: string;
 }
 
 function ListItemIcon(props: IListItemIconProps) {
@@ -147,6 +148,7 @@ function ListItemIcon(props: IListItemIconProps) {
         containerStyle,
         contentStyle,
         onPress,
+        color,
     } = props;
 
     const colors = useColors();
@@ -164,7 +166,7 @@ function ListItemIcon(props: IListItemIconProps) {
                 name={icon}
                 size={iconSize}
                 style={contentStyle}
-                color={colors.text}
+                color={color || colors.text}
             />
         </View>
     );

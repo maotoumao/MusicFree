@@ -99,6 +99,10 @@ export function mergeProps(
 
 export enum InternalDataType {
     LOCALPATH = 'localPath',
+    // 加入歌单时间
+    TIMESTAMP = 'timestamp',
+    // 如果时间相同，辅助排序
+    SORTINDEX = 'sortIndex',
 }
 
 export function setInternalData<T extends ICommon.IMediaBase>(

@@ -7,7 +7,6 @@ import {ImgAsset} from '@/constants/assetsConst';
 import {launchImageLibrary} from 'react-native-image-picker';
 import pathConst from '@/constants/pathConst';
 import Image from '@/components/base/image';
-import MusicSheet from '@/core/musicSheet';
 import {addFileScheme, addRandomHash} from '@/utils/fileUtils';
 import Toast from '@/utils/toast';
 import {hideDialog} from '../useDialog';
@@ -15,6 +14,7 @@ import Dialog from './base';
 import Input from '@/components/base/input';
 import {fontSizeConst} from '@/constants/uiConst';
 import {copyAsync, deleteAsync, getInfoAsync} from 'expo-file-system';
+import MusicSheet from '@/core/musicSheet';
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
@@ -81,11 +81,9 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
             _title = musicSheet.title;
         }
         // 更新歌单信息
-        MusicSheet.updateAndSaveSheet(musicSheet.id, {
-            basic: {
-                coverImg: newCoverImg ? addRandomHash(newCoverImg) : undefined,
-                title: _title,
-            },
+        MusicSheet.updateMusicSheetBase(musicSheet.id, {
+            coverImg: newCoverImg ? addRandomHash(newCoverImg) : undefined,
+            title: _title,
         }).then(() => {
             Toast.success('更新歌单信息成功~');
         });

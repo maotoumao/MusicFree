@@ -2,13 +2,13 @@ import React from 'react';
 import {StyleProp, ViewStyle} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-interface IHorizonalSafeAreaViewProps {
+interface IHorizontalSafeAreaViewProps {
     mode?: 'margin' | 'padding';
     children: JSX.Element | JSX.Element[];
     style?: StyleProp<ViewStyle>;
 }
-export default function HorizonalSafeAreaView(
-    props: IHorizonalSafeAreaViewProps,
+export default function HorizontalSafeAreaView(
+    props: IHorizontalSafeAreaViewProps,
 ) {
     const {children, style, mode} = props;
     return (

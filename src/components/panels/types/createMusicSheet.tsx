@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
-import MusicSheet from '@/core/musicSheet';
 import {fontSizeConst} from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
 
@@ -9,14 +8,15 @@ import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
 import PanelHeader from '../base/panelHeader';
+import MusicSheet from '@/core/musicSheet';
 
-interface INewMusicSheetProps {
+interface ICreateMusicSheetProps {
     defaultName?: string;
     onSheetCreated?: (sheetId: string) => void;
     onCancel?: () => void;
 }
 
-export default function NewMusicSheet(props: INewMusicSheetProps) {
+export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
     const {onSheetCreated, onCancel, defaultName = '新建歌单'} = props;
 
     const [input, setInput] = useState('');

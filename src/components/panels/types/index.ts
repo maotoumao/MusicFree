@@ -4,7 +4,7 @@ import ColorPicker from './colorPicker';
 import ImportMusicSheet from './importMusicSheet';
 import MusicItemOptions from './musicItemOptions';
 import MusicQuality from './musicQuality';
-import NewMusicSheet from './newMusicSheet';
+import CreateMusicSheet from './createMusicSheet.tsx';
 import PlayList from './playList';
 import PlayRate from './playRate';
 import SearchLrc from './searchLrc';
@@ -22,7 +22,7 @@ export default {
     /** 歌曲选项 */
     MusicItemOptions: MusicItemOptions,
     /** 新建歌单 */
-    NewMusicSheet: NewMusicSheet,
+    CreateMusicSheet: CreateMusicSheet,
     /** 导入歌单 */
     ImportMusicSheet,
     /** 当前播放列表 */

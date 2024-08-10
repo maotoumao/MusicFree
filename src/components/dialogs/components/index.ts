@@ -4,6 +4,7 @@ import LoadingDialog from './loadingDialog';
 import RadioDialog from './radioDialog';
 import SimpleDialog from './simpleDialog';
 import SubscribePluginDialog from './subscribePluginDialog';
+import CheckStorage from '@/components/dialogs/components/checkStorage.tsx';
 
 const dialogs = {
     SimpleDialog,
@@ -12,6 +13,7 @@ const dialogs = {
     SubscribePluginDialog,
     LoadingDialog,
     EditSheetDetailDialog,
+    CheckStorage,
 };
 
 export default dialogs;

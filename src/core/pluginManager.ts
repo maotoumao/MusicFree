@@ -1018,6 +1018,49 @@ interface IInstallPluginConfig {
     notCheckVersion?: boolean;
 }
 
+async function installPluginFromRawCode(
+    funcCode: string,
+    config?: IInstallPluginConfig,
+) {
+    if (funcCode) {
+        const plugin = new Plugin(funcCode, '');
+        const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
+        if (_pluginIndex !== -1) {
+            // 静默忽略
+            return plugin;
+        }
+        const oldVersionPlugin = plugins.find(p => p.name === plugin.name);
+        if (oldVersionPlugin && !config?.notCheckVersion) {
+            if (
+                compare(
+                    oldVersionPlugin.instance.version ?? '',
+                    plugin.instance.version ?? '',
+                    '>',
+                )
+            ) {
+                throw new Error('已安装更新版本的插件');
+            }
+        }
+
+        if (plugin.hash !== '') {
+            const fn = nanoid();
+            if (oldVersionPlugin) {
+                plugins = plugins.filter(_ => _.hash !== oldVersionPlugin.hash);
+                try {
+                    await unlink(oldVersionPlugin.path);
+                } catch {}
+            }
+            const pluginPath = `${pathConst.pluginPath}${fn}.js`;
+            await writeFile(pluginPath, funcCode, 'utf8');
+            plugin.path = pluginPath;
+            plugins = plugins.concat(plugin);
+            pluginStateMapper.notify();
+            return plugin;
+        }
+        throw new Error('插件无法解析!');
+    }
+}
+
 // 安装插件
 async function installPlugin(
     pluginPath: string,
@@ -1301,6 +1344,7 @@ async function setPluginEnabled(plugin: Plugin, enabled?: boolean) {
 const PluginManager = {
     setup,
     installPlugin,
+    installPluginFromRawCode,
     installPluginFromUrl,
     updatePlugin,
     uninstallPlugin,

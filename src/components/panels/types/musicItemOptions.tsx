@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicSheet from '@/core/musicSheet';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
 import Download from '@/core/download';
@@ -29,6 +28,7 @@ import TrackPlayer from '@/core/trackPlayer';
 import mediaCache from '@/core/mediaCache';
 import LyricManager from '@/core/lyricManager';
 import {IIconName} from '@/components/base/icon.tsx';
+import MusicSheet from '@/core/musicSheet';
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */

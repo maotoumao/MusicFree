@@ -22,6 +22,8 @@ interface IPersistConfig {
     'music.quality': IMusic.IQualityKey;
     /** app */
     'app.skipVersion': string;
+    /** 开屏弹窗 */
+    'app.skipBootstrapStorageDialog': boolean;
     /** 上次更新插件的时间 */
     'app.pluginUpdateTime': number;
     /** 歌词-是否启用翻译 */

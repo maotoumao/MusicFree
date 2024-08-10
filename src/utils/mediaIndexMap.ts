@@ -1,6 +1,6 @@
-interface IIndexMap {
+export interface IIndexMap {
     getIndexMap: () => Record<string, Record<string, number>>;
-    getIndex: (musicItem: ICommon.IMediaBase) => number;
+    getIndex: (mediaItem: ICommon.IMediaBase) => number;
     has: (mediaItem: ICommon.IMediaBase) => boolean;
 }
 

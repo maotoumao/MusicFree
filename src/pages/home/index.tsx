@@ -7,7 +7,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import HomeDrawer from './components/drawer';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
 import Theme from '@/core/theme';
 import HomeBody from './components/homeBody';
@@ -20,7 +20,7 @@ function Home() {
     return (
         <SafeAreaView edges={['top', 'bottom']} style={styles.appWrapper}>
             <HomeStatusBar />
-            <HorizonalSafeAreaView style={globalStyle.flex1}>
+            <HorizontalSafeAreaView style={globalStyle.flex1}>
                 <>
                     <NavBar />
                     {orientation === 'vertical' ? (
@@ -29,7 +29,7 @@ function Home() {
                         <HomeBodyHorizonal />
                     )}
                 </>
-            </HorizonalSafeAreaView>
+            </HorizontalSafeAreaView>
             <MusicBar />
         </SafeAreaView>
     );

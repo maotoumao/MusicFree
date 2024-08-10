@@ -1,6 +1,6 @@
 import pathConst from '@/constants/pathConst';
 import FastImage from 'react-native-fast-image';
-import {
+import RNFS, {
     copyFile,
     downloadFile,
     exists,
@@ -180,5 +180,27 @@ export async function mkdirR(directory: string) {
         } catch (e) {
             console.log('error', e);
         }
+    }
+}
+
+export async function writeInChunks(
+    filePath: string,
+    data,
+    chunkSize = 1024 * 1024 * 2,
+) {
+    let offset = 0;
+    console.log('here');
+    if (await exists(filePath)) {
+        await unlink(filePath);
+    }
+
+    while (offset < data.length) {
+        const chunk = data.slice(offset, offset + chunkSize);
+        if (offset === 0) {
+            await RNFS.writeFile(filePath, chunk, 'utf8');
+        } else {
+            await RNFS.appendFile(filePath, chunk, 'utf8');
+        }
+        offset += chunkSize;
     }
 }

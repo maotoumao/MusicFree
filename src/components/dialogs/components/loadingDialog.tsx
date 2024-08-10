@@ -6,17 +6,22 @@ import {hideDialog} from '../useDialog';
 import Dialog from './base';
 
 interface ILoadingDialogProps<T extends any = any> {
-    promise: Promise<T>;
+    promise?: Promise<T>;
+    task?: () => Promise<T>;
     title: string;
+    loadingText?: string;
     onResolve?: (data: T, hideDialog: () => void) => void;
     onReject?: (reason: any, hideDialog: () => void) => void;
     onCancel?: (hideDialog: () => void) => void;
 }
 export default function LoadingDialog(props: ILoadingDialogProps) {
-    const {title, onResolve, onReject, promise, onCancel} = props;
+    const {title, loadingText, onResolve, onReject, promise, task, onCancel} =
+        props;
 
     useEffect(() => {
-        promise
+        console.log('mount!');
+        const _promise = promise || task?.();
+        _promise
             ?.then(data => {
                 onResolve?.(data, hideDialog);
             })
@@ -29,7 +34,7 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
         <Dialog onDismiss={hideDialog}>
             <Dialog.Title>{title}</Dialog.Title>
             <Dialog.Content style={style.content}>
-                <Loading text="扫描中..." />
+                <Loading text={loadingText || '扫描中...'} />
             </Dialog.Content>
             <Dialog.Actions
                 actions={[

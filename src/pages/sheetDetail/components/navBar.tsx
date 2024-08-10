@@ -1,15 +1,17 @@
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import MusicSheet from '@/core/musicSheet';
 import {ROUTE_PATH, useParams} from '@/entry/router';
 import Toast from '@/utils/toast';
+import toast from '@/utils/toast';
 import {showDialog} from '@/components/dialogs/useDialog';
 import AppBar from '@/components/base/appBar';
+import MusicSheet from '@/core/musicSheet';
+import {SortType} from '@/constants/commonConst.ts';
 
 export default function () {
     const navigation = useNavigation<any>();
     const {id = 'favorite'} = useParams<'local-sheet-detail'>();
-    const musicSheet = MusicSheet.useSheets(id);
+    const musicSheet = MusicSheet.useSheetItem(id);
 
     return (
         <>
@@ -52,45 +54,41 @@ export default function () {
                     },
                     {
                         icon: 'sort-outline',
-                        title: '排序',
+                        title: '歌曲排序',
                         onPress() {
                             showDialog('RadioDialog', {
                                 content: [
                                     {
-                                        value: 'random',
-                                        key: '随机顺序',
+                                        value: SortType.Title,
+                                        label: '按歌曲名排序',
                                     },
                                     {
-                                        value: 'a2z',
-                                        key: '歌曲名A-Z',
+                                        value: SortType.Artist,
+                                        label: '按作者名排序',
                                     },
                                     {
-                                        value: 'z2a',
-                                        key: '歌曲名Z-A',
+                                        value: SortType.Album,
+                                        label: '按专辑名排序',
                                     },
                                     {
-                                        value: 'arta2z',
-                                        key: '作者名A-Z',
+                                        value: SortType.Newest,
+                                        label: '按收藏时间从新到旧排序',
                                     },
                                     {
-                                        value: 'artz2a',
-                                        key: '作者名Z-A',
-                                    },
-                                    {
-                                        value: 'time',
-                                        key: '加入歌单时间',
-                                    },
-                                    {
-                                        value: 'time-rev',
-                                        key: '加入歌单时间（逆序）',
+                                        value: SortType.Oldest,
+                                        label: '按收藏时间从旧到新排序',
                                     },
                                 ],
-                                title: '排序',
+                                defaultSelected:
+                                    MusicSheet.getSheetMeta(id, 'sort') ||
+                                    SortType.None,
+                                title: '歌曲排序',
                                 async onOk(value) {
-                                    MusicSheet.sortMusicList(
-                                        value as any,
-                                        musicSheet,
+                                    await MusicSheet.setSortType(
+                                        id,
+                                        value as SortType,
                                     );
+                                    toast.success('排序已更新');
                                 },
                             });
                         },

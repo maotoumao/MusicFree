@@ -89,3 +89,18 @@ export const timingConfig = {
     animationNormal,
     animationSlow,
 };
+
+export const enum SortType {
+    // 未排序
+    None = 'None',
+    // 按标题排序
+    Title = 'title',
+    // 按作者排序
+    Artist = 'artist',
+    // 按专辑名排序
+    Album = 'album',
+    // 按时间排序
+    Newest = 'time',
+    // 按时间逆序
+    Oldest = 'time-rev',
+}

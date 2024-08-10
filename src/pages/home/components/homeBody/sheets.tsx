@@ -4,7 +4,6 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import useColors from '@/hooks/useColors';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-import MusicSheet from '@/core/musicSheet';
 import {FlashList} from '@shopify/flash-list';
 import ListItem from '@/components/base/listItem';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
@@ -15,14 +14,15 @@ import Empty from '@/components/base/empty';
 import IconButton from '@/components/base/iconButton';
 import {showPanel} from '@/components/panels/usePanel';
 import {localPluginPlatform} from '@/constants/commonConst';
+import MusicSheet from '@/core/musicSheet';
 
 export default function Sheets() {
     const [index, setIndex] = useState(0);
     const colors = useColors();
     const navigate = useNavigate();
 
-    const allSheets = MusicSheet.useSheets();
-    const staredSheets = MusicSheet.useStarredMusicSheet();
+    const allSheets = MusicSheet.useSheetsBase();
+    const staredSheets = MusicSheet.useStarredSheets();
 
     const selectedTabTextStyle = useMemo(() => {
         return [
@@ -93,7 +93,7 @@ export default function Sheets() {
                         sizeType="normal"
                         accessibilityLabel="新建歌单"
                         onPress={() => {
-                            showPanel('NewMusicSheet');
+                            showPanel('CreateMusicSheet');
                         }}
                     />
                     <IconButton
@@ -144,7 +144,7 @@ export default function Sheets() {
                                 title={sheet.title}
                                 description={
                                     isLocalSheet
-                                        ? `${sheet.musicList?.length ?? '-'}首`
+                                        ? `${sheet.worksNum}首`
                                         : `${sheet.artist}`
                                 }
                             />

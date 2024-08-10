@@ -6,7 +6,7 @@ import Header from './header';
 import MusicList from '@/components/musicList';
 import Config from '@/core/config';
 import globalStyle from '@/constants/globalStyle';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import TrackPlayer from '@/core/trackPlayer';
 
 interface IMusicListProps {
@@ -25,7 +25,7 @@ export default function SheetMusicList(props: IMusicListProps) {
             {!musicList ? (
                 <Loading />
             ) : (
-                <HorizonalSafeAreaView style={globalStyle.fwflex1}>
+                <HorizontalSafeAreaView style={globalStyle.fwflex1}>
                     <MusicList
                         showIndex
                         loadMore={loadMore}
@@ -55,7 +55,7 @@ export default function SheetMusicList(props: IMusicListProps) {
                             onEndReached?.();
                         }}
                     />
-                </HorizonalSafeAreaView>
+                </HorizontalSafeAreaView>
             )}
         </View>
     );

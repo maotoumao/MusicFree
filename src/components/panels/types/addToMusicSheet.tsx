@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx, {vmax} from '@/utils/rpx';
 import ListItem from '@/components/base/listItem';
-import MusicSheet from '@/core/musicSheet';
 import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
 
@@ -11,6 +10,7 @@ import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
 import {hidePanel, showPanel} from '../usePanel';
 import PanelHeader from '../base/panelHeader';
+import MusicSheet from '@/core/musicSheet';
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -19,7 +19,7 @@ interface IAddToMusicSheetProps {
 }
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
-    const sheets = MusicSheet.useSheets();
+    const sheets = MusicSheet.useSheetsBase();
 
     const {musicItem = [], newSheetDefaultName} = props ?? {};
     const safeAreaInsets = useSafeAreaInsets();
@@ -46,7 +46,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                     withHorizontalPadding
                                     key="new"
                                     onPress={() => {
-                                        showPanel('NewMusicSheet', {
+                                        showPanel('CreateMusicSheet', {
                                             defaultName: newSheetDefaultName,
                                             async onSheetCreated(sheetId) {
                                                 try {
@@ -100,7 +100,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                     <ListItem.Content
                                         title={sheet.title}
                                         description={`${
-                                            sheet.musicList.length ?? '-'
+                                            sheet.worksNum ?? '-'
                                         }首`}
                                     />
                                 </ListItem>

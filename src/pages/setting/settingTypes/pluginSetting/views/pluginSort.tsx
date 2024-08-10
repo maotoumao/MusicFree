@@ -8,7 +8,7 @@ import objectPath from 'object-path';
 import rpx from '@/utils/rpx';
 import PluginManager, {Plugin} from '@/core/pluginManager';
 import Toast from '@/utils/toast';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
 import AppBar from '@/components/base/appBar';
 import useColors from '@/hooks/useColors';
@@ -32,7 +32,7 @@ export default function PluginSort() {
     return (
         <>
             <AppBar>插件排序</AppBar>
-            <HorizonalSafeAreaView style={style.sortWrapper}>
+            <HorizontalSafeAreaView style={style.sortWrapper}>
                 <>
                     <ThemeText fontWeight="bold">插件排序</ThemeText>
                     <TouchableOpacity
@@ -56,8 +56,8 @@ export default function PluginSort() {
                         <ThemeText>完成</ThemeText>
                     </TouchableOpacity>
                 </>
-            </HorizonalSafeAreaView>
-            <HorizonalSafeAreaView style={globalStyle.flex1}>
+            </HorizontalSafeAreaView>
+            <HorizontalSafeAreaView style={globalStyle.flex1}>
                 <SortableFlatList
                     data={sortingPlugins}
                     activeBackgroundColor={colors.placeholder}
@@ -69,7 +69,7 @@ export default function PluginSort() {
                         setSortingPlugins(data);
                     }}
                 />
-            </HorizonalSafeAreaView>
+            </HorizontalSafeAreaView>
         </>
     );
 }

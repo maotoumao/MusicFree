@@ -8,9 +8,9 @@ import useColors from '@/hooks/useColors';
 import {showPanel} from '../panels/usePanel';
 import IconButton from './iconButton';
 import TrackPlayer from '@/core/trackPlayer';
-import MusicSheet from '@/core/musicSheet';
 import Toast from '@/utils/toast';
 import Icon from '@/components/base/icon.tsx';
+import MusicSheet from '@/core/musicSheet';
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
@@ -26,7 +26,7 @@ export default function (props: IProps) {
     const colors = useColors();
     const navigate = useNavigate();
 
-    const starred = MusicSheet.useSheetStarred(musicSheet);
+    const starred = MusicSheet.useSheetIsStarred(musicSheet);
 
     return (
         <View style={style.topWrapper}>

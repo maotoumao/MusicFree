@@ -1,10 +1,9 @@
 import React from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import DocumentPicker from 'react-native-document-picker';
 import ListItem, {ListItemHeader} from '@/components/base/listItem';
 import Toast from '@/utils/toast';
 import Backup from '@/core/backup';
-import {readFile, writeFile} from 'react-native-fs';
+import backup from '@/core/backup';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
 
 import axios from 'axios';
@@ -13,6 +12,10 @@ import {showPanel} from '@/components/panels/usePanel';
 
 import {AuthType, createClient} from 'webdav';
 import Config from '@/core/config';
+import {writeInChunks} from '@/utils/fileUtils.ts';
+import {getDocumentAsync} from 'expo-document-picker';
+import {readAsStringAsync} from 'expo-file-system';
+import sleep from '@/utils/sleep';
 
 export default function BackupSetting() {
     const navigate = useNavigate();
@@ -30,7 +33,8 @@ export default function BackupSetting() {
                 return new Promise(resolve => {
                     showDialog('LoadingDialog', {
                         title: '备份本地音乐',
-                        promise: writeFile(
+                        loadingText: '备份中...',
+                        promise: writeInChunks(
                             `${folder}${
                                 folder?.endsWith('/') ? '' : '/'
                             }backup.json`,
@@ -48,9 +52,8 @@ export default function BackupSetting() {
                         onReject(reason, hideDialog) {
                             hideDialog();
                             resolve(false);
-                            Toast.success(
-                                `备份失败 ${reason?.message ?? reason}`,
-                            );
+                            console.log(reason);
+                            Toast.warn(`备份失败 ${reason?.message ?? reason}`);
                         },
                     });
                 });
@@ -60,15 +63,39 @@ export default function BackupSetting() {
 
     async function onResumeFromLocal() {
         try {
-            let filePath: string | undefined;
-            try {
-                filePath = (await DocumentPicker.pickSingle()).uri;
-            } catch {
+            const pickResult = await getDocumentAsync({
+                copyToCacheDirectory: true,
+                type: 'application/json',
+            });
+            if (pickResult.canceled) {
                 return;
             }
-            const raw = await readFile(filePath);
-            await Backup.resume(raw);
-            Toast.success('恢复成功~');
+            const result = await readAsStringAsync(pickResult.assets[0].uri);
+            return new Promise(resolve => {
+                showDialog('LoadingDialog', {
+                    title: '恢复本地音乐',
+                    loadingText: '恢复中...',
+                    async task() {
+                        await sleep(300);
+                        return backup.resume(result);
+                    },
+                    onResolve(_, hideDialog) {
+                        Toast.success('恢复成功~');
+                        hideDialog();
+                        resolve(true);
+                    },
+                    onCancel(hideDialog) {
+                        hideDialog();
+                        resolve(false);
+                    },
+                    onReject(reason, hideDialog) {
+                        hideDialog();
+                        resolve(false);
+                        console.log(reason);
+                        Toast.warn(`恢复失败 ${reason?.message ?? reason}`);
+                    },
+                });
+            });
         } catch (e: any) {
             Toast.warn(`恢复失败 ${e?.message ?? e}`);
         }
@@ -174,11 +201,11 @@ export default function BackupSetting() {
                         title: '设置恢复方式',
                         content: [
                             {
-                                key: '追加到歌单末尾',
+                                label: '追加到歌单末尾',
                                 value: 'append',
                             },
                             {
-                                key: '覆盖歌单',
+                                label: '覆盖歌单',
                                 value: 'overwrite',
                             },
                         ],
