@@ -3,40 +3,34 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ListItem from '@/components/base/listItem';
 import ThemeText from '@/components/base/themeText';
-import Download from '@/core/download';
 import {ImgAsset} from '@/constants/assetsConst';
 import Clipboard from '@react-native-clipboard/clipboard';
-
-import MediaMeta from '@/core/mediaExtra';
 import {getMediaKey} from '@/utils/mediaItem';
 import FastImage from '@/components/base/fastImage';
 import Toast from '@/utils/toast';
-import LocalMusicSheet from '@/core/localMusicSheet';
-import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
-import {ROUTE_PATH} from '@/entry/router';
+import toast from '@/utils/toast';
 
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
-import musicHistory from '@/core/musicHistory';
-import {showDialog} from '@/components/dialogs/useDialog';
-import {hidePanel, showPanel} from '../usePanel';
 import Divider from '@/components/base/divider';
 import {iconSizeConst} from '@/constants/uiConst';
 import Config from '@/core/config';
-import TrackPlayer from '@/core/trackPlayer';
 import mediaCache from '@/core/mediaCache';
 import LyricManager from '@/core/lyricManager';
 import {IIconName} from '@/components/base/icon.tsx';
-import MusicSheet from '@/core/musicSheet';
+import LyricUtil from '@/native/lyricUtil';
+import {hidePanel} from '@/components/panels/usePanel.ts';
+import {getDocumentAsync} from 'expo-document-picker';
+import {readAsStringAsync} from 'expo-file-system';
+import {checkAndCreateDir} from '@/utils/fileUtils.ts';
+import pathConst from '@/constants/pathConst.ts';
+import CryptoJs from 'crypto-js';
+import RNFS from 'react-native-fs';
 
-interface IMusicItemOptionsProps {
+interface IMusicItemLyricOptionsProps {
     /** 歌曲信息 */
     musicItem: IMusic.IMusicItem;
-    /** 歌曲所在歌单 */
-    musicSheet?: IMusic.IMusicSheetItem;
-    /** 来源 */
-    from?: string;
 }
 
 const ITEM_HEIGHT = rpx(96);
@@ -48,13 +42,19 @@ interface IOption {
     show?: boolean;
 }
 
-export default function MusicItemOptions(props: IMusicItemOptionsProps) {
-    const {musicItem, musicSheet, from} = props ?? {};
+export default function MusicItemLyricOptions(
+    props: IMusicItemLyricOptionsProps,
+) {
+    const {musicItem} = props ?? {};
+
+    const platformHash = CryptoJs.MD5(musicItem.platform).toString(
+        CryptoJs.enc.Hex,
+    );
+    const idHash: string = CryptoJs.MD5(musicItem.id).toString(
+        CryptoJs.enc.Hex,
+    );
 
     const safeAreaInsets = useSafeAreaInsets();
-
-    const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
-    const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
 
     const options: IOption[] = [
         {
@@ -101,121 +101,130 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'motion-play',
-            title: '下一首播放',
-            onPress: () => {
-                TrackPlayer.addNext(musicItem);
-                hidePanel();
-            },
-        },
-        {
-            icon: 'folder-plus',
-            title: '添加到歌单',
-            onPress: () => {
-                showPanel('AddToMusicSheet', {musicItem});
-            },
-        },
-        {
-            icon: 'arrow-down-tray',
-            title: '下载',
-            show: !downloaded,
-            onPress: async () => {
-                showPanel('MusicQuality', {
-                    musicItem,
-                    type: 'download',
-                    async onQualityPress(quality) {
-                        Download.downloadMusic(musicItem, quality);
-                    },
-                });
-            },
-        },
-        {
-            icon: 'check-circle-outline',
-            title: '已下载',
-            show: !!downloaded,
-        },
-        {
-            icon: 'trash-outline',
-            title: '删除',
-            show: !!musicSheet,
-            onPress: async () => {
-                if (musicSheet?.id === localMusicSheetId) {
-                    await LocalMusicSheet.removeMusic(musicItem);
-                } else if (musicSheet?.id === musicHistorySheetId) {
-                    await musicHistory.removeMusic(musicItem);
+            icon: 'lyric',
+            title: `${
+                Config.get('setting.lyric.showStatusBarLyric') ? '关闭' : '开启'
+            }桌面歌词`,
+            async onPress() {
+                const lyricConfig = Config.get('setting.lyric');
+                if (!lyricConfig?.showStatusBarLyric) {
+                    const hasPermission =
+                        await LyricUtil.checkSystemAlertPermission();
+
+                    if (hasPermission) {
+                        LyricUtil.showStatusBarLyric(
+                            LyricManager.getCurrentLyric()?.lrc ?? 'MusicFree',
+                            Config.get('setting.lyric') ?? {},
+                        );
+                        Config.set('setting.lyric.showStatusBarLyric', true);
+                    } else {
+                        LyricUtil.requestSystemAlertPermission().finally(() => {
+                            Toast.warn('开启桌面歌词失败，无悬浮窗权限');
+                        });
+                    }
                 } else {
-                    await MusicSheet.removeMusic(musicSheet!.id, musicItem);
+                    LyricUtil.hideStatusBarLyric();
+                    Config.set('setting.lyric.showStatusBarLyric', false);
                 }
-                Toast.success('已删除');
                 hidePanel();
             },
         },
         {
-            icon: 'trash-outline',
-            title: '删除本地下载',
-            show: !!downloaded,
-            onPress: () => {
-                showDialog('SimpleDialog', {
-                    title: '删除本地下载',
-                    content: '将会删除已下载的本地文件，确定继续吗？',
-                    async onOk() {
-                        try {
-                            await LocalMusicSheet.removeMusic(musicItem, true);
-                            Toast.success('已删除本地下载');
-                        } catch (e: any) {
-                            Toast.warn(`删除失败 ${e?.message ?? e}`);
-                        }
-                    },
-                });
-                hidePanel();
-            },
-        },
-        {
-            icon: 'link',
-            title: associatedLrc
-                ? `已关联歌词 ${associatedLrc.platform}@${associatedLrc.id}`
-                : '关联歌词',
-            onPress: async () => {
-                if (
-                    Config.get('setting.basic.associateLyricType') === 'input'
-                ) {
-                    showPanel('AssociateLrc', {
-                        musicItem,
+            icon: 'arrow-up-tray',
+            title: '上传本地歌词',
+            async onPress() {
+                try {
+                    const result = await getDocumentAsync({
+                        copyToCacheDirectory: true,
                     });
-                } else {
-                    showPanel('SearchLrc', {
-                        musicItem,
+                    if (result.canceled) {
+                        return;
+                    }
+                    const pickedDoc = result.assets[0].uri;
+                    const lyricContent = await readAsStringAsync(pickedDoc, {
+                        encoding: 'utf8',
                     });
+
+                    // 调用rnfs写到external storage
+                    await checkAndCreateDir(
+                        pathConst.localLrcPath + platformHash,
+                    );
+
+                    await RNFS.writeFile(
+                        pathConst.localLrcPath +
+                            platformHash +
+                            '/' +
+                            idHash +
+                            '.lrc',
+                        lyricContent,
+                        'utf8',
+                    );
+                    toast.success('设置成功');
+                    LyricManager.refreshLyric(false, true);
+                    hidePanel();
+                } catch (e: any) {
+                    console.log(e);
+                    toast.warn('设置失败' + e.message);
                 }
             },
         },
         {
-            icon: 'link-slash',
-            title: '解除关联歌词',
-            show: !!associatedLrc,
-            onPress: async () => {
-                MediaMeta.update(musicItem, {
-                    associatedLrc: undefined,
-                });
-                LyricManager.refreshLyric(false, true);
-                Toast.success('已解除关联歌词');
-                hidePanel();
+            icon: 'arrow-up-tray',
+            title: '上传本地歌词翻译',
+            async onPress() {
+                try {
+                    const result = await getDocumentAsync({
+                        copyToCacheDirectory: true,
+                    });
+                    if (result.canceled) {
+                        return;
+                    }
+                    const pickedDoc = result.assets[0].uri;
+                    const lyricContent = await readAsStringAsync(pickedDoc, {
+                        encoding: 'utf8',
+                    });
+
+                    // 调用rnfs写到external storage
+                    await checkAndCreateDir(
+                        pathConst.localLrcPath + platformHash,
+                    );
+
+                    await RNFS.writeFile(
+                        pathConst.localLrcPath +
+                            platformHash +
+                            '/' +
+                            idHash +
+                            '.tran.lrc',
+                        lyricContent,
+                        'utf8',
+                    );
+                    toast.success('设置成功');
+                    LyricManager.refreshLyric(false, true);
+                    hidePanel();
+                } catch (e: any) {
+                    console.log(e);
+                    toast.warn('设置失败' + e.message);
+                }
             },
         },
         {
-            icon: 'alarm-outline',
-            title: '定时关闭',
-            show: from === ROUTE_PATH.MUSIC_DETAIL,
-            onPress: () => {
-                showPanel('TimingClose');
-            },
-        },
-        {
-            icon: 'archive-box-x-mark',
-            title: '清除插件缓存(播放异常时使用)',
-            onPress: () => {
-                mediaCache.removeMediaCache(musicItem);
-                Toast.success('缓存已清除');
+            icon: 'trash-outline',
+            title: '删除本地歌词',
+            async onPress() {
+                try {
+                    const basePath =
+                        pathConst.localLrcPath + platformHash + '/' + idHash;
+
+                    await RNFS.unlink(basePath + '.lrc').catch(() => {});
+                    await RNFS.unlink(basePath + '.tran.lrc').catch(() => {});
+
+                    toast.success('删除成功');
+                    LyricManager.refreshLyric(false, true);
+                    hidePanel();
+                } catch (e: any) {
+                    console.log(e);
+                    toast.warn('删除失败' + e.message);
+                }
             },
         },
     ];
@@ -236,8 +245,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                             </ThemeText>
                             <ThemeText
                                 fontColor="textSecondary"
-                                numberOfLines={2}
-                                fontSize="description">
+                                fontSize="description"
+                                numberOfLines={2}>
                                 {musicItem?.artist}{' '}
                                 {musicItem?.album ? `- ${musicItem.album}` : ''}
                             </ThemeText>

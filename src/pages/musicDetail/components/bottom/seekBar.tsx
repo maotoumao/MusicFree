@@ -11,7 +11,9 @@ interface ITimeLabelProps {
 }
 
 function TimeLabel(props: ITimeLabelProps) {
-    return <Text style={style.text}>{timeformat(props.time)}</Text>;
+    return (
+        <Text style={style.text}>{timeformat(Math.max(props.time, 0))}</Text>
+    );
 }
 
 export default function SeekBar() {

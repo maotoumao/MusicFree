@@ -9,6 +9,7 @@ import ArrowLeftIcon from '@/assets/icons/arrow-left.svg';
 import ArrowLongLeftIcon from '@/assets/icons/arrow-long-left.svg';
 import ArrowPathIcon from '@/assets/icons/arrow-path.svg';
 import ArrowRightEndOnRectangleIcon from '@/assets/icons/arrow-right-end-on-rectangle.svg';
+import ArrowUpTrayIcon from '@/assets/icons/arrow-up-tray.svg';
 import ArrowUturnLeftIcon from '@/assets/icons/arrow-uturn-left.svg';
 import ArrowsLeftRightIcon from '@/assets/icons/arrows-left-right.svg';
 import Bars3Icon from '@/assets/icons/bars-3.svg';
@@ -79,6 +80,7 @@ export type IIconName =
     | 'arrow-long-left'
     | 'arrow-path'
     | 'arrow-right-end-on-rectangle'
+    | 'arrow-up-tray'
     | 'arrow-uturn-left'
     | 'arrows-left-right'
     | 'bars-3'
@@ -156,6 +158,7 @@ const iconMap = {
     'arrow-long-left': ArrowLongLeftIcon,
     'arrow-path': ArrowPathIcon,
     'arrow-right-end-on-rectangle': ArrowRightEndOnRectangleIcon,
+    'arrow-up-tray': ArrowUpTrayIcon,
     'arrow-uturn-left': ArrowUturnLeftIcon,
     'arrows-left-right': ArrowsLeftRightIcon,
     'bars-3': Bars3Icon,

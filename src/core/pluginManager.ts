@@ -1,4 +1,4 @@
-import {
+import RNFS, {
     copyFile,
     exists,
     readDir,
@@ -467,6 +467,47 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         /** 原始歌词文本 */
         let rawLrc: string | null = musicItem.rawLrc || null;
         let translation: string | null = null;
+
+        // 2. 本地手动设置的歌词
+        const platformHash = CryptoJs.MD5(musicItem.platform).toString(
+            CryptoJs.enc.Hex,
+        );
+        const idHash = CryptoJs.MD5(musicItem.id).toString(CryptoJs.enc.Hex);
+        if (
+            await RNFS.exists(
+                pathConst.localLrcPath + platformHash + '/' + idHash + '.lrc',
+            )
+        ) {
+            rawLrc = await RNFS.readFile(
+                pathConst.localLrcPath + platformHash + '/' + idHash + '.lrc',
+                'utf8',
+            );
+
+            if (
+                await RNFS.exists(
+                    pathConst.localLrcPath +
+                        platformHash +
+                        '/' +
+                        idHash +
+                        '.tran.lrc',
+                )
+            ) {
+                translation =
+                    (await RNFS.readFile(
+                        pathConst.localLrcPath +
+                            platformHash +
+                            '/' +
+                            idHash +
+                            '.tran.lrc',
+                        'utf8',
+                    )) || null;
+            }
+
+            return {
+                rawLrc,
+                translation: translation || undefined, // TODO: 这里写的不好
+            };
+        }
 
         // 2. 缓存歌词 / 对象上本身的歌词
         if (musicItemCache?.lyric) {

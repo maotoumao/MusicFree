@@ -18,6 +18,7 @@ import TimingClose from './timingClose';
 import ImageViewer from './imageViewer';
 import EditMusicSheetInfo from './editMusicSheetInfo';
 import MusicComment from './musicComment';
+import MusicItemLyricOptions from './musicItemLyricOptions';
 
 export default {
     /** 加入歌单 */
@@ -60,4 +61,5 @@ export default {
     EditMusicSheetInfo,
     /** 音乐评论 */
     MusicComment,
+    MusicItemLyricOptions,
 };

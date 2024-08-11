@@ -2,12 +2,10 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {iconSizeConst} from '@/constants/uiConst';
-import LyricIcon from '@/assets/icons/lyric.svg';
 import TranslationIcon from '@/assets/icons/translation.svg';
 import Config from '@/core/config';
 import useColors from '@/hooks/useColors';
 import LyricManager from '@/core/lyricManager';
-import LyricUtil from '@/native/lyricUtil';
 import Toast from '@/utils/toast';
 import {hidePanel, showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
@@ -97,42 +95,6 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                     // }
                 }}
             />
-            <LyricIcon
-                onPress={async () => {
-                    if (!lyricConfig?.showStatusBarLyric) {
-                        const hasPermission =
-                            await LyricUtil.checkSystemAlertPermission();
-
-                        if (hasPermission) {
-                            LyricUtil.showStatusBarLyric(
-                                LyricManager.getCurrentLyric()?.lrc ??
-                                    'MusicFree',
-                                Config.get('setting.lyric') ?? {},
-                            );
-                            Config.set(
-                                'setting.lyric.showStatusBarLyric',
-                                true,
-                            );
-                        } else {
-                            LyricUtil.requestSystemAlertPermission().finally(
-                                () => {
-                                    Toast.warn(
-                                        '开启桌面歌词失败，无悬浮窗权限',
-                                    );
-                                },
-                            );
-                        }
-                    } else {
-                        LyricUtil.hideStatusBarLyric();
-                        Config.set('setting.lyric.showStatusBarLyric', false);
-                    }
-                }}
-                width={iconSizeConst.normal}
-                height={iconSizeConst.normal}
-                color={
-                    lyricConfig?.showStatusBarLyric ? colors.primary : 'white'
-                }
-            />
             <TranslationIcon
                 width={iconSizeConst.normal}
                 height={iconSizeConst.normal}
@@ -152,6 +114,19 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                         !showTranslation,
                     );
                     scrollToCurrentLrcItem();
+                }}
+            />
+            <Icon
+                name="ellipsis-vertical"
+                size={iconSizeConst.normal}
+                color={'white'}
+                onPress={() => {
+                    const currentMusic = TrackPlayer.getCurrentMusic();
+                    if (currentMusic) {
+                        showPanel('MusicItemLyricOptions', {
+                            musicItem: currentMusic,
+                        });
+                    }
                 }}
             />
         </View>

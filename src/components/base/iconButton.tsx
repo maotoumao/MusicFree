@@ -1,7 +1,7 @@
 import React from 'react';
 import {ColorKey, colorMap, iconSizeConst} from '@/constants/uiConst';
 import {TapGestureHandler} from 'react-native-gesture-handler';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import useColors from '@/hooks/useColors';
 import {SvgProps} from 'react-native-svg';
 import Icon, {IIconName} from '@/components/base/icon.tsx';
@@ -29,14 +29,16 @@ export function IconButtonWithGesture(props: IIconButtonProps) {
     const color = colors[colorMap[fontColor]];
     return (
         <TapGestureHandler onActivated={onPress}>
-            <Icon
-                accessible
-                accessibilityLabel={accessibilityLabel}
-                name={name}
-                color={color}
-                style={[{minWidth: textSize}, styles.textCenter, style]}
-                size={textSize}
-            />
+            <View>
+                <Icon
+                    accessible
+                    accessibilityLabel={accessibilityLabel}
+                    name={name}
+                    color={color}
+                    style={[{minWidth: textSize}, styles.textCenter, style]}
+                    size={textSize}
+                />
+            </View>
         </TapGestureHandler>
     );
 }

@@ -9,7 +9,6 @@ import {
     TapGestureHandler,
 } from 'react-native-gesture-handler';
 import {fontSizeConst} from '@/constants/uiConst';
-import {IconButtonWithGesture} from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
 import globalStyle from '@/constants/globalStyle';
 import {showPanel} from '@/components/panels/usePanel';
@@ -23,6 +22,7 @@ import PersistStatus from '@/core/persistStatus';
 import LyricOperations from './lyricOperations';
 import MediaExtra from '@/core/mediaExtra';
 import {IParsedLrcItem} from '@/utils/lrcParser';
+import {IconButtonWithGesture} from '@/components/base/iconButton.tsx';
 
 const ITEM_HEIGHT = rpx(92);
 

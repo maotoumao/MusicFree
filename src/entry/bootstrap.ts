@@ -172,6 +172,7 @@ async function setupFolder() {
         checkAndCreateDir(pathConst.cachePath),
         checkAndCreateDir(pathConst.pluginPath),
         checkAndCreateDir(pathConst.lrcCachePath),
+        checkAndCreateDir(pathConst.localLrcPath),
         checkAndCreateDir(pathConst.downloadPath).then(() => {
             checkAndCreateDir(pathConst.downloadMusicPath);
         }),
