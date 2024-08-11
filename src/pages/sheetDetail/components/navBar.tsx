@@ -7,6 +7,7 @@ import {showDialog} from '@/components/dialogs/useDialog';
 import AppBar from '@/components/base/appBar';
 import MusicSheet from '@/core/musicSheet';
 import {SortType} from '@/constants/commonConst.ts';
+import {showPanel} from '@/components/panels/usePanel.ts';
 
 export default function () {
     const navigation = useNavigation<any>();
@@ -47,7 +48,7 @@ export default function () {
                         icon: 'pencil-outline',
                         title: '编辑歌单信息',
                         onPress() {
-                            showDialog('EditSheetDetailDialog', {
+                            showPanel('EditMusicSheetInfo', {
                                 musicSheet: musicSheet,
                             });
                         },

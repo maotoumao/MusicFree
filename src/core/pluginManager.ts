@@ -869,6 +869,25 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         }
     }
+
+    async getMusicComments(
+        musicItem: IMusic.IMusicItem,
+    ): Promise<ICommon.PaginationResponse<IMedia.IComment>> {
+        const result = await this.plugin.instance?.getMusicComments?.(
+            musicItem,
+        );
+        if (!result) {
+            throw new Error();
+        }
+        if (result.isEnd !== false) {
+            result.isEnd = true;
+        }
+        if (!result.data) {
+            result.data = [];
+        }
+
+        return result;
+    }
 }
 //#endregion
 

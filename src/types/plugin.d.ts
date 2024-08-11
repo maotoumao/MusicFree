@@ -134,6 +134,10 @@ declare namespace IPlugin {
             tag: ICommon.IUnique,
             page?: number,
         ) => Promise<ICommon.PaginationResponse<IMusic.IMusicSheetItemBase>>;
+        /** 获取评论 */
+        getMusicComments?: (
+            musicItem: IMusic.IMusicItem,
+        ) => Promise<ICommon.PaginationResponse<IMedia.IComment>>;
     }
 
     export interface IPluginInstance extends IPluginDefine {

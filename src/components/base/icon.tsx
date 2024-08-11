@@ -13,6 +13,7 @@ import ArrowUturnLeftIcon from '@/assets/icons/arrow-uturn-left.svg';
 import ArrowsLeftRightIcon from '@/assets/icons/arrows-left-right.svg';
 import Bars3Icon from '@/assets/icons/bars-3.svg';
 import BookmarkSquareIcon from '@/assets/icons/bookmark-square.svg';
+import ChatBubbleOvalLeftEllipsisIcon from '@/assets/icons/chat-bubble-oval-left-ellipsis.svg';
 import CheckCircleOutlineIcon from '@/assets/icons/check-circle-outline.svg';
 import CheckCircleIcon from '@/assets/icons/check-circle.svg';
 import CheckIcon from '@/assets/icons/check.svg';
@@ -29,6 +30,7 @@ import FolderMusicOutlineIcon from '@/assets/icons/folder-music-outline.svg';
 import FolderOutlineIcon from '@/assets/icons/folder-outline.svg';
 import FolderPlusIcon from '@/assets/icons/folder-plus.svg';
 import FontSizeIcon from '@/assets/icons/font-size.svg';
+import HandThumbUpIcon from '@/assets/icons/hand-thumb-up.svg';
 import HeartOutlineIcon from '@/assets/icons/heart-outline.svg';
 import HeartIcon from '@/assets/icons/heart.svg';
 import HomeOutlineIcon from '@/assets/icons/home-outline.svg';
@@ -81,6 +83,7 @@ export type IIconName =
     | 'arrows-left-right'
     | 'bars-3'
     | 'bookmark-square'
+    | 'chat-bubble-oval-left-ellipsis'
     | 'check-circle-outline'
     | 'check-circle'
     | 'check'
@@ -97,6 +100,7 @@ export type IIconName =
     | 'folder-outline'
     | 'folder-plus'
     | 'font-size'
+    | 'hand-thumb-up'
     | 'heart-outline'
     | 'heart'
     | 'home-outline'
@@ -156,6 +160,7 @@ const iconMap = {
     'arrows-left-right': ArrowsLeftRightIcon,
     'bars-3': Bars3Icon,
     'bookmark-square': BookmarkSquareIcon,
+    'chat-bubble-oval-left-ellipsis': ChatBubbleOvalLeftEllipsisIcon,
     'check-circle-outline': CheckCircleOutlineIcon,
     'check-circle': CheckCircleIcon,
     check: CheckIcon,
@@ -172,6 +177,7 @@ const iconMap = {
     'folder-outline': FolderOutlineIcon,
     'folder-plus': FolderPlusIcon,
     'font-size': FontSizeIcon,
+    'hand-thumb-up': HandThumbUpIcon,
     'heart-outline': HeartOutlineIcon,
     heart: HeartIcon,
     'home-outline': HomeOutlineIcon,

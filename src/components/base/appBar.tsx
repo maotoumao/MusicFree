@@ -45,6 +45,7 @@ interface IAppBarProps {
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ViewStyle>;
     actionComponent?: ReactNode;
+    onBackPress?: () => void;
 }
 
 const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
@@ -67,6 +68,7 @@ export default function AppBar(props: IAppBarProps) {
         contentStyle,
         children,
         actionComponent,
+        onBackPress,
     } = props;
 
     const colors = useColors();
@@ -108,9 +110,12 @@ export default function AppBar(props: IAppBarProps) {
                     sizeType="normal"
                     color={contentColor}
                     style={globalStyle.notShrink}
-                    onPress={() => {
-                        navigation.goBack();
-                    }}
+                    onPress={
+                        onBackPress ||
+                        (() => {
+                            navigation.goBack();
+                        })
+                    }
                 />
                 <View style={[globalStyle.grow, styles.content, contentStyle]}>
                     {typeof children === 'string' ? (
