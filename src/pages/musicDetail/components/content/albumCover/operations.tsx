@@ -98,10 +98,10 @@ export default function Operations() {
                 name="chat-bubble-oval-left-ellipsis"
                 size={iconSizeConst.normal}
                 color="white"
-                opacity={supportComment ? 1 : 0.6}
+                opacity={supportComment ? 1 : 0.2}
                 onPress={() => {
                     if (!supportComment) {
-                        toast.warn('当前插件暂不支持查看评论');
+                        toast.warn('当前歌曲暂无评论');
                         return;
                     }
                     if (musicItem) {
