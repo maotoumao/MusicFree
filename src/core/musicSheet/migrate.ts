@@ -39,11 +39,10 @@ export const migrateV2 = {
         }
         let dirty = false;
         const now = Date.now();
-        const count = musicItems.length - 1;
         musicItems.forEach((it, index) => {
             if (!it.$timestamp || it.$sortIndex === undefined) {
                 it.$timestamp = now;
-                it.$sortIndex = count - index;
+                it.$sortIndex = index;
                 dirty = true;
             }
         });

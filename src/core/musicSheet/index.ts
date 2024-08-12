@@ -13,7 +13,7 @@ import {
     musicSheetsBaseAtom,
     starredMusicSheetsAtom,
 } from '@/core/musicSheet/atoms.ts';
-import {SortType} from '@/constants/commonConst.ts';
+import {ResumeMode, SortType} from '@/constants/commonConst.ts';
 import SortedMusicList from '@/core/musicSheet/sortedMusicList.ts';
 import ee from '@/core/musicSheet/ee.ts';
 import Config from '@/core/config.ts';
@@ -187,8 +187,16 @@ async function addSheet(title: string) {
 
 async function resumeSheets(
     sheets: IMusic.IMusicSheetItem[],
-    overwrite?: boolean,
+    resumeMode: ResumeMode,
 ) {
+    if (resumeMode === ResumeMode.Append) {
+        // 逆序恢复，最新创建的在最上方
+        for (let i = sheets.length - 1; i >= 0; --i) {
+            const newSheetId = await addSheet(sheets[i].title || '');
+            await addMusic(newSheetId, sheets[i].musicList || []);
+        }
+        return;
+    }
     // 1. 分离默认歌单和其他歌单
     const defaultSheetIndex = sheets.findIndex(it => it.id === defaultSheet.id);
 
@@ -198,14 +206,33 @@ async function resumeSheets(
         exportedDefaultSheet = sheets.splice(defaultSheetIndex, 1)[0];
     }
 
-    // 逆序恢复，最新创建的在最上方
-    for (let i = sheets.length - 1; i >= 0; --i) {
-        const newSheetId = await addSheet(sheets[i].title || '');
-        await addMusic(newSheetId, sheets[i].musicList || []);
+    // 2. 合并默认歌单
+    await addMusic(defaultSheet.id, exportedDefaultSheet?.musicList || []);
+
+    // 3. 合并其他歌单
+    if (resumeMode === ResumeMode.OverwriteDefault) {
+        // 逆序恢复，最新创建的在最上方
+        for (let i = sheets.length - 1; i >= 0; --i) {
+            const newSheetId = await addSheet(sheets[i].title || '');
+            await addMusic(newSheetId, sheets[i].musicList || []);
+        }
+    } else {
+        // 合并同名
+        const existsSheetIdMap: Record<string, string> = {};
+        const allSheets = getDefaultStore().get(musicSheetsBaseAtom);
+        allSheets.forEach(it => {
+            existsSheetIdMap[it.title!] = it.id;
+        });
+        for (let i = sheets.length - 1; i >= 0; --i) {
+            let newSheetId = existsSheetIdMap[sheets[i].title || ''];
+            if (!newSheetId) {
+                newSheetId = await addSheet(sheets[i].title || '');
+            }
+            await addMusic(newSheetId, sheets[i].musicList || []);
+        }
     }
 
     if (overwrite) {
-        await addMusic(defaultSheet.id, exportedDefaultSheet?.musicList || []);
     } else {
         const newSheetId = await addSheet(
             exportedDefaultSheet?.title || defaultSheet.title!,

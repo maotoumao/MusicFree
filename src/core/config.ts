@@ -3,7 +3,7 @@ import {CustomizedColors} from '@/hooks/useColors';
 import {getStorage, setStorage} from '@/utils/storage';
 import {produce} from 'immer';
 import {useEffect, useState} from 'react';
-import {SortType} from '@/constants/commonConst.ts';
+import {ResumeMode, SortType} from '@/constants/commonConst.ts';
 
 type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[] | IMusic.IQuality;
 interface IConfig {
@@ -92,7 +92,7 @@ interface IConfig {
         };
 
         backup: {
-            resumeMode: 'append' | 'overwrite';
+            resumeMode: ResumeMode;
         };
 
         plugin: {

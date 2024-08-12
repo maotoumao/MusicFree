@@ -104,3 +104,9 @@ export const enum SortType {
     // 按时间逆序
     Oldest = 'time-rev',
 }
+
+export const enum ResumeMode {
+    Append = 'append',
+    Overwrite = 'overwrite',
+    OverwriteDefault = 'overwrite-default',
+}

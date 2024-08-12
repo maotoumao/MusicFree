@@ -16,6 +16,8 @@ import {writeInChunks} from '@/utils/fileUtils.ts';
 import {getDocumentAsync} from 'expo-document-picker';
 import {readAsStringAsync} from 'expo-file-system';
 import sleep from '@/utils/sleep';
+import {ResumeMode} from '@/constants/commonConst.ts';
+import strings from '@/constants/strings.ts';
 
 export default function BackupSetting() {
     const navigate = useNavigate();
@@ -73,11 +75,11 @@ export default function BackupSetting() {
             const result = await readAsStringAsync(pickResult.assets[0].uri);
             return new Promise(resolve => {
                 showDialog('LoadingDialog', {
-                    title: '恢复本地音乐',
+                    title: '从本地文件恢复',
                     loadingText: '恢复中...',
                     async task() {
                         await sleep(300);
-                        return backup.resume(result);
+                        return backup.resume(result, backupConfig?.resumeMode);
                     },
                     onResolve(_, hideDialog) {
                         Toast.success('恢复成功~');
@@ -112,7 +114,7 @@ export default function BackupSetting() {
                     const url = text.trim();
                     if (url.endsWith('.json') || url.endsWith('.txt')) {
                         const raw = (await axios.get(text)).data;
-                        await Backup.resume(raw);
+                        await Backup.resume(raw, backupConfig?.resumeMode);
                         Toast.success('恢复成功~');
                         closePanel();
                     } else {
@@ -151,7 +153,7 @@ export default function BackupSetting() {
             );
             await Backup.resume(
                 resumeData,
-                Config.get('setting.backup.resumeMode') === 'overwrite',
+                Config.get('setting.backup.resumeMode'),
             );
             Toast.success('恢复成功~');
         } catch (e: any) {
@@ -201,12 +203,18 @@ export default function BackupSetting() {
                         title: '设置恢复方式',
                         content: [
                             {
-                                label: '追加到歌单末尾',
-                                value: 'append',
+                                label: strings.settings[ResumeMode.Append],
+                                value: ResumeMode.Append,
                             },
                             {
-                                label: '覆盖歌单',
-                                value: 'overwrite',
+                                label: strings.settings[
+                                    ResumeMode.OverwriteDefault
+                                ],
+                                value: ResumeMode.OverwriteDefault,
+                            },
+                            {
+                                label: strings.settings[ResumeMode.Overwrite],
+                                value: ResumeMode.Overwrite,
                             },
                         ],
                         onOk(value) {
@@ -219,9 +227,12 @@ export default function BackupSetting() {
                 }}>
                 <ListItem.Content title="恢复方式" />
                 <ListItem.ListItemText>
-                    {backupConfig?.resumeMode === 'overwrite'
-                        ? '覆盖歌单'
-                        : '追加到歌单末尾'}
+                    {
+                        strings.settings[
+                            (backupConfig?.resumeMode as ResumeMode) ||
+                                ResumeMode.Append
+                        ]
+                    }
                 </ListItem.ListItemText>
             </ListItem>
             <ListItemHeader>本地备份</ListItemHeader>

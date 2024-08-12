@@ -3,6 +3,7 @@
 import {compare} from 'compare-versions';
 import PluginManager from './pluginManager';
 import MusicSheet from '@/core/musicSheet';
+import {ResumeMode} from '@/constants/commonConst.ts';
 
 /**
  * 结果：一份大的json文件
@@ -31,7 +32,10 @@ function backup() {
     });
 }
 
-async function resume(raw: string | Object, overwrite?: boolean) {
+async function resume(
+    raw: string | Object,
+    resumeMode: ResumeMode = ResumeMode.Append,
+) {
     let obj: IBackJson;
     if (typeof raw === 'string') {
         obj = JSON.parse(raw);
@@ -61,7 +65,7 @@ async function resume(raw: string | Object, overwrite?: boolean) {
     });
 
     /** 恢复歌单 */
-    const resumeMusicSheets = MusicSheet.resumeSheets(musicSheets, overwrite);
+    const resumeMusicSheets = MusicSheet.resumeSheets(musicSheets, resumeMode);
 
     return Promise.all([...(resumePlugins ?? []), resumeMusicSheets]);
 }

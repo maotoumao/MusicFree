@@ -131,6 +131,7 @@ export default function EditMusicSheetInfo(props: IEditMusicSheetInfoProps) {
                 </View>
                 <Button
                     style={style.button}
+                    type="primary"
                     text={'提交'}
                     onPress={onConfirm}
                 />
@@ -155,5 +156,6 @@ const style = StyleSheet.create({
     },
     button: {
         marginTop: rpx(24),
+        marginHorizontal: rpx(24),
     },
 });
