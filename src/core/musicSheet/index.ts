@@ -231,14 +231,6 @@ async function resumeSheets(
             await addMusic(newSheetId, sheets[i].musicList || []);
         }
     }
-
-    if (overwrite) {
-    } else {
-        const newSheetId = await addSheet(
-            exportedDefaultSheet?.title || defaultSheet.title!,
-        );
-        await addMusic(newSheetId, exportedDefaultSheet?.musicList || []);
-    }
 }
 
 function backupSheets() {

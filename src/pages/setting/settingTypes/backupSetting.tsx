@@ -18,6 +18,7 @@ import {readAsStringAsync} from 'expo-file-system';
 import sleep from '@/utils/sleep';
 import {ResumeMode} from '@/constants/commonConst.ts';
 import strings from '@/constants/strings.ts';
+import {errorLog} from '@/utils/log.ts';
 
 export default function BackupSetting() {
     const navigate = useNavigate();
@@ -99,6 +100,7 @@ export default function BackupSetting() {
                 });
             });
         } catch (e: any) {
+            errorLog('恢复失败', e);
             Toast.warn(`恢复失败 ${e?.message ?? e}`);
         }
     }
