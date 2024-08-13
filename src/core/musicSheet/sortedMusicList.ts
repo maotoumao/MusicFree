@@ -54,6 +54,10 @@ export default class SortedMusicList {
         return this.array[0] || null;
     }
 
+    get platforms() {
+        return [...this.countMap.keys()];
+    }
+
     get length() {
         return this.array.length;
     }

@@ -182,7 +182,7 @@ export default function PluginItem(props: IPluginItemProps) {
                     {plugin.name}
                 </ThemeText>
                 <ThemeSwitch
-                    value={plugin.state === 'disabled' ? false : true}
+                    value={plugin.state !== 'disabled'}
                     onValueChange={val => {
                         PluginManager.setPluginEnabled(plugin, val);
                     }}
@@ -206,10 +206,6 @@ export default function PluginItem(props: IPluginItemProps) {
                 {options.map((it, index) =>
                     it.show !== false ? (
                         <IconTextButton
-                            containerStyle={{
-                                // TODO: 升级框架之后换成gap
-                                marginBottom: rpx(16),
-                            }}
                             key={index}
                             icon={it.icon}
                             onPress={it.onPress}>
@@ -266,7 +262,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: rpx(8),
         marginHorizontal: rpx(24),
-        paddingTop: rpx(18),
+        paddingVertical: rpx(18),
         marginTop: rpx(36),
     },
     header: {
@@ -292,5 +288,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
+        gap: rpx(16),
     },
 });

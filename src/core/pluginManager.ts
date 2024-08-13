@@ -929,6 +929,36 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
 
         return result;
     }
+
+    async migrateFromOtherPlugin(
+        mediaItem: ICommon.IMediaBase,
+        fromPlatform: string,
+    ): Promise<{isOk: boolean; data?: ICommon.IMediaBase}> {
+        try {
+            const result = await this.plugin.instance?.migrateFromOtherPlugin(
+                mediaItem,
+                fromPlatform,
+            );
+
+            if (
+                result.isOk &&
+                result.data?.id &&
+                result.data?.platform === this.plugin.platform
+            ) {
+                return {
+                    isOk: result.isOk,
+                    data: result.data,
+                };
+            }
+            return {
+                isOk: false,
+            };
+        } catch {
+            return {
+                isOk: false,
+            };
+        }
+    }
 }
 //#endregion
 

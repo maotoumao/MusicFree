@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MusicFree</string>
+    <string name="expo_splash_screen_status_bar_translucent">true</string>
 </resources>

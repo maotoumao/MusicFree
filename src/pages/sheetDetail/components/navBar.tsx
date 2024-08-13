@@ -19,36 +19,20 @@ export default function () {
             <AppBar
                 menu={[
                     {
-                        icon: 'trash-outline',
-                        title: '删除歌单',
-                        show: id !== 'favorite',
+                        icon: 'pencil-outline',
+                        title: '编辑歌单信息',
                         onPress() {
-                            showDialog('SimpleDialog', {
-                                title: '删除歌单',
-                                content: `确定删除歌单「${musicSheet.title}」吗?`,
-                                onOk: async () => {
-                                    await MusicSheet.removeSheet(id);
-                                    Toast.success('已删除');
-                                    navigation.goBack();
-                                },
-                            });
-                        },
-                    },
-                    {
-                        icon: 'pencil-square',
-                        title: '批量编辑',
-                        onPress() {
-                            navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
-                                musicList: musicSheet.musicList,
+                            showPanel('EditMusicSheetInfo', {
                                 musicSheet: musicSheet,
                             });
                         },
                     },
                     {
-                        icon: 'pencil-outline',
-                        title: '编辑歌单信息',
+                        icon: 'pencil-square',
+                        title: '批量编辑歌曲',
                         onPress() {
-                            showPanel('EditMusicSheetInfo', {
+                            navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
+                                musicList: musicSheet.musicList,
                                 musicSheet: musicSheet,
                             });
                         },
@@ -90,6 +74,22 @@ export default function () {
                                         value as SortType,
                                     );
                                     toast.success('排序已更新');
+                                },
+                            });
+                        },
+                    },
+                    {
+                        icon: 'trash-outline',
+                        title: '删除歌单',
+                        show: id !== 'favorite',
+                        onPress() {
+                            showDialog('SimpleDialog', {
+                                title: '删除歌单',
+                                content: `确定删除歌单「${musicSheet.title}」吗?`,
+                                onOk: async () => {
+                                    await MusicSheet.removeSheet(id);
+                                    Toast.success('已删除');
+                                    navigation.goBack();
                                 },
                             });
                         },
