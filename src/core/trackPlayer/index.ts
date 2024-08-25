@@ -43,7 +43,7 @@ import {
 import {createMediaIndexMap} from '@/utils/mediaIndexMap';
 import PluginManager from '../pluginManager';
 import {musicIsPaused} from '@/utils/trackUtils';
-import {trace} from '@/utils/log';
+import {errorLog, trace} from '@/utils/log';
 import PersistStatus from '../persistStatus';
 import {getCurrentDialog, showDialog} from '@/components/dialogs/useDialog';
 import getSimilarMusic from '@/utils/getSimilarMusic';
@@ -170,6 +170,7 @@ async function setupTrackPlayer() {
         ReactNativeTrackPlayer.addEventListener(
             Event.PlaybackError,
             async e => {
+                errorLog('播放出错', e.message);
                 // WARNING: 不稳定，报错的时候有可能track已经变到下一首歌去了
                 const currentTrack =
                     await ReactNativeTrackPlayer.getActiveTrack();
