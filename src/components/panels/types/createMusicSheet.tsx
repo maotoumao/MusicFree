@@ -25,6 +25,7 @@ export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
     return (
         <PanelBase
             height={vmax(30)}
+            keyboardAvoidBehavior="height"
             renderBody={() => (
                 <>
                     <PanelHeader

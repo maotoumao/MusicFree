@@ -36,6 +36,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
     return (
         <PanelBase
             keyboardAvoidBehavior="none"
+            awareKeyboard
             height={vmax(80)}
             renderBody={() => (
                 <View style={style.wrapper}>

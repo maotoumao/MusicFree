@@ -16,7 +16,6 @@ import SimpleInput from './simpleInput';
 import SimpleSelect from './simpleSelect';
 import TimingClose from './timingClose';
 import ImageViewer from './imageViewer';
-import EditMusicSheetInfo from './editMusicSheetInfo';
 import MusicComment from './musicComment';
 import MusicItemLyricOptions from './musicItemLyricOptions';
 
@@ -57,8 +56,6 @@ export default {
     SetLyricOffset,
     /** 图片阅读器 */
     ImageViewer,
-    /** 编辑歌单信息 */
-    EditMusicSheetInfo,
     /** 音乐评论 */
     MusicComment,
     MusicItemLyricOptions,
