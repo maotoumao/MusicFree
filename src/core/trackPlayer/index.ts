@@ -59,7 +59,6 @@ const qualityStore = new GlobalState<IMusic.IQualityKey>('standard');
 
 let currentIndex = -1;
 
-// TODO: 下个版本最大限制调大一些
 const maxMusicQueueLength = 10000; // 当前播放最大限制
 const halfMaxMusicQueueLength = Math.floor(maxMusicQueueLength / 2);
 const shrinkPlayListToSize = (
@@ -310,9 +309,6 @@ const addAll = (
     if (currentMusicItem) {
         currentIndex = getMusicIndex(currentMusicItem);
     }
-
-    // TODO: 更新播放队列信息
-    // 5. 存储更新的播放列表信息
 };
 
 /** 追加到队尾 */
@@ -364,11 +360,7 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
             try {
                 const state = (await ReactNativeTrackPlayer.getPlaybackState())
                     .state;
-                if (musicIsPaused(state)) {
-                    shouldPlayCurrent = false;
-                } else {
-                    shouldPlayCurrent = true;
-                }
+                shouldPlayCurrent = !musicIsPaused(state);
             } catch {
                 shouldPlayCurrent = false;
             }
@@ -691,10 +683,6 @@ const play = async (
                         '当前非WIFI环境，侧边栏设置中打开【使用移动网络播放】功能后可继续播放',
                 });
             }
-
-            // Toast.warn(
-            //     '当前禁止移动网络播放音乐，如需播放请去侧边栏-基本设置中修改',
-            // );
         } else if (message === PlayFailReason.INVALID_SOURCE) {
             trace('音源为空，播放失败');
             await failToPlay();

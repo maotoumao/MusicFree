@@ -23,7 +23,7 @@ export default async function <T extends ICommon.SupportMediaType>(
     const startTime = Date.now();
 
     for (let plugin of plugins) {
-        // 超时时间：10s
+        // 超时时间：8s
         if (abortFunction?.() || Date.now() - startTime > 8000) {
             break;
         }

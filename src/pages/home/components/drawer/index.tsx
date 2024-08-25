@@ -14,7 +14,7 @@ import timeformat from '@/utils/timeformat';
 import {showPanel} from '@/components/panels/usePanel';
 import Divider from '@/components/base/divider';
 import TrackPlayer from '@/core/trackPlayer';
-import {checkUpdateAndShowResult} from '@/hooks/useCheckUpdate';
+import {checkUpdateAndShowResult} from '@/hooks/useCheckUpdate.ts';
 import {IIconName} from '@/components/base/icon.tsx';
 
 const ITEM_HEIGHT = rpx(108);
