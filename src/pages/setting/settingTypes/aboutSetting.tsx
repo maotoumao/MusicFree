@@ -10,7 +10,7 @@ import rpx from '@/utils/rpx';
 import {ImgAsset} from '@/constants/assetsConst';
 import ThemeText from '@/components/base/themeText';
 import LinkText from '@/components/base/linkText';
-import useCheckUpdate from '@/hooks/useCheckUpdate';
+import useCheckUpdate from '@/hooks/useCheckUpdate.ts';
 import useOrientation from '@/hooks/useOrientation';
 import Divider from '@/components/base/divider';
 

@@ -9,7 +9,7 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
-import rpx, {vh} from '@/utils/rpx';
+import rpx, {vh, vw} from '@/utils/rpx';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
@@ -21,6 +21,7 @@ import ThemeText from '@/components/base/themeText';
 import Divider from '@/components/base/divider';
 import {fontSizeConst} from '@/constants/uiConst';
 import {ScrollView} from 'react-native-gesture-handler';
+import useOrientation from '@/hooks/useOrientation.ts';
 
 interface IDialogProps {
     onDismiss?: () => void;
@@ -32,6 +33,17 @@ function Dialog(props: IDialogProps) {
     const sharedShowValue = useSharedValue(0);
     const colors = useColors();
     const backHandlerRef = useRef<NativeEventSubscription>();
+    const orientation = useOrientation();
+
+    // 对话框宽度
+    const dialogContainerStyle: ViewStyle =
+        orientation === 'vertical'
+            ? {
+                  width: vw(100) - rpx(72),
+              }
+            : {
+                  width: '80%',
+              };
 
     useEffect(() => {
         sharedShowValue.value = withTiming(1, timingConfig.animationFast);
@@ -62,7 +74,7 @@ function Dialog(props: IDialogProps) {
         };
     });
 
-    const scaleStyle = useAnimatedStyle(() => {
+    const scaleAnimationStyle = useAnimatedStyle(() => {
         return {
             transform: [
                 {
@@ -82,8 +94,9 @@ function Dialog(props: IDialogProps) {
             <Animated.View
                 style={[
                     styles.dialogContainer,
+                    dialogContainerStyle,
                     containerStyle,
-                    scaleStyle,
+                    scaleAnimationStyle,
                     {
                         backgroundColor: colors.backdrop,
                         shadowColor: colors.shadow,

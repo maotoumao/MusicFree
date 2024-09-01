@@ -4,13 +4,13 @@ import rpx from '@/utils/rpx';
 import React from 'react';
 import {StyleProp, StyleSheet, ViewStyle} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon, {IIconName} from '@/components/base/icon.tsx';
 
 interface IActionButtonProps {
-    iconName: string;
+    iconName: IIconName;
     iconColor?: string;
     title: string;
-    action: () => void;
+    action?: () => void;
     style?: StyleProp<ViewStyle>;
 }
 

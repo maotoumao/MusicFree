@@ -1,19 +1,21 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Image, Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Download from '@/core/download';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {ROUTE_PATH} from '@/entry/router';
 import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
+import toast from '@/utils/toast';
 import useOrientation from '@/hooks/useOrientation';
 import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import {iconSizeConst} from '@/constants/uiConst';
 import PersistStatus from '@/core/persistStatus';
 import HeartIcon from '../heartIcon';
+import Icon from '@/components/base/icon.tsx';
+import PluginManager from '@/core/pluginManager.ts';
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -24,15 +26,17 @@ export default function Operations() {
     const rate = PersistStatus.useValue('music.rate', 100);
     const orientation = useOrientation();
 
+    const supportComment = useMemo(() => {
+        return !musicItem
+            ? false
+            : !!PluginManager.getByMedia(musicItem)?.instance?.getMusicComments;
+    }, [musicItem]);
+
     return (
         <View
             style={[
-                style.wrapper,
-                orientation === 'horizonal'
-                    ? {
-                          marginBottom: 0,
-                      }
-                    : null,
+                styles.wrapper,
+                orientation === 'horizonal' ? styles.horizontalWrapper : null,
             ]}>
             <HeartIcon />
             <Pressable
@@ -53,16 +57,17 @@ export default function Operations() {
                 }}>
                 <Image
                     source={ImgAsset.quality[currentQuality]}
-                    style={style.quality}
+                    style={styles.quality}
                 />
             </Pressable>
             <Icon
-                name={isDownloaded ? 'check-circle-outline' : 'download'}
+                name={isDownloaded ? 'check-circle-outline' : 'arrow-down-tray'}
                 size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
                     if (musicItem && !isDownloaded) {
                         showPanel('MusicQuality', {
+                            type: 'download',
                             musicItem,
                             async onQualityPress(quality) {
                                 Download.downloadMusic(musicItem, quality);
@@ -87,10 +92,27 @@ export default function Operations() {
                         },
                     });
                 }}>
-                <Image source={ImgAsset.rate[rate!]} style={style.quality} />
+                <Image source={ImgAsset.rate[rate!]} style={styles.quality} />
             </Pressable>
             <Icon
-                name="dots-vertical"
+                name="chat-bubble-oval-left-ellipsis"
+                size={iconSizeConst.normal}
+                color="white"
+                opacity={supportComment ? 1 : 0.2}
+                onPress={() => {
+                    if (!supportComment) {
+                        toast.warn('当前歌曲暂无评论');
+                        return;
+                    }
+                    if (musicItem) {
+                        showPanel('MusicComment', {
+                            musicItem,
+                        });
+                    }
+                }}
+            />
+            <Icon
+                name="ellipsis-vertical"
                 size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
@@ -106,7 +128,7 @@ export default function Operations() {
     );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     wrapper: {
         width: '100%',
         height: rpx(80),
@@ -114,6 +136,9 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
+    },
+    horizontalWrapper: {
+        marginBottom: 0,
     },
     quality: {
         width: rpx(52),

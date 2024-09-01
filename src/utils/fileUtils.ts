@@ -1,6 +1,6 @@
 import pathConst from '@/constants/pathConst';
 import FastImage from 'react-native-fast-image';
-import {
+import RNFS, {
     copyFile,
     downloadFile,
     exists,
@@ -43,7 +43,9 @@ export function sizeFormatter(bytes: number | string) {
     if (typeof bytes === 'string') {
         return bytes;
     }
-    if (bytes === 0) return '0B';
+    if (bytes === 0) {
+        return '0B';
+    }
     let k = 1024,
         sizes = ['B', 'KB', 'MB', 'GB'],
         i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -131,7 +133,7 @@ export function trimHash(url: string) {
 }
 
 export function escapeCharacter(str?: string) {
-    return str !== undefined ? `${str}`.replace(/[\/|\\?*"<>:]+/g, '_') : '';
+    return str !== undefined ? `${str}`.replace(/[/|\\?*"<>:]+/g, '_') : '';
 }
 
 export function getDirectory(dirPath: string) {
@@ -147,7 +149,7 @@ export function getFileName(filePath: string, withoutExt?: boolean) {
     if (lastSlash === -1) {
         return filePath;
     }
-    const fileName = filePath.slice(lastSlash);
+    const fileName = filePath.slice(lastSlash + 1);
     if (withoutExt) {
         const lastDot = fileName.lastIndexOf('.');
         return lastDot === -1 ? fileName : fileName.slice(0, lastDot);
@@ -158,7 +160,7 @@ export function getFileName(filePath: string, withoutExt?: boolean) {
 
 export async function mkdirR(directory: string) {
     let folder = directory;
-    const checkStack = [];
+    const checkStack: string[] = [];
     while (folder.length > 15) {
         checkStack.push(folder);
         folder = path.dirname(folder);
@@ -178,5 +180,27 @@ export async function mkdirR(directory: string) {
         } catch (e) {
             console.log('error', e);
         }
+    }
+}
+
+export async function writeInChunks(
+    filePath: string,
+    data,
+    chunkSize = 1024 * 1024 * 2,
+) {
+    let offset = 0;
+    console.log('here');
+    if (await exists(filePath)) {
+        await unlink(filePath);
+    }
+
+    while (offset < data.length) {
+        const chunk = data.slice(offset, offset + chunkSize);
+        if (offset === 0) {
+            await RNFS.writeFile(filePath, chunk, 'utf8');
+        } else {
+            await RNFS.appendFile(filePath, chunk, 'utf8');
+        }
+        offset += chunkSize;
     }
 }

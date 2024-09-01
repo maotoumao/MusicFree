@@ -22,6 +22,7 @@ import Slider from '@react-native-community/slider';
 import useColors from '@/hooks/useColors';
 import ColorBlock from '@/components/base/colorBlock';
 import LyricManager from '@/core/lyricManager';
+import {SortType} from '@/constants/commonConst.ts';
 
 function createSwitch(
     title: string,
@@ -56,7 +57,7 @@ const createRadio = function (
             title,
             content: valueMap
                 ? candidates.map(_ => ({
-                      key: valueMap[_],
+                      label: valueMap[_] as string,
                       value: _,
                   }))
                 : candidates,
@@ -182,13 +183,22 @@ export default function BasicSetting() {
                     },
                 ),
                 createRadio(
-                    '本地歌单添加歌曲顺序',
+                    '新建歌单时默认歌曲排序',
                     'setting.basic.musicOrderInLocalSheet',
-                    ['start', 'end'],
+                    [
+                        SortType.Title,
+                        SortType.Artist,
+                        SortType.Album,
+                        SortType.Newest,
+                        SortType.Oldest,
+                    ],
                     basicSetting?.musicOrderInLocalSheet ?? 'end',
                     {
-                        start: '添加到歌单开头',
-                        end: '添加到歌单末尾',
+                        [SortType.Title]: '按歌曲名排序',
+                        [SortType.Artist]: '按作者名排序',
+                        [SortType.Album]: '按专辑名排序',
+                        [SortType.Newest]: '按收藏时间从新到旧排序',
+                        [SortType.Oldest]: '按收藏时间从旧到新排序',
                     },
                 ),
             ],
@@ -525,7 +535,7 @@ export default function BasicSetting() {
 
                     return (
                         <ListItem
-                            withHorizonalPadding
+                            withHorizontalPadding
                             heightType="small"
                             onPress={item.onPress}>
                             <ListItem.Content title={item.title} />
@@ -635,14 +645,14 @@ function LyricSetting() {
     return (
         <View>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={autoSearchLyric.onPress}>
                 <ListItem.Content title={autoSearchLyric.title} />
                 {autoSearchLyric.right}
             </ListItem>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={openStatusBarLyric.onPress}>
                 <ListItem.Content title={openStatusBarLyric.title} />
@@ -733,14 +743,14 @@ function LyricSetting() {
                 />
             </View>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={alignStatusBarLyric.onPress}>
                 <ListItem.Content title={alignStatusBarLyric.title} />
                 {alignStatusBarLyric.right}
             </ListItem>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={() => {
                     showPanel('ColorPicker', {
@@ -759,7 +769,7 @@ function LyricSetting() {
                 <ColorBlock color={lyricSetting?.color ?? '#FFE9D2FF'} />
             </ListItem>
             <ListItem
-                withHorizonalPadding
+                withHorizontalPadding
                 heightType="small"
                 onPress={() => {
                     showPanel('ColorPicker', {

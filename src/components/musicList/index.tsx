@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {FlatListProps} from 'react-native';
 import rpx from '@/utils/rpx';
 
@@ -40,10 +40,12 @@ export default function MusicList(props: IMusicListProps) {
         loadMore = 'idle',
     } = props;
 
-    const keyExtractor = useCallback(
-        (item: any, i: number) => `${i}-${item.platform}-${item.id}`,
-        [],
-    );
+    // ! keyExtractor需要保证整个生命周期统一？ 有些奇怪
+    // const keyExtractor = useCallback(
+    //     (item: any, index: number) =>
+    //         '' + index + '-' + item.platform + '-' + item.id,
+    //     [],
+    // );
 
     return (
         <FlashList
@@ -57,7 +59,7 @@ export default function MusicList(props: IMusicListProps) {
                     : null
             }
             data={musicList ?? []}
-            keyExtractor={keyExtractor}
+            // keyExtractor={keyExtractor}
             estimatedItemSize={ITEM_HEIGHT}
             renderItem={({index, item: musicItem}) => {
                 return (

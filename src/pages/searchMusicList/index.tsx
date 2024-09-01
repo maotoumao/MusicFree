@@ -45,6 +45,7 @@ export default function SearchMusicList() {
                     fontColor={colors.appBarText}
                     placeholder="在列表中搜索歌曲"
                     accessible
+                    autoFocus
                     accessibilityLabel="搜索框"
                     accessibilityHint={'在列表中搜索歌曲'}
                     value={query}

@@ -1,17 +1,17 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import MusicSheet from '@/core/musicSheet';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import {useParams} from '@/entry/router';
 import PlayAllBar from '@/components/base/playAllBar';
 import useColors from '@/hooks/useColors';
+import MusicSheet from '@/core/musicSheet';
 
 export default function Header() {
     const {id = 'favorite'} = useParams<'local-sheet-detail'>();
-    const sheet = MusicSheet.useSheets(id);
+    const sheet = MusicSheet.useSheetItem(id);
     const colors = useColors();
 
     return (
@@ -23,13 +23,15 @@ export default function Header() {
                     emptySrc={ImgAsset.albumDefault}
                 />
                 <View style={style.details}>
-                    <ThemeText fontSize="title">{sheet?.title}</ThemeText>
+                    <ThemeText fontSize="title" numberOfLines={3}>
+                        {sheet?.title}
+                    </ThemeText>
                     <ThemeText fontColor="textSecondary" fontSize="subTitle">
-                        共{sheet?.musicList.length ?? 0}首
+                        共{sheet?.musicList?.length ?? 0}首
                     </ThemeText>
                 </View>
             </View>
-            <PlayAllBar musicList={sheet.musicList} musicSheet={sheet} />
+            <PlayAllBar musicList={sheet?.musicList} musicSheet={sheet} />
         </View>
     );
 }
@@ -53,5 +55,6 @@ const style = StyleSheet.create({
         flex: 1,
         height: rpx(140),
         justifyContent: 'space-between',
+        gap: rpx(14),
     },
 });

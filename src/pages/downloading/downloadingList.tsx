@@ -21,7 +21,7 @@ export default function DownloadingList() {
                     if (index < downloading.length) {
                         const prog = progress[item.filename];
                         return (
-                            <ListItem withHorizonalPadding>
+                            <ListItem withHorizontalPadding>
                                 <ListItem.Content
                                     title={item.musicItem.title}
                                     description={`${
@@ -38,7 +38,7 @@ export default function DownloadingList() {
                         );
                     } else {
                         return (
-                            <ListItem withHorizonalPadding>
+                            <ListItem withHorizontalPadding>
                                 <ListItem.Content
                                     title={item.musicItem.title}
                                     description="等待下载"

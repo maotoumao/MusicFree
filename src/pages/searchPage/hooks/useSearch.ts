@@ -1,7 +1,7 @@
 import {devLog, errorLog, trace} from '@/utils/log';
 import {RequestStateCode} from '@/constants/commonConst';
-import produce from 'immer';
-import {useAtom, useSetAtom} from 'jotai';
+import {produce} from 'immer';
+import {getDefaultStore, useAtom, useSetAtom} from 'jotai';
 import {useCallback, useRef} from 'react';
 import {PageStatus, pageStatusAtom, searchResultsAtom} from '../store/atoms';
 import PluginManager, {Plugin} from '@/core/pluginManager';
@@ -155,8 +155,11 @@ export default function useSearch() {
                         e,
                         e?.message,
                     );
-
-                    setPageStatus(PageStatus.RESULT);
+                    const currentPageStatus =
+                        getDefaultStore().get(pageStatusAtom);
+                    if (currentPageStatus !== PageStatus.EDITING) {
+                        setPageStatus(PageStatus.RESULT);
+                    }
                     setSearchResults(
                         produce(draft => {
                             const prevMediaResult = draft[searchType];

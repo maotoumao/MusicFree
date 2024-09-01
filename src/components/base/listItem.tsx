@@ -12,7 +12,6 @@ import {
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
 import ThemeText from './themeText';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
     fontSizeConst,
     fontWeightConst,
@@ -20,10 +19,11 @@ import {
 } from '@/constants/uiConst';
 import FastImage from './fastImage';
 import {ImageStyle} from 'react-native-fast-image';
+import Icon, {IIconName} from '@/components/base/icon.tsx';
 
 interface IListItemProps {
     // 是否有左右边距
-    withHorizonalPadding?: boolean;
+    withHorizontalPadding?: boolean;
     // 左边距
     leftPadding?: number;
     // 右边距
@@ -50,7 +50,7 @@ const Size = {
 
 function ListItem(props: IListItemProps) {
     const {
-        withHorizonalPadding,
+        withHorizontalPadding,
         leftPadding = defaultPadding,
         rightPadding = defaultPadding,
         style,
@@ -61,8 +61,8 @@ function ListItem(props: IListItemProps) {
     } = props;
 
     const defaultStyle: StyleProp<ViewStyle> = {
-        paddingLeft: withHorizonalPadding ? leftPadding : 0,
-        paddingRight: withHorizonalPadding ? rightPadding : 0,
+        paddingLeft: withHorizontalPadding ? leftPadding : 0,
+        paddingRight: withHorizontalPadding ? rightPadding : 0,
         height: Size[heightType],
     };
 
@@ -127,7 +127,7 @@ function ListItemText(props: IListItemTextProps) {
 }
 
 interface IListItemIconProps {
-    icon: string;
+    icon: IIconName;
     iconSize?: number;
     width?: number;
     position?: 'left' | 'right' | 'none';
@@ -135,6 +135,7 @@ interface IListItemIconProps {
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<TextStyle>;
     onPress?: () => void;
+    color?: string;
 }
 
 function ListItemIcon(props: IListItemIconProps) {
@@ -147,6 +148,7 @@ function ListItemIcon(props: IListItemIconProps) {
         containerStyle,
         contentStyle,
         onPress,
+        color,
     } = props;
 
     const colors = useColors();
@@ -164,7 +166,7 @@ function ListItemIcon(props: IListItemIconProps) {
                 name={icon}
                 size={iconSize}
                 style={contentStyle}
-                color={colors.text}
+                color={color || colors.text}
             />
         </View>
     );
@@ -185,7 +187,7 @@ interface IListItemImageProps {
     fixedWidth?: boolean;
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ImageStyle>;
-    maskIcon?: string | null;
+    maskIcon?: IIconName | null;
 }
 
 function ListItemImage(props: IListItemImageProps) {
@@ -277,7 +279,7 @@ export function ListItemHeader(props: {children?: ReactNode}) {
     const {children} = props;
     return (
         <ListItem
-            withHorizonalPadding
+            withHorizontalPadding
             heightType="smallest"
             style={styles.listItemHeader}>
             {typeof children === 'string' ? (

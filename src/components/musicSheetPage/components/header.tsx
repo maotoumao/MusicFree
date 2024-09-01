@@ -36,7 +36,9 @@ export default function Header(props: IHeaderProps) {
                         emptySrc={ImgAsset.albumDefault}
                     />
                     <View style={style.details}>
-                        <ThemeText>{musicSheet?.title}</ThemeText>
+                        <ThemeText numberOfLines={3}>
+                            {musicSheet?.title}
+                        </ThemeText>
                         <ThemeText
                             fontColor="textSecondary"
                             fontSize="description">

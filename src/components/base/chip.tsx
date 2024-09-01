@@ -26,13 +26,15 @@ export default function Chip(props: IChipProps) {
                 containerStyle,
             ]}>
             {typeof children === 'string' ? (
-                <ThemeText fontSize="subTitle">{children}</ThemeText>
+                <ThemeText fontSize="subTitle" numberOfLines={1}>
+                    {children}
+                </ThemeText>
             ) : (
                 children
             )}
             <IconButton
                 onPress={onClose}
-                name="close"
+                name="x-mark"
                 sizeType="small"
                 style={styles.icon}
             />

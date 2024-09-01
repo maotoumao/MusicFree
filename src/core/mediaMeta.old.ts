@@ -1,7 +1,7 @@
 /**
  * 歌单管理
  */
-import produce from 'immer';
+import {produce} from 'immer';
 import {nanoid} from 'nanoid';
 import {
     getMultiStorage,
@@ -23,18 +23,6 @@ async function setup() {
     try {
         await migrate();
     } catch {}
-    // const metaKeys = (await getStorage(StorageKeys.MediaMetaKeys)) ?? {};
-    // if (!metaKeys) {
-    //     await setStorage(StorageKeys.MediaMetaKeys, {});
-    // }
-    // const kv: [string, string][] = Object.entries(metaKeys);
-    // const metas = await getMultiStorage(kv.map(_ => _[1]));
-    // const newMediaMetas: Record<string, Record<string, any>> = {};
-    // metas.forEach((value, index) => {
-    //     newMediaMetas[kv[index][0]] = value ?? {};
-    // });
-    // mediaMetas = newMediaMetas;
-    // // // todo： setup时校验一下，清空冗余数据
 }
 
 async function migrate() {

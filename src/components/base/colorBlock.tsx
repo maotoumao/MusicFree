@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Image, View} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {ImgAsset} from '@/constants/assetsConst';
 

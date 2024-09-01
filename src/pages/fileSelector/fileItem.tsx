@@ -2,10 +2,11 @@ import React, {memo} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useTextColor from '@/hooks/useTextColor';
 import Checkbox from '@/components/base/checkbox';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import Icon from '@/components/base/icon.tsx';
+import {iconSizeConst} from '@/constants/uiConst.ts';
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -39,9 +40,14 @@ function FileItem(props: IProps) {
                 }}
                 style={styles.pathWrapper}>
                 <Icon
-                    name={type === 'folder' ? 'folder-outline' : 'file-outline'}
+                    name={
+                        type === 'folder'
+                            ? 'folder-outline'
+                            : 'document-outline'
+                    }
                     color={textColor}
                     style={styles.folderIcon}
+                    size={iconSizeConst.light}
                 />
                 <ThemeText
                     style={styles.path}

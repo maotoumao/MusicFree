@@ -3,21 +3,21 @@ import MusicSheet from '@/core/musicSheet';
 import Header from './header';
 import MusicList from '@/components/musicList';
 import {useParams} from '@/entry/router';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
 
 export default function SheetMusicList() {
     const {id = 'favorite'} = useParams<'local-sheet-detail'>();
-    const musicSheet = MusicSheet.useSheets(id);
+    const musicSheet = MusicSheet.useSheetItem(id);
 
     return (
-        <HorizonalSafeAreaView style={globalStyle.flex1}>
+        <HorizontalSafeAreaView style={globalStyle.flex1}>
             <MusicList
                 Header={<Header />}
                 musicList={musicSheet?.musicList}
                 musicSheet={musicSheet}
                 showIndex
             />
-        </HorizonalSafeAreaView>
+        </HorizontalSafeAreaView>
     );
 }

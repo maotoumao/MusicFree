@@ -1,7 +1,6 @@
 import React from 'react';
-import {StyleProp, StyleSheet, ViewStyle} from 'react-native';
+import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import rpx from '@/utils/rpx';
-import {TouchableOpacity} from 'react-native';
 import Image from './image';
 import {ImgAsset} from '@/constants/assetsConst';
 import ThemeText from './themeText';

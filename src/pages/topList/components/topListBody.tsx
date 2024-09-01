@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {Text} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import rpx from '@/utils/rpx';
 import PluginManager from '@/core/pluginManager';
 import {TabBar, TabView} from 'react-native-tab-view';
@@ -36,14 +36,8 @@ export default function TopListBody() {
             renderTabBar={props => (
                 <TabBar
                     {...props}
-                    style={{
-                        backgroundColor: 'transparent',
-                        shadowColor: 'transparent',
-                        borderColor: 'transparent',
-                    }}
-                    tabStyle={{
-                        width: 'auto',
-                    }}
+                    style={styles.tabBarStyle}
+                    tabStyle={styles.tabStyle}
                     scrollEnabled
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
@@ -73,3 +67,14 @@ export default function TopListBody() {
         />
     );
 }
+
+const styles = StyleSheet.create({
+    tabBarStyle: {
+        backgroundColor: 'transparent',
+        shadowColor: 'transparent',
+        borderColor: 'transparent',
+    },
+    tabStyle: {
+        width: 'auto',
+    },
+});

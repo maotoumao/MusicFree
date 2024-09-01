@@ -4,7 +4,7 @@
 
 import {isSameMediaItem} from '@/utils/mediaItem';
 import PluginManager from './pluginManager';
-import LyricParser from '@/utils/lrcParser';
+import LyricParser, {IParsedLrcItem} from '@/utils/lrcParser';
 import {GlobalState} from '@/utils/stateMapper';
 import {EDeviceEvents} from '@/constants/commonConst';
 import {DeviceEventEmitter} from 'react-native';
@@ -14,28 +14,25 @@ import TrackPlayer from './trackPlayer';
 import MediaExtra from './mediaExtra';
 import minDistance from '@/utils/minDistance';
 
-const lyricStateStore = new GlobalState<{
+interface ILyricState {
     loading: boolean;
     lyricParser?: LyricParser;
-    lyrics: ILyric.IParsedLrc;
-    translationLyrics?: ILyric.IParsedLrc;
+    lyrics: IParsedLrcItem[];
     meta?: Record<string, string>;
     hasTranslation: boolean;
-}>({
-    loading: true,
-    lyrics: [],
-    hasTranslation: false,
-});
+}
 
-const currentLyricStore = new GlobalState<ILyric.IParsedLrcItem | null>(null);
-const loadingState = {
+const defaultLyricState = {
     loading: true,
     lyrics: [],
     hasTranslation: false,
 };
 
-function setLyricLoading() {
-    lyricStateStore.setValue(loadingState);
+const lyricStateStore = new GlobalState<ILyricState>(defaultLyricState);
+const currentLyricStore = new GlobalState<IParsedLrcItem | null>(null);
+
+function resetLyricState() {
+    lyricStateStore.setValue(defaultLyricState);
 }
 
 // 重新获取歌词
@@ -50,6 +47,7 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
             });
 
             currentLyricStore.setValue({
+                index: 0,
                 lrc: 'MusicFree',
                 time: 0,
             });
@@ -57,23 +55,22 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
             return;
         }
 
-        const currentParserMusicItem = lyricStateStore
-            .getValue()
-            ?.lyricParser?.getCurrentMusicItem();
+        const currentParserMusicItem =
+            lyricStateStore.getValue()?.lyricParser?.musicItem;
 
         let lrcSource: ILyric.ILyricSource | null | undefined;
         if (
             forceRequest ||
             !isSameMediaItem(currentParserMusicItem, musicItem)
         ) {
-            lyricStateStore.setValue(loadingState);
+            resetLyricState();
             currentLyricStore.setValue(null);
 
             lrcSource = await PluginManager.getByMedia(
                 musicItem,
             )?.methods?.getLyric(musicItem);
         } else {
-            lrcSource = lyricStateStore.getValue().lyricParser!.lrcSource;
+            lrcSource = lyricStateStore.getValue().lyricParser?.lyricSource;
         }
 
         if (!lrcSource && Config.get('setting.lyric.autoSearchLyric')) {
@@ -135,26 +132,28 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
         if (isSameMediaItem(musicItem, realtimeMusicItem)) {
             if (lrcSource) {
                 const mediaExtra = MediaExtra.get(musicItem);
-                const parser = new LyricParser(lrcSource, musicItem, {
-                    offset: (mediaExtra?.lyricOffset || 0) * -1,
+                const parser = new LyricParser(lrcSource.rawLrc!, {
+                    extra: {
+                        offset: (mediaExtra?.lyricOffset || 0) * -1,
+                    },
+                    musicItem: musicItem,
+                    lyricSource: lrcSource,
+                    translation: lrcSource.translation,
                 });
 
                 lyricStateStore.setValue({
                     loading: false,
                     lyricParser: parser,
-                    lyrics: parser.getLyric(),
-                    translationLyrics: lrcSource.translation
-                        ? parser.getTranslationLyric()
-                        : undefined,
+                    lyrics: parser.getLyricItems(),
+                    hasTranslation: parser.hasTranslation,
                     meta: parser.getMeta(),
-                    hasTranslation: !!lrcSource.translation,
                 });
                 // 更新当前状态的歌词
                 const currentLyric = fromStart
-                    ? parser.getLyric()[0]
+                    ? parser.getLyricItems()[0]
                     : parser.getPosition(
                           (await TrackPlayer.getProgress()).position,
-                      ).lrc;
+                      );
                 currentLyricStore.setValue(currentLyric || null);
             } else {
                 // 没有歌词
@@ -201,7 +200,7 @@ const LyricManager = {
     getCurrentLyric: currentLyricStore.getValue,
     setCurrentLyric: currentLyricStore.setValue,
     refreshLyric,
-    setLyricLoading,
+    setLyricLoading: refreshLyric,
 };
 
 export default LyricManager;

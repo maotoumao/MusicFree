@@ -27,6 +27,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
 
     return (
         <PanelBase
+            keyboardAvoidBehavior="height"
             height={vmax(30)}
             renderBody={() => (
                 <>

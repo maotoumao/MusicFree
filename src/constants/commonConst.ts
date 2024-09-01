@@ -1,7 +1,7 @@
-import Animated, {Easing} from 'react-native-reanimated';
+import {Easing, EasingFunction} from 'react-native-reanimated';
 
 export const internalSymbolKey = Symbol.for('$');
-// 加入播放列表/歌单的时间
+// 加入播放列表的时间；app内使用，无法被序列化
 export const timeStampSymbol = Symbol.for('time-stamp');
 // 加入播放列表的辅助顺序
 export const sortIndexSymbol = Symbol.for('sort-index');
@@ -66,7 +66,7 @@ export enum EDeviceEvents {
     REFRESH_LYRIC = 'refresh-lyric',
 }
 
-const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
+const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 150;
 
 const animationFast = {
@@ -89,3 +89,24 @@ export const timingConfig = {
     animationNormal,
     animationSlow,
 };
+
+export const enum SortType {
+    // 未排序
+    None = 'None',
+    // 按标题排序
+    Title = 'title',
+    // 按作者排序
+    Artist = 'artist',
+    // 按专辑名排序
+    Album = 'album',
+    // 按时间排序
+    Newest = 'time',
+    // 按时间逆序
+    Oldest = 'time-rev',
+}
+
+export const enum ResumeMode {
+    Append = 'append',
+    Overwrite = 'overwrite',
+    OverwriteDefault = 'overwrite-default',
+}

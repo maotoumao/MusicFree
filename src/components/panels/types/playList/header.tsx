@@ -5,6 +5,7 @@ import ThemeText from '@/components/base/themeText';
 import repeatModeConst from '@/constants/repeatModeConst';
 import IconTextButton from '@/components/base/iconTextButton';
 import TrackPlayer from '@/core/trackPlayer';
+import sleep from '@/utils/sleep.ts';
 
 export default function Header() {
     const repeatMode = TrackPlayer.useRepeatMode();
@@ -24,7 +25,8 @@ export default function Header() {
             </ThemeText>
             <IconTextButton
                 onPress={() => {
-                    InteractionManager.runAfterInteractions(() => {
+                    InteractionManager.runAfterInteractions(async () => {
+                        await sleep(20);
                         TrackPlayer.toggleRepeatMode();
                     });
                 }}
@@ -32,7 +34,7 @@ export default function Header() {
                 {repeatModeConst[repeatMode].text}
             </IconTextButton>
             <IconTextButton
-                icon="trash-can-outline"
+                icon="trash-outline"
                 onPress={() => {
                     TrackPlayer.clear();
                 }}>

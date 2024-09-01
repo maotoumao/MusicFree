@@ -15,12 +15,12 @@ interface IBoardPanelProps {
 function BoardPanel(props: IBoardPanelProps) {
     const {hash, topListData} = props ?? {};
 
-    const renderItem: SectionListProps<IMusic.IMusicTopListItem>['renderItem'] =
+    const renderItem: SectionListProps<IMusic.IMusicSheetItemBase>['renderItem'] =
         ({item}) => {
             return <TopListItem topListItem={item} pluginHash={hash} />;
         };
 
-    const renderSectionHeader: SectionListProps<IMusic.IMusicTopListItem>['renderSectionHeader'] =
+    const renderSectionHeader: SectionListProps<IMusic.IMusicSheetItemBase>['renderSectionHeader'] =
         ({section: {title}}) => {
             return (
                 <View style={style.sectionHeader}>
@@ -38,7 +38,7 @@ function BoardPanel(props: IBoardPanelProps) {
             renderItem={renderItem}
             renderSectionHeader={renderSectionHeader}
             ListEmptyComponent={<Empty />}
-            sections={topListData.data ?? []}
+            sections={topListData?.data || []}
         />
     );
 }

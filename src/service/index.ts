@@ -69,7 +69,7 @@ module.exports = async function () {
         const parser = LyricManager.getLyricState().lyricParser;
         if (parser) {
             const prevLyricText = LyricManager.getCurrentLyric()?.lrc;
-            const currentLyricItem = parser.getPosition(evt.position).lrc;
+            const currentLyricItem = parser.getPosition(evt.position);
             if (prevLyricText !== currentLyricItem?.lrc) {
                 LyricManager.setCurrentLyric(currentLyricItem ?? null);
                 const showTranslation = PersistStatus.get(
@@ -79,11 +79,7 @@ module.exports = async function () {
                     LyricUtil.setStatusBarLyricText(
                         (currentLyricItem?.lrc ?? '') +
                             (showTranslation
-                                ? `\n${
-                                      parser.getTranslationLyric()?.[
-                                          currentLyricItem?.index!
-                                      ]?.lrc || ''
-                                  }`
+                                ? `\n${currentLyricItem?.translation ?? ''}`
                                 : ''),
                     );
                 }

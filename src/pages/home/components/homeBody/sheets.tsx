@@ -4,7 +4,6 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import useColors from '@/hooks/useColors';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-import MusicSheet from '@/core/musicSheet';
 import {FlashList} from '@shopify/flash-list';
 import ListItem from '@/components/base/listItem';
 import {ROUTE_PATH, useNavigate} from '@/entry/router';
@@ -15,14 +14,15 @@ import Empty from '@/components/base/empty';
 import IconButton from '@/components/base/iconButton';
 import {showPanel} from '@/components/panels/usePanel';
 import {localPluginPlatform} from '@/constants/commonConst';
+import MusicSheet from '@/core/musicSheet';
 
 export default function Sheets() {
     const [index, setIndex] = useState(0);
     const colors = useColors();
     const navigate = useNavigate();
 
-    const allSheets = MusicSheet.useSheets();
-    const staredSheets = MusicSheet.useStarredMusicSheet();
+    const allSheets = MusicSheet.useSheetsBase();
+    const staredSheets = MusicSheet.useStarredSheets();
 
     const selectedTabTextStyle = useMemo(() => {
         return [
@@ -93,11 +93,11 @@ export default function Sheets() {
                         sizeType="normal"
                         accessibilityLabel="新建歌单"
                         onPress={() => {
-                            showPanel('NewMusicSheet');
+                            showPanel('CreateMusicSheet');
                         }}
                     />
                     <IconButton
-                        name="import"
+                        name="inbox-arrow-down"
                         sizeType="normal"
                         accessibilityLabel="导入歌单"
                         onPress={() => {
@@ -119,7 +119,7 @@ export default function Sheets() {
                         <ListItem
                             key={`${sheet.id}`}
                             heightType="big"
-                            withHorizonalPadding
+                            withHorizontalPadding
                             onPress={() => {
                                 if (isLocalSheet) {
                                     navigate(ROUTE_PATH.LOCAL_SHEET_DETAIL, {
@@ -144,14 +144,14 @@ export default function Sheets() {
                                 title={sheet.title}
                                 description={
                                     isLocalSheet
-                                        ? `${sheet.musicList?.length ?? '-'}首`
+                                        ? `${sheet.worksNum}首`
                                         : `${sheet.artist}`
                                 }
                             />
                             {sheet.id !== MusicSheet.defaultSheet.id ? (
                                 <ListItem.ListItemIcon
                                     position="right"
-                                    icon="trash-can-outline"
+                                    icon="trash-outline"
                                     onPress={() => {
                                         showDialog('SimpleDialog', {
                                             title: '删除歌单',

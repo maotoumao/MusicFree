@@ -2,6 +2,8 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
     BackHandler,
     DeviceEventEmitter,
+    EmitterSubscription,
+    Keyboard,
     KeyboardAvoidingView,
     NativeEventSubscription,
     Pressable,
@@ -34,10 +36,16 @@ interface IPanelBaseProps {
     keyboardAvoidBehavior?: 'height' | 'padding' | 'position' | 'none';
     height?: number;
     renderBody: (loading: boolean) => JSX.Element;
+    awareKeyboard?: boolean;
 }
 
 export default function (props: IPanelBaseProps) {
-    const {height = vh(60), renderBody, keyboardAvoidBehavior} = props;
+    const {
+        height = vh(60),
+        renderBody,
+        keyboardAvoidBehavior,
+        awareKeyboard,
+    } = props;
     const snapPoint = useSharedValue(0);
 
     const colors = useColors();
@@ -53,6 +61,7 @@ export default function (props: IPanelBaseProps) {
 
     const hideCallbackRef = useRef<Function[]>([]);
 
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
     useEffect(() => {
         snapPoint.value = withTiming(1, timingConfig);
         timerRef.current = setTimeout(() => {
@@ -83,6 +92,30 @@ export default function (props: IPanelBaseProps) {
             },
         );
 
+        let keyboardDidShowListener: EmitterSubscription;
+        let keyboardDidHideListener: EmitterSubscription;
+        if (awareKeyboard) {
+            Keyboard.addListener('keyboardDidChangeFrame', event => {
+                console.log(event, 'KKss');
+            });
+            Keyboard.addListener('keyboardWillShow', event => {
+                console.log(event, 'KKsss');
+            });
+            keyboardDidShowListener = Keyboard.addListener(
+                'keyboardDidShow',
+                event => {
+                    setKeyboardHeight(event.endCoordinates.height);
+                },
+            );
+
+            keyboardDidHideListener = Keyboard.addListener(
+                'keyboardDidHide',
+                () => {
+                    setKeyboardHeight(0);
+                },
+            );
+        }
+
         return () => {
             if (timerRef.current) {
                 clearTimeout(timerRef.current);
@@ -93,12 +126,14 @@ export default function (props: IPanelBaseProps) {
                 backHandlerRef.current = undefined;
             }
             listenerSubscription.remove();
+            keyboardDidShowListener?.remove();
+            keyboardDidHideListener?.remove();
         };
     }, []);
 
     const maskAnimated = useAnimatedStyle(() => {
         return {
-            opacity: withTiming(snapPoint.value * 0.5, timingConfig),
+            opacity: snapPoint.value * 0.5,
         };
     });
 
@@ -107,16 +142,10 @@ export default function (props: IPanelBaseProps) {
             transform: [
                 orientation === 'vertical'
                     ? {
-                          translateY: withTiming(
-                              (1 - snapPoint.value) * useAnimatedBase,
-                              timingConfig,
-                          ),
+                          translateY: (1 - snapPoint.value) * useAnimatedBase,
                       }
                     : {
-                          translateX: withTiming(
-                              (1 - snapPoint.value) * useAnimatedBase,
-                              timingConfig,
-                          ),
+                          translateX: (1 - snapPoint.value) * useAnimatedBase,
                       },
             ],
         };
@@ -156,7 +185,7 @@ export default function (props: IPanelBaseProps) {
                     height:
                         orientation === 'horizonal'
                             ? vh(100) - safeAreaInsets.top
-                            : height,
+                            : height - keyboardHeight,
                 },
                 panelAnimated,
             ]}>

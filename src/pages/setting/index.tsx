@@ -4,7 +4,7 @@ import settingTypes from './settingTypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import {useParams} from '@/entry/router';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import AppBar from '@/components/base/appBar';
 
 export default function Setting() {
@@ -21,9 +21,9 @@ export default function Setting() {
             {type === 'plugin' ? (
                 <settingItem.component />
             ) : (
-                <HorizonalSafeAreaView style={style.wrapper}>
+                <HorizontalSafeAreaView style={style.wrapper}>
                     <settingItem.component />
-                </HorizonalSafeAreaView>
+                </HorizontalSafeAreaView>
             )}
         </SafeAreaView>
     );

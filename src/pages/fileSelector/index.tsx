@@ -3,10 +3,10 @@ import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import {
-    ExternalStorageDirectoryPath,
-    readDir,
-    getAllExternalFilesDirs,
     exists,
+    ExternalStorageDirectoryPath,
+    getAllExternalFilesDirs,
+    readDir,
 } from 'react-native-fs';
 import {FlatList} from 'react-native-gesture-handler';
 import useColors from '@/hooks/useColors';
@@ -20,7 +20,7 @@ import {useParams} from '@/entry/router';
 import StatusBar from '@/components/base/statusBar';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 
 interface IPathItem {
     path: string;
@@ -227,7 +227,7 @@ export default function FileSelector() {
             <View style={[style.header, {backgroundColor: colors.appBar}]}>
                 <IconButton
                     sizeType="small"
-                    name="keyboard-backspace"
+                    name="arrow-long-left"
                     color={colors.appBarText}
                     onPress={() => {
                         // 返回上一级

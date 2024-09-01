@@ -8,9 +8,9 @@ import MediaExtra from '@/core/mediaExtra';
 import {iconSizeConst} from '@/constants/uiConst';
 import PanelHeader from '../base/panelHeader';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {hidePanel} from '../usePanel';
 import useColors from '@/hooks/useColors';
+import Icon from '@/components/base/icon.tsx';
 
 interface IProps {
     musicItem: IMusic.IMusicItem;
@@ -31,8 +31,8 @@ export default function SetLyricOffset(props: IProps) {
         offset === 0
             ? '正常'
             : offset < 0
-            ? `提前${(-offset).toFixed(1)}s`
-            : `延后${offset.toFixed(1)}s`;
+            ? `延后${(-offset).toFixed(1)}s`
+            : `提前${offset.toFixed(1)}s`;
 
     return (
         <PanelBase
@@ -66,7 +66,7 @@ export default function SetLyricOffset(props: IProps) {
                                 setOffset(0);
                             }}>
                             <Icon
-                                name="arrow-u-left-top"
+                                name="arrow-uturn-left"
                                 size={iconSizeConst.big}
                                 color={colors.text}
                             />

@@ -1,14 +1,14 @@
 import React from 'react';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ColorKey, iconSizeConst, colorMap} from '@/constants/uiConst';
-import {IconProps} from 'react-native-vector-icons/Icon';
+import {ColorKey, colorMap, iconSizeConst} from '@/constants/uiConst';
 import {TapGestureHandler} from 'react-native-gesture-handler';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import useColors from '@/hooks/useColors';
+import {SvgProps} from 'react-native-svg';
+import Icon, {IIconName} from '@/components/base/icon.tsx';
 
-interface IIconButtonProps extends IconProps {
-    name: string;
-    style?: IconProps['style'];
+interface IIconButtonProps extends SvgProps {
+    name: IIconName;
+    style?: SvgProps['style'];
     sizeType?: keyof typeof iconSizeConst;
     fontColor?: ColorKey;
     color?: string;
@@ -29,14 +29,16 @@ export function IconButtonWithGesture(props: IIconButtonProps) {
     const color = colors[colorMap[fontColor]];
     return (
         <TapGestureHandler onActivated={onPress}>
-            <Icon
-                accessible
-                accessibilityLabel={accessibilityLabel}
-                name={name}
-                color={color}
-                style={[{minWidth: textSize}, styles.textCenter, style]}
-                size={textSize}
-            />
+            <View>
+                <Icon
+                    accessible
+                    accessibilityLabel={accessibilityLabel}
+                    name={name}
+                    color={color}
+                    style={[{minWidth: textSize}, styles.textCenter, style]}
+                    size={textSize}
+                />
+            </View>
         </TapGestureHandler>
     );
 }

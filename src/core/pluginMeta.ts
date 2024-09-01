@@ -1,7 +1,7 @@
 import {StorageKeys} from '@/constants/commonConst';
 import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storage';
-import produce from 'immer';
+import {produce} from 'immer';
 import objectPath from 'object-path';
 import {Plugin} from './pluginManager';
 

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import DocumentPicker from 'react-native-document-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import Loading from '@/components/base/loading';
 
 import PluginManager from '@/core/pluginManager';
@@ -12,12 +12,20 @@ import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import Config from '@/core/config';
 import Empty from '@/components/base/empty';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import {showDialog} from '@/components/dialogs/useDialog';
 import {showPanel} from '@/components/panels/usePanel';
 import AppBar from '@/components/base/appBar';
 import Fab from '@/components/base/fab';
 import PluginItem from '../components/pluginItem';
+import {IIconName} from '@/components/base/icon.tsx';
+import {readAsStringAsync} from 'expo-file-system';
+
+interface IOption {
+    icon: IIconName;
+    title: string;
+    onPress?: () => void;
+}
 
 export default function PluginList() {
     const plugins = PluginManager.useSortedPlugins();
@@ -25,23 +33,23 @@ export default function PluginList() {
 
     const navigator = useNavigation<any>();
 
-    const menuOptions = [
+    const menuOptions: IOption[] = [
         {
-            icon: 'book-plus-multiple-outline',
+            icon: 'bookmark-square',
             title: '订阅设置',
             async onPress() {
                 navigator.navigate('/pluginsetting/subscribe');
             },
         },
         {
-            icon: 'menu',
+            icon: 'bars-3',
             title: '插件排序',
             onPress() {
                 navigator.navigate('/pluginsetting/sort');
             },
         },
         {
-            icon: 'trash-can-outline',
+            icon: 'trash-outline',
             title: '卸载全部插件',
             onPress() {
                 showDialog('SimpleDialog', {
@@ -59,25 +67,31 @@ export default function PluginList() {
 
     async function onInstallFromLocalClick() {
         try {
-            const result = await DocumentPicker.pickMultiple();
-            setLoading(true);
-            // 初步过滤
-            const validResult = result?.filter(
-                _ => _.uri.endsWith('.js') || _.name?.endsWith('.js'),
-            );
-            await Promise.all(
-                validResult.map(_ => PluginManager.installPlugin(_.uri)),
-            );
-            if (validResult.length) {
-                Toast.success('插件安装成功~');
-            } else {
-                Toast.warn('安装失败');
-            }
-        } catch (e: any) {
-            if (e?.message?.startsWith('User')) {
-                setLoading(false);
+            const results = await DocumentPicker.getDocumentAsync({
+                copyToCacheDirectory: true,
+                multiple: true,
+                type: ['application/javascript', 'text/javascript'],
+            });
+            if (results.canceled) {
+                // 用户取消
                 return;
             }
+            setLoading(true);
+
+            await Promise.all(
+                results.assets.map(async it => {
+                    const code = await readAsStringAsync(it.uri);
+                    await PluginManager.installPluginFromRawCode(code, {
+                        notCheckVersion: Config.get(
+                            'setting.basic.notCheckPluginVersion',
+                        ),
+                    });
+                }),
+            );
+            // 初步过滤
+
+            Toast.success('插件安装成功~');
+        } catch (e: any) {
             trace('插件安装失败', e?.message);
             Toast.warn(`插件安装失败: ${e?.message ?? ''}`);
         }
@@ -173,7 +187,7 @@ export default function PluginList() {
     return (
         <>
             <AppBar menu={menuOptions}>插件管理</AppBar>
-            <HorizonalSafeAreaView style={style.wrapper}>
+            <HorizontalSafeAreaView style={style.wrapper}>
                 <>
                     {loading ? (
                         <Loading />
@@ -225,7 +239,7 @@ export default function PluginList() {
                         }}
                     />
                 </>
-            </HorizonalSafeAreaView>
+            </HorizontalSafeAreaView>
         </>
     );
 }

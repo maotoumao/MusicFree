@@ -1,4 +1,4 @@
-import {useTheme, Theme} from '@react-navigation/native';
+import {Theme, useTheme} from '@react-navigation/native';
 import Color from 'color';
 import {useMemo} from 'react';
 

@@ -1,6 +1,6 @@
 import Config from '@/core/config';
 import Theme from '@/core/theme';
-import useCheckUpdate from '@/hooks/useCheckUpdate';
+import useCheckUpdate from '@/hooks/useCheckUpdate.ts';
 import {useListenOrientationChange} from '@/hooks/useOrientation';
 import {useEffect} from 'react';
 import {useColorScheme} from 'react-native';

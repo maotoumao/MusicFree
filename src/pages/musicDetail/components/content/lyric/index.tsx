@@ -9,7 +9,6 @@ import {
     TapGestureHandler,
 } from 'react-native-gesture-handler';
 import {fontSizeConst} from '@/constants/uiConst';
-import {IconButtonWithGesture} from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
 import globalStyle from '@/constants/globalStyle';
 import {showPanel} from '@/components/panels/usePanel';
@@ -22,6 +21,8 @@ import LyricItemComponent from './lyricItem';
 import PersistStatus from '@/core/persistStatus';
 import LyricOperations from './lyricOperations';
 import MediaExtra from '@/core/mediaExtra';
+import {IParsedLrcItem} from '@/utils/lrcParser';
+import {IconButtonWithGesture} from '@/components/base/iconButton.tsx';
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -44,7 +45,7 @@ const fontSizeMap = {
 export default function Lyric(props: IProps) {
     const {onTurnPageClick} = props;
 
-    const {loading, meta, lyrics, translationLyrics, hasTranslation} =
+    const {loading, meta, lyrics, hasTranslation} =
         LyricManager.useLyricState();
     const currentLrcItem = LyricManager.useCurrentLyric();
     const showTranslation = PersistStatus.useValue(
@@ -65,7 +66,7 @@ export default function Lyric(props: IProps) {
 
     const [layout, setLayout] = useState<LayoutRectangle>();
 
-    const listRef = useRef<FlatList<ILyric.IParsedLrcItem> | null>();
+    const listRef = useRef<FlatList<IParsedLrcItem> | null>();
 
     const currentMusicItem = TrackPlayer.useCurrentMusic();
     const associateMusicItem = currentMusicItem
@@ -307,13 +308,8 @@ export default function Lyric(props: IProps) {
                             extraData={currentLrcItem}
                             renderItem={({item, index}) => {
                                 let text = item.lrc;
-
                                 if (showTranslation && hasTranslation) {
-                                    const transLrc =
-                                        translationLyrics?.[index]?.lrc;
-                                    if (transLrc) {
-                                        text += `\n${transLrc}`;
-                                    }
+                                    text += `\n${item?.translation ?? ''}`;
                                 }
 
                                 return (

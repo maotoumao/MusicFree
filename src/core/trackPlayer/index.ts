@@ -1,4 +1,4 @@
-import produce from 'immer';
+import {produce} from 'immer';
 import ReactNativeTrackPlayer, {
     Event,
     State,
@@ -43,7 +43,7 @@ import {
 import {createMediaIndexMap} from '@/utils/mediaIndexMap';
 import PluginManager from '../pluginManager';
 import {musicIsPaused} from '@/utils/trackUtils';
-import {trace} from '@/utils/log';
+import {errorLog, trace} from '@/utils/log';
 import PersistStatus from '../persistStatus';
 import {getCurrentDialog, showDialog} from '@/components/dialogs/useDialog';
 import getSimilarMusic from '@/utils/getSimilarMusic';
@@ -59,8 +59,7 @@ const qualityStore = new GlobalState<IMusic.IQualityKey>('standard');
 
 let currentIndex = -1;
 
-// TODO: 下个版本最大限制调大一些
-const maxMusicQueueLength = 1500; // 当前播放最大限制
+const maxMusicQueueLength = 10000; // 当前播放最大限制
 const halfMaxMusicQueueLength = Math.floor(maxMusicQueueLength / 2);
 const shrinkPlayListToSize = (
     queue: IMusic.IMusicItem[],
@@ -171,6 +170,7 @@ async function setupTrackPlayer() {
         ReactNativeTrackPlayer.addEventListener(
             Event.PlaybackError,
             async e => {
+                errorLog('播放出错', e.message);
                 // WARNING: 不稳定，报错的时候有可能track已经变到下一首歌去了
                 const currentTrack =
                     await ReactNativeTrackPlayer.getActiveTrack();
@@ -267,20 +267,19 @@ const addAll = (
     const now = Date.now();
     let newPlayList: IMusic.IMusicItem[] = [];
     let currentPlayList = getPlayList();
-    const _musicItems = musicItems.map((item, index) =>
-        produce(item, draft => {
-            draft[timeStampSymbol] = now;
-            draft[sortIndexSymbol] = index;
-        }),
-    );
+    musicItems.forEach((item, index) => {
+        item[timeStampSymbol] = now;
+        item[sortIndexSymbol] = index;
+    });
+
     if (beforeIndex === undefined || beforeIndex < 0) {
         // 1.1. 添加到歌单末尾，并过滤掉已有的歌曲
         newPlayList = currentPlayList.concat(
-            _musicItems.filter(item => !isInPlayList(item)),
+            musicItems.filter(item => !isInPlayList(item)),
         );
     } else {
         // 1.2. 新的播放列表，插入
-        const indexMap = createMediaIndexMap(_musicItems);
+        const indexMap = createMediaIndexMap(musicItems);
         const beforeDraft = currentPlayList
             .slice(0, beforeIndex)
             .filter(item => !indexMap.has(item));
@@ -288,7 +287,7 @@ const addAll = (
             .slice(beforeIndex)
             .filter(item => !indexMap.has(item));
 
-        newPlayList = [...beforeDraft, ..._musicItems, ...afterDraft];
+        newPlayList = [...beforeDraft, ...musicItems, ...afterDraft];
     }
 
     // 如果太长了
@@ -311,9 +310,6 @@ const addAll = (
     if (currentMusicItem) {
         currentIndex = getMusicIndex(currentMusicItem);
     }
-
-    // TODO: 更新播放队列信息
-    // 5. 存储更新的播放列表信息
 };
 
 /** 追加到队尾 */
@@ -365,11 +361,7 @@ const remove = async (musicItem: IMusic.IMusicItem) => {
             try {
                 const state = (await ReactNativeTrackPlayer.getPlaybackState())
                     .state;
-                if (musicIsPaused(state)) {
-                    shouldPlayCurrent = false;
-                } else {
-                    shouldPlayCurrent = true;
-                }
+                shouldPlayCurrent = !musicIsPaused(state);
             } catch {
                 shouldPlayCurrent = false;
             }
@@ -398,7 +390,6 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
     const playList = getPlayList();
     let newPlayList;
     const prevMode = repeatModeStore.getValue();
-
     if (
         (prevMode === MusicRepeatMode.SHUFFLE &&
             mode !== MusicRepeatMode.SHUFFLE) ||
@@ -542,7 +533,7 @@ const play = async (
         // 4.1 刷新歌词信息
         if (
             !isSameMediaItem(
-                LyricManager.getLyricState()?.lyricParser?.getCurrentMusicItem?.(),
+                LyricManager.getLyricState()?.lyricParser?.musicItem,
                 musicItem,
             )
         ) {
@@ -693,10 +684,6 @@ const play = async (
                         '当前非WIFI环境，侧边栏设置中打开【使用移动网络播放】功能后可继续播放',
                 });
             }
-
-            // Toast.warn(
-            //     '当前禁止移动网络播放音乐，如需播放请去侧边栏-基本设置中修改',
-            // );
         } else if (message === PlayFailReason.INVALID_SOURCE) {
             trace('音源为空，播放失败');
             await failToPlay();
@@ -723,16 +710,16 @@ const playWithReplacePlayList = async (
                 newPlayList.findIndex(it => isSameMediaItem(it, musicItem)),
             );
         }
-        const playListItems = newPlayList.map((item, index) =>
-            produce(item, draft => {
-                draft[timeStampSymbol] = now;
-                draft[sortIndexSymbol] = index;
-            }),
-        );
+
+        newPlayList.forEach((it, index) => {
+            it[timeStampSymbol] = now;
+            it[sortIndexSymbol] = index;
+        });
+
         setPlayList(
             repeatModeStore.getValue() === MusicRepeatMode.SHUFFLE
-                ? shuffle(playListItems)
-                : playListItems,
+                ? shuffle(newPlayList)
+                : newPlayList,
         );
         await play(musicItem, true);
     }

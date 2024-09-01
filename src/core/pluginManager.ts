@@ -1,4 +1,4 @@
-import {
+import RNFS, {
     copyFile,
     exists,
     readDir,
@@ -17,7 +17,7 @@ import pathConst from '@/constants/pathConst';
 import {compare, satisfies} from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
 import StateMapper from '@/utils/stateMapper';
-import MediaMeta from './mediaExtra';
+import MediaExtra from './mediaExtra';
 import {nanoid} from 'nanoid';
 import {devLog, errorLog, trace} from '../utils/log';
 import {
@@ -39,7 +39,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import he from 'he';
 import Network from './network';
 import LocalMusicSheet from './localMusicSheet';
-import {FileSystem} from 'react-native-file-access';
+import {getInfoAsync} from 'expo-file-system';
 import Mp3Util from '@/native/mp3Util';
 import {PluginMeta} from './pluginMeta';
 import {useEffect, useState} from 'react';
@@ -47,8 +47,7 @@ import {addFileScheme, getFileName} from '@/utils/fileUtils';
 import {URL} from 'react-native-url-polyfill';
 import Base64 from '@/utils/base64';
 import MediaCache from './mediaCache';
-import produce from 'immer';
-import MediaExtra from './mediaExtra';
+import {produce} from 'immer';
 import objectPath from 'object-path';
 
 axios.defaults.timeout = 2000;
@@ -309,11 +308,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 LocalMusicSheet.isLocalMusic(musicItem),
                 InternalDataType.LOCALPATH,
             );
-        if (
-            localPath &&
-            (localPath.startsWith('content://') ||
-                (await FileSystem.exists(localPath)))
-        ) {
+        if (localPath && (await getInfoAsync(localPath)).exists) {
             trace('本地播放', localPath);
             if (mediaExtra && mediaExtra.localPath !== localPath) {
                 // 修正一下本地数据
@@ -457,7 +452,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         originalMusicItem: IMusic.IMusicItemBase,
     ): Promise<ILyric.ILyricSource | null> {
         // 1.额外存储的meta信息（关联歌词）
-        const meta = MediaMeta.get(originalMusicItem);
+        const meta = MediaExtra.get(originalMusicItem);
         let musicItem: IMusic.IMusicItem;
         if (meta && meta.associatedLrc) {
             musicItem = meta.associatedLrc as IMusic.IMusicItem;
@@ -472,6 +467,47 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         /** 原始歌词文本 */
         let rawLrc: string | null = musicItem.rawLrc || null;
         let translation: string | null = null;
+
+        // 2. 本地手动设置的歌词
+        const platformHash = CryptoJs.MD5(musicItem.platform).toString(
+            CryptoJs.enc.Hex,
+        );
+        const idHash = CryptoJs.MD5(musicItem.id).toString(CryptoJs.enc.Hex);
+        if (
+            await RNFS.exists(
+                pathConst.localLrcPath + platformHash + '/' + idHash + '.lrc',
+            )
+        ) {
+            rawLrc = await RNFS.readFile(
+                pathConst.localLrcPath + platformHash + '/' + idHash + '.lrc',
+                'utf8',
+            );
+
+            if (
+                await RNFS.exists(
+                    pathConst.localLrcPath +
+                        platformHash +
+                        '/' +
+                        idHash +
+                        '.tran.lrc',
+                )
+            ) {
+                translation =
+                    (await RNFS.readFile(
+                        pathConst.localLrcPath +
+                            platformHash +
+                            '/' +
+                            idHash +
+                            '.tran.lrc',
+                        'utf8',
+                    )) || null;
+            }
+
+            return {
+                rawLrc,
+                translation: translation || undefined, // TODO: 这里写的不好
+            };
+        }
 
         // 2. 缓存歌词 / 对象上本身的歌词
         if (musicItemCache?.lyric) {
@@ -874,6 +910,55 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         }
     }
+
+    async getMusicComments(
+        musicItem: IMusic.IMusicItem,
+    ): Promise<ICommon.PaginationResponse<IMedia.IComment>> {
+        const result = await this.plugin.instance?.getMusicComments?.(
+            musicItem,
+        );
+        if (!result) {
+            throw new Error();
+        }
+        if (result.isEnd !== false) {
+            result.isEnd = true;
+        }
+        if (!result.data) {
+            result.data = [];
+        }
+
+        return result;
+    }
+
+    async migrateFromOtherPlugin(
+        mediaItem: ICommon.IMediaBase,
+        fromPlatform: string,
+    ): Promise<{isOk: boolean; data?: ICommon.IMediaBase}> {
+        try {
+            const result = await this.plugin.instance?.migrateFromOtherPlugin(
+                mediaItem,
+                fromPlatform,
+            );
+
+            if (
+                result.isOk &&
+                result.data?.id &&
+                result.data?.platform === this.plugin.platform
+            ) {
+                return {
+                    isOk: result.isOk,
+                    data: result.data,
+                };
+            }
+            return {
+                isOk: false,
+            };
+        } catch {
+            return {
+                isOk: false,
+            };
+        }
+    }
 }
 //#endregion
 
@@ -936,13 +1021,21 @@ const localFilePlugin = new Plugin(function () {
             try {
                 meta = await Mp3Util.getBasicMeta(urlLike);
             } catch {}
-            const id = await FileSystem.hash(urlLike, 'MD5');
+            const stat = await getInfoAsync(urlLike, {
+                md5: true,
+            });
+            let id: string;
+            if (stat.exists) {
+                id = stat.md5 || nanoid();
+            } else {
+                id = nanoid();
+            }
             return {
                 id: id,
                 platform: '本地',
                 title: meta?.title ?? getFileName(urlLike),
                 artist: meta?.artist ?? '未知歌手',
-                duration: parseInt(meta?.duration ?? '0') / 1000,
+                duration: parseInt(meta?.duration ?? '0', 10) / 1000,
                 album: meta?.album ?? '未知专辑',
                 artwork: '',
                 [internalSerializeKey]: {
@@ -1013,6 +1106,49 @@ async function setup() {
 
 interface IInstallPluginConfig {
     notCheckVersion?: boolean;
+}
+
+async function installPluginFromRawCode(
+    funcCode: string,
+    config?: IInstallPluginConfig,
+) {
+    if (funcCode) {
+        const plugin = new Plugin(funcCode, '');
+        const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
+        if (_pluginIndex !== -1) {
+            // 静默忽略
+            return plugin;
+        }
+        const oldVersionPlugin = plugins.find(p => p.name === plugin.name);
+        if (oldVersionPlugin && !config?.notCheckVersion) {
+            if (
+                compare(
+                    oldVersionPlugin.instance.version ?? '',
+                    plugin.instance.version ?? '',
+                    '>',
+                )
+            ) {
+                throw new Error('已安装更新版本的插件');
+            }
+        }
+
+        if (plugin.hash !== '') {
+            const fn = nanoid();
+            if (oldVersionPlugin) {
+                plugins = plugins.filter(_ => _.hash !== oldVersionPlugin.hash);
+                try {
+                    await unlink(oldVersionPlugin.path);
+                } catch {}
+            }
+            const pluginPath = `${pathConst.pluginPath}${fn}.js`;
+            await writeFile(pluginPath, funcCode, 'utf8');
+            plugin.path = pluginPath;
+            plugins = plugins.concat(plugin);
+            pluginStateMapper.notify();
+            return plugin;
+        }
+        throw new Error('插件无法解析!');
+    }
 }
 
 // 安装插件
@@ -1136,7 +1272,7 @@ async function uninstallPlugin(hash: string) {
             pluginStateMapper.notify();
             // 防止其他重名
             if (plugins.every(_ => _.name !== pluginName)) {
-                MediaMeta.removeAll(pluginName);
+                MediaExtra.removeAll(pluginName);
             }
         } catch {}
     }
@@ -1148,7 +1284,7 @@ async function uninstallAllPlugins() {
             try {
                 const pluginName = plugin.name;
                 await unlink(plugin.path);
-                MediaMeta.removeAll(pluginName);
+                MediaExtra.removeAll(pluginName);
             } catch (e) {}
         }),
     );
@@ -1298,6 +1434,7 @@ async function setPluginEnabled(plugin: Plugin, enabled?: boolean) {
 const PluginManager = {
     setup,
     installPlugin,
+    installPluginFromRawCode,
     installPluginFromUrl,
     updatePlugin,
     uninstallPlugin,

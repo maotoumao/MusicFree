@@ -1,18 +1,18 @@
 import React, {useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Button from '@/components/base/button';
+import Button from '@/components/base/textButton.tsx';
 import {useAtom} from 'jotai';
 import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
-import MusicSheet from '@/core/musicSheet';
 import Toast from '@/utils/toast';
 import MusicList from './musicList';
 import {useParams} from '@/entry/router';
 import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
 import LocalMusicSheet from '@/core/localMusicSheet';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
 import musicHistory from '@/core/musicHistory';
+import MusicSheet from '@/core/musicSheet';
 
 export default function Body() {
     const {musicSheet} = useParams<'music-list-editor'>();
@@ -25,7 +25,7 @@ export default function Body() {
         [editingMusicList],
     );
     return (
-        <HorizonalSafeAreaView style={globalStyle.flex1}>
+        <HorizontalSafeAreaView style={globalStyle.flex1}>
             <View style={style.header}>
                 <Button
                     onPress={() => {
@@ -72,13 +72,9 @@ export default function Body() {
                                     editingMusicList.map(_ => _.musicItem),
                                 );
                             } else {
-                                await MusicSheet.updateAndSaveSheet(
+                                await MusicSheet.manualSort(
                                     musicSheet.id,
-                                    {
-                                        musicList: editingMusicList.map(
-                                            _ => _.musicItem,
-                                        ),
-                                    },
+                                    editingMusicList.map(_ => _.musicItem),
                                 );
                             }
 
@@ -90,7 +86,7 @@ export default function Body() {
                 </Button>
             </View>
             <MusicList />
-        </HorizonalSafeAreaView>
+        </HorizontalSafeAreaView>
     );
 }
 

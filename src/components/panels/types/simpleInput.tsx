@@ -36,6 +36,7 @@ export default function SimpleInput(props: ISimpleInputProps) {
 
     return (
         <PanelBase
+            keyboardAvoidBehavior="height"
             height={vmax(30)}
             renderBody={() => (
                 <>

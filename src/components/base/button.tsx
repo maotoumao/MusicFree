@@ -1,35 +1,49 @@
+import {
+    GestureResponderEvent,
+    StyleProp,
+    StyleSheet,
+    TouchableOpacity,
+    ViewStyle,
+} from 'react-native';
+import useColors from '@/hooks/useColors.ts';
+import ThemeText from '@/components/base/themeText.tsx';
 import React from 'react';
-import {Pressable} from 'react-native';
-import ThemeText from './themeText';
-import rpx from '@/utils/rpx';
-import {CustomizedColors} from '@/hooks/useColors';
+import rpx from '@/utils/rpx.ts';
 
-interface IButtonProps {
-    withHorizonalPadding?: boolean;
-    style?: any;
-    hitSlop?: number;
-    children: string;
-    fontColor?: keyof CustomizedColors;
-    onPress?: () => void;
-}
-export default function (props: IButtonProps) {
-    const {children, onPress, fontColor, hitSlop, withHorizonalPadding} = props;
+export function Button(props: {
+    type?: 'normal' | 'primary';
+    text: string;
+    style?: StyleProp<ViewStyle>;
+    onPress?: (evt: GestureResponderEvent) => void;
+}) {
+    const {type = 'normal', text, style, onPress} = props;
+    const colors = useColors();
+
     return (
-        <Pressable
-            {...props}
-            style={[
-                withHorizonalPadding
-                    ? {
-                          paddingHorizontal: rpx(24),
-                      }
-                    : null,
-                props.style,
-            ]}
-            hitSlop={hitSlop ?? (withHorizonalPadding ? 0 : rpx(28))}
+        <TouchableOpacity
+            activeOpacity={0.6}
             onPress={onPress}
-            accessible
-            accessibilityLabel={children}>
-            <ThemeText fontColor={fontColor}>{children}</ThemeText>
-        </Pressable>
+            style={[
+                styles.bottomBtn,
+                {
+                    backgroundColor:
+                        type === 'normal' ? colors.placeholder : colors.primary,
+                },
+                style,
+            ]}>
+            <ThemeText color={type === 'normal' ? undefined : 'white'}>
+                {text}
+            </ThemeText>
+        </TouchableOpacity>
     );
 }
+
+const styles = StyleSheet.create({
+    bottomBtn: {
+        borderRadius: rpx(8),
+        flexShrink: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: rpx(72),
+    },
+});

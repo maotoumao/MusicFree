@@ -16,7 +16,7 @@ export default function (props: INavBarProps) {
         <AppBar
             actions={[
                 {
-                    icon: 'magnify',
+                    icon: 'magnifying-glass',
                     onPress() {
                         navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                             musicList: musicList,
@@ -26,7 +26,7 @@ export default function (props: INavBarProps) {
             ]}
             menu={[
                 {
-                    icon: 'playlist-edit',
+                    icon: 'pencil-square',
                     title: '批量编辑',
                     onPress() {
                         navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {

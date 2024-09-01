@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 // @ts-nocheck
 // @flow
 // Inspired by: https://github.com/davidchambers/Base64.js/blob/master/base64.js

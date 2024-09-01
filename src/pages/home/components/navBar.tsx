@@ -2,12 +2,12 @@ import {ROUTE_PATH} from '@/entry/router';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/base/themeText';
 import Color from 'color';
 import IconButton from '@/components/base/iconButton';
+import Icon from '@/components/base/icon.tsx';
 
 // todo icon: = musicFree(引入自定义字体 居中) search
 export default function NavBar() {
@@ -17,7 +17,7 @@ export default function NavBar() {
         <View style={styles.appbar}>
             <IconButton
                 accessibilityLabel="打开侧边栏"
-                name="menu"
+                name="bars-3"
                 style={styles.menu}
                 color={colors.text}
                 onPress={() => {
@@ -39,7 +39,7 @@ export default function NavBar() {
                 }}>
                 <Icon
                     accessible={false}
-                    name="magnify"
+                    name="magnifying-glass"
                     size={rpx(32)}
                     color={Color(colors.text).alpha(0.6).toString()}
                 />

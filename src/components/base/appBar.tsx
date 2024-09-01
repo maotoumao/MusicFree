@@ -1,11 +1,11 @@
-import React, {ReactNode, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import {
     LayoutRectangle,
+    StatusBar as OriginalStatusBar,
+    StyleProp,
     StyleSheet,
     TouchableWithoutFeedback,
     View,
-    StatusBar as OriginalStatusBar,
-    StyleProp,
     ViewStyle,
 } from 'react-native';
 import rpx from '@/utils/rpx';
@@ -24,17 +24,18 @@ import Animated, {
 } from 'react-native-reanimated';
 import Portal from './portal';
 import ListItem from './listItem';
+import {IIconName} from '@/components/base/icon.tsx';
 
 interface IAppBarProps {
     titleTextOpacity?: number;
     withStatusBar?: boolean;
     color?: string;
     actions?: Array<{
-        icon: string;
+        icon: IIconName;
         onPress?: () => void;
     }>;
     menu?: Array<{
-        icon: string;
+        icon: IIconName;
         title: string;
         show?: boolean;
         onPress?: () => void;
@@ -44,6 +45,7 @@ interface IAppBarProps {
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ViewStyle>;
     actionComponent?: ReactNode;
+    onBackPress?: () => void;
 }
 
 const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
@@ -66,6 +68,7 @@ export default function AppBar(props: IAppBarProps) {
         contentStyle,
         children,
         actionComponent,
+        onBackPress,
     } = props;
 
     const colors = useColors();
@@ -75,7 +78,8 @@ export default function AppBar(props: IAppBarProps) {
     const contentColor = _color ?? colors.appBarText;
 
     const [showMenu, setShowMenu] = useState(false);
-    const menuIconLayoutRef = useRef<LayoutRectangle>();
+    const [menuIconLayout, setMenuIconLayout] =
+        useState<LayoutRectangle | null>(null);
     const scaleRate = useSharedValue(0);
 
     useEffect(() => {
@@ -106,9 +110,12 @@ export default function AppBar(props: IAppBarProps) {
                     sizeType="normal"
                     color={contentColor}
                     style={globalStyle.notShrink}
-                    onPress={() => {
-                        navigation.goBack();
-                    }}
+                    onPress={
+                        onBackPress ||
+                        (() => {
+                            navigation.goBack();
+                        })
+                    }
                 />
                 <View style={[globalStyle.grow, styles.content, contentStyle]}>
                     {typeof children === 'string' ? (
@@ -142,10 +149,10 @@ export default function AppBar(props: IAppBarProps) {
                 {actionComponent ?? null}
                 {menu?.length ? (
                     <IconButton
-                        name="dots-vertical"
+                        name="ellipsis-vertical"
                         sizeType="normal"
-                        onLayout={e => {
-                            menuIconLayoutRef.current = e.nativeEvent.layout;
+                        onLayout={evt => {
+                            setMenuIconLayout(evt.nativeEvent.layout);
                         }}
                         color={contentColor}
                         style={[globalStyle.notShrink, styles.rightButton]}
@@ -171,13 +178,12 @@ export default function AppBar(props: IAppBarProps) {
                             {
                                 borderBottomColor: colors.background,
                                 left:
-                                    (menuIconLayoutRef.current?.x ?? 0) +
-                                    (menuIconLayoutRef.current?.width ?? 0) /
-                                        2 -
+                                    (menuIconLayout?.x ?? 0) +
+                                    (menuIconLayout?.width ?? 0) / 2 -
                                     rpx(10),
                                 top:
-                                    (menuIconLayoutRef.current?.y ?? 0) +
-                                    (menuIconLayoutRef.current?.height ?? 0) +
+                                    (menuIconLayout?.y ?? 0) +
+                                    (menuIconLayout?.height ?? 0) +
                                     (menuWithStatusBar
                                         ? OriginalStatusBar.currentHeight ?? 0
                                         : 0),
@@ -193,8 +199,8 @@ export default function AppBar(props: IAppBarProps) {
                                 backgroundColor: colors.background,
                                 right: rpx(24),
                                 top:
-                                    (menuIconLayoutRef.current?.y ?? 0) +
-                                    (menuIconLayoutRef.current?.height ?? 0) +
+                                    (menuIconLayout?.y ?? 0) +
+                                    (menuIconLayout?.height ?? 0) +
                                     rpx(20) +
                                     (menuWithStatusBar
                                         ? OriginalStatusBar.currentHeight ?? 0
@@ -208,11 +214,14 @@ export default function AppBar(props: IAppBarProps) {
                             it.show !== false ? (
                                 <ListItem
                                     key={it.title}
-                                    withHorizonalPadding
+                                    withHorizontalPadding
                                     heightType="small"
                                     onPress={() => {
-                                        it.onPress?.();
                                         setShowMenu(false);
+                                        // async
+                                        setTimeout(() => {
+                                            it.onPress?.();
+                                        }, 20);
                                     }}>
                                     <ListItem.ListItemIcon icon={it.icon} />
                                     <ListItem.Content title={it.title} />
@@ -232,6 +241,7 @@ const styles = StyleSheet.create({
         zIndex: 10000,
         height: rpx(88),
         flexDirection: 'row',
+        alignItems: 'center',
         paddingHorizontal: rpx(24),
     },
     content: {

@@ -1,7 +1,6 @@
 import React, {memo, useEffect, useState} from 'react';
 import {Keyboard, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {CircularProgressBase} from 'react-native-circular-progress-indicator';
 
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -11,6 +10,7 @@ import IconButton from '../base/iconButton';
 import TrackPlayer from '@/core/trackPlayer';
 import {musicIsPaused} from '@/utils/trackUtils';
 import MusicInfo from './musicInfo';
+import Icon from '@/components/base/icon.tsx';
 
 function CircularPlayBtn() {
     const progress = TrackPlayer.useProgress();
@@ -94,15 +94,13 @@ function MusicBar() {
                         <Icon
                             accessible
                             accessibilityLabel="播放列表"
-                            name="playlist-music"
+                            name="playlist"
                             size={rpx(56)}
                             onPress={() => {
                                 showPanel('PlayList');
                             }}
-                            style={[
-                                style.actionIcon,
-                                {color: colors.musicBarText},
-                            ]}
+                            color={colors.musicBarText}
+                            style={[style.actionIcon]}
                         />
                     </View>
                 </View>

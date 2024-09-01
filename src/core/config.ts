@@ -1,8 +1,9 @@
 // import {Quality} from '@/constants/commonConst';
 import {CustomizedColors} from '@/hooks/useColors';
 import {getStorage, setStorage} from '@/utils/storage';
-import produce from 'immer';
+import {produce} from 'immer';
 import {useEffect, useState} from 'react';
+import {ResumeMode, SortType} from '@/constants/commonConst.ts';
 
 type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[] | IMusic.IQuality;
 interface IConfig {
@@ -59,7 +60,7 @@ interface IConfig {
             // 是否展示退出按钮
             showExitOnNotification: boolean;
             // 本地歌单添加歌曲顺序
-            musicOrderInLocalSheet: 'start' | 'end';
+            musicOrderInLocalSheet: SortType;
             // 自动换源
             tryChangeSourceWhenPlayFail: boolean;
         };
@@ -91,7 +92,7 @@ interface IConfig {
         };
 
         backup: {
-            resumeMode: 'append' | 'overwrite';
+            resumeMode: ResumeMode;
         };
 
         plugin: {

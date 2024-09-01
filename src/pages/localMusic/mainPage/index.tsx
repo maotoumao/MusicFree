@@ -16,7 +16,7 @@ export default function MainPage() {
                 withStatusBar
                 actions={[
                     {
-                        icon: 'magnify',
+                        icon: 'magnifying-glass',
                         onPress() {
                             navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                                 musicList: LocalMusicSheet.getMusicList(),
@@ -26,7 +26,7 @@ export default function MainPage() {
                 ]}
                 menu={[
                     {
-                        icon: 'magnify',
+                        icon: 'magnifying-glass',
                         title: '扫描本地音乐',
                         async onPress() {
                             navigate(ROUTE_PATH.FILE_SELECTOR, {
@@ -60,7 +60,7 @@ export default function MainPage() {
                         },
                     },
                     {
-                        icon: 'playlist-edit',
+                        icon: 'pencil-square',
                         title: '批量编辑',
                         async onPress() {
                             navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
@@ -72,7 +72,7 @@ export default function MainPage() {
                         },
                     },
                     {
-                        icon: 'download',
+                        icon: 'arrow-down-tray',
                         title: '下载列表',
                         async onPress() {
                             navigate(ROUTE_PATH.DOWNLOADING);

@@ -4,7 +4,7 @@ import ColorPicker from './colorPicker';
 import ImportMusicSheet from './importMusicSheet';
 import MusicItemOptions from './musicItemOptions';
 import MusicQuality from './musicQuality';
-import NewMusicSheet from './newMusicSheet';
+import CreateMusicSheet from './createMusicSheet';
 import PlayList from './playList';
 import PlayRate from './playRate';
 import SearchLrc from './searchLrc';
@@ -15,30 +15,33 @@ import SheetTags from './sheetTags';
 import SimpleInput from './simpleInput';
 import SimpleSelect from './simpleSelect';
 import TimingClose from './timingClose';
+import ImageViewer from './imageViewer';
+import MusicComment from './musicComment';
+import MusicItemLyricOptions from './musicItemLyricOptions';
 
 export default {
     /** 加入歌单 */
-    AddToMusicSheet: AddToMusicSheet,
+    AddToMusicSheet,
     /** 歌曲选项 */
-    MusicItemOptions: MusicItemOptions,
+    MusicItemOptions,
     /** 新建歌单 */
-    NewMusicSheet: NewMusicSheet,
+    CreateMusicSheet,
     /** 导入歌单 */
     ImportMusicSheet,
     /** 当前播放列表 */
     PlayList: PlayList,
     /** 关联歌词 */
-    AssociateLrc: AssociateLrc,
+    AssociateLrc,
     /** 简单的输入 */
-    SimpleInput: SimpleInput,
+    SimpleInput,
     /** 定时关闭 */
-    TimingClose: TimingClose,
+    TimingClose,
     /** 音质选择 */
-    MusicQuality: MusicQuality,
+    MusicQuality,
     /** 播放速度 */
-    PlayRate: PlayRate,
+    PlayRate,
     /** 歌单tag */
-    SheetTags: SheetTags,
+    SheetTags,
     /** 搜索歌词 */
     SearchLrc,
     /** 简单的选择 */
@@ -51,4 +54,9 @@ export default {
     SetFontSize,
     /** 设置歌词偏移 */
     SetLyricOffset,
+    /** 图片阅读器 */
+    ImageViewer,
+    /** 音乐评论 */
+    MusicComment,
+    MusicItemLyricOptions,
 };

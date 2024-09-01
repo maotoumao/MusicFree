@@ -1,3 +1,3 @@
 <resources>
-    <color name="bootsplash_background">#F7F7F1</color>
+    <color name="splashscreen_background">#27282C</color> <!-- #AARRGGBB or #RRGGBB format -->
 </resources>

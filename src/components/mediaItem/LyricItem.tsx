@@ -13,7 +13,7 @@ export default function LyricItem(props: IAlbumResultsProps) {
     return (
         <ListItem
             heightType="big"
-            withHorizonalPadding
+            withHorizontalPadding
             onPress={() => {
                 onPress?.(lyricItem);
             }}>

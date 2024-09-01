@@ -63,7 +63,9 @@ function ResultWrapper(props: IResultWrapperProps) {
     ) : (
         <FlashList
             extraData={searchState}
-            ListEmptyComponent={() => <Empty />}
+            ListEmptyComponent={() =>
+                searchState & RequestStateCode.LOADING ? null : <Empty />
+            }
             ListFooterComponent={() => (
                 <View style={style.wrapper}>
                     {searchState === RequestStateCode.PENDING_REST_PAGE ? (

@@ -6,6 +6,7 @@ import {hideDialog} from '../useDialog';
 import Dialog from './base';
 import Input from '@/components/base/input';
 import useColors from '@/hooks/useColors';
+
 interface ISubscribeItem {
     name: string;
     url: string;

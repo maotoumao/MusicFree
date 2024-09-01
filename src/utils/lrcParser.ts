@@ -1,51 +1,203 @@
 const timeReg = /\[[\d:.]+\]/g;
-const metaReg = /\[(.+)\:(.+)\]/g;
+const metaReg = /\[(.+):(.+)\]/g;
 
-/** 额外的配置 */
-interface IExtra {
-    offset?: number;
+type LyricMeta = Record<string, any>;
+
+interface IOptions {
+    musicItem?: IMusic.IMusicItem;
+    lyricSource?: ILyric.ILyricSource;
+    translation?: string;
+    extra?: Record<string, any>;
+}
+
+export interface IParsedLrcItem {
+    /** 时间 s */
+    time: number;
+    /** 歌词 */
+    lrc: string;
+    /** 翻译 */
+    translation?: string;
+    /** 位置 */
+    index: number;
 }
 
 export default class LyricParser {
-    private lastIndex: number = 0;
-    private lrcItems: Array<ILyric.IParsedLrcItem>;
-    private translationLrcItems: Array<ILyric.IParsedLrcItem>;
-    private meta: Record<string, any>;
-    private currentMusicItem?: IMusic.IMusicItem;
-    public readonly lrcSource: ILyric.ILyricSource;
+    private _musicItem?: IMusic.IMusicItem;
 
-    constructor(
-        source: ILyric.ILyricSource,
-        currentMusicItem?: IMusic.IMusicItem,
-        extra?: IExtra,
-    ) {
-        this.lrcSource = source;
-        this.currentMusicItem = currentMusicItem;
-        const rawResult = this.parseLrc(source.rawLrc, extra);
-        const translationResult = this.parseLrc(source.translation, extra);
+    private meta: LyricMeta;
+    private lrcItems: Array<IParsedLrcItem>;
 
-        this.meta = rawResult.meta;
-        this.lrcItems = rawResult.lrcItems;
-        this.translationLrcItems = translationResult.lrcItems;
+    private extra: Record<string, any>;
+
+    private lastSearchIndex = 0;
+
+    public hasTranslation = false;
+    public lyricSource?: ILyric.ILyricSource;
+
+    get musicItem() {
+        return this._musicItem;
     }
 
-    private parseLrc(raw?: string, extra?: IExtra) {
-        if (!raw) {
-            return {
-                lrcItems: [],
-                meta: {},
-            };
+    constructor(raw: string, options?: IOptions) {
+        // init
+        this._musicItem = options?.musicItem;
+        this.extra = options?.extra || {};
+        this.lyricSource = options?.lyricSource;
+
+        let translation = options?.translation;
+        if (!raw && translation) {
+            raw = translation;
+            translation = undefined;
         }
+
+        const {lrcItems, meta} = this.parseLyricImpl(raw);
+        if (this.extra.offset) {
+            meta.offset = (meta.offset ?? 0) + this.extra.offset;
+        }
+        this.meta = meta;
+        this.lrcItems = lrcItems;
+
+        if (translation) {
+            this.hasTranslation = true;
+            const transLrcItems = this.parseLyricImpl(translation).lrcItems;
+
+            // 2 pointer
+            let p1 = 0;
+            let p2 = 0;
+
+            while (p1 < this.lrcItems.length) {
+                const lrcItem = this.lrcItems[p1];
+                while (
+                    transLrcItems[p2].time < lrcItem.time &&
+                    p2 < transLrcItems.length - 1
+                ) {
+                    ++p2;
+                }
+                if (transLrcItems[p2].time === lrcItem.time) {
+                    lrcItem.translation = transLrcItems[p2].lrc;
+                } else {
+                    lrcItem.translation = '';
+                }
+
+                ++p1;
+            }
+        }
+    }
+
+    getPosition(position: number): IParsedLrcItem | null {
+        position = position - (this.meta?.offset ?? 0);
+        let index;
+        /** 最前面 */
+        if (!this.lrcItems[0] || position < this.lrcItems[0].time) {
+            this.lastSearchIndex = 0;
+            return null;
+        }
+        for (
+            index = this.lastSearchIndex;
+            index < this.lrcItems.length - 1;
+            ++index
+        ) {
+            if (
+                position >= this.lrcItems[index].time &&
+                position < this.lrcItems[index + 1].time
+            ) {
+                this.lastSearchIndex = index;
+                return this.lrcItems[index];
+            }
+        }
+
+        for (index = 0; index < this.lastSearchIndex; ++index) {
+            if (
+                position >= this.lrcItems[index].time &&
+                position < this.lrcItems[index + 1].time
+            ) {
+                this.lastSearchIndex = index;
+                return this.lrcItems[index];
+            }
+        }
+
+        index = this.lrcItems.length - 1;
+        this.lastSearchIndex = index;
+        return this.lrcItems[index];
+    }
+
+    getLyricItems() {
+        return this.lrcItems;
+    }
+
+    getMeta() {
+        return this.meta;
+    }
+
+    toString(options?: {
+        withTimestamp?: boolean;
+        type?: 'raw' | 'translation';
+    }) {
+        const {type = 'raw', withTimestamp = true} = options || {};
+
+        if (withTimestamp) {
+            return this.lrcItems
+                .map(
+                    item =>
+                        `${this.timeToLrctime(item.time)} ${
+                            type === 'raw' ? item.lrc : item.translation
+                        }`,
+                )
+                .join('\r\n');
+        } else {
+            return this.lrcItems
+                .map(item => (type === 'raw' ? item.lrc : item.translation))
+                .join('\r\n');
+        }
+    }
+
+    /** [xx:xx.xx] => x s */
+    private parseTime(timeStr: string): number {
+        let result = 0;
+        const nums = timeStr.slice(1, timeStr.length - 1).split(':');
+        for (let i = 0; i < nums.length; ++i) {
+            result = result * 60 + +nums[i];
+        }
+        return result;
+    }
+    /** x s => [xx:xx.xx] */
+    private timeToLrctime(sec: number) {
+        const min = Math.floor(sec / 60);
+        sec = sec - min * 60;
+        const secInt = Math.floor(sec);
+        const secFloat = sec - secInt;
+        return `[${min.toFixed(0).padStart(2, '0')}:${secInt
+            .toString()
+            .padStart(2, '0')}.${secFloat.toFixed(2).slice(2)}]`;
+    }
+
+    private parseMetaImpl(metaStr: string) {
+        if (metaStr === '') {
+            return {};
+        }
+        const metaArr = metaStr.match(metaReg) ?? [];
+        const meta: any = {};
+        let k, v;
+        for (const m of metaArr) {
+            k = m.substring(1, m.indexOf(':'));
+            v = m.substring(k.length + 2, m.length - 1);
+            if (k === 'offset') {
+                meta[k] = +v / 1000;
+            } else {
+                meta[k] = v;
+            }
+        }
+        return meta;
+    }
+
+    private parseLyricImpl(raw: string) {
         raw = raw.trim();
-        const rawLrcItems: Array<ILyric.IParsedLrcItem> = [];
+        const rawLrcItems: Array<IParsedLrcItem> = [];
         const rawLrcs = raw.split(timeReg) ?? [];
         const rawTimes = raw.match(timeReg) ?? [];
         const len = rawTimes.length;
 
-        const meta = this.parseMeta(rawLrcs[0].trim());
-        if (extra?.offset) {
-            meta.offset = (meta.offset ?? 0) + extra.offset;
-        }
+        const meta = this.parseMetaImpl(rawLrcs[0].trim());
         rawLrcs.shift();
 
         let counter = 0;
@@ -61,6 +213,7 @@ export default class LyricParser {
                 rawLrcItems.push({
                     time: this.parseTime(rawTimes[j]),
                     lrc,
+                    index: j,
                 });
             }
             i += counter;
@@ -68,128 +221,23 @@ export default class LyricParser {
                 rawLrcItems.push({
                     time: this.parseTime(rawTimes[i]),
                     lrc,
+                    index: j,
                 });
             }
             rawLrcs.shift();
         }
         let lrcItems = rawLrcItems.sort((a, b) => a.time - b.time);
         if (lrcItems.length === 0 && raw.length) {
-            lrcItems = raw.split('\n').map(_ => ({
+            lrcItems = raw.split('\n').map((_, index) => ({
                 time: 0,
                 lrc: _,
+                index,
             }));
-        }
-
-        for (let i = 0; i < lrcItems.length; ++i) {
-            lrcItems[i].index = i;
         }
 
         return {
             lrcItems,
             meta,
         };
-    }
-
-    getPosition(position: number): {
-        lrc?: ILyric.IParsedLrcItem;
-        transLrc?: ILyric.IParsedLrcItem;
-        index: number;
-    } {
-        position = position - (this.meta?.offset ?? 0);
-        let index;
-        /** 最前面 */
-        if (!this.lrcItems[0] || position < this.lrcItems[0].time) {
-            this.lastIndex = 0;
-            return {
-                lrc: undefined,
-                index: -1,
-            };
-        }
-        for (
-            index = this.lastIndex;
-            index < this.lrcItems.length - 1;
-            ++index
-        ) {
-            if (
-                position >= this.lrcItems[index].time &&
-                position < this.lrcItems[index + 1].time
-            ) {
-                this.lastIndex = index;
-                return {
-                    lrc: this.lrcItems[index],
-                    index,
-                };
-            }
-        }
-
-        for (index = 0; index < this.lastIndex; ++index) {
-            if (
-                position >= this.lrcItems[index].time &&
-                position < this.lrcItems[index + 1].time
-            ) {
-                this.lastIndex = index;
-                return {
-                    lrc: this.lrcItems[index],
-                    index,
-                };
-            }
-        }
-
-        index = this.lrcItems.length - 1;
-        this.lastIndex = index;
-        return {
-            lrc: this.lrcItems[index],
-            transLrc: this.translationLrcItems[index],
-            index,
-        };
-    }
-
-    getCurrentMusicItem() {
-        return this.currentMusicItem;
-    }
-
-    getLyric() {
-        return this.lrcItems;
-    }
-
-    getTranslationLyric() {
-        return this.translationLrcItems;
-    }
-
-    getMeta() {
-        return this.meta;
-    }
-
-    setMeta(newMeta: Record<string, any>) {
-        this.meta = newMeta;
-    }
-
-    parseMeta(metaStr: string) {
-        if (metaStr === '') {
-            return {};
-        }
-        const metaArr = metaStr.match(metaReg) ?? [];
-        const meta: any = {};
-        let k, v;
-        for (let m of metaArr) {
-            k = m.substring(1, m.indexOf(':'));
-            v = m.substring(k.length + 2, m.length - 1);
-            if (k === 'offset') {
-                meta[k] = +v / 1000;
-            } else {
-                meta[k] = v;
-            }
-        }
-        return meta;
-    }
-
-    /** [xx:xx.xx] => x s */
-    parseTime(timeStr: string): number {
-        let result = 0;
-        const nums = timeStr.slice(1, timeStr.length - 1).split(':');
-        for (let i = 0; i < nums.length; ++i) {
-            result = result * 60 + +nums[i];
-        }
-        return result;
     }
 }

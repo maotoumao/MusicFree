@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {StyleSheet, View, BackHandler, Platform} from 'react-native';
+import {BackHandler, Platform, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import ListItem from '@/components/base/listItem';
@@ -7,16 +7,24 @@ import {ROUTE_PATH, useNavigate} from '@/entry/router';
 import ThemeText from '@/components/base/themeText';
 import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';
+import deviceInfoModule from 'react-native-device-info';
 import NativeUtils from '@/native/utils';
 import {useTimingClose} from '@/utils/timingClose';
 import timeformat from '@/utils/timeformat';
 import {showPanel} from '@/components/panels/usePanel';
 import Divider from '@/components/base/divider';
 import TrackPlayer from '@/core/trackPlayer';
-import deviceInfoModule from 'react-native-device-info';
-import {checkUpdateAndShowResult} from '@/hooks/useCheckUpdate';
+import {checkUpdateAndShowResult} from '@/hooks/useCheckUpdate.ts';
+import {IIconName} from '@/components/base/icon.tsx';
 
 const ITEM_HEIGHT = rpx(108);
+
+interface ISettingOptions {
+    icon: IIconName;
+    title: string;
+    onPress?: () => void;
+}
+
 function HomeDrawer(props: any) {
     const navigate = useNavigate();
     function navigateToSetting(settingType: string) {
@@ -25,33 +33,33 @@ function HomeDrawer(props: any) {
         });
     }
 
-    const basicSetting = [
+    const basicSetting: ISettingOptions[] = [
         {
-            icon: 'cog-outline',
+            icon: 'cog-8-tooth',
             title: '基本设置',
             onPress: () => {
                 navigateToSetting('basic');
             },
         },
         {
-            icon: 'language-javascript',
+            icon: 'javascript',
             title: '插件管理',
             onPress: () => {
                 navigateToSetting('plugin');
             },
         },
         {
-            icon: 'tshirt-v-outline',
+            icon: 't-shirt-outline',
             title: '主题设置',
             onPress: () => {
                 navigateToSetting('theme');
             },
         },
-    ] as const;
+    ];
 
-    const otherSetting = [
+    const otherSetting: ISettingOptions[] = [
         {
-            icon: 'backup-restore',
+            icon: 'circle-stack',
             title: '备份与恢复',
             onPress: () => {
                 navigateToSetting('backup');
@@ -61,7 +69,7 @@ function HomeDrawer(props: any) {
 
     if (Platform.OS === 'android') {
         otherSetting.push({
-            icon: 'cellphone-key',
+            icon: 'shield-keyhole-outline',
             title: '权限管理',
             onPress: () => {
                 navigate(ROUTE_PATH.PERMISSIONS);
@@ -80,7 +88,7 @@ function HomeDrawer(props: any) {
                     {/* <IconButton icon={'qrcode-scan'} size={rpx(36)} /> */}
                 </View>
                 <View style={style.card}>
-                    <ListItem withHorizonalPadding heightType="smallest">
+                    <ListItem withHorizontalPadding heightType="smallest">
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
@@ -89,7 +97,7 @@ function HomeDrawer(props: any) {
                     </ListItem>
                     {basicSetting.map(item => (
                         <ListItem
-                            withHorizonalPadding
+                            withHorizontalPadding
                             key={item.title}
                             onPress={item.onPress}>
                             <ListItem.ListItemIcon
@@ -101,7 +109,7 @@ function HomeDrawer(props: any) {
                     ))}
                 </View>
                 <View style={style.card}>
-                    <ListItem withHorizonalPadding heightType="smallest">
+                    <ListItem withHorizontalPadding heightType="smallest">
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
@@ -111,7 +119,7 @@ function HomeDrawer(props: any) {
                     <CountDownItem />
                     {otherSetting.map(item => (
                         <ListItem
-                            withHorizonalPadding
+                            withHorizontalPadding
                             key={item.title}
                             onPress={item.onPress}>
                             <ListItem.ListItemIcon
@@ -124,7 +132,7 @@ function HomeDrawer(props: any) {
                 </View>
 
                 <View style={style.card}>
-                    <ListItem withHorizonalPadding heightType="smallest">
+                    <ListItem withHorizontalPadding heightType="smallest">
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
@@ -133,13 +141,13 @@ function HomeDrawer(props: any) {
                     </ListItem>
 
                     <ListItem
-                        withHorizonalPadding
+                        withHorizontalPadding
                         key={'update'}
                         onPress={() => {
                             checkUpdateAndShowResult(true);
                         }}>
                         <ListItem.ListItemIcon
-                            icon={'update'}
+                            icon={'arrow-path'}
                             width={rpx(48)}
                         />
                         <ListItem.Content title="检查更新" />
@@ -150,13 +158,13 @@ function HomeDrawer(props: any) {
                         </ListItem.ListItemText>
                     </ListItem>
                     <ListItem
-                        withHorizonalPadding
+                        withHorizontalPadding
                         key={'about'}
                         onPress={() => {
                             navigateToSetting('about');
                         }}>
                         <ListItem.ListItemIcon
-                            icon={'information-outline'}
+                            icon={'information-circle'}
                             width={rpx(48)}
                         />
                         <ListItem.Content
@@ -167,7 +175,7 @@ function HomeDrawer(props: any) {
 
                 <Divider />
                 <ListItem
-                    withHorizonalPadding
+                    withHorizontalPadding
                     onPress={() => {
                         // 仅安卓生效
                         BackHandler.exitApp();
@@ -179,12 +187,15 @@ function HomeDrawer(props: any) {
                     <ListItem.Content title={'返回桌面'} />
                 </ListItem>
                 <ListItem
-                    withHorizonalPadding
+                    withHorizontalPadding
                     onPress={async () => {
                         await TrackPlayer.reset();
                         NativeUtils.exitApp();
                     }}>
-                    <ListItem.ListItemIcon icon={'power'} width={rpx(48)} />
+                    <ListItem.ListItemIcon
+                        icon={'power-outline'}
+                        width={rpx(48)}
+                    />
                     <ListItem.Content title={'退出应用'} />
                 </ListItem>
             </DrawerContentScrollView>
@@ -230,11 +241,11 @@ function _CountDownItem() {
 
     return (
         <ListItem
-            withHorizonalPadding
+            withHorizontalPadding
             onPress={() => {
                 showPanel('TimingClose');
             }}>
-            <ListItem.ListItemIcon icon="timer-outline" width={rpx(48)} />
+            <ListItem.ListItemIcon icon="alarm-outline" width={rpx(48)} />
             <ListItem.Content title="定时关闭" />
             <ListItem.ListItemText position="right" fontSize="subTitle">
                 {countDown ? timeformat(countDown) : ''}

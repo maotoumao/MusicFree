@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 
 // Internal Method
 const getStore = () => {
-    return getOrCreateMMKV(`App.PersistStatus`);
+    return getOrCreateMMKV('App.PersistStatus');
 };
 
 interface IPersistConfig {
@@ -22,14 +22,14 @@ interface IPersistConfig {
     'music.quality': IMusic.IQualityKey;
     /** app */
     'app.skipVersion': string;
+    /** 开屏弹窗 */
+    'app.skipBootstrapStorageDialog': boolean;
     /** 上次更新插件的时间 */
     'app.pluginUpdateTime': number;
     /** 歌词-是否启用翻译 */
     'lyric.showTranslation': boolean;
     /** 歌词-详情页字体大小 */
     'lyric.detailFontSize': number;
-    /** APP logo */
-    'app.logo': 'Default' | 'Logo1';
 }
 
 function set<K extends keyof IPersistConfig>(

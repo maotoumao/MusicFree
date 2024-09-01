@@ -2,11 +2,11 @@ import React from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {iconSizeConst} from '@/constants/uiConst';
+import Icon, {IIconName} from '@/components/base/icon.tsx';
 
 interface IFabProps {
-    icon?: string;
+    icon?: IIconName;
     onPress?: () => void;
 }
 export default function Fab(props: IFabProps) {

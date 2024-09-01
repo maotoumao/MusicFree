@@ -1,9 +1,9 @@
 /** 备份与恢复 */
 /** 歌单、插件 */
-import {trimInternalData} from '@/utils/mediaItem';
 import {compare} from 'compare-versions';
-import MusicSheet from './musicSheet';
 import PluginManager from './pluginManager';
+import MusicSheet from '@/core/musicSheet';
+import {ResumeMode} from '@/constants/commonConst.ts';
 
 /**
  * 结果：一份大的json文件
@@ -14,17 +14,12 @@ import PluginManager from './pluginManager';
  */
 
 interface IBackJson {
-    musicSheets: ICommon.WithMusicList<IMusic.IMusicSheetItemBase>[];
+    musicSheets: IMusic.IMusicSheetItem[];
     plugins: Array<{srcUrl: string; version: string}>;
 }
 
 function backup() {
-    const {musicSheets, sheetMusicMap} = MusicSheet.getSheets();
-    const normalizedSheets = musicSheets.map(_ => ({
-        ..._,
-        musicList: (sheetMusicMap[_.id] ?? []).map(trimInternalData),
-        coverImg: undefined,
-    }));
+    const musicSheets = MusicSheet.backupSheets();
     const plugins = PluginManager.getValidPlugins();
     const normalizedPlugins = plugins.map(_ => ({
         srcUrl: _.instance.srcUrl,
@@ -32,18 +27,22 @@ function backup() {
     }));
 
     return JSON.stringify({
-        musicSheets: normalizedSheets,
+        musicSheets: musicSheets,
         plugins: normalizedPlugins,
     });
 }
 
-async function resume(raw: string | Object, overwrite?: boolean) {
+async function resume(
+    raw: string | Object,
+    resumeMode: ResumeMode = ResumeMode.Append,
+) {
     let obj: IBackJson;
     if (typeof raw === 'string') {
         obj = JSON.parse(raw);
     } else {
         obj = raw as IBackJson;
     }
+
     const {plugins, musicSheets} = obj ?? {};
     /** 恢复插件 */
     const validPlugins = PluginManager.getValidPlugins();
@@ -64,8 +63,9 @@ async function resume(raw: string | Object, overwrite?: boolean) {
         }
         return PluginManager.installPluginFromUrl(_.srcUrl);
     });
+
     /** 恢复歌单 */
-    const resumeMusicSheets = MusicSheet.resumeSheets(musicSheets, overwrite);
+    const resumeMusicSheets = MusicSheet.resumeSheets(musicSheets, resumeMode);
 
     return Promise.all([...(resumePlugins ?? []), resumeMusicSheets]);
 }

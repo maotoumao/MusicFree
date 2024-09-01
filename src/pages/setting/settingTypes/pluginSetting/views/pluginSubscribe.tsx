@@ -7,7 +7,7 @@ import Empty from '@/components/base/empty';
 import ListItem from '@/components/base/listItem';
 import Toast from '@/utils/toast';
 import Clipboard from '@react-native-clipboard/clipboard';
-import HorizonalSafeAreaView from '@/components/base/horizonalSafeAreaView';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
 import {showDialog} from '@/components/dialogs/useDialog';
 import AppBar from '@/components/base/appBar';
@@ -79,7 +79,7 @@ export default function PluginSubscribe() {
     return (
         <>
             <AppBar>订阅设置</AppBar>
-            <HorizonalSafeAreaView style={globalStyle.flex1}>
+            <HorizontalSafeAreaView style={globalStyle.flex1}>
                 <FlatList
                     style={style.listWrapper}
                     ListEmptyComponent={Empty}
@@ -87,7 +87,7 @@ export default function PluginSubscribe() {
                     renderItem={({item, index}) => {
                         return (
                             <ListItem
-                                withHorizonalPadding
+                                withHorizontalPadding
                                 onPress={() => {
                                     showDialog('SubscribePluginDialog', {
                                         subscribeItem: item,
@@ -132,7 +132,7 @@ export default function PluginSubscribe() {
                         index,
                     })}
                 />
-            </HorizonalSafeAreaView>
+            </HorizontalSafeAreaView>
             <Fab
                 icon="plus"
                 onPress={() => {
