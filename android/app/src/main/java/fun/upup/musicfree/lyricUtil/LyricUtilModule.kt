@@ -165,7 +165,7 @@ class LyricUtilModule(private val reactContext: ReactApplicationContext): ReactC
     }
 
     @ReactMethod
-    fun setStatusBarColors(textColor: String, backgroundColor: String, promise: Promise) {
+    fun setStatusBarColors(textColor: String?, backgroundColor: String?, promise: Promise) {
         try {
             UiThreadUtil.runOnUiThread {
                 lyricView?.setColors(textColor, backgroundColor)
