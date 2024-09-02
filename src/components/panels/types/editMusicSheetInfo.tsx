@@ -6,7 +6,6 @@ import {hidePanel} from '@/components/panels/usePanel.ts';
 import ThemeText from '@/components/base/themeText.tsx';
 import Toast from '@/utils/toast.ts';
 import useColors from '@/hooks/useColors.ts';
-import {hideDialog} from '@/components/dialogs/useDialog.ts';
 import MusicSheet from '@/core/musicSheet';
 import Input from '@/components/base/input.tsx';
 import {fontSizeConst} from '@/constants/uiConst.ts';
@@ -48,7 +47,7 @@ export default function EditMusicSheetInfo(props: IEditSheetDetailProps) {
             // coverImg === musicSheet?.coverImg &&
             title === musicSheet?.title
         ) {
-            hideDialog();
+            hidePanel();
             return;
         }
 
