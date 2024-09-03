@@ -37,7 +37,7 @@ class LyricUtilModule(private val reactContext: ReactApplicationContext): ReactC
     }
 
     @ReactMethod
-    fun showStatusBarLyric(initLyric: String, options: ReadableMap, promise: Promise) {
+    fun showStatusBarLyric(initLyric: String?, options: ReadableMap?, promise: Promise) {
         try {
             UiThreadUtil.runOnUiThread {
                 if (lyricView == null) {
@@ -45,6 +45,9 @@ class LyricUtilModule(private val reactContext: ReactApplicationContext): ReactC
                 }
 
                 val mapOptions = mutableMapOf<String, Any>().apply {
+                    if (options == null) {
+                        return@apply
+                    }
                     if (options.hasKey("topPercent")) {
                         put("topPercent", options.getDouble("topPercent"))
                     }
