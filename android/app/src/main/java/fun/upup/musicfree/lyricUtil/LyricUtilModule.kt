@@ -61,13 +61,13 @@ class LyricUtilModule(private val reactContext: ReactApplicationContext): ReactC
                         options.getString("color")?.let { put("color", it) }
                     }
                     if (options.hasKey("backgroundColor")) {
-                        options.getString("backgroundColor")?.let { put("color", it) }
+                        options.getString("backgroundColor")?.let { put("backgroundColor", it) }
                     }
                     if (options.hasKey("widthPercent")) {
-                        put("color", options.getDouble("widthPercent"))
+                        put("widthPercent", options.getDouble("widthPercent"))
                     }
                     if (options.hasKey("fontSize")) {
-                        put("color", options.getDouble("fontSize"))
+                        put("fontSize", options.getDouble("fontSize"))
                     }
                 }
 
