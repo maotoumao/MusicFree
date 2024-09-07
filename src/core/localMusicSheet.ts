@@ -13,9 +13,9 @@ import StateMapper from '@/utils/stateMapper';
 import {getStorage, setStorage} from '@/utils/storage';
 import {nanoid} from 'nanoid';
 import {useEffect, useState} from 'react';
-import {unlink} from 'react-native-fs';
-import {getInfoAsync, readDirectoryAsync} from 'expo-file-system';
+import {exists, readDir, ReadDirItem, unlink} from 'react-native-fs';
 import {addFileScheme, getFileName} from '@/utils/fileUtils.ts';
+import CryptoJs from 'crypto-js';
 
 let localSheet: IMusic.IMusicItem[] = [];
 const localSheetStateMapper = new StateMapper(() => localSheet);
@@ -29,7 +29,7 @@ export async function setup() {
                 musicItem,
                 InternalDataType.LOCALPATH,
             );
-            if (localPath && (await getInfoAsync(localPath)).exists) {
+            if (localPath && (await exists(localPath))) {
                 validSheet.push(musicItem);
             }
         }
@@ -126,36 +126,32 @@ function localMediaFilter(filename: string) {
 let importToken: string | null = null;
 // 获取本地的文件列表
 async function getMusicStats(folderPaths: string[]) {
+    console.log('GGGG', folderPaths);
     const _importToken = nanoid();
     importToken = _importToken;
     const musicList: string[] = [];
     let peek: string | undefined;
-    let dirFiles: string[] = [];
+    let dirFiles: ReadDirItem[] = [];
     while (folderPaths.length !== 0) {
         if (importToken !== _importToken) {
             throw new Error('Import Broken');
         }
         peek = folderPaths.shift() as string;
         try {
-            dirFiles = await readDirectoryAsync(peek);
+            dirFiles = await readDir(peek);
         } catch {
             dirFiles = [];
         }
 
-        await Promise.all(
-            dirFiles.map(async fileName => {
-                const stat = await getInfoAsync(peek + '/' + fileName);
-                if (!stat.exists) {
-                    return;
-                }
-                if (stat.isDirectory && !folderPaths.includes(stat.uri)) {
-                    folderPaths.push(stat.uri);
-                } else if (localMediaFilter(stat.uri)) {
-                    musicList.push(stat.uri);
-                }
-            }),
-        );
+        dirFiles.forEach(item => {
+            if (item.isDirectory() && !folderPaths.includes(item.path)) {
+                folderPaths.push(item.path);
+            } else if (localMediaFilter(item.path)) {
+                musicList.push(item.path);
+            }
+        });
     }
+
     return {musicList, token: _importToken};
 }
 
@@ -168,7 +164,6 @@ const groupNum = 25;
 async function importLocal(_folderPaths: string[]) {
     const folderPaths = [..._folderPaths.map(it => addFileScheme(it))];
     const {musicList, token} = await getMusicStats(folderPaths);
-    console.log('HI!!!', musicList, folderPaths, _folderPaths);
     if (token !== importToken) {
         throw new Error('Import Broken');
     }
@@ -192,10 +187,7 @@ async function importLocal(_folderPaths: string[]) {
             const meta = metas[index];
             if (!platform || !id) {
                 platform = '本地';
-                const fileInfo = await getInfoAsync(musicPath, {
-                    md5: true,
-                });
-                id = fileInfo.exists ? fileInfo.md5 : nanoid();
+                id = CryptoJs.MD5(musicPath).toString(CryptoJs.enc.Hex);
             }
             return {
                 id,
