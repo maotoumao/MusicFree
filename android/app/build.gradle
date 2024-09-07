@@ -91,21 +91,21 @@ static def getVersion() {
     return packageJson["version"]
 }
 
-static def versionStringToCode(String version) {
-    def parts = version.split('\\.')
-    def versionCode = 0
-    def multiplier = 1000000
-
-    parts.each { part ->
-        versionCode += part.toInteger() * multiplier
-        multiplier /= 1000
-    }
-
-    return versionCode.intValue()
-}
+// static def versionStringToCode(String version) {
+//     def parts = version.split('\\.')
+//     def versionCode = 0
+//     def multiplier = 1000000
+//
+//     parts.each { part ->
+//         versionCode += part.toInteger() * multiplier
+//         multiplier /= 1000
+//     }
+//
+//     return versionCode.intValue()
+// }
 
 def appVersion = getVersion()
-def appVersionCode = versionStringToCode(appVersion)
+def appVersionCode = 400011
 
 
 android {
@@ -146,19 +146,7 @@ android {
             }
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def versionCodes = ["armeabi-v7a": 1, "arm64-v8a": 2, "x86": 3, "x86_64": 4]
 
-            def abi = output.getFilter(OutputFile.ABI)
-
-            if (abi != null) {
-                output.versionCodeOverride = defaultConfig.versionCode * 100 + versionCodes.get(abi);
-            } else {
-                output.versionCodeOverride = defaultConfig.versionCode * 100
-            }
-        }
-    }
 
     buildTypes {
         debug {
