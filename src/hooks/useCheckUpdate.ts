@@ -25,6 +25,7 @@ export const checkUpdateAndShowResult = (
                 version: data.version,
                 content: data.changeLog,
                 fromUrl: data.download[0],
+                backUrl: data.download[1],
             });
         } else {
             if (showToast) {
