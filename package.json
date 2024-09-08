@@ -1,8 +1,8 @@
 {
   "name": "MusicFree",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
-  "license": "GPL",
+  "license": "AGPL",
   "author": {
     "name": "猫头猫",
     "email": "lhx_xjtu@163.com"

@@ -73,6 +73,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         <Button
                             style={style.button}
                             onPress={async () => {
+                                Config.set('status.app.skipVersion', undefined);
                                 openUrl(backUrl);
                                 Clipboard.setString(backUrl);
                             }}>
