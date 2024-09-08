@@ -131,7 +131,7 @@ export function ToastBaseComponent() {
                         color={typeConfig[activeToast.type].color}
                     />
                     <Text
-                        numberOfLines={1}
+                        numberOfLines={2}
                         style={[styles.text, {color: colors.text}]}>
                         {activeToast.message}
                     </Text>

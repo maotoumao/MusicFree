@@ -179,7 +179,8 @@ export default function (props: IPanelBaseProps) {
                     height:
                         orientation === 'horizonal'
                             ? vh(100) - safeAreaInsets.top
-                            : height - keyboardHeight,
+                            : height -
+                              (isFinite(keyboardHeight) ? keyboardHeight : 0),
                 },
                 panelAnimated,
             ]}>
