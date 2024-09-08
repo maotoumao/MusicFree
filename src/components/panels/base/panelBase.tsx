@@ -95,12 +95,6 @@ export default function (props: IPanelBaseProps) {
         let keyboardDidShowListener: EmitterSubscription;
         let keyboardDidHideListener: EmitterSubscription;
         if (awareKeyboard) {
-            Keyboard.addListener('keyboardDidChangeFrame', event => {
-                console.log(event, 'KKss');
-            });
-            Keyboard.addListener('keyboardWillShow', event => {
-                console.log(event, 'KKsss');
-            });
             keyboardDidShowListener = Keyboard.addListener(
                 'keyboardDidShow',
                 event => {
