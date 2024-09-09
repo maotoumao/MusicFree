@@ -1,0 +1,67 @@
+name: 添加功能
+description: 新想法/需求点这里
+title: "[Feature] xxxxx"
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        如果有能力可自行提交PR
+
+  - type: checkboxes
+    id: understand
+    attributes:
+      label: ⠀
+      options:
+        - label: 已经阅读过ReadMe并*了解本软件的定位*
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 需求描述
+      description: 请详细描述一下需求场景
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: 添加原因
+      description: 添加这个功能有什么好处
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: 功能示例
+      description: 上传相关功能的图片或详细描述
+    validations:
+      required: true
+
+  - type: textarea
+    id: conflict
+    attributes:
+      label: 添加困难
+      description: 添加后可能导致的问题或冲突
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternative
+    attributes:
+      label: 替代方案
+      description: 如果无法实现，请描述一下预期的替代方案或最低期望
+    validations:
+      required: false
+
+  - type: textarea
+    id: detail
+    attributes:
+      label: 其他信息
+      description: 是否能提供一些其他的帮助，如果有的话，辛苦描述一下，感谢~
+      placeholder: |
+        包括但不限于代码、UI、测试 ...
+    validations:
+      required: false
