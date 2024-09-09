@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GitHub discussions
+    url: https://github.com/maotoumao/MusicFree/discussions
+    about: Discuss or ask questions here
+  - name: 讨论区
+    url: https://github.com/maotoumao/MusicFree/discussions
+    about: 在这里讨论或寻求帮助

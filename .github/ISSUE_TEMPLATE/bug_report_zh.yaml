@@ -1,0 +1,90 @@
+name: 反馈问题
+description: 遇到bug了点这里
+title: "[BUG] xxxxx"
+labels: [bug]
+body:
+  - type: checkboxes
+    id: answer
+    attributes:
+      label: ⠀
+      options:
+        - label: 已阅读 Q&A
+          required: true
+
+  - type: checkboxes
+    id: thirdparty
+    attributes:
+      label: ⠀
+      options:
+        - label: 非插件导致（如搜索结果不全，无法导入等都属于插件问题）
+          required: true
+
+  - type: checkboxes
+    id: duplication
+    attributes:
+      label: ⠀
+      options:
+        - label: 不与其他 issue 重复
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 简要描述一下问题的现象
+      placeholder: |
+        在xx场景下，进行xx操作，产生xx现象，而不是xx
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为
+      description: 描述一下预期正确的行为是什么样的
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 详细的复现步骤
+      description: 按步骤详细描述一下触发bug的特定行为
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 截图
+      description: 截图/录屏
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 日志
+      description: 如果方便的话，复现之后贴一下日志
+      placeholder: |
+        侧边栏-基本设置-记录详细日志
+        Android/data/fun.upup.musicfree/files/log/trace-log.log
+        （完成之后记得删掉，不然时间长了会卡）
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 其他信息
+      description: 系统环境、应用版本等相关信息
+      placeholder: |
+        设备型号：
+        系统版本：
+        应用版本：
+    validations:
+      required: true
