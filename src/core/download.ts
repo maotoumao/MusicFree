@@ -11,7 +11,7 @@ import StateMapper from '@/utils/stateMapper';
 import Toast from '@/utils/toast';
 import {produce} from 'immer';
 import {InteractionManager} from 'react-native';
-import {downloadFile, exists} from 'react-native-fs';
+import {copyFile, downloadFile, exists, unlink} from 'react-native-fs';
 
 import Config from './config';
 import LocalMusicSheet from './localMusicSheet';
@@ -25,6 +25,7 @@ import {
     hideDialog,
     showDialog,
 } from '@/components/dialogs/useDialog';
+import {nanoid} from 'nanoid';
 
 /** 队列中的元素 */
 interface IDownloadMusicOptions {
@@ -68,13 +69,21 @@ const getExtensionName = (url: string) => {
 };
 
 /** 生成下载文件 */
-const getDownloadPath = (fileName?: string) => {
+const getDownloadPath = (fileName: string) => {
     const dlPath =
         Config.get('setting.basic.downloadPath') ?? pathConst.downloadMusicPath;
     if (!dlPath.endsWith('/')) {
         return `${dlPath}/${fileName ?? ''}`;
     }
     return fileName ? dlPath + fileName : dlPath;
+};
+
+const getCacheDownloadPath = (fileName: string) => {
+    const cachePath = pathConst.downloadCachePath;
+    if (!cachePath.endsWith('/')) {
+        return `${cachePath}/${fileName ?? ''}`;
+    }
+    return fileName ? cachePath + fileName : cachePath;
 };
 
 /** 从待下载中移除 */
@@ -222,12 +231,15 @@ async function downloadNext() {
         extension = 'mp3';
     }
     /** 目标下载地址 */
+    const cacheDownloadPath = addFileScheme(
+        getCacheDownloadPath(`${nanoid()}.${extension}`),
+    );
     const targetDownloadPath = addFileScheme(
         getDownloadPath(`${nextDownloadItem.filename}.${extension}`),
     );
     const {promise, jobId} = downloadFile({
         fromUrl: url ?? '',
-        toFile: targetDownloadPath,
+        toFile: cacheDownloadPath,
         headers: headers,
         background: true,
         begin(res) {
@@ -256,8 +268,10 @@ async function downloadNext() {
     if (!folderExists) {
         await mkdirR(folder);
     }
+
     try {
         await promise;
+        await copyFile(cacheDownloadPath, targetDownloadPath);
         /** 下载完成 */
         LocalMusicSheet.addMusicDraft({
             ...musicItem,
@@ -301,6 +315,8 @@ async function downloadNext() {
             targetDownloadPath: targetDownloadPath,
         });
         hasError = true;
+    } finally {
+        await unlink(cacheDownloadPath);
     }
     removeFromDownloadingQueue(nextDownloadItem);
     downloadingProgress = produce(downloadingProgress, draft => {

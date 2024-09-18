@@ -16,6 +16,7 @@ export default {
     imageCachePath: CachesDirectoryPath + '/image_manager_disk_cache',
     localLrcPath: `${basePath}/local_lrc/`,
     lrcCachePath: `${basePath}/cache/lrc/`,
+    downloadCachePath: `${basePath}/cache/download/`,
     downloadPath: `${basePath}/download/`,
     downloadMusicPath: `${basePath}/download/music/`,
     mmkvPath: `${basePath}/mmkv`,

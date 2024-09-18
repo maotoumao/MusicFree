@@ -3,6 +3,7 @@ import RNFS, {
     exists,
     readDir,
     readFile,
+    stat,
     unlink,
     writeFile,
 } from 'react-native-fs';
@@ -39,7 +40,6 @@ import CookieManager from '@react-native-cookies/cookies';
 import he from 'he';
 import Network from './network';
 import LocalMusicSheet from './localMusicSheet';
-import {getInfoAsync} from 'expo-file-system';
 import Mp3Util from '@/native/mp3Util';
 import {PluginMeta} from './pluginMeta';
 import {useEffect, useState} from 'react';
@@ -253,15 +253,18 @@ export class Plugin {
         return true;
     }
 }
+
 //#endregion
 
 //#region 基于插件类封装的方法，供给APP侧直接调用
 /** 有缓存等信息 */
 class PluginMethods implements IPlugin.IPluginInstanceMethods {
     private plugin;
+
     constructor(plugin: Plugin) {
         this.plugin = plugin;
     }
+
     /** 搜索 */
     async search<T extends ICommon.SupportMediaType>(
         query: string,
@@ -308,7 +311,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
                 LocalMusicSheet.isLocalMusic(musicItem),
                 InternalDataType.LOCALPATH,
             );
-        if (localPath && (await getInfoAsync(localPath)).exists) {
+        if (localPath && (await exists(localPath))) {
             trace('本地播放', localPath);
             if (mediaExtra && mediaExtra.localPath !== localPath) {
                 // 修正一下本地数据
@@ -801,6 +804,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return [];
         }
     }
+
     /** 导入单曲 */
     async importMusicItem(urlLike: string): Promise<IMusic.IMusicItem | null> {
         try {
@@ -818,6 +822,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return null;
         }
     }
+
     /** 获取榜单 */
     async getTopLists(): Promise<IMusic.IMusicSheetGroupItem[]> {
         try {
@@ -831,6 +836,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             return [];
         }
     }
+
     /** 获取榜单详情 */
     async getTopListDetail(
         topListItem: IMusic.IMusicSheetItemBase,
@@ -879,6 +885,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             };
         }
     }
+
     /** 获取某个tag的推荐歌单 */
     async getRecommendSheetsByTag(
         tagItem: ICommon.IUnique,
@@ -1018,18 +1025,19 @@ const localFilePlugin = new Plugin(function () {
         },
         async importMusicItem(urlLike) {
             let meta: any = {};
+            let id: string;
+
             try {
                 meta = await Mp3Util.getBasicMeta(urlLike);
-            } catch {}
-            const stat = await getInfoAsync(urlLike, {
-                md5: true,
-            });
-            let id: string;
-            if (stat.exists) {
-                id = stat.md5 || nanoid();
-            } else {
+                const fileStat = await stat(urlLike);
+                id =
+                    CryptoJs.MD5(fileStat.originalFilepath).toString(
+                        CryptoJs.enc.Hex,
+                    ) || nanoid();
+            } catch {
                 id = nanoid();
             }
+
             return {
                 id: id,
                 platform: '本地',
