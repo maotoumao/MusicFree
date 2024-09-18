@@ -10,6 +10,7 @@ let playListIndexMap: Record<string, Record<string, number>> = {};
 /**
  * 设置播放队列
  * @param newPlayList 新的播放队列
+ * @param shouldSave 是否保存到本地
  */
 export function setPlayList(
     newPlayList: IMusic.IMusicItem[],

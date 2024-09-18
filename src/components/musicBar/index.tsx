@@ -37,6 +37,12 @@ function CircularPlayBtn() {
                 accessibilityLabel={'播放或暂停歌曲'}
                 name={isPaused ? 'play' : 'pause'}
                 sizeType={'normal'}
+                hitSlop={{
+                    top: 10,
+                    left: 10,
+                    right: 10,
+                    bottom: 10,
+                }}
                 color={colors.musicBarText}
                 onPress={async () => {
                     if (isPaused) {
