@@ -17,7 +17,7 @@
 
 ![微信公众号](./src/assets/imgs/wechat_channel.jpg)
 
-软件下载方式、插件使用说明、插件开发文档可去站点 [https://musicfree.upup.fun](https://musicfree.upup.fun) 查看。
+软件下载方式、插件使用说明、插件开发文档可去站点 [https://musicfree.catcat.work](https://musicfree.catcat.work) 查看。
 
 > [!NOTE]
 > - 如果你在其他的平台看到收费版/无广告版/破解版，都是假的，本来就是开源项目，**遇到收费版请直接举报**；
@@ -51,7 +51,7 @@
 
 插件本质上是一个满足插件协议的 commonjs 模块。插件中定义了搜索（音乐、专辑、作者）、播放、查看专辑、作者详细信息、导入歌单、获取歌词等基本函数，插件的开发者只需要关心输入输出逻辑，至于分页、缓存等全都交给 MusicFree 控制即可。本软件通过插件来完成播放器的所有功能，这样解耦的设计也可以使得本软件可以专注于做一个功能完善的播放器，我直呼小而美。
 
-插件开发文档可以参考 [这里](https://musicfree.upup.fun/plugin/introduction.html)
+插件开发文档可以参考 [这里](https://musicfree.catcat.work/plugin/introduction.html)
 
 需要注意的是：
 
@@ -74,7 +74,7 @@
 
 ## Q&A
 
-使用时遇到的常见问题可以看这里：[MusicFree 使用 Q&A](https://musicfree.upup.fun/qa/common.html)
+使用时遇到的常见问题可以看这里：[MusicFree 使用 Q&A](https://musicfree.catcat.work/qa/common.html)
 
 技术交流/一起写点有意思的东西/技术向的闲聊欢迎加群：[683467814](https://jq.qq.com/?_wv=1027&k=upVpi2k3)~ （不是答疑群）
 
