@@ -15,6 +15,7 @@ import Animated, {
 import {timingConfig} from '@/constants/commonConst';
 
 interface ISwitchProps extends SwitchProps {}
+
 const fixedWidth = rpx(40);
 
 export default function ThemeSwitch(props: ISwitchProps) {
@@ -24,17 +25,17 @@ export default function ThemeSwitch(props: ISwitchProps) {
     const sharedValue = useSharedValue(value ? 1 : 0);
 
     useEffect(() => {
-        sharedValue.value = withTiming(
-            value ? 1 : 0,
-            timingConfig.animationNormal,
-        );
+        sharedValue.value = value ? 1 : 0;
     }, [value]);
 
     const thumbStyle = useAnimatedStyle(() => {
         return {
             transform: [
                 {
-                    translateX: sharedValue.value * fixedWidth,
+                    translateX: withTiming(
+                        sharedValue.value * fixedWidth,
+                        timingConfig.animationNormal,
+                    ),
                 },
             ],
         };

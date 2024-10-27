@@ -18,13 +18,14 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withTiming,
+    EasingFunction,
 } from 'react-native-reanimated';
 import useColors from '@/hooks/useColors';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import useOrientation from '@/hooks/useOrientation';
 import {panelInfoStore} from '../usePanel';
 
-const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
+const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 250;
 
 const timingConfig = {
@@ -57,6 +58,7 @@ export default function (props: IPanelBaseProps) {
         () => (orientation === 'horizonal' ? rpx(750) : height),
         [orientation],
     );
+
     const backHandlerRef = useRef<NativeEventSubscription>();
 
     const hideCallbackRef = useRef<Function[]>([]);
@@ -64,6 +66,7 @@ export default function (props: IPanelBaseProps) {
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     useEffect(() => {
         snapPoint.value = withTiming(1, timingConfig);
+
         timerRef.current = setTimeout(() => {
             if (loading) {
                 // 兜底
@@ -71,7 +74,7 @@ export default function (props: IPanelBaseProps) {
             }
         }, 400);
         if (backHandlerRef.current) {
-            backHandlerRef.current?.remove();
+            backHandlerRef.current.remove();
             backHandlerRef.current = undefined;
         }
         backHandlerRef.current = BackHandler.addEventListener(
@@ -160,9 +163,14 @@ export default function (props: IPanelBaseProps) {
     useAnimatedReaction(
         () => snapPoint.value,
         (result, prevResult) => {
-            if (prevResult && result > prevResult && result > 0.8) {
+            if (
+                ((prevResult !== null && result > prevResult) ||
+                    prevResult === null) &&
+                result > 0.8
+            ) {
                 runOnJS(mountPanel)();
             }
+
             if (prevResult && result < prevResult && result === 0) {
                 runOnJS(unmountPanel)();
             }

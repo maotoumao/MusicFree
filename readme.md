@@ -17,7 +17,7 @@
 
 ![微信公众号](./src/assets/imgs/wechat_channel.jpg)
 
-软件下载方式、插件使用说明、插件开发文档可去站点 [https://musicfree.upup.fun](https://musicfree.upup.fun) 查看。
+软件下载方式、插件使用说明、插件开发文档可去站点 [https://musicfree.catcat.work](https://musicfree.catcat.work) 查看。
 
 > [!NOTE]
 > - 如果你在其他的平台看到收费版/无广告版/破解版，都是假的，本来就是开源项目，**遇到收费版请直接举报**；
@@ -51,7 +51,7 @@
 
 插件本质上是一个满足插件协议的 commonjs 模块。插件中定义了搜索（音乐、专辑、作者）、播放、查看专辑、作者详细信息、导入歌单、获取歌词等基本函数，插件的开发者只需要关心输入输出逻辑，至于分页、缓存等全都交给 MusicFree 控制即可。本软件通过插件来完成播放器的所有功能，这样解耦的设计也可以使得本软件可以专注于做一个功能完善的播放器，我直呼小而美。
 
-插件开发文档可以参考 [这里](https://musicfree.upup.fun/plugin/introduction.html)
+插件开发文档可以参考 [这里](https://musicfree.catcat.work/plugin/introduction.html)
 
 需要注意的是：
 
@@ -66,7 +66,7 @@
 
 你可以直接点击从网络安装插件，然后输入<https://gitee.com/maotoumao/MusicFreePlugins/raw/master/plugins.json> ，点击确认即可安装。
 
-图文版详细使用说明可以参考公众号：[MusicFree 插件使用指南](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483875&idx=1&sn=aedf8bb909540634d927de7fd2b4b8b1&chksm=c1a390c4f6d419d233908bb781d418c6b9fd2ca82e9e93291e7c93b8ead3c50ca5ae39668212#rd)，或者站点： https://musicfree.upup.fun/usage/mobile/install-plugin.html
+图文版详细使用说明可以参考公众号：[MusicFree 插件使用指南](https://mp.weixin.qq.com/s?__biz=MzkxOTM5MDI4MA==&mid=2247483875&idx=1&sn=aedf8bb909540634d927de7fd2b4b8b1&chksm=c1a390c4f6d419d233908bb781d418c6b9fd2ca82e9e93291e7c93b8ead3c50ca5ae39668212#rd)，或者站点： https://musicfree.catcat.work/usage/mobile/install-plugin.html
 
 ## 下载地址
 
@@ -74,7 +74,7 @@
 
 ## Q&A
 
-使用时遇到的常见问题可以看这里：[MusicFree 使用 Q&A](https://musicfree.upup.fun/qa/common.html)
+使用时遇到的常见问题可以看这里：[MusicFree 使用 Q&A](https://musicfree.catcat.work/qa/common.html)
 
 技术交流/一起写点有意思的东西/技术向的闲聊欢迎加群：[683467814](https://jq.qq.com/?_wv=1027&k=upVpi2k3)~ （不是答疑群）
 
@@ -104,7 +104,7 @@
 [点击这里](./changelog.md)
 
 ---
-本项目仅供学习参考使用，基于 AGPL 协议开源；请在符合法律法规的情况下合理使用本项目，不要用于商业目的使用。
+本项目仅供学习参考使用，基于 AGPL3.0 协议开源；请在符合法律法规的情况下合理使用本项目，禁止用于商业目的使用。
 
 ## 应用截图
 
