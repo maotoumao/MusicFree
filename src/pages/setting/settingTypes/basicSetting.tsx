@@ -23,6 +23,8 @@ import useColors from '@/hooks/useColors';
 import ColorBlock from '@/components/base/colorBlock';
 import LyricManager from '@/core/lyricManager';
 import {SortType} from '@/constants/commonConst.ts';
+import Clipboard from '@react-native-clipboard/clipboard';
+import toast from '@/utils/toast';
 
 function createSwitch(
     title: string,
@@ -475,6 +477,14 @@ export default function BasicSetting() {
                                     </Paragraph>
                                 </ScrollView>
                             ),
+                            cancelText: '我知道了',
+                            okText: '复制日志',
+                            onOk() {
+                                if (errorLogContent) {
+                                    Clipboard.setString(errorLogContent);
+                                    toast.success('复制成功');
+                                }
+                            },
                         });
                     },
                 },

@@ -27,6 +27,7 @@ interface IDialogProps {
     onDismiss?: () => void;
     children?: ReactNode;
 }
+
 function Dialog(props: IDialogProps) {
     const {children, onDismiss} = props;
 
@@ -46,7 +47,7 @@ function Dialog(props: IDialogProps) {
               };
 
     useEffect(() => {
-        sharedShowValue.value = withTiming(1, timingConfig.animationFast);
+        sharedShowValue.value = 1;
         if (backHandlerRef.current) {
             backHandlerRef.current?.remove();
             backHandlerRef.current = undefined;
@@ -60,7 +61,7 @@ function Dialog(props: IDialogProps) {
         );
 
         return () => {
-            sharedShowValue.value = withTiming(0, timingConfig.animationFast);
+            sharedShowValue.value = 0;
             if (backHandlerRef.current) {
                 backHandlerRef.current?.remove();
                 backHandlerRef.current = undefined;
@@ -70,7 +71,10 @@ function Dialog(props: IDialogProps) {
 
     const containerStyle = useAnimatedStyle(() => {
         return {
-            opacity: sharedShowValue.value,
+            opacity: withTiming(
+                sharedShowValue.value,
+                timingConfig.animationFast,
+            ),
         };
     });
 
@@ -78,7 +82,10 @@ function Dialog(props: IDialogProps) {
         return {
             transform: [
                 {
-                    scale: 0.9 + sharedShowValue.value * 0.1,
+                    scale: withTiming(
+                        0.9 + sharedShowValue.value * 0.1,
+                        timingConfig.animationFast,
+                    ),
                 },
             ],
         };

@@ -66,7 +66,7 @@ export default function AboutSetting() {
                     软件相关信息会发布在公众号【
                     <ThemeText fontWeight="bold">一只猫头猫</ThemeText>
                     】中👇，也简单做了个
-                    <LinkText linkTo="https://musicfree.upup.fun">
+                    <LinkText linkTo="https://musicfree.catcat.work">
                         官方网站
                     </LinkText>
                     。（手机版和桌面版的）下载地址、使用方式、插件开发方式、常见问题都在站点中。
@@ -79,15 +79,15 @@ export default function AboutSetting() {
 
                 <ThemeText style={style.content}>
                     本软件完全免费，并基于{' '}
-                    <ThemeText fontWeight="bold">GPL3.0 协议</ThemeText>{' '}
+                    <ThemeText fontWeight="bold">AGPL3.0 协议</ThemeText>{' '}
                     开源，如果需要使用此代码进行二次开发，请遵守如下约定：
                 </ThemeText>
 
                 <ThemeText style={style.content}>
-                    1. 二次分发版必须同样遵循 GPL 3.0 协议，开源且免费
+                    1. 二次分发版必须同样遵循 AGPL 3.0 协议，开源且免费
                 </ThemeText>
                 <ThemeText style={style.content}>
-                    2. 合法合规使用代码，禁止用于商业用途;
+                    2. 合法合规使用代码，不要用于商业用途;
                     修改后的软件造成的任何问题由使用此代码的开发者承担
                 </ThemeText>
                 <ThemeText style={style.content}>
@@ -95,12 +95,7 @@ export default function AboutSetting() {
                     打包、二次分发时请保留代码出处：https://github.com/maotoumao/MusicFree
                 </ThemeText>
                 <ThemeText style={style.content}>
-                    4.
-                    如果使用此代码的开发者不同意以上三条，则视为二次分发版中修改部分的代码遵守
-                    CC0 协议
-                </ThemeText>
-                <ThemeText style={style.content}>
-                    5. 如果开源协议变更，将在此 Github 仓库更新，不另行通知
+                    4. 如果开源协议变更，将在此 Github 仓库更新，不另行通知
                 </ThemeText>
                 <ThemeText style={style.content}>
                     代码已开源到{' '}

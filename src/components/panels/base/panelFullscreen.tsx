@@ -60,7 +60,7 @@ export default function (props: IPanelFullScreenProps) {
     const windowHeight = useMemo(() => vh(100), [orientation]);
 
     useEffect(() => {
-        snapPoint.value = withTiming(1, timingConfig);
+        snapPoint.value = 1;
 
         if (backHandlerRef.current) {
             backHandlerRef.current?.remove();
@@ -69,7 +69,7 @@ export default function (props: IPanelFullScreenProps) {
         backHandlerRef.current = BackHandler.addEventListener(
             'hardwareBackPress',
             () => {
-                snapPoint.value = withTiming(0, timingConfig);
+                snapPoint.value = 0;
                 return true;
             },
         );
@@ -80,7 +80,7 @@ export default function (props: IPanelFullScreenProps) {
                 if (callback) {
                     hideCallbackRef.current.push(callback);
                 }
-                snapPoint.value = withTiming(0, timingConfig);
+                snapPoint.value = 0;
             },
         );
 
@@ -115,10 +115,13 @@ export default function (props: IPanelFullScreenProps) {
             return {
                 transform: [
                     {
-                        scale: 0.3 + snapPoint.value * 0.7,
+                        scale: withTiming(
+                            0.3 + snapPoint.value * 0.7,
+                            timingConfig,
+                        ),
                     },
                 ],
-                opacity: snapPoint.value,
+                opacity: withTiming(snapPoint.value, timingConfig),
             };
         }
     });
