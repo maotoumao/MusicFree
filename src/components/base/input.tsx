@@ -6,11 +6,11 @@ import {StyleSheet, TextInput, TextInputProps} from 'react-native';
 
 interface IInputProps extends TextInputProps {
     fontColor?: string;
-    hasHorizonalPadding?: boolean;
+    hasHorizontalPadding?: boolean;
 }
 
 export default function Input(props: IInputProps) {
-    const {fontColor, hasHorizonalPadding = true} = props;
+    const {fontColor, hasHorizontalPadding = true} = props;
     const colors = useColors();
 
     const currentColor = fontColor ?? colors.text;
@@ -24,7 +24,7 @@ export default function Input(props: IInputProps) {
             placeholderTextColor={Color(currentColor).alpha(0.7).toString()}
             {...props}
             style={[
-                hasHorizonalPadding
+                hasHorizontalPadding
                     ? styles.container
                     : styles.containerWithoutPadding,
                 defaultStyle,

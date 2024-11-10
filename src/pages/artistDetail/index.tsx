@@ -47,11 +47,11 @@ export default function ArtistDetail() {
             </AppBar>
             <View
                 style={
-                    orientation === 'horizonal'
-                        ? style.horizonal
+                    orientation === 'horizontal'
+                        ? style.horizontal
                         : globalStyle.flex1
                 }>
-                <Header neverFold={orientation === 'horizonal'} />
+                <Header neverFold={orientation === 'horizontal'} />
                 <Body />
             </View>
 
@@ -61,7 +61,7 @@ export default function ArtistDetail() {
 }
 
 const style = StyleSheet.create({
-    horizonal: {
+    horizontal: {
         flexDirection: 'row',
         flex: 1,
     },

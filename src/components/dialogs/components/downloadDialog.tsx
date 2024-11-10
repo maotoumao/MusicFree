@@ -6,10 +6,10 @@ import openUrl from '@/utils/openUrl';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {hideDialog} from '../useDialog';
-import Config from '@/core/config';
 import Checkbox from '@/components/base/checkbox';
 import Button from '@/components/base/textButton.tsx';
 import Dialog from './base';
+import PersistStatus from '@/core/persistStatus';
 
 interface IDownloadDialogProps {
     version: string;
@@ -25,7 +25,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
         <Dialog
             onDismiss={() => {
                 if (skipState) {
-                    Config.set('status.app.skipVersion', version);
+                    PersistStatus.set('app.skipVersion', version);
                 }
                 hideDialog();
             }}>
@@ -55,7 +55,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         onPress={() => {
                             hideDialog();
                             if (skipState) {
-                                Config.set('status.app.skipVersion', version);
+                                PersistStatus.set('app.skipVersion', version);
                             }
                         }}>
                         取消
@@ -63,7 +63,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                     <Button
                         style={style.button}
                         onPress={async () => {
-                            Config.set('status.app.skipVersion', undefined);
+                            PersistStatus.set('app.skipVersion', undefined);
                             openUrl(fromUrl);
                             Clipboard.setString(fromUrl);
                         }}>
@@ -73,7 +73,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         <Button
                             style={style.button}
                             onPress={async () => {
-                                Config.set('status.app.skipVersion', undefined);
+                                PersistStatus.set('app.skipVersion', undefined);
                                 openUrl(backUrl);
                                 Clipboard.setString(backUrl);
                             }}>

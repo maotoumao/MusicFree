@@ -113,7 +113,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
                         numberOfLines={1}
                         textAlign="right"
                         value={title}
-                        hasHorizonalPadding={false}
+                        hasHorizontalPadding={false}
                         onChangeText={onTitleChange}
                         style={{
                             height: fontSizeConst.content * 2.5,

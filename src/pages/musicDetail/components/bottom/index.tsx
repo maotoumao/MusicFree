@@ -11,7 +11,7 @@ export default function Bottom() {
         <View
             style={[
                 style.wrapper,
-                orientation === 'horizonal'
+                orientation === 'horizontal'
                     ? {
                           height: rpx(156),
                       }

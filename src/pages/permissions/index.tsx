@@ -96,7 +96,7 @@ export default function Permissions() {
                 />
                 <ThemeSwitch value={permissions.fileStorage} />
             </ListItem>
-            {/* <ListItem withHorizonalPadding heightType="big">
+            {/* <ListItem withHorizontalPadding heightType="big">
                 <ListItem.Content
                     title="后台运行"
                     description="用以在后台播放音乐"></ListItem.Content>

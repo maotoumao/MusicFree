@@ -21,7 +21,7 @@ export default function () {
             <View
                 style={[
                     style.wrapper,
-                    orientation === 'horizonal'
+                    orientation === 'horizontal'
                         ? {
                               marginTop: 0,
                           }

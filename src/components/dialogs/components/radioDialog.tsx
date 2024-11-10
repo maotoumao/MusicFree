@@ -36,7 +36,7 @@ export default function RadioDialog(props: IRadioDialogProps) {
             <FlatList
                 style={{
                     maxHeight:
-                        orientation === 'horizonal' ? vmin(60) : vmax(60),
+                        orientation === 'horizontal' ? vmin(60) : vmax(60),
                 }}
                 data={content}
                 renderItem={({item}) => {

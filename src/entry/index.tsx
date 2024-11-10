@@ -15,6 +15,10 @@ import Theme from '@/core/theme';
 import {BootstrapComp} from './useBootstrap';
 import {ToastBaseComponent} from '@/components/base/toast';
 import {StatusBar} from 'react-native';
+import {ReducedMotionConfig, ReduceMotion} from 'react-native-reanimated';
+/**
+ * 字体颜色
+ */
 
 /**
  * 字体颜色
@@ -32,6 +36,7 @@ export default function Pages() {
     return (
         <>
             <BootstrapComp />
+            <ReducedMotionConfig mode={ReduceMotion.Never} />
             <GestureHandlerRootView style={globalStyle.flex1}>
                 <SafeAreaProvider>
                     <NavigationContainer theme={theme} ref={navigationRef}>

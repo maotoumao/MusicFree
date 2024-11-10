@@ -11,10 +11,10 @@ export default function Content() {
         Config.get('setting.basic.musicDetailDefault') || 'album',
     );
     const orientation = useOrientation();
-    const showAlbumCover = tab === 'album' || orientation === 'horizonal';
+    const showAlbumCover = tab === 'album' || orientation === 'horizontal';
 
     const onTurnPageClick = () => {
-        if (orientation === 'horizonal') {
+        if (orientation === 'horizontal') {
             return;
         }
         if (tab === 'album') {
