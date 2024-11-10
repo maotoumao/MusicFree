@@ -38,7 +38,7 @@ export default function MusicDetail() {
                         <Content />
                         <Bottom />
                     </View>
-                    {orientation === 'horizonal' ? (
+                    {orientation === 'horizontal' ? (
                         <View style={globalStyle.flex1}>
                             <Lyric />
                         </View>

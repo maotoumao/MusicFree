@@ -22,7 +22,7 @@ export default function AboutSetting() {
         <View
             style={[
                 style.wrapper,
-                orientation === 'horizonal'
+                orientation === 'horizontal'
                     ? {
                           flexDirection: 'row',
                       }
@@ -31,7 +31,7 @@ export default function AboutSetting() {
             <View
                 style={[
                     style.header,
-                    orientation === 'horizonal' ? style.horizonalSize : null,
+                    orientation === 'horizontal' ? style.horizontalSize : null,
                 ]}>
                 <TouchableOpacity
                     onPress={() => {
@@ -152,7 +152,7 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    horizonalSize: {
+    horizontalSize: {
         width: rpx(600),
         height: '100%',
     },

@@ -245,7 +245,7 @@ export default function PluginItem(props: IPluginItemProps) {
         //     {options.map(_ =>
         //         _.show ? (
         //             <ListItem
-        //                 withHorizonalPadding
+        //                 withHorizontalPadding
         //                 key={`${plugin.hash}${_.title}`}
         //                 onPress={_.onPress}>
         //                 <ListItem.ListItemIcon icon={_.icon} />

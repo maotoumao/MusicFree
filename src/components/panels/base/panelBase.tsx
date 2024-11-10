@@ -55,7 +55,7 @@ export default function (props: IPanelBaseProps) {
     const safeAreaInsets = useSafeAreaInsets();
     const orientation = useOrientation();
     const useAnimatedBase = useMemo(
-        () => (orientation === 'horizonal' ? rpx(750) : height),
+        () => (orientation === 'horizontal' ? rpx(750) : height),
         [orientation],
     );
 
@@ -64,6 +64,7 @@ export default function (props: IPanelBaseProps) {
     const hideCallbackRef = useRef<Function[]>([]);
 
     const [keyboardHeight, setKeyboardHeight] = useState(0);
+
     useEffect(() => {
         snapPoint.value = withTiming(1, timingConfig);
 
@@ -185,7 +186,7 @@ export default function (props: IPanelBaseProps) {
                 {
                     backgroundColor: colors.backdrop,
                     height:
-                        orientation === 'horizonal'
+                        orientation === 'horizontal'
                             ? vh(100) - safeAreaInsets.top
                             : height -
                               (isFinite(keyboardHeight) ? keyboardHeight : 0),

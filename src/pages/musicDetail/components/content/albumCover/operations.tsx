@@ -36,7 +36,7 @@ export default function Operations() {
         <View
             style={[
                 styles.wrapper,
-                orientation === 'horizonal' ? styles.horizontalWrapper : null,
+                orientation === 'horizontal' ? styles.horizontalWrapper : null,
             ]}>
             <HeartIcon />
             <Pressable

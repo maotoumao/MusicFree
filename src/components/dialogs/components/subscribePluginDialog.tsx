@@ -43,7 +43,7 @@ export default function SubscribePluginDialog(
                 <View style={style.headerWrapper}>
                     <ThemeText>名称: </ThemeText>
                     <Input
-                        hasHorizonalPadding={false}
+                        hasHorizontalPadding={false}
                         style={[style.textInput, textColors]}
                         value={name}
                         onChangeText={t => {
@@ -54,7 +54,7 @@ export default function SubscribePluginDialog(
                 <View style={style.headerWrapper}>
                     <ThemeText>URL: </ThemeText>
                     <Input
-                        hasHorizonalPadding={false}
+                        hasHorizontalPadding={false}
                         style={[style.textInput, textColors]}
                         value={url}
                         onChangeText={t => {
