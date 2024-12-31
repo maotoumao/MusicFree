@@ -43,7 +43,6 @@ declare namespace ICommon {
         lyricOffset?: number;
 
         lrc?: string;
-        associatedLrc?: IMediaBase;
         headers?: Record<string, any>;
         url?: string;
         id?: string;
