@@ -49,6 +49,7 @@ import MediaCache from './mediaCache';
 import {produce} from 'immer';
 import objectPath from 'object-path';
 import notImplementedFunction from '@/utils/notImplementedFunction.ts';
+import deviceInfoModule from "react-native-device-info";
 
 axios.defaults.timeout = 2000;
 
@@ -102,6 +103,8 @@ const _console = {
     info: _consoleBind.bind(null, 'info'),
     error: _consoleBind.bind(null, 'error'),
 };
+
+const appVersion = deviceInfoModule.getVersion();
 
 function formatAuthUrl(url: string) {
     const urlObj = new URL(url);
@@ -164,13 +167,20 @@ export class Plugin {
                             PluginMeta.getPluginMeta(this)?.userVariables ?? {}
                         );
                     },
+                    appVersion,
                     os: 'android',
+                    lang: 'zh-CN'
                 };
+                const _process = {
+                    platform: 'android',
+                    version: appVersion,
+                    env,
+                }
 
                 // eslint-disable-next-line no-new-func
                 _instance = Function(`
                     'use strict';
-                    return function(require, __musicfree_require, module, exports, console, env, URL) {
+                    return function(require, __musicfree_require, module, exports, console, env, URL, process) {
                         ${funcCode}
                     }
                 `)()(
@@ -181,6 +191,7 @@ export class Plugin {
                     _console,
                     env,
                     URL,
+                    _process
                 );
                 if (_module.exports.default) {
                     _instance = _module.exports
