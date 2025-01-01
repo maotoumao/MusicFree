@@ -36,7 +36,6 @@ import {
 } from '@/constants/commonConst';
 import delay from '@/utils/delay';
 import * as cheerio from 'cheerio';
-import CookieManager from '@react-native-cookies/cookies';
 import he from 'he';
 import Network from './network';
 import LocalMusicSheet from './localMusicSheet';
@@ -49,6 +48,7 @@ import Base64 from '@/utils/base64';
 import MediaCache from './mediaCache';
 import {produce} from 'immer';
 import objectPath from 'object-path';
+import notImplementedFunction from '@/utils/notImplementedFunction.ts';
 
 axios.defaults.timeout = 2000;
 
@@ -61,6 +61,12 @@ export enum PluginStateCode {
     CannotParse = 'CANNOT PARSE',
 }
 
+const deprecatedCookieManager = {
+    get: notImplementedFunction,
+    set: notImplementedFunction,
+    flush: notImplementedFunction,
+};
+
 const packages: Record<string, any> = {
     cheerio,
     'crypto-js': CryptoJs,
@@ -69,7 +75,7 @@ const packages: Record<string, any> = {
     'big-integer': bigInt,
     qs,
     he,
-    '@react-native-cookies/cookies': CookieManager,
+    '@react-native-cookies/cookies': deprecatedCookieManager,
     webdav,
 };
 
@@ -967,6 +973,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         }
     }
 }
+
 //#endregion
 
 let plugins: Array<Plugin> = [];
