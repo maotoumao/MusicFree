@@ -9,7 +9,7 @@ import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import Toast from '@/utils/toast';
 import Download from '@/core/download';
 
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import {produce} from 'immer';

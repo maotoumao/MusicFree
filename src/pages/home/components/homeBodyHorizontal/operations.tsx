@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import rpx from '@/utils/rpx';
 import ActionButton from '../ActionButton';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import {ScrollView} from 'react-native-gesture-handler';
 
 export default function Operations() {

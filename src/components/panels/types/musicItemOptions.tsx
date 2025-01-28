@@ -13,7 +13,7 @@ import FastImage from '@/components/base/fastImage';
 import Toast from '@/utils/toast';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH} from '@/core/router';
 
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';

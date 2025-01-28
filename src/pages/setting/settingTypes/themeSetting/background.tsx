@@ -9,7 +9,7 @@ import Config from '@/core/config';
 // import ImageColors from 'react-native-image-colors';
 // import {launchImageLibrary} from 'react-native-image-picker';
 import ThemeCard from './themeCard';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import Theme from '@/core/theme';
 
 export default function Background() {

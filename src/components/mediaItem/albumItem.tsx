@@ -1,5 +1,5 @@
 import React from 'react';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import ListItem from '@/components/base/listItem';
 import {ImgAsset} from '@/constants/assetsConst';
 import TitleAndTag from './titleAndTag';

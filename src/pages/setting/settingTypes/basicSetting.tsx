@@ -9,7 +9,7 @@ import {clearCache, getCacheSize, sizeFormatter} from '@/utils/fileUtils';
 
 import Toast from '@/utils/toast';
 import pathConst from '@/constants/pathConst';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import {readdir} from 'react-native-fs';
 import {qualityKeys, qualityText} from '@/utils/qualities';
 import {clearLog, getErrorLogContent} from '@/utils/log';

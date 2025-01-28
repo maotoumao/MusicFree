@@ -5,7 +5,7 @@ import Header from './components/header';
 import Body from './components/body';
 import {useAtom, useSetAtom} from 'jotai';
 import {initQueryResult, queryResultAtom, scrollToTopAtom} from './store/atoms';
-import {ROUTE_PATH, useNavigate, useParams} from '@/entry/router';
+import {ROUTE_PATH, useNavigate, useParams} from '@/core/router';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import useOrientation from '@/hooks/useOrientation';

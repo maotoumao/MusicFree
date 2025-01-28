@@ -10,7 +10,7 @@ import {useAtomValue} from 'jotai';
 import {scrollToTopAtom} from '../store/atoms';
 import ThemeText from '@/components/base/themeText';
 import Tag from '@/components/base/tag';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import Image from '@/components/base/image';
 import {ImgAsset} from '@/constants/assetsConst';
 

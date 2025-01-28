@@ -1,6 +1,6 @@
 import React from 'react';
 import MusicSheetPage from '@/components/musicSheetPage';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import usePluginSheetMusicList from './hooks/usePluginSheetMusicList';
 
 export default function PluginSheetDetail() {

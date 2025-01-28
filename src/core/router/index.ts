@@ -1,25 +1,6 @@
-import ArtistDetail from '@/pages/artistDetail';
-import Downloading from '@/pages/downloading';
-import FileSelector from '@/pages/fileSelector';
-import LocalMusic from '@/pages/localMusic';
-import MusicListEditor from '@/pages/musicListEditor';
-import SearchMusicList from '@/pages/searchMusicList';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {createRef, useCallback} from 'react';
-import AlbumDetail from '../pages/albumDetail';
-import Home from '../pages/home';
-import MusicDetail from '../pages/musicDetail';
-import SearchPage from '../pages/searchPage';
-import Setting from '../pages/setting';
-import SheetDetail from '../pages/sheetDetail';
-import {LogBox} from 'react-native';
-import TopList from '@/pages/topList';
-import TopListDetail from '@/pages/topListDetail';
-import RecommendSheets from '@/pages/recommendSheets';
-import PluginSheetDetail from '@/pages/pluginSheetDetail';
-import History from '@/pages/history';
-import SetCustomTheme from '@/pages/setCustomTheme';
-import Permissions from '@/pages/permissions';
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useCallback } from "react";
+import { LogBox } from "react-native";
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -67,92 +48,8 @@ export const ROUTE_PATH = {
     PERMISSIONS: 'permissions',
 } as const;
 
-type Valueof<T> = T[keyof T];
-type RoutePaths = Valueof<typeof ROUTE_PATH>;
-
-type IRoutes = {
-    path: RoutePaths;
-    component: (...args: any[]) => JSX.Element;
-};
-
-export const routes: Array<IRoutes> = [
-    {
-        path: ROUTE_PATH.HOME,
-        component: Home,
-    },
-    {
-        path: ROUTE_PATH.MUSIC_DETAIL,
-        component: MusicDetail,
-    },
-    {
-        path: ROUTE_PATH.TOP_LIST,
-        component: TopList,
-    },
-    {
-        path: ROUTE_PATH.TOP_LIST_DETAIL,
-        component: TopListDetail,
-    },
-    {
-        path: ROUTE_PATH.SEARCH_PAGE,
-        component: SearchPage,
-    },
-    {
-        path: ROUTE_PATH.LOCAL_SHEET_DETAIL,
-        component: SheetDetail,
-    },
-    {
-        path: ROUTE_PATH.ALBUM_DETAIL,
-        component: AlbumDetail,
-    },
-    {
-        path: ROUTE_PATH.ARTIST_DETAIL,
-        component: ArtistDetail,
-    },
-    {
-        path: ROUTE_PATH.SETTING,
-        component: Setting,
-    },
-    {
-        path: ROUTE_PATH.LOCAL,
-        component: LocalMusic,
-    },
-    {
-        path: ROUTE_PATH.DOWNLOADING,
-        component: Downloading,
-    },
-    {
-        path: ROUTE_PATH.SEARCH_MUSIC_LIST,
-        component: SearchMusicList,
-    },
-    {
-        path: ROUTE_PATH.MUSIC_LIST_EDITOR,
-        component: MusicListEditor,
-    },
-    {
-        path: ROUTE_PATH.FILE_SELECTOR,
-        component: FileSelector,
-    },
-    {
-        path: ROUTE_PATH.RECOMMEND_SHEETS,
-        component: RecommendSheets,
-    },
-    {
-        path: ROUTE_PATH.PLUGIN_SHEET_DETAIL,
-        component: PluginSheetDetail,
-    },
-    {
-        path: ROUTE_PATH.HISTORY,
-        component: History,
-    },
-    {
-        path: ROUTE_PATH.SET_CUSTOM_THEME,
-        component: SetCustomTheme,
-    },
-    {
-        path: ROUTE_PATH.PERMISSIONS,
-        component: Permissions,
-    },
-];
+type ValueOf<T> = T[keyof T];
+type RoutePaths = ValueOf<typeof ROUTE_PATH>;
 
 type RouterParamsBase = Record<RoutePaths, any>;
 /** 路由参数 */
@@ -228,14 +125,4 @@ export function useNavigate() {
     []);
 
     return navigate;
-}
-
-export const navigationRef = createRef<any>();
-
-/** 在 react 组件外使用导航 */
-export function navigate<T extends RoutePaths>(
-    route: T,
-    params?: RouterParams[T],
-) {
-    navigationRef.current?.navigate?.(route, params);
 }

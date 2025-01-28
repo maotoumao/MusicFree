@@ -4,7 +4,7 @@ import ListItem, {ListItemHeader} from '@/components/base/listItem';
 import Toast from '@/utils/toast';
 import Backup from '@/core/backup';
 import backup from '@/core/backup';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 
 import axios from 'axios';
 import {showDialog} from '@/components/dialogs/useDialog';

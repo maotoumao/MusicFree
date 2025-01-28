@@ -4,7 +4,7 @@ import rpx from "@/utils/rpx";
 
 import Download from "@/core/download";
 import LocalMusicSheet from "@/core/localMusicSheet";
-import { ROUTE_PATH } from "@/entry/router";
+import { ROUTE_PATH } from "@/core/router";
 import { ImgAsset } from "@/constants/assetsConst";
 import Toast from "@/utils/toast";
 import toast from "@/utils/toast";

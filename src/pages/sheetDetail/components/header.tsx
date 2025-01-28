@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import PlayAllBar from '@/components/base/playAllBar';
 import useColors from '@/hooks/useColors';
 import MusicSheet from '@/core/musicSheet';
