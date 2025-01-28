@@ -1,5 +1,5 @@
 import { showDialog } from "@/components/dialogs/useDialog";
-import PersistConfig from "@/core/persistConfig.ts";
+import PersistStatus from "@/core/persistStatus.ts";
 import checkUpdate from "@/utils/checkUpdate";
 import Toast from "@/utils/toast";
 import { compare } from "compare-versions";
@@ -12,7 +12,7 @@ export const checkUpdateAndShowResult = (
     checkUpdate().then(updateInfo => {
         if (updateInfo?.needUpdate) {
             const {data} = updateInfo;
-            const skipVersion = PersistConfig.get('app.skipVersion');
+            const skipVersion = PersistStatus.get('app.skipVersion');
             console.log(skipVersion, data);
             if (
                 checkSkip &&

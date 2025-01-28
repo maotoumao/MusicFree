@@ -1,4 +1,4 @@
-import PersistConfig from "@/core/persistConfig.ts";
+import PersistStatus from "@/core/persistStatus.ts";
 import { GlobalState } from "@/utils/stateMapper";
 
 /** 音乐队列 */
@@ -31,7 +31,7 @@ export function setPlayList(
     });
     playListIndexMap = newIndexMap;
     if (shouldSave) {
-        PersistConfig.set('music.playList', newPlayList);
+        PersistStatus.set('music.playList', newPlayList);
     }
 }
 

@@ -6,7 +6,7 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { hideDialog } from "../useDialog";
 import Checkbox from "@/components/base/checkbox";
 import Dialog from "./base";
-import PersistConfig from "@/core/persistConfig.ts";
+import PersistStatus from "@/core/persistStatus.ts";
 import NativeUtils from "@/native/utils";
 
 export default function CheckStorage() {
@@ -14,7 +14,7 @@ export default function CheckStorage() {
 
     const onCancel = () => {
         if (skipState) {
-            PersistConfig.set('app.skipBootstrapStorageDialog', true);
+            PersistStatus.set('app.skipBootstrapStorageDialog', true);
         }
         hideDialog();
     };

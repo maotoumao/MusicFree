@@ -77,10 +77,10 @@ function useValue<K extends keyof IPersistConfig>(
     return state;
 }
 
-const PersistConfig = {
+const PersistStatus = {
     get,
     set,
     useValue,
 };
 
-export default PersistConfig;
+export default PersistStatus;

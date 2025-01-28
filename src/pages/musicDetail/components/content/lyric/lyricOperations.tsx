@@ -10,7 +10,7 @@ import Toast from "@/utils/toast";
 import { hidePanel, showPanel } from "@/components/panels/usePanel";
 import TrackPlayer from "@/core/trackPlayer";
 import MediaExtra from "@/core/mediaExtra";
-import PersistConfig from "@/core/persistConfig.ts";
+import PersistStatus from "@/core/persistStatus.ts";
 import useOrientation from "@/hooks/useOrientation";
 import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";
@@ -25,7 +25,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
     const lyricConfig = Config.useConfig('setting.lyric');
 
     const hasTranslation = LyricManager.useLyricState()?.hasTranslation;
-    const showTranslation = PersistConfig.useValue(
+    const showTranslation = PersistStatus.useValue(
         'lyric.showTranslation',
         false,
     );
@@ -43,7 +43,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                     showPanel('SetFontSize', {
                         defaultSelect: lyricConfig?.detailFontSize ?? 1,
                         onSelectChange(value) {
-                            PersistConfig.set('lyric.detailFontSize', value);
+                            PersistStatus.set('lyric.detailFontSize', value);
                             scrollToCurrentLrcItem();
                         },
                     });
@@ -109,7 +109,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                         return;
                     }
 
-                    PersistConfig.set(
+                    PersistStatus.set(
                         'lyric.showTranslation',
                         !showTranslation,
                     );

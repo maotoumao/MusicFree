@@ -9,7 +9,7 @@ import { hideDialog } from "../useDialog";
 import Checkbox from "@/components/base/checkbox";
 import Button from "@/components/base/textButton.tsx";
 import Dialog from "./base";
-import PersistConfig from "@/core/persistConfig.ts";
+import PersistStatus from "@/core/persistStatus.ts";
 
 interface IDownloadDialogProps {
     version: string;
@@ -25,7 +25,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
         <Dialog
             onDismiss={() => {
                 if (skipState) {
-                    PersistConfig.set('app.skipVersion', version);
+                    PersistStatus.set('app.skipVersion', version);
                 }
                 hideDialog();
             }}>
@@ -55,7 +55,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         onPress={() => {
                             hideDialog();
                             if (skipState) {
-                                PersistConfig.set('app.skipVersion', version);
+                                PersistStatus.set('app.skipVersion', version);
                             }
                         }}>
                         取消
@@ -63,7 +63,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                     <Button
                         style={style.button}
                         onPress={async () => {
-                            PersistConfig.set('app.skipVersion', undefined);
+                            PersistStatus.set('app.skipVersion', undefined);
                             openUrl(fromUrl);
                             Clipboard.setString(fromUrl);
                         }}>
@@ -73,7 +73,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         <Button
                             style={style.button}
                             onPress={async () => {
-                                PersistConfig.set('app.skipVersion', undefined);
+                                PersistStatus.set('app.skipVersion', undefined);
                                 openUrl(backUrl);
                                 Clipboard.setString(backUrl);
                             }}>

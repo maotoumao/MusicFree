@@ -1,9 +1,9 @@
 // import {Quality} from '@/constants/commonConst';
-import {CustomizedColors} from '@/hooks/useColors';
-import {getStorage, setStorage} from '@/utils/storage';
-import {produce} from 'immer';
-import {useEffect, useState} from 'react';
-import {ResumeMode, SortType} from '@/constants/commonConst.ts';
+import { CustomizedColors } from "@/hooks/useColors";
+import { getStorage, setStorage } from "@/utils/storage";
+import { produce } from "immer";
+import { useEffect, useState } from "react";
+import { ResumeMode, SortType } from "@/constants/commonConst.ts";
 
 type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[] | IMusic.IQuality;
 interface IConfig {
@@ -102,24 +102,6 @@ interface IConfig {
             url: string;
             username: string;
             password: string;
-        };
-    };
-    status: {
-        music: {
-            /** 当前的音乐 */
-            track: IMusic.IMusicItem;
-            /** 进度 */
-            progress: number;
-            /** 模式 */
-            repeatMode: string;
-            /** 列表 */
-            musicQueue: IMusic.IMusicItem[];
-            /** 速度 */
-            rate: number;
-        };
-        app: {
-            /** 跳过特定版本 */
-            skipVersion: string;
         };
     };
 }

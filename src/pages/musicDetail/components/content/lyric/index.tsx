@@ -13,7 +13,7 @@ import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
 import DraggingTime from "./draggingTime";
 import LyricItemComponent from "./lyricItem";
-import PersistConfig from "@/core/persistConfig.ts";
+import PersistStatus from "@/core/persistStatus.ts";
 import LyricOperations from "./lyricOperations";
 import MediaExtra from "@/core/mediaExtra";
 import { IParsedLrcItem } from "@/utils/lrcParser";
@@ -43,11 +43,11 @@ export default function Lyric(props: IProps) {
     const {loading, meta, lyrics, hasTranslation} =
         LyricManager.useLyricState();
     const currentLrcItem = LyricManager.useCurrentLyric();
-    const showTranslation = PersistConfig.useValue(
+    const showTranslation = PersistStatus.useValue(
         'lyric.showTranslation',
         false,
     );
-    const fontSizeKey = PersistConfig.useValue('lyric.detailFontSize', 1);
+    const fontSizeKey = PersistStatus.useValue('lyric.detailFontSize', 1);
     const fontSizeStyle = useMemo(
         () => ({
             fontSize: fontSizeMap[fontSizeKey!],

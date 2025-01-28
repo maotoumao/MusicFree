@@ -35,7 +35,7 @@ import { createMediaIndexMap } from "@/utils/mediaIndexMap";
 import PluginManager from "../pluginManager";
 import { musicIsPaused } from "@/utils/trackUtils";
 import { errorLog, trace } from "@/utils/log";
-import PersistConfig from "../persistConfig.ts";
+import PersistStatus from "../persistStatus.ts";
 import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog";
 import getSimilarMusic from "@/utils/getSimilarMusic";
 
@@ -81,24 +81,24 @@ function migrate() {
         return;
     }
     const {rate, repeatMode, musicQueue, progress, track} = config;
-    PersistConfig.set('music.rate', rate);
-    PersistConfig.set('music.repeatMode', repeatMode);
-    PersistConfig.set('music.playList', musicQueue);
-    PersistConfig.set('music.progress', progress);
-    PersistConfig.set('music.musicItem', track);
+    PersistStatus.set('music.rate', rate);
+    PersistStatus.set('music.repeatMode', repeatMode);
+    PersistStatus.set('music.playList', musicQueue);
+    PersistStatus.set('music.progress', progress);
+    PersistStatus.set('music.musicItem', track);
     Config.set('status.music', undefined);
 }
 
 async function setupTrackPlayer() {
     migrate();
 
-    const rate = PersistConfig.get('music.rate');
-    const musicQueue = PersistConfig.get('music.playList');
-    const repeatMode = PersistConfig.get('music.repeatMode');
-    const progress = PersistConfig.get('music.progress');
-    const track = PersistConfig.get('music.musicItem');
+    const rate = PersistStatus.get('music.rate');
+    const musicQueue = PersistStatus.get('music.playList');
+    const repeatMode = PersistStatus.get('music.repeatMode');
+    const progress = PersistStatus.get('music.progress');
+    const track = PersistStatus.get('music.musicItem');
     const quality =
-        PersistConfig.get('music.quality') ||
+        PersistStatus.get('music.quality') ||
         Config.get('setting.basic.defaultPlayQuality') ||
         'standard';
 
@@ -401,7 +401,7 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
     // 更新下一首歌的信息
     ReactNativeTrackPlayer.updateMetadataForTrack(1, getFakeNextTrack());
     // 记录
-    PersistConfig.set('music.repeatMode', mode);
+    PersistStatus.set('music.repeatMode', mode);
 };
 
 /** 清空播放列表 */
@@ -410,8 +410,8 @@ const clear = async () => {
     setCurrentMusic(null);
 
     await ReactNativeTrackPlayer.reset();
-    PersistConfig.set('music.musicItem', undefined);
-    PersistConfig.set('music.progress', 0);
+    PersistStatus.set('music.musicItem', undefined);
+    PersistStatus.set('music.progress', 0);
 };
 
 /** 暂停 */
@@ -425,8 +425,8 @@ const setTrackSource = async (track: Track, autoPlay = true) => {
         track.artwork = undefined;
     }
     await ReactNativeTrackPlayer.setQueue([track, getFakeNextTrack()]);
-    PersistConfig.set('music.musicItem', track as IMusic.IMusicItem);
-    PersistConfig.set('music.progress', 0);
+    PersistStatus.set('music.musicItem', track as IMusic.IMusicItem);
+    PersistStatus.set('music.progress', 0);
     if (autoPlay) {
         await ReactNativeTrackPlayer.play();
     }
@@ -436,8 +436,8 @@ const setCurrentMusic = (musicItem?: IMusic.IMusicItem | null) => {
     if (!musicItem) {
         currentIndex = -1;
         currentMusicStore.setValue(null);
-        PersistConfig.set('music.musicItem', undefined);
-        PersistConfig.set('music.progress', 0);
+        PersistStatus.set('music.musicItem', undefined);
+        PersistStatus.set('music.progress', 0);
         return;
     }
     currentIndex = getMusicIndex(musicItem);
@@ -446,7 +446,7 @@ const setCurrentMusic = (musicItem?: IMusic.IMusicItem | null) => {
 
 const setQuality = (quality: IMusic.IQualityKey) => {
     qualityStore.setValue(quality);
-    PersistConfig.set('music.quality', quality);
+    PersistStatus.set('music.quality', quality);
 };
 /**
  * 播放

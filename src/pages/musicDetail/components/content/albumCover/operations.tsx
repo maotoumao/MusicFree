@@ -12,7 +12,7 @@ import useOrientation from "@/hooks/useOrientation";
 import { showPanel } from "@/components/panels/usePanel";
 import TrackPlayer from "@/core/trackPlayer";
 import { iconSizeConst } from "@/constants/uiConst";
-import PersistConfig from "@/core/persistConfig.ts";
+import PersistStatus from "@/core/persistStatus.ts";
 import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";
 import PluginManager from "@/core/pluginManager.ts";
@@ -23,7 +23,7 @@ export default function Operations() {
     const currentQuality = TrackPlayer.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
-    const rate = PersistConfig.useValue('music.rate', 100);
+    const rate = PersistStatus.useValue('music.rate', 100);
     const orientation = useOrientation();
 
     const supportComment = useMemo(() => {
@@ -86,7 +86,7 @@ export default function Operations() {
                             if (rate !== newRate) {
                                 try {
                                     await TrackPlayer.setRate(newRate / 100);
-                                    PersistConfig.set('music.rate', newRate);
+                                    PersistStatus.set('music.rate', newRate);
                                 } catch {}
                             }
                         },
