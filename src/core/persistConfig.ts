@@ -1,6 +1,6 @@
-import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
-import safeParse from '@/utils/safeParse';
-import {useEffect, useState} from 'react';
+import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
+import safeParse from "@/utils/safeParse";
+import { useEffect, useState } from "react";
 
 // Internal Method
 const getStore = () => {
@@ -77,10 +77,10 @@ function useValue<K extends keyof IPersistConfig>(
     return state;
 }
 
-const PersistStatus = {
+const PersistConfig = {
     get,
     set,
     useValue,
 };
 
-export default PersistStatus;
+export default PersistConfig;

@@ -1,19 +1,19 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import {iconSizeConst} from '@/constants/uiConst';
-import TranslationIcon from '@/assets/icons/translation.svg';
-import Config from '@/core/config';
-import useColors from '@/hooks/useColors';
-import LyricManager from '@/core/lyricManager';
-import Toast from '@/utils/toast';
-import {hidePanel, showPanel} from '@/components/panels/usePanel';
-import TrackPlayer from '@/core/trackPlayer';
-import MediaExtra from '@/core/mediaExtra';
-import PersistStatus from '@/core/persistStatus';
-import useOrientation from '@/hooks/useOrientation';
-import HeartIcon from '../heartIcon';
-import Icon from '@/components/base/icon.tsx';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import { iconSizeConst } from "@/constants/uiConst";
+import TranslationIcon from "@/assets/icons/translation.svg";
+import Config from "@/core/config";
+import useColors from "@/hooks/useColors";
+import LyricManager from "@/core/lyricManager";
+import Toast from "@/utils/toast";
+import { hidePanel, showPanel } from "@/components/panels/usePanel";
+import TrackPlayer from "@/core/trackPlayer";
+import MediaExtra from "@/core/mediaExtra";
+import PersistConfig from "@/core/persistConfig.ts";
+import useOrientation from "@/hooks/useOrientation";
+import HeartIcon from "../heartIcon";
+import Icon from "@/components/base/icon.tsx";
 
 interface ILyricOperationsProps {
     scrollToCurrentLrcItem: () => void;
@@ -25,7 +25,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
     const lyricConfig = Config.useConfig('setting.lyric');
 
     const hasTranslation = LyricManager.useLyricState()?.hasTranslation;
-    const showTranslation = PersistStatus.useValue(
+    const showTranslation = PersistConfig.useValue(
         'lyric.showTranslation',
         false,
     );
@@ -43,7 +43,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                     showPanel('SetFontSize', {
                         defaultSelect: lyricConfig?.detailFontSize ?? 1,
                         onSelectChange(value) {
-                            PersistStatus.set('lyric.detailFontSize', value);
+                            PersistConfig.set('lyric.detailFontSize', value);
                             scrollToCurrentLrcItem();
                         },
                     });
@@ -109,7 +109,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                         return;
                     }
 
-                    PersistStatus.set(
+                    PersistConfig.set(
                         'lyric.showTranslation',
                         !showTranslation,
                     );

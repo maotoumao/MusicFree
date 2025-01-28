@@ -1,36 +1,27 @@
-import {produce} from 'immer';
+import { produce } from "immer";
 import ReactNativeTrackPlayer, {
     Event,
     State,
     Track,
     TrackMetadataBase,
     usePlaybackState,
-    useProgress,
-} from 'react-native-track-player';
-import shuffle from 'lodash.shuffle';
-import Config from '../config';
-import {
-    EDeviceEvents,
-    internalFakeSoundKey,
-    sortIndexSymbol,
-    timeStampSymbol,
-} from '@/constants/commonConst';
-import {GlobalState} from '@/utils/stateMapper';
-import delay from '@/utils/delay';
-import {
-    isSameMediaItem,
-    mergeProps,
-    sortByTimestampAndIndex,
-} from '@/utils/mediaItem';
-import Network from '../network';
-import LocalMusicSheet from '../localMusicSheet';
-import {SoundAsset} from '@/constants/assetsConst';
-import {getQualityOrder} from '@/utils/qualities';
-import musicHistory from '../musicHistory';
-import getUrlExt from '@/utils/getUrlExt';
-import {DeviceEventEmitter} from 'react-native';
-import LyricManager from '../lyricManager';
-import {MusicRepeatMode} from './common';
+    useProgress
+} from "react-native-track-player";
+import shuffle from "lodash.shuffle";
+import Config from "../config";
+import { EDeviceEvents, internalFakeSoundKey, sortIndexSymbol, timeStampSymbol } from "@/constants/commonConst";
+import { GlobalState } from "@/utils/stateMapper";
+import delay from "@/utils/delay";
+import { isSameMediaItem, mergeProps, sortByTimestampAndIndex } from "@/utils/mediaItem";
+import Network from "../network";
+import LocalMusicSheet from "../localMusicSheet";
+import { SoundAsset } from "@/constants/assetsConst";
+import { getQualityOrder } from "@/utils/qualities";
+import musicHistory from "../musicHistory";
+import getUrlExt from "@/utils/getUrlExt";
+import { DeviceEventEmitter } from "react-native";
+import LyricManager from "../lyricManager";
+import { MusicRepeatMode } from "./common";
 import {
     getMusicIndex,
     getPlayList,
@@ -38,15 +29,15 @@ import {
     isInPlayList,
     isPlayListEmpty,
     setPlayList,
-    usePlayList,
-} from './internal/playList';
-import {createMediaIndexMap} from '@/utils/mediaIndexMap';
-import PluginManager from '../pluginManager';
-import {musicIsPaused} from '@/utils/trackUtils';
-import {errorLog, trace} from '@/utils/log';
-import PersistStatus from '../persistStatus';
-import {getCurrentDialog, showDialog} from '@/components/dialogs/useDialog';
-import getSimilarMusic from '@/utils/getSimilarMusic';
+    usePlayList
+} from "./internal/playList";
+import { createMediaIndexMap } from "@/utils/mediaIndexMap";
+import PluginManager from "../pluginManager";
+import { musicIsPaused } from "@/utils/trackUtils";
+import { errorLog, trace } from "@/utils/log";
+import PersistConfig from "../persistConfig.ts";
+import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog";
+import getSimilarMusic from "@/utils/getSimilarMusic";
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -90,24 +81,24 @@ function migrate() {
         return;
     }
     const {rate, repeatMode, musicQueue, progress, track} = config;
-    PersistStatus.set('music.rate', rate);
-    PersistStatus.set('music.repeatMode', repeatMode);
-    PersistStatus.set('music.playList', musicQueue);
-    PersistStatus.set('music.progress', progress);
-    PersistStatus.set('music.musicItem', track);
+    PersistConfig.set('music.rate', rate);
+    PersistConfig.set('music.repeatMode', repeatMode);
+    PersistConfig.set('music.playList', musicQueue);
+    PersistConfig.set('music.progress', progress);
+    PersistConfig.set('music.musicItem', track);
     Config.set('status.music', undefined);
 }
 
 async function setupTrackPlayer() {
     migrate();
 
-    const rate = PersistStatus.get('music.rate');
-    const musicQueue = PersistStatus.get('music.playList');
-    const repeatMode = PersistStatus.get('music.repeatMode');
-    const progress = PersistStatus.get('music.progress');
-    const track = PersistStatus.get('music.musicItem');
+    const rate = PersistConfig.get('music.rate');
+    const musicQueue = PersistConfig.get('music.playList');
+    const repeatMode = PersistConfig.get('music.repeatMode');
+    const progress = PersistConfig.get('music.progress');
+    const track = PersistConfig.get('music.musicItem');
     const quality =
-        PersistStatus.get('music.quality') ||
+        PersistConfig.get('music.quality') ||
         Config.get('setting.basic.defaultPlayQuality') ||
         'standard';
 
@@ -410,7 +401,7 @@ const setRepeatMode = (mode: MusicRepeatMode) => {
     // 更新下一首歌的信息
     ReactNativeTrackPlayer.updateMetadataForTrack(1, getFakeNextTrack());
     // 记录
-    PersistStatus.set('music.repeatMode', mode);
+    PersistConfig.set('music.repeatMode', mode);
 };
 
 /** 清空播放列表 */
@@ -419,8 +410,8 @@ const clear = async () => {
     setCurrentMusic(null);
 
     await ReactNativeTrackPlayer.reset();
-    PersistStatus.set('music.musicItem', undefined);
-    PersistStatus.set('music.progress', 0);
+    PersistConfig.set('music.musicItem', undefined);
+    PersistConfig.set('music.progress', 0);
 };
 
 /** 暂停 */
@@ -434,8 +425,8 @@ const setTrackSource = async (track: Track, autoPlay = true) => {
         track.artwork = undefined;
     }
     await ReactNativeTrackPlayer.setQueue([track, getFakeNextTrack()]);
-    PersistStatus.set('music.musicItem', track as IMusic.IMusicItem);
-    PersistStatus.set('music.progress', 0);
+    PersistConfig.set('music.musicItem', track as IMusic.IMusicItem);
+    PersistConfig.set('music.progress', 0);
     if (autoPlay) {
         await ReactNativeTrackPlayer.play();
     }
@@ -445,8 +436,8 @@ const setCurrentMusic = (musicItem?: IMusic.IMusicItem | null) => {
     if (!musicItem) {
         currentIndex = -1;
         currentMusicStore.setValue(null);
-        PersistStatus.set('music.musicItem', undefined);
-        PersistStatus.set('music.progress', 0);
+        PersistConfig.set('music.musicItem', undefined);
+        PersistConfig.set('music.progress', 0);
         return;
     }
     currentIndex = getMusicIndex(musicItem);
@@ -455,7 +446,7 @@ const setCurrentMusic = (musicItem?: IMusic.IMusicItem | null) => {
 
 const setQuality = (quality: IMusic.IQualityKey) => {
     qualityStore.setValue(quality);
-    PersistStatus.set('music.quality', quality);
+    PersistConfig.set('music.quality', quality);
 };
 /**
  * 播放

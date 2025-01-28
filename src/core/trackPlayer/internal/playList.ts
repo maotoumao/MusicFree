@@ -1,5 +1,5 @@
-import PersistStatus from '@/core/persistStatus';
-import {GlobalState} from '@/utils/stateMapper';
+import PersistConfig from "@/core/persistConfig.ts";
+import { GlobalState } from "@/utils/stateMapper";
 
 /** 音乐队列 */
 const playListStore = new GlobalState<IMusic.IMusicItem[]>([]);
@@ -31,7 +31,7 @@ export function setPlayList(
     });
     playListIndexMap = newIndexMap;
     if (shouldSave) {
-        PersistStatus.set('music.playList', newPlayList);
+        PersistConfig.set('music.playList', newPlayList);
     }
 }
 

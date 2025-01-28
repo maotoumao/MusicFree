@@ -1,21 +1,21 @@
-import React, {useMemo} from 'react';
-import {Image, Pressable, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
+import React, { useMemo } from "react";
+import { Image, Pressable, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
 
-import Download from '@/core/download';
-import LocalMusicSheet from '@/core/localMusicSheet';
-import {ROUTE_PATH} from '@/entry/router';
-import {ImgAsset} from '@/constants/assetsConst';
-import Toast from '@/utils/toast';
-import toast from '@/utils/toast';
-import useOrientation from '@/hooks/useOrientation';
-import {showPanel} from '@/components/panels/usePanel';
-import TrackPlayer from '@/core/trackPlayer';
-import {iconSizeConst} from '@/constants/uiConst';
-import PersistStatus from '@/core/persistStatus';
-import HeartIcon from '../heartIcon';
-import Icon from '@/components/base/icon.tsx';
-import PluginManager from '@/core/pluginManager.ts';
+import Download from "@/core/download";
+import LocalMusicSheet from "@/core/localMusicSheet";
+import { ROUTE_PATH } from "@/entry/router";
+import { ImgAsset } from "@/constants/assetsConst";
+import Toast from "@/utils/toast";
+import toast from "@/utils/toast";
+import useOrientation from "@/hooks/useOrientation";
+import { showPanel } from "@/components/panels/usePanel";
+import TrackPlayer from "@/core/trackPlayer";
+import { iconSizeConst } from "@/constants/uiConst";
+import PersistConfig from "@/core/persistConfig.ts";
+import HeartIcon from "../heartIcon";
+import Icon from "@/components/base/icon.tsx";
+import PluginManager from "@/core/pluginManager.ts";
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -23,7 +23,7 @@ export default function Operations() {
     const currentQuality = TrackPlayer.useCurrentQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
-    const rate = PersistStatus.useValue('music.rate', 100);
+    const rate = PersistConfig.useValue('music.rate', 100);
     const orientation = useOrientation();
 
     const supportComment = useMemo(() => {
@@ -86,7 +86,7 @@ export default function Operations() {
                             if (rate !== newRate) {
                                 try {
                                     await TrackPlayer.setRate(newRate / 100);
-                                    PersistStatus.set('music.rate', newRate);
+                                    PersistConfig.set('music.rate', newRate);
                                 } catch {}
                             }
                         },

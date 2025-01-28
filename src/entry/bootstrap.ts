@@ -16,7 +16,7 @@ import Toast from "@/utils/toast";
 import { localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
 import TrackPlayer from "@/core/trackPlayer";
 import musicHistory from "@/core/musicHistory";
-import PersistStatus from "@/core/persistStatus";
+import PersistConfig from "@/core/persistConfig.ts";
 import { perfLogger } from "@/utils/perfLogger";
 import * as SplashScreen from "expo-splash-screen";
 import MusicSheet from "@/core/musicSheet";
@@ -43,7 +43,7 @@ async function _bootstrap() {
         const hasPermission = await NativeUtils.checkStoragePermission();
         if (
             !hasPermission &&
-            !PersistStatus.get('app.skipBootstrapStorageDialog')
+            !PersistConfig.get('app.skipBootstrapStorageDialog')
         ) {
             showDialog('CheckStorage');
         }
@@ -192,10 +192,10 @@ async function extraMakeup() {
         Network.setup();
 
         if (Config.get('setting.basic.autoUpdatePlugin')) {
-            const lastUpdated = PersistStatus.get('app.pluginUpdateTime') || 0;
+            const lastUpdated = PersistConfig.get('app.pluginUpdateTime') || 0;
             const now = Date.now();
             if (Math.abs(now - lastUpdated) > 86400000) {
-                PersistStatus.set('app.pluginUpdateTime', now);
+                PersistConfig.set('app.pluginUpdateTime', now);
                 const plugins = PluginManager.getValidPlugins();
                 for (let i = 0; i < plugins.length; ++i) {
                     const srcUrl = plugins[i].instance.srcUrl;

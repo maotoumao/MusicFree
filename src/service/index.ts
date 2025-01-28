@@ -1,10 +1,10 @@
-import Config from '@/core/config';
-import RNTrackPlayer, {Event, State} from 'react-native-track-player';
-import LyricManager from '@/core/lyricManager';
-import LyricUtil from '@/native/lyricUtil';
-import TrackPlayer from '@/core/trackPlayer';
-import {musicIsPaused} from '@/utils/trackUtils';
-import PersistStatus from '@/core/persistStatus';
+import Config from "@/core/config";
+import RNTrackPlayer, { Event, State } from "react-native-track-player";
+import LyricManager from "@/core/lyricManager";
+import LyricUtil from "@/native/lyricUtil";
+import TrackPlayer from "@/core/trackPlayer";
+import { musicIsPaused } from "@/utils/trackUtils";
+import PersistConfig from "@/core/persistConfig.ts";
 
 let resumeState: State | null;
 module.exports = async function () {
@@ -63,7 +63,7 @@ module.exports = async function () {
     });
 
     RNTrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
-        PersistStatus.set('music.progress', evt.position);
+        PersistConfig.set('music.progress', evt.position);
 
         // 歌词逻辑
         const parser = LyricManager.getLyricState().lyricParser;
@@ -72,7 +72,7 @@ module.exports = async function () {
             const currentLyricItem = parser.getPosition(evt.position);
             if (prevLyricText !== currentLyricItem?.lrc) {
                 LyricManager.setCurrentLyric(currentLyricItem ?? null);
-                const showTranslation = PersistStatus.get(
+                const showTranslation = PersistConfig.get(
                     'lyric.showTranslation',
                 );
                 if (Config.get('setting.lyric.showStatusBarLyric')) {
