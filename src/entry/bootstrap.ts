@@ -1,31 +1,27 @@
-import {check, PERMISSIONS, request} from 'react-native-permissions';
-import RNTrackPlayer, {
-    AppKilledPlaybackBehavior,
-    Capability,
-} from 'react-native-track-player';
-import 'react-native-get-random-values';
-import Config from '@/core/config';
-import pathConst from '@/constants/pathConst';
-import {checkAndCreateDir} from '@/utils/fileUtils';
-import {errorLog, trace} from '@/utils/log';
-import MediaMeta from '@/core/mediaMeta.old';
-import PluginManager from '@/core/pluginManager';
-import Network from '@/core/network';
-import {ImgAsset} from '@/constants/assetsConst';
-import LocalMusicSheet from '@/core/localMusicSheet';
-import {Linking, Platform} from 'react-native';
-import Theme from '@/core/theme';
-import LyricManager from '@/core/lyricManager';
-import Toast from '@/utils/toast';
-import {localPluginHash, supportLocalMediaType} from '@/constants/commonConst';
-import TrackPlayer from '@/core/trackPlayer';
-import musicHistory from '@/core/musicHistory';
-import PersistStatus from '@/core/persistStatus';
-import {perfLogger} from '@/utils/perfLogger';
-import * as SplashScreen from 'expo-splash-screen';
-import MusicSheet from '@/core/musicSheet';
-import NativeUtils from '@/native/utils';
-import {showDialog} from '@/components/dialogs/useDialog.ts';
+import { check, PERMISSIONS, request } from "react-native-permissions";
+import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
+import "react-native-get-random-values";
+import Config from "@/core/config";
+import pathConst from "@/constants/pathConst";
+import { checkAndCreateDir } from "@/utils/fileUtils";
+import { errorLog, trace } from "@/utils/log";
+import PluginManager from "@/core/pluginManager";
+import Network from "@/core/network";
+import { ImgAsset } from "@/constants/assetsConst";
+import LocalMusicSheet from "@/core/localMusicSheet";
+import { Linking, Platform } from "react-native";
+import Theme from "@/core/theme";
+import LyricManager from "@/core/lyricManager";
+import Toast from "@/utils/toast";
+import { localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
+import TrackPlayer from "@/core/trackPlayer";
+import musicHistory from "@/core/musicHistory";
+import PersistStatus from "@/core/persistStatus";
+import { perfLogger } from "@/utils/perfLogger";
+import * as SplashScreen from "expo-splash-screen";
+import MusicSheet from "@/core/musicSheet";
+import NativeUtils from "@/native/utils";
+import { showDialog } from "@/components/dialogs/useDialog.ts";
 
 /** app加载前执行
  * 1. 检查权限
@@ -79,9 +75,6 @@ async function _bootstrap() {
     await Promise.all([
         Config.setup().then(() => {
             logger.mark('Config');
-        }),
-        MediaMeta.setup().then(() => {
-            logger.mark('MediaMeta');
         }),
         MusicSheet.setup().then(() => {
             logger.mark('MusicSheet');
