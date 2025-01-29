@@ -12,7 +12,7 @@ import { musicListMap, musicSheetsBaseAtom, starredMusicSheetsAtom } from "@/cor
 import { ResumeMode, SortType } from "@/constants/commonConst.ts";
 import SortedMusicList from "@/core/musicSheet/sortedMusicList.ts";
 import ee from "@/core/musicSheet/ee.ts";
-import Config from "@/core/config.bak.ts";
+import Config from "@/core/config.ts";
 
 const produce = new Immer({
     autoFreeze: false,
@@ -162,7 +162,7 @@ async function addSheet(title: string) {
 
     // 更新状态
     getDefaultStore().set(musicSheetsBaseAtom, newSheets);
-    let defaultSortType = Config.get('setting.basic.musicOrderInLocalSheet');
+    let defaultSortType = Config.getConfig('basic.musicOrderInLocalSheet');
     if (
         defaultSortType &&
         [
