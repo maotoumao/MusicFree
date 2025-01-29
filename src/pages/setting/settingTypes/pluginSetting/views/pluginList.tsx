@@ -10,7 +10,7 @@ import { trace } from "@/utils/log";
 import Toast from "@/utils/toast";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
-import Config from "@/core/config";
+import Config from "@/core/config.ts";
 import Empty from "@/components/base/empty";
 import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
 import { showDialog } from "@/components/dialogs/useDialog";
@@ -80,8 +80,8 @@ export default function PluginList() {
             await Promise.all(
                 results.assets.map(async it => {
                     await PluginManager.installPluginFromLocalFile(it.uri, {
-                        notCheckVersion: Config.get(
-                          'setting.basic.notCheckPluginVersion',
+                        notCheckVersion: Config.getConfig(
+                          'basic.notCheckPluginVersion',
                         ),
                         useExpoFs: true
                     })
@@ -119,7 +119,7 @@ export default function PluginList() {
     }
 
     async function onSubscribeClick() {
-        const urls = Config.get('setting.plugin.subscribeUrl');
+        const urls = Config.getConfig('plugin.subscribeUrl');
         if (!urls) {
             Toast.warn('暂无订阅');
         }
@@ -290,8 +290,8 @@ async function installPluginFromUrl(text: string): Promise<IInstallResult> {
         await Promise.all(
             urls.map(url =>
                 PluginManager.installPluginFromUrl(url, {
-                    notCheckVersion: Config.get(
-                        'setting.basic.notCheckPluginVersion',
+                    notCheckVersion: Config.getConfig(
+                        'basic.notCheckPluginVersion',
                     ),
                 }).catch(e => {
                     failedPlugins.push(e?.message ?? '');

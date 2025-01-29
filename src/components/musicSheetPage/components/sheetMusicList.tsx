@@ -1,13 +1,13 @@
-import React from 'react';
-import {View} from 'react-native';
+import React from "react";
+import { View } from "react-native";
 
-import Loading from '@/components/base/loading';
-import Header from './header';
-import MusicList from '@/components/musicList';
-import Config from '@/core/config';
-import globalStyle from '@/constants/globalStyle';
-import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
-import TrackPlayer from '@/core/trackPlayer';
+import Loading from "@/components/base/loading";
+import Header from "./header";
+import MusicList from "@/components/musicList";
+import Config from "@/core/config.ts";
+import globalStyle from "@/constants/globalStyle";
+import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
+import TrackPlayer from "@/core/trackPlayer";
 
 interface IMusicListProps {
     sheetInfo: IMusic.IMusicSheetItem | null;
@@ -39,8 +39,8 @@ export default function SheetMusicList(props: IMusicListProps) {
                         musicList={musicList}
                         onItemPress={(musicItem, musicList) => {
                             if (
-                                Config.get(
-                                    'setting.basic.clickMusicInAlbum',
+                                Config.getConfig(
+                                    'basic.clickMusicInAlbum',
                                 ) === '播放单曲'
                             ) {
                                 TrackPlayer.play(musicItem);

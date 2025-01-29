@@ -8,7 +8,7 @@ import ReactNativeTrackPlayer, {
     useProgress
 } from "react-native-track-player";
 import shuffle from "lodash.shuffle";
-import Config from "../config";
+import Config from "../config.ts";
 import { EDeviceEvents, internalFakeSoundKey, sortIndexSymbol, timeStampSymbol } from "@/constants/commonConst";
 import { GlobalState } from "@/utils/stateMapper";
 import delay from "@/utils/delay";
@@ -82,7 +82,7 @@ async function setupTrackPlayer() {
     const track = PersistStatus.get('music.musicItem');
     const quality =
         PersistStatus.get('music.quality') ||
-        Config.get('setting.basic.defaultPlayQuality') ||
+        Config.getConfig('basic.defaultPlayQuality') ||
         'standard';
 
     // 状态恢复
@@ -98,7 +98,7 @@ async function setupTrackPlayer() {
     }
 
     if (track && isInPlayList(track)) {
-        if (!Config.get('setting.basic.autoPlayWhenAppStart')) {
+        if (!Config.getConfig('basic.autoPlayWhenAppStart')) {
             track.isInit = true;
         }
 
@@ -209,7 +209,7 @@ const getFakeNextTrack = () => {
 /** 播放失败时的情况 */
 async function failToPlay() {
     // 如果自动跳转下一曲, 500s后自动跳转
-    if (!Config.get('setting.basic.autoStopWhenError')) {
+    if (!Config.getConfig('basic.autoStopWhenError')) {
         await ReactNativeTrackPlayer.reset();
         await delay(500);
         await skipToNext();
@@ -454,7 +454,7 @@ const play = async (
         // 1. 移动网络禁止播放
         if (
             Network.isCellular() &&
-            !Config.get('setting.basic.useCelluarNetworkPlay') &&
+            !Config.getConfig('basic.useCelluarNetworkPlay') &&
             !LocalMusicSheet.isLocalMusic(musicItem)
         ) {
             await ReactNativeTrackPlayer.reset();
@@ -521,8 +521,8 @@ const play = async (
         const plugin = PluginManager.getByName(musicItem.platform);
         // 5.2 获取音质排序
         const qualityOrder = getQualityOrder(
-            Config.get('setting.basic.defaultPlayQuality') ?? 'standard',
-            Config.get('setting.basic.playQualityOrder') ?? 'asc',
+            Config.getConfig('basic.defaultPlayQuality') ?? 'standard',
+            Config.getConfig('basic.playQualityOrder') ?? 'asc',
         );
         // 5.3 插件返回音源
         let source: IPlugin.IMediaSourceResult | null = null;
@@ -562,7 +562,7 @@ const play = async (
             // 5.4 没有返回源
             if (!source && !musicItem.url) {
                 // 插件失效的情况
-                if (Config.get('setting.basic.tryChangeSourceWhenPlayFail')) {
+                if (Config.getConfig('basic.tryChangeSourceWhenPlayFail')) {
                     // 重试
                     const similarMusic = await getSimilarMusic(
                         musicItem,

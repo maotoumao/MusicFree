@@ -1,32 +1,32 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ListItem from '@/components/base/listItem';
-import ThemeText from '@/components/base/themeText';
-import {ImgAsset} from '@/constants/assetsConst';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {getMediaKey} from '@/utils/mediaItem';
-import FastImage from '@/components/base/fastImage';
-import Toast from '@/utils/toast';
-import toast from '@/utils/toast';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ListItem from "@/components/base/listItem";
+import ThemeText from "@/components/base/themeText";
+import { ImgAsset } from "@/constants/assetsConst";
+import Clipboard from "@react-native-clipboard/clipboard";
+import { getMediaKey } from "@/utils/mediaItem";
+import FastImage from "@/components/base/fastImage";
+import Toast from "@/utils/toast";
+import toast from "@/utils/toast";
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import {FlatList} from 'react-native-gesture-handler';
-import Divider from '@/components/base/divider';
-import {iconSizeConst} from '@/constants/uiConst';
-import Config from '@/core/config';
-import mediaCache from '@/core/mediaCache';
-import LyricManager from '@/core/lyricManager';
-import {IIconName} from '@/components/base/icon.tsx';
-import LyricUtil from '@/native/lyricUtil';
-import {hidePanel} from '@/components/panels/usePanel.ts';
-import {getDocumentAsync} from 'expo-document-picker';
-import {readAsStringAsync} from 'expo-file-system';
-import {checkAndCreateDir} from '@/utils/fileUtils.ts';
-import pathConst from '@/constants/pathConst.ts';
-import CryptoJs from 'crypto-js';
-import RNFS from 'react-native-fs';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import { FlatList } from "react-native-gesture-handler";
+import Divider from "@/components/base/divider";
+import { iconSizeConst } from "@/constants/uiConst";
+import Config from "@/core/config.ts";
+import mediaCache from "@/core/mediaCache";
+import LyricManager from "@/core/lyricManager";
+import { IIconName } from "@/components/base/icon.tsx";
+import LyricUtil from "@/native/lyricUtil";
+import { hidePanel } from "@/components/panels/usePanel.ts";
+import { getDocumentAsync } from "expo-document-picker";
+import { readAsStringAsync } from "expo-file-system";
+import { checkAndCreateDir } from "@/utils/fileUtils.ts";
+import pathConst from "@/constants/pathConst.ts";
+import CryptoJs from "crypto-js";
+import RNFS from "react-native-fs";
 
 interface IMusicItemLyricOptionsProps {
     /** 歌曲信息 */
@@ -103,20 +103,29 @@ export default function MusicItemLyricOptions(
         {
             icon: 'lyric',
             title: `${
-                Config.get('setting.lyric.showStatusBarLyric') ? '关闭' : '开启'
+                Config.getConfig('lyric.showStatusBarLyric') ? '关闭' : '开启'
             }桌面歌词`,
             async onPress() {
-                const lyricConfig = Config.get('setting.lyric');
-                if (!lyricConfig?.showStatusBarLyric) {
+                const showStatusBarLyric = Config.getConfig('lyric.showStatusBarLyric');
+                if (!showStatusBarLyric) {
                     const hasPermission =
                         await LyricUtil.checkSystemAlertPermission();
 
                     if (hasPermission) {
+                        const statusBarLyricConfig = {
+                            topPercent: Config.getConfig("lyric.topPercent"),
+                            leftPercent: Config.getConfig("lyric.leftPercent"),
+                            align: Config.getConfig("lyric.align"),
+                            color: Config.getConfig("lyric.color"),
+                            backgroundColor: Config.getConfig("lyric.backgroundColor"),
+                            widthPercent: Config.getConfig("lyric.widthPercent"),
+                            fontSize: Config.getConfig("lyric.fontSize")
+                        };
                         LyricUtil.showStatusBarLyric(
-                            LyricManager.getCurrentLyric()?.lrc ?? 'MusicFree',
-                            Config.get('setting.lyric') ?? {},
+                          "MusicFree",
+                          statusBarLyricConfig ?? {}
                         );
-                        Config.set('setting.lyric.showStatusBarLyric', true);
+                        Config.setConfig('lyric.showStatusBarLyric', true);
                     } else {
                         LyricUtil.requestSystemAlertPermission().finally(() => {
                             Toast.warn('开启桌面歌词失败，无悬浮窗权限');
@@ -124,7 +133,7 @@ export default function MusicItemLyricOptions(
                     }
                 } else {
                     LyricUtil.hideStatusBarLyric();
-                    Config.set('setting.lyric.showStatusBarLyric', false);
+                    Config.setConfig('lyric.showStatusBarLyric', false);
                 }
                 hidePanel();
             },

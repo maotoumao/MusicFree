@@ -1,7 +1,7 @@
 import { check, PERMISSIONS, request } from "react-native-permissions";
 import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 import "react-native-get-random-values";
-import Config from "@/core/config";
+import Config from "@/core/config.ts";
 import pathConst from "@/constants/pathConst";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import { errorLog, trace } from "@/utils/log";
@@ -89,7 +89,7 @@ async function _bootstrap() {
     try {
         await RNTrackPlayer.setupPlayer({
             maxCacheSize:
-                Config.get('setting.basic.maxCacheSize') ?? 1024 * 1024 * 512,
+                Config.getConfig('basic.maxCacheSize') ?? 1024 * 1024 * 512,
         });
     } catch (e: any) {
         if (
@@ -101,7 +101,7 @@ async function _bootstrap() {
     }
     logger.mark('加载播放器');
 
-    const capabilities = Config.get('setting.basic.showExitOnNotification')
+    const capabilities = Config.getConfig('basic.showExitOnNotification')
         ? [
               Capability.Play,
               Capability.Pause,
@@ -190,7 +190,7 @@ async function extraMakeup() {
         // 初始化网络状态
         Network.setup();
 
-        if (Config.get('setting.basic.autoUpdatePlugin')) {
+        if (Config.getConfig('basic.autoUpdatePlugin')) {
             const lastUpdated = PersistStatus.get('app.pluginUpdateTime') || 0;
             const now = Date.now();
             if (Math.abs(now - lastUpdated) > 86400000) {
@@ -223,8 +223,8 @@ async function extraMakeup() {
                 Toast.success('安装成功~');
             } else if (url.endsWith('.js')) {
                 PluginManager.installPluginFromLocalFile(url, {
-                    notCheckVersion: Config.get(
-                        'setting.basic.notCheckPluginVersion',
+                    notCheckVersion: Config.getConfig(
+                        'basic.notCheckPluginVersion',
                     ),
                 })
                     .then(res => {
@@ -258,7 +258,7 @@ async function extraMakeup() {
         handleLinkingUrl(initUrl);
     }
 
-    if (Config.get('setting.basic.autoPlayWhenAppStart')) {
+    if (Config.getConfig('basic.autoPlayWhenAppStart')) {
         TrackPlayer.play();
     }
 }

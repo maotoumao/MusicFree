@@ -1,8 +1,8 @@
-import React from 'react';
-import MusicItem from '@/components/mediaItem/musicItem';
-import Config from '@/core/config';
-import {ISearchResult} from '@/pages/searchPage/store/atoms';
-import TrackPlayer from '@/core/trackPlayer';
+import React from "react";
+import MusicItem from "@/components/mediaItem/musicItem";
+import Config from "@/core/config.ts";
+import { ISearchResult } from "@/pages/searchPage/store/atoms";
+import TrackPlayer from "@/core/trackPlayer";
 
 interface IMusicResultsProps {
     item: IMusic.IMusicItem;
@@ -17,8 +17,8 @@ export default function MusicResultItem(props: IMusicResultsProps) {
         <MusicItem
             musicItem={musicItem}
             onItemPress={() => {
-                const clickBehavior = Config.get(
-                    'setting.basic.clickMusicInSearch',
+                const clickBehavior = Config.getConfig(
+                    'basic.clickMusicInSearch',
                 );
                 if (clickBehavior === '播放歌曲并替换播放列表') {
                     TrackPlayer.playWithReplacePlayList(

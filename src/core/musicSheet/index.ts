@@ -1,22 +1,18 @@
 /**
  * 歌单管理
  */
-import {Immer} from 'immer';
-import {useEffect, useMemo, useState} from 'react';
-import {nanoid} from 'nanoid';
-import {isSameMediaItem} from '@/utils/mediaItem';
-import storage from '@/core/musicSheet/storage.ts';
-import migrate, {migrateV2} from '@/core/musicSheet/migrate.ts';
-import {getDefaultStore, useAtomValue} from 'jotai';
-import {
-    musicListMap,
-    musicSheetsBaseAtom,
-    starredMusicSheetsAtom,
-} from '@/core/musicSheet/atoms.ts';
-import {ResumeMode, SortType} from '@/constants/commonConst.ts';
-import SortedMusicList from '@/core/musicSheet/sortedMusicList.ts';
-import ee from '@/core/musicSheet/ee.ts';
-import Config from '@/core/config.ts';
+import { Immer } from "immer";
+import { useEffect, useMemo, useState } from "react";
+import { nanoid } from "nanoid";
+import { isSameMediaItem } from "@/utils/mediaItem";
+import storage from "@/core/musicSheet/storage.ts";
+import migrate, { migrateV2 } from "@/core/musicSheet/migrate.ts";
+import { getDefaultStore, useAtomValue } from "jotai";
+import { musicListMap, musicSheetsBaseAtom, starredMusicSheetsAtom } from "@/core/musicSheet/atoms.ts";
+import { ResumeMode, SortType } from "@/constants/commonConst.ts";
+import SortedMusicList from "@/core/musicSheet/sortedMusicList.ts";
+import ee from "@/core/musicSheet/ee.ts";
+import Config from "@/core/config.bak.ts";
 
 const produce = new Immer({
     autoFreeze: false,

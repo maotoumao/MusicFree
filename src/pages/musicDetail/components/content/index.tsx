@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
-import {View} from 'react-native';
-import AlbumCover from './albumCover';
-import Lyric from './lyric';
-import useOrientation from '@/hooks/useOrientation';
-import Config from '@/core/config';
-import globalStyle from '@/constants/globalStyle';
+import React, { useState } from "react";
+import { View } from "react-native";
+import AlbumCover from "./albumCover";
+import Lyric from "./lyric";
+import useOrientation from "@/hooks/useOrientation";
+import Config from "@/core/config.ts";
+import globalStyle from "@/constants/globalStyle";
 
 export default function Content() {
     const [tab, selectTab] = useState<'album' | 'lyric'>(
-        Config.get('setting.basic.musicDetailDefault') || 'album',
+        Config.getConfig('basic.musicDetailDefault') || 'album',
     );
     const orientation = useOrientation();
     const showAlbumCover = tab === 'album' || orientation === 'horizontal';

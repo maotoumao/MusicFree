@@ -1,31 +1,24 @@
-import {
-    internalSerializeKey,
-    supportLocalMediaType,
-} from '@/constants/commonConst';
-import pathConst from '@/constants/pathConst';
-import {addFileScheme, escapeCharacter, mkdirR} from '@/utils/fileUtils';
-import {errorLog} from '@/utils/log';
-import {isSameMediaItem} from '@/utils/mediaItem';
-import {getQualityOrder} from '@/utils/qualities';
-import StateMapper from '@/utils/stateMapper';
-import Toast from '@/utils/toast';
-import {produce} from 'immer';
-import {InteractionManager} from 'react-native';
-import {copyFile, downloadFile, exists, unlink} from 'react-native-fs';
+import { internalSerializeKey, supportLocalMediaType } from "@/constants/commonConst";
+import pathConst from "@/constants/pathConst";
+import { addFileScheme, escapeCharacter, mkdirR } from "@/utils/fileUtils";
+import { errorLog } from "@/utils/log";
+import { isSameMediaItem } from "@/utils/mediaItem";
+import { getQualityOrder } from "@/utils/qualities";
+import StateMapper from "@/utils/stateMapper";
+import Toast from "@/utils/toast";
+import { produce } from "immer";
+import { InteractionManager } from "react-native";
+import { copyFile, downloadFile, exists, unlink } from "react-native-fs";
 
-import Config from './config';
-import LocalMusicSheet from './localMusicSheet';
-import MediaMeta from './mediaExtra';
-import Network from './network';
-import PluginManager from './pluginManager';
-import {check, PERMISSIONS} from 'react-native-permissions';
-import path from 'path-browserify';
-import {
-    getCurrentDialog,
-    hideDialog,
-    showDialog,
-} from '@/components/dialogs/useDialog';
-import {nanoid} from 'nanoid';
+import Config from "./config.ts";
+import LocalMusicSheet from "./localMusicSheet";
+import MediaMeta from "./mediaExtra";
+import Network from "./network";
+import PluginManager from "./pluginManager";
+import { check, PERMISSIONS } from "react-native-permissions";
+import path from "path-browserify";
+import { getCurrentDialog, hideDialog, showDialog } from "@/components/dialogs/useDialog";
+import { nanoid } from "nanoid";
 
 /** 队列中的元素 */
 interface IDownloadMusicOptions {
@@ -71,7 +64,7 @@ const getExtensionName = (url: string) => {
 /** 生成下载文件 */
 const getDownloadPath = (fileName: string) => {
     const dlPath =
-        Config.get('setting.basic.downloadPath') ?? pathConst.downloadMusicPath;
+        Config.getConfig('basic.downloadPath') ?? pathConst.downloadMusicPath;
     if (!dlPath.endsWith('/')) {
         return `${dlPath}/${fileName ?? ''}`;
     }
@@ -183,9 +176,9 @@ async function downloadNext() {
         if (plugin) {
             const qualityOrder = getQualityOrder(
                 quality ??
-                    Config.get('setting.basic.defaultDownloadQuality') ??
+                    Config.getConfig('basic.defaultDownloadQuality') ??
                     'standard',
-                Config.get('setting.basic.downloadQualityOrder') ?? 'asc',
+                Config.getConfig('basic.downloadQualityOrder') ?? 'asc',
             );
             let data: IPlugin.IMediaSourceResult | null = null;
             for (let quality of qualityOrder) {
@@ -374,7 +367,7 @@ function downloadMusic(
     }
     if (
         Network.isCellular() &&
-        !Config.get('setting.basic.useCelluarNetworkDownload') &&
+        !Config.getConfig('basic.useCelluarNetworkDownload') &&
         getCurrentDialog()?.name !== 'SimpleDialog'
     ) {
         showDialog('SimpleDialog', {
@@ -409,7 +402,7 @@ function downloadMusic(
     if (enqueueData.length) {
         pendingMusicQueue = pendingMusicQueue.concat(enqueueData);
         pendingMusicQueueStateMapper.notify();
-        maxDownload = +(Config.get('setting.basic.maxDownload') ?? 3);
+        maxDownload = +(Config.getConfig('basic.maxDownload') ?? 3);
         downloadNextAfterInteraction();
     }
 }

@@ -1,7 +1,7 @@
-import Config from '@/core/config';
-import Toast from '@/utils/toast';
-import {NativeModule, NativeModules} from 'react-native';
-import {errorLog} from '@/utils/log.ts';
+import Config from "@/core/config.ts";
+import Toast from "@/utils/toast";
+import { NativeModule, NativeModules } from "react-native";
+import { errorLog } from "@/utils/log.ts";
 
 export enum NativeTextAlignment {
     // 左对齐
@@ -57,7 +57,7 @@ const showStatusBarLyric: ILyricUtil['showStatusBarLyric'] = async (
     } catch (e) {
         errorLog('状态栏歌词开启失败', e);
         Toast.warn('状态栏歌词开启失败，请到手机系统设置打开悬浮窗权限');
-        Config.set('setting.lyric.showStatusBarLyric', false);
+        Config.setConfig('lyric.showStatusBarLyric', false);
     }
 };
 
