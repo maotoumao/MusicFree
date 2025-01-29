@@ -1,55 +1,43 @@
-import RNFS, {
-    copyFile,
-    exists,
-    readDir,
-    readFile,
-    stat,
-    unlink,
-    writeFile,
-} from 'react-native-fs';
-import CryptoJs from 'crypto-js';
-import dayjs from 'dayjs';
-import axios from 'axios';
-import bigInt from 'big-integer';
-import qs from 'qs';
-import * as webdav from 'webdav';
-import {InteractionManager, ToastAndroid} from 'react-native';
-import pathConst from '@/constants/pathConst';
-import {compare, satisfies} from 'compare-versions';
-import DeviceInfo from 'react-native-device-info';
-import StateMapper from '@/utils/stateMapper';
-import MediaExtra from './mediaExtra';
-import {nanoid} from 'nanoid';
-import {devLog, errorLog, trace} from '../utils/log';
-import {
-    getInternalData,
-    InternalDataType,
-    isSameMediaItem,
-    resetMediaItem,
-} from '@/utils/mediaItem';
+import RNFS, { copyFile, exists, readDir, readFile, stat, unlink, writeFile } from "react-native-fs";
+import CryptoJs from "crypto-js";
+import dayjs from "dayjs";
+import axios from "axios";
+import bigInt from "big-integer";
+import qs from "qs";
+import * as webdav from "webdav";
+import { InteractionManager, ToastAndroid } from "react-native";
+import pathConst from "@/constants/pathConst";
+import { compare, satisfies } from "compare-versions";
+import DeviceInfo from "react-native-device-info";
+import deviceInfoModule from "react-native-device-info";
+import StateMapper from "@/utils/stateMapper";
+import MediaExtra from "./mediaExtra";
+import { nanoid } from "nanoid";
+import { devLog, errorLog, trace } from "../utils/log";
+import { getInternalData, InternalDataType, isSameMediaItem, resetMediaItem } from "@/utils/mediaItem";
 import {
     CacheControl,
     emptyFunction,
     internalSerializeKey,
     localPluginHash,
-    localPluginPlatform,
-} from '@/constants/commonConst';
-import delay from '@/utils/delay';
-import * as cheerio from 'cheerio';
-import he from 'he';
-import Network from './network';
-import LocalMusicSheet from './localMusicSheet';
-import Mp3Util from '@/native/mp3Util';
-import {PluginMeta} from './pluginMeta';
-import {useEffect, useState} from 'react';
-import {addFileScheme, getFileName} from '@/utils/fileUtils';
-import {URL} from 'react-native-url-polyfill';
-import Base64 from '@/utils/base64';
-import MediaCache from './mediaCache';
-import {produce} from 'immer';
-import objectPath from 'object-path';
-import notImplementedFunction from '@/utils/notImplementedFunction.ts';
-import deviceInfoModule from "react-native-device-info";
+    localPluginPlatform
+} from "@/constants/commonConst";
+import delay from "@/utils/delay";
+import * as cheerio from "cheerio";
+import he from "he";
+import Network from "./network";
+import LocalMusicSheet from "./localMusicSheet";
+import Mp3Util from "@/native/mp3Util";
+import { PluginMeta } from "./pluginMeta";
+import { useEffect, useState } from "react";
+import { addFileScheme, getFileName } from "@/utils/fileUtils";
+import { URL } from "react-native-url-polyfill";
+import Base64 from "@/utils/base64";
+import MediaCache from "./mediaCache";
+import { produce } from "immer";
+import objectPath from "object-path";
+import notImplementedFunction from "@/utils/notImplementedFunction.ts";
+import { readAsStringAsync } from "expo-file-system";
 
 axios.defaults.timeout = 2000;
 
@@ -1134,56 +1122,19 @@ interface IInstallPluginConfig {
     notCheckVersion?: boolean;
 }
 
-async function installPluginFromRawCode(
-    funcCode: string,
-    config?: IInstallPluginConfig,
-) {
-    if (funcCode) {
-        const plugin = new Plugin(funcCode, '');
-        const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
-        if (_pluginIndex !== -1) {
-            // 静默忽略
-            return plugin;
-        }
-        const oldVersionPlugin = plugins.find(p => p.name === plugin.name);
-        if (oldVersionPlugin && !config?.notCheckVersion) {
-            if (
-                compare(
-                    oldVersionPlugin.instance.version ?? '',
-                    plugin.instance.version ?? '',
-                    '>',
-                )
-            ) {
-                throw new Error('已安装更新版本的插件');
-            }
-        }
-
-        if (plugin.hash !== '') {
-            const fn = nanoid();
-            if (oldVersionPlugin) {
-                plugins = plugins.filter(_ => _.hash !== oldVersionPlugin.hash);
-                try {
-                    await unlink(oldVersionPlugin.path);
-                } catch {}
-            }
-            const pluginPath = `${pathConst.pluginPath}${fn}.js`;
-            await writeFile(pluginPath, funcCode, 'utf8');
-            plugin.path = pluginPath;
-            plugins = plugins.concat(plugin);
-            pluginStateMapper.notify();
-            return plugin;
-        }
-        throw new Error('插件无法解析!');
-    }
-}
-
-// 安装插件
-async function installPlugin(
+// 从本地文件安装插件
+async function installPluginFromLocalFile(
     pluginPath: string,
-    config?: IInstallPluginConfig,
+    config?: IInstallPluginConfig & {
+        useExpoFs?: boolean
+    },
 ) {
-    // if (pluginPath.endsWith('.js')) {
-    const funcCode = await readFile(pluginPath, 'utf8');
+    let funcCode: string;
+    if (config?.useExpoFs) {
+        funcCode = await readAsStringAsync(pluginPath);
+    } else {
+        funcCode = await readFile(pluginPath, 'utf8');
+    }
 
     if (funcCode) {
         const plugin = new Plugin(funcCode, pluginPath);
@@ -1459,8 +1410,7 @@ async function setPluginEnabled(plugin: Plugin, enabled?: boolean) {
 
 const PluginManager = {
     setup,
-    installPlugin,
-    installPluginFromRawCode,
+    installPluginFromLocalFile,
     installPluginFromUrl,
     updatePlugin,
     uninstallPlugin,

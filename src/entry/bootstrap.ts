@@ -13,7 +13,7 @@ import { Linking, Platform } from "react-native";
 import Theme from "@/core/theme";
 import LyricManager from "@/core/lyricManager";
 import Toast from "@/utils/toast";
-import { localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
+import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
 import TrackPlayer from "@/core/trackPlayer";
 import musicHistory from "@/core/musicHistory";
 import PersistStatus from "@/core/persistStatus.ts";
@@ -199,7 +199,8 @@ async function extraMakeup() {
                 for (let i = 0; i < plugins.length; ++i) {
                     const srcUrl = plugins[i].instance.srcUrl;
                     if (srcUrl) {
-                        await PluginManager.installPluginFromUrl(srcUrl);
+                        // 静默失败
+                        await PluginManager.installPluginFromUrl(srcUrl).catch(emptyFunction);
                     }
                 }
             }
@@ -216,12 +217,12 @@ async function extraMakeup() {
                     .map(decodeURIComponent);
                 await Promise.all(
                     plugins.map(it =>
-                        PluginManager.installPluginFromUrl(it).catch(() => {}),
+                        PluginManager.installPluginFromUrl(it).catch(emptyFunction),
                     ),
                 );
                 Toast.success('安装成功~');
             } else if (url.endsWith('.js')) {
-                PluginManager.installPlugin(url, {
+                PluginManager.installPluginFromLocalFile(url, {
                     notCheckVersion: Config.get(
                         'setting.basic.notCheckPluginVersion',
                     ),
