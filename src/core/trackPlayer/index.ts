@@ -74,24 +74,7 @@ const shrinkPlayListToSize = (
 
 let hasSetupListener = false;
 
-// TODO: 删除
-function migrate() {
-    const config = Config.get('status.music');
-    if (!config) {
-        return;
-    }
-    const {rate, repeatMode, musicQueue, progress, track} = config;
-    PersistStatus.set('music.rate', rate);
-    PersistStatus.set('music.repeatMode', repeatMode);
-    PersistStatus.set('music.playList', musicQueue);
-    PersistStatus.set('music.progress', progress);
-    PersistStatus.set('music.musicItem', track);
-    Config.set('status.music', undefined);
-}
-
 async function setupTrackPlayer() {
-    migrate();
-
     const rate = PersistStatus.get('music.rate');
     const musicQueue = PersistStatus.get('music.playList');
     const repeatMode = PersistStatus.get('music.repeatMode');

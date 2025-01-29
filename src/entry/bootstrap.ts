@@ -26,7 +26,6 @@ import { showDialog } from "@/components/dialogs/useDialog.ts";
 /** app加载前执行
  * 1. 检查权限
  * 2. 数据初始化
- * 3.
  */
 
 async function _bootstrap() {
