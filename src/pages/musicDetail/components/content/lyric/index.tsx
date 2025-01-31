@@ -361,7 +361,7 @@ export default function Lyric(props: IProps) {
 
                             <IconButtonWithGesture
                                 style={styles.playIcon}
-                                sizeType="small"
+                                sizeType='normal'
                                 name="play"
                                 onPress={onLyricSeekPress}
                             />
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
         opacity: 0.4,
     },
     playIcon: {
-        width: rpx(90),
+        width: rpx(100),
         textAlign: 'right',
         color: 'white',
     },
