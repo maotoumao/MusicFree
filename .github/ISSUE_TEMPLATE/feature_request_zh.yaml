@@ -28,7 +28,6 @@ body:
         - 当前存在的痛点是什么？
         - 希望如何解决这个问题？
         - 预期的使用体验是怎样的？
-      value: ""
     validations:
       required: true
 
@@ -36,7 +35,7 @@ body:
     id: attachments
     attributes:
       label: 附件信息（可选）
-      description: "可拖放上传示意图/设计稿（支持图片/PDF等格式）"
+      description: "可拖放上传示意图/设计稿"
       placeholder: "设计稿说明或云文档链接..."
     validations:
       required: false
