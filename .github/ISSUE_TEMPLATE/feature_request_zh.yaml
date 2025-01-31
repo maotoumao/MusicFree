@@ -1,13 +1,13 @@
 ---
 name: 提交新需求
 description: 新功能需求模板
-title: "[Feature] "
+title: ""
 labels: ["feature"]
 body:
   - type: checkboxes
     attributes:
       label: 提需求之前，请先确认
-      description: "请勾选以下确认项"
+      description: "请检查以下确认项"
       options:
         - label: "已经阅读过Q&A (https://musicfree.catcat.work/qa/mobile.html)"
           required: true
