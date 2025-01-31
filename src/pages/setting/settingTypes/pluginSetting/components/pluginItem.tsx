@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { memo } from "react";
 
-import useColors from '@/hooks/useColors';
-import PluginManager, {Plugin} from '@/core/pluginManager';
+import useColors from "@/hooks/useColors";
+import PluginManager, { Plugin } from "@/core/pluginManager";
 
-import Toast from '@/utils/toast';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {showDialog} from '@/components/dialogs/useDialog';
-import {showPanel} from '@/components/panels/usePanel';
-import rpx from '@/utils/rpx';
-import {StyleSheet, View} from 'react-native';
-import ThemeText from '@/components/base/themeText';
-import IconTextButton from '@/components/base/iconTextButton';
-import {PluginMeta} from '@/core/pluginMeta';
-import ThemeSwitch from '@/components/base/switch';
-import {IIconName} from '@/components/base/icon.tsx';
+import Toast from "@/utils/toast";
+import Clipboard from "@react-native-clipboard/clipboard";
+import { showDialog } from "@/components/dialogs/useDialog";
+import { showPanel } from "@/components/panels/usePanel";
+import rpx from "@/utils/rpx";
+import { StyleSheet, View } from "react-native";
+import ThemeText from "@/components/base/themeText";
+import IconTextButton from "@/components/base/iconTextButton";
+import { PluginMeta } from "@/core/pluginMeta";
+import ThemeSwitch from "@/components/base/switch";
+import { IIconName } from "@/components/base/icon.tsx";
 
 interface IPluginItemProps {
     plugin: Plugin;
@@ -26,10 +26,9 @@ interface IOption {
     show?: boolean;
 }
 
-export default function PluginItem(props: IPluginItemProps) {
+function _PluginItem(props: IPluginItemProps) {
     const {plugin} = props;
     const colors = useColors();
-
     const options: IOption[] = [
         {
             title: '更新插件',
@@ -256,6 +255,11 @@ export default function PluginItem(props: IPluginItemProps) {
         // </List.Accordion>
     );
 }
+
+const PluginItem = memo(_PluginItem, (prev, curr) => {
+    return prev.plugin === curr.plugin;
+});
+export default PluginItem;
 
 const styles = StyleSheet.create({
     container: {

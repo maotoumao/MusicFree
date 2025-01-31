@@ -72,7 +72,6 @@ export default function EditMusicSheetInfo(props: IEditSheetDetailProps) {
           if ((await exists(newCoverImg))) {
             await unlink(newCoverImg);
           }
-          console.log(newCoverImg);
 
           // Copy
           const rawImage = await readAsStringAsync(coverImg, {
