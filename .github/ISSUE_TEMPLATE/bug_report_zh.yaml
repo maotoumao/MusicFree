@@ -1,5 +1,5 @@
 ---
-name: Bug Report
+name: 反馈问题
 description: 问题反馈模板
 labels: ["bug"]
 body:
@@ -15,7 +15,7 @@ body:
         - label: "不与其他已有issue重复"
           required: true
 
-  - type: input
+  - type: textarea
     id: system_info
     attributes:
       label: 系统信息
