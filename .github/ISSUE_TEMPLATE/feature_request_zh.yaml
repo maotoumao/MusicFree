@@ -1,7 +1,6 @@
 ---
 name: 提交新需求
 description: 新功能需求模板
-title: ""
 labels: ["feature"]
 body:
   - type: checkboxes
