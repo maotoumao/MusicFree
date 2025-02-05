@@ -12,7 +12,13 @@ import Config from "../config.ts";
 import { EDeviceEvents, internalFakeSoundKey, sortIndexSymbol, timeStampSymbol } from "@/constants/commonConst";
 import { GlobalState } from "@/utils/stateMapper";
 import delay from "@/utils/delay";
-import { isSameMediaItem, mergeProps, sortByTimestampAndIndex } from "@/utils/mediaItem";
+import {
+    getInternalData,
+    InternalDataType,
+    isSameMediaItem,
+    mergeProps,
+    sortByTimestampAndIndex
+} from "@/utils/mediaItem";
 import Network from "../network";
 import LocalMusicSheet from "../localMusicSheet";
 import { SoundAsset } from "@/constants/assetsConst";
@@ -38,6 +44,7 @@ import { errorLog, trace } from "@/utils/log";
 import PersistStatus from "../persistStatus.ts";
 import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog";
 import getSimilarMusic from "@/utils/getSimilarMusic";
+import MediaExtra from "@/core/mediaExtra.ts";
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -452,10 +459,16 @@ const play = async (
             throw new Error(PlayFailReason.PLAY_LIST_IS_EMPTY);
         }
         // 1. 移动网络禁止播放
+        const mediaExtra = MediaExtra.get(musicItem);
+        // TODO: 优化本地音乐的逻辑
+        const localPath =
+          mediaExtra?.localPath ||
+          getInternalData<string>(musicItem, InternalDataType.LOCALPATH)
         if (
             Network.isCellular() &&
             !Config.getConfig('basic.useCelluarNetworkPlay') &&
-            !LocalMusicSheet.isLocalMusic(musicItem)
+            !LocalMusicSheet.isLocalMusic(musicItem) &&
+            !localPath
         ) {
             await ReactNativeTrackPlayer.reset();
             throw new Error(PlayFailReason.FORBID_CELLUAR_NETWORK_PLAY);
