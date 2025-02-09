@@ -1,10 +1,10 @@
-import Config from '@/core/config';
-import RNTrackPlayer, {Event, State} from 'react-native-track-player';
-import LyricManager from '@/core/lyricManager';
-import LyricUtil from '@/native/lyricUtil';
-import TrackPlayer from '@/core/trackPlayer';
-import {musicIsPaused} from '@/utils/trackUtils';
-import PersistStatus from '@/core/persistStatus';
+import Config from "@/core/config.ts";
+import RNTrackPlayer, { Event, State } from "react-native-track-player";
+import LyricManager from "@/core/lyricManager";
+import LyricUtil from "@/native/lyricUtil";
+import TrackPlayer from "@/core/trackPlayer";
+import { musicIsPaused } from "@/utils/trackUtils";
+import PersistStatus from "@/core/persistStatus.ts";
 
 let resumeState: State | null;
 module.exports = async function () {
@@ -21,14 +21,14 @@ module.exports = async function () {
     RNTrackPlayer.addEventListener(
         Event.RemoteDuck,
         async ({paused, permanent}) => {
-            if (Config.get('setting.basic.notInterrupt')) {
+            if (Config.getConfig('basic.notInterrupt')) {
                 return;
             }
             if (permanent) {
                 return TrackPlayer.pause();
             }
-            const tempRemoteDuckConf = Config.get(
-                'setting.basic.tempRemoteDuck',
+            const tempRemoteDuckConf = Config.getConfig(
+                'basic.tempRemoteDuck',
             );
             if (tempRemoteDuckConf === '降低音量') {
                 if (paused) {
@@ -75,7 +75,7 @@ module.exports = async function () {
                 const showTranslation = PersistStatus.get(
                     'lyric.showTranslation',
                 );
-                if (Config.get('setting.lyric.showStatusBarLyric')) {
+                if (Config.getConfig('lyric.showStatusBarLyric')) {
                     LyricUtil.setStatusBarLyricText(
                         (currentLyricItem?.lrc ?? '') +
                             (showTranslation

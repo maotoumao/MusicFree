@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 import settingTypes from './settingTypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import AppBar from '@/components/base/appBar';
 

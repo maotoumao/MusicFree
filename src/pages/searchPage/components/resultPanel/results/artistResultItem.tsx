@@ -1,7 +1,7 @@
 import React from 'react';
 import ListItem from '@/components/base/listItem';
 import {ImgAsset} from '@/constants/assetsConst';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import TitleAndTag from '@/components/mediaItem/titleAndTag';
 
 interface IArtistResultsProps {

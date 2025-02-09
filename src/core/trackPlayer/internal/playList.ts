@@ -1,5 +1,5 @@
-import PersistStatus from '@/core/persistStatus';
-import {GlobalState} from '@/utils/stateMapper';
+import PersistStatus from "@/core/persistStatus.ts";
+import { GlobalState } from "@/utils/stateMapper";
 
 /** 音乐队列 */
 const playListStore = new GlobalState<IMusic.IMusicItem[]>([]);

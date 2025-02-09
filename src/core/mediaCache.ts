@@ -1,13 +1,13 @@
-import {addFileScheme} from '@/utils/fileUtils';
-import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
-import {getMediaKey} from '@/utils/mediaItem';
-import safeParse from '@/utils/safeParse';
-import {exists, unlink} from 'react-native-fs';
+import { addFileScheme } from "@/utils/fileUtils";
+import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
+import { getMediaKey } from "@/utils/mediaItem";
+import safeParse from "@/utils/safeParse";
+import { exists, unlink } from "react-native-fs";
 
 // Internal Method
 const mediaCacheStore = getOrCreateMMKV('cache.MediaCache', true);
 
-// 最多缓存1000条数据
+// 最多缓存800条数据
 const maxCacheCount = 800;
 
 /** 获取meta信息 */

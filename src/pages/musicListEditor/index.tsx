@@ -4,7 +4,7 @@ import Bottom from './components/bottom';
 import Body from './components/body';
 import {useSetAtom} from 'jotai';
 import {editingMusicListAtom, musicListChangedAtom} from './store/atom';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import globalStyle from '@/constants/globalStyle';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import AppBar from '@/components/base/appBar';

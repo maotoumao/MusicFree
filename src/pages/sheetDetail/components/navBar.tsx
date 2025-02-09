@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {ROUTE_PATH, useParams} from '@/entry/router';
+import {ROUTE_PATH, useParams} from '@/core/router';
 import Toast from '@/utils/toast';
 import toast from '@/utils/toast';
 import {showDialog} from '@/components/dialogs/useDialog';

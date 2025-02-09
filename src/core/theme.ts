@@ -1,12 +1,9 @@
-import Config from '@/core/config';
+import Config from "@/core/config.ts";
 
-import {
-    DarkTheme as _DarkTheme,
-    DefaultTheme as _DefaultTheme,
-} from '@react-navigation/native';
-import {GlobalState} from '@/utils/stateMapper';
-import {CustomizedColors} from '@/hooks/useColors';
-import Color from 'color';
+import { DarkTheme as _DarkTheme, DefaultTheme as _DefaultTheme } from "@react-navigation/native";
+import { GlobalState } from "@/utils/stateMapper";
+import { CustomizedColors } from "@/hooks/useColors";
+import Color from "color";
 
 export const lightTheme = {
     id: 'p-light',
@@ -74,7 +71,7 @@ const themeStore = new GlobalState(darkTheme);
 const backgroundStore = new GlobalState<IBackgroundInfo | null>(null);
 
 function setup() {
-    const currentTheme = Config.get('setting.theme.selectedTheme') ?? 'p-dark';
+    const currentTheme = Config.getConfig('theme.selectedTheme') ?? 'p-dark';
 
     if (currentTheme === 'p-dark') {
         themeStore.setValue(darkTheme);
@@ -86,14 +83,14 @@ function setup() {
             dark: true,
             // @ts-ignore
             colors:
-                (Config.get('setting.theme.colors') as CustomizedColors) ??
+                (Config.getConfig('theme.colors') as CustomizedColors) ??
                 darkTheme.colors,
         });
     }
 
-    const bgUrl = Config.get('setting.theme.background');
-    const bgBlur = Config.get('setting.theme.backgroundBlur');
-    const bgOpacity = Config.get('setting.theme.backgroundOpacity');
+    const bgUrl = Config.getConfig('theme.background');
+    const bgBlur = Config.getConfig('theme.backgroundBlur');
+    const bgOpacity = Config.getConfig('theme.backgroundOpacity');
 
     backgroundStore.setValue({
         url: bgUrl,
@@ -124,8 +121,8 @@ function setTheme(
         });
     }
 
-    Config.set('setting.theme.selectedTheme', themeName);
-    Config.set('setting.theme.colors', themeStore.getValue().colors);
+    Config.setConfig('theme.selectedTheme', themeName);
+    Config.setConfig('theme.colors', themeStore.getValue().colors);
 
     if (extra?.background) {
         const currentBg = backgroundStore.getValue();
@@ -145,9 +142,9 @@ function setTheme(
             newBg.url = extra.background.url;
         }
 
-        Config.set('setting.theme.background', newBg.url);
-        Config.set('setting.theme.backgroundBlur', newBg.blur);
-        Config.set('setting.theme.backgroundOpacity', newBg.opacity);
+        Config.setConfig('theme.background', newBg.url);
+        Config.setConfig('theme.backgroundBlur', newBg.blur);
+        Config.setConfig('theme.backgroundOpacity', newBg.opacity);
 
         backgroundStore.setValue(newBg);
     }
@@ -163,8 +160,8 @@ function setColors(colors: Partial<CustomizedColors>) {
                 ...colors,
             },
         };
-        Config.set('setting.theme.customColors', newTheme.colors);
-        Config.set('setting.theme.colors', newTheme.colors);
+        Config.setConfig('theme.customColors', newTheme.colors);
+        Config.setConfig('theme.colors', newTheme.colors);
         themeStore.setValue(newTheme);
     }
 }
@@ -178,15 +175,15 @@ function setBackground(backgroundInfo: Partial<IBackgroundInfo>) {
         }),
     };
     if (typeof backgroundInfo.blur === 'number') {
-        Config.set('setting.theme.backgroundBlur', backgroundInfo.blur);
+        Config.setConfig('theme.backgroundBlur', backgroundInfo.blur);
         newBgInfo.blur = backgroundInfo.blur;
     }
     if (typeof backgroundInfo.opacity === 'number') {
-        Config.set('setting.theme.backgroundOpacity', backgroundInfo.opacity);
+        Config.setConfig('theme.backgroundOpacity', backgroundInfo.opacity);
         newBgInfo.opacity = backgroundInfo.opacity;
     }
     if (backgroundInfo.url !== undefined) {
-        Config.set('setting.theme.background', backgroundInfo.url);
+        Config.setConfig('theme.background', backgroundInfo.url);
         newBgInfo.url = backgroundInfo.url;
     }
     backgroundStore.setValue(newBgInfo);

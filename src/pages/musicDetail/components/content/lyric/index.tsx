@@ -1,28 +1,23 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {LayoutRectangle, StyleSheet, Text, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import useDelayFalsy from '@/hooks/useDelayFalsy';
-import {
-    FlatList,
-    Gesture,
-    GestureDetector,
-    TapGestureHandler,
-} from 'react-native-gesture-handler';
-import {fontSizeConst} from '@/constants/uiConst';
-import Loading from '@/components/base/loading';
-import globalStyle from '@/constants/globalStyle';
-import {showPanel} from '@/components/panels/usePanel';
-import LyricManager from '@/core/lyricManager';
-import TrackPlayer from '@/core/trackPlayer';
-import {musicIsPaused} from '@/utils/trackUtils';
-import delay from '@/utils/delay';
-import DraggingTime from './draggingTime';
-import LyricItemComponent from './lyricItem';
-import PersistStatus from '@/core/persistStatus';
-import LyricOperations from './lyricOperations';
-import MediaExtra from '@/core/mediaExtra';
-import {IParsedLrcItem} from '@/utils/lrcParser';
-import {IconButtonWithGesture} from '@/components/base/iconButton.tsx';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { LayoutRectangle, StyleSheet, Text, View } from "react-native";
+import rpx from "@/utils/rpx";
+import useDelayFalsy from "@/hooks/useDelayFalsy";
+import { FlatList, Gesture, GestureDetector, TapGestureHandler } from "react-native-gesture-handler";
+import { fontSizeConst } from "@/constants/uiConst";
+import Loading from "@/components/base/loading";
+import globalStyle from "@/constants/globalStyle";
+import { showPanel } from "@/components/panels/usePanel";
+import LyricManager from "@/core/lyricManager";
+import TrackPlayer from "@/core/trackPlayer";
+import { musicIsPaused } from "@/utils/trackUtils";
+import delay from "@/utils/delay";
+import DraggingTime from "./draggingTime";
+import LyricItemComponent from "./lyricItem";
+import PersistStatus from "@/core/persistStatus.ts";
+import LyricOperations from "./lyricOperations";
+import MediaExtra from "@/core/mediaExtra";
+import { IParsedLrcItem } from "@/utils/lrcParser";
+import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
 
 const ITEM_HEIGHT = rpx(92);
 

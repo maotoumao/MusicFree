@@ -1,4 +1,4 @@
-import {ROUTE_PATH} from '@/entry/router';
+import {ROUTE_PATH} from '@/core/router';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';

@@ -6,7 +6,7 @@ import useColors from '@/hooks/useColors';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {FlashList} from '@shopify/flash-list';
 import ListItem from '@/components/base/listItem';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import {ImgAsset} from '@/constants/assetsConst';
 import {showDialog} from '@/components/dialogs/useDialog';
 import Toast from '@/utils/toast';

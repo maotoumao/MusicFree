@@ -1,36 +1,33 @@
-import {produce} from 'immer';
+import { produce } from "immer";
 import ReactNativeTrackPlayer, {
     Event,
     State,
     Track,
     TrackMetadataBase,
     usePlaybackState,
-    useProgress,
-} from 'react-native-track-player';
-import shuffle from 'lodash.shuffle';
-import Config from '../config';
+    useProgress
+} from "react-native-track-player";
+import shuffle from "lodash.shuffle";
+import Config from "../config.ts";
+import { EDeviceEvents, internalFakeSoundKey, sortIndexSymbol, timeStampSymbol } from "@/constants/commonConst";
+import { GlobalState } from "@/utils/stateMapper";
+import delay from "@/utils/delay";
 import {
-    EDeviceEvents,
-    internalFakeSoundKey,
-    sortIndexSymbol,
-    timeStampSymbol,
-} from '@/constants/commonConst';
-import {GlobalState} from '@/utils/stateMapper';
-import delay from '@/utils/delay';
-import {
+    getInternalData,
+    InternalDataType,
     isSameMediaItem,
     mergeProps,
-    sortByTimestampAndIndex,
-} from '@/utils/mediaItem';
-import Network from '../network';
-import LocalMusicSheet from '../localMusicSheet';
-import {SoundAsset} from '@/constants/assetsConst';
-import {getQualityOrder} from '@/utils/qualities';
-import musicHistory from '../musicHistory';
-import getUrlExt from '@/utils/getUrlExt';
-import {DeviceEventEmitter} from 'react-native';
-import LyricManager from '../lyricManager';
-import {MusicRepeatMode} from './common';
+    sortByTimestampAndIndex
+} from "@/utils/mediaItem";
+import Network from "../network";
+import LocalMusicSheet from "../localMusicSheet";
+import { SoundAsset } from "@/constants/assetsConst";
+import { getQualityOrder } from "@/utils/qualities";
+import musicHistory from "../musicHistory";
+import getUrlExt from "@/utils/getUrlExt";
+import { DeviceEventEmitter } from "react-native";
+import LyricManager from "../lyricManager";
+import { MusicRepeatMode } from "./common";
 import {
     getMusicIndex,
     getPlayList,
@@ -38,15 +35,16 @@ import {
     isInPlayList,
     isPlayListEmpty,
     setPlayList,
-    usePlayList,
-} from './internal/playList';
-import {createMediaIndexMap} from '@/utils/mediaIndexMap';
-import PluginManager from '../pluginManager';
-import {musicIsPaused} from '@/utils/trackUtils';
-import {errorLog, trace} from '@/utils/log';
-import PersistStatus from '../persistStatus';
-import {getCurrentDialog, showDialog} from '@/components/dialogs/useDialog';
-import getSimilarMusic from '@/utils/getSimilarMusic';
+    usePlayList
+} from "./internal/playList";
+import { createMediaIndexMap } from "@/utils/mediaIndexMap";
+import PluginManager from "../pluginManager";
+import { musicIsPaused } from "@/utils/trackUtils";
+import { errorLog, trace } from "@/utils/log";
+import PersistStatus from "../persistStatus.ts";
+import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog";
+import getSimilarMusic from "@/utils/getSimilarMusic";
+import MediaExtra from "@/core/mediaExtra.ts";
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -83,24 +81,7 @@ const shrinkPlayListToSize = (
 
 let hasSetupListener = false;
 
-// TODO: 删除
-function migrate() {
-    const config = Config.get('status.music');
-    if (!config) {
-        return;
-    }
-    const {rate, repeatMode, musicQueue, progress, track} = config;
-    PersistStatus.set('music.rate', rate);
-    PersistStatus.set('music.repeatMode', repeatMode);
-    PersistStatus.set('music.playList', musicQueue);
-    PersistStatus.set('music.progress', progress);
-    PersistStatus.set('music.musicItem', track);
-    Config.set('status.music', undefined);
-}
-
 async function setupTrackPlayer() {
-    migrate();
-
     const rate = PersistStatus.get('music.rate');
     const musicQueue = PersistStatus.get('music.playList');
     const repeatMode = PersistStatus.get('music.repeatMode');
@@ -108,7 +89,7 @@ async function setupTrackPlayer() {
     const track = PersistStatus.get('music.musicItem');
     const quality =
         PersistStatus.get('music.quality') ||
-        Config.get('setting.basic.defaultPlayQuality') ||
+        Config.getConfig('basic.defaultPlayQuality') ||
         'standard';
 
     // 状态恢复
@@ -124,7 +105,7 @@ async function setupTrackPlayer() {
     }
 
     if (track && isInPlayList(track)) {
-        if (!Config.get('setting.basic.autoPlayWhenAppStart')) {
+        if (!Config.getConfig('basic.autoPlayWhenAppStart')) {
             track.isInit = true;
         }
 
@@ -235,7 +216,7 @@ const getFakeNextTrack = () => {
 /** 播放失败时的情况 */
 async function failToPlay() {
     // 如果自动跳转下一曲, 500s后自动跳转
-    if (!Config.get('setting.basic.autoStopWhenError')) {
+    if (!Config.getConfig('basic.autoStopWhenError')) {
         await ReactNativeTrackPlayer.reset();
         await delay(500);
         await skipToNext();
@@ -478,10 +459,16 @@ const play = async (
             throw new Error(PlayFailReason.PLAY_LIST_IS_EMPTY);
         }
         // 1. 移动网络禁止播放
+        const mediaExtra = MediaExtra.get(musicItem);
+        // TODO: 优化本地音乐的逻辑
+        const localPath =
+          mediaExtra?.localPath ||
+          getInternalData<string>(musicItem, InternalDataType.LOCALPATH)
         if (
             Network.isCellular() &&
-            !Config.get('setting.basic.useCelluarNetworkPlay') &&
-            !LocalMusicSheet.isLocalMusic(musicItem)
+            !Config.getConfig('basic.useCelluarNetworkPlay') &&
+            !LocalMusicSheet.isLocalMusic(musicItem) &&
+            !localPath
         ) {
             await ReactNativeTrackPlayer.reset();
             throw new Error(PlayFailReason.FORBID_CELLUAR_NETWORK_PLAY);
@@ -547,8 +534,8 @@ const play = async (
         const plugin = PluginManager.getByName(musicItem.platform);
         // 5.2 获取音质排序
         const qualityOrder = getQualityOrder(
-            Config.get('setting.basic.defaultPlayQuality') ?? 'standard',
-            Config.get('setting.basic.playQualityOrder') ?? 'asc',
+            Config.getConfig('basic.defaultPlayQuality') ?? 'standard',
+            Config.getConfig('basic.playQualityOrder') ?? 'asc',
         );
         // 5.3 插件返回音源
         let source: IPlugin.IMediaSourceResult | null = null;
@@ -588,7 +575,7 @@ const play = async (
             // 5.4 没有返回源
             if (!source && !musicItem.url) {
                 // 插件失效的情况
-                if (Config.get('setting.basic.tryChangeSourceWhenPlayFail')) {
+                if (Config.getConfig('basic.tryChangeSourceWhenPlayFail')) {
                     // 重试
                     const similarMusic = await getSimilarMusic(
                         musicItem,

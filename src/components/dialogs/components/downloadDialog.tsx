@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
-import ThemeText from '@/components/base/themeText';
-import {StyleSheet, View} from 'react-native';
-import rpx, {vh} from '@/utils/rpx';
-import openUrl from '@/utils/openUrl';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import {hideDialog} from '../useDialog';
-import Checkbox from '@/components/base/checkbox';
-import Button from '@/components/base/textButton.tsx';
-import Dialog from './base';
-import PersistStatus from '@/core/persistStatus';
+import React, { useState } from "react";
+import ThemeText from "@/components/base/themeText";
+import { StyleSheet, View } from "react-native";
+import rpx, { vh } from "@/utils/rpx";
+import openUrl from "@/utils/openUrl";
+import Clipboard from "@react-native-clipboard/clipboard";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { hideDialog } from "../useDialog";
+import Checkbox from "@/components/base/checkbox";
+import Button from "@/components/base/textButton.tsx";
+import Dialog from "./base";
+import PersistStatus from "@/core/persistStatus.ts";
 
 interface IDownloadDialogProps {
     version: string;

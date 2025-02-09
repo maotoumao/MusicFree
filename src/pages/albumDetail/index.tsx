@@ -1,6 +1,6 @@
 import React from 'react';
 import useAlbumDetail from './hooks/useAlbumMusicList';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import MusicSheetPage from '@/components/musicSheetPage';
 
 export default function AlbumDetail() {

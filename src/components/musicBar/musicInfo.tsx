@@ -6,7 +6,7 @@ import {ImgAsset} from '@/constants/assetsConst';
 import Color from 'color';
 import ThemeText from '../base/themeText';
 import useColors from '@/hooks/useColors';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import TrackPlayer from '@/core/trackPlayer';
 import Animated, {

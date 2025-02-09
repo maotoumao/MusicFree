@@ -1,22 +1,22 @@
-import StatusBar from '@/components/base/statusBar';
-import globalStyle from '@/constants/globalStyle';
-import useOrientation from '@/hooks/useOrientation';
-import React, {useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import Background from './components/background';
-import Bottom from './components/bottom';
-import Content from './components/content';
-import Lyric from './components/content/lyric';
-import NavBar from './components/navBar';
-import Config from '@/core/config';
-import {activateKeepAwakeAsync, deactivateKeepAwake} from 'expo-keep-awake';
+import StatusBar from "@/components/base/statusBar";
+import globalStyle from "@/constants/globalStyle";
+import useOrientation from "@/hooks/useOrientation";
+import React, { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Background from "./components/background";
+import Bottom from "./components/bottom";
+import Content from "./components/content";
+import Lyric from "./components/content/lyric";
+import NavBar from "./components/navBar";
+import Config from "@/core/config.ts";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 
 export default function MusicDetail() {
     const orientation = useOrientation();
 
     useEffect(() => {
-        const needAwake = Config.get('setting.basic.musicDetailAwake');
+        const needAwake = Config.getConfig('basic.musicDetailAwake');
         if (needAwake) {
             activateKeepAwakeAsync();
         }

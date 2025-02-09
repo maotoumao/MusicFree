@@ -1,21 +1,21 @@
-import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import bootstrap from './bootstrap';
-import {navigationRef, routes} from './router';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import Dialogs from '@/components/dialogs';
-import Panels from '@/components/panels';
-import PageBackground from '@/components/base/pageBackground';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Debug from '@/components/debug';
-import {PortalHost} from '@/components/base/portal';
-import globalStyle from '@/constants/globalStyle';
-import Theme from '@/core/theme';
-import {BootstrapComp} from './useBootstrap';
-import {ToastBaseComponent} from '@/components/base/toast';
-import {StatusBar} from 'react-native';
-import {ReducedMotionConfig, ReduceMotion} from 'react-native-reanimated';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import bootstrap from "./bootstrap";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Dialogs from "@/components/dialogs";
+import Panels from "@/components/panels";
+import PageBackground from "@/components/base/pageBackground";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import Debug from "@/components/debug";
+import { PortalHost } from "@/components/base/portal";
+import globalStyle from "@/constants/globalStyle";
+import Theme from "@/core/theme";
+import { BootstrapComp } from "./useBootstrap";
+import { ToastBaseComponent } from "@/components/base/toast";
+import { StatusBar } from "react-native";
+import { ReducedMotionConfig, ReduceMotion } from "react-native-reanimated";
+import { routes } from "@/core/router/routes.tsx";
 /**
  * 字体颜色
  */
@@ -39,7 +39,7 @@ export default function Pages() {
             <ReducedMotionConfig mode={ReduceMotion.Never} />
             <GestureHandlerRootView style={globalStyle.flex1}>
                 <SafeAreaProvider>
-                    <NavigationContainer theme={theme} ref={navigationRef}>
+                    <NavigationContainer theme={theme}>
                         <PageBackground />
                         <Stack.Navigator
                             initialRouteName={routes[0].path}

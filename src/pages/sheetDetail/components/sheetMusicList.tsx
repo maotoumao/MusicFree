@@ -2,7 +2,7 @@ import React from 'react';
 import MusicSheet from '@/core/musicSheet';
 import Header from './header';
 import MusicList from '@/components/musicList';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
 

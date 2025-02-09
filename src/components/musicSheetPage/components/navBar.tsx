@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import AppBar from '@/components/base/appBar';
 
 interface INavBarProps {

@@ -16,7 +16,7 @@ import Empty from '@/components/base/empty';
 import useHardwareBack from '@/hooks/useHardwareBack';
 import {useNavigation} from '@react-navigation/native';
 import Loading from '@/components/base/loading';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import StatusBar from '@/components/base/statusBar';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';

@@ -1,13 +1,13 @@
-import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
-import safeParse from '@/utils/safeParse';
-import {useEffect, useState} from 'react';
+import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
+import safeParse from "@/utils/safeParse";
+import { useEffect, useState } from "react";
 
 // Internal Method
 const getStore = () => {
     return getOrCreateMMKV('App.PersistStatus');
 };
 
-interface IPersistConfig {
+interface IPersistStatus {
     /** 当前的音乐 */
     'music.musicItem': IMusic.IMusicItem;
     /** 进度 */
@@ -32,9 +32,9 @@ interface IPersistConfig {
     'lyric.detailFontSize': number;
 }
 
-function set<K extends keyof IPersistConfig>(
+function set<K extends keyof IPersistStatus>(
     key: K,
-    value: IPersistConfig[K] | undefined,
+    value: IPersistStatus[K] | undefined,
 ) {
     const store = getStore();
     if (value === undefined) {
@@ -44,20 +44,20 @@ function set<K extends keyof IPersistConfig>(
     }
 }
 
-function get<K extends keyof IPersistConfig>(key: K): IPersistConfig[K] | null {
+function get<K extends keyof IPersistStatus>(key: K): IPersistStatus[K] | null {
     const store = getStore();
     const raw = store.getString(key);
     if (raw) {
-        return safeParse(raw) as IPersistConfig[K];
+        return safeParse(raw) as IPersistStatus[K];
     }
     return null;
 }
 
-function useValue<K extends keyof IPersistConfig>(
+function useValue<K extends keyof IPersistStatus>(
     key: K,
-    defaultValue?: IPersistConfig[K],
-): IPersistConfig[K] | null {
-    const [state, setState] = useState<IPersistConfig[K] | null>(
+    defaultValue?: IPersistStatus[K],
+): IPersistStatus[K] | null {
+    const [state, setState] = useState<IPersistStatus[K] | null>(
         get(key) ?? defaultValue ?? null,
     );
 

@@ -3,7 +3,7 @@ import {BackHandler, Platform, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import ListItem from '@/components/base/listItem';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import ThemeText from '@/components/base/themeText';
 import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';

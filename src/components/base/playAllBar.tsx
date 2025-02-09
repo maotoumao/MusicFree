@@ -2,7 +2,7 @@ import React from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {iconSizeConst} from '@/constants/uiConst';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
 import {showPanel} from '../panels/usePanel';

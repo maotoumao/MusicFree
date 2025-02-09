@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
-import Config from '@/core/config';
-import {FlatList} from 'react-native-gesture-handler';
-import Empty from '@/components/base/empty';
-import ListItem from '@/components/base/listItem';
-import Toast from '@/utils/toast';
-import Clipboard from '@react-native-clipboard/clipboard';
-import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
-import globalStyle from '@/constants/globalStyle';
-import {showDialog} from '@/components/dialogs/useDialog';
-import AppBar from '@/components/base/appBar';
-import Fab from '@/components/base/fab';
+import React, { useEffect, useState } from "react";
+import { StyleSheet } from "react-native";
+import rpx from "@/utils/rpx";
+import Config from "@/core/config.ts";
+import { FlatList } from "react-native-gesture-handler";
+import Empty from "@/components/base/empty";
+import ListItem from "@/components/base/listItem";
+import Toast from "@/utils/toast";
+import Clipboard from "@react-native-clipboard/clipboard";
+import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
+import globalStyle from "@/constants/globalStyle";
+import { showDialog } from "@/components/dialogs/useDialog";
+import AppBar from "@/components/base/appBar";
+import Fab from "@/components/base/fab";
 
 interface ISubscribeItem {
     name: string;
@@ -21,7 +21,7 @@ interface ISubscribeItem {
 const ITEM_HEIGHT = rpx(108);
 
 export default function PluginSubscribe() {
-    const urls = Config.useConfig('setting.plugin.subscribeUrl') ?? '';
+    const urls = Config.useConfigValue('plugin.subscribeUrl') ?? '';
     const [subscribes, setSubscribes] = useState<Array<ISubscribeItem>>([]);
 
     useEffect(() => {
@@ -56,8 +56,8 @@ export default function PluginSubscribe() {
             subscribeItem.url.endsWith('.json')
         ) {
             if (editingIndex !== undefined) {
-                Config.set(
-                    'setting.plugin.subscribeUrl',
+                Config.setConfig(
+                    'plugin.subscribeUrl',
                     JSON.stringify([
                         ...subscribes.slice(0, editingIndex),
                         subscribeItem,
@@ -65,8 +65,8 @@ export default function PluginSubscribe() {
                     ]),
                 );
             } else {
-                Config.set(
-                    'setting.plugin.subscribeUrl',
+                Config.setConfig(
+                    'plugin.subscribeUrl',
                     JSON.stringify([...subscribes, subscribeItem]),
                 );
             }
@@ -94,8 +94,8 @@ export default function PluginSubscribe() {
                                         onSubmit,
                                         editingIndex: index,
                                         onDelete(editingIndex, hideDialog) {
-                                            Config.set(
-                                                'setting.plugin.subscribeUrl',
+                                            Config.setConfig(
+                                                'plugin.subscribeUrl',
                                                 JSON.stringify([
                                                     ...subscribes.slice(
                                                         0,

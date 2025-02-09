@@ -7,7 +7,7 @@ import MusicList from '@/components/musicList';
 import {musicHistorySheetId} from '@/constants/commonConst';
 import MusicBar from '@/components/musicBar';
 import AppBar from '@/components/base/appBar';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 
 export default function History() {
     const musicHistoryList = musicHistory.useMusicHistory();

@@ -1,277 +1,225 @@
-// import {Quality} from '@/constants/commonConst';
-import {CustomizedColors} from '@/hooks/useColors';
-import {getStorage, setStorage} from '@/utils/storage';
-import {produce} from 'immer';
-import {useEffect, useState} from 'react';
-import {ResumeMode, SortType} from '@/constants/commonConst.ts';
+import { CustomizedColors } from "@/hooks/useColors";
+import { getStorage, removeStorage } from "@/utils/storage";
+import { ResumeMode, SortType } from "@/constants/commonConst.ts";
+import getOrCreateMMKV from "@/utils/getOrCreateMMKV.ts";
+import safeStringify from "@/utils/safeStringify.ts";
+import { useMMKVObject } from "react-native-mmkv";
 
-type ExceptionType = IMusic.IMusicItem | IMusic.IMusicItem[] | IMusic.IQuality;
+
+const configStore = getOrCreateMMKV('App.config');
+
+// 新版本配置类型（扁平化结构）
 interface IConfig {
-    setting: {
-        basic: {
-            autoPlayWhenAppStart: boolean;
-            /** 使用移动网络播放 */
-            useCelluarNetworkPlay: boolean;
-            /** 使用移动网络下载 */
-            useCelluarNetworkDownload: boolean;
-            /** 最大同时下载 */
-            maxDownload: number | string;
-            /** 播放歌曲行为 */
-            clickMusicInSearch: '播放歌曲' | '播放歌曲并替换播放列表';
-            /** 点击专辑单曲 */
-            clickMusicInAlbum: '播放专辑' | '播放单曲';
-            /** 下载文件夹 */
-            downloadPath: string;
-            /** 同时播放 */
-            notInterrupt: boolean;
-            /** 打断时 */
-            tempRemoteDuck: '暂停' | '降低音量';
-            /** 播放错误时自动停止 */
-            autoStopWhenError: boolean;
-            /** 插件缓存策略 todo */
-            pluginCacheControl: string;
-            /** 最大音乐缓存 */
-            maxCacheSize: number;
-            /** 默认播放音质 */
-            defaultPlayQuality: IMusic.IQualityKey;
-            /** 音质顺序 */
-            playQualityOrder: 'asc' | 'desc';
-            /** 默认下载音质 */
-            defaultDownloadQuality: IMusic.IQualityKey;
-            /** 下载音质顺序 */
-            downloadQualityOrder: 'asc' | 'desc';
-            /** 歌曲详情页 */
-            musicDetailDefault: 'album' | 'lyric';
-            /** 歌曲详情页常亮 */
-            musicDetailAwake: boolean;
-            debug: {
-                errorLog: boolean;
-                traceLog: boolean;
-                devLog: boolean;
-            };
-            /** 最大历史记录条目 */
-            maxHistoryLen: number;
-            /** 启动时自动更新插件 */
-            autoUpdatePlugin: boolean;
-            // 不检查插件版本号
-            notCheckPluginVersion: boolean;
-            /** 关联歌词方式 */
-            associateLyricType: 'input' | 'search';
-            // 是否展示退出按钮
-            showExitOnNotification: boolean;
-            // 本地歌单添加歌曲顺序
-            musicOrderInLocalSheet: SortType;
-            // 自动换源
-            tryChangeSourceWhenPlayFail: boolean;
-        };
-        /** 歌词 */
-        lyric: {
-            showStatusBarLyric: boolean;
-            topPercent: number;
-            leftPercent: number;
-            align: number;
-            color: string;
-            backgroundColor: string;
-            widthPercent: number;
-            fontSize: number;
-            // 详情页的字体大小
-            detailFontSize: number;
-            // 自动搜索歌词
-            autoSearchLyric: boolean;
-        };
+    "$schema": "1";
+    // Basic
+    "basic.autoPlayWhenAppStart": boolean;
+    "basic.useCelluarNetworkPlay": boolean;
+    "basic.useCelluarNetworkDownload": boolean;
+    "basic.maxDownload": number | string;
+    "basic.clickMusicInSearch": '播放歌曲' | '播放歌曲并替换播放列表';
+    "basic.clickMusicInAlbum": '播放专辑' | '播放单曲';
+    "basic.downloadPath": string;
+    "basic.notInterrupt": boolean;
+    "basic.tempRemoteDuck": '暂停' | '降低音量';
+    "basic.autoStopWhenError": boolean;
+    "basic.pluginCacheControl": string;
+    "basic.maxCacheSize": number;
+    "basic.defaultPlayQuality": IMusic.IQualityKey;
+    "basic.playQualityOrder": 'asc' | 'desc';
+    "basic.defaultDownloadQuality": IMusic.IQualityKey;
+    "basic.downloadQualityOrder": 'asc' | 'desc';
+    "basic.musicDetailDefault": 'album' | 'lyric';
+    "basic.musicDetailAwake": boolean;
+    "basic.maxHistoryLen": number;
+    "basic.autoUpdatePlugin": boolean;
+    "basic.notCheckPluginVersion": boolean;
+    "basic.associateLyricType": 'input' | 'search';
+    "basic.showExitOnNotification": boolean;
+    "basic.musicOrderInLocalSheet": SortType;
+    "basic.tryChangeSourceWhenPlayFail": boolean;
 
-        /** 主题 */
-        theme: {
-            background: string;
-            backgroundOpacity: number;
-            backgroundBlur: number;
-            colors: CustomizedColors;
-            customColors?: CustomizedColors;
-            followSystem: boolean;
-            selectedTheme: string;
-        };
+    // Lyric
+    "lyric.showStatusBarLyric": boolean;
+    "lyric.topPercent": number;
+    "lyric.leftPercent": number;
+    "lyric.align": number;
+    "lyric.color": string;
+    "lyric.backgroundColor": string;
+    "lyric.widthPercent": number;
+    "lyric.fontSize": number;
+    "lyric.detailFontSize": number;
+    "lyric.autoSearchLyric": boolean;
 
-        backup: {
-            resumeMode: ResumeMode;
-        };
+    // Theme
+    "theme.background": string;
+    "theme.backgroundOpacity": number;
+    "theme.backgroundBlur": number;
+    "theme.colors": CustomizedColors;
+    "theme.customColors"?: CustomizedColors;
+    "theme.followSystem": boolean;
+    "theme.selectedTheme": string;
 
-        plugin: {
-            subscribeUrl: string;
-        };
-        webdav: {
-            url: string;
-            username: string;
-            password: string;
-        };
-    };
-    status: {
-        music: {
-            /** 当前的音乐 */
-            track: IMusic.IMusicItem;
-            /** 进度 */
-            progress: number;
-            /** 模式 */
-            repeatMode: string;
-            /** 列表 */
-            musicQueue: IMusic.IMusicItem[];
-            /** 速度 */
-            rate: number;
-        };
-        app: {
-            /** 跳过特定版本 */
-            skipVersion: string;
-        };
-    };
+    // Backup
+    "backup.resumeMode": ResumeMode;
+
+    // Plugin
+    "plugin.subscribeUrl": string;
+
+    // WebDAV
+    "webdav.url": string;
+    "webdav.username": string;
+    "webdav.password": string;
+
+    // Debug（保持嵌套结构）
+    "debug.errorLog": boolean;
+    "debug.traceLog": boolean;
+    "debug.devLog": boolean;
 }
 
-type FilterType<T, R = never> = T extends Record<string | number, any>
-    ? {
-          [P in keyof T]: T[P] extends ExceptionType ? R : T[P];
-      }
-    : never;
 
-type KeyPaths<
-    T extends object,
-    Root extends boolean = true,
-    R = FilterType<T, ''>,
-    K extends keyof R = keyof R,
-> = K extends string | number
-    ?
-          | (Root extends true ? `${K}` : `.${K}`)
-          | (R[K] extends Record<string | number, any>
-                ? `${Root extends true ? `${K}` : `.${K}`}${KeyPaths<
-                      R[K],
-                      false
-                  >}`
-                : never)
-    : never;
+export type ConfigKey = keyof IConfig;
 
-type KeyPathValue<T extends object, K extends string> = T extends Record<
-    string | number,
-    any
->
-    ? K extends `${infer S}.${infer R}`
-        ? KeyPathValue<T[S], R>
-        : T[K]
-    : never;
-
-type KeyPathsObj<
-    T extends object,
-    K extends string = KeyPaths<T>,
-> = T extends Record<string | number, any>
-    ? {
-          [R in K]: KeyPathValue<T, R>;
-      }
-    : never;
-
-type DeepPartial<T> = {
-    [K in keyof T]?: T[K] extends Record<string | number, any>
-        ? T[K] extends ExceptionType
-            ? T[K]
-            : DeepPartial<T[K]>
-        : T[K];
-};
-
-export type IConfigPaths = KeyPaths<IConfig>;
-type PartialConfig = DeepPartial<IConfig> | null;
-type IConfigPathsObj = KeyPathsObj<DeepPartial<IConfig>, IConfigPaths>;
-
-let config: PartialConfig = null;
-/** 初始化config */
-async function setup() {
-    config = (await getStorage('local-config')) ?? {};
-    // await checkValidPath(['setting.theme.background']);
-    notify();
-}
-
-/** 设置config */
-async function setConfig<T extends IConfigPaths>(
-    key: T,
-    value: IConfigPathsObj[T],
-    shouldNotify = true,
-) {
-    if (config === null) {
+// 迁移函数
+async function migrateConfig(): Promise<void> {
+    // 检查是否已经迁移
+    if (configStore.contains('$schema')) {
         return;
     }
-    const keys = key.split('.');
 
-    const result = produce(config, draft => {
-        draft[keys[0] as keyof IConfig] = draft[keys[0] as keyof IConfig] ?? {};
-        let conf: any = draft[keys[0] as keyof IConfig];
-        for (let i = 1; i < keys.length - 1; ++i) {
-            if (!conf?.[keys[i]]) {
-                conf[keys[i]] = {};
-            }
-            conf = conf[keys[i]];
+    // 获取旧配置
+    const oldConfig = await getStorage('local-config');
+
+    // 如果没有旧配置，直接初始化新配置
+    if (!oldConfig) {
+        configStore.set('$schema', '1');
+        return;
+    }
+
+    // 迁移每个字段
+    const mapping: [string, ConfigKey][] = [
+        // Basic
+        ['setting.basic.autoPlayWhenAppStart', 'basic.autoPlayWhenAppStart'],
+        ['setting.basic.useCelluarNetworkPlay', 'basic.useCelluarNetworkPlay'],
+        ['setting.basic.useCelluarNetworkDownload', 'basic.useCelluarNetworkDownload'],
+        ['setting.basic.maxDownload', 'basic.maxDownload'],
+        ['setting.basic.clickMusicInSearch', 'basic.clickMusicInSearch'],
+        ['setting.basic.clickMusicInAlbum', 'basic.clickMusicInAlbum'],
+        ['setting.basic.downloadPath', 'basic.downloadPath'],
+        ['setting.basic.notInterrupt', 'basic.notInterrupt'],
+        ['setting.basic.tempRemoteDuck', 'basic.tempRemoteDuck'],
+        ['setting.basic.autoStopWhenError', 'basic.autoStopWhenError'],
+        ['setting.basic.pluginCacheControl', 'basic.pluginCacheControl'],
+        ['setting.basic.maxCacheSize', 'basic.maxCacheSize'],
+        ['setting.basic.defaultPlayQuality', 'basic.defaultPlayQuality'],
+        ['setting.basic.playQualityOrder', 'basic.playQualityOrder'],
+        ['setting.basic.defaultDownloadQuality', 'basic.defaultDownloadQuality'],
+        ['setting.basic.downloadQualityOrder', 'basic.downloadQualityOrder'],
+        ['setting.basic.musicDetailDefault', 'basic.musicDetailDefault'],
+        ['setting.basic.musicDetailAwake', 'basic.musicDetailAwake'],
+        ['setting.basic.debug.errorLog', 'debug.errorLog'],
+        ['setting.basic.debug.traceLog', 'debug.traceLog'],
+        ['setting.basic.debug.devLog', 'debug.devLog'],
+        ['setting.basic.maxHistoryLen', 'basic.maxHistoryLen'],
+        ['setting.basic.autoUpdatePlugin', 'basic.autoUpdatePlugin'],
+        ['setting.basic.notCheckPluginVersion', 'basic.notCheckPluginVersion'],
+        ['setting.basic.associateLyricType', 'basic.associateLyricType'],
+        ['setting.basic.showExitOnNotification', 'basic.showExitOnNotification'],
+        ['setting.basic.musicOrderInLocalSheet', 'basic.musicOrderInLocalSheet'],
+        ['setting.basic.tryChangeSourceWhenPlayFail', 'basic.tryChangeSourceWhenPlayFail'],
+
+        // Lyric
+        ['setting.lyric.showStatusBarLyric', 'lyric.showStatusBarLyric'],
+        ['setting.lyric.topPercent', 'lyric.topPercent'],
+        ['setting.lyric.leftPercent', 'lyric.leftPercent'],
+        ['setting.lyric.align', 'lyric.align'],
+        ['setting.lyric.color', 'lyric.color'],
+        ['setting.lyric.backgroundColor', 'lyric.backgroundColor'],
+        ['setting.lyric.widthPercent', 'lyric.widthPercent'],
+        ['setting.lyric.fontSize', 'lyric.fontSize'],
+        ['setting.lyric.detailFontSize', 'lyric.detailFontSize'],
+        ['setting.lyric.autoSearchLyric', 'lyric.autoSearchLyric'],
+
+        // Theme
+        ['setting.theme.background', 'theme.background'],
+        ['setting.theme.backgroundOpacity', 'theme.backgroundOpacity'],
+        ['setting.theme.backgroundBlur', 'theme.backgroundBlur'],
+        ['setting.theme.colors', 'theme.colors'],
+        ['setting.theme.customColors', 'theme.customColors'],
+        ['setting.theme.followSystem', 'theme.followSystem'],
+        ['setting.theme.selectedTheme', 'theme.selectedTheme'],
+
+        // Backup
+        ['setting.backup.resumeMode', 'backup.resumeMode'],
+
+        // Plugin
+        ['setting.plugin.subscribeUrl', 'plugin.subscribeUrl'],
+
+        // WebDAV
+        ['setting.webdav.url', 'webdav.url'],
+        ['setting.webdav.username', 'webdav.username'],
+        ['setting.webdav.password', 'webdav.password'],
+    ];
+
+    // 执行迁移
+    function getPathValue(obj: Record<string, any>, path: string) {
+        const keys = path.split('.');
+        let tmp = obj;
+        for (let i = 0; i < keys.length; ++i) {
+            tmp = tmp?.[keys[i]];
         }
-        conf[keys[keys.length - 1]] = value;
-        return draft;
+        return tmp;
+    }
+
+    mapping.forEach(([oldPath, newKey]) => {
+        const value = getPathValue(oldConfig, oldPath);
+        if (value !== undefined) {
+            configStore.set(newKey, safeStringify(value));
+        }
     });
 
-    setStorage('local-config', result);
-    config = result;
-    if (shouldNotify) {
-        notify();
-    }
+    // 设置版本标识
+    configStore.set('$schema', '1');
+
+    // 清理旧配置
+    await removeStorage('local-config'); // 根据需求决定是否删除旧配置
 }
 
-// todo: 获取兜底
-/** 获取config */
-function getConfig(): PartialConfig;
-function getConfig<T extends IConfigPaths>(key: T): IConfigPathsObj[T];
-function getConfig(key?: string) {
-    let result: any = config;
-    if (key && config) {
-        result = getPathValue(config, key);
-    }
-
-    return result;
+/** 初始化config */
+async function setup() {
+    await migrateConfig();
 }
 
-/** 通过path获取值 */
-function getPathValue(obj: Record<string, any>, path: string) {
-    const keys = path.split('.');
-    let tmp = obj;
-    for (let i = 0; i < keys.length; ++i) {
-        tmp = tmp?.[keys[i]];
-    }
-    return tmp;
-}
-
-/** 同步hook */
-const notifyCbs = new Set<() => void>();
-function notify() {
-    notifyCbs.forEach(_ => _?.());
-}
-
-/** hook */
-function useConfig(): PartialConfig;
-function useConfig<T extends IConfigPaths>(key: T): IConfigPathsObj[T];
-function useConfig(key?: string) {
-    // TODO: 应该有性能损失
-    const [_cfg, _setCfg] = useState<PartialConfig>(config);
-    function setCfg() {
-        _setCfg(config);
-    }
-    useEffect(() => {
-        notifyCbs.add(setCfg);
-        return () => {
-            notifyCbs.delete(setCfg);
-        };
-    }, []);
-
-    if (key) {
-        return _cfg ? getPathValue(_cfg, key) : undefined;
+function setConfig<K extends ConfigKey>(key: K, value?: IConfig[K]) {
+    if (value === undefined) {
+        configStore.delete(key);
     } else {
-        return _cfg;
+        configStore.set(key, safeStringify(value));
     }
+}
+
+function getConfig<K extends ConfigKey>(key: K): IConfig[K] | undefined {
+    const value = configStore.getString(key);
+    if (value === undefined) {
+        return undefined;
+    }
+    return JSON.parse(value);
+}
+
+
+function useConfig<K extends ConfigKey>(key: K) {
+    return useMMKVObject<IConfig[K]>(key, configStore);
+}
+
+function useConfigValue<K extends ConfigKey>(key: K) {
+    return useMMKVObject<IConfig[K]>(key, configStore)[0];
 }
 
 const Config = {
-    get: getConfig,
-    set: setConfig,
-    useConfig,
     setup,
-};
+    setConfig,
+    getConfig,
+    useConfig,
+    useConfigValue
+}
 
 export default Config;

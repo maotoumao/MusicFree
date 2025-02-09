@@ -1,29 +1,33 @@
-import React from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
-import ListItem, {ListItemHeader} from '@/components/base/listItem';
-import Toast from '@/utils/toast';
-import Backup from '@/core/backup';
-import backup from '@/core/backup';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import React from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import ListItem, { ListItemHeader } from "@/components/base/listItem";
+import Toast from "@/utils/toast";
+import Backup from "@/core/backup";
+import backup from "@/core/backup";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
 
-import axios from 'axios';
-import {showDialog} from '@/components/dialogs/useDialog';
-import {showPanel} from '@/components/panels/usePanel';
+import axios from "axios";
+import { showDialog } from "@/components/dialogs/useDialog";
+import { showPanel } from "@/components/panels/usePanel";
 
-import {AuthType, createClient} from 'webdav';
-import Config from '@/core/config';
-import {writeInChunks} from '@/utils/fileUtils.ts';
-import {getDocumentAsync} from 'expo-document-picker';
-import {readAsStringAsync} from 'expo-file-system';
-import sleep from '@/utils/sleep';
-import {ResumeMode} from '@/constants/commonConst.ts';
-import strings from '@/constants/strings.ts';
-import {errorLog} from '@/utils/log.ts';
+import { AuthType, createClient } from "webdav";
+import Config from "@/core/config.ts";
+import { writeInChunks } from "@/utils/fileUtils.ts";
+import { getDocumentAsync } from "expo-document-picker";
+import { readAsStringAsync } from "expo-file-system";
+import sleep from "@/utils/sleep";
+import { ResumeMode } from "@/constants/commonConst.ts";
+import strings from "@/constants/strings.ts";
+import { errorLog } from "@/utils/log.ts";
 
 export default function BackupSetting() {
     const navigate = useNavigate();
-    const webdavConfig = Config.useConfig('setting.webdav');
-    const backupConfig = Config.useConfig('setting.backup');
+
+    const resumeMode = Config.useConfigValue('backup.resumeMode');
+    const webdavUrl = Config.useConfigValue('webdav.url');
+    const webdavUsername = Config.useConfigValue('webdav.username');
+    const webdavPassword = Config.useConfigValue('webdav.password');
+
 
     const onBackupToLocal = async () => {
         navigate(ROUTE_PATH.FILE_SELECTOR, {
@@ -80,7 +84,7 @@ export default function BackupSetting() {
                     loadingText: '恢复中...',
                     async task() {
                         await sleep(300);
-                        return backup.resume(result, backupConfig?.resumeMode);
+                        return backup.resume(result, resumeMode);
                     },
                     onResolve(_, hideDialog) {
                         Toast.success('恢复成功~');
@@ -116,7 +120,7 @@ export default function BackupSetting() {
                     const url = text.trim();
                     if (url.endsWith('.json') || url.endsWith('.txt')) {
                         const raw = (await axios.get(text)).data;
-                        await Backup.resume(raw, backupConfig?.resumeMode);
+                        await Backup.resume(raw, resumeMode);
                         Toast.success('恢复成功~');
                         closePanel();
                     } else {
@@ -130,7 +134,10 @@ export default function BackupSetting() {
     }
 
     async function onResumeFromWebdav() {
-        const {username, password, url} = Config.get('setting.webdav') ?? {};
+        const url = Config.getConfig('webdav.url');
+        const username = Config.getConfig('webdav.username');
+        const password = Config.getConfig('webdav.password');
+
         if (!(username && password && url)) {
             Toast.warn('请先在「Webdav设置」中完成配置，再执行恢复');
             return;
@@ -155,7 +162,7 @@ export default function BackupSetting() {
             );
             await Backup.resume(
                 resumeData,
-                Config.get('setting.backup.resumeMode'),
+                Config.getConfig('backup.resumeMode'),
             );
             Toast.success('恢复成功~');
         } catch (e: any) {
@@ -164,7 +171,9 @@ export default function BackupSetting() {
     }
 
     async function onBackupToWebdav() {
-        const {username, password, url} = Config.get('setting.webdav') ?? {};
+        const username = Config.getConfig('webdav.username');
+        const password = Config.getConfig('webdav.password');
+        const url = Config.getConfig('webdav.url');
         if (!(username && password && url)) {
             Toast.warn('请先在「Webdav设置」中完成配置，再执行恢复');
             return;
@@ -220,8 +229,8 @@ export default function BackupSetting() {
                             },
                         ],
                         onOk(value) {
-                            Config.set(
-                                'setting.backup.resumeMode',
+                            Config.setConfig(
+                                'backup.resumeMode',
                                 value as any,
                             );
                         },
@@ -231,7 +240,7 @@ export default function BackupSetting() {
                 <ListItem.ListItemText>
                     {
                         strings.settings[
-                            (backupConfig?.resumeMode as ResumeMode) ||
+                            (resumeMode as ResumeMode) ||
                                 ResumeMode.Append
                         ]
                     }
@@ -252,10 +261,11 @@ export default function BackupSetting() {
                 withHorizontalPadding
                 onPress={() => {
                     showPanel('SetUserVariables', {
+                        title: 'Webdav设置',
                         initValues: {
-                            url: webdavConfig?.url ?? '',
-                            username: webdavConfig?.username ?? '',
-                            password: webdavConfig?.password ?? '',
+                            url: webdavUrl ?? '',
+                            username: webdavUsername ?? '',
+                            password: webdavPassword ?? '',
                         },
                         variables: [
                             {
@@ -273,7 +283,10 @@ export default function BackupSetting() {
                             },
                         ],
                         onOk(values, closePanel) {
-                            Config.set('setting.webdav', values);
+                            Config.setConfig('webdav.url', values?.url);
+                            Config.setConfig('webdav.username', values?.username);
+                            Config.setConfig('webdav.password', values?.password);
+
                             Toast.success('保存成功');
                             closePanel();
                         },

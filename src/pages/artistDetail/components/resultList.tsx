@@ -8,7 +8,7 @@ import useQueryArtist from '../hooks/useQuery';
 import Empty from '@/components/base/empty';
 import ListLoading from '@/components/base/listLoading';
 import ListReachEnd from '@/components/base/listReachEnd';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 
 const ITEM_HEIGHT = rpx(120);
 

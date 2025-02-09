@@ -1,9 +1,9 @@
-import {showDialog} from '@/components/dialogs/useDialog';
-import PersistStatus from '@/core/persistStatus';
-import checkUpdate from '@/utils/checkUpdate';
-import Toast from '@/utils/toast';
-import {compare} from 'compare-versions';
-import {useEffect} from 'react';
+import { showDialog } from "@/components/dialogs/useDialog";
+import PersistStatus from "@/core/persistStatus.ts";
+import checkUpdate from "@/utils/checkUpdate";
+import Toast from "@/utils/toast";
+import { compare } from "compare-versions";
+import { useEffect } from "react";
 
 export const checkUpdateAndShowResult = (
     showToast = false,

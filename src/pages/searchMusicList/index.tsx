@@ -6,7 +6,7 @@ import SearchResult from './searchResult';
 import StatusBar from '@/components/base/statusBar';
 import useColors from '@/hooks/useColors';
 import {fontSizeConst} from '@/constants/uiConst';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import globalStyle from '@/constants/globalStyle';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import Input from '@/components/base/input';

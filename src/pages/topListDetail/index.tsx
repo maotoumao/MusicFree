@@ -1,6 +1,6 @@
 import React from 'react';
 import useTopListDetail from './hooks/useTopListDetail';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import MusicSheetPage from '@/components/musicSheetPage';
 import {RequestStateCode} from '@/constants/commonConst';
 

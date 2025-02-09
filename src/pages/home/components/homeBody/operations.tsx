@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ActionButton from '../ActionButton';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
+import {ROUTE_PATH, useNavigate} from '@/core/router';
 
 export default function Operations() {
     const navigate = useNavigate();

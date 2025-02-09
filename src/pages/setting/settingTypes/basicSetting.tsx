@@ -1,34 +1,33 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {SectionList, StyleSheet, TouchableOpacity, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import Config, {IConfigPaths} from '@/core/config';
-import ListItem from '@/components/base/listItem';
-import ThemeText from '@/components/base/themeText';
-import ThemeSwitch from '@/components/base/switch';
-import {clearCache, getCacheSize, sizeFormatter} from '@/utils/fileUtils';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
+import rpx from "@/utils/rpx";
+import Config, { ConfigKey } from "@/core/config.ts";
+import ListItem from "@/components/base/listItem";
+import ThemeText from "@/components/base/themeText";
+import ThemeSwitch from "@/components/base/switch";
+import { clearCache, getCacheSize, sizeFormatter } from "@/utils/fileUtils";
 
-import Toast from '@/utils/toast';
-import pathConst from '@/constants/pathConst';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import {readdir} from 'react-native-fs';
-import {qualityKeys, qualityText} from '@/utils/qualities';
-import {clearLog, getErrorLogContent} from '@/utils/log';
-import {FlatList, ScrollView} from 'react-native-gesture-handler';
-import {showDialog} from '@/components/dialogs/useDialog';
-import {showPanel} from '@/components/panels/usePanel';
-import Paragraph from '@/components/base/paragraph';
-import LyricUtil, {NativeTextAlignment} from '@/native/lyricUtil';
-import Slider from '@react-native-community/slider';
-import useColors from '@/hooks/useColors';
-import ColorBlock from '@/components/base/colorBlock';
-import LyricManager from '@/core/lyricManager';
-import {SortType} from '@/constants/commonConst.ts';
-import Clipboard from '@react-native-clipboard/clipboard';
-import toast from '@/utils/toast';
+import Toast from "@/utils/toast";
+import toast from "@/utils/toast";
+import pathConst from "@/constants/pathConst";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import { readdir } from "react-native-fs";
+import { qualityKeys, qualityText } from "@/utils/qualities";
+import { clearLog, getErrorLogContent } from "@/utils/log";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { showDialog } from "@/components/dialogs/useDialog";
+import { showPanel } from "@/components/panels/usePanel";
+import Paragraph from "@/components/base/paragraph";
+import LyricUtil, { NativeTextAlignment } from "@/native/lyricUtil";
+import Slider from "@react-native-community/slider";
+import useColors from "@/hooks/useColors";
+import ColorBlock from "@/components/base/colorBlock";
+import { SortType } from "@/constants/commonConst.ts";
+import Clipboard from "@react-native-clipboard/clipboard";
 
 function createSwitch(
     title: string,
-    changeKey: IConfigPaths,
+    changeKey: ConfigKey,
     value: boolean,
     callback?: (newValue: boolean) => void,
 ) {
@@ -36,7 +35,7 @@ function createSwitch(
         if (callback) {
             callback(!value);
         } else {
-            Config.set(changeKey, !value);
+            Config.setConfig(changeKey, !value);
         }
     };
     return {
@@ -48,7 +47,7 @@ function createSwitch(
 
 const createRadio = function (
     title: string,
-    changeKey: IConfigPaths,
+    changeKey: ConfigKey,
     candidates: Array<string | number>,
     value: string | number,
     valueMap?: Record<string | number, string | number>,
@@ -64,7 +63,7 @@ const createRadio = function (
                   }))
                 : candidates,
             onOk(val) {
-                Config.set(changeKey, val);
+                Config.setConfig(changeKey, val);
                 onChange?.(val);
             },
         });
@@ -104,7 +103,36 @@ function useCacheSize() {
 }
 
 export default function BasicSetting() {
-    const basicSetting = Config.useConfig('setting.basic');
+
+    const autoPlayWhenAppStart = Config.useConfigValue('basic.autoPlayWhenAppStart');
+    const useCelluarNetworkPlay = Config.useConfigValue('basic.useCelluarNetworkPlay');
+    const useCelluarNetworkDownload = Config.useConfigValue('basic.useCelluarNetworkDownload');
+    const maxDownload = Config.useConfigValue('basic.maxDownload');
+    const clickMusicInSearch = Config.useConfigValue('basic.clickMusicInSearch');
+    const clickMusicInAlbum = Config.useConfigValue('basic.clickMusicInAlbum');
+    const downloadPath = Config.useConfigValue('basic.downloadPath');
+    const notInterrupt = Config.useConfigValue('basic.notInterrupt');
+    const tempRemoteDuck = Config.useConfigValue('basic.tempRemoteDuck');
+    const autoStopWhenError = Config.useConfigValue('basic.autoStopWhenError');
+    const maxCacheSize = Config.useConfigValue('basic.maxCacheSize');
+    const defaultPlayQuality = Config.useConfigValue('basic.defaultPlayQuality');
+    const playQualityOrder = Config.useConfigValue('basic.playQualityOrder');
+    const defaultDownloadQuality = Config.useConfigValue('basic.defaultDownloadQuality');
+    const downloadQualityOrder = Config.useConfigValue('basic.downloadQualityOrder');
+    const musicDetailDefault = Config.useConfigValue('basic.musicDetailDefault');
+    const musicDetailAwake = Config.useConfigValue('basic.musicDetailAwake');
+    const maxHistoryLen = Config.useConfigValue('basic.maxHistoryLen');
+    const autoUpdatePlugin = Config.useConfigValue('basic.autoUpdatePlugin');
+    const notCheckPluginVersion = Config.useConfigValue('basic.notCheckPluginVersion');
+    const associateLyricType = Config.useConfigValue('basic.associateLyricType');
+    const showExitOnNotification = Config.useConfigValue('basic.showExitOnNotification');
+    const musicOrderInLocalSheet = Config.useConfigValue('basic.musicOrderInLocalSheet');
+    const tryChangeSourceWhenPlayFail = Config.useConfigValue('basic.tryChangeSourceWhenPlayFail');
+
+
+    const debugEnableErrorLog = Config.useConfigValue('debug.errorLog');
+    const debugEnableTraceLog = Config.useConfigValue('debug.traceLog');
+    const debugEnableDevLog = Config.useConfigValue('debug.devLog');
 
     const navigate = useNavigate();
 
@@ -123,15 +151,15 @@ export default function BasicSetting() {
             data: [
                 createRadio(
                     '历史记录最多保存条数',
-                    'setting.basic.maxHistoryLen',
+                    'basic.maxHistoryLen',
                     [20, 50, 100, 200, 500],
-                    basicSetting?.maxHistoryLen ?? 50,
+                    maxHistoryLen ?? 50,
                 ),
                 createRadio(
                     '打开歌曲详情页时',
-                    'setting.basic.musicDetailDefault',
+                    'basic.musicDetailDefault',
                     ['album', 'lyric'],
-                    basicSetting?.musicDetailDefault ?? 'album',
+                    musicDetailDefault ?? 'album',
                     {
                         album: '默认展示歌曲封面',
                         lyric: '默认展示歌词页',
@@ -139,14 +167,14 @@ export default function BasicSetting() {
                 ),
                 createSwitch(
                     '处于歌曲详情页时常亮',
-                    'setting.basic.musicDetailAwake',
-                    basicSetting?.musicDetailAwake ?? false,
+                    'basic.musicDetailAwake',
+                    musicDetailAwake ?? false,
                 ),
                 createRadio(
                     '关联歌词方式',
-                    'setting.basic.associateLyricType',
+                    'basic.associateLyricType',
                     ['input', 'search'],
-                    basicSetting?.associateLyricType ?? 'search',
+                    associateLyricType ?? 'search',
                     {
                         input: '输入歌曲ID',
                         search: '搜索歌词',
@@ -154,8 +182,8 @@ export default function BasicSetting() {
                 ),
                 createSwitch(
                     '通知栏显示关闭按钮 (重启后生效)',
-                    'setting.basic.showExitOnNotification',
-                    basicSetting?.showExitOnNotification ?? false,
+                    'basic.showExitOnNotification',
+                    showExitOnNotification ?? false,
                 ),
             ],
         },
@@ -164,21 +192,21 @@ export default function BasicSetting() {
             data: [
                 createRadio(
                     '点击搜索结果内单曲时',
-                    'setting.basic.clickMusicInSearch',
+                    'basic.clickMusicInSearch',
                     ['播放歌曲', '播放歌曲并替换播放列表'],
-                    basicSetting?.clickMusicInSearch ?? '播放歌曲',
+                    clickMusicInSearch ?? '播放歌曲',
                 ),
                 createRadio(
                     '点击专辑内单曲时',
-                    'setting.basic.clickMusicInAlbum',
+                    'basic.clickMusicInAlbum',
                     ['播放单曲', '播放专辑'],
-                    basicSetting?.clickMusicInAlbum ?? '播放专辑',
+                    clickMusicInAlbum ?? '播放专辑',
                 ),
                 createRadio(
                     '打开歌曲详情页时',
-                    'setting.basic.musicDetailDefault',
+                    'basic.musicDetailDefault',
                     ['album', 'lyric'],
-                    basicSetting?.musicDetailDefault ?? 'album',
+                    musicDetailDefault ?? 'album',
                     {
                         album: '默认展示歌曲封面',
                         lyric: '默认展示歌词页',
@@ -186,7 +214,7 @@ export default function BasicSetting() {
                 ),
                 createRadio(
                     '新建歌单时默认歌曲排序',
-                    'setting.basic.musicOrderInLocalSheet',
+                    'basic.musicOrderInLocalSheet',
                     [
                         SortType.Title,
                         SortType.Artist,
@@ -194,7 +222,7 @@ export default function BasicSetting() {
                         SortType.Newest,
                         SortType.Oldest,
                     ],
-                    basicSetting?.musicOrderInLocalSheet ?? 'end',
+                    musicOrderInLocalSheet ?? 'end',
                     {
                         [SortType.Title]: '按歌曲名排序',
                         [SortType.Artist]: '按作者名排序',
@@ -210,13 +238,13 @@ export default function BasicSetting() {
             data: [
                 createSwitch(
                     '软件启动时自动更新插件',
-                    'setting.basic.autoUpdatePlugin',
-                    basicSetting?.autoUpdatePlugin ?? false,
+                    'basic.autoUpdatePlugin',
+                    autoUpdatePlugin ?? false,
                 ),
                 createSwitch(
                     '安装插件时不校验版本',
-                    'setting.basic.notCheckPluginVersion',
-                    basicSetting?.notCheckPluginVersion ?? false,
+                    'basic.notCheckPluginVersion',
+                    notCheckPluginVersion ?? false,
                 ),
             ],
         },
@@ -225,42 +253,42 @@ export default function BasicSetting() {
             data: [
                 createSwitch(
                     '允许与其他应用同时播放',
-                    'setting.basic.notInterrupt',
-                    basicSetting?.notInterrupt ?? false,
+                    'basic.notInterrupt',
+                    notInterrupt ?? false,
                 ),
                 createSwitch(
                     '软件启动时自动播放歌曲',
-                    'setting.basic.autoPlayWhenAppStart',
-                    basicSetting?.autoPlayWhenAppStart ?? false,
+                    'basic.autoPlayWhenAppStart',
+                    autoPlayWhenAppStart ?? false,
                 ),
                 createSwitch(
                     '播放失败时尝试更换音源',
-                    'setting.basic.tryChangeSourceWhenPlayFail',
-                    basicSetting?.tryChangeSourceWhenPlayFail ?? false,
+                    'basic.tryChangeSourceWhenPlayFail',
+                    tryChangeSourceWhenPlayFail ?? false,
                 ),
                 createSwitch(
                     '播放失败时自动暂停',
-                    'setting.basic.autoStopWhenError',
-                    basicSetting?.autoStopWhenError ?? false,
+                    'basic.autoStopWhenError',
+                    autoStopWhenError ?? false,
                 ),
                 createRadio(
                     '播放被暂时打断时',
-                    'setting.basic.tempRemoteDuck',
+                    'basic.tempRemoteDuck',
                     ['暂停', '降低音量'],
-                    basicSetting?.tempRemoteDuck ?? '暂停',
+                    tempRemoteDuck ?? '暂停',
                 ),
                 createRadio(
                     '默认播放音质',
-                    'setting.basic.defaultPlayQuality',
+                    'basic.defaultPlayQuality',
                     qualityKeys,
-                    basicSetting?.defaultPlayQuality ?? 'standard',
+                    defaultPlayQuality ?? 'standard',
                     qualityText,
                 ),
                 createRadio(
                     '默认播放音质缺失时',
-                    'setting.basic.playQualityOrder',
+                    'basic.playQualityOrder',
                     ['asc', 'desc'],
-                    basicSetting?.playQualityOrder ?? 'asc',
+                    playQualityOrder ?? 'asc',
                     {
                         asc: '播放更高音质',
                         desc: '播放更低音质',
@@ -278,7 +306,7 @@ export default function BasicSetting() {
                             fontSize="subTitle"
                             style={styles.centerText}
                             numberOfLines={3}>
-                            {basicSetting?.downloadPath ??
+                            {downloadPath ??
                                 pathConst.downloadMusicPath}
                         </ThemeText>
                     ),
@@ -291,8 +319,8 @@ export default function BasicSetting() {
                                 try {
                                     const targetDir = selectedFiles[0];
                                     await readdir(targetDir.path);
-                                    Config.set(
-                                        'setting.basic.downloadPath',
+                                    Config.setConfig(
+                                        'basic.downloadPath',
                                         targetDir.path,
                                     );
                                     return true;
@@ -306,22 +334,22 @@ export default function BasicSetting() {
                 },
                 createRadio(
                     '最大同时下载数目',
-                    'setting.basic.maxDownload',
+                    'basic.maxDownload',
                     [1, 3, 5, 7],
-                    basicSetting?.maxDownload ?? 3,
+                    maxDownload ?? 3,
                 ),
                 createRadio(
                     '默认下载音质',
-                    'setting.basic.defaultDownloadQuality',
+                    'basic.defaultDownloadQuality',
                     qualityKeys,
-                    basicSetting?.defaultDownloadQuality ?? 'standard',
+                    defaultDownloadQuality ?? 'standard',
                     qualityText,
                 ),
                 createRadio(
                     '默认下载音质缺失时',
-                    'setting.basic.downloadQualityOrder',
+                    'basic.downloadQualityOrder',
                     ['asc', 'desc'],
-                    basicSetting?.downloadQualityOrder ?? 'asc',
+                    downloadQualityOrder ?? 'asc',
                     {
                         asc: '下载更高音质',
                         desc: '下载更低音质',
@@ -334,13 +362,13 @@ export default function BasicSetting() {
             data: [
                 createSwitch(
                     '使用移动网络播放',
-                    'setting.basic.useCelluarNetworkPlay',
-                    basicSetting?.useCelluarNetworkPlay ?? false,
+                    'basic.useCelluarNetworkPlay',
+                    useCelluarNetworkPlay ?? false,
                 ),
                 createSwitch(
                     '使用移动网络下载',
-                    'setting.basic.useCelluarNetworkDownload',
-                    basicSetting?.useCelluarNetworkDownload ?? false,
+                    'basic.useCelluarNetworkDownload',
+                    useCelluarNetworkDownload ?? false,
                 ),
             ],
         },
@@ -356,8 +384,8 @@ export default function BasicSetting() {
                     title: '音乐缓存上限',
                     right: (
                         <ThemeText style={styles.centerText}>
-                            {basicSetting?.maxCacheSize
-                                ? sizeFormatter(basicSetting.maxCacheSize)
+                            {maxCacheSize
+                                ? sizeFormatter(maxCacheSize)
                                 : '512M'}
                         </ThemeText>
                     ),
@@ -373,8 +401,8 @@ export default function BasicSetting() {
                                     val = 8192;
                                 }
                                 if (val >= 100 && val <= 8192) {
-                                    Config.set(
-                                        'setting.basic.maxCacheSize',
+                                    Config.setConfig(
+                                        'basic.maxCacheSize',
                                         val * 1024 * 1024,
                                     );
                                     closePanel();
@@ -449,18 +477,18 @@ export default function BasicSetting() {
             data: [
                 createSwitch(
                     '记录错误日志',
-                    'setting.basic.debug.errorLog',
-                    basicSetting?.debug?.errorLog ?? false,
+                    'debug.errorLog',
+                    debugEnableErrorLog ?? false,
                 ),
                 createSwitch(
                     '记录详细日志',
-                    'setting.basic.debug.traceLog',
-                    basicSetting?.debug?.traceLog ?? false,
+                    'debug.traceLog',
+                    debugEnableTraceLog ?? false,
                 ),
                 createSwitch(
                     '调试面板',
-                    'setting.basic.debug.devLog',
-                    basicSetting?.debug?.devLog ?? false,
+                    'debug.devLog',
+                    debugEnableDevLog ?? false,
                 ),
                 {
                     title: '查看错误日志',
@@ -592,20 +620,43 @@ const styles = StyleSheet.create({
 });
 
 function LyricSetting() {
-    const lyricSetting = Config.useConfig('setting.lyric');
+    /**
+     * // Lyric
+     *     "lyric.showStatusBarLyric": boolean;
+     *     "lyric.topPercent": number;
+     *     "lyric.leftPercent": number;
+     *     "lyric.align": number;
+     *     "lyric.color": string;
+     *     "lyric.backgroundColor": string;
+     *     "lyric.widthPercent": number;
+     *     "lyric.fontSize": number;
+     *     "lyric.detailFontSize": number;
+     *     "lyric.autoSearchLyric": boolean;
+     */
+    const showStatusBarLyric = Config.useConfigValue('lyric.showStatusBarLyric');
+    const topPercent = Config.useConfigValue('lyric.topPercent');
+    const leftPercent = Config.useConfigValue('lyric.leftPercent');
+    const align = Config.useConfigValue('lyric.align');
+    const color = Config.useConfigValue('lyric.color');
+    const backgroundColor = Config.useConfigValue('lyric.backgroundColor');
+    const widthPercent = Config.useConfigValue('lyric.widthPercent');
+    const fontSize = Config.useConfigValue('lyric.fontSize');
+    const enableAutoSearchLyric = Config.useConfigValue('lyric.autoSearchLyric');
+
+
 
     const colors = useColors();
 
     const autoSearchLyric = createSwitch(
         '歌词缺失时自动搜索歌词',
-        'setting.lyric.autoSearchLyric',
-        lyricSetting?.autoSearchLyric ?? false,
+        'lyric.autoSearchLyric',
+      enableAutoSearchLyric ?? false,
     );
 
     const openStatusBarLyric = createSwitch(
         '开启桌面歌词',
-        'setting.lyric.showStatusBarLyric',
-        lyricSetting?.showStatusBarLyric ?? false,
+        'lyric.showStatusBarLyric',
+        showStatusBarLyric ?? false,
         async newValue => {
             try {
                 if (newValue) {
@@ -613,11 +664,20 @@ function LyricSetting() {
                         await LyricUtil.checkSystemAlertPermission();
 
                     if (hasPermission) {
+                        const statusBarLyricConfig = {
+                            topPercent: Config.getConfig("lyric.topPercent"),
+                            leftPercent: Config.getConfig("lyric.leftPercent"),
+                            align: Config.getConfig("lyric.align"),
+                            color: Config.getConfig("lyric.color"),
+                            backgroundColor: Config.getConfig("lyric.backgroundColor"),
+                            widthPercent: Config.getConfig("lyric.widthPercent"),
+                            fontSize: Config.getConfig("lyric.fontSize")
+                        };
                         LyricUtil.showStatusBarLyric(
-                            LyricManager.getCurrentLyric()?.lrc ?? 'MusicFree',
-                            lyricSetting ?? {},
+                          "MusicFree",
+                          statusBarLyricConfig ?? {}
                         );
-                        Config.set('setting.lyric.showStatusBarLyric', true);
+                        Config.setConfig('lyric.showStatusBarLyric', true);
                     } else {
                         LyricUtil.requestSystemAlertPermission().finally(() => {
                             Toast.warn('无悬浮窗权限');
@@ -625,7 +685,7 @@ function LyricSetting() {
                     }
                 } else {
                     LyricUtil.hideStatusBarLyric();
-                    Config.set('setting.lyric.showStatusBarLyric', false);
+                    Config.setConfig('lyric.showStatusBarLyric', false);
                 }
             } catch {}
         },
@@ -633,20 +693,20 @@ function LyricSetting() {
 
     const alignStatusBarLyric = createRadio(
         '对齐方式',
-        'setting.lyric.align',
+        'lyric.align',
         [
             NativeTextAlignment.LEFT,
             NativeTextAlignment.CENTER,
             NativeTextAlignment.RIGHT,
         ],
-        lyricSetting?.align ?? NativeTextAlignment.CENTER,
+        align ?? NativeTextAlignment.CENTER,
         {
             [NativeTextAlignment.LEFT]: '左对齐',
             [NativeTextAlignment.CENTER]: '居中对齐',
             [NativeTextAlignment.RIGHT]: '右对齐',
         },
         newVal => {
-            if (lyricSetting?.showStatusBarLyric) {
+            if (showStatusBarLyric) {
                 LyricUtil.setStatusBarLyricAlign(newVal as any);
             }
         },
@@ -677,15 +737,15 @@ function LyricSetting() {
                     thumbTintColor={colors.primary}
                     minimumValue={0}
                     step={0.01}
-                    value={lyricSetting?.leftPercent ?? 0.5}
+                    value={leftPercent ?? 0.5}
                     maximumValue={1}
                     onValueChange={val => {
-                        if (lyricSetting?.showStatusBarLyric) {
+                        if (showStatusBarLyric) {
                             LyricUtil.setStatusBarLyricLeft(val);
                         }
                     }}
                     onSlidingComplete={val => {
-                        Config.set('setting.lyric.leftPercent', val);
+                        Config.setConfig('lyric.leftPercent', val);
                     }}
                 />
             </View>
@@ -697,16 +757,16 @@ function LyricSetting() {
                     maximumTrackTintColor={colors.text ?? '#999999'}
                     thumbTintColor={colors.primary}
                     minimumValue={0}
-                    value={lyricSetting?.topPercent ?? 0}
+                    value={topPercent ?? 0}
                     step={0.01}
                     maximumValue={1}
                     onValueChange={val => {
-                        if (lyricSetting?.showStatusBarLyric) {
+                        if (showStatusBarLyric) {
                             LyricUtil.setStatusBarLyricTop(val);
                         }
                     }}
                     onSlidingComplete={val => {
-                        Config.set('setting.lyric.topPercent', val);
+                        Config.setConfig('lyric.topPercent', val);
                     }}
                 />
             </View>
@@ -719,15 +779,15 @@ function LyricSetting() {
                     thumbTintColor={colors.primary}
                     minimumValue={0}
                     step={0.01}
-                    value={lyricSetting?.widthPercent ?? 0.5}
+                    value={widthPercent ?? 0.5}
                     maximumValue={1}
                     onValueChange={val => {
-                        if (lyricSetting?.showStatusBarLyric) {
+                        if (showStatusBarLyric) {
                             LyricUtil.setStatusBarLyricWidth(val);
                         }
                     }}
                     onSlidingComplete={val => {
-                        Config.set('setting.lyric.widthPercent', val);
+                        Config.setConfig('lyric.widthPercent', val);
                     }}
                 />
             </View>
@@ -741,14 +801,14 @@ function LyricSetting() {
                     minimumValue={Math.round(rpx(18))}
                     step={0.5}
                     maximumValue={Math.round(rpx(56))}
-                    value={lyricSetting?.fontSize ?? Math.round(rpx(24))}
+                    value={fontSize ?? Math.round(rpx(24))}
                     onValueChange={val => {
-                        if (lyricSetting?.showStatusBarLyric) {
+                        if (showStatusBarLyric) {
                             LyricUtil.setStatusBarLyricFontSize(val);
                         }
                     }}
                     onSlidingComplete={val => {
-                        Config.set('setting.lyric.fontSize', val);
+                        Config.setConfig('lyric.fontSize', val);
                     }}
                 />
             </View>
@@ -765,18 +825,18 @@ function LyricSetting() {
                 onPress={() => {
                     showPanel('ColorPicker', {
                         closePanelWhenSelected: true,
-                        defaultColor: lyricSetting?.color ?? 'transparent',
+                        defaultColor: color ?? 'transparent',
                         onSelected(color) {
-                            if (lyricSetting?.showStatusBarLyric) {
+                            if (showStatusBarLyric) {
                                 const colorStr = color.hexa();
                                 LyricUtil.setStatusBarColors(colorStr, null);
-                                Config.set('setting.lyric.color', colorStr);
+                                Config.setConfig('lyric.color', colorStr);
                             }
                         },
                     });
                 }}>
                 <ListItem.Content title="文本颜色" />
-                <ColorBlock color={lyricSetting?.color ?? '#FFE9D2FF'} />
+                <ColorBlock color={color ?? '#FFE9D2FF'} />
             </ListItem>
             <ListItem
                 withHorizontalPadding
@@ -785,13 +845,13 @@ function LyricSetting() {
                     showPanel('ColorPicker', {
                         closePanelWhenSelected: true,
                         defaultColor:
-                            lyricSetting?.backgroundColor ?? 'transparent',
+                            backgroundColor ?? 'transparent',
                         onSelected(color) {
-                            if (lyricSetting?.showStatusBarLyric) {
+                            if (showStatusBarLyric) {
                                 const colorStr = color.hexa();
                                 LyricUtil.setStatusBarColors(null, colorStr);
-                                Config.set(
-                                    'setting.lyric.backgroundColor',
+                                Config.setConfig(
+                                    'lyric.backgroundColor',
                                     colorStr,
                                 );
                             }
@@ -800,7 +860,7 @@ function LyricSetting() {
                 }}>
                 <ListItem.Content title="文本背景色" />
                 <ColorBlock
-                    color={lyricSetting?.backgroundColor ?? '#84888153'}
+                    color={backgroundColor ?? '#84888153'}
                 />
             </ListItem>
         </View>

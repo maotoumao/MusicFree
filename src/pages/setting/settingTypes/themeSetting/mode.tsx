@@ -1,14 +1,14 @@
-import React from 'react';
-import {Appearance, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import ListItem from '@/components/base/listItem';
-import ThemeSwitch from '@/components/base/switch';
-import Config from '@/core/config';
-import Theme from '@/core/theme';
+import React from "react";
+import { Appearance, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
+import ListItem from "@/components/base/listItem";
+import ThemeSwitch from "@/components/base/switch";
+import Config from "@/core/config.ts";
+import Theme from "@/core/theme";
 
 export default function Mode() {
-    const mode = Config.useConfig('setting.theme.followSystem') ?? false;
+    const mode = Config.useConfigValue('theme.followSystem') ?? false;
     return (
         <View>
             <ThemeText
@@ -34,7 +34,7 @@ export default function Mode() {
                                             Theme.setTheme('p-light');
                                         }
                                     }
-                                    Config.set('setting.theme.followSystem', e);
+                                    Config.setConfig('theme.followSystem', e);
                                 }}
                             />
                         </View>

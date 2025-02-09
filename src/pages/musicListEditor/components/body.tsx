@@ -6,7 +6,7 @@ import {useAtom} from 'jotai';
 import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import Toast from '@/utils/toast';
 import MusicList from './musicList';
-import {useParams} from '@/entry/router';
+import {useParams} from '@/core/router';
 import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
 import LocalMusicSheet from '@/core/localMusicSheet';
 import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';

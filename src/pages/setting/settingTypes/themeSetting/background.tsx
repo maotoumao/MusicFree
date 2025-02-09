@@ -1,19 +1,17 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
 // import pathConst from '@/constants/pathConst';
-import Config from '@/core/config';
-// import Color from 'color';
-// import {copyFile} from 'react-native-fs';
-// import ImageColors from 'react-native-image-colors';
-// import {launchImageLibrary} from 'react-native-image-picker';
-import ThemeCard from './themeCard';
-import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import Theme from '@/core/theme';
+import Config from "@/core/config.ts";
+import ThemeCard from "./themeCard";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import Theme from "@/core/theme";
 
 export default function Background() {
-    const theme = Config.useConfig('setting.theme');
+
+  const themeBackground = Config.useConfigValue('theme.background');
+  const themeSelectedTheme = Config.useConfigValue('theme.selectedTheme');
 
     const navigate = useNavigate();
 
@@ -92,38 +90,38 @@ export default function Background() {
                 <ThemeCard
                     preview="#fff"
                     title="浅色模式"
-                    selected={theme?.selectedTheme === 'p-light'}
+                    selected={themeSelectedTheme === 'p-light'}
                     onPress={() => {
-                        if (theme?.selectedTheme !== 'p-light') {
+                        if (themeSelectedTheme !== 'p-light') {
                             Theme.setTheme('p-light');
-                            Config.set('setting.theme.followSystem', false);
+                            Config.setConfig('theme.followSystem', false);
                         }
                     }}
                 />
                 <ThemeCard
                     preview="#131313"
                     title="深色模式"
-                    selected={theme?.selectedTheme === 'p-dark'}
+                    selected={themeSelectedTheme === 'p-dark'}
                     onPress={() => {
-                        if (theme?.selectedTheme !== 'p-dark') {
+                        if (themeSelectedTheme !== 'p-dark') {
                             Theme.setTheme('p-dark');
-                            Config.set('setting.theme.followSystem', false);
+                            Config.setConfig('theme.followSystem', false);
                         }
                     }}
                 />
 
                 <ThemeCard
                     title="自定义背景"
-                    selected={theme?.selectedTheme === 'custom'}
-                    preview={theme?.background}
+                    selected={themeSelectedTheme === 'custom'}
+                    preview={themeBackground}
                     onPress={() => {
-                        if (theme?.selectedTheme !== 'custom') {
+                        if (themeSelectedTheme !== 'custom') {
+                            Config.setConfig('theme.followSystem', false);
                             Theme.setTheme('custom', {
-                                colors: Config.get(
-                                    'setting.theme.customColors',
+                                colors: Config.getConfig(
+                                    'theme.customColors',
                                 ),
                             });
-                            Config.set('setting.theme.followSystem', false);
                         }
                         navigate(ROUTE_PATH.SET_CUSTOM_THEME);
                         // showPanel('ColorPicker');

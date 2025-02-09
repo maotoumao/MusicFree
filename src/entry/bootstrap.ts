@@ -1,36 +1,31 @@
-import {check, PERMISSIONS, request} from 'react-native-permissions';
-import RNTrackPlayer, {
-    AppKilledPlaybackBehavior,
-    Capability,
-} from 'react-native-track-player';
-import 'react-native-get-random-values';
-import Config from '@/core/config';
-import pathConst from '@/constants/pathConst';
-import {checkAndCreateDir} from '@/utils/fileUtils';
-import {errorLog, trace} from '@/utils/log';
-import MediaMeta from '@/core/mediaMeta.old';
-import PluginManager from '@/core/pluginManager';
-import Network from '@/core/network';
-import {ImgAsset} from '@/constants/assetsConst';
-import LocalMusicSheet from '@/core/localMusicSheet';
-import {Linking, Platform} from 'react-native';
-import Theme from '@/core/theme';
-import LyricManager from '@/core/lyricManager';
-import Toast from '@/utils/toast';
-import {localPluginHash, supportLocalMediaType} from '@/constants/commonConst';
-import TrackPlayer from '@/core/trackPlayer';
-import musicHistory from '@/core/musicHistory';
-import PersistStatus from '@/core/persistStatus';
-import {perfLogger} from '@/utils/perfLogger';
-import * as SplashScreen from 'expo-splash-screen';
-import MusicSheet from '@/core/musicSheet';
-import NativeUtils from '@/native/utils';
-import {showDialog} from '@/components/dialogs/useDialog.ts';
+import { check, PERMISSIONS, request } from "react-native-permissions";
+import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
+import "react-native-get-random-values";
+import Config from "@/core/config.ts";
+import pathConst from "@/constants/pathConst";
+import { checkAndCreateDir } from "@/utils/fileUtils";
+import { errorLog, trace } from "@/utils/log";
+import PluginManager from "@/core/pluginManager";
+import Network from "@/core/network";
+import { ImgAsset } from "@/constants/assetsConst";
+import LocalMusicSheet from "@/core/localMusicSheet";
+import { Linking, Platform } from "react-native";
+import Theme from "@/core/theme";
+import LyricManager from "@/core/lyricManager";
+import Toast from "@/utils/toast";
+import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
+import TrackPlayer from "@/core/trackPlayer";
+import musicHistory from "@/core/musicHistory";
+import PersistStatus from "@/core/persistStatus.ts";
+import { perfLogger } from "@/utils/perfLogger";
+import * as SplashScreen from "expo-splash-screen";
+import MusicSheet from "@/core/musicSheet";
+import NativeUtils from "@/native/utils";
+import { showDialog } from "@/components/dialogs/useDialog.ts";
 
 /** app加载前执行
  * 1. 检查权限
  * 2. 数据初始化
- * 3.
  */
 
 async function _bootstrap() {
@@ -80,9 +75,6 @@ async function _bootstrap() {
         Config.setup().then(() => {
             logger.mark('Config');
         }),
-        MediaMeta.setup().then(() => {
-            logger.mark('MediaMeta');
-        }),
         MusicSheet.setup().then(() => {
             logger.mark('MusicSheet');
         }),
@@ -97,7 +89,7 @@ async function _bootstrap() {
     try {
         await RNTrackPlayer.setupPlayer({
             maxCacheSize:
-                Config.get('setting.basic.maxCacheSize') ?? 1024 * 1024 * 512,
+                Config.getConfig('basic.maxCacheSize') ?? 1024 * 1024 * 512,
         });
     } catch (e: any) {
         if (
@@ -109,7 +101,7 @@ async function _bootstrap() {
     }
     logger.mark('加载播放器');
 
-    const capabilities = Config.get('setting.basic.showExitOnNotification')
+    const capabilities = Config.getConfig('basic.showExitOnNotification')
         ? [
               Capability.Play,
               Capability.Pause,
@@ -198,7 +190,7 @@ async function extraMakeup() {
         // 初始化网络状态
         Network.setup();
 
-        if (Config.get('setting.basic.autoUpdatePlugin')) {
+        if (Config.getConfig('basic.autoUpdatePlugin')) {
             const lastUpdated = PersistStatus.get('app.pluginUpdateTime') || 0;
             const now = Date.now();
             if (Math.abs(now - lastUpdated) > 86400000) {
@@ -207,7 +199,8 @@ async function extraMakeup() {
                 for (let i = 0; i < plugins.length; ++i) {
                     const srcUrl = plugins[i].instance.srcUrl;
                     if (srcUrl) {
-                        await PluginManager.installPluginFromUrl(srcUrl);
+                        // 静默失败
+                        await PluginManager.installPluginFromUrl(srcUrl).catch(emptyFunction);
                     }
                 }
             }
@@ -224,14 +217,14 @@ async function extraMakeup() {
                     .map(decodeURIComponent);
                 await Promise.all(
                     plugins.map(it =>
-                        PluginManager.installPluginFromUrl(it).catch(() => {}),
+                        PluginManager.installPluginFromUrl(it).catch(emptyFunction),
                     ),
                 );
                 Toast.success('安装成功~');
             } else if (url.endsWith('.js')) {
-                PluginManager.installPlugin(url, {
-                    notCheckVersion: Config.get(
-                        'setting.basic.notCheckPluginVersion',
+                PluginManager.installPluginFromLocalFile(url, {
+                    notCheckVersion: Config.getConfig(
+                        'basic.notCheckPluginVersion',
                     ),
                 })
                     .then(res => {
@@ -265,7 +258,7 @@ async function extraMakeup() {
         handleLinkingUrl(initUrl);
     }
 
-    if (Config.get('setting.basic.autoPlayWhenAppStart')) {
+    if (Config.getConfig('basic.autoPlayWhenAppStart')) {
         TrackPlayer.play();
     }
 }

@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import ThemeText from '@/components/base/themeText';
-import {StyleSheet, View} from 'react-native';
-import rpx, {vh} from '@/utils/rpx';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import {hideDialog} from '../useDialog';
-import Checkbox from '@/components/base/checkbox';
-import Dialog from './base';
-import PersistStatus from '@/core/persistStatus.ts';
-import NativeUtils from '@/native/utils';
+import React, { useState } from "react";
+import ThemeText from "@/components/base/themeText";
+import { StyleSheet, View } from "react-native";
+import rpx, { vh } from "@/utils/rpx";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { hideDialog } from "../useDialog";
+import Checkbox from "@/components/base/checkbox";
+import Dialog from "./base";
+import PersistStatus from "@/core/persistStatus.ts";
+import NativeUtils from "@/native/utils";
 
 export default function CheckStorage() {
     const [skipState, setSkipState] = useState(false);

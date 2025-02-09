@@ -1,34 +1,34 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ListItem from '@/components/base/listItem';
-import ThemeText from '@/components/base/themeText';
-import Download from '@/core/download';
-import {ImgAsset} from '@/constants/assetsConst';
-import Clipboard from '@react-native-clipboard/clipboard';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ListItem from "@/components/base/listItem";
+import ThemeText from "@/components/base/themeText";
+import Download from "@/core/download";
+import { ImgAsset } from "@/constants/assetsConst";
+import Clipboard from "@react-native-clipboard/clipboard";
 
-import MediaMeta from '@/core/mediaExtra';
-import {getMediaKey} from '@/utils/mediaItem';
-import FastImage from '@/components/base/fastImage';
-import Toast from '@/utils/toast';
-import LocalMusicSheet from '@/core/localMusicSheet';
-import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
-import {ROUTE_PATH} from '@/entry/router';
+import MediaMeta from "@/core/mediaExtra";
+import { getMediaKey } from "@/utils/mediaItem";
+import FastImage from "@/components/base/fastImage";
+import Toast from "@/utils/toast";
+import LocalMusicSheet from "@/core/localMusicSheet";
+import { localMusicSheetId, musicHistorySheetId } from "@/constants/commonConst";
+import { ROUTE_PATH } from "@/core/router";
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import {FlatList} from 'react-native-gesture-handler';
-import musicHistory from '@/core/musicHistory';
-import {showDialog} from '@/components/dialogs/useDialog';
-import {hidePanel, showPanel} from '../usePanel';
-import Divider from '@/components/base/divider';
-import {iconSizeConst} from '@/constants/uiConst';
-import Config from '@/core/config';
-import TrackPlayer from '@/core/trackPlayer';
-import mediaCache from '@/core/mediaCache';
-import LyricManager from '@/core/lyricManager';
-import {IIconName} from '@/components/base/icon.tsx';
-import MusicSheet from '@/core/musicSheet';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import { FlatList } from "react-native-gesture-handler";
+import musicHistory from "@/core/musicHistory";
+import { showDialog } from "@/components/dialogs/useDialog";
+import { hidePanel, showPanel } from "../usePanel";
+import Divider from "@/components/base/divider";
+import { iconSizeConst } from "@/constants/uiConst";
+import Config from "@/core/config.ts";
+import TrackPlayer from "@/core/trackPlayer";
+import mediaCache from "@/core/mediaCache";
+import LyricManager from "@/core/lyricManager";
+import { IIconName } from "@/components/base/icon.tsx";
+import MusicSheet from "@/core/musicSheet";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -177,7 +177,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 : '关联歌词',
             onPress: async () => {
                 if (
-                    Config.get('setting.basic.associateLyricType') === 'input'
+                    Config.getConfig('basic.associateLyricType') === 'input'
                 ) {
                     showPanel('AssociateLrc', {
                         musicItem,
