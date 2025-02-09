@@ -261,6 +261,7 @@ export default function BackupSetting() {
                 withHorizontalPadding
                 onPress={() => {
                     showPanel('SetUserVariables', {
+                        title: 'Webdav设置',
                         initValues: {
                             url: webdavUrl ?? '',
                             username: webdavUsername ?? '',
