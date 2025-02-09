@@ -29,6 +29,7 @@ export default function SetUserVariables(props: IUserVariablesProps) {
 
     return (
         <PanelBase
+            awareKeyboard
             height={vmax(80)}
             keyboardAvoidBehavior="none"
             renderBody={() => (
