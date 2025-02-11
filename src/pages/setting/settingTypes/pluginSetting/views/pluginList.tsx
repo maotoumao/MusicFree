@@ -197,7 +197,7 @@ export default function PluginList() {
                             data={plugins ?? []}
                             keyExtractor={_ => _.hash}
                             renderItem={({item: plugin}) => (
-                                <PluginItem key={plugin.hash} plugin={plugin} />
+                                <PluginItem key={plugin.hash} plugin={plugin} enabled={plugin.state === 'enabled'}/>
                             )}
                         />
                     )}
