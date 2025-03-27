@@ -228,7 +228,11 @@ async function extraMakeup() {
                     ),
                 })
                     .then(res => {
-                        Toast.success(`插件「${res.name}」安装成功~`);
+                        if (res.success) {
+                            Toast.success(`插件「${res.pluginName}」安装成功~`);
+                        } else {
+                            Toast.warn("安装失败: " + res.message);
+                        }
                     })
                     .catch(e => {
                         console.log(e);

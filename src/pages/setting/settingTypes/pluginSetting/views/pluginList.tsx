@@ -4,7 +4,7 @@ import rpx from "@/utils/rpx";
 import * as DocumentPicker from "expo-document-picker";
 import Loading from "@/components/base/loading";
 
-import PluginManager from "@/core/pluginManager";
+import PluginManager, { IInstallPluginResult } from "@/core/pluginManager";
 import { trace } from "@/utils/log";
 
 import Toast from "@/utils/toast";
@@ -81,7 +81,7 @@ export default function PluginList() {
                 results.assets.map(async it => {
                     await PluginManager.installPluginFromLocalFile(it.uri, {
                         notCheckVersion: Config.getConfig(
-                          'basic.notCheckPluginVersion',
+                            'basic.notCheckPluginVersion',
                         ),
                         useExpoFs: true
                     })
@@ -101,18 +101,40 @@ export default function PluginList() {
         showPanel('SimpleInput', {
             title: '安装插件',
             placeholder: '输入插件URL',
-            maxLength: 120,
+            maxLength: 200,
             async onOk(text, closePanel) {
                 setLoading(true);
                 closePanel();
 
                 const result = await installPluginFromUrl(text.trim());
 
-                if (result?.code === 'success') {
+                // 检查是否全部安装成功
+                const successResults: IInstallPluginResult[] = [];
+                const failResults: IInstallPluginResult[] = [];
+                for (let i = 0; i < result.length; ++i) {
+                    if (result[i].success) {
+                        successResults.push(result[i]);
+                    } else {
+                        failResults.push(result[i]);
+                    }
+                }
+
+                if (!failResults.length) {
                     Toast.success('插件安装成功');
                 } else {
-                    Toast.warn(`部分插件安装失败: ${result.message ?? ''}`);
+                    Toast.warn((successResults.length ? "部分" : "全部") + "插件安装失败", {
+                        'type': 'warn',
+                        'actionText': "查看",
+                        'onActionClick': () => {
+                            showDialog('SimpleDialog', {
+                                title: "插件安装失败",
+                                content: "以下插件安装失败: \n" + failResults.map(it => (it.pluginUrl ?? "") + "\n失败原因：" + it.message).join('\n-----\n'),
+                            })
+                        }
+                    });
                 }
+
+
                 setLoading(false);
             },
         });
@@ -124,59 +146,96 @@ export default function PluginList() {
             Toast.warn('暂无订阅');
         }
         setLoading(true);
+
+        const successResults: IInstallPluginResult[] = [];
+        const failResults: IInstallPluginResult[] = [];
+
         try {
             const urlItems = JSON.parse(urls!);
-            let code = 'success';
             if (Array.isArray(urlItems)) {
                 for (let i = 0; i < urlItems.length; ++i) {
                     const result = await installPluginFromUrl(urlItems[i].url);
-                    if (result.code === 'fail') {
-                        code = result.message ?? 'fail';
+                    if (result[0]) {
+                        if (result[0].success) {
+                            successResults.push(result[0]);
+                        } else {
+                            failResults.push(result[0]);
+                        }
                     }
                 }
             } else {
                 throw new Error();
             }
-            if (code !== 'success') {
-                Toast.warn(`部分插件安装失败: ${code ?? ''}`);
-            } else {
+
+            if (!failResults.length) {
                 Toast.success('插件安装成功');
+            } else {
+                Toast.warn((successResults.length ? "部分" : "全部") + "插件安装失败", {
+                    'type': 'warn',
+                    'actionText': "查看",
+                    'onActionClick': () => {
+                        showDialog('SimpleDialog', {
+                            title: "插件安装失败",
+                            content: "以下插件安装失败: \n" + failResults.map(it => (it.pluginUrl ?? "") + "\n失败原因：" + it.message).join('\n-----\n'),
+                        })
+                    }
+                });
             }
+
         } catch {
             if (urls?.length) {
                 const result = await installPluginFromUrl(urls);
-                if (result.code === 'success') {
-                    Toast.success('插件安装成功');
+                if (result[0]) {
+                    if (result[0].success) {
+                        Toast.success('插件安装成功');
+                    } else {
+                        Toast.warn(`部分插件安装失败: ${result[0].message ?? ''}`);
+                    }
                 } else {
-                    Toast.warn(`部分插件安装失败: ${result.message ?? ''}`);
+                    Toast.warn('订阅无效');
                 }
-            } else {
-                Toast.warn('订阅无效');
             }
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     async function onUpdateAllClick() {
         const plugins = PluginManager.getValidPlugins();
         setLoading(true);
+
+        const successResults: IInstallPluginResult[] = [];
+        const failResults: IInstallPluginResult[] = [];
+
         try {
-            let code = 'success';
             for (let i = 0; i < plugins.length; ++i) {
                 const srcUrl = plugins[i].instance.srcUrl;
                 if (srcUrl) {
                     const result = await installPluginFromUrl(srcUrl);
-                    if (result.code === 'fail') {
-                        code = result.message ?? 'fail';
+                    if (result[0]) {
+                        if (result[0].success) {
+                            successResults.push(result[0]);
+                        } else {
+                            failResults.push(result[0]);
+                        }
                     }
                 }
             }
 
-            if (code !== 'success') {
-                Toast.warn(`部分插件安装失败: ${code ?? ''}`);
-            } else {
+            if (!failResults.length) {
                 Toast.success('插件更新成功');
+            } else {
+                Toast.warn((successResults.length ? "部分" : "全部") + "插件更新失败", {
+                    'type': 'warn',
+                    'actionText': "查看",
+                    'onActionClick': () => {
+                        showDialog('SimpleDialog', {
+                            title: "插件更新失败",
+                            content: "以下插件更新失败: \n" + failResults.map(it => (it.pluginUrl ?? "") + "\n失败原因：" + it.message).join('\n-----\n'),
+                        })
+                    }
+                });
             }
+
         } catch (e: any) {
             Toast.warn(`出现未知错误: ${e.message ?? e}`);
         }
@@ -196,8 +255,8 @@ export default function PluginList() {
                             ListFooterComponent={<View style={style.blank} />}
                             data={plugins ?? []}
                             keyExtractor={_ => _.hash}
-                            renderItem={({item: plugin}) => (
-                                <PluginItem key={plugin.hash} plugin={plugin} enabled={plugin.state === 'enabled'}/>
+                            renderItem={({ item: plugin }) => (
+                                <PluginItem key={plugin.hash} plugin={plugin} enabled={plugin.state === 'enabled'} />
                             )}
                         />
                     )}
@@ -253,25 +312,20 @@ const style = StyleSheet.create({
     },
 });
 
-interface IInstallResult {
-    code: 'success' | 'fail';
-    message?: string;
-}
 
-const reqHeaders = {
-    'Cache-Control': 'no-cache',
-    Pragma: 'no-cache',
-    Expires: '0',
-};
 
-async function installPluginFromUrl(text: string): Promise<IInstallResult> {
+async function installPluginFromUrl(text: string): Promise<IInstallPluginResult[]> {
     try {
         let urls: string[] = [];
-        const iptUrl = text.trim();
+        const inputUrl = text.trim();
         if (text.endsWith('.json')) {
             const jsonFile = (
-                await axios.get(iptUrl, {
-                    headers: reqHeaders,
+                await axios.get(inputUrl, {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        Pragma: 'no-cache',
+                        Expires: '0',
+                    },
                 })
             ).data;
             /**
@@ -284,30 +338,18 @@ async function installPluginFromUrl(text: string): Promise<IInstallResult> {
              */
             urls = (jsonFile?.plugins ?? []).map((_: any) => _.url);
         } else {
-            urls = [iptUrl];
+            urls = [inputUrl];
         }
-        const failedPlugins: Array<string> = [];
-        await Promise.all(
+        return await Promise.all(
             urls.map(url =>
                 PluginManager.installPluginFromUrl(url, {
                     notCheckVersion: Config.getConfig(
                         'basic.notCheckPluginVersion',
                     ),
-                }).catch(e => {
-                    failedPlugins.push(e?.message ?? '');
                 }),
             ),
         );
-        if (failedPlugins.length) {
-            throw new Error(failedPlugins.join('\n'));
-        }
-        return {
-            code: 'success',
-        };
     } catch (e: any) {
-        return {
-            code: 'fail',
-            message: e?.message,
-        };
+        return [{ success: false, message: e?.message, pluginUrl: text }];
     }
 }
