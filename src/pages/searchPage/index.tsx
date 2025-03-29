@@ -6,7 +6,7 @@ import {
     initSearchResults,
     PageStatus,
     pageStatusAtom,
-    queryAtom,
+    queryAtom, typeAtom,
     searchResultsAtom,
 } from './store/atoms';
 import HistoryPanel from './components/historyPanel';
@@ -16,13 +16,24 @@ import Loading from '@/components/base/loading';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import NoPlugin from '../../components/base/noPlugin';
+import {useParams} from "@/core/router";
+import useSearch from "@/pages/searchPage/hooks/useSearch";
 
 export default function () {
+    const params = useParams<'search-page'>();
     const [pageStatus, setPageStatus] = useAtom(pageStatusAtom);
     const setQuery = useSetAtom(queryAtom);
+    const setType = useSetAtom(typeAtom);
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const search = useSearch();
+    setQuery(params?.query || '');
+    setType(params?.type);
     useEffect(() => {
         setSearchResultsState(initSearchResults);
+        if (params?.query) {
+            setPageStatus(PageStatus.SEARCHING);
+            search(params.query, 1, params.type);
+        }
         return () => {
             setPageStatus(PageStatus.EDITING);
             setQuery('');

@@ -6,8 +6,7 @@ import {
     initSearchResults,
     PageStatus,
     pageStatusAtom,
-    queryAtom,
-    searchResultsAtom,
+    queryAtom, searchResultsAtom,
 } from '../store/atoms';
 import useSearch from '../hooks/useSearch';
 import {addHistory} from '../common/historySearch';
@@ -51,7 +50,7 @@ export default function NavBar() {
                     style={style.magnify}
                 />
                 <Input
-                    autoFocus
+                    autoFocus={!query}
                     style={[
                         style.searchBar,
                         {
