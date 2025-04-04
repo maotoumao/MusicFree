@@ -13,7 +13,7 @@ import FastImage from "@/components/base/fastImage";
 import Toast from "@/utils/toast";
 import LocalMusicSheet from "@/core/localMusicSheet";
 import { localMusicSheetId, musicHistorySheetId } from "@/constants/commonConst";
-import { ROUTE_PATH } from "@/core/router";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PanelBase from "../base/panelBase";
@@ -46,15 +46,22 @@ interface IOption {
     title: string;
     onPress?: () => void;
     show?: boolean;
+    onLongPress?: () => void;
 }
 
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
+    const navigate = useNavigate();
     const {musicItem, musicSheet, from} = props ?? {};
 
     const safeAreaInsets = useSafeAreaInsets();
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
     const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
+
+    function navigateToSearchPage(query: string, type: ICommon.SupportMediaType) {
+        hidePanel();
+        navigate(ROUTE_PATH.SEARCH_PAGE, {type, query});
+    }
 
     const options: IOption[] = [
         {
@@ -79,6 +86,9 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'user',
             title: `作者: ${musicItem.artist}`,
             onPress: () => {
+                navigateToSearchPage(musicItem.artist, 'artist');
+            },
+            onLongPress:() =>{
                 try {
                     Clipboard.setString(musicItem.artist.toString());
                     Toast.success('已复制到剪切板');
@@ -92,6 +102,9 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             show: !!musicItem.album,
             title: `专辑: ${musicItem.album}`,
             onPress: () => {
+                navigateToSearchPage(musicItem.album, 'album');
+            },
+            onLongPress:() =>{
                 try {
                     Clipboard.setString(musicItem.album.toString());
                     Toast.success('已复制到剪切板');
@@ -231,7 +244,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                             emptySrc={ImgAsset.albumDefault}
                         />
                         <View style={style.content}>
-                            <ThemeText numberOfLines={2} style={style.title}>
+                            <ThemeText numberOfLines={2} style={style.title}
+                                       onPress={() => navigateToSearchPage(musicItem.title, 'music')}>
                                 {musicItem?.title}
                             </ThemeText>
                             <ThemeText
@@ -265,7 +279,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                     <ListItem
                                         withHorizontalPadding
                                         heightType="small"
-                                        onPress={item.onPress}>
+                                        onPress={item.onPress}
+                                        onLongPress={item.onLongPress}>
                                         <ListItem.ListItemIcon
                                             width={rpx(48)}
                                             icon={item.icon}
