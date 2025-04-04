@@ -17,6 +17,7 @@ import { IIconName } from "@/components/base/icon.tsx";
 
 interface IPluginItemProps {
     plugin: Plugin;
+    enabled: boolean;
 }
 
 interface IOption {
@@ -27,7 +28,7 @@ interface IOption {
 }
 
 function _PluginItem(props: IPluginItemProps) {
-    const {plugin} = props;
+    const {plugin, enabled} = props;
     const colors = useColors();
     const options: IOption[] = [
         {
@@ -181,7 +182,7 @@ function _PluginItem(props: IPluginItemProps) {
                     {plugin.name}
                 </ThemeText>
                 <ThemeSwitch
-                    value={plugin.state !== 'disabled'}
+                    value={enabled}
                     onValueChange={val => {
                         PluginManager.setPluginEnabled(plugin, val);
                     }}
@@ -257,7 +258,7 @@ function _PluginItem(props: IPluginItemProps) {
 }
 
 const PluginItem = memo(_PluginItem, (prev, curr) => {
-    return prev.plugin === curr.plugin;
+    return prev.plugin === curr.plugin && prev.enabled === curr.enabled;
 });
 export default PluginItem;
 

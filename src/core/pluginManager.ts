@@ -1122,13 +1122,21 @@ interface IInstallPluginConfig {
     notCheckVersion?: boolean;
 }
 
+export interface IInstallPluginResult {
+    success: boolean;
+    message?: string;
+    pluginName?: string;
+    pluginHash?: string;
+    pluginUrl?: string;
+}
+
 // 从本地文件安装插件
 async function installPluginFromLocalFile(
     pluginPath: string,
     config?: IInstallPluginConfig & {
         useExpoFs?: boolean
     },
-) {
+): Promise<IInstallPluginResult> {
     let funcCode: string;
     if (config?.useExpoFs) {
         funcCode = await readAsStringAsync(pluginPath);
@@ -1141,7 +1149,12 @@ async function installPluginFromLocalFile(
         const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
         if (_pluginIndex !== -1) {
             // 静默忽略
-            return plugin;
+            return {
+                success: true,
+                message: '插件已安装',
+                pluginName: plugin.name,
+                pluginHash: plugin.hash,
+            };
         }
         const oldVersionPlugin = plugins.find(p => p.name === plugin.name);
         if (oldVersionPlugin && !config?.notCheckVersion) {
@@ -1152,7 +1165,12 @@ async function installPluginFromLocalFile(
                     '>',
                 )
             ) {
-                throw new Error('已安装更新版本的插件');
+                return {
+                    success: false,
+                    message: '已安装更新版本的插件',
+                    pluginName: plugin.name,
+                    pluginHash: plugin.hash,
+                };
             }
         }
 
@@ -1169,27 +1187,36 @@ async function installPluginFromLocalFile(
             plugin.path = _pluginPath;
             plugins = plugins.concat(plugin);
             pluginStateMapper.notify();
-            return plugin;
+            return {
+                success: true,
+                pluginName: plugin.name,
+                pluginHash: plugin.hash,
+            };
         }
-        throw new Error('插件无法解析!');
+        return {
+            success: false,
+            message: '插件无法解析',
+        }
     }
-    throw new Error('插件无法识别!');
+    return {
+        success: false,
+        message: '插件无法识别',
+    };
 }
 
-const reqHeaders = {
-    'Cache-Control': 'no-cache',
-    Pragma: 'no-cache',
-    Expires: '0',
-};
 
 async function installPluginFromUrl(
     url: string,
     config?: IInstallPluginConfig,
-) {
+) : Promise<IInstallPluginResult> {
     try {
         const funcCode = (
             await axios.get(url, {
-                headers: reqHeaders,
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    Pragma: 'no-cache',
+                    Expires: '0',
+                },
             })
         ).data;
         if (funcCode) {
@@ -1197,7 +1224,13 @@ async function installPluginFromUrl(
             const _pluginIndex = plugins.findIndex(p => p.hash === plugin.hash);
             if (_pluginIndex !== -1) {
                 // 静默忽略
-                return;
+                return {
+                    success: true,
+                    message: '插件已安装',
+                    pluginName: plugin.name,
+                    pluginHash: plugin.hash,
+                    pluginUrl: url,
+                };
             }
             const oldVersionPlugin = plugins.find(p => p.name === plugin.name);
             if (oldVersionPlugin && !config?.notCheckVersion) {
@@ -1208,7 +1241,13 @@ async function installPluginFromUrl(
                         '>',
                     )
                 ) {
-                    throw new Error('已安装更新版本的插件');
+                    return {
+                        success: false,
+                        message: '已安装更新版本的插件',
+                        pluginName: plugin.name,
+                        pluginHash: plugin.hash,
+                        pluginUrl: url,
+                    };
                 }
             }
 
@@ -1227,14 +1266,42 @@ async function installPluginFromUrl(
                     } catch {}
                 }
                 pluginStateMapper.notify();
-                return;
+                return {
+                    success: true,
+                    pluginName: plugin.name,
+                    pluginHash: plugin.hash,
+                    pluginUrl: url,
+                }
             }
-            throw new Error('插件无法解析!');
+            return {
+                success: false,
+                message: '插件无法解析',
+                pluginUrl: url,
+            }
+        } else {
+            return {
+                success: false,
+                message: '插件无法识别',
+                pluginUrl: url,
+            }
         }
     } catch (e: any) {
         devLog('error', 'URL安装插件失败', e, e?.message);
         errorLog('URL安装插件失败', e);
-        throw new Error(e?.message ?? '');
+
+        if (e?.response?.statusCode === 404) {
+            return {
+                success: false,
+                message: '插件不存在，请联系插件作者',
+                pluginUrl: url,
+            }
+        } else {
+            return {
+                success: false,
+                message: e?.message ?? '',
+                pluginUrl: url,
+            }
+        }
     }
 }
 
