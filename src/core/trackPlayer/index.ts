@@ -27,7 +27,6 @@ import musicHistory from "../musicHistory";
 import getUrlExt from "@/utils/getUrlExt";
 import { DeviceEventEmitter } from "react-native";
 import LyricManager from "../lyricManager";
-import { MusicRepeatMode } from "./common";
 import {
     getMusicIndex,
     getPlayList,
@@ -45,6 +44,7 @@ import PersistStatus from "../persistStatus.ts";
 import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog";
 import getSimilarMusic from "@/utils/getSimilarMusic";
 import MediaExtra from "@/core/mediaExtra.ts";
+import { MusicRepeatMode } from "@/constants/repeatModeConst.ts";
 
 /** 当前播放 */
 const currentMusicStore = new GlobalState<IMusic.IMusicItem | null>(null);
@@ -843,4 +843,4 @@ const TrackPlayer = {
 };
 
 export default TrackPlayer;
-export {MusicRepeatMode, State as MusicState};
+export {State as MusicState};

@@ -16,9 +16,6 @@ import { ToastBaseComponent } from "@/components/base/toast";
 import { StatusBar } from "react-native";
 import { ReducedMotionConfig, ReduceMotion } from "react-native-reanimated";
 import { routes } from "@/core/router/routes.tsx";
-/**
- * 字体颜色
- */
 
 /**
  * 字体颜色

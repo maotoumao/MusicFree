@@ -7,10 +7,11 @@ import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
 import {showPanel} from '../panels/usePanel';
 import IconButton from './iconButton';
-import TrackPlayer, {MusicRepeatMode} from '@/core/trackPlayer';
+import TrackPlayer from '@/core/trackPlayer';
 import Toast from '@/utils/toast';
 import Icon from '@/components/base/icon.tsx';
 import MusicSheet from '@/core/musicSheet';
+import { MusicRepeatMode } from '@/constants/repeatModeConst';
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
