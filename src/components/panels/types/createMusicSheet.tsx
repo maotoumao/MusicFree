@@ -59,7 +59,7 @@ export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
                         ]}
                         placeholderTextColor={colors.textSecondary}
                         placeholder={defaultName}
-                        maxLength={12}
+                        maxLength={200}
                     />
                 </>
             )}

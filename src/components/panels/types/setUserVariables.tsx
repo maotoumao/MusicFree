@@ -13,6 +13,7 @@ import globalStyle from '@/constants/globalStyle';
 import PanelHeader from '../base/panelHeader';
 
 interface IUserVariablesProps {
+    title?: string;
     onOk: (values: Record<string, string>, closePanel: () => void) => void;
     variables: IPlugin.IUserVariable[];
     initValues?: Record<string, string>;
@@ -20,7 +21,7 @@ interface IUserVariablesProps {
 }
 
 export default function SetUserVariables(props: IUserVariablesProps) {
-    const {onOk, onCancel, variables, initValues = {}} = props;
+    const {onOk, onCancel, variables, initValues = {}, title} = props;
 
     const colors = useColors();
 
@@ -28,12 +29,13 @@ export default function SetUserVariables(props: IUserVariablesProps) {
 
     return (
         <PanelBase
+            awareKeyboard
             height={vmax(80)}
             keyboardAvoidBehavior="none"
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title="设置用户变量"
+                        title={ title ?? '设置用户变量'}
                         onCancel={() => {
                             onCancel?.();
                             hidePanel();
