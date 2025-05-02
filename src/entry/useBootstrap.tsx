@@ -15,7 +15,6 @@ export function BootstrapComp() {
 
     useEffect(() => {
         if (followSystem) {
-            console.log('trg')
             if (colorScheme === 'dark') {
                 Theme.setTheme('p-dark');
             } else if (colorScheme === 'light') {
