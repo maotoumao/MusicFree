@@ -5,14 +5,14 @@ import repeatModeConst from '@/constants/repeatModeConst';
 
 import useOrientation from '@/hooks/useOrientation';
 import {showPanel} from '@/components/panels/usePanel';
-import TrackPlayer from '@/core/trackPlayer';
+import TrackPlayer, { useMusicState, useRepeatMode } from '@/core/trackPlayer';
 import {musicIsPaused} from '@/utils/trackUtils';
 import Icon from '@/components/base/icon.tsx';
-import sleep from '@/utils/sleep.ts';
+import sleep from '@/utils/sleep';
 
 export default function () {
-    const repeatMode = TrackPlayer.useRepeatMode();
-    const musicState = TrackPlayer.useMusicState();
+    const repeatMode = useRepeatMode();
+    const musicState = useMusicState();
 
     const orientation = useOrientation();
 

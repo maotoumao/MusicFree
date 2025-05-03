@@ -1,23 +1,83 @@
-import { State } from "react-native-track-player";
-import { MusicRepeatMode } from "@/constants/repeatModeConst";
+import type { Progress } from "react-native-track-player";
+import type { MusicRepeatMode } from "@/constants/repeatModeConst";
 
 export interface ITrackPlayer {
+    /**
+     * 上一首歌曲
+     */
+    readonly previousMusic: IMusic.IMusicItem | null;
+
+    /**
+     * 获取上一首歌曲
+     */
+    getPreviousMusic(): IMusic.IMusicItem | null;
+
+    /**
+     * 当前播放的歌曲
+     */
+    readonly currentMusic: IMusic.IMusicItem | null;
+
+    /**
+     * 获取当前播放的歌曲
+     */
+    getCurrentMusic(): IMusic.IMusicItem | null;
+
+    /**
+     * 下一首歌曲
+     */
+    readonly nextMusic: IMusic.IMusicItem | null;
+
+    /**
+     * 获取下一首歌曲
+     */
+    getNextMusic(): IMusic.IMusicItem | null;
+
+    /**
+     * 当前播放模式
+     */
+    readonly repeatMode: MusicRepeatMode;
+
+    /**
+     * 当前播放音质
+     */
+    readonly quality: IMusic.IQualityKey;
+
+    /**
+     * 当前播放列表
+     */
+    readonly playList: IMusic.IMusicItem[];
+
     /**
      * 初始化音乐播放器，恢复上次播放状态
      */
     setupTrackPlayer(): Promise<void>;
 
     /**
-     * 获取播放列表的React Hook
-     * @returns 当前播放列表
+     * 获取音乐在播放列表中的索引
+     * @param musicItem 要查找的音乐项
+     * @returns 索引值，如不存在则返回-1
      */
-    usePlayList(): IMusic.IMusicItem[];
+    getMusicIndexInPlayList(musicItem?: IMusic.IMusicItem | null): number;
 
     /**
-     * 获取当前播放列表
-     * @returns 当前播放列表
+     * 判断音乐是否在播放列表中
+     * @param musicItem 要查找的音乐项
+     * @returns 是否存在于播放列表
      */
-    getPlayList(): IMusic.IMusicItem[];
+    isInPlayList(musicItem?: IMusic.IMusicItem | null): boolean;
+
+    /**
+     * 获取播放列表中指定索引的音乐
+     * @param index 索引，支持循环索引（负数或超出长度会自动取模）
+     * @returns 音乐项或null（如果列表为空）
+     */
+    getPlayListMusicAt(index: number): IMusic.IMusicItem | null;
+
+    /**
+     * 判断播放列表是否为空
+     * @returns 播放列表是否为空
+     */
+    isPlayListEmpty(): boolean;
 
     /**
      * 批量添加音乐到播放列表
@@ -26,7 +86,7 @@ export interface ITrackPlayer {
      * @param shouldShuffle 是否随机排序添加的音乐
      */
     addAll(
-        musicItems?: Array<IMusic.IMusicItem>,
+        musicItems: Array<IMusic.IMusicItem>,
         beforeIndex?: number,
         shouldShuffle?: boolean
     ): void;
@@ -46,6 +106,19 @@ export interface ITrackPlayer {
      * @param musicItem 单曲或音乐列表
      */
     addNext(musicItem: IMusic.IMusicItem | IMusic.IMusicItem[]): void;
+
+    /**
+     * 从播放列表中移除指定音乐
+     * @param musicItem 要移除的音乐
+     */
+    remove(musicItem: IMusic.IMusicItem): Promise<void>;
+
+    /**
+     * 判断指定音乐是否是当前播放的音乐
+     * @param musicItem 要判断的音乐
+     * @returns 是否是当前音乐
+     */
+    isCurrentMusic(musicItem?: IMusic.IMusicItem | null): boolean;
 
     /**
      * 跳到播放列表的下一首
@@ -83,73 +156,19 @@ export interface ITrackPlayer {
     pause(): Promise<void>;
 
     /**
-     * 从播放列表中移除指定音乐
-     * @param musicItem 要移除的音乐
-     */
-    remove(musicItem: IMusic.IMusicItem): Promise<void>;
-
-    /**
-     * 清空播放列表并停止播放
-     */
-    clear(): Promise<void>;
-
-    /**
-     * 当前播放音乐的React Hook
-     * @returns 当前播放的音乐
-     */
-    useCurrentMusic(): IMusic.IMusicItem | null;
-
-    /**
-     * 获取当前正在播放的音乐
-     * @returns 当前播放的音乐
-     */
-    getCurrentMusic(): IMusic.IMusicItem | null;
-
-    /**
-     * 播放模式的React Hook
-     * @returns 当前播放模式
-     */
-    useRepeatMode(): MusicRepeatMode;
-
-    /**
-     * 获取当前播放模式
-     * @returns 当前播放模式
-     */
-    getRepeatMode(): MusicRepeatMode;
-
-    /**
      * 切换到下一个播放模式（列表循环->随机播放->单曲循环）
      */
     toggleRepeatMode(): void;
 
     /**
-     * 播放状态的React Hook
+     * 清空播放列表并停止播放
      */
-    usePlaybackState(): {
-        state: State;
-        error?: string | undefined;
-    };
+    clearPlayList(): Promise<void>;
 
     /**
-     * 获取播放进度
-     * @returns 播放进度信息
+     * 处理播放失败的情况
      */
-    getProgress(): Promise<{ position: number; duration: number }>;
-
-    /**
-     * 播放进度的React Hook
-     */
-    useProgress(): {
-        position: number;
-        duration: number;
-        buffered: number;
-    };
-
-    /**
-     * 跳转到指定播放位置
-     * @param position 目标播放位置（秒）
-     */
-    seekTo(position: number): Promise<void>;
+    handlePlayFail(): Promise<void>;
 
     /**
      * 切换播放音质
@@ -159,16 +178,10 @@ export interface ITrackPlayer {
     changeQuality(newQuality: IMusic.IQualityKey): Promise<boolean>;
 
     /**
-     * 当前音质的React Hook
-     * @returns 当前播放音质
+     * 获取当前播放进度
+     * @returns 包含播放位置和总时长的对象
      */
-    useCurrentQuality(): IMusic.IQualityKey;
-
-    /**
-     * 获取当前播放音质
-     * @returns 当前播放音质
-     */
-    getCurrentQuality(): IMusic.IQualityKey;
+    getProgress(): Promise<Progress>;
 
     /**
      * 获取当前播放速率
@@ -183,25 +196,8 @@ export interface ITrackPlayer {
     setRate(rate: number): Promise<void>;
 
     /**
-     * 音乐播放状态的React Hook
-     * @returns 当前播放状态
+     * 跳转到指定播放位置
+     * @param position 目标位置（秒）
      */
-    useMusicState(): State;
-
-    /**
-     * 重置播放器
-     */
-    reset(): Promise<void>;
-
-    /**
-     * 获取上一首歌曲
-     * @returns 上一首歌曲，如果不存在则返回null
-     */
-    getPreviousMusic(): IMusic.IMusicItem | null;
-
-    /**
-     * 获取下一首歌曲
-     * @returns 下一首歌曲，如果不存在则返回null
-     */
-    getNextMusic(): IMusic.IMusicItem | null;
+    seekTo(position: number): Promise<void>;
 }

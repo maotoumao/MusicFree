@@ -4,12 +4,12 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import repeatModeConst from '@/constants/repeatModeConst';
 import IconTextButton from '@/components/base/iconTextButton';
-import TrackPlayer from '@/core/trackPlayer';
+import TrackPlayer, { usePlayList, useRepeatMode } from '@/core/trackPlayer';
 import sleep from '@/utils/sleep.ts';
 
 export default function Header() {
-    const repeatMode = TrackPlayer.useRepeatMode();
-    const playList = TrackPlayer.usePlayList();
+    const repeatMode = useRepeatMode();
+    const playList = usePlayList();
 
     return (
         <View style={style.wrapper}>
@@ -36,7 +36,7 @@ export default function Header() {
             <IconTextButton
                 icon="trash-outline"
                 onPress={() => {
-                    TrackPlayer.clear();
+                    TrackPlayer.clearPlayList();
                 }}>
                 清空
             </IconTextButton>

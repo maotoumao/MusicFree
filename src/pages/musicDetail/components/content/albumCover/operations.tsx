@@ -10,7 +10,7 @@ import Toast from "@/utils/toast";
 import toast from "@/utils/toast";
 import useOrientation from "@/hooks/useOrientation";
 import { showPanel } from "@/components/panels/usePanel";
-import TrackPlayer from "@/core/trackPlayer";
+import TrackPlayer, { useCurrentMusic, useMusicQuality } from "@/core/trackPlayer";
 import { iconSizeConst } from "@/constants/uiConst";
 import PersistStatus from "@/core/persistStatus.ts";
 import HeartIcon from "../heartIcon";
@@ -19,8 +19,8 @@ import PluginManager from "@/core/pluginManager.ts";
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
-    const musicItem = TrackPlayer.useCurrentMusic();
-    const currentQuality = TrackPlayer.useCurrentQuality();
+    const musicItem = useCurrentMusic();
+    const currentQuality = useMusicQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
     const rate = PersistStatus.useValue('music.rate', 100);

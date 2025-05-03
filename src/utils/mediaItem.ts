@@ -42,7 +42,7 @@ export function isSameMediaItem(
     b: ICommon.IMediaBase | null | undefined,
 ) {
     // eslint-disable-next-line eqeqeq
-    return a && b && a.id == b.id && a.platform === b.platform;
+    return !!(a && b && a.id == b.id && a.platform === b.platform);
 }
 
 /** 查找是否存在 */
@@ -57,7 +57,7 @@ export function includesMedia(
 }
 
 /** 获取复位的mediaItem */
-export function resetMediaItem<T extends Partial<ICommon.IMediaBase>>(
+export function resetMediaItem<T extends ICommon.IMediaBase>(
     mediaItem: T,
     platform?: string,
     newObj?: boolean,

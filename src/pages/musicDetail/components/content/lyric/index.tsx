@@ -8,7 +8,7 @@ import Loading from "@/components/base/loading";
 import globalStyle from "@/constants/globalStyle";
 import { showPanel } from "@/components/panels/usePanel";
 import LyricManager from "@/core/lyricManager";
-import TrackPlayer from "@/core/trackPlayer";
+import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
 import DraggingTime from "./draggingTime";
@@ -57,13 +57,13 @@ export default function Lyric(props: IProps) {
 
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
         useDelayFalsy<number | undefined>(undefined, 2000);
-    const musicState = TrackPlayer.useMusicState();
+    const musicState = useMusicState();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
 
     const listRef = useRef<FlatList<IParsedLrcItem> | null>();
 
-    const currentMusicItem = TrackPlayer.useCurrentMusic();
+    const currentMusicItem = useCurrentMusic();
     const associateMusicItem = currentMusicItem
         ? MediaExtra.get(currentMusicItem)?.associatedLrc
         : null;

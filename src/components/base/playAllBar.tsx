@@ -37,7 +37,7 @@ export default function (props: IProps) {
                     if (musicList) {
                         let defaultPlayMusic = musicList[0];
                         if (
-                            TrackPlayer.getRepeatMode() ===
+                            TrackPlayer.repeatMode ===
                             MusicRepeatMode.SHUFFLE
                         ) {
                             defaultPlayMusic =

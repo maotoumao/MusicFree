@@ -7,11 +7,11 @@ import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
 import Share from 'react-native-share';
 import {B64Asset} from '@/constants/assetsConst';
 import IconButton from '@/components/base/iconButton';
-import TrackPlayer from '@/core/trackPlayer';
+import { useCurrentMusic } from '@/core/trackPlayer';
 
 export default function NavBar() {
     const navigation = useNavigation();
-    const musicItem = TrackPlayer.useCurrentMusic();
+    const musicItem = useCurrentMusic();
     // const {showShare} = useShare();
 
     return (

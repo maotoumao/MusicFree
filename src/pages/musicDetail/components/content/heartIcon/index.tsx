@@ -1,11 +1,11 @@
 import React from 'react';
 import {iconSizeConst} from '@/constants/uiConst';
-import TrackPlayer from '@/core/trackPlayer';
+import { useCurrentMusic } from '@/core/trackPlayer';
 import Icon from '@/components/base/icon.tsx';
 import MusicSheet from '@/core/musicSheet';
 
 export default function () {
-    const musicItem = TrackPlayer.useCurrentMusic();
+    const musicItem = useCurrentMusic();
 
     const isFavorite = MusicSheet.useFavorite(musicItem);
 
