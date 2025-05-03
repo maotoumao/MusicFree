@@ -347,7 +347,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             mediaCache?.source?.[quality]?.url &&
             (pluginCacheControl === CacheControl.Cache ||
                 (pluginCacheControl === CacheControl.NoCache &&
-                    Network.isOffline()))
+                    Network.isOffline))
         ) {
             trace('播放', '缓存播放');
             const qualityInfo = mediaCache.source[quality];

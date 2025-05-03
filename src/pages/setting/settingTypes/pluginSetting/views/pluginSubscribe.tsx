@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import rpx from "@/utils/rpx";
-import Config from "@/core/config.ts";
+import Config, { useConfigValue } from "@/core/config.ts";
 import { FlatList } from "react-native-gesture-handler";
 import Empty from "@/components/base/empty";
 import ListItem from "@/components/base/listItem";
@@ -21,7 +21,7 @@ interface ISubscribeItem {
 const ITEM_HEIGHT = rpx(108);
 
 export default function PluginSubscribe() {
-    const urls = Config.useConfigValue('plugin.subscribeUrl') ?? '';
+    const urls = useConfigValue('plugin.subscribeUrl') ?? '';
     const [subscribes, setSubscribes] = useState<Array<ISubscribeItem>>([]);
 
     useEffect(() => {

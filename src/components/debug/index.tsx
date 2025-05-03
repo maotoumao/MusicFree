@@ -1,10 +1,10 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import VDebug from "@/lib/react-native-vdebug";
-import Config from "@/core/config.ts";
+import { useConfigValue } from "@/core/config.ts";
 
 export default function Debug() {
-    const showDebug = Config.useConfigValue('debug.devLog');
+    const showDebug = useConfigValue('debug.devLog');
     return showDebug ? (
         <View style={style.wrapper} pointerEvents="box-none">
             <VDebug />

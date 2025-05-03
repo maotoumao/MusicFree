@@ -6,7 +6,6 @@ import pathConst from "@/constants/pathConst";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import { errorLog, trace } from "@/utils/log";
 import PluginManager from "@/core/pluginManager";
-import Network from "@/core/network";
 import { ImgAsset } from "@/constants/assetsConst";
 import LocalMusicSheet from "@/core/localMusicSheet";
 import { Linking, Platform } from "react-native";
@@ -187,9 +186,6 @@ export default async function () {
 async function extraMakeup() {
     // 自动更新
     try {
-        // 初始化网络状态
-        Network.setup();
-
         if (Config.getConfig('basic.autoUpdatePlugin')) {
             const lastUpdated = PersistStatus.get('app.pluginUpdateTime') || 0;
             const now = Date.now();

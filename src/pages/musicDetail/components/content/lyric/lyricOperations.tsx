@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import { iconSizeConst } from "@/constants/uiConst";
 import TranslationIcon from "@/assets/icons/translation.svg";
-import Config from "@/core/config.ts";
+import { useConfigValue } from "@/core/config";
 import useColors from "@/hooks/useColors";
 import LyricManager from "@/core/lyricManager";
 import Toast from "@/utils/toast";
@@ -22,7 +22,7 @@ interface ILyricOperationsProps {
 export default function LyricOperations(props: ILyricOperationsProps) {
     const {scrollToCurrentLrcItem} = props;
 
-    const detailFontSize = Config.useConfigValue('lyric.detailFontSize');
+    const detailFontSize = useConfigValue('lyric.detailFontSize');
 
     const hasTranslation = LyricManager.useLyricState()?.hasTranslation;
     const showTranslation = PersistStatus.useValue(

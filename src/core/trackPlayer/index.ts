@@ -465,7 +465,7 @@ const play = async (
           mediaExtra?.localPath ||
           getInternalData<string>(musicItem, InternalDataType.LOCALPATH)
         if (
-            Network.isCellular() &&
+            Network.isCellular &&
             !Config.getConfig('basic.useCelluarNetworkPlay') &&
             !LocalMusicSheet.isLocalMusic(musicItem) &&
             !localPath

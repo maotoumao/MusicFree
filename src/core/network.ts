@@ -1,44 +1,61 @@
+import { emptyFunction } from '@/constants/commonConst';
 import NetInfo from '@react-native-community/netinfo';
 
-let networkState: 'Offline' | 'Wifi' | 'Cellular';
-
-function getState() {
-    return networkState;
+enum NetworkState {
+    Offline = 'Offline',
+    Wifi = 'Wifi',
+    Cellular = 'Cellular',
 }
 
-const isOffline = () => networkState === 'Offline';
+class Network {
+    private _state: NetworkState = NetworkState.Wifi;
 
-const isWifi = () => networkState === 'Wifi';
-
-const isCellular = () => networkState === 'Cellular';
-
-const mapState = (state: any) => {
-    if (state.type === 'none') {
-        networkState = 'Offline';
-    } else if (state.type === 'wifi') {
-        networkState = 'Wifi';
-    } else {
-        networkState = 'Cellular';
+    /** 获取网络状态 */
+    get state() {
+        return this._state;
     }
-};
 
-async function setup() {
-    try {
-        const state = await NetInfo.fetch();
-        mapState(state);
-    } catch (e) {}
+    /** 是否离线 */
+    get isOffline() {
+        return this._state === NetworkState.Offline;
+    }
 
-    NetInfo.addEventListener(state => {
-        mapState(state);
-    });
+    /** 是否处于wifi环境 */
+    get isWifi() {
+        return this._state === NetworkState.Wifi;
+    }
+
+    /** 是否处于移动网络环境 */
+    get isCellular() {
+        return this._state === NetworkState.Cellular;
+    }
+
+    /** 是否链接网络 */
+    get isConnected() {
+        return this._state !== NetworkState.Offline;
+    }
+
+    constructor() {
+        NetInfo.fetch().then(state => {
+            this.mapState(state);
+        }).catch(emptyFunction);
+
+        NetInfo.addEventListener(state => {
+            this.mapState(state);
+        });
+    }
+
+    private mapState(state: any) {
+        if (state.type === 'none') {
+            this._state = NetworkState.Offline;
+        } else if (state.type === 'wifi') {
+            this._state = NetworkState.Wifi;
+        } else {
+            this._state = NetworkState.Cellular;
+        }
+    }
+
 }
 
-const Network = {
-    setup,
-    getState,
-    isOffline,
-    isWifi,
-    isCellular,
-};
-
-export default Network;
+const network = new Network();
+export default network;

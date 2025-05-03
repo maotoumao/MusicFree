@@ -11,7 +11,6 @@ import { showDialog } from "@/components/dialogs/useDialog";
 import { showPanel } from "@/components/panels/usePanel";
 
 import { AuthType, createClient } from "webdav";
-import Config from "@/core/config.ts";
 import { writeInChunks } from "@/utils/fileUtils.ts";
 import { getDocumentAsync } from "expo-document-picker";
 import { readAsStringAsync } from "expo-file-system";
@@ -19,14 +18,15 @@ import sleep from "@/utils/sleep";
 import { ResumeMode } from "@/constants/commonConst.ts";
 import strings from "@/constants/strings.ts";
 import { errorLog } from "@/utils/log.ts";
+import Config, { useConfigValue } from "@/core/config";
 
 export default function BackupSetting() {
     const navigate = useNavigate();
 
-    const resumeMode = Config.useConfigValue('backup.resumeMode');
-    const webdavUrl = Config.useConfigValue('webdav.url');
-    const webdavUsername = Config.useConfigValue('webdav.username');
-    const webdavPassword = Config.useConfigValue('webdav.password');
+    const resumeMode = useConfigValue('backup.resumeMode');
+    const webdavUrl = useConfigValue('webdav.url');
+    const webdavUsername = useConfigValue('webdav.username');
+    const webdavPassword = useConfigValue('webdav.password');
 
 
     const onBackupToLocal = async () => {
