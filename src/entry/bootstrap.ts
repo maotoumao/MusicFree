@@ -22,10 +22,11 @@ import MusicSheet from "@/core/musicSheet";
 import NativeUtils from "@/native/utils";
 import { showDialog } from "@/components/dialogs/useDialog.ts";
 
-/** app加载前执行
- * 1. 检查权限
- * 2. 数据初始化
- */
+
+// 依赖管理
+musicHistory.injectDependencies(Config);
+TrackPlayer.injectDependencies(Config, musicHistory);
+
 
 async function _bootstrap() {
     await SplashScreen.preventAutoHideAsync()
@@ -69,6 +70,10 @@ async function _bootstrap() {
     trace('文件夹初始化完成');
     logger.mark('文件夹初始化完成');
 
+
+
+
+
     // 加载配置
     await Promise.all([
         Config.setup().then(() => {
@@ -77,7 +82,7 @@ async function _bootstrap() {
         MusicSheet.setup().then(() => {
             logger.mark('MusicSheet');
         }),
-        musicHistory.setupMusicHistory().then(() => {
+        musicHistory.setup().then(() => {
             logger.mark('musicHistory');
         }),
     ]);

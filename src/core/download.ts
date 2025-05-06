@@ -361,12 +361,12 @@ function downloadMusic(
     musicItems: IMusic.IMusicItem | IMusic.IMusicItem[],
     quality?: IMusic.IQualityKey,
 ) {
-    if (Network.isOffline()) {
+    if (Network.isOffline) {
         Toast.warn('当前无网络，无法下载');
         return;
     }
     if (
-        Network.isCellular() &&
+        Network.isCellular &&
         !Config.getConfig('basic.useCelluarNetworkDownload') &&
         getCurrentDialog()?.name !== 'SimpleDialog'
     ) {

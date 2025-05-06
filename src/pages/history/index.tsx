@@ -2,7 +2,7 @@ import React from 'react';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import StatusBar from '@/components/base/statusBar';
-import musicHistory from '@/core/musicHistory';
+import musicHistory, { useMusicHistory } from '@/core/musicHistory';
 import MusicList from '@/components/musicList';
 import {musicHistorySheetId} from '@/constants/commonConst';
 import MusicBar from '@/components/musicBar';
@@ -10,7 +10,7 @@ import AppBar from '@/components/base/appBar';
 import {ROUTE_PATH, useNavigate} from '@/core/router';
 
 export default function History() {
-    const musicHistoryList = musicHistory.useMusicHistory();
+    const musicHistoryList = useMusicHistory();
 
     const navigate = useNavigate();
 
@@ -51,7 +51,7 @@ export default function History() {
                     id: musicHistorySheetId,
                     title: '播放记录',
                     musicList: musicHistoryList,
-                }}
+                } as IMusic.IMusicSheetItem}
             />
             <MusicBar />
         </VerticalSafeAreaView>

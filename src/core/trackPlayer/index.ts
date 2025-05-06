@@ -8,7 +8,6 @@ import ReactNativeTrackPlayer, {
     useProgress,
 } from 'react-native-track-player';
 import shuffle from 'lodash.shuffle';
-import Config from '../config.ts';
 import {
     EDeviceEvents,
     internalFakeSoundKey,
@@ -26,7 +25,6 @@ import {
 import Network from '../network';
 import LocalMusicSheet from '../localMusicSheet';
 import { getQualityOrder } from '@/utils/qualities';
-import musicHistory from '../musicHistory';
 import getUrlExt from '@/utils/getUrlExt';
 import { DeviceEventEmitter } from 'react-native';
 import LyricManager from '../lyricManager';
@@ -43,12 +41,21 @@ import { atom, getDefaultStore, useAtomValue } from 'jotai';
 import { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import EventEmitter from 'eventemitter3';
 
+
+import type { IInjectable } from '@/types/infra.js';
+import type { IConfig } from '@/types/core/config.js';
+import type { IMusicHistory } from '@/types/core/musicHistory.js';
+
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
 const qualityAtom = atom<IMusic.IQualityKey>('standard');
 const playListAtom = atom<IMusic.IMusicItem[]>([]);
 
-class TrackPlayer extends EventEmitter implements ITrackPlayer {
+class TrackPlayer extends EventEmitter implements ITrackPlayer, IInjectable {
+
+    private configService!: IConfig;
+    private musicHistoryService!: IMusicHistory;
+
     private currentIndex = -1;
 
     private static maxMusicQueueLength = 10000;
@@ -107,6 +114,12 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
     public get playList() {
         return getDefaultStore().get(playListAtom);
     }
+
+    injectDependencies(configService: IConfig, musicHistoryService): void {
+        this.configService = configService;
+        this.musicHistoryService = musicHistoryService;
+    }
+
 
     private setCurrentMusic(musicItem?: IMusic.IMusicItem | null) {
         if (!musicItem) {
@@ -177,7 +190,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
         const track = PersistStatus.get('music.musicItem');
         const quality =
             PersistStatus.get('music.quality') ||
-            Config.getConfig('basic.defaultPlayQuality') ||
+            this.configService.getConfig('basic.defaultPlayQuality') ||
             'standard';
 
         // 状态恢复
@@ -197,7 +210,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
         }
 
         if (track && this.isInPlayList(track)) {
-            if (!Config.getConfig('basic.autoPlayWhenAppStart')) {
+            if (!this.configService.getConfig('basic.autoPlayWhenAppStart')) {
                 track.isInit = true;
             }
 
@@ -495,7 +508,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
                 getInternalData<string>(musicItem, InternalDataType.LOCALPATH);
             if (
                 Network.isCellular &&
-                !Config.getConfig('basic.useCelluarNetworkPlay') &&
+                !this.configService.getConfig('basic.useCelluarNetworkPlay') &&
                 !LocalMusicSheet.isLocalMusic(musicItem) &&
                 !localPath
             ) {
@@ -571,8 +584,8 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
             const plugin = PluginManager.getByName(musicItem.platform);
             // 5.2 获取音质排序
             const qualityOrder = getQualityOrder(
-                Config.getConfig('basic.defaultPlayQuality') ?? 'standard',
-                Config.getConfig('basic.playQualityOrder') ?? 'asc',
+                this.configService.getConfig('basic.defaultPlayQuality') ?? 'standard',
+                this.configService.getConfig('basic.playQualityOrder') ?? 'asc',
             );
             // 5.3 插件返回音源
             let source: IPlugin.IMediaSourceResult | null = null;
@@ -612,7 +625,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
                 // 5.4 没有返回源
                 if (!source && !musicItem.url) {
                     // 插件失效的情况
-                    if (Config.getConfig('basic.tryChangeSourceWhenPlayFail')) {
+                    if (this.configService.getConfig('basic.tryChangeSourceWhenPlayFail')) {
                         // 重试
                         const similarMusic = await getSimilarMusic(
                             musicItem,
@@ -666,7 +679,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
             track = mergeProps(musicItem, source) as IMusic.IMusicItem;
 
             // 8. 新增历史记录
-            musicHistory.addMusic(musicItem);
+            this.musicHistoryService.addMusic(musicItem);
 
             trace('获取音源成功', track);
             // 9. 设置音源
@@ -788,7 +801,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
 
     async handlePlayFail() {
         // 如果自动跳转下一曲, 500s后自动跳转
-        if (!Config.getConfig('basic.autoStopWhenError')) {
+        if (!this.configService.getConfig('basic.autoStopWhenError')) {
             await ReactNativeTrackPlayer.reset();
             await delay(500);
             await this.skipToNext();
