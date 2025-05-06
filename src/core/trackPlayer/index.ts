@@ -1,4 +1,4 @@
-import {produce} from 'immer';
+import { produce } from 'immer';
 import ReactNativeTrackPlayer, {
     Event,
     State,
@@ -25,23 +25,22 @@ import {
 } from '@/utils/mediaItem';
 import Network from '../network';
 import LocalMusicSheet from '../localMusicSheet';
-import {SoundAsset} from '@/constants/assetsConst';
-import {getQualityOrder} from '@/utils/qualities';
+import { getQualityOrder } from '@/utils/qualities';
 import musicHistory from '../musicHistory';
 import getUrlExt from '@/utils/getUrlExt';
-import {DeviceEventEmitter} from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 import LyricManager from '../lyricManager';
-import {createMediaIndexMap} from '@/utils/mediaIndexMap';
+import { createMediaIndexMap } from '@/utils/mediaIndexMap';
 import PluginManager from '../pluginManager';
-import {musicIsPaused} from '@/utils/trackUtils';
-import {errorLog, trace} from '@/utils/log';
+import { musicIsPaused } from '@/utils/trackUtils';
+import { errorLog, trace } from '@/utils/log';
 import PersistStatus from '../persistStatus.ts';
-import {getCurrentDialog, showDialog} from '@/components/dialogs/useDialog';
+import { getCurrentDialog, showDialog } from '@/components/dialogs/useDialog';
 import getSimilarMusic from '@/utils/getSimilarMusic';
 import MediaExtra from '@/core/mediaExtra.ts';
-import {MusicRepeatMode} from '@/constants/repeatModeConst';
-import {atom, getDefaultStore, useAtomValue} from 'jotai';
-import {ITrackPlayer} from '@/types/core/trackPlayer/index';
+import { MusicRepeatMode } from '@/constants/repeatModeConst';
+import { atom, getDefaultStore, useAtomValue } from 'jotai';
+import { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import EventEmitter from 'eventemitter3';
 
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
@@ -59,6 +58,9 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
         [MusicRepeatMode.SINGLE]: MusicRepeatMode.QUEUE,
         [MusicRepeatMode.QUEUE]: MusicRepeatMode.SHUFFLE,
     };
+
+    private static fakeAudioUrl = "musicfree://fake-audio";
+    private static proposedAudioUrl = "musicfree://proposed-audio";
 
     public get previousMusic() {
         const currentMusic = this.currentMusic;
@@ -219,13 +221,17 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
         }
 
         if (!this.inited) {
+
+            /**
+             * 此事件可能会被触发多次（比如直接替换queue） 参考代码：https://github.com/doublesymmetry/KotlinAudio
+             */
             ReactNativeTrackPlayer.addEventListener(
                 Event.PlaybackActiveTrackChanged,
                 async evt => {
                     if (
                         evt.index === 1 &&
                         evt.lastIndex === 0 &&
-                        evt.track?.$ === internalFakeSoundKey
+                        evt.track?.url === TrackPlayer.fakeAudioUrl
                     ) {
                         trace('队列末尾，播放下一首');
                         if (
@@ -259,8 +265,8 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
                     }
 
                     if (
-                        (await ReactNativeTrackPlayer.getActiveTrackIndex()) ===
-                            0 &&
+                        currentTrack?.url !== TrackPlayer.fakeAudioUrl && currentTrack?.url !== TrackPlayer.proposedAudioUrl &&
+                        (await ReactNativeTrackPlayer.getActiveTrackIndex()) === 0 &&
                         e.message &&
                         e.message !== 'android-io-file-not-found'
                     ) {
@@ -542,7 +548,11 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
 
             // 4. 更新列表状态和当前音乐
             this.setCurrentMusic(musicItem);
-            await ReactNativeTrackPlayer.reset();
+            await ReactNativeTrackPlayer.setQueue([{
+                ...musicItem,
+                url: TrackPlayer.proposedAudioUrl
+            }, this.getFakeNextTrack()]);
+
 
             // 4.1 刷新歌词信息
             if (
@@ -673,7 +683,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
                 ) {
                     delete info.url;
                 }
-            } catch {}
+            } catch { }
 
             // 11. 设置补充信息
             if (info && this.isCurrentMusic(musicItem)) {
@@ -740,7 +750,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
 
         if (track) {
             return produce(track, _ => {
-                _.url = SoundAsset.fakeAudio;
+                _.url = TrackPlayer.fakeAudioUrl;
                 _.$ = internalFakeSoundKey;
                 if (!_.artwork?.trim()?.length) {
                     _.artwork = undefined;
@@ -749,7 +759,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
         } else {
             // 只有列表长度为0时才会出现的特殊情况
             return {
-                url: SoundAsset.fakeAudio,
+                url: TrackPlayer.fakeAudioUrl,
                 $: internalFakeSoundKey,
             } as Track;
         }
@@ -851,7 +861,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
             await this.play(musicItem, true);
         }
     }
-    
+
     getProgress = ReactNativeTrackPlayer.getProgress;
     getRate = ReactNativeTrackPlayer.getRate;
     setRate = ReactNativeTrackPlayer.setRate;
@@ -868,7 +878,7 @@ export function useMusicState() {
 
     return playbackState.state;
 }
-export {useProgress, State as MusicState};
+export { useProgress, State as MusicState };
 
 enum PlayFailReason {
     /** 禁止移动网络播放 */
