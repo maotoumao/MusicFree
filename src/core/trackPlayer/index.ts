@@ -69,6 +69,10 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer, IInjectable {
     private static fakeAudioUrl = "musicfree://fake-audio";
     private static proposedAudioUrl = "musicfree://proposed-audio";
 
+    constructor() {
+        super();
+    }
+
     public get previousMusic() {
         const currentMusic = this.currentMusic;
         if (!currentMusic) {
