@@ -9,7 +9,7 @@ import storage from "@/core/musicSheet/storage.ts";
 import migrate, { migrateV2 } from "@/core/musicSheet/migrate.ts";
 import { getDefaultStore, useAtomValue } from "jotai";
 import { musicListMap, musicSheetsBaseAtom, starredMusicSheetsAtom } from "@/core/musicSheet/atoms.ts";
-import { ResumeMode, SortType } from "@/constants/commonConst.ts";
+import { localPluginPlatform, ResumeMode, SortType } from "@/constants/commonConst.ts";
 import SortedMusicList from "@/core/musicSheet/sortedMusicList.ts";
 import ee from "@/core/musicSheet/ee.ts";
 import Config from "@/core/config.ts";
@@ -20,6 +20,7 @@ const produce = new Immer({
 
 const defaultSheet: IMusic.IMusicSheetItemBase = {
     id: 'favorite',
+    platform: localPluginPlatform,
     coverImg: undefined,
     title: '我喜欢',
     worksNum: 0,
@@ -149,6 +150,7 @@ async function addSheet(title: string) {
         musicSheets[0],
         {
             title,
+            platform: localPluginPlatform,
             id: newId,
             coverImg: undefined,
             worksNum: 0,
