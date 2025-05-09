@@ -10,7 +10,7 @@ import Toast from "@/utils/toast";
 import { hidePanel, showPanel } from "@/components/panels/usePanel";
 import TrackPlayer from "@/core/trackPlayer";
 import MediaExtra from "@/core/mediaExtra";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 import useOrientation from "@/hooks/useOrientation";
 import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";

@@ -4,7 +4,7 @@ import LyricManager from "@/core/lyricManager";
 import LyricUtil from "@/native/lyricUtil";
 import TrackPlayer from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 
 let resumeState: State | null;
 module.exports = async function () {

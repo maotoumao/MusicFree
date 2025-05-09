@@ -13,7 +13,7 @@ import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
 import DraggingTime from "./draggingTime";
 import LyricItemComponent from "./lyricItem";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 import LyricOperations from "./lyricOperations";
 import MediaExtra from "@/core/mediaExtra";
 import { IParsedLrcItem } from "@/utils/lrcParser";

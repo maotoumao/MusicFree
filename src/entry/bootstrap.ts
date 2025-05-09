@@ -15,7 +15,7 @@ import Toast from "@/utils/toast";
 import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
 import TrackPlayer from "@/core/trackPlayer";
 import musicHistory from "@/core/musicHistory";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 import { perfLogger } from "@/utils/perfLogger";
 import * as SplashScreen from "expo-splash-screen";
 import MusicSheet from "@/core/musicSheet";

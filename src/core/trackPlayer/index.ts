@@ -32,7 +32,7 @@ import { createMediaIndexMap } from '@/utils/mediaIndexMap';
 import PluginManager from '../pluginManager';
 import { musicIsPaused } from '@/utils/trackUtils';
 import { errorLog, trace } from '@/utils/log';
-import PersistStatus from '../persistStatus.ts';
+import PersistStatus from '@/utils/persistStatus';
 import { getCurrentDialog, showDialog } from '@/components/dialogs/useDialog';
 import getSimilarMusic from '@/utils/getSimilarMusic';
 import MediaExtra from '@/core/mediaExtra.ts';
