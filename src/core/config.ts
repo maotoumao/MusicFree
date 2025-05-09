@@ -4,11 +4,11 @@ import {getStorage, removeStorage} from '@/utils/storage';
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV.ts';
 import safeStringify from '@/utils/safeStringify.ts';
 
-import type {ConfigPropertyKey, IConfig, IConfigProperties} from '@/types/core/config';
+import type {AppConfigPropertyKey, IAppConfig, IAppConfigProperties} from '@/types/core/config';
 
 const configStore = getOrCreateMMKV('App.config');
 
-class Config implements IConfig {
+class AppConfig implements IAppConfig {
     // 迁移函数
     private async migrateConfig(): Promise<void> {
         // 检查是否已经迁移
@@ -26,7 +26,7 @@ class Config implements IConfig {
         }
 
         // 迁移每个字段
-        const mapping: [string, ConfigPropertyKey][] = [
+        const mapping: [string, AppConfigPropertyKey][] = [
             // Basic
             [
                 'setting.basic.autoPlayWhenAppStart',
@@ -145,9 +145,9 @@ class Config implements IConfig {
         await this.migrateConfig();
     }
 
-    setConfig<K extends keyof IConfigProperties>(
+    setConfig<K extends keyof IAppConfigProperties>(
         key: K,
-        value?: IConfigProperties[K] | undefined,
+        value?: IAppConfigProperties[K] | undefined,
     ): void {
         if (value === undefined) {
             configStore.delete(key);
@@ -156,9 +156,9 @@ class Config implements IConfig {
         }
     }
 
-    getConfig<K extends keyof IConfigProperties>(
+    getConfig<K extends keyof IAppConfigProperties>(
         key: K,
-    ): IConfigProperties[K] | undefined {
+    ): IAppConfigProperties[K] | undefined {
         const value = configStore.getString(key);
         if (value === undefined) {
             return undefined;
@@ -167,10 +167,10 @@ class Config implements IConfig {
     }
 }
 
-const config = new Config();
-export default config;
+const appConfig = new AppConfig();
+export default appConfig;
 
 /***** hooks *****/
-export function useConfigValue<K extends keyof IConfigProperties>(key: K): IConfigProperties[K] | undefined {
-    return useMMKVObject<IConfigProperties[K]>(key, configStore)[0];
+export function useAppConfig<K extends keyof IAppConfigProperties>(key: K): IAppConfigProperties[K] | undefined {
+    return useMMKVObject<IAppConfigProperties[K]>(key, configStore)[0];
 }

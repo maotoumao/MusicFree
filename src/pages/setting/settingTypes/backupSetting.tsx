@@ -18,15 +18,15 @@ import sleep from "@/utils/sleep";
 import { ResumeMode } from "@/constants/commonConst.ts";
 import strings from "@/constants/strings.ts";
 import { errorLog } from "@/utils/log.ts";
-import Config, { useConfigValue } from "@/core/config";
+import Config, { useAppConfig } from "@/core/config";
 
 export default function BackupSetting() {
     const navigate = useNavigate();
 
-    const resumeMode = useConfigValue('backup.resumeMode');
-    const webdavUrl = useConfigValue('webdav.url');
-    const webdavUsername = useConfigValue('webdav.username');
-    const webdavPassword = useConfigValue('webdav.password');
+    const resumeMode = useAppConfig('backup.resumeMode');
+    const webdavUrl = useAppConfig('webdav.url');
+    const webdavUsername = useAppConfig('webdav.username');
+    const webdavPassword = useAppConfig('webdav.password');
 
 
     const onBackupToLocal = async () => {

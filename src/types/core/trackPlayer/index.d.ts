@@ -1,7 +1,8 @@
 import type { Progress } from "react-native-track-player";
 import type { MusicRepeatMode } from "@/constants/repeatModeConst";
+import { IInjectable } from "@/types/infra";
 
-export interface ITrackPlayer {
+export interface ITrackPlayer extends IInjectable {
     /**
      * 上一首歌曲
      */

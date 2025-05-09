@@ -2,7 +2,7 @@ import { isSameMediaItem } from "@/utils/mediaItem";
 import { getStorage, setStorage } from "@/utils/storage";
 import { musicHistorySheetId } from "@/constants/commonConst";
 import type { IInjectable } from "@/types/infra";
-import type { IConfig } from "@/types/core/config";
+import type { IAppConfig } from "@/types/core/config";
 import { atom, getDefaultStore, useAtomValue } from "jotai";
 import type { IMusicHistory } from "@/types/core/musicHistory.js";
 
@@ -10,9 +10,9 @@ import type { IMusicHistory } from "@/types/core/musicHistory.js";
 const musicHistoryAtom = atom<IMusic.IMusicItem[]>([]);
 
 class MusicHistory implements IMusicHistory, IInjectable {
-    private configService!: IConfig;
+    private configService!: IAppConfig;
 
-    injectDependencies(configService: IConfig): void {
+    injectDependencies(configService: IAppConfig): void {
         this.configService = configService;
     }
 

@@ -1,7 +1,7 @@
 import type {ResumeMode, SortType} from '@/constants/commonConst.ts';
 import type {CustomizedColors} from '@/hooks/useColors';
 
-export interface IConfigProperties {
+export interface IAppConfigProperties {
     $schema: '1';
     // Basic
     'basic.autoPlayWhenAppStart': boolean;
@@ -68,9 +68,9 @@ export interface IConfigProperties {
     'debug.devLog': boolean;
 }
 
-export type ConfigPropertyKey = keyof IConfigProperties;
+export type AppConfigPropertyKey = keyof IAppConfigProperties;
 
-export interface IConfig<T extends IConfigProperties = IConfigProperties> {
+export interface IAppConfig<T extends IAppConfigProperties = IAppConfigProperties> {
     setup(): Promise<void>;
 
     setConfig<K extends keyof T>(key: K, value?: T[K]): void;

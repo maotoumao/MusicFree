@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
 import rpx from "@/utils/rpx";
-import Config, { useConfigValue } from "@/core/config";
+import Config, { useAppConfig } from "@/core/config";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
 import ThemeSwitch from "@/components/base/switch";
@@ -25,11 +25,11 @@ import ColorBlock from "@/components/base/colorBlock";
 import { SortType } from "@/constants/commonConst.ts";
 import Clipboard from "@react-native-clipboard/clipboard";
 
-import { ConfigPropertyKey } from "@/types/core/config";
+import { AppConfigPropertyKey } from "@/types/core/config";
 
 function createSwitch(
     title: string,
-    changeKey: ConfigPropertyKey,
+    changeKey: AppConfigPropertyKey,
     value: boolean,
     callback?: (newValue: boolean) => void,
 ) {
@@ -49,7 +49,7 @@ function createSwitch(
 
 const createRadio = function (
     title: string,
-    changeKey: ConfigPropertyKey,
+    changeKey: AppConfigPropertyKey,
     candidates: Array<string | number>,
     value: string | number,
     valueMap?: Record<string | number, string | number>,
@@ -106,35 +106,35 @@ function useCacheSize() {
 
 export default function BasicSetting() {
 
-    const autoPlayWhenAppStart = useConfigValue('basic.autoPlayWhenAppStart');
-    const useCelluarNetworkPlay = useConfigValue('basic.useCelluarNetworkPlay');
-    const useCelluarNetworkDownload = useConfigValue('basic.useCelluarNetworkDownload');
-    const maxDownload = useConfigValue('basic.maxDownload');
-    const clickMusicInSearch = useConfigValue('basic.clickMusicInSearch');
-    const clickMusicInAlbum = useConfigValue('basic.clickMusicInAlbum');
-    const downloadPath = useConfigValue('basic.downloadPath');
-    const notInterrupt = useConfigValue('basic.notInterrupt');
-    const tempRemoteDuck = useConfigValue('basic.tempRemoteDuck');
-    const autoStopWhenError = useConfigValue('basic.autoStopWhenError');
-    const maxCacheSize = useConfigValue('basic.maxCacheSize');
-    const defaultPlayQuality = useConfigValue('basic.defaultPlayQuality');
-    const playQualityOrder = useConfigValue('basic.playQualityOrder');
-    const defaultDownloadQuality = useConfigValue('basic.defaultDownloadQuality');
-    const downloadQualityOrder = useConfigValue('basic.downloadQualityOrder');
-    const musicDetailDefault = useConfigValue('basic.musicDetailDefault');
-    const musicDetailAwake = useConfigValue('basic.musicDetailAwake');
-    const maxHistoryLen = useConfigValue('basic.maxHistoryLen');
-    const autoUpdatePlugin = useConfigValue('basic.autoUpdatePlugin');
-    const notCheckPluginVersion = useConfigValue('basic.notCheckPluginVersion');
-    const associateLyricType = useConfigValue('basic.associateLyricType');
-    const showExitOnNotification = useConfigValue('basic.showExitOnNotification');
-    const musicOrderInLocalSheet = useConfigValue('basic.musicOrderInLocalSheet');
-    const tryChangeSourceWhenPlayFail = useConfigValue('basic.tryChangeSourceWhenPlayFail');
+    const autoPlayWhenAppStart = useAppConfig('basic.autoPlayWhenAppStart');
+    const useCelluarNetworkPlay = useAppConfig('basic.useCelluarNetworkPlay');
+    const useCelluarNetworkDownload = useAppConfig('basic.useCelluarNetworkDownload');
+    const maxDownload = useAppConfig('basic.maxDownload');
+    const clickMusicInSearch = useAppConfig('basic.clickMusicInSearch');
+    const clickMusicInAlbum = useAppConfig('basic.clickMusicInAlbum');
+    const downloadPath = useAppConfig('basic.downloadPath');
+    const notInterrupt = useAppConfig('basic.notInterrupt');
+    const tempRemoteDuck = useAppConfig('basic.tempRemoteDuck');
+    const autoStopWhenError = useAppConfig('basic.autoStopWhenError');
+    const maxCacheSize = useAppConfig('basic.maxCacheSize');
+    const defaultPlayQuality = useAppConfig('basic.defaultPlayQuality');
+    const playQualityOrder = useAppConfig('basic.playQualityOrder');
+    const defaultDownloadQuality = useAppConfig('basic.defaultDownloadQuality');
+    const downloadQualityOrder = useAppConfig('basic.downloadQualityOrder');
+    const musicDetailDefault = useAppConfig('basic.musicDetailDefault');
+    const musicDetailAwake = useAppConfig('basic.musicDetailAwake');
+    const maxHistoryLen = useAppConfig('basic.maxHistoryLen');
+    const autoUpdatePlugin = useAppConfig('basic.autoUpdatePlugin');
+    const notCheckPluginVersion = useAppConfig('basic.notCheckPluginVersion');
+    const associateLyricType = useAppConfig('basic.associateLyricType');
+    const showExitOnNotification = useAppConfig('basic.showExitOnNotification');
+    const musicOrderInLocalSheet = useAppConfig('basic.musicOrderInLocalSheet');
+    const tryChangeSourceWhenPlayFail = useAppConfig('basic.tryChangeSourceWhenPlayFail');
 
 
-    const debugEnableErrorLog = useConfigValue('debug.errorLog');
-    const debugEnableTraceLog = useConfigValue('debug.traceLog');
-    const debugEnableDevLog = useConfigValue('debug.devLog');
+    const debugEnableErrorLog = useAppConfig('debug.errorLog');
+    const debugEnableTraceLog = useAppConfig('debug.traceLog');
+    const debugEnableDevLog = useAppConfig('debug.devLog');
 
     const navigate = useNavigate();
 
@@ -635,15 +635,15 @@ function LyricSetting() {
      *     "lyric.detailFontSize": number;
      *     "lyric.autoSearchLyric": boolean;
      */
-    const showStatusBarLyric = useConfigValue('lyric.showStatusBarLyric');
-    const topPercent = useConfigValue('lyric.topPercent');
-    const leftPercent = useConfigValue('lyric.leftPercent');
-    const align = useConfigValue('lyric.align');
-    const color = useConfigValue('lyric.color');
-    const backgroundColor = useConfigValue('lyric.backgroundColor');
-    const widthPercent = useConfigValue('lyric.widthPercent');
-    const fontSize = useConfigValue('lyric.fontSize');
-    const enableAutoSearchLyric = useConfigValue('lyric.autoSearchLyric');
+    const showStatusBarLyric = useAppConfig('lyric.showStatusBarLyric');
+    const topPercent = useAppConfig('lyric.topPercent');
+    const leftPercent = useAppConfig('lyric.leftPercent');
+    const align = useAppConfig('lyric.align');
+    const color = useAppConfig('lyric.color');
+    const backgroundColor = useAppConfig('lyric.backgroundColor');
+    const widthPercent = useAppConfig('lyric.widthPercent');
+    const fontSize = useAppConfig('lyric.fontSize');
+    const enableAutoSearchLyric = useAppConfig('lyric.autoSearchLyric');
 
 
 

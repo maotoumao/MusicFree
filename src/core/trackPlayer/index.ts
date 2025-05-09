@@ -38,22 +38,26 @@ import getSimilarMusic from '@/utils/getSimilarMusic';
 import MediaExtra from '@/core/mediaExtra.ts';
 import { MusicRepeatMode } from '@/constants/repeatModeConst';
 import { atom, getDefaultStore, useAtomValue } from 'jotai';
-import { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import EventEmitter from 'eventemitter3';
 
-
-import type { IInjectable } from '@/types/infra.js';
-import type { IConfig } from '@/types/core/config.js';
-import type { IMusicHistory } from '@/types/core/musicHistory.js';
+import type { ITrackPlayer } from '@/types/core/trackPlayer/index';
+import type { IAppConfig } from '@/types/core/config';
+import type { IMusicHistory } from '@/types/core/musicHistory';
 
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
 const qualityAtom = atom<IMusic.IQualityKey>('standard');
 const playListAtom = atom<IMusic.IMusicItem[]>([]);
 
-class TrackPlayer extends EventEmitter implements ITrackPlayer, IInjectable {
+export enum TrackPlayerEvents {
+    // 一首歌曲播放结束
+    PlayEnd = 'play-end',
 
-    private configService!: IConfig;
+}
+
+class TrackPlayer extends EventEmitter implements ITrackPlayer {
+
+    private configService!: IAppConfig;
     private musicHistoryService!: IMusicHistory;
 
     private currentIndex = -1;
@@ -119,7 +123,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer, IInjectable {
         return getDefaultStore().get(playListAtom);
     }
 
-    injectDependencies(configService: IConfig, musicHistoryService): void {
+    injectDependencies(configService: IAppConfig, musicHistoryService): void {
         this.configService = configService;
         this.musicHistoryService = musicHistoryService;
     }
@@ -251,6 +255,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer, IInjectable {
                         evt.track?.url === TrackPlayer.fakeAudioUrl
                     ) {
                         trace('队列末尾，播放下一首');
+                        this.emit(TrackPlayerEvents.PlayEnd);
                         if (
                             this.repeatMode ===
                             MusicRepeatMode.SINGLE

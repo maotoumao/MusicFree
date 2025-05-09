@@ -3,15 +3,15 @@ import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import ThemeText from "@/components/base/themeText";
 // import pathConst from '@/constants/pathConst';
-import Config, { useConfigValue } from "@/core/config";
+import Config, { useAppConfig } from "@/core/config";
 import ThemeCard from "./themeCard";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
 import Theme from "@/core/theme";
 
 export default function Background() {
 
-  const themeBackground = useConfigValue('theme.background');
-  const themeSelectedTheme = useConfigValue('theme.selectedTheme');
+  const themeBackground = useAppConfig('theme.background');
+  const themeSelectedTheme = useAppConfig('theme.selectedTheme');
 
     const navigate = useNavigate();
 

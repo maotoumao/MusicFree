@@ -1,4 +1,4 @@
-import { useConfigValue } from "@/core/config.ts";
+import { useAppConfig } from "@/core/config.ts";
 import Theme from "@/core/theme";
 import useCheckUpdate from "@/hooks/useCheckUpdate.ts";
 import { useListenOrientationChange } from "@/hooks/useOrientation";
@@ -9,7 +9,7 @@ export function BootstrapComp() {
     useListenOrientationChange();
     useCheckUpdate();
 
-    const followSystem = useConfigValue('theme.followSystem');
+    const followSystem = useAppConfig('theme.followSystem');
 
     const colorScheme = useColorScheme();
 
