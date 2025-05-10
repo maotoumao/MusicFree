@@ -56,7 +56,10 @@ type RouterParamsBase = Record<RoutePaths, any>;
 interface RouterParams extends RouterParamsBase {
     home: undefined;
     'music-detail': undefined;
-    'search-page': undefined;
+    'search-page': {
+        type?: ICommon.SupportMediaType,
+        query?: string
+    };
     'local-sheet-detail': {
         id: string;
     };

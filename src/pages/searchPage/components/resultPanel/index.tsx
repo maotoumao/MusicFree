@@ -9,6 +9,8 @@ import ResultSubPanel from './resultSubPanel';
 import results from './results';
 import {fontWeightConst} from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
+import {useAtom} from "jotai";
+import {typeAtom} from "@/pages/searchPage/store/atoms";
 
 const routes = results;
 
@@ -25,7 +27,13 @@ const getRouterScene = (
 const renderScene = getRouterScene(routes);
 
 function ResultPanel() {
-    const [index, setIndex] = useState(0);
+    const [scene] = useAtom(typeAtom);
+    let sceneIndex = 0;
+    if (scene) {
+        sceneIndex = routes.findIndex(route => route.key === scene);
+    }
+    const [index, setIndex] = useState(sceneIndex);
+
     const colors = useColors();
 
     return (
