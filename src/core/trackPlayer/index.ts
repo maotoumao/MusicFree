@@ -22,7 +22,7 @@ import {
     mergeProps,
     sortByTimestampAndIndex,
 } from '@/utils/mediaItem';
-import Network from '../network';
+import Network from '../../utils/network';
 import LocalMusicSheet from '../localMusicSheet';
 import { getQualityOrder } from '@/utils/qualities';
 import getUrlExt from '@/utils/getUrlExt';

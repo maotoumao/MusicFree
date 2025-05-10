@@ -7,7 +7,7 @@ export interface IAppConfigProperties {
     'basic.autoPlayWhenAppStart': boolean;
     'basic.useCelluarNetworkPlay': boolean;
     'basic.useCelluarNetworkDownload': boolean;
-    'basic.maxDownload': number | string;
+    'basic.maxDownload': number;
     'basic.clickMusicInSearch': '播放歌曲' | '播放歌曲并替换播放列表';
     'basic.clickMusicInAlbum': '播放专辑' | '播放单曲';
     'basic.downloadPath': string;

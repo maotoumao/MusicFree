@@ -20,15 +20,17 @@ import { perfLogger } from "@/utils/perfLogger";
 import * as SplashScreen from "expo-splash-screen";
 import MusicSheet from "@/core/musicSheet";
 import NativeUtils from "@/native/utils";
-import { showDialog } from "@/components/dialogs/useDialog.ts";
+import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog.ts";
+import downloader, { DownloaderEvent, DownloadFailReason } from "@/core/downloader";
 
 
 // 依赖管理
 musicHistory.injectDependencies(Config);
 TrackPlayer.injectDependencies(Config, musicHistory);
+downloader.injectDependencies(Config);
 
 
-async function _bootstrap() {
+async function bootstrapImpl() {
     await SplashScreen.preventAutoHideAsync()
         .then(result =>
             console.log(
@@ -107,18 +109,18 @@ async function _bootstrap() {
 
     const capabilities = Config.getConfig('basic.showExitOnNotification')
         ? [
-              Capability.Play,
-              Capability.Pause,
-              Capability.SkipToNext,
-              Capability.SkipToPrevious,
-              Capability.Stop,
-          ]
+            Capability.Play,
+            Capability.Pause,
+            Capability.SkipToNext,
+            Capability.SkipToPrevious,
+            Capability.Stop,
+        ]
         : [
-              Capability.Play,
-              Capability.Pause,
-              Capability.SkipToNext,
-              Capability.SkipToPrevious,
-          ];
+            Capability.Play,
+            Capability.Pause,
+            Capability.SkipToNext,
+            Capability.SkipToPrevious,
+        ];
     await RNTrackPlayer.updateOptions({
         icon: ImgAsset.logoTransparent,
         progressUpdateEventInterval: 1,
@@ -178,7 +180,8 @@ async function setupFolder() {
 
 export default async function () {
     try {
-        await _bootstrap();
+        await bootstrapImpl();
+        bindEvents();
     } catch (e) {
         errorLog('初始化出错', e);
     }
@@ -206,7 +209,7 @@ async function extraMakeup() {
                 }
             }
         }
-    } catch {}
+    } catch { }
 
     async function handleLinkingUrl(url: string) {
         // 插件
@@ -249,7 +252,7 @@ async function extraMakeup() {
                     TrackPlayer.play(musicItem);
                 }
             }
-        } catch {}
+        } catch { }
     }
 
     // 开启监听
@@ -266,4 +269,25 @@ async function extraMakeup() {
     if (Config.getConfig('basic.autoPlayWhenAppStart')) {
         TrackPlayer.play();
     }
+}
+
+
+function bindEvents() {
+    // 下载事件
+    downloader.on(DownloaderEvent.DownloadError, (reason) => {
+        if (reason === DownloadFailReason.NetworkOffline) {
+            Toast.warn("当前无网络连接，请等待网络恢复后重试");
+        } else if (reason === DownloadFailReason.NotAllowToDownloadInCellular) {
+            if (getCurrentDialog()?.name !== "SimpleDialog") {
+                showDialog("SimpleDialog", {
+                    title: "流量提醒",
+                    content: '当前非WIFI环境，为节省流量，请到侧边栏设置中打开【使用移动网络下载】功能后方可继续下载'
+                })
+            }
+        }
+    });
+
+    downloader.on(DownloaderEvent.DownloadQueueCompleted, () => {
+        Toast.success("下载任务已完成");
+    })
 }

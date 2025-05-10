@@ -3,7 +3,6 @@ import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
-import Download from "@/core/download";
 import { ImgAsset } from "@/constants/assetsConst";
 import Clipboard from "@react-native-clipboard/clipboard";
 
@@ -29,6 +28,7 @@ import mediaCache from "@/core/mediaCache";
 import LyricManager from "@/core/lyricManager";
 import { IIconName } from "@/components/base/icon.tsx";
 import MusicSheet from "@/core/musicSheet";
+import downloader from "@/core/downloader";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -124,7 +124,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     musicItem,
                     type: 'download',
                     async onQualityPress(quality) {
-                        Download.downloadMusic(musicItem, quality);
+                        downloader.download(musicItem, quality);
                     },
                 });
             },

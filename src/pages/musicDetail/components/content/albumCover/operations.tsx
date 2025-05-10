@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 
-import Download from "@/core/download";
 import LocalMusicSheet from "@/core/localMusicSheet";
 import { ROUTE_PATH } from "@/core/router";
 import { ImgAsset } from "@/constants/assetsConst";
@@ -16,6 +15,7 @@ import PersistStatus from "@/utils/persistStatus";
 import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";
 import PluginManager from "@/core/pluginManager.ts";
+import downloader from "@/core/downloader";
 
 export default function Operations() {
     //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
@@ -70,7 +70,7 @@ export default function Operations() {
                             type: 'download',
                             musicItem,
                             async onQualityPress(quality) {
-                                Download.downloadMusic(musicItem, quality);
+                                downloader.download(musicItem, quality);
                             },
                         });
                     }

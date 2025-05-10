@@ -25,7 +25,7 @@ import {
 import delay from "@/utils/delay";
 import * as cheerio from "cheerio";
 import he from "he";
-import Network from "./network";
+import Network from "../utils/network";
 import LocalMusicSheet from "./localMusicSheet";
 import Mp3Util from "@/native/mp3Util";
 import { PluginMeta } from "./pluginMeta";
