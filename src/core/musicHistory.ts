@@ -1,9 +1,10 @@
 import { isSameMediaItem } from "@/utils/mediaItem";
 import { getStorage, setStorage } from "@/utils/storage";
 import { musicHistorySheetId } from "@/constants/commonConst";
+import { atom, getDefaultStore, useAtomValue } from "jotai";
+
 import type { IInjectable } from "@/types/infra";
 import type { IAppConfig } from "@/types/core/config";
-import { atom, getDefaultStore, useAtomValue } from "jotai";
 import type { IMusicHistory } from "@/types/core/musicHistory.js";
 
 

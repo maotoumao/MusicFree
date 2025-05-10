@@ -3,7 +3,6 @@ import { ScrollView, StyleSheet } from "react-native";
 import ListItem, { ListItemHeader } from "@/components/base/listItem";
 import Toast from "@/utils/toast";
 import Backup from "@/core/backup";
-import backup from "@/core/backup";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
 
 import axios from "axios";
@@ -84,7 +83,7 @@ export default function BackupSetting() {
                     loadingText: '恢复中...',
                     async task() {
                         await sleep(300);
-                        return backup.resume(result, resumeMode);
+                        return Backup.resume(result, resumeMode);
                     },
                     onResolve(_, hideDialog) {
                         Toast.success('恢复成功~');
