@@ -1,33 +1,35 @@
-import { PERMISSIONS, check, request } from "react-native-permissions";
-import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 import "react-native-get-random-values";
-import Config from "@/core/appConfig";
+
+import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog.ts";
+import { ImgAsset } from "@/constants/assetsConst";
+import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
 import pathConst from "@/constants/pathConst";
+import Config from "@/core/appConfig";
+import downloader, { DownloadFailReason, DownloaderEvent } from "@/core/downloader";
+import LocalMusicSheet from "@/core/localMusicSheet";
+import lyricManager from "@/core/lyricManager";
+import musicHistory from "@/core/musicHistory";
+import MusicSheet from "@/core/musicSheet";
+import PluginManager from "@/core/pluginManager";
+import Theme from "@/core/theme";
+import TrackPlayer from "@/core/trackPlayer";
+import NativeUtils from "@/native/utils";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import { errorLog, trace } from "@/utils/log";
-import PluginManager from "@/core/pluginManager";
-import { ImgAsset } from "@/constants/assetsConst";
-import LocalMusicSheet from "@/core/localMusicSheet";
-import { Linking, Platform } from "react-native";
-import Theme from "@/core/theme";
-import LyricManager from "@/core/lyricManager";
-import Toast from "@/utils/toast";
-import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
-import TrackPlayer from "@/core/trackPlayer";
-import musicHistory from "@/core/musicHistory";
-import PersistStatus from "@/utils/persistStatus";
 import { perfLogger } from "@/utils/perfLogger";
+import PersistStatus from "@/utils/persistStatus";
+import Toast from "@/utils/toast";
 import * as SplashScreen from "expo-splash-screen";
-import MusicSheet from "@/core/musicSheet";
-import NativeUtils from "@/native/utils";
-import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog.ts";
-import downloader, { DownloadFailReason, DownloaderEvent } from "@/core/downloader";
+import { Linking, Platform } from "react-native";
+import { PERMISSIONS, check, request } from "react-native-permissions";
+import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 
 
 // 依赖管理
 musicHistory.injectDependencies(Config);
 TrackPlayer.injectDependencies(Config, musicHistory);
 downloader.injectDependencies(Config);
+lyricManager.injectDependencies(TrackPlayer, Config);
 
 
 async function bootstrapImpl() {
@@ -152,7 +154,7 @@ async function bootstrapImpl() {
     trace('主题初始化完成');
     logger.mark('主题初始化完成');
 
-    await LyricManager.setup();
+    await lyricManager.setup();
 
     logger.mark('歌词初始化完成');
 

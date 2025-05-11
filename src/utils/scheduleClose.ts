@@ -1,4 +1,5 @@
-import TrackPlayer, { TrackPlayerEvents } from '@/core/trackPlayer';
+import { TrackPlayerEvents } from '@/core.defination/trackPlayer';
+import TrackPlayer from '@/core/trackPlayer';
 import NativeUtils from '@/native/utils';
 import { atom, getDefaultStore, useAtomValue } from 'jotai';
 import { useEffect, useRef, useState } from 'react';

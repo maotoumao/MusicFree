@@ -1,8 +1,17 @@
 import type { Progress } from "react-native-track-player";
 import type { MusicRepeatMode } from "@/constants/repeatModeConst";
 import { IInjectable } from "@/types/infra";
+import type EventEmitter from "eventemitter3";
+import type { TrackPlayerEvents } from "@/core.defination/trackPlayer";
 
-export interface ITrackPlayer extends IInjectable {
+export interface ITrackPlayer extends IInjectable, EventEmitter<{
+    [TrackPlayerEvents.PlayEnd]: () => void;
+    [TrackPlayerEvents.CurrentMusicChanged]: (musicItem: IMusic.IMusicItem | null) => void;
+    [TrackPlayerEvents.ProgressChanged]: (progress: {
+        position: number;
+        duration: number;
+    }) => void;
+}> {
     /**
      * 上一首歌曲
      */

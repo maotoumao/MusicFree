@@ -1,17 +1,16 @@
-import React, {memo} from 'react';
-import rpx from '@/utils/rpx';
-import searchResultStore, {ISearchLyricResult} from './searchResultStore';
 import Empty from '@/components/base/empty';
-import {RequestStateCode} from '@/constants/commonConst';
+import ListReachEnd from '@/components/base/listReachEnd';
 import Loading from '@/components/base/loading';
 import LyricItem from '@/components/mediaItem/LyricItem';
-import ListReachEnd from '@/components/base/listReachEnd';
-import {FlatList} from 'react-native-gesture-handler';
-import Toast from '@/utils/toast';
-import {associateLrc} from '@/utils/mediaUtils';
-import {hidePanel} from '../../usePanel';
+import { RequestStateCode } from '@/constants/commonConst';
+import lyricManager from '@/core/lyricManager';
 import TrackPlayer from '@/core/trackPlayer';
-import LyricManager from '@/core/lyricManager';
+import rpx from '@/utils/rpx';
+import Toast from '@/utils/toast';
+import React, { memo } from 'react';
+import { FlatList } from 'react-native-gesture-handler';
+import { hidePanel } from '../../usePanel';
+import searchResultStore, { ISearchLyricResult } from './searchResultStore';
 
 interface ILyricListWrapperProps {
     route: {
@@ -43,7 +42,7 @@ function LyricListImpl(props: ILyricListProps) {
                 offset: ITEM_HEIGHT * index,
                 index,
             })}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
                 <LyricItem
                     lyricItem={item}
                     onPress={async () => {
@@ -52,8 +51,8 @@ function LyricListImpl(props: ILyricListProps) {
                             if (!currentMusic) {
                                 return;
                             }
-                            await associateLrc(currentMusic, item);
-                            LyricManager.refreshLyric(false, true);
+
+                            lyricManager.associateLyric(currentMusic, item);
                             Toast.success('设置成功~');
                             hidePanel();
                             // 触发刷新歌词

@@ -1,6 +1,5 @@
 import { getCurrentDialog, showDialog } from '@/components/dialogs/useDialog';
 import {
-    EDeviceEvents,
     internalFakeSoundKey,
     sortIndexSymbol,
     timeStampSymbol,
@@ -23,7 +22,6 @@ import EventEmitter from 'eventemitter3';
 import { produce } from 'immer';
 import { atom, getDefaultStore, useAtomValue } from 'jotai';
 import shuffle from 'lodash.shuffle';
-import { DeviceEventEmitter } from 'react-native';
 import ReactNativeTrackPlayer, {
     Event,
     State,
@@ -33,25 +31,27 @@ import ReactNativeTrackPlayer, {
     useProgress,
 } from 'react-native-track-player';
 import LocalMusicSheet from '../localMusicSheet';
-import LyricManager from '../lyricManager';
 import PluginManager from '../pluginManager';
 
 import type { IAppConfig } from '@/types/core/config';
 import type { IMusicHistory } from '@/types/core/musicHistory';
-import type { ITrackPlayer } from '@/types/core/trackPlayer/index';
+import { ITrackPlayer } from '@/types/core/trackPlayer/index';
+import { TrackPlayerEvents } from '@/core.defination/trackPlayer';
 
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
 const qualityAtom = atom<IMusic.IQualityKey>('standard');
 const playListAtom = atom<IMusic.IMusicItem[]>([]);
 
-export enum TrackPlayerEvents {
-    // 一首歌曲播放结束
-    PlayEnd = 'play-end',
 
-}
-
-class TrackPlayer extends EventEmitter implements ITrackPlayer {
+class TrackPlayer extends EventEmitter<{
+    [TrackPlayerEvents.PlayEnd]: () => void;
+    [TrackPlayerEvents.CurrentMusicChanged]: (musicItem: IMusic.IMusicItem | null) => void;
+    [TrackPlayerEvents.ProgressChanged]: (progress: {
+        position: number;
+        duration: number;
+    }) => void;
+}> implements ITrackPlayer {
     // 依赖
     private configService!: IAppConfig;
     private musicHistoryService!: IMusicHistory;
@@ -231,6 +231,8 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
                 },
             );
 
+
+
             this.serviceInited = true;
         }
     }
@@ -368,6 +370,7 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
                     shouldPlayCurrent = false;
                 }
             }
+            this.setCurrentMusic(currentMusic);
         } else {
             // 3. 删除
             newPlayList = produce(playList, draft => {
@@ -376,7 +379,6 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
         }
 
         this.setPlayList(newPlayList);
-        this.setCurrentMusic(currentMusic);
         if (shouldPlayCurrent === true) {
             await this.play(currentMusic, true);
         } else if (shouldPlayCurrent === false) {
@@ -461,17 +463,6 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
                 ...musicItem,
                 url: TrackPlayer.proposedAudioUrl
             }, this.getFakeNextTrack()]);
-
-
-            // 4.1 刷新歌词信息
-            if (
-                !isSameMediaItem(
-                    LyricManager.getLyricState()?.lyricParser?.musicItem,
-                    musicItem,
-                )
-            ) {
-                DeviceEventEmitter.emit(EDeviceEvents.REFRESH_LYRIC, true);
-            }
 
             // 5. 获取音源
             let track: IMusic.IMusicItem;
@@ -749,10 +740,14 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
             getDefaultStore().set(currentMusicAtom, null);
             PersistStatus.set('music.musicItem', undefined);
             PersistStatus.set('music.progress', 0);
+
+            this.emit(TrackPlayerEvents.CurrentMusicChanged, null);
             return;
         }
         this.currentIndex = this.getMusicIndexInPlayList(musicItem);
         getDefaultStore().set(currentMusicAtom, musicItem);
+
+        this.emit(TrackPlayerEvents.CurrentMusicChanged, musicItem);
     }
 
     private setRepeatMode(mode: MusicRepeatMode) {

@@ -5,7 +5,6 @@ import { iconSizeConst } from "@/constants/uiConst";
 import TranslationIcon from "@/assets/icons/translation.svg";
 import { useAppConfig } from "@/core/appConfig";
 import useColors from "@/hooks/useColors";
-import LyricManager from "@/core/lyricManager";
 import Toast from "@/utils/toast";
 import { hidePanel, showPanel } from "@/components/panels/usePanel";
 import TrackPlayer from "@/core/trackPlayer";
@@ -13,18 +12,18 @@ import PersistStatus from "@/utils/persistStatus";
 import useOrientation from "@/hooks/useOrientation";
 import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";
-import { patchMediaExtra } from "@/utils/mediaExtra";
+import lyricManager, { useLyricState } from "@/core/lyricManager";
 
 interface ILyricOperationsProps {
     scrollToCurrentLrcItem: () => void;
 }
 
 export default function LyricOperations(props: ILyricOperationsProps) {
-    const {scrollToCurrentLrcItem} = props;
+    const { scrollToCurrentLrcItem } = props;
 
     const detailFontSize = useAppConfig('lyric.detailFontSize');
 
-    const hasTranslation = LyricManager.useLyricState()?.hasTranslation;
+    const { hasTranslation } = useLyricState();
     const showTranslation = PersistStatus.useValue(
         'lyric.showTranslation',
         false,
@@ -60,10 +59,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                         showPanel('SetLyricOffset', {
                             musicItem: currentMusicItem,
                             onSubmit(offset) {
-                                patchMediaExtra(currentMusicItem, {
-                                    lyricOffset: offset
-                                });
-                                LyricManager.refreshLyric();
+                                lyricManager.updateLyricOffset(currentMusicItem, offset);
                                 scrollToCurrentLrcItem();
                                 hidePanel();
                             },

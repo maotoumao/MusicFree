@@ -1,26 +1,26 @@
-import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
-import rpx, {vmax} from '@/utils/rpx';
+import rpx, { vmax } from '@/utils/rpx';
+import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
 
-import {fontSizeConst} from '@/constants/uiConst';
-import useColors from '@/hooks/useColors';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {errorLog} from '@/utils/log';
-import {associateLrc, parseMediaUniqueKey} from '@/utils/mediaUtils';
-import Toast from '@/utils/toast';
-import PanelBase from '../base/panelBase';
-import {TextInput} from 'react-native-gesture-handler';
-import {hidePanel} from '../usePanel';
+import { fontSizeConst } from '@/constants/uiConst';
+import lyricManager from '@/core/lyricManager';
 import mediaCache from '@/core/mediaCache';
-import LyricManager from '@/core/lyricManager';
+import useColors from '@/hooks/useColors';
+import { errorLog } from '@/utils/log';
+import { parseMediaUniqueKey } from '@/utils/mediaUtils';
+import Toast from '@/utils/toast';
+import Clipboard from '@react-native-clipboard/clipboard';
+import { TextInput } from 'react-native-gesture-handler';
+import PanelBase from '../base/panelBase';
 import PanelHeader from '../base/panelHeader';
+import { hidePanel } from '../usePanel';
 
 interface INewMusicSheetProps {
     musicItem: IMusic.IMusicItem;
 }
 
 export default function AssociateLrc(props: INewMusicSheetProps) {
-    const {musicItem} = props;
+    const { musicItem } = props;
 
     const [input, setInput] = useState('');
     const colors = useColors();
@@ -52,12 +52,12 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                         // TODO: ERROR CODE
                                         throw new Error('CLIPBOARD TIMEOUT');
                                     }
-                                    await associateLrc(musicItem, {
+
+                                    lyricManager.associateLyric(musicItem, {
                                         ...targetMedia,
                                         ...targetCache,
-                                    });
+                                    })
                                     Toast.success('关联歌词成功');
-                                    LyricManager.refreshLyric(false, true);
                                     hidePanel();
                                 } catch (e: any) {
                                     if (e.message !== 'CLIPBOARD TIMEOUT') {
@@ -66,8 +66,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                     errorLog('关联歌词失败', e?.message);
                                 }
                             } else {
-                                associateLrc(musicItem, musicItem);
-                                LyricManager.refreshLyric(false, true);
+                                lyricManager.unassociateLyric(musicItem);
                                 Toast.success('取消关联歌词成功');
                                 hidePanel();
                             }

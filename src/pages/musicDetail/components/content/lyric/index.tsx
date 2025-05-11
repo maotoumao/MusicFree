@@ -7,7 +7,6 @@ import { fontSizeConst } from "@/constants/uiConst";
 import Loading from "@/components/base/loading";
 import globalStyle from "@/constants/globalStyle";
 import { showPanel } from "@/components/panels/usePanel";
-import LyricManager from "@/core/lyricManager";
 import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
@@ -17,7 +16,8 @@ import PersistStatus from "@/utils/persistStatus";
 import LyricOperations from "./lyricOperations";
 import { IParsedLrcItem } from "@/utils/lrcParser";
 import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
-import { getMediaExtraProperty, patchMediaExtra } from "@/utils/mediaExtra";
+import { getMediaExtraProperty } from "@/utils/mediaExtra";
+import lyricManager, { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -38,11 +38,11 @@ const fontSizeMap = {
 } as Record<number, number>;
 
 export default function Lyric(props: IProps) {
-    const {onTurnPageClick} = props;
+    const { onTurnPageClick } = props;
 
-    const {loading, meta, lyrics, hasTranslation} =
-        LyricManager.useLyricState();
-    const currentLrcItem = LyricManager.useCurrentLyric();
+    const { loading, meta, lyrics, hasTranslation } =
+        useLyricState();
+    const currentLrcItem = useCurrentLyricItem();
     const showTranslation = PersistStatus.useValue(
         'lyric.showTranslation',
         false,
@@ -100,16 +100,16 @@ export default function Lyric(props: IProps) {
         if (!listRef.current) {
             return;
         }
-        const currentLrcItem = LyricManager.getCurrentLyric();
-        const lyrics = LyricManager.getLyricState().lyrics;
-        if (currentLrcItem?.index === -1 || !currentLrcItem) {
+        const currentLyricItem = lyricManager.currentLyricItem;
+        const currentLyrics = lyricManager.lyricState?.lyrics;
+        if (currentLyricItem?.index === -1 || !currentLyricItem) {
             listRef.current?.scrollToIndex({
                 index: 0,
                 viewPosition: 0.5,
             });
         } else {
             listRef.current?.scrollToIndex({
-                index: Math.min(currentLrcItem.index ?? 0, lyrics.length - 1),
+                index: Math.min(currentLyricItem.index ?? 0, currentLyrics.length - 1),
                 viewPosition: 0.5,
             });
         }
@@ -215,11 +215,7 @@ export default function Lyric(props: IProps) {
     const unlinkTapGesture = Gesture.Tap()
         .onStart(() => {
             if (currentMusicItem) {
-                patchMediaExtra(currentMusicItem, {
-                    associatedLrc: undefined
-                });
-                
-                LyricManager.refreshLyric(false, true);
+                lyricManager.unassociateLyric(currentMusicItem);
             }
         })
         .runOnJS(true);
@@ -241,7 +237,7 @@ export default function Lyric(props: IProps) {
                             viewabilityConfig={{
                                 itemVisiblePercentThreshold: 100,
                             }}
-                            onScrollToIndexFailed={({index}) => {
+                            onScrollToIndexFailed={({ index }) => {
                                 delay(120).then(() => {
                                     listRef.current?.scrollToIndex({
                                         index: Math.min(
@@ -301,7 +297,7 @@ export default function Lyric(props: IProps) {
                             initialNumToRender={30}
                             overScrollMode="never"
                             extraData={currentLrcItem}
-                            renderItem={({item, index}) => {
+                            renderItem={({ item, index }) => {
                                 let text = item.lrc;
                                 if (showTranslation && hasTranslation) {
                                     text += `\n${item?.translation ?? ''}`;
@@ -346,9 +342,9 @@ export default function Lyric(props: IProps) {
                                 styles.draggingTime,
                                 layout?.height
                                     ? {
-                                          top:
-                                              (layout.height - ITEM_HEIGHT) / 2,
-                                      }
+                                        top:
+                                            (layout.height - ITEM_HEIGHT) / 2,
+                                    }
                                     : null,
                             ]}>
                             <DraggingTime

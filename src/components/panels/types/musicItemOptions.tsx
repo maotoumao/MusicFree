@@ -24,11 +24,11 @@ import { iconSizeConst } from "@/constants/uiConst";
 import Config from "@/core/appConfig";
 import TrackPlayer from "@/core/trackPlayer";
 import mediaCache from "@/core/mediaCache";
-import LyricManager from "@/core/lyricManager";
 import { IIconName } from "@/components/base/icon.tsx";
 import MusicSheet from "@/core/musicSheet";
 import downloader from "@/core/downloader";
-import { getMediaExtraProperty, patchMediaExtra } from "@/utils/mediaExtra";
+import { getMediaExtraProperty } from "@/utils/mediaExtra";
+import lyricManager from "@/core/lyricManager";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -49,13 +49,13 @@ interface IOption {
 }
 
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
-    const {musicItem, musicSheet, from} = props ?? {};
+    const { musicItem, musicSheet, from } = props ?? {};
 
     const safeAreaInsets = useSafeAreaInsets();
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
     const associatedLrc = getMediaExtraProperty(musicItem, 'associatedLrc');
-   
+
     const options: IOption[] = [
         {
             icon: 'identification',
@@ -112,7 +112,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'folder-plus',
             title: '添加到歌单',
             onPress: () => {
-                showPanel('AddToMusicSheet', {musicItem});
+                showPanel('AddToMusicSheet', { musicItem });
             },
         },
         {
@@ -194,11 +194,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '解除关联歌词',
             show: !!associatedLrc,
             onPress: async () => {
-                patchMediaExtra(musicItem, {
-                    associatedLrc: undefined
-                })
-
-                LyricManager.refreshLyric(false, true);
+                lyricManager.unassociateLyric(musicItem);
                 Toast.success('已解除关联歌词');
                 hidePanel();
             },
@@ -261,7 +257,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                 },
                             ]}
                             keyExtractor={_ => _.title}
-                            renderItem={({item}) =>
+                            renderItem={({ item }) =>
                                 item.show !== false ? (
                                     <ListItem
                                         withHorizontalPadding
