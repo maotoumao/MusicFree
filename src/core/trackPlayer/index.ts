@@ -231,8 +231,6 @@ class TrackPlayer extends EventEmitter<{
                 },
             );
 
-
-
             this.serviceInited = true;
         }
     }
@@ -894,7 +892,6 @@ class TrackPlayer extends EventEmitter<{
     private async handlePlayFail() {
         // 如果自动跳转下一曲, 500s后自动跳转
         if (!this.configService.getConfig('basic.autoStopWhenError')) {
-            await ReactNativeTrackPlayer.reset();
             await delay(500);
             await this.skipToNext();
         }
