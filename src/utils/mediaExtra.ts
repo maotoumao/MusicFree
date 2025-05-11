@@ -2,7 +2,7 @@
  * 媒体资源的附加属性
  */
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
-import { getMediaKey } from '@/utils/mediaItem';
+import { getMediaUniqueKey } from '@/utils/mediaUtils';
 import { useEffect, useState } from 'react';
 import { safeParse } from './jsonUtil';
 
@@ -78,7 +78,7 @@ function patchMediaExtra(mediaItem: ICommon.IMediaBase, extra: Partial<IMediaExt
     store.set(`${mediaItem.id}`, JSON.stringify(newMeta));
 
     // 发送事件更新
-    const callbacks = observerCallbacks.get(getMediaKey(mediaItem));
+    const callbacks = observerCallbacks.get(getMediaUniqueKey(mediaItem));
     if (callbacks && callbacks.size > 0) {
         for (const callback of callbacks) {
             callback(newMeta);
@@ -102,7 +102,7 @@ function setMediaExtra(mediaItem: ICommon.IMediaBase, extra: IMediaExtraProperti
     store.set(`${mediaItem.id}`, JSON.stringify(extra));
 
     // 发送事件更新
-    const callbacks = observerCallbacks.get(getMediaKey(mediaItem));
+    const callbacks = observerCallbacks.get(getMediaUniqueKey(mediaItem));
     if (callbacks && callbacks.size > 0) {
         for (const callback of callbacks) {
             callback(extra);
@@ -125,7 +125,7 @@ function removeMediaExtra(mediaItem: ICommon.IMediaBase) {
     store.delete(`${mediaItem.id}`);
 
     // 发送事件更新
-    const callbacks = observerCallbacks.get(getMediaKey(mediaItem));
+    const callbacks = observerCallbacks.get(getMediaUniqueKey(mediaItem));
     if (callbacks && callbacks.size > 0) {
         for (const callback of callbacks) {
             callback(null);
@@ -173,7 +173,7 @@ function useMediaExtra(mediaItem: ICommon.IMediaBase) {
         } else {
             setMediaExtraState(getMediaExtra(mediaItem));
 
-            const mediaKey = getMediaKey(mediaItem);
+            const mediaKey = getMediaUniqueKey(mediaItem);
             if (!observerCallbacks.has(mediaKey)) {
                 observerCallbacks.set(mediaKey, new Set());
             }
@@ -185,7 +185,7 @@ function useMediaExtra(mediaItem: ICommon.IMediaBase) {
 
 
         return () => {
-            const mediaKey = getMediaKey(mediaItem);
+            const mediaKey = getMediaUniqueKey(mediaItem);
             if (observerCallbacks.has(mediaKey)) {
                 const callbacks = observerCallbacks.get(mediaKey);
                 if (callbacks) {
@@ -216,7 +216,7 @@ function useMediaExtraProperty<K extends keyof IMediaExtraProperties>(mediaItem:
         } else {
             setMediaExtraPropertyState(getMediaExtraProperty(mediaItem, key));
 
-            const mediaKey = getMediaKey(mediaItem);
+            const mediaKey = getMediaUniqueKey(mediaItem);
             if (!observerCallbacks.has(mediaKey)) {
                 observerCallbacks.set(mediaKey, new Set());
             }
@@ -228,7 +228,7 @@ function useMediaExtraProperty<K extends keyof IMediaExtraProperties>(mediaItem:
 
 
         return () => {
-            const mediaKey = getMediaKey(mediaItem);
+            const mediaKey = getMediaUniqueKey(mediaItem);
             if (observerCallbacks.has(mediaKey)) {
                 const callbacks = observerCallbacks.get(mediaKey);
                 if (callbacks) {

@@ -5,7 +5,7 @@ import { IInjectable } from "@/types/infra";
 import { addFileScheme, escapeCharacter, mkdirR } from "@/utils/fileUtils";
 import { errorLog } from "@/utils/log";
 import { patchMediaExtra } from "@/utils/mediaExtra";
-import { getMediaKey, isSameMediaItem } from "@/utils/mediaItem";
+import { getMediaUniqueKey, isSameMediaItem } from "@/utils/mediaUtils";
 import network from "@/utils/network";
 import { getQualityOrder } from "@/utils/qualities";
 import EventEmitter from "eventemitter3";
@@ -113,10 +113,10 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
 
     private updateDownloadTask(musicItem: IMusic.IMusicItem, patch: Partial<IDownloadTaskInfo>) {
         const newValue = {
-            ...downloadTasks.get(getMediaKey(musicItem)),
+            ...downloadTasks.get(getMediaUniqueKey(musicItem)),
             ...patch,
         } as IDownloadTaskInfo;
-        downloadTasks.set(getMediaKey(musicItem), newValue);
+        downloadTasks.set(getMediaUniqueKey(musicItem), newValue);
         this.emit(DownloaderEvent.DownloadTaskUpdate, newValue);
         return newValue;
     }
@@ -190,7 +190,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
         let nextTask: IDownloadTaskInfo | null = null;
         for (let i = 0; i < downloadQueue.length; i++) {
             const musicItem = downloadQueue[i];
-            const key = getMediaKey(musicItem);
+            const key = getMediaUniqueKey(musicItem);
             const task = downloadTasks.get(key);
             if (task && task.status === DownloadStatus.Pending) {
                 nextTask = task;
@@ -347,7 +347,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
         this.downloadNextPendingTask();
         
         // 如果任务状态是完成，则从队列中移除
-        const key = getMediaKey(musicItem);
+        const key = getMediaUniqueKey(musicItem);
         if (downloadTasks.get(key)?.status === DownloadStatus.Completed) {
             downloadTasks.delete(key);
             const downloadQueue = getDefaultStore().get(downloadQueueAtom);
@@ -374,7 +374,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
 
         // 防止重复下载
         musicItems = musicItems.filter(m => {
-            const key = getMediaKey(m);
+            const key = getMediaUniqueKey(m);
             // 如果存在下载任务
             if (downloadTasks.has(key)) {
                 return false;
@@ -385,7 +385,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
             }
 
             // 设置下载任务
-            downloadTasks.set(getMediaKey(m), {
+            downloadTasks.set(getMediaUniqueKey(m), {
                 status: DownloadStatus.Pending,
                 filename: Downloader.generateFilename(m),
                 quality: quality,
@@ -409,7 +409,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
 
     remove(musicItem: IMusic.IMusicItem) {
         // 删除下载任务
-        const key = getMediaKey(musicItem);
+        const key = getMediaUniqueKey(musicItem);
         const task = downloadTasks.get(key);
         if (!task) {
             return false;
@@ -430,7 +430,7 @@ const downloader = new Downloader();
 export default downloader;
 
 export function useDownloadTask(musicItem: IMusic.IMusicItem) {
-    const [downloadStatus, setDownloadStatus] = useState(downloadTasks.get(getMediaKey(musicItem)) ?? null);
+    const [downloadStatus, setDownloadStatus] = useState(downloadTasks.get(getMediaUniqueKey(musicItem)) ?? null);
 
     useEffect(() => {
         const callback = (task: IDownloadTaskInfo) => {

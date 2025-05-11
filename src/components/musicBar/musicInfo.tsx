@@ -127,8 +127,8 @@ export default function MusicInfo(props: IMusicInfoProps) {
             };
         }
         return {
-            prev: TrackPlayer.getPreviousMusic(),
-            next: TrackPlayer.getNextMusic(),
+            prev: TrackPlayer.previousMusic,
+            next: TrackPlayer.nextMusic,
         };
     }, [musicItem, playLists]);
 

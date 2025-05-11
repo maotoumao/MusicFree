@@ -8,7 +8,7 @@ import ee from "@/core/musicSheet/ee.ts";
 import migrate, { migrateV2 } from "@/core/musicSheet/migrate.ts";
 import SortedMusicList from "@/core/musicSheet/sortedMusicList.ts";
 import storage from "@/core/musicSheet/storage.ts";
-import { isSameMediaItem } from "@/utils/mediaItem";
+import { isSameMediaItem } from "@/utils/mediaUtils";
 import { Immer } from "immer";
 import { getDefaultStore, useAtomValue } from "jotai";
 import { nanoid } from "nanoid";

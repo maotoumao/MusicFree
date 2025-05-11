@@ -8,7 +8,7 @@ import LyricItem from '@/components/mediaItem/LyricItem';
 import ListReachEnd from '@/components/base/listReachEnd';
 import {FlatList} from 'react-native-gesture-handler';
 import Toast from '@/utils/toast';
-import {associateLrc} from '@/utils/mediaItem';
+import {associateLrc} from '@/utils/mediaUtils';
 import {hidePanel} from '../../usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import LyricManager from '@/core/lyricManager';
@@ -48,7 +48,7 @@ function LyricListImpl(props: ILyricListProps) {
                     lyricItem={item}
                     onPress={async () => {
                         try {
-                            const currentMusic = TrackPlayer.getCurrentMusic();
+                            const currentMusic = TrackPlayer.currentMusic;
                             if (!currentMusic) {
                                 return;
                             }

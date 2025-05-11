@@ -4,7 +4,7 @@ import rpx from '@/utils/rpx';
 import Tag from '@/components/base/tag';
 import ThemeText from '@/components/base/themeText';
 import {fontSizeConst} from '@/constants/uiConst';
-import {isSameMediaItem} from '@/utils/mediaItem';
+import {isSameMediaItem} from '@/utils/mediaUtils';
 import IconButton from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';

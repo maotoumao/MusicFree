@@ -6,10 +6,9 @@ import {
 import mp3Util, { IBasicMeta } from '@/native/mp3Util';
 import { addFileScheme, getFileName } from '@/utils/fileUtils.ts';
 import {
-    InternalDataType,
-    getInternalData,
+    getLocalPath,
     isSameMediaItem,
-} from '@/utils/mediaItem';
+} from '@/utils/mediaUtils';
 import StateMapper from '@/utils/stateMapper';
 import { getStorage, setStorage } from '@/utils/storage';
 import CryptoJs from 'crypto-js';
@@ -25,10 +24,7 @@ export async function setup() {
     if (sheet) {
         let validSheet: IMusic.IMusicItem[] = [];
         for (let musicItem of sheet) {
-            const localPath = getInternalData<string>(
-                musicItem,
-                InternalDataType.LOCALPATH,
-            );
+            const localPath = getLocalPath(musicItem);
             if (localPath && (await exists(localPath))) {
                 validSheet.push(musicItem);
             }

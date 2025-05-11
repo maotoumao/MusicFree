@@ -1,5 +1,5 @@
 import { musicHistorySheetId } from "@/constants/commonConst";
-import { isSameMediaItem } from "@/utils/mediaItem";
+import { isSameMediaItem } from "@/utils/mediaUtils";
 import { getStorage, setStorage } from "@/utils/storage";
 import { atom, getDefaultStore, useAtomValue } from "jotai";
 

@@ -330,7 +330,7 @@ export default function Lyric(props: IProps) {
                                 onActivated={() => {
                                     showPanel('SearchLrc', {
                                         musicItem:
-                                            TrackPlayer.getCurrentMusic(),
+                                            TrackPlayer.currentMusic,
                                     });
                                 }}>
                                 <Text

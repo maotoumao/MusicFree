@@ -13,7 +13,7 @@ import deviceInfoModule from "react-native-device-info";
 import StateMapper from "@/utils/stateMapper";
 import { nanoid } from "nanoid";
 import { devLog, errorLog, trace } from "../utils/log";
-import { InternalDataType, getInternalData, isSameMediaItem, resetMediaItem } from "@/utils/mediaItem";
+import { getLocalPath, isSameMediaItem, resetMediaItem } from "@/utils/mediaUtils";
 import {
     CacheControl,
     emptyFunction,
@@ -309,13 +309,7 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
     ): Promise<IPlugin.IMediaSourceResult | null> {
         // 1. 本地搜索 其实直接读mediameta就好了
         const localPathInMediaExtra = getMediaExtraProperty(musicItem, 'localPath');
-        const localPath =
-        localPathInMediaExtra ||
-            getInternalData<string>(musicItem, InternalDataType.LOCALPATH) ||
-            getInternalData<string>(
-                LocalMusicSheet.isLocalMusic(musicItem),
-                InternalDataType.LOCALPATH,
-            );
+        const localPath = getLocalPath(musicItem);
         if (localPath && (await exists(localPath))) {
             trace('本地播放', localPath);
             if (localPathInMediaExtra !== localPath) {
@@ -986,10 +980,7 @@ const localFilePlugin = new Plugin(function () {
         platform: localPluginPlatform,
         _path: '',
         async getMusicInfo(musicBase) {
-            const localPath = getInternalData<string>(
-                musicBase,
-                InternalDataType.LOCALPATH,
-            );
+            const localPath = getLocalPath(musicBase);
             if (localPath) {
                 const coverImg = await Mp3Util.getMediaCoverImg(localPath);
                 return {
@@ -999,10 +990,7 @@ const localFilePlugin = new Plugin(function () {
             return null;
         },
         async getLyric(musicBase) {
-            const localPath = getInternalData<string>(
-                musicBase,
-                InternalDataType.LOCALPATH,
-            );
+            const localPath = getLocalPath(musicBase);
             let rawLrc: string | null = null;
             if (localPath) {
                 // 读取内嵌歌词

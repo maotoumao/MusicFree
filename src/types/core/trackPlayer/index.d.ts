@@ -9,29 +9,14 @@ export interface ITrackPlayer extends IInjectable {
     readonly previousMusic: IMusic.IMusicItem | null;
 
     /**
-     * 获取上一首歌曲
-     */
-    getPreviousMusic(): IMusic.IMusicItem | null;
-
-    /**
      * 当前播放的歌曲
      */
     readonly currentMusic: IMusic.IMusicItem | null;
 
     /**
-     * 获取当前播放的歌曲
-     */
-    getCurrentMusic(): IMusic.IMusicItem | null;
-
-    /**
      * 下一首歌曲
      */
     readonly nextMusic: IMusic.IMusicItem | null;
-
-    /**
-     * 获取下一首歌曲
-     */
-    getNextMusic(): IMusic.IMusicItem | null;
 
     /**
      * 当前播放模式
@@ -165,11 +150,6 @@ export interface ITrackPlayer extends IInjectable {
      * 清空播放列表并停止播放
      */
     clearPlayList(): Promise<void>;
-
-    /**
-     * 处理播放失败的情况
-     */
-    handlePlayFail(): Promise<void>;
 
     /**
      * 切换播放音质

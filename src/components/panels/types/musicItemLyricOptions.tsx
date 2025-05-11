@@ -5,7 +5,7 @@ import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
 import { ImgAsset } from "@/constants/assetsConst";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { getMediaKey } from "@/utils/mediaItem";
+import { getMediaUniqueKey } from "@/utils/mediaUtils";
 import FastImage from "@/components/base/fastImage";
 import Toast from "@/utils/toast";
 import toast from "@/utils/toast";
@@ -59,7 +59,7 @@ export default function MusicItemLyricOptions(
     const options: IOption[] = [
         {
             icon: 'identification',
-            title: `ID: ${getMediaKey(musicItem)}`,
+            title: `ID: ${getMediaUniqueKey(musicItem)}`,
             onPress: () => {
                 mediaCache.setMediaCache(musicItem);
                 Clipboard.setString(

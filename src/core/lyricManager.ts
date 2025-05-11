@@ -6,7 +6,7 @@ import { EDeviceEvents } from "@/constants/commonConst";
 import LyricUtil from "@/native/lyricUtil";
 import LyricParser, { IParsedLrcItem } from "@/utils/lrcParser";
 import { getMediaExtra } from "@/utils/mediaExtra.ts";
-import { isSameMediaItem } from "@/utils/mediaItem";
+import { isSameMediaItem } from "@/utils/mediaUtils.ts";
 import minDistance from "@/utils/minDistance";
 import { GlobalState } from "@/utils/stateMapper";
 import { DeviceEventEmitter } from "react-native";
@@ -37,7 +37,7 @@ function resetLyricState() {
 
 // 重新获取歌词
 async function refreshLyric(fromStart?: boolean, forceRequest = false) {
-  const musicItem = TrackPlayer.getCurrentMusic();
+  const musicItem = TrackPlayer.currentMusic;
   try {
     if (!musicItem) {
       lyricStateStore.setValue({
@@ -82,7 +82,7 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
       let targetPlugin;
 
       for (let plugin of plugins) {
-        const realtimeMusicItem = TrackPlayer.getCurrentMusic();
+        const realtimeMusicItem = TrackPlayer.currentMusic;
         if (
           !isSameMediaItem(musicItem, realtimeMusicItem) ||
           plugin.name === musicItem.platform
@@ -128,7 +128,7 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
       }
     }
 
-    const realtimeMusicItem = TrackPlayer.getCurrentMusic();
+    const realtimeMusicItem = TrackPlayer.currentMusic;
     if (isSameMediaItem(musicItem, realtimeMusicItem)) {
       if (lrcSource) {
         const mediaExtra = getMediaExtra(musicItem);
@@ -166,7 +166,7 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
     }
   } catch (e) {
     console.log(e, "LRC");
-    const realtimeMusicItem = TrackPlayer.getCurrentMusic();
+    const realtimeMusicItem = TrackPlayer.currentMusic;
     if (isSameMediaItem(musicItem, realtimeMusicItem)) {
       // 异常情况
       lyricStateStore.setValue({

@@ -54,7 +54,7 @@ module.exports = async function () {
     );
 
     RNTrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, () => {
-        const currentMusicItem = TrackPlayer.getCurrentMusic();
+        const currentMusicItem = TrackPlayer.currentMusic;
         if (currentMusicItem) {
             LyricUtil.setStatusBarLyricText(
                 `${currentMusicItem.title} - ${currentMusicItem.artist}`,

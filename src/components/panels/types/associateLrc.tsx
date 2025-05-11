@@ -6,7 +6,7 @@ import {fontSizeConst} from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {errorLog} from '@/utils/log';
-import {associateLrc, parseMediaKey} from '@/utils/mediaItem';
+import {associateLrc, parseMediaUniqueKey} from '@/utils/mediaUtils';
 import Toast from '@/utils/toast';
 import PanelBase from '../base/panelBase';
 import {TextInput} from 'react-native-gesture-handler';
@@ -39,7 +39,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                 input ?? (await Clipboard.getString());
                             if (inputValue) {
                                 try {
-                                    const targetMedia = parseMediaKey(
+                                    const targetMedia = parseMediaUniqueKey(
                                         inputValue.trim(),
                                     );
                                     // 目标也要写进去

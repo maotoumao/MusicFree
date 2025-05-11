@@ -54,7 +54,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                 size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
-                    const currentMusicItem = TrackPlayer.getCurrentMusic();
+                    const currentMusicItem = TrackPlayer.currentMusic;
 
                     if (currentMusicItem) {
                         showPanel('SetLyricOffset', {
@@ -77,7 +77,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                 size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
-                    const currentMusic = TrackPlayer.getCurrentMusic();
+                    const currentMusic = TrackPlayer.currentMusic;
                     if (!currentMusic) {
                         return;
                     }
@@ -121,7 +121,7 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                 size={iconSizeConst.normal}
                 color={'white'}
                 onPress={() => {
-                    const currentMusic = TrackPlayer.getCurrentMusic();
+                    const currentMusic = TrackPlayer.currentMusic;
                     if (currentMusic) {
                         showPanel('MusicItemLyricOptions', {
                             musicItem: currentMusic,

@@ -1,5 +1,5 @@
 import PluginManager from '@/core/pluginManager';
-import {resetMediaItem} from '@/utils/mediaItem';
+import {resetMediaItem} from '@/utils/mediaUtils';
 import {useCallback, useEffect, useRef, useState} from 'react';
 
 export default function (pluginHash: string, tag: ICommon.IUnique) {
