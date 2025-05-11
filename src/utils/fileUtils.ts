@@ -1,11 +1,11 @@
 import pathConst from '@/constants/pathConst';
 import FastImage from 'react-native-fast-image';
 import RNFS, {
+    PicturesDirectoryPath,
     copyFile,
     downloadFile,
     exists,
     mkdir,
-    PicturesDirectoryPath,
     readDir,
     unlink,
     writeFile,

@@ -12,8 +12,8 @@ import {
 } from '../common/historySearch';
 import {useSetAtom} from 'jotai';
 import {
-    initSearchResults,
     PageStatus,
+    initSearchResults,
     pageStatusAtom,
     queryAtom,
     searchResultsAtom,

@@ -1,4 +1,32 @@
+import { getCurrentDialog, showDialog } from '@/components/dialogs/useDialog';
+import {
+    EDeviceEvents,
+    internalFakeSoundKey,
+    sortIndexSymbol,
+    timeStampSymbol,
+} from '@/constants/commonConst';
+import { MusicRepeatMode } from '@/constants/repeatModeConst';
+import delay from '@/utils/delay';
+import getSimilarMusic from '@/utils/getSimilarMusic';
+import getUrlExt from '@/utils/getUrlExt';
+import { errorLog, trace } from '@/utils/log';
+import { createMediaIndexMap } from '@/utils/mediaIndexMap';
+import {
+    InternalDataType,
+    getInternalData,
+    isSameMediaItem,
+    mergeProps,
+    sortByTimestampAndIndex,
+} from '@/utils/mediaItem';
+import Network from '@/utils/network';
+import PersistStatus from '@/utils/persistStatus';
+import { getQualityOrder } from '@/utils/qualities';
+import { musicIsPaused } from '@/utils/trackUtils';
+import EventEmitter from 'eventemitter3';
 import { produce } from 'immer';
+import { atom, getDefaultStore, useAtomValue } from 'jotai';
+import shuffle from 'lodash.shuffle';
+import { DeviceEventEmitter } from 'react-native';
 import ReactNativeTrackPlayer, {
     Event,
     State,
@@ -7,41 +35,13 @@ import ReactNativeTrackPlayer, {
     usePlaybackState,
     useProgress,
 } from 'react-native-track-player';
-import shuffle from 'lodash.shuffle';
-import {
-    EDeviceEvents,
-    internalFakeSoundKey,
-    sortIndexSymbol,
-    timeStampSymbol,
-} from '@/constants/commonConst';
-import delay from '@/utils/delay';
-import {
-    getInternalData,
-    InternalDataType,
-    isSameMediaItem,
-    mergeProps,
-    sortByTimestampAndIndex,
-} from '@/utils/mediaItem';
-import Network from '../../utils/network';
 import LocalMusicSheet from '../localMusicSheet';
-import { getQualityOrder } from '@/utils/qualities';
-import getUrlExt from '@/utils/getUrlExt';
-import { DeviceEventEmitter } from 'react-native';
 import LyricManager from '../lyricManager';
-import { createMediaIndexMap } from '@/utils/mediaIndexMap';
 import PluginManager from '../pluginManager';
-import { musicIsPaused } from '@/utils/trackUtils';
-import { errorLog, trace } from '@/utils/log';
-import PersistStatus from '@/utils/persistStatus';
-import { getCurrentDialog, showDialog } from '@/components/dialogs/useDialog';
-import getSimilarMusic from '@/utils/getSimilarMusic';
-import { MusicRepeatMode } from '@/constants/repeatModeConst';
-import { atom, getDefaultStore, useAtomValue } from 'jotai';
-import EventEmitter from 'eventemitter3';
 
-import type { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import type { IAppConfig } from '@/types/core/config';
 import type { IMusicHistory } from '@/types/core/musicHistory';
+import type { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import { getMediaExtraProperty } from '@/utils/mediaExtra';
 
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
@@ -900,7 +900,7 @@ export function useMusicState() {
 
     return playbackState.state;
 }
-export { useProgress, State as MusicState };
+export { State as MusicState, useProgress };
 
 enum PlayFailReason {
     /** 禁止移动网络播放 */

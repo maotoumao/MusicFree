@@ -1,21 +1,21 @@
 import {
-    internalSerializeKey,
     StorageKeys,
+    internalSerializeKey,
     supportLocalMediaType,
 } from '@/constants/commonConst';
-import mp3Util, {IBasicMeta} from '@/native/mp3Util';
+import mp3Util, { IBasicMeta } from '@/native/mp3Util';
+import { addFileScheme, getFileName } from '@/utils/fileUtils.ts';
 import {
-    getInternalData,
     InternalDataType,
+    getInternalData,
     isSameMediaItem,
 } from '@/utils/mediaItem';
 import StateMapper from '@/utils/stateMapper';
-import {getStorage, setStorage} from '@/utils/storage';
-import {nanoid} from 'nanoid';
-import {useEffect, useState} from 'react';
-import {exists, readDir, ReadDirItem, unlink} from 'react-native-fs';
-import {addFileScheme, getFileName} from '@/utils/fileUtils.ts';
+import { getStorage, setStorage } from '@/utils/storage';
 import CryptoJs from 'crypto-js';
+import { nanoid } from 'nanoid';
+import { useEffect, useState } from 'react';
+import { ReadDirItem, exists, readDir, unlink } from 'react-native-fs';
 
 let localSheet: IMusic.IMusicItem[] = [];
 const localSheetStateMapper = new StateMapper(() => localSheet);

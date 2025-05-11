@@ -2,17 +2,17 @@
  * 管理当前歌曲的歌词
  */
 
-import { isSameMediaItem } from "@/utils/mediaItem";
-import PluginManager from "./pluginManager";
-import LyricParser, { IParsedLrcItem } from "@/utils/lrcParser";
-import { GlobalState } from "@/utils/stateMapper";
 import { EDeviceEvents } from "@/constants/commonConst";
+import LyricUtil from "@/native/lyricUtil";
+import LyricParser, { IParsedLrcItem } from "@/utils/lrcParser";
+import { getMediaExtra } from "@/utils/mediaExtra.ts";
+import { isSameMediaItem } from "@/utils/mediaItem";
+import minDistance from "@/utils/minDistance";
+import { GlobalState } from "@/utils/stateMapper";
 import { DeviceEventEmitter } from "react-native";
 import Config from "./config.ts";
-import LyricUtil from "@/native/lyricUtil";
+import PluginManager from "./pluginManager";
 import TrackPlayer from "./trackPlayer";
-import minDistance from "@/utils/minDistance";
-import { getMediaExtra } from "@/utils/mediaExtra.ts";
 
 interface ILyricState {
   loading: boolean;

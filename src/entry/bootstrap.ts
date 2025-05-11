@@ -1,4 +1,4 @@
-import { check, PERMISSIONS, request } from "react-native-permissions";
+import { PERMISSIONS, check, request } from "react-native-permissions";
 import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 import "react-native-get-random-values";
 import Config from "@/core/config.ts";
@@ -21,7 +21,7 @@ import * as SplashScreen from "expo-splash-screen";
 import MusicSheet from "@/core/musicSheet";
 import NativeUtils from "@/native/utils";
 import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog.ts";
-import downloader, { DownloaderEvent, DownloadFailReason } from "@/core/downloader";
+import downloader, { DownloadFailReason, DownloaderEvent } from "@/core/downloader";
 
 
 // 依赖管理

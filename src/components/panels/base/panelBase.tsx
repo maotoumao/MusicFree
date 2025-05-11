@@ -13,12 +13,12 @@ import rpx, {vh} from '@/utils/rpx';
 
 import Animated, {
     Easing,
+    EasingFunction,
     runOnJS,
     useAnimatedReaction,
     useAnimatedStyle,
     useSharedValue,
     withTiming,
-    EasingFunction,
 } from 'react-native-reanimated';
 import useColors from '@/hooks/useColors';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';

@@ -13,7 +13,7 @@ import deviceInfoModule from "react-native-device-info";
 import StateMapper from "@/utils/stateMapper";
 import { nanoid } from "nanoid";
 import { devLog, errorLog, trace } from "../utils/log";
-import { getInternalData, InternalDataType, isSameMediaItem, resetMediaItem } from "@/utils/mediaItem";
+import { InternalDataType, getInternalData, isSameMediaItem, resetMediaItem } from "@/utils/mediaItem";
 import {
     CacheControl,
     emptyFunction,

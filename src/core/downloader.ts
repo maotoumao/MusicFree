@@ -1,21 +1,21 @@
+import { internalSerializeKey, supportLocalMediaType } from "@/constants/commonConst";
+import pathConst from "@/constants/pathConst";
 import { IAppConfig } from "@/types/core/config";
 import { IInjectable } from "@/types/infra";
 import { addFileScheme, escapeCharacter, mkdirR } from "@/utils/fileUtils";
+import { errorLog } from "@/utils/log";
+import { patchMediaExtra } from "@/utils/mediaExtra";
 import { getMediaKey, isSameMediaItem } from "@/utils/mediaItem";
 import network from "@/utils/network";
+import { getQualityOrder } from "@/utils/qualities";
 import EventEmitter from "eventemitter3";
 import { atom, getDefaultStore, useAtomValue } from "jotai";
+import { nanoid } from "nanoid";
+import path from "path-browserify";
 import { useEffect, useState } from "react";
+import { copyFile, downloadFile, exists, unlink } from "react-native-fs";
 import LocalMusicSheet from "./localMusicSheet";
 import PluginManager from "./pluginManager";
-import { getQualityOrder } from "@/utils/qualities";
-import { errorLog } from "@/utils/log";
-import { internalSerializeKey, supportLocalMediaType } from "@/constants/commonConst";
-import pathConst from "@/constants/pathConst";
-import { nanoid } from "nanoid";
-import { copyFile, downloadFile, exists, unlink } from "react-native-fs";
-import path from "path-browserify";
-import { patchMediaExtra } from "@/utils/mediaExtra";
 
 
 export enum DownloadStatus {

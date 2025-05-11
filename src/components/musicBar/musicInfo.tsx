@@ -10,8 +10,8 @@ import {ROUTE_PATH, useNavigate} from '@/core/router';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import TrackPlayer, { usePlayList } from '@/core/trackPlayer';
 import Animated, {
-    runOnJS,
     SharedValue,
+    runOnJS,
     useAnimatedStyle,
     useSharedValue,
     withTiming,
