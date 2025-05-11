@@ -9,7 +9,7 @@ import PageBackground from '@/components/base/pageBackground';
 import DeviceInfo from 'react-native-device-info';
 import deviceInfoModule from 'react-native-device-info';
 import NativeUtils from '@/native/utils';
-import {useScheduleCloseCountDown} from '@/utils/timingClose';
+import {useScheduleCloseCountDown} from '@/utils/scheduleClose';
 import timeformat from '@/utils/timeformat';
 import {showPanel} from '@/components/panels/usePanel';
 import Divider from '@/components/base/divider';

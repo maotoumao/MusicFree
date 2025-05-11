@@ -7,8 +7,7 @@ import BackgroundTimer from 'react-native-background-timer';
 
 const deadlineAtom = atom<number | null>(null);
 const closeAfterPlayEndAtom = atom(false);
-// let closeAfterPlayEnd = false;
-// const closeAfterPlayEndStateMapper = new StateMapper(() => closeAfterPlayEnd);
+
 let timerId: any;
 
 

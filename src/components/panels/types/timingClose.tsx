@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 
-import { setCloseAfterPlayEnd, setScheduleClose, useCloseAfterPlayEnd, useScheduleCloseCountDown } from '@/utils/timingClose';
+import { setCloseAfterPlayEnd, setScheduleClose, useCloseAfterPlayEnd, useScheduleCloseCountDown } from '@/utils/scheduleClose';
 import timeformat from '@/utils/timeformat';
 import PanelBase from '../base/panelBase';
 import Divider from '@/components/base/divider';

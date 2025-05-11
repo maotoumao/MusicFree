@@ -17,7 +17,7 @@ interface IMediaExtraProperties {
     /** 歌词偏移 */
     lyricOffset?: number;
     /** 关联歌词 */
-    associatedLrc?: ICommon.IMediaBase 
+    associatedLrc?: ICommon.IMediaBase
 }
 
 
@@ -121,13 +121,13 @@ function removeMediaExtra(mediaItem: ICommon.IMediaBase) {
     const store = getPluginStore(mediaItem.platform);
     store.delete(`${mediaItem.id}`);
 
-     // 发送事件更新
-     const callbacks = observerCallbacks.get(getMediaKey(mediaItem));
-     if (callbacks && callbacks.size > 0) {
-         for (const callback of callbacks) {
-             callback(null);
-         }
-     }
+    // 发送事件更新
+    const callbacks = observerCallbacks.get(getMediaKey(mediaItem));
+    if (callbacks && callbacks.size > 0) {
+        for (const callback of callbacks) {
+            callback(null);
+        }
+    }
 
     return true;
 }
@@ -191,7 +191,7 @@ function useMediaExtra(mediaItem: ICommon.IMediaBase) {
                         observerCallbacks.delete(mediaKey);
                     }
                 }
-                
+
             }
         }
     }, [mediaItem]);
@@ -202,7 +202,7 @@ function useMediaExtra(mediaItem: ICommon.IMediaBase) {
 
 function useMediaExtraProperty<K extends keyof IMediaExtraProperties>(mediaItem: ICommon.IMediaBase, key: K) {
     const [mediaExtraPropertyState, setMediaExtraPropertyState] = useState<IMediaExtraProperties[K] | null>(getMediaExtraProperty(mediaItem, key));
-    
+
     useEffect(() => {
         const callback = (mediaExtra: IMediaExtraProperties | null) => {
             setMediaExtraPropertyState(mediaExtra ? mediaExtra[key] : null);
@@ -234,7 +234,6 @@ function useMediaExtraProperty<K extends keyof IMediaExtraProperties>(mediaItem:
                         observerCallbacks.delete(mediaKey);
                     }
                 }
-                
             }
         }
     }, [mediaItem]);
