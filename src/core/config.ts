@@ -2,9 +2,9 @@ import {useMMKVObject} from 'react-native-mmkv';
 
 import {getStorage, removeStorage} from '@/utils/storage';
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV.ts';
-import safeStringify from '@/utils/safeStringify.ts';
 
 import type {AppConfigPropertyKey, IAppConfig, IAppConfigProperties} from '@/types/core/config';
+import { safeStringify } from '@/utils/jsonUtil';
 
 const configStore = getOrCreateMMKV('App.config');
 

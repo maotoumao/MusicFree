@@ -1,7 +1,7 @@
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
 import { getMediaKey } from '@/utils/mediaItem';
-import safeParse from '@/utils/safeParse';
 import { useEffect, useState } from 'react';
+import { safeParse } from './jsonUtil';
 
 // Internal Method
 const getPluginStore = (pluginName: string) => {

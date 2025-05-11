@@ -1,7 +1,7 @@
 import { addFileScheme } from "@/utils/fileUtils";
 import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
+import { safeParse } from "@/utils/jsonUtil";
 import { getMediaKey } from "@/utils/mediaItem";
-import safeParse from "@/utils/safeParse";
 import { exists, unlink } from "react-native-fs";
 
 // Internal Method

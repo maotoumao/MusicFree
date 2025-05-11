@@ -1,8 +1,7 @@
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV.ts';
-import safeParse from '@/utils/safeParse.ts';
 import {InteractionManager} from 'react-native';
-import safeStringify from '@/utils/safeStringify.ts';
 import {SortType} from '@/constants/commonConst.ts';
+import { safeParse, safeStringify } from '@/utils/jsonUtil';
 
 function getStorageData(key: string) {
     const mmkv = getOrCreateMMKV(`LocalSheet.${key}`);
