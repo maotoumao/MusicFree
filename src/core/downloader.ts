@@ -15,7 +15,7 @@ import pathConst from "@/constants/pathConst";
 import { nanoid } from "nanoid";
 import { copyFile, downloadFile, exists, unlink } from "react-native-fs";
 import path from "path-browserify";
-import MediaExtra from "./mediaExtra";
+import { patchMediaExtra } from "@/utils/mediaExtra";
 
 
 export enum DownloadStatus {
@@ -331,10 +331,11 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
                     localPath: targetDownloadPath,
                 },
             });
-            MediaExtra.update(musicItem, {
+
+            patchMediaExtra(musicItem, {
                 downloaded: true,
-                localPath: targetDownloadPath,
-            });
+                localPath: targetDownloadPath
+            })
 
             this.markTaskAsCompleted(musicItem);
         } catch (e: any) {

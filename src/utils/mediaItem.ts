@@ -4,9 +4,9 @@ import {
     sortIndexSymbol,
     timeStampSymbol,
 } from '@/constants/commonConst';
-import MediaMeta from '@/core/mediaExtra';
 import {produce} from 'immer';
 import objectPath from 'object-path';
+import { patchMediaExtra } from './mediaExtra';
 
 /** 获取mediakey */
 export function getMediaKey(mediaItem: ICommon.IMediaBase) {
@@ -147,9 +147,9 @@ export async function associateLrc(
     }
 
     // 如果相同直接断链
-    MediaMeta.update(musicItem, {
+    patchMediaExtra(musicItem, {
         associatedLrc: isSameMediaItem(musicItem, linkto) ? undefined : linkto,
-    });
+    })
 }
 
 export function sortByTimestampAndIndex(array: any[], newArray = false) {

@@ -11,7 +11,6 @@ import { compare, satisfies } from "compare-versions";
 import DeviceInfo from "react-native-device-info";
 import deviceInfoModule from "react-native-device-info";
 import StateMapper from "@/utils/stateMapper";
-import MediaExtra from "./mediaExtra";
 import { nanoid } from "nanoid";
 import { devLog, errorLog, trace } from "../utils/log";
 import { getInternalData, InternalDataType, isSameMediaItem, resetMediaItem } from "@/utils/mediaItem";
@@ -38,6 +37,7 @@ import { produce } from "immer";
 import objectPath from "object-path";
 import notImplementedFunction from "@/utils/notImplementedFunction.ts";
 import { readAsStringAsync } from "expo-file-system";
+import { getMediaExtraProperty, patchMediaExtra, removeAllMediaExtra } from "@/utils/mediaExtra";
 
 axios.defaults.timeout = 2000;
 
@@ -308,9 +308,9 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         notUpdateCache = false,
     ): Promise<IPlugin.IMediaSourceResult | null> {
         // 1. 本地搜索 其实直接读mediameta就好了
-        const mediaExtra = MediaExtra.get(musicItem);
+        const localPathInMediaExtra = getMediaExtraProperty(musicItem, 'localPath');
         const localPath =
-            mediaExtra?.localPath ||
+        localPathInMediaExtra ||
             getInternalData<string>(musicItem, InternalDataType.LOCALPATH) ||
             getInternalData<string>(
                 LocalMusicSheet.isLocalMusic(musicItem),
@@ -318,19 +318,20 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
             );
         if (localPath && (await exists(localPath))) {
             trace('本地播放', localPath);
-            if (mediaExtra && mediaExtra.localPath !== localPath) {
+            if (localPathInMediaExtra !== localPath) {
                 // 修正一下本地数据
-                MediaExtra.update(musicItem, {
-                    localPath,
+                patchMediaExtra(musicItem, {
+                    localPath
                 });
+   
             }
             return {
                 url: addFileScheme(localPath),
             };
-        } else if (mediaExtra?.localPath) {
-            MediaExtra.update(musicItem, {
+        } else if (localPathInMediaExtra) {
+            patchMediaExtra(musicItem, {
                 localPath: undefined,
-            });
+            })
         }
 
         if (musicItem.platform === localPluginPlatform) {
@@ -460,10 +461,10 @@ class PluginMethods implements IPlugin.IPluginInstanceMethods {
         originalMusicItem: IMusic.IMusicItemBase,
     ): Promise<ILyric.ILyricSource | null> {
         // 1.额外存储的meta信息（关联歌词）
-        const meta = MediaExtra.get(originalMusicItem);
+        const associatedLrc = getMediaExtraProperty(originalMusicItem, 'associatedLrc');
         let musicItem: IMusic.IMusicItem;
-        if (meta && meta.associatedLrc) {
-            musicItem = meta.associatedLrc as IMusic.IMusicItem;
+        if (associatedLrc) {
+            musicItem = associatedLrc as IMusic.IMusicItem;
         } else {
             musicItem = originalMusicItem as IMusic.IMusicItem;
         }
@@ -1316,7 +1317,7 @@ async function uninstallPlugin(hash: string) {
             pluginStateMapper.notify();
             // 防止其他重名
             if (plugins.every(_ => _.name !== pluginName)) {
-                MediaExtra.removeAll(pluginName);
+                removeAllMediaExtra(pluginName);
             }
         } catch {}
     }
@@ -1328,7 +1329,7 @@ async function uninstallAllPlugins() {
             try {
                 const pluginName = plugin.name;
                 await unlink(plugin.path);
-                MediaExtra.removeAll(pluginName);
+                removeAllMediaExtra(pluginName);
             } catch (e) {}
         }),
     );

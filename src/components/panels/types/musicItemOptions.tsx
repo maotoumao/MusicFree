@@ -6,7 +6,6 @@ import ThemeText from "@/components/base/themeText";
 import { ImgAsset } from "@/constants/assetsConst";
 import Clipboard from "@react-native-clipboard/clipboard";
 
-import MediaMeta from "@/core/mediaExtra";
 import { getMediaKey } from "@/utils/mediaItem";
 import FastImage from "@/components/base/fastImage";
 import Toast from "@/utils/toast";
@@ -29,6 +28,7 @@ import LyricManager from "@/core/lyricManager";
 import { IIconName } from "@/components/base/icon.tsx";
 import MusicSheet from "@/core/musicSheet";
 import downloader from "@/core/downloader";
+import { getMediaExtraProperty, patchMediaExtra } from "@/utils/mediaExtra";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -54,8 +54,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const safeAreaInsets = useSafeAreaInsets();
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
-    const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
-
+    const associatedLrc = getMediaExtraProperty(musicItem, 'associatedLrc');
+   
     const options: IOption[] = [
         {
             icon: 'identification',
@@ -194,9 +194,10 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '解除关联歌词',
             show: !!associatedLrc,
             onPress: async () => {
-                MediaMeta.update(musicItem, {
-                    associatedLrc: undefined,
-                });
+                patchMediaExtra(musicItem, {
+                    associatedLrc: undefined
+                })
+
                 LyricManager.refreshLyric(false, true);
                 Toast.success('已解除关联歌词');
                 hidePanel();

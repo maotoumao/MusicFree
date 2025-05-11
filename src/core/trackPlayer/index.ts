@@ -35,7 +35,6 @@ import { errorLog, trace } from '@/utils/log';
 import PersistStatus from '@/utils/persistStatus';
 import { getCurrentDialog, showDialog } from '@/components/dialogs/useDialog';
 import getSimilarMusic from '@/utils/getSimilarMusic';
-import MediaExtra from '@/core/mediaExtra.ts';
 import { MusicRepeatMode } from '@/constants/repeatModeConst';
 import { atom, getDefaultStore, useAtomValue } from 'jotai';
 import EventEmitter from 'eventemitter3';
@@ -43,6 +42,7 @@ import EventEmitter from 'eventemitter3';
 import type { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import type { IAppConfig } from '@/types/core/config';
 import type { IMusicHistory } from '@/types/core/musicHistory';
+import { getMediaExtraProperty } from '@/utils/mediaExtra';
 
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
@@ -510,10 +510,10 @@ class TrackPlayer extends EventEmitter implements ITrackPlayer {
                 throw new Error(PlayFailReason.PLAY_LIST_IS_EMPTY);
             }
             // 1. 移动网络禁止播放
-            const mediaExtra = MediaExtra.get(musicItem);
+            const localPathInMediaExtra = getMediaExtraProperty(musicItem, 'localPath');
             // TODO: 优化本地音乐的逻辑
             const localPath =
-                mediaExtra?.localPath ||
+                localPathInMediaExtra ||
                 getInternalData<string>(musicItem, InternalDataType.LOCALPATH);
             if (
                 Network.isCellular &&

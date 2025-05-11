@@ -15,9 +15,9 @@ import DraggingTime from "./draggingTime";
 import LyricItemComponent from "./lyricItem";
 import PersistStatus from "@/utils/persistStatus";
 import LyricOperations from "./lyricOperations";
-import MediaExtra from "@/core/mediaExtra";
 import { IParsedLrcItem } from "@/utils/lrcParser";
 import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
+import { getMediaExtraProperty, patchMediaExtra } from "@/utils/mediaExtra";
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -64,9 +64,8 @@ export default function Lyric(props: IProps) {
     const listRef = useRef<FlatList<IParsedLrcItem> | null>();
 
     const currentMusicItem = useCurrentMusic();
-    const associateMusicItem = currentMusicItem
-        ? MediaExtra.get(currentMusicItem)?.associatedLrc
-        : null;
+    const associateMusicItem = getMediaExtraProperty(currentMusicItem, 'associatedLrc');
+
     // 是否展示拖拽
     const dragShownRef = useRef(false);
 
@@ -216,9 +215,10 @@ export default function Lyric(props: IProps) {
     const unlinkTapGesture = Gesture.Tap()
         .onStart(() => {
             if (currentMusicItem) {
-                MediaExtra.update(currentMusicItem, {
-                    associatedLrc: undefined,
+                patchMediaExtra(currentMusicItem, {
+                    associatedLrc: undefined
                 });
+                
                 LyricManager.refreshLyric(false, true);
             }
         })

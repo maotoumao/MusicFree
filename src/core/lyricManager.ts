@@ -11,8 +11,8 @@ import { DeviceEventEmitter } from "react-native";
 import Config from "./config.ts";
 import LyricUtil from "@/native/lyricUtil";
 import TrackPlayer from "./trackPlayer";
-import MediaExtra from "./mediaExtra";
 import minDistance from "@/utils/minDistance";
+import { getMediaExtra } from "@/utils/mediaExtra.ts";
 
 interface ILyricState {
   loading: boolean;
@@ -131,7 +131,7 @@ async function refreshLyric(fromStart?: boolean, forceRequest = false) {
     const realtimeMusicItem = TrackPlayer.getCurrentMusic();
     if (isSameMediaItem(musicItem, realtimeMusicItem)) {
       if (lrcSource) {
-        const mediaExtra = MediaExtra.get(musicItem);
+        const mediaExtra = getMediaExtra(musicItem);
         const parser = new LyricParser(lrcSource.rawLrc!, {
           extra: {
             offset: (mediaExtra?.lyricOffset || 0) * -1

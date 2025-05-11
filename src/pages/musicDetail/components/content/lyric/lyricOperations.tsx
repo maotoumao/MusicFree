@@ -9,11 +9,11 @@ import LyricManager from "@/core/lyricManager";
 import Toast from "@/utils/toast";
 import { hidePanel, showPanel } from "@/components/panels/usePanel";
 import TrackPlayer from "@/core/trackPlayer";
-import MediaExtra from "@/core/mediaExtra";
 import PersistStatus from "@/utils/persistStatus";
 import useOrientation from "@/hooks/useOrientation";
 import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";
+import { patchMediaExtra } from "@/utils/mediaExtra";
 
 interface ILyricOperationsProps {
     scrollToCurrentLrcItem: () => void;
@@ -60,8 +60,8 @@ export default function LyricOperations(props: ILyricOperationsProps) {
                         showPanel('SetLyricOffset', {
                             musicItem: currentMusicItem,
                             onSubmit(offset) {
-                                MediaExtra.update(currentMusicItem, {
-                                    lyricOffset: offset,
+                                patchMediaExtra(currentMusicItem, {
+                                    lyricOffset: offset
                                 });
                                 LyricManager.refreshLyric();
                                 scrollToCurrentLrcItem();
