@@ -21,7 +21,7 @@ import { showDialog } from "@/components/dialogs/useDialog";
 import { hidePanel, showPanel } from "../usePanel";
 import Divider from "@/components/base/divider";
 import { iconSizeConst } from "@/constants/uiConst";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import TrackPlayer from "@/core/trackPlayer";
 import mediaCache from "@/core/mediaCache";
 import LyricManager from "@/core/lyricManager";

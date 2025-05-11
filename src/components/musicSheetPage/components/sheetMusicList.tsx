@@ -4,7 +4,7 @@ import { View } from "react-native";
 import Loading from "@/components/base/loading";
 import Header from "./header";
 import MusicList from "@/components/musicList";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import globalStyle from "@/constants/globalStyle";
 import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
 import TrackPlayer from "@/core/trackPlayer";

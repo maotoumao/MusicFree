@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import rpx from "@/utils/rpx";
-import Config, { useAppConfig } from "@/core/config.ts";
+import Config, { useAppConfig } from "@/core/appConfig";
 import { FlatList } from "react-native-gesture-handler";
 import Empty from "@/components/base/empty";
 import ListItem from "@/components/base/listItem";

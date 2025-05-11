@@ -1,3 +1,6 @@
+/**
+ * 媒体资源的附加属性
+ */
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
 import { getMediaKey } from '@/utils/mediaItem';
 import { useEffect, useState } from 'react';

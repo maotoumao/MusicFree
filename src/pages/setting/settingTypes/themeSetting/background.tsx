@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import ThemeText from "@/components/base/themeText";
 // import pathConst from '@/constants/pathConst';
-import Config, { useAppConfig } from "@/core/config";
+import Config, { useAppConfig } from "@/core/appConfig";
 import ThemeCard from "./themeCard";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
 import Theme from "@/core/theme";

@@ -2,7 +2,7 @@
  * 歌单管理
  */
 import { ResumeMode, SortType, localPluginPlatform } from "@/constants/commonConst.ts";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import { musicListMap, musicSheetsBaseAtom, starredMusicSheetsAtom } from "@/core/musicSheet/atoms.ts";
 import ee from "@/core/musicSheet/ee.ts";
 import migrate, { migrateV2 } from "@/core/musicSheet/migrate.ts";

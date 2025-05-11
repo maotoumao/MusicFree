@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
 import rpx from "@/utils/rpx";
-import Config, { useAppConfig } from "@/core/config";
+import Config, { useAppConfig } from "@/core/appConfig";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
 import ThemeSwitch from "@/components/base/switch";

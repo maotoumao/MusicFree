@@ -1,4 +1,4 @@
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 
 import { DarkTheme as _DarkTheme, DefaultTheme as _DefaultTheme } from "@react-navigation/native";
 import { GlobalState } from "@/utils/stateMapper";

@@ -1,6 +1,6 @@
 import React from "react";
 import MusicItem from "@/components/mediaItem/musicItem";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import { ISearchResult } from "@/pages/searchPage/store/atoms";
 import TrackPlayer from "@/core/trackPlayer";
 

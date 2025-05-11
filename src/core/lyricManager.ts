@@ -10,7 +10,7 @@ import { isSameMediaItem } from "@/utils/mediaItem";
 import minDistance from "@/utils/minDistance";
 import { GlobalState } from "@/utils/stateMapper";
 import { DeviceEventEmitter } from "react-native";
-import Config from "./config.ts";
+import Config from "./appConfig.ts";
 import PluginManager from "./pluginManager";
 import TrackPlayer from "./trackPlayer";
 

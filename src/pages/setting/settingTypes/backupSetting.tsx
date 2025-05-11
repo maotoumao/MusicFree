@@ -11,7 +11,7 @@ import axios from "axios";
 
 import { ResumeMode } from "@/constants/commonConst.ts";
 import strings from "@/constants/strings.ts";
-import Config, { useAppConfig } from "@/core/config";
+import Config, { useAppConfig } from "@/core/appConfig";
 import delay from "@/utils/delay";
 import { writeInChunks } from "@/utils/fileUtils.ts";
 import { errorLog } from "@/utils/log.ts";

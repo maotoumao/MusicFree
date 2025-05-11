@@ -10,7 +10,7 @@ import { trace } from "@/utils/log";
 import Toast from "@/utils/toast";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import Empty from "@/components/base/empty";
 import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
 import { showDialog } from "@/components/dialogs/useDialog";

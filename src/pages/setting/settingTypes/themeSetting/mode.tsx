@@ -4,7 +4,7 @@ import rpx from "@/utils/rpx";
 import ThemeText from "@/components/base/themeText";
 import ListItem from "@/components/base/listItem";
 import ThemeSwitch from "@/components/base/switch";
-import Config, { useAppConfig } from "@/core/config";
+import Config, { useAppConfig } from "@/core/appConfig";
 import Theme from "@/core/theme";
 
 export default function Mode() {

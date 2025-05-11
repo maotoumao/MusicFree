@@ -1,4 +1,4 @@
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import RNTrackPlayer, { Event, State } from "react-native-track-player";
 import LyricManager from "@/core/lyricManager";
 import LyricUtil from "@/native/lyricUtil";

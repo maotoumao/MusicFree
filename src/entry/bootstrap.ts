@@ -1,7 +1,7 @@
 import { PERMISSIONS, check, request } from "react-native-permissions";
 import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 import "react-native-get-random-values";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import pathConst from "@/constants/pathConst";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import { errorLog, trace } from "@/utils/log";

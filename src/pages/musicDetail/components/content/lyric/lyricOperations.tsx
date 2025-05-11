@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import { iconSizeConst } from "@/constants/uiConst";
 import TranslationIcon from "@/assets/icons/translation.svg";
-import { useAppConfig } from "@/core/config";
+import { useAppConfig } from "@/core/appConfig";
 import useColors from "@/hooks/useColors";
 import LyricManager from "@/core/lyricManager";
 import Toast from "@/utils/toast";

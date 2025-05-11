@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import VDebug from "@/lib/react-native-vdebug";
-import { useAppConfig } from "@/core/config.ts";
+import { useAppConfig } from "@/core/appConfig";
 
 export default function Debug() {
     const showDebug = useAppConfig('debug.devLog');
