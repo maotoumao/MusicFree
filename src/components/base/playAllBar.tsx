@@ -10,7 +10,7 @@ import IconButton from './iconButton';
 import TrackPlayer from '@/core/trackPlayer';
 import Toast from '@/utils/toast';
 import Icon from '@/components/base/icon.tsx';
-import MusicSheet from '@/core/musicSheet';
+import MusicSheet, { useSheetIsStarred } from '@/core/musicSheet';
 import { MusicRepeatMode } from '@/constants/repeatModeConst';
 
 interface IProps {
@@ -27,7 +27,7 @@ export default function (props: IProps) {
     const colors = useColors();
     const navigate = useNavigate();
 
-    const starred = MusicSheet.useSheetIsStarred(musicSheet);
+    const starred = useSheetIsStarred(musicSheet);
 
     return (
         <View style={style.topWrapper}>

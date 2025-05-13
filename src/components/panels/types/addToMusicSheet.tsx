@@ -10,7 +10,7 @@ import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
 import {hidePanel, showPanel} from '../usePanel';
 import PanelHeader from '../base/panelHeader';
-import MusicSheet from '@/core/musicSheet';
+import MusicSheet, { useSheetsBase } from '@/core/musicSheet';
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -19,7 +19,7 @@ interface IAddToMusicSheetProps {
 }
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
-    const sheets = MusicSheet.useSheetsBase();
+    const sheets = useSheetsBase();
 
     const {musicItem = [], newSheetDefaultName} = props ?? {};
     const safeAreaInsets = useSafeAreaInsets();

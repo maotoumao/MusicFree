@@ -30,6 +30,7 @@ musicHistory.injectDependencies(Config);
 TrackPlayer.injectDependencies(Config, musicHistory);
 downloader.injectDependencies(Config);
 lyricManager.injectDependencies(TrackPlayer, Config);
+MusicSheet.injectDependencies(Config);
 
 
 async function bootstrapImpl() {
