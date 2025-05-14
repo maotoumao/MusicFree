@@ -168,7 +168,7 @@ export default function useSearch() {
                             };
 
                             prevPluginResult.state =
-                                RequestStateCode.PARTLY_DONE;
+                                RequestStateCode.ERROR;
                             return draft;
                         }),
                     );

@@ -3,8 +3,7 @@ import { fontSizeConst } from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { Pressable } from 'react-native-gesture-handler';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ThemeText from './themeText';
 
 interface IEmptyProps {
@@ -36,9 +35,9 @@ export default function ListEmpty(props: IEmptyProps) {
             <ThemeText fontSize="title">
                 出错啦...
             </ThemeText>
-            <Pressable onPress={onRetry} style={style.retryButton}>
+            <TouchableOpacity onPress={onRetry} style={style.retryButton}>
                 <ThemeText>点击重试</ThemeText>
-            </Pressable>
+            </TouchableOpacity>
         </View>
     }
  
