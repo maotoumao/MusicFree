@@ -7,7 +7,7 @@ import {
     View,
 } from 'react-native';
 import rpx from '@/utils/rpx';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
 import ThemeText from '@/components/base/themeText';
 import LinkText from '@/components/base/linkText';
 import useCheckUpdate from '@/hooks/useCheckUpdate.ts';
@@ -24,8 +24,8 @@ export default function AboutSetting() {
                 style.wrapper,
                 orientation === 'horizontal'
                     ? {
-                          flexDirection: 'row',
-                      }
+                        flexDirection: 'row',
+                    }
                     : null,
             ]}>
             <View
@@ -47,12 +47,20 @@ export default function AboutSetting() {
                 <ThemeText style={style.margin}>
                     公众号: 【一只猫头猫】
                 </ThemeText>
-                <ThemeText style={style.margin}>
-                    B站:{' '}
-                    <LinkText linkTo="https://space.bilibili.com/12866223">
-                        不想睡觉猫头猫
-                    </LinkText>
-                </ThemeText>
+                <View style={style.contactContainer}>
+                    <ThemeText style={style.margin}>
+                        B站:{' '}
+                        <LinkText linkTo="https://space.bilibili.com/12866223">
+                            不想睡觉猫头猫
+                        </LinkText>
+                    </ThemeText>
+                    <ThemeText style={style.margin}>
+                        小红书:{' '}
+                        <LinkText linkTo="https://www.xiaohongshu.com/user/profile/5ce6085200000000050213a6?xsec_token=YBqVNCKP4kpvphpU5sZI8WC93c5JINc3NhGtRBymgKvuo%3D&xsec_source=app_share&xhsshare=CopyLink&appuid=5ce6085200000000050213a6&apptime=1747275535&share_id=faef5820564a43be80e5b77da887e4b9&share_channel=copy_link">
+                            一只猫头猫
+                        </LinkText>
+                    </ThemeText>
+                </View>
             </View>
             <ScrollView
                 contentContainerStyle={style.scrollViewContainer}
@@ -151,6 +159,12 @@ const style = StyleSheet.create({
         height: rpx(400),
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    contactContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: rpx(24),
     },
     horizontalSize: {
         width: rpx(600),
