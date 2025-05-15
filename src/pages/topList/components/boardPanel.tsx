@@ -4,9 +4,9 @@ import rpx from '@/utils/rpx';
 import {IPluginTopListResult} from '../store/atoms';
 import {RequestStateCode} from '@/constants/commonConst';
 import Loading from '@/components/base/loading';
-import Empty from '@/components/base/empty';
 import TopListItem from '@/components/mediaItem/topListItem';
 import ThemeText from '@/components/base/themeText';
+import ListEmpty from '@/components/base/listEmpty';
 
 interface IBoardPanelProps {
     hash: string;
@@ -37,7 +37,7 @@ function BoardPanel(props: IBoardPanelProps) {
         <SectionList
             renderItem={renderItem}
             renderSectionHeader={renderSectionHeader}
-            ListEmptyComponent={<Empty />}
+            ListEmptyComponent={<ListEmpty state={topListData?.state} />}
             sections={topListData?.data || []}
         />
     );

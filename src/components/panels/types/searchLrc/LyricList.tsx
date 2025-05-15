@@ -1,5 +1,3 @@
-import Empty from '@/components/base/empty';
-import ListReachEnd from '@/components/base/listReachEnd';
 import Loading from '@/components/base/loading';
 import LyricItem from '@/components/mediaItem/LyricItem';
 import { RequestStateCode } from '@/constants/commonConst';
@@ -8,9 +6,11 @@ import TrackPlayer from '@/core/trackPlayer';
 import rpx from '@/utils/rpx';
 import Toast from '@/utils/toast';
 import React, { memo } from 'react';
-import { FlatList } from 'react-native-gesture-handler';
 import { hidePanel } from '../../usePanel';
 import searchResultStore, { ISearchLyricResult } from './searchResultStore';
+import ListEmpty from '@/components/base/listEmpty';
+import ListFooter from '@/components/base/listFooter';
+import { FlashList } from '@shopify/flash-list';
 
 interface ILyricListWrapperProps {
     route: {
@@ -36,12 +36,8 @@ function LyricListImpl(props: ILyricListProps) {
     return searchState === RequestStateCode.PENDING_FIRST_PAGE ? (
         <Loading />
     ) : (
-        <FlatList
-            getItemLayout={(_, index) => ({
-                length: ITEM_HEIGHT,
-                offset: ITEM_HEIGHT * index,
-                index,
-            })}
+        <FlashList
+            estimatedItemSize={ITEM_HEIGHT}
             renderItem={({ item }) => (
                 <LyricItem
                     lyricItem={item}
@@ -62,17 +58,8 @@ function LyricListImpl(props: ILyricListProps) {
                     }}
                 />
             )}
-            ListEmptyComponent={<Empty />}
-            ListFooterComponent={() => (
-                // searchState === RequestStateCode.PENDING ? (
-                //     <ListLoading />
-                // ) : searchState === RequestStateCode.FINISHED ? (
-                //     <ListReachEnd />
-                // ) : (
-                //     <></>
-                // )
-                <ListReachEnd />
-            )}
+            ListEmptyComponent={<ListEmpty state={searchState} />}
+            ListFooterComponent={data?.data?.length ? <ListFooter state={searchState} /> : null}
             data={data?.data}
         />
     );

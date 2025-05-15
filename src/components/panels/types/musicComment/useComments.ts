@@ -42,7 +42,6 @@ export default function useComments(mediaItem: ICommon.IMediaBase) {
         plugin.methods
             .getMusicComments(mediaItem as any)
             .then(res => {
-                console.log('here!!!');
                 if (mountedRef.current) {
                     setComments({
                         mediaItem: mediaItem,

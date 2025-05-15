@@ -6,7 +6,7 @@ import usePluginSheetMusicList from './hooks/usePluginSheetMusicList';
 export default function PluginSheetDetail() {
     const {sheetInfo} = useParams<'plugin-sheet-detail'>();
 
-    const [loadMore, sheetItem, musicList, getSheetDetail] =
+    const [requestState, sheetItem, musicList, getSheetDetail] =
         usePluginSheetMusicList(sheetInfo as IMusic.IMusicSheetItem);
     return (
         <MusicSheetPage
@@ -14,10 +14,9 @@ export default function PluginSheetDetail() {
             sheetInfo={sheetItem}
             navTitle={sheetInfo?.title ?? '歌单'}
             musicList={musicList}
-            loadMore={loadMore}
-            onEndReached={() => {
-                getSheetDetail();
-            }}
+            state={requestState}
+            onRetry={getSheetDetail}
+            onLoadMore={getSheetDetail}
         />
     );
 }

@@ -4,10 +4,10 @@ import globalStyle from '@/constants/globalStyle';
 import StatusBar from '@/components/base/statusBar';
 import musicHistory, { useMusicHistory } from '@/core/musicHistory';
 import MusicList from '@/components/musicList';
-import {musicHistorySheetId} from '@/constants/commonConst';
+import { musicHistorySheetId, RequestStateCode } from '@/constants/commonConst';
 import MusicBar from '@/components/musicBar';
 import AppBar from '@/components/base/appBar';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
 
 export default function History() {
     const musicHistoryList = useMusicHistory();
@@ -47,6 +47,7 @@ export default function History() {
             <MusicList
                 musicList={musicHistoryList}
                 showIndex
+                state={RequestStateCode.IDLE}
                 musicSheet={{
                     id: musicHistorySheetId,
                     title: '播放记录',

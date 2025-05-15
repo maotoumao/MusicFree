@@ -1,13 +1,14 @@
 import React from 'react';
 import Header from './header';
 import MusicList from '@/components/musicList';
-import {useParams} from '@/core/router';
+import { useParams } from '@/core/router';
 import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
 import { useSheetItem } from '@/core/musicSheet';
+import { RequestStateCode } from '@/constants/commonConst';
 
 export default function SheetMusicList() {
-    const {id = 'favorite'} = useParams<'local-sheet-detail'>();
+    const { id = 'favorite' } = useParams<'local-sheet-detail'>();
     const musicSheet = useSheetItem(id);
 
     return (
@@ -17,6 +18,8 @@ export default function SheetMusicList() {
                 musicList={musicSheet?.musicList}
                 musicSheet={musicSheet}
                 showIndex
+                state={RequestStateCode.IDLE}
+
             />
         </HorizontalSafeAreaView>
     );
