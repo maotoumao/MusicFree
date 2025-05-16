@@ -3,6 +3,10 @@ name: 反馈问题
 description: 问题反馈模板
 labels: ["bug"]
 body:
+  - type: markdown
+    attributes:
+      value: "## 不要在此仓库提和具体插件有关的问题！！！"
+    
   - type: checkboxes
     attributes:
       label: 提问题之前，请先确认
@@ -10,7 +14,7 @@ body:
       options:
         - label: "已经阅读过Q&A (https://musicfree.catcat.work/qa/mobile.html)"
           required: true
-        - label: "要提出的问题与插件功能无关（类似插件搜索结果不全、ip被封禁等请找对应插件作者）"
+        - label: "要提出的问题与插件功能无关（类似某个插件搜索结果不全、ip被封禁等请找对应插件作者，在此仓库下提具体插件的问题将会被直接关闭）"
           required: true
         - label: "不与其他已有issue重复"
           required: true
