@@ -1,13 +1,12 @@
-import React from 'react';
-import {FlatListProps} from 'react-native';
-import rpx from '@/utils/rpx';
-
-import MusicItem from '../mediaItem/musicItem';
-import Empty from '../base/empty';
-import {FlashList} from '@shopify/flash-list';
-import ListLoading from '../base/listLoading';
-import ListReachEnd from '../base/listReachEnd';
+import { RequestStateCode } from '@/constants/commonConst';
 import TrackPlayer from '@/core/trackPlayer';
+import rpx from '@/utils/rpx';
+import { FlashList } from '@shopify/flash-list';
+import React from 'react';
+import { FlatListProps } from 'react-native';
+import ListEmpty from '../base/listEmpty';
+import ListFooter from '../base/listFooter';
+import MusicItem from '../mediaItem/musicItem';
 
 interface IMusicListProps {
     /** 顶部 */
@@ -23,8 +22,10 @@ interface IMusicListProps {
         musicItem: IMusic.IMusicItem,
         musicList?: IMusic.IMusicItem[],
     ) => void;
-    loadMore?: 'loading' | 'done' | 'idle';
-    onEndReached?: () => void;
+    // 状态
+    state: RequestStateCode;
+    onRetry?: () => void;
+    onLoadMore?: () => void;
 }
 const ITEM_HEIGHT = rpx(120);
 
@@ -36,8 +37,9 @@ export default function MusicList(props: IMusicListProps) {
         musicSheet,
         showIndex,
         onItemPress,
-        onEndReached,
-        loadMore = 'idle',
+        state,
+        onRetry,
+        onLoadMore,
     } = props;
 
     // ! keyExtractor需要保证整个生命周期统一？ 有些奇怪
@@ -50,18 +52,14 @@ export default function MusicList(props: IMusicListProps) {
     return (
         <FlashList
             ListHeaderComponent={Header}
-            ListEmptyComponent={loadMore !== 'loading' ? Empty : null}
+            ListEmptyComponent={<ListEmpty state={state} onRetry={onRetry}/>}
             ListFooterComponent={
-                loadMore === 'done'
-                    ? ListReachEnd
-                    : loadMore === 'loading'
-                    ? ListLoading
-                    : null
+                musicList?.length ? <ListFooter state={state} onRetry={onRetry} /> : null
             }
             data={musicList ?? []}
             // keyExtractor={keyExtractor}
             estimatedItemSize={ITEM_HEIGHT}
-            renderItem={({index, item: musicItem}) => {
+            renderItem={({ index, item: musicItem }) => {
                 return (
                     <MusicItem
                         musicItem={musicItem}
@@ -81,8 +79,8 @@ export default function MusicList(props: IMusicListProps) {
                 );
             }}
             onEndReached={() => {
-                if (loadMore !== 'loading') {
-                    onEndReached?.();
+                if (state === RequestStateCode.IDLE || state === RequestStateCode.PARTLY_DONE) {
+                    onLoadMore?.();
                 }
             }}
             onEndReachedThreshold={0.1}

@@ -1,10 +1,10 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {ImgAsset} from '@/constants/assetsConst';
-import TrackPlayer from '@/core/trackPlayer';
+import { useCurrentMusic } from '@/core/trackPlayer';
 
 export default function Background() {
-    const musicItem = TrackPlayer.useCurrentMusic();
+    const musicItem = useCurrentMusic();
     const source = musicItem?.artwork
         ? {
               uri: musicItem.artwork,

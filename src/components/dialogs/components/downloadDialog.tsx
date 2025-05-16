@@ -9,7 +9,7 @@ import { hideDialog } from "../useDialog";
 import Checkbox from "@/components/base/checkbox";
 import Button from "@/components/base/textButton.tsx";
 import Dialog from "./base";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 
 interface IDownloadDialogProps {
     version: string;

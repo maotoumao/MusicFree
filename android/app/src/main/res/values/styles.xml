@@ -4,7 +4,14 @@
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
-        <item name="android:windowBackground">@drawable/splashscreen</item> <!-- this line instructs the system to use 'splashscreen.xml' as a background of the whole application -->
+    </style>
+
+    <!-- Splash screen -->
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splashscreen_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen_image</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/spashscreen_branding_image</item>
     </style>
 
 </resources>

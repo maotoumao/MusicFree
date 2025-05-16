@@ -1,7 +1,7 @@
 import {atom, getDefaultStore, useAtom} from 'jotai';
 import {RequestStateCode} from '@/constants/commonConst.ts';
 import {useEffect, useRef} from 'react';
-import {isSameMediaItem} from '@/utils/mediaItem.ts';
+import {isSameMediaItem} from '@/utils/mediaUtils';
 import PluginManager from '@/core/pluginManager.ts';
 
 const reqStateAtom = atom(RequestStateCode.PENDING_FIRST_PAGE);
@@ -42,7 +42,6 @@ export default function useComments(mediaItem: ICommon.IMediaBase) {
         plugin.methods
             .getMusicComments(mediaItem as any)
             .then(res => {
-                console.log('here!!!');
                 if (mountedRef.current) {
                     setComments({
                         mediaItem: mediaItem,

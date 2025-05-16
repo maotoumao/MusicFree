@@ -5,14 +5,14 @@ import Toast from '@/utils/toast';
 import toast from '@/utils/toast';
 import {showDialog} from '@/components/dialogs/useDialog';
 import AppBar from '@/components/base/appBar';
-import MusicSheet from '@/core/musicSheet';
+import MusicSheet, { useSheetItem } from '@/core/musicSheet';
 import {SortType} from '@/constants/commonConst.ts';
 import {showPanel} from '@/components/panels/usePanel.ts';
 
 export default function () {
     const navigation = useNavigation<any>();
     const {id = 'favorite'} = useParams<'local-sheet-detail'>();
-    const musicSheet = MusicSheet.useSheetItem(id);
+    const musicSheet = useSheetItem(id);
 
     return (
         <>

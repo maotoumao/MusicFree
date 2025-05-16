@@ -4,13 +4,13 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 
 import PanelBase from '../base/panelBase';
-import MediaExtra from '@/core/mediaExtra';
 import {iconSizeConst} from '@/constants/uiConst';
 import PanelHeader from '../base/panelHeader';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
 import useColors from '@/hooks/useColors';
 import Icon from '@/components/base/icon.tsx';
+import { getMediaExtraProperty } from '@/utils/mediaExtra';
 
 interface IProps {
     musicItem: IMusic.IMusicItem;
@@ -22,7 +22,7 @@ export default function SetLyricOffset(props: IProps) {
     const {musicItem, onSubmit} = props ?? {};
 
     const [offset, setOffset] = useState(
-        MediaExtra.get(musicItem)?.lyricOffset ?? 0,
+        getMediaExtraProperty(musicItem, 'lyricOffset') ?? 0
     );
 
     const colors = useColors();

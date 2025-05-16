@@ -1,10 +1,8 @@
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import RNTrackPlayer, { Event, State } from "react-native-track-player";
-import LyricManager from "@/core/lyricManager";
-import LyricUtil from "@/native/lyricUtil";
 import TrackPlayer from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 
 let resumeState: State | null;
 module.exports = async function () {
@@ -53,38 +51,9 @@ module.exports = async function () {
         },
     );
 
-    RNTrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, () => {
-        const currentMusicItem = TrackPlayer.getCurrentMusic();
-        if (currentMusicItem) {
-            LyricUtil.setStatusBarLyricText(
-                `${currentMusicItem.title} - ${currentMusicItem.artist}`,
-            );
-        }
-    });
 
     RNTrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
         PersistStatus.set('music.progress', evt.position);
-
-        // 歌词逻辑
-        const parser = LyricManager.getLyricState().lyricParser;
-        if (parser) {
-            const prevLyricText = LyricManager.getCurrentLyric()?.lrc;
-            const currentLyricItem = parser.getPosition(evt.position);
-            if (prevLyricText !== currentLyricItem?.lrc) {
-                LyricManager.setCurrentLyric(currentLyricItem ?? null);
-                const showTranslation = PersistStatus.get(
-                    'lyric.showTranslation',
-                );
-                if (Config.getConfig('lyric.showStatusBarLyric')) {
-                    LyricUtil.setStatusBarLyricText(
-                        (currentLyricItem?.lrc ?? '') +
-                            (showTranslation
-                                ? `\n${currentLyricItem?.translation ?? ''}`
-                                : ''),
-                    );
-                }
-            }
-        }
     });
 
     RNTrackPlayer.addEventListener(Event.RemoteStop, async () => {

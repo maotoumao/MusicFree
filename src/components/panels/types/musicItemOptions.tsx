@@ -3,12 +3,10 @@ import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
-import Download from "@/core/download";
 import { ImgAsset } from "@/constants/assetsConst";
 import Clipboard from "@react-native-clipboard/clipboard";
 
-import MediaMeta from "@/core/mediaExtra";
-import { getMediaKey } from "@/utils/mediaItem";
+import { getMediaUniqueKey } from "@/utils/mediaUtils";
 import FastImage from "@/components/base/fastImage";
 import Toast from "@/utils/toast";
 import LocalMusicSheet from "@/core/localMusicSheet";
@@ -23,12 +21,14 @@ import { showDialog } from "@/components/dialogs/useDialog";
 import { hidePanel, showPanel } from "../usePanel";
 import Divider from "@/components/base/divider";
 import { iconSizeConst } from "@/constants/uiConst";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import TrackPlayer from "@/core/trackPlayer";
 import mediaCache from "@/core/mediaCache";
-import LyricManager from "@/core/lyricManager";
 import { IIconName } from "@/components/base/icon.tsx";
 import MusicSheet from "@/core/musicSheet";
+import downloader from "@/core/downloader";
+import { getMediaExtraProperty } from "@/utils/mediaExtra";
+import lyricManager from "@/core/lyricManager";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -49,17 +49,17 @@ interface IOption {
 }
 
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
-    const {musicItem, musicSheet, from} = props ?? {};
+    const { musicItem, musicSheet, from } = props ?? {};
 
     const safeAreaInsets = useSafeAreaInsets();
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
-    const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
+    const associatedLrc = getMediaExtraProperty(musicItem, 'associatedLrc');
 
     const options: IOption[] = [
         {
             icon: 'identification',
-            title: `ID: ${getMediaKey(musicItem)}`,
+            title: `ID: ${getMediaUniqueKey(musicItem)}`,
             onPress: () => {
                 mediaCache.setMediaCache(musicItem);
                 Clipboard.setString(
@@ -112,7 +112,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'folder-plus',
             title: '添加到歌单',
             onPress: () => {
-                showPanel('AddToMusicSheet', {musicItem});
+                showPanel('AddToMusicSheet', { musicItem });
             },
         },
         {
@@ -124,7 +124,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     musicItem,
                     type: 'download',
                     async onQualityPress(quality) {
-                        Download.downloadMusic(musicItem, quality);
+                        downloader.download(musicItem, quality);
                     },
                 });
             },
@@ -194,10 +194,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: '解除关联歌词',
             show: !!associatedLrc,
             onPress: async () => {
-                MediaMeta.update(musicItem, {
-                    associatedLrc: undefined,
-                });
-                LyricManager.refreshLyric(false, true);
+                lyricManager.unassociateLyric(musicItem);
                 Toast.success('已解除关联歌词');
                 hidePanel();
             },
@@ -260,7 +257,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                 },
                             ]}
                             keyExtractor={_ => _.title}
-                            renderItem={({item}) =>
+                            renderItem={({ item }) =>
                                 item.show !== false ? (
                                     <ListItem
                                         withHorizontalPadding

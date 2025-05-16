@@ -1,32 +1,31 @@
+import ListItem, { ListItemHeader } from "@/components/base/listItem";
+import Backup from "@/core/backup";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import Toast from "@/utils/toast";
 import React from "react";
 import { ScrollView, StyleSheet } from "react-native";
-import ListItem, { ListItemHeader } from "@/components/base/listItem";
-import Toast from "@/utils/toast";
-import Backup from "@/core/backup";
-import backup from "@/core/backup";
-import { ROUTE_PATH, useNavigate } from "@/core/router";
 
-import axios from "axios";
 import { showDialog } from "@/components/dialogs/useDialog";
 import { showPanel } from "@/components/panels/usePanel";
+import axios from "axios";
 
-import { AuthType, createClient } from "webdav";
-import Config from "@/core/config.ts";
-import { writeInChunks } from "@/utils/fileUtils.ts";
-import { getDocumentAsync } from "expo-document-picker";
-import { readAsStringAsync } from "expo-file-system";
-import sleep from "@/utils/sleep";
 import { ResumeMode } from "@/constants/commonConst.ts";
 import strings from "@/constants/strings.ts";
+import Config, { useAppConfig } from "@/core/appConfig";
+import delay from "@/utils/delay";
+import { writeInChunks } from "@/utils/fileUtils.ts";
 import { errorLog } from "@/utils/log.ts";
+import { getDocumentAsync } from "expo-document-picker";
+import { readAsStringAsync } from "expo-file-system";
+import { AuthType, createClient } from "webdav";
 
 export default function BackupSetting() {
     const navigate = useNavigate();
 
-    const resumeMode = Config.useConfigValue('backup.resumeMode');
-    const webdavUrl = Config.useConfigValue('webdav.url');
-    const webdavUsername = Config.useConfigValue('webdav.username');
-    const webdavPassword = Config.useConfigValue('webdav.password');
+    const resumeMode = useAppConfig('backup.resumeMode');
+    const webdavUrl = useAppConfig('webdav.url');
+    const webdavUsername = useAppConfig('webdav.username');
+    const webdavPassword = useAppConfig('webdav.password');
 
 
     const onBackupToLocal = async () => {
@@ -83,8 +82,8 @@ export default function BackupSetting() {
                     title: '从本地文件恢复',
                     loadingText: '恢复中...',
                     async task() {
-                        await sleep(300);
-                        return backup.resume(result, resumeMode);
+                        await delay(300, false);
+                        return Backup.resume(result, resumeMode);
                     },
                     onResolve(_, hideDialog) {
                         Toast.success('恢复成功~');

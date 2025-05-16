@@ -1,51 +1,67 @@
 import React from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
-import Download from '@/core/download';
 import ListItem from '@/components/base/listItem';
-import {sizeFormatter} from '@/utils/fileUtils';
+import { sizeFormatter } from '@/utils/fileUtils';
+import { DownloadFailReason, DownloadStatus, useDownloadQueue, useDownloadTask } from '@/core/downloader';
+import { FlashList } from '@shopify/flash-list';
+
+
+interface DownloadingListItemProps {
+    musicItem: IMusic.IMusicItem;
+}
+function DownloadingListItem(props: DownloadingListItemProps) {
+    const { musicItem } = props;
+    const taskInfo = useDownloadTask(musicItem);
+
+    const status = taskInfo?.status ?? DownloadStatus.Error;
+
+    let description = "";
+
+    if (status === DownloadStatus.Error) {
+        const reason = taskInfo?.errorReason;
+
+        if (reason === DownloadFailReason.NoWritePermission) {
+            description = "没有写入文件的权限";
+        } else if (reason === DownloadFailReason.FailToFetchSource) {
+            description = "获取音乐源失败";
+        } else {
+            description = "未知错误";
+        }
+    } else if (status === DownloadStatus.Completed) {
+        description = "下载完成";
+    } else if (status === DownloadStatus.Downloading) {
+        const progress = taskInfo?.downloadedSize ? sizeFormatter(taskInfo.downloadedSize) : '-';
+        const totalSize = taskInfo?.fileSize ? sizeFormatter(taskInfo.fileSize) : '-';
+
+        description = "下载中: " + progress + " / " + totalSize;
+    } else if (status === DownloadStatus.Pending) {
+        description = "等待下载";
+    } else if (status === DownloadStatus.Preparing) {
+        description = "正在获取音乐资源链接";
+    }
+
+    return <ListItem withHorizontalPadding>
+        <ListItem.Content
+            title={musicItem.title}
+            description={description}
+         />
+    </ListItem>
+
+}
 
 export default function DownloadingList() {
-    const downloading = Download.useDownloadingMusic();
-    const pending = Download.usePendingMusic();
-    const progress = Download.useDownloadingProgress(); // progress没有更新同步
+    const downloadQueue = useDownloadQueue();
+
 
     return (
         <View style={style.wrapper}>
-            <FlatList
+            <FlashList
                 style={style.downloading}
-                data={downloading.concat(pending)}
-                keyExtractor={_ => `dl${_.filename}`}
-                extraData={progress}
-                renderItem={({item, index}) => {
-                    if (index < downloading.length) {
-                        const prog = progress[item.filename];
-                        return (
-                            <ListItem withHorizontalPadding>
-                                <ListItem.Content
-                                    title={item.musicItem.title}
-                                    description={`${
-                                        prog?.progress
-                                            ? sizeFormatter(prog.progress)
-                                            : '-'
-                                    } / ${
-                                        prog?.size
-                                            ? sizeFormatter(prog.size)
-                                            : '-'
-                                    }`}
-                                />
-                            </ListItem>
-                        );
-                    } else {
-                        return (
-                            <ListItem withHorizontalPadding>
-                                <ListItem.Content
-                                    title={item.musicItem.title}
-                                    description="等待下载"
-                                />
-                            </ListItem>
-                        );
-                    }
+                data={downloadQueue}
+                keyExtractor={_ => `dl${_.platform}.${_.id}`}
+                renderItem={({ item }) => {
+                    return <DownloadingListItem musicItem={item} />
                 }}
             />
         </View>
