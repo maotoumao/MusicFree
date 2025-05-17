@@ -37,6 +37,7 @@ import type { IAppConfig } from '@/types/core/config';
 import type { IMusicHistory } from '@/types/core/musicHistory';
 import { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import { TrackPlayerEvents } from '@/core.defination/trackPlayer';
+import { getAppUserAgent } from '@/utils/userAgentHelper'; // <--- 新增UA统一导入
 
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
@@ -84,7 +85,7 @@ class TrackPlayer extends EventEmitter<{
             return null;
         }
 
-        return this.getPlayListMusicAt(this.currentIndex + 1);
+        return this.getPlayListMusicAt(this.currentIndex - 1); // <--- 修正: 应该是 this.currentIndex - 1
     }
 
     public get currentMusic() {
@@ -113,7 +114,7 @@ class TrackPlayer extends EventEmitter<{
     }
 
 
-    injectDependencies(configService: IAppConfig, musicHistoryService): void {
+    injectDependencies(configService: IAppConfig, musicHistoryService: IMusicHistory): void { // <--- 修正 musicHistoryService 类型
         this.configService = configService;
         this.musicHistoryService = musicHistoryService;
     }
@@ -124,7 +125,7 @@ class TrackPlayer extends EventEmitter<{
         const musicQueue = PersistStatus.get('music.playList');
         const repeatMode = PersistStatus.get('music.repeatMode');
         const progress = PersistStatus.get('music.progress');
-        const track = PersistStatus.get('music.musicItem');
+        let track = PersistStatus.get('music.musicItem'); // <--- 改为 let
         const quality =
             PersistStatus.get('music.quality') ||
             this.configService.getConfig('basic.defaultPlayQuality') ||
@@ -150,6 +151,8 @@ class TrackPlayer extends EventEmitter<{
             if (!this.configService.getConfig('basic.autoPlayWhenAppStart')) {
                 track.isInit = true;
             }
+            // 添加 UA
+            track.userAgent = getAppUserAgent();
 
             // 异步
             PluginManager.getByMedia(track)
@@ -157,6 +160,7 @@ class TrackPlayer extends EventEmitter<{
                 .then(async newSource => {
                     track.url = newSource?.url || track.url;
                     track.headers = newSource?.headers || track.headers;
+                    track.userAgent = getAppUserAgent();
 
                     if (isSameMediaItem(this.currentMusic, track)) {
                         await this.setTrackSource(track as Track, false);
@@ -211,6 +215,7 @@ class TrackPlayer extends EventEmitter<{
                             ...currentTrack,
                             // @ts-ignore
                             isInit: undefined,
+                            userAgent: getAppUserAgent(), // <--- 添加UA
                         });
                         return;
                     }
@@ -257,7 +262,7 @@ class TrackPlayer extends EventEmitter<{
         if (len === 0) {
             return null;
         }
-        return playList[(index + len) % len];
+        return playList[(index % len + len) % len]; // <--- 修正取模确保正数
     }
 
     isPlayListEmpty() {
@@ -330,8 +335,8 @@ class TrackPlayer extends EventEmitter<{
     addNext(musicItem: IMusic.IMusicItem | IMusic.IMusicItem[]): void {
         this.add(musicItem, this.currentIndex + 1);
 
-        const shouldAutoPlay = this.isPlayListEmpty();
-        if (shouldAutoPlay) {
+        const shouldAutoPlay = this.isPlayListEmpty(); // <--- 应该是判断添加前是否为空，或者第一个添加的自动播放
+        if (shouldAutoPlay && this.playList.length > 0) { // <--- 修正逻辑
             this.play(Array.isArray(musicItem) ? musicItem[0] : musicItem);
         }
     }
@@ -374,6 +379,10 @@ class TrackPlayer extends EventEmitter<{
             newPlayList = produce(playList, draft => {
                 draft.splice(targetIndex, 1);
             });
+            // 如果删除的是当前播放歌曲之前的项，需要调整currentIndex
+            if (targetIndex < this.currentIndex) {
+                this.currentIndex--;
+            }
         }
 
         this.setPlayList(newPlayList);
@@ -459,8 +468,11 @@ class TrackPlayer extends EventEmitter<{
             this.setCurrentMusic(musicItem);
             await ReactNativeTrackPlayer.setQueue([{
                 ...musicItem,
-                url: TrackPlayer.proposedAudioUrl
+                url: TrackPlayer.proposedAudioUrl,
+                userAgent: getAppUserAgent(), // <--- 设置UA
             }, this.getFakeNextTrack()]);
+
+            this.emit(TrackPlayerEvents.ProgressChanged, { position: 0, duration: musicItem.duration || 0 });
 
             // 5. 获取音源
             let track: IMusic.IMusicItem;
@@ -563,6 +575,8 @@ class TrackPlayer extends EventEmitter<{
             // 7. 合并结果
             track = this.mergeTrackSource(musicItem, source) as IMusic.IMusicItem;
 
+            track.userAgent = getAppUserAgent(); // <--- 确保UA
+
             // 8. 新增历史记录
             this.musicHistoryService.addMusic(musicItem);
 
@@ -586,6 +600,7 @@ class TrackPlayer extends EventEmitter<{
             // 11. 设置补充信息
             if (info && this.isCurrentMusic(musicItem)) {
                 const mergedTrack = this.mergeTrackSource(track, info);
+                mergedTrack.userAgent = getAppUserAgent(); // <--- 再次确保UA
                 getDefaultStore().set(currentMusicAtom, mergedTrack as IMusic.IMusicItem);
                 await ReactNativeTrackPlayer.updateMetadataForTrack(
                     0,
@@ -681,6 +696,7 @@ class TrackPlayer extends EventEmitter<{
                 const playingState = (
                     await ReactNativeTrackPlayer.getPlaybackState()
                 ).state;
+                trackToPlay.userAgent = getAppUserAgent(); // <--- 设置UA
                 await this.setTrackSource(
                     this.mergeTrackSource(musicItem, newSource) as unknown as Track,
                     !musicIsPaused(playingState),
@@ -788,6 +804,7 @@ class TrackPlayer extends EventEmitter<{
         if (!track.artwork?.trim()?.length) {
             track.artwork = undefined;
         }
+        track.userAgent = getAppUserAgent(); // <--- 确保设置UA
         await ReactNativeTrackPlayer.setQueue([track, this.getFakeNextTrack()]);
         PersistStatus.set('music.musicItem', track as IMusic.IMusicItem);
         PersistStatus.set('music.progress', 0);
@@ -837,7 +854,7 @@ class TrackPlayer extends EventEmitter<{
         mediaItem: ICommon.IMediaBase,
         props: Record<string, any> | undefined,
     ) {
-        return props
+        const merged = props
             ? {
                 ...mediaItem,
                 ...props,
@@ -845,6 +862,8 @@ class TrackPlayer extends EventEmitter<{
                 platform: mediaItem.platform,
             }
             : mediaItem;
+        merged.userAgent = getAppUserAgent(); // <--- 确保UA
+        return merged;
     }
 
     private sortByTimestampAndIndex(array: any[], newArray = false) {
@@ -871,6 +890,8 @@ class TrackPlayer extends EventEmitter<{
             track = this.getPlayListMusicAt(this.currentIndex + 1) as Track;
         }
 
+        const appUA = getAppUserAgent();
+
         if (track) {
             return produce(track, _ => {
                 _.url = TrackPlayer.fakeAudioUrl;
@@ -878,6 +899,7 @@ class TrackPlayer extends EventEmitter<{
                 if (!_.artwork?.trim()?.length) {
                     _.artwork = undefined;
                 }
+                _.userAgent = appUA;
             });
         } else {
             // 只有列表长度为0时才会出现的特殊情况
