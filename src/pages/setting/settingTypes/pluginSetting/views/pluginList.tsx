@@ -4,7 +4,7 @@ import rpx from "@/utils/rpx";
 import * as DocumentPicker from "expo-document-picker";
 import Loading from "@/components/base/loading";
 
-import PluginManager, { IInstallPluginResult } from "@/core/pluginManager";
+import PluginManager, { useSortedPlugins } from "@/core/pluginManager";
 import { trace } from "@/utils/log";
 
 import Toast from "@/utils/toast";
@@ -19,6 +19,7 @@ import AppBar from "@/components/base/appBar";
 import Fab from "@/components/base/fab";
 import PluginItem from "../components/pluginItem";
 import { IIconName } from "@/components/base/icon.tsx";
+import { IInstallPluginResult } from "@/types/core/pluginManager";
 
 interface IOption {
     icon: IIconName;
@@ -27,7 +28,8 @@ interface IOption {
 }
 
 export default function PluginList() {
-    const plugins = PluginManager.useSortedPlugins();
+    const plugins = useSortedPlugins();
+    console.log("uuuuuusesorted", plugins);
     const [loading, setLoading] = useState(false);
 
     const navigator = useNavigation<any>();
@@ -200,7 +202,7 @@ export default function PluginList() {
     }
 
     async function onUpdateAllClick() {
-        const plugins = PluginManager.getValidPlugins();
+        const plugins = PluginManager.getEnabledPlugins();
         setLoading(true);
 
         const successResults: IInstallPluginResult[] = [];
@@ -256,7 +258,7 @@ export default function PluginList() {
                             data={plugins ?? []}
                             keyExtractor={_ => _.hash}
                             renderItem={({ item: plugin }) => (
-                                <PluginItem key={plugin.hash} plugin={plugin} enabled={plugin.state === 'enabled'} />
+                                <PluginItem key={plugin.hash} plugin={plugin}/>
                             )}
                         />
                     )}

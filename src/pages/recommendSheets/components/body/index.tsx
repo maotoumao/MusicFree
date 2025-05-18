@@ -1,17 +1,17 @@
-import React, {useState} from 'react';
-import {Text} from 'react-native';
-import rpx, {vw} from '@/utils/rpx';
-import {TabBar, TabView} from 'react-native-tab-view';
-import PluginManager from '@/core/pluginManager';
-import {fontWeightConst} from '@/constants/uiConst';
-import SheetBody from './sheetBody';
-import useColors from '@/hooks/useColors';
 import NoPlugin from '@/components/base/noPlugin';
+import { fontWeightConst } from '@/constants/uiConst';
+import PluginManager from '@/core/pluginManager';
+import useColors from '@/hooks/useColors';
+import rpx, { vw } from '@/utils/rpx';
+import React, { useState } from 'react';
+import { Text } from 'react-native';
+import { TabBar, TabView } from 'react-native-tab-view';
+import SheetBody from './sheetBody';
 
 export default function Body() {
     const [index, setIndex] = useState(0);
     const colors = useColors();
-    const routes = PluginManager.getSortedRecommendSheetablePlugins().map(
+    const routes = PluginManager.getSortedPluginsWithAbility('getRecommendSheetsByTag').map(
         _ => ({
             key: _.hash,
             title: _.name,
@@ -33,7 +33,7 @@ export default function Body() {
             pressColor="transparent"
             inactiveColor={colors.text}
             activeColor={colors.primary}
-            renderLabel={({route, focused, color}) => (
+            renderLabel={({ route, focused, color }) => (
                 <Text
                     numberOfLines={1}
                     style={{
@@ -69,7 +69,7 @@ export default function Body() {
                 return <SheetBody hash={props.route.key} />;
             }}
             onIndexChange={setIndex}
-            initialLayout={{width: vw(100)}}
+            initialLayout={{ width: vw(100) }}
             swipeEnabled={false}
         />
     );

@@ -15,7 +15,7 @@ import path from "path-browserify";
 import { useEffect, useState } from "react";
 import { copyFile, downloadFile, exists, unlink } from "react-native-fs";
 import LocalMusicSheet from "./localMusicSheet";
-import PluginManager from "./pluginManager";
+import { IPluginManager } from "@/types/core/pluginManager";
 
 
 export enum DownloadStatus {
@@ -95,6 +95,7 @@ interface IEvents {
 
 class Downloader extends EventEmitter<IEvents> implements IInjectable {
     private configService!: IAppConfig;
+    private pluginManagerService!: IPluginManager;
 
     private downloadingCount = 0;
 
@@ -107,8 +108,9 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
     }
 
 
-    injectDependencies(configService: IAppConfig,): void {
+    injectDependencies(configService: IAppConfig, pluginManager: IPluginManager): void {
         this.configService = configService;
+        this.pluginManagerService = pluginManager;
     }
 
     private updateDownloadTask(musicItem: IMusic.IMusicItem, patch: Partial<IDownloadTaskInfo>) {
@@ -213,7 +215,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
         let url = musicItem.url;
         let headers = musicItem.headers;
 
-        const plugin = PluginManager.getByName(musicItem.platform);
+        const plugin = this.pluginManagerService.getByName(musicItem.platform);
 
         try {
             if (plugin) {
@@ -345,7 +347,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
         // 清理工作
         await unlink(cacheDownloadPath);
         this.downloadNextPendingTask();
-        
+
         // 如果任务状态是完成，则从队列中移除
         const key = getMediaUniqueKey(musicItem);
         if (downloadTasks.get(key)?.status === DownloadStatus.Completed) {

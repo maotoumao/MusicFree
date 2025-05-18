@@ -1,15 +1,15 @@
-import React, {useCallback, useState} from 'react';
-import {StyleSheet, Text} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { StyleSheet, Text } from 'react-native';
 import rpx from '@/utils/rpx';
 import PluginManager from '@/core/pluginManager';
-import {TabBar, TabView} from 'react-native-tab-view';
-import {fontWeightConst} from '@/constants/uiConst';
+import { TabBar, TabView } from 'react-native-tab-view';
+import { fontWeightConst } from '@/constants/uiConst';
 import BoardPanelWrapper from './boardPanelWrapper';
 import useColors from '@/hooks/useColors';
 import NoPlugin from '@/components/base/noPlugin';
 
 export default function TopListBody() {
-    const routes = PluginManager.getSortedTopListsablePlugins().map(_ => ({
+    const routes = PluginManager.getSortedPluginsWithAbility('getTopLists').map(_ => ({
         key: _.hash,
         title: _.name,
     }));
@@ -17,7 +17,7 @@ export default function TopListBody() {
     const colors = useColors();
 
     const renderScene = useCallback(
-        (props: {route: {key: string}}) => (
+        (props: { route: { key: string } }) => (
             <BoardPanelWrapper hash={props?.route?.key} />
         ),
         [],
@@ -41,7 +41,7 @@ export default function TopListBody() {
                     scrollEnabled
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
-                    renderLabel={({route, focused, color}) => (
+                    renderLabel={({ route, focused, color }) => (
                         <Text
                             numberOfLines={1}
                             style={{
@@ -63,7 +63,7 @@ export default function TopListBody() {
             )}
             renderScene={renderScene}
             onIndexChange={setIndex}
-            initialLayout={{width: rpx(750)}}
+            initialLayout={{ width: rpx(750) }}
         />
     );
 }

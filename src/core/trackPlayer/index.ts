@@ -6,7 +6,6 @@ import {
 } from '@/constants/commonConst';
 import { MusicRepeatMode } from '@/constants/repeatModeConst';
 import delay from '@/utils/delay';
-import getSimilarMusic from '@/utils/getSimilarMusic';
 import getUrlExt from '@/utils/getUrlExt';
 import { errorLog, trace } from '@/utils/log';
 import { createMediaIndexMap } from '@/utils/mediaIndexMap';
@@ -31,12 +30,15 @@ import ReactNativeTrackPlayer, {
     useProgress,
 } from 'react-native-track-player';
 import LocalMusicSheet from '../localMusicSheet';
-import PluginManager from '../pluginManager';
 
+import { TrackPlayerEvents } from '@/core.defination/trackPlayer';
 import type { IAppConfig } from '@/types/core/config';
 import type { IMusicHistory } from '@/types/core/musicHistory';
 import { ITrackPlayer } from '@/types/core/trackPlayer/index';
-import { TrackPlayerEvents } from '@/core.defination/trackPlayer';
+import minDistance from '@/utils/minDistance';
+import { IPluginManager } from '@/types/core/pluginManager';
+
+
 
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
@@ -55,6 +57,7 @@ class TrackPlayer extends EventEmitter<{
     // 依赖
     private configService!: IAppConfig;
     private musicHistoryService!: IMusicHistory;
+    private pluginManagerService!: IPluginManager;
 
     // 当前播放的音乐下标
     private currentIndex = -1;
@@ -113,9 +116,10 @@ class TrackPlayer extends EventEmitter<{
     }
 
 
-    injectDependencies(configService: IAppConfig, musicHistoryService): void {
+    injectDependencies(configService: IAppConfig, musicHistoryService: IMusicHistory, pluginManager: IPluginManager): void {
         this.configService = configService;
         this.musicHistoryService = musicHistoryService;
+        this.pluginManagerService = pluginManager;
     }
 
 
@@ -152,8 +156,8 @@ class TrackPlayer extends EventEmitter<{
             }
 
             // 异步
-            PluginManager.getByMedia(track)
-                ?.methods.getMediaSource(track, quality, 0)
+            this.pluginManagerService.getByMedia(track)
+                ?.methods.getMediaSource(track, quality)
                 .then(async newSource => {
                     track.url = newSource?.url || track.url;
                     track.headers = newSource?.headers || track.headers;
@@ -461,7 +465,7 @@ class TrackPlayer extends EventEmitter<{
             let track: IMusic.IMusicItem;
 
             // 5.1 通过插件获取音源
-            const plugin = PluginManager.getByName(musicItem.platform);
+            const plugin = this.pluginManagerService.getByName(musicItem.platform);
             // 5.2 获取音质排序
             const qualityOrder = getQualityOrder(
                 this.configService.getConfig('basic.defaultPlayQuality') ?? 'standard',
@@ -507,7 +511,7 @@ class TrackPlayer extends EventEmitter<{
                     // 插件失效的情况
                     if (this.configService.getConfig('basic.tryChangeSourceWhenPlayFail')) {
                         // 重试
-                        const similarMusic = await getSimilarMusic(
+                        const similarMusic = await this.getSimilarMusic(
                             musicItem,
                             'music',
                             () => !this.isCurrentMusic(musicItem),
@@ -515,7 +519,7 @@ class TrackPlayer extends EventEmitter<{
 
                         if (similarMusic) {
                             const similarMusicPlugin =
-                                PluginManager.getByMedia(similarMusic);
+                                this.pluginManagerService.getByMedia(similarMusic);
 
                             for (let quality of qualityOrder) {
                                 if (this.isCurrentMusic(musicItem)) {
@@ -664,7 +668,7 @@ class TrackPlayer extends EventEmitter<{
         }
         try {
             const progress = await ReactNativeTrackPlayer.getProgress();
-            const plugin = PluginManager.getByMedia(musicItem);
+            const plugin = this.pluginManagerService.getByMedia(musicItem);
             const newSource = await plugin?.methods?.getMediaSource(
                 musicItem,
                 newQuality,
@@ -890,6 +894,71 @@ class TrackPlayer extends EventEmitter<{
             await delay(500);
             await this.skipToNext();
         }
+    }
+
+    /**
+ *
+ * @param musicItem 音乐类型
+ * @param type 媒体类型
+ * @param abortFunction 如果函数为true，则中断
+ * @returns
+ */
+    private async getSimilarMusic<T extends ICommon.SupportMediaType>(
+        musicItem: IMusic.IMusicItem,
+        type: T = 'music' as T,
+        abortFunction?: () => boolean,
+    ): Promise<ICommon.SupportMediaItemBase[T] | null> {
+        const keyword = musicItem.alias || musicItem.title;
+        const plugins = this.pluginManagerService.getSearchablePlugins(type);
+
+        let distance = Infinity;
+        let minDistanceMusicItem;
+        let targetPlugin;
+
+        const startTime = Date.now();
+
+        for (let plugin of plugins) {
+            // 超时时间：8s
+            if (abortFunction?.() || Date.now() - startTime > 8000) {
+                break;
+            }
+            if (plugin.name === musicItem.platform) {
+                continue;
+            }
+            const results = await plugin.methods
+                .search(keyword, 1, type)
+                .catch(() => null);
+
+            // 取前两个
+            const firstTwo = results?.data?.slice(0, 2) || [];
+
+            for (let item of firstTwo) {
+                if (item.title === keyword && item.artist === musicItem.artist) {
+                    distance = 0;
+                    minDistanceMusicItem = item;
+                    targetPlugin = plugin;
+                    break;
+                } else {
+                    const dist =
+                        minDistance(keyword, musicItem.title) +
+                        minDistance(item.artist, musicItem.artist);
+                    if (dist < distance) {
+                        distance = dist;
+                        minDistanceMusicItem = item;
+                        targetPlugin = plugin;
+                    }
+                }
+            }
+
+            if (distance === 0) {
+                break;
+            }
+        }
+        if (minDistanceMusicItem && targetPlugin) {
+            return minDistanceMusicItem as ICommon.SupportMediaItemBase[T];
+        }
+
+        return null;
     }
 
 }

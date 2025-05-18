@@ -2,7 +2,7 @@ import {atom, getDefaultStore, useAtom} from 'jotai';
 import {RequestStateCode} from '@/constants/commonConst.ts';
 import {useEffect, useRef} from 'react';
 import {isSameMediaItem} from '@/utils/mediaUtils';
-import PluginManager from '@/core/pluginManager.ts';
+import PluginManager from '@/core/pluginManager';
 
 const reqStateAtom = atom(RequestStateCode.PENDING_FIRST_PAGE);
 const commentsAtom = atom<{

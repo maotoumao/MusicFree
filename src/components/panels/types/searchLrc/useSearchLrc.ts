@@ -1,8 +1,8 @@
-import { devLog, errorLog } from '@/utils/log';
 import { RequestStateCode } from '@/constants/commonConst';
+import PluginManager, { Plugin } from '@/core/pluginManager';
+import { devLog, errorLog } from '@/utils/log';
 import { produce } from 'immer';
 import { useCallback, useRef } from 'react';
-import PluginManager, { Plugin } from '@/core/pluginManager';
 import searchResultStore from './searchResultStore';
 
 export default function useSearchLrc() {
