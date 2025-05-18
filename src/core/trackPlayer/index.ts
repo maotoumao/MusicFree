@@ -84,7 +84,7 @@ class TrackPlayer extends EventEmitter<{
             return null;
         }
 
-        return this.getPlayListMusicAt(this.currentIndex + 1);
+        return this.getPlayListMusicAt(this.currentIndex - 1);
     }
 
     public get currentMusic() {
@@ -310,11 +310,6 @@ class TrackPlayer extends EventEmitter<{
         }
         // 3. 设置播放列表
         this.setPlayList(newPlayList);
-
-        // 4. 重置下标
-        if (this.currentMusic) {
-            this.currentIndex = this.getMusicIndexInPlayList(this.currentMusic);
-        }
     }
 
     add(
@@ -766,8 +761,6 @@ class TrackPlayer extends EventEmitter<{
             this.setPlayList(newPlayList);
         }
 
-        const currentMusicItem = this.currentMusic;
-        this.currentIndex = this.getMusicIndexInPlayList(currentMusicItem);
         getDefaultStore().set(repeatModeAtom, mode);
         // 更新下一首歌的信息
         ReactNativeTrackPlayer.updateMetadataForTrack(
@@ -809,6 +802,8 @@ class TrackPlayer extends EventEmitter<{
         if (persist) {
             PersistStatus.set('music.playList', newPlayList);
         }
+
+        this.currentIndex = this.getMusicIndexInPlayList(this.currentMusic);
     }
 
 
