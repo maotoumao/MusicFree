@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 
 import useColors from "@/hooks/useColors";
-import PluginManager, { Plugin } from "@/core/pluginManager";
+import PluginManager, { Plugin, usePluginEnabled } from "@/core/pluginManager";
 
 import Toast from "@/utils/toast";
 import Clipboard from "@react-native-clipboard/clipboard";
@@ -11,13 +11,11 @@ import rpx from "@/utils/rpx";
 import { StyleSheet, View } from "react-native";
 import ThemeText from "@/components/base/themeText";
 import IconTextButton from "@/components/base/iconTextButton";
-import { PluginMeta } from "@/core/pluginMeta";
 import ThemeSwitch from "@/components/base/switch";
 import { IIconName } from "@/components/base/icon.tsx";
 
 interface IPluginItemProps {
     plugin: Plugin;
-    enabled: boolean;
 }
 
 interface IOption {
@@ -28,8 +26,10 @@ interface IOption {
 }
 
 function _PluginItem(props: IPluginItemProps) {
-    const {plugin, enabled} = props;
+    const { plugin } = props;
     const colors = useColors();
+    const enabled = usePluginEnabled(plugin);
+
     const options: IOption[] = [
         {
             title: '更新插件',
@@ -123,7 +123,7 @@ function _PluginItem(props: IPluginItemProps) {
                         const result = await plugin.methods.importMusicSheet(
                             text,
                         );
-                        if (result.length > 0) {
+                        if (result && result.length > 0) {
                             showDialog('SimpleDialog', {
                                 title: '准备导入',
                                 content: `发现${result.length}首歌曲! 现在开始导入吗?`,
@@ -148,17 +148,12 @@ function _PluginItem(props: IPluginItemProps) {
                 if (Array.isArray(plugin.instance.userVariables)) {
                     showPanel('SetUserVariables', {
                         async onOk(newValue, closePanel) {
-                            await PluginMeta.setPluginMetaProp(
-                                plugin,
-                                'userVariables',
-                                newValue,
-                            );
+                            PluginManager.setUserVariables(plugin, newValue);
                             Toast.success('设置成功~');
                             closePanel();
                         },
                         variables: plugin.instance.userVariables,
-                        initValues:
-                            PluginMeta.getPluginMeta(plugin)?.userVariables,
+                        initValues: PluginManager.getUserVariables(plugin),
                     });
                 }
             },
@@ -258,7 +253,7 @@ function _PluginItem(props: IPluginItemProps) {
 }
 
 const PluginItem = memo(_PluginItem, (prev, curr) => {
-    return prev.plugin === curr.plugin && prev.enabled === curr.enabled;
+    return prev.plugin === curr.plugin;
 });
 export default PluginItem;
 

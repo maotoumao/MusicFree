@@ -14,7 +14,7 @@ import { iconSizeConst } from "@/constants/uiConst";
 import PersistStatus from "@/utils/persistStatus";
 import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";
-import PluginManager from "@/core/pluginManager.ts";
+import PluginManager from "@/core/pluginManager";
 import downloader from "@/core/downloader";
 
 export default function Operations() {
@@ -87,7 +87,7 @@ export default function Operations() {
                                 try {
                                     await TrackPlayer.setRate(newRate / 100);
                                     PersistStatus.set('music.rate', newRate);
-                                } catch {}
+                                } catch { }
                             }
                         },
                     });

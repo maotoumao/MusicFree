@@ -28,9 +28,9 @@ import { getAppUserAgent } from "@/utils/userAgentHelper"; // <--- 新增UA导�
 
 // 依赖管理
 musicHistory.injectDependencies(Config);
-TrackPlayer.injectDependencies(Config, musicHistory);
-downloader.injectDependencies(Config);
-lyricManager.injectDependencies(TrackPlayer, Config);
+TrackPlayer.injectDependencies(Config, musicHistory, PluginManager);
+downloader.injectDependencies(Config, PluginManager);
+lyricManager.injectDependencies(TrackPlayer, Config, PluginManager);
 MusicSheet.injectDependencies(Config);
 
 
@@ -205,7 +205,7 @@ async function extraMakeup() {
             const now = Date.now();
             if (Math.abs(now - lastUpdated) > 86400000) {
                 PersistStatus.set('app.pluginUpdateTime', now);
-                const plugins = PluginManager.getValidPlugins();
+                const plugins = PluginManager.getEnabledPlugins();
                 for (let i = 0; i < plugins.length; ++i) {
                     const srcUrl = plugins[i].instance.srcUrl;
                     if (srcUrl) {

@@ -6,7 +6,7 @@ import { getMediaExtraProperty, patchMediaExtra } from "@/utils/mediaExtra";
 import { isSameMediaItem } from "@/utils/mediaUtils";
 import minDistance from "@/utils/minDistance";
 import { atom, getDefaultStore, useAtomValue } from "jotai";
-import PluginManager, { Plugin } from "./pluginManager";
+import { Plugin } from "./pluginManager";
 
 import pathConst from "@/constants/pathConst";
 import LyricUtil from "@/native/lyricUtil";
@@ -16,6 +16,7 @@ import CryptoJs from "crypto-js";
 import { unlink, writeFile } from "react-native-fs";
 import RNTrackPlayer, { Event } from "react-native-track-player";
 import { TrackPlayerEvents } from "@/core.defination/trackPlayer";
+import { IPluginManager } from "@/types/core/pluginManager";
 
 
 interface ILyricState {
@@ -38,7 +39,8 @@ const currentLyricItemAtom = atom<IParsedLrcItem | null>(null);
 class LyricManager implements IInjectable {
 
     private trackPlayer!: ITrackPlayer;
-    private appConfig!: IAppConfig
+    private appConfig!: IAppConfig;
+    private pluginManager!: IPluginManager;
 
     private lyricParser: LyricParser | null = null;
 
@@ -51,9 +53,10 @@ class LyricManager implements IInjectable {
         return getDefaultStore().get(lyricStateAtom);
     }
 
-    injectDependencies(trackPlayerService: ITrackPlayer, appConfigService: IAppConfig): void {
+    injectDependencies(trackPlayerService: ITrackPlayer, appConfigService: IAppConfig, pluginManager: IPluginManager): void {
         this.trackPlayer = trackPlayerService;
         this.appConfig = appConfigService;
+        this.pluginManager = pluginManager;
     }
 
     setup() {
@@ -261,7 +264,7 @@ class LyricManager implements IInjectable {
                 // 重置歌词状态
                 this.setLyricAsLoadingState();
 
-                lrcSource = (await PluginManager.getByMedia(currentMusicItem)?.methods?.getLyric(currentMusicItem)) ?? null;
+                lrcSource = (await this.pluginManager.getByMedia(currentMusicItem)?.methods?.getLyric(currentMusicItem)) ?? null;
             }
 
             // 切换到其他歌曲了, 直接返回
@@ -336,7 +339,7 @@ class LyricManager implements IInjectable {
      */
     private async searchSimilarLyric(musicItem: IMusic.IMusicItem) {
         const keyword = musicItem.alias || musicItem.title;
-        const plugins = PluginManager.getSearchablePlugins("lyric");
+        const plugins = this.pluginManager.getSearchablePlugins("lyric");
 
         let distance = Infinity;
         let minDistanceMusicItem;

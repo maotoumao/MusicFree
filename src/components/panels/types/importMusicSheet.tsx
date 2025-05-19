@@ -1,23 +1,21 @@
-import React from 'react';
-import {View} from 'react-native';
-import {vmax} from '@/utils/rpx';
 import ListItem from '@/components/base/listItem';
+import { vmax } from '@/utils/rpx';
 import Toast from '@/utils/toast';
+import React from 'react';
+import { View } from 'react-native';
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import {FlatList} from 'react-native-gesture-handler';
-import {showPanel} from '../usePanel';
-import PanelHeader from '../base/panelHeader';
-import PluginManager from '@/core/pluginManager';
 import NoPlugin from '@/components/base/noPlugin';
+import { showDialog } from '@/components/dialogs/useDialog';
 import globalStyle from '@/constants/globalStyle';
-import {showDialog} from '@/components/dialogs/useDialog';
+import PluginManager from '@/core/pluginManager';
+import { FlatList } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import PanelBase from '../base/panelBase';
+import PanelHeader from '../base/panelHeader';
+import { showPanel } from '../usePanel';
 
 export default function ImportMusicSheet() {
-    const plugins = PluginManager.useSortedPlugins() || [];
-
-    const validPlugins = plugins.filter(it => !!it.instance?.importMusicSheet);
+    const validPlugins = PluginManager.getSortedPluginsWithAbility('importMusicSheet');
 
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -35,7 +33,7 @@ export default function ImportMusicSheet() {
                                 style={{
                                     marginBottom: safeAreaInsets.bottom,
                                 }}
-                                renderItem={({item: plugin}) => (
+                                renderItem={({ item: plugin }) => (
                                     <ListItem
                                         withHorizontalPadding
                                         key={`${plugin.hash}`}
@@ -55,7 +53,7 @@ export default function ImportMusicSheet() {
                                                         await plugin.methods.importMusicSheet(
                                                             text,
                                                         );
-                                                    if (result.length > 0) {
+                                                    if (result && result.length > 0) {
                                                         showDialog(
                                                             'SimpleDialog',
                                                             {

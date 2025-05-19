@@ -2,8 +2,7 @@ import {
     internalSerializeKey,
     localPluginPlatform,
 } from '@/constants/commonConst';
-import { produce } from 'immer';
-import { getMediaExtraProperty, patchMediaExtra } from './mediaExtra';
+import { getMediaExtraProperty } from './mediaExtra';
 
 /**
  * 获取媒体资源的唯一key
@@ -74,10 +73,11 @@ export function resetMediaItem<T extends ICommon.IMediaBase>(
         mediaItem[internalSerializeKey] = undefined;
         return mediaItem;
     } else {
-        return produce(mediaItem, _ => {
-            _.platform = platform ?? mediaItem.platform;
-            _[internalSerializeKey] = undefined;
-        });
+        return {
+            ...mediaItem,
+            platform: platform ?? mediaItem.platform,
+            [internalSerializeKey]: undefined,
+        };
     }
 }
 
@@ -106,20 +106,4 @@ export function getLocalPath(mediaItem: ICommon.IMediaBase) {
     const localPathInMediaExtra = getMediaExtraProperty(mediaItem, 'localPath');
 
     return localPathInMediaExtra ?? null;
-}
-
-
-/** 关联歌词 */
-export async function associateLrc(
-    musicItem: ICommon.IMediaBase,
-    linkto: ICommon.IMediaBase,
-) {
-    if (!musicItem || !linkto) {
-        throw new Error('');
-    }
-
-    // 如果相同直接断链
-    patchMediaExtra(musicItem, {
-        associatedLrc: isSameMediaItem(musicItem, linkto) ? undefined : linkto,
-    })
 }
