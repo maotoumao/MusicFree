@@ -5,18 +5,17 @@ import MusicSheetPage from '@/components/musicSheetPage';
 
 export default function AlbumDetail() {
     const {albumItem: originalAlbumItem} = useParams<'album-detail'>();
-    const [loadMore, albumItem, musicList, getAlbumDetail] =
+    const [requestStateCode, albumItem, musicList, getAlbumDetail] =
         useAlbumDetail(originalAlbumItem);
 
     return (
         <MusicSheetPage
             navTitle="专辑"
             sheetInfo={albumItem}
-            loadMore={loadMore}
+            state={requestStateCode}
+            onRetry={getAlbumDetail}
+            onLoadMore={getAlbumDetail}
             musicList={musicList}
-            onEndReached={() => {
-                getAlbumDetail();
-            }}
         />
     );
 }

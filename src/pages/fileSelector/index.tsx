@@ -3,8 +3,8 @@ import {Pressable, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import {
-    exists,
     ExternalStorageDirectoryPath,
+    exists,
     getAllExternalFilesDirs,
     readDir,
 } from 'react-native-fs';

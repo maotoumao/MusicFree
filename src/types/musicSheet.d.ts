@@ -13,7 +13,7 @@ declare namespace IMusic {
         description?: string;
         /** 作品总数 */
         worksNum?: number;
-        platform?: string;
+        platform: string;
         [k: string]: any;
     }
     /** 歌单项 */

@@ -20,7 +20,7 @@ interface IBackJson {
 
 function backup() {
     const musicSheets = MusicSheet.backupSheets();
-    const plugins = PluginManager.getValidPlugins();
+    const plugins = PluginManager.getEnabledPlugins();
     const normalizedPlugins = plugins.map(_ => ({
         srcUrl: _.instance.srcUrl,
         version: _.instance.version,
@@ -45,7 +45,7 @@ async function resume(
 
     const {plugins, musicSheets} = obj ?? {};
     /** 恢复插件 */
-    const validPlugins = PluginManager.getValidPlugins();
+    const validPlugins = PluginManager.getEnabledPlugins();
     const resumePlugins = plugins?.map(_ => {
         // 校验是否安装过: 同源且本地版本更高就忽略掉
         if (

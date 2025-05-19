@@ -1,6 +1,10 @@
+/**
+ * 全局持久化的状态
+ */
+
 import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
-import safeParse from "@/utils/safeParse";
 import { useEffect, useState } from "react";
+import { safeParse } from "./jsonUtil";
 
 // Internal Method
 const getStore = () => {

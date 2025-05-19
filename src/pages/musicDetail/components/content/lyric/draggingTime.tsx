@@ -3,10 +3,10 @@ import {StyleSheet, Text} from 'react-native';
 import rpx from '@/utils/rpx';
 import timeformat from '@/utils/timeformat';
 import {fontSizeConst} from '@/constants/uiConst';
-import TrackPlayer from '@/core/trackPlayer';
+import { useProgress } from '@/core/trackPlayer';
 
 export default function DraggingTime(props: {time: number}) {
-    const progress = TrackPlayer.useProgress();
+    const progress = useProgress();
 
     return (
         <Text style={style.draggingTimeText}>

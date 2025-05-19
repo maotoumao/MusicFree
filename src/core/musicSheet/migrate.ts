@@ -1,10 +1,10 @@
-import {getAppMeta, setAppMeta} from '@/core/appMeta.ts';
 import {getStorage as oldGetStorage} from '@/utils/storage';
 import storage from '@/core/musicSheet/storage.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import appMeta from '../appMeta';
 
 export default async function migrate() {
-    const dbUpdated = +(getAppMeta('MusicSheetVersion') || '0') > 1;
+    const dbUpdated = appMeta.musicSheetVersion > 1;
     if (dbUpdated) {
         return;
     }
@@ -14,7 +14,7 @@ export default async function migrate() {
             'music-sheets',
         );
         if (!musicSheets) {
-            setAppMeta('MusicSheetVersion', '1');
+            appMeta.setMusicSheetVersion(1);
             return;
         }
 
@@ -25,7 +25,7 @@ export default async function migrate() {
             await storage.setMusicList(sheet.id, musicList);
             await AsyncStorage.removeItem(sheet.id);
         }
-        setAppMeta('MusicSheetVersion', '1');
+        appMeta.setMusicSheetVersion(1);
     } catch (e) {
         console.warn('升级失败', e);
     }
@@ -33,7 +33,7 @@ export default async function migrate() {
 
 export const migrateV2 = {
     migrate(sheetId: string, musicItems: IMusic.IMusicItem[]) {
-        const dbUpdated = getAppMeta('MusicSheetVersion') === '2';
+        const dbUpdated = appMeta.musicSheetVersion === 2;
         if (dbUpdated) {
             return;
         }
@@ -51,6 +51,6 @@ export const migrateV2 = {
         }
     },
     done() {
-        setAppMeta('MusicSheetVersion', '2');
+        appMeta.setMusicSheetVersion(2);
     },
 };

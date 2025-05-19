@@ -6,7 +6,7 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { hideDialog } from "../useDialog";
 import Checkbox from "@/components/base/checkbox";
 import Dialog from "./base";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 import NativeUtils from "@/native/utils";
 
 export default function CheckStorage() {

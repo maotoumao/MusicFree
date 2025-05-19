@@ -7,13 +7,13 @@ import useColors from '@/hooks/useColors';
 import {useAtom, useSetAtom} from 'jotai';
 import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import Toast from '@/utils/toast';
-import Download from '@/core/download';
 
 import {useParams} from '@/core/router';
 import {showPanel} from '@/components/panels/usePanel';
 import TrackPlayer from '@/core/trackPlayer';
 import {produce} from 'immer';
 import Icon, {IIconName} from '@/components/base/icon.tsx';
+import downloader from '@/core/downloader';
 
 export default function Bottom() {
     const {musicSheet} = useParams<'music-list-editor'>();
@@ -68,7 +68,7 @@ export default function Bottom() {
                 title="下载"
                 onPress={() => {
                     if (selectedItems.length) {
-                        Download.downloadMusic(selectedItems);
+                        downloader.download(selectedItems);
                         Toast.success(
                             '开始下载；全部下载完成之前请不要关闭应用',
                         );

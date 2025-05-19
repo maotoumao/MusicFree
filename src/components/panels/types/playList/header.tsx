@@ -1,15 +1,15 @@
-import React from 'react';
-import {InteractionManager, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
+import IconTextButton from '@/components/base/iconTextButton';
 import ThemeText from '@/components/base/themeText';
 import repeatModeConst from '@/constants/repeatModeConst';
-import IconTextButton from '@/components/base/iconTextButton';
-import TrackPlayer from '@/core/trackPlayer';
-import sleep from '@/utils/sleep.ts';
+import TrackPlayer, { usePlayList, useRepeatMode } from '@/core/trackPlayer';
+import delay from '@/utils/delay';
+import rpx from '@/utils/rpx';
+import React from 'react';
+import { InteractionManager, StyleSheet, View } from 'react-native';
 
 export default function Header() {
-    const repeatMode = TrackPlayer.useRepeatMode();
-    const playList = TrackPlayer.usePlayList();
+    const repeatMode = useRepeatMode();
+    const playList = usePlayList();
 
     return (
         <View style={style.wrapper}>
@@ -26,7 +26,7 @@ export default function Header() {
             <IconTextButton
                 onPress={() => {
                     InteractionManager.runAfterInteractions(async () => {
-                        await sleep(20);
+                        await delay(20, false);
                         TrackPlayer.toggleRepeatMode();
                     });
                 }}
@@ -36,7 +36,7 @@ export default function Header() {
             <IconTextButton
                 icon="trash-outline"
                 onPress={() => {
-                    TrackPlayer.clear();
+                    TrackPlayer.clearPlayList();
                 }}>
                 清空
             </IconTextButton>

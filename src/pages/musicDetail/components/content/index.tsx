@@ -3,7 +3,7 @@ import { View } from "react-native";
 import AlbumCover from "./albumCover";
 import Lyric from "./lyric";
 import useOrientation from "@/hooks/useOrientation";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import globalStyle from "@/constants/globalStyle";
 
 export default function Content() {

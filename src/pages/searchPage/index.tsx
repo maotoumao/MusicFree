@@ -3,8 +3,8 @@ import {StyleSheet, View} from 'react-native';
 import NavBar from './components/navBar';
 import {useAtom, useSetAtom} from 'jotai';
 import {
-    initSearchResults,
     PageStatus,
+    initSearchResults,
     pageStatusAtom,
     queryAtom,
     searchResultsAtom,

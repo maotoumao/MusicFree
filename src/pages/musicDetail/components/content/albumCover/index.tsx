@@ -4,7 +4,7 @@ import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import useOrientation from '@/hooks/useOrientation';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import TrackPlayer from '@/core/trackPlayer';
+import { useCurrentMusic } from '@/core/trackPlayer';
 import globalStyle from '@/constants/globalStyle';
 import {View} from 'react-native';
 import Operations from './operations';
@@ -17,7 +17,7 @@ interface IProps {
 export default function AlbumCover(props: IProps) {
     const {onTurnPageClick} = props;
 
-    const musicItem = TrackPlayer.useCurrentMusic();
+    const musicItem = useCurrentMusic();
     const orientation = useOrientation();
 
     const artworkStyle = useMemo(() => {

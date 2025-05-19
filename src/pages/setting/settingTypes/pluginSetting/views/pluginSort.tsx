@@ -1,28 +1,25 @@
-import {StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import AppBar from '@/components/base/appBar';
+import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import SortableFlatList from '@/components/base/SortableFlatList';
 import ThemeText from '@/components/base/themeText';
-import {PluginMeta} from '@/core/pluginMeta';
-import {produce} from 'immer';
-import objectPath from 'object-path';
-import rpx from '@/utils/rpx';
-import PluginManager, {Plugin} from '@/core/pluginManager';
-import Toast from '@/utils/toast';
-import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
-import AppBar from '@/components/base/appBar';
+import PluginManager, { Plugin, useSortedPlugins } from '@/core/pluginManager';
 import useColors from '@/hooks/useColors';
+import rpx from '@/utils/rpx';
+import Toast from '@/utils/toast';
+import React, { useState } from 'react';
+import { StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const ITEM_HEIGHT = rpx(96);
 const marginTop = rpx(188) + (StatusBar.currentHeight ?? 0);
 
 export default function PluginSort() {
-    const plugins = PluginManager.useSortedPlugins();
+    const plugins = useSortedPlugins();
     const [sortingPlugins, setSortingPlugins] = useState([...plugins]);
 
     const colors = useColors();
 
-    function renderSortingItem({item}: {item: Plugin}) {
+    function renderSortingItem({ item }: { item: Plugin }) {
         return (
             <View style={style.sortItem}>
                 <ThemeText>{item.name}</ThemeText>
@@ -37,20 +34,7 @@ export default function PluginSort() {
                     <ThemeText fontWeight="bold">插件排序</ThemeText>
                     <TouchableOpacity
                         onPress={async () => {
-                            await PluginMeta.setPluginMetaAll(
-                                produce(
-                                    PluginMeta.getPluginMetaAll(),
-                                    draft => {
-                                        sortingPlugins.forEach((plg, idx) => {
-                                            objectPath.set(
-                                                draft,
-                                                `${plg.name}.order`,
-                                                idx,
-                                            );
-                                        });
-                                    },
-                                ),
-                            );
+                            PluginManager.setPluginOrder(sortingPlugins);
                             Toast.success('已保存');
                         }}>
                         <ThemeText>完成</ThemeText>

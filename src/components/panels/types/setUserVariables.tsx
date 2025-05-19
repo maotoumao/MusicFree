@@ -1,12 +1,12 @@
-import React, {useRef} from 'react';
-import {KeyboardAvoidingView, StyleSheet} from 'react-native';
-import rpx, {vmax} from '@/utils/rpx';
+import React, { useRef } from 'react';
+import { KeyboardAvoidingView, StyleSheet } from 'react-native';
+import rpx, { vmax } from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
 
 import ThemeText from '@/components/base/themeText';
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import PanelBase from '../base/panelBase';
-import {hidePanel} from '../usePanel';
+import { hidePanel } from '../usePanel';
 import ListItem from '@/components/base/listItem';
 import Input from '@/components/base/input';
 import globalStyle from '@/constants/globalStyle';
@@ -21,21 +21,21 @@ interface IUserVariablesProps {
 }
 
 export default function SetUserVariables(props: IUserVariablesProps) {
-    const {onOk, onCancel, variables, initValues = {}, title} = props;
+    const { onOk, onCancel, variables, initValues = {}, title } = props;
 
     const colors = useColors();
 
-    const resultRef = useRef({...initValues});
+    const resultRef = useRef({ ...initValues });
 
     return (
         <PanelBase
-            awareKeyboard
             height={vmax(80)}
-            keyboardAvoidBehavior="none"
+            positionMethod='top'
+            keyboardAvoidBehavior='none'
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title={ title ?? '设置用户变量'}
+                        title={title ?? '设置用户变量'}
                         onCancel={() => {
                             onCancel?.();
                             hidePanel();

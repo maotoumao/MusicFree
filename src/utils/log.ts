@@ -1,7 +1,7 @@
 import { fileAsyncTransport, logger } from "react-native-logs";
 import RNFS, { readDir, readFile } from "react-native-fs";
 import pathConst from "@/constants/pathConst";
-import Config from "../core/config.ts";
+import Config from "../core/appConfig.ts";
 import { addLog } from "@/lib/react-native-vdebug/src/log";
 
 const config = {

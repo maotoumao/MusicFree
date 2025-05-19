@@ -4,11 +4,11 @@ import rpx from "@/utils/rpx";
 import ThemeText from "@/components/base/themeText";
 import ListItem from "@/components/base/listItem";
 import ThemeSwitch from "@/components/base/switch";
-import Config from "@/core/config.ts";
+import Config, { useAppConfig } from "@/core/appConfig";
 import Theme from "@/core/theme";
 
 export default function Mode() {
-    const mode = Config.useConfigValue('theme.followSystem') ?? false;
+    const mode = useAppConfig('theme.followSystem') ?? false;
     return (
         <View>
             <ThemeText

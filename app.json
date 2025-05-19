@@ -1,16 +1,4 @@
 {
   "name": "MusicFree",
-  "displayName": "MusicFree",
-  "expo": {
-    "plugins": [
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#27282C",
-          "image": "./android/app/src/main/res/drawable/splashscreen_image.png",
-          "imageWidth": 200
-        }
-      ]
-    ],
-  }
+  "displayName": "MusicFree"
 }

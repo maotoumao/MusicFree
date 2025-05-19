@@ -3,8 +3,8 @@ import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import {useAtom, useSetAtom} from 'jotai';
 import {
-    initSearchResults,
     PageStatus,
+    initSearchResults,
     pageStatusAtom,
     queryAtom,
     searchResultsAtom,

@@ -60,12 +60,6 @@ export const supportLocalMediaType = [
     '.opus',
 ];
 
-/** 全局事件 */
-export enum EDeviceEvents {
-    /** 刷新歌词 */
-    REFRESH_LYRIC = 'refresh-lyric',
-}
-
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 150;
 

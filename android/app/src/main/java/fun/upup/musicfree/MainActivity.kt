@@ -1,5 +1,6 @@
 package `fun`.upup.musicfree
 import expo.modules.ReactActivityDelegateWrapper
+import expo.modules.splashscreen.SplashScreenManager
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -24,6 +25,7 @@ class MainActivity : ReactActivity() {
 
   // https://reactnavigation.org/docs/getting-started/#installing-dependencies-into-a-bare-react-native-project
   override fun onCreate(savedInstanceState: Bundle?) {
+      SplashScreenManager.registerOnActivity(this)
       super.onCreate(null);
   }
 }

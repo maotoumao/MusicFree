@@ -1,28 +1,28 @@
-import React, {useMemo, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import useColors from '@/hooks/useColors';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-import {FlashList} from '@shopify/flash-list';
-import ListItem from '@/components/base/listItem';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
-import {ImgAsset} from '@/constants/assetsConst';
-import {showDialog} from '@/components/dialogs/useDialog';
-import Toast from '@/utils/toast';
 import Empty from '@/components/base/empty';
 import IconButton from '@/components/base/iconButton';
-import {showPanel} from '@/components/panels/usePanel';
-import {localPluginPlatform} from '@/constants/commonConst';
-import MusicSheet from '@/core/musicSheet';
+import ListItem from '@/components/base/listItem';
+import ThemeText from '@/components/base/themeText';
+import { showDialog } from '@/components/dialogs/useDialog';
+import { showPanel } from '@/components/panels/usePanel';
+import { ImgAsset } from '@/constants/assetsConst';
+import { localPluginPlatform } from '@/constants/commonConst';
+import MusicSheet, { useSheetsBase, useStarredSheets } from '@/core/musicSheet';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
+import useColors from '@/hooks/useColors';
+import rpx from '@/utils/rpx';
+import Toast from '@/utils/toast';
+import { FlashList } from '@shopify/flash-list';
+import React, { useMemo, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export default function Sheets() {
     const [index, setIndex] = useState(0);
     const colors = useColors();
     const navigate = useNavigate();
 
-    const allSheets = MusicSheet.useSheetsBase();
-    const staredSheets = MusicSheet.useStarredSheets();
+    const allSheets = useSheetsBase();
+    const staredSheets = useStarredSheets();
 
     const selectedTabTextStyle = useMemo(() => {
         return [
