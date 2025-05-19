@@ -1,16 +1,15 @@
+import useColors from '@/hooks/useColors';
+import useOrientation from '@/hooks/useOrientation';
+import rpx, { vh } from '@/utils/rpx';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     BackHandler,
     DeviceEventEmitter,
-    // EmitterSubscription,
-    // Keyboard,
     KeyboardAvoidingView,
     NativeEventSubscription,
     Pressable,
     StyleSheet,
 } from 'react-native';
-import rpx, { vh } from '@/utils/rpx';
-
 import Animated, {
     Easing,
     EasingFunction,
@@ -20,9 +19,7 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import useColors from '@/hooks/useColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import useOrientation from '@/hooks/useOrientation';
 import { panelInfoStore } from '../usePanel';
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
