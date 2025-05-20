@@ -227,6 +227,9 @@ export default class LyricParser {
             rawLrcs.shift();
         }
         let lrcItems = rawLrcItems.sort((a, b) => a.time - b.time);
+        lrcItems.forEach((item, index) => {
+            item.index = index;
+        })
         if (lrcItems.length === 0 && raw.length) {
             lrcItems = raw.split('\n').map((_, index) => ({
                 time: 0,

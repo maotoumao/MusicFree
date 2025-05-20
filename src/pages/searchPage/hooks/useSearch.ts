@@ -115,7 +115,11 @@ export default function useSearch() {
                         return;
                     }
                     /** 切换到结果页 */
-                    setPageStatus(PageStatus.RESULT);
+                    const currentPageStatus =
+                        getDefaultStore().get(pageStatusAtom);
+                    if (currentPageStatus !== PageStatus.EDITING) {
+                        setPageStatus(PageStatus.RESULT);
+                    }
                     if (!result) {
                         throw new Error('搜索结果为空');
                     }

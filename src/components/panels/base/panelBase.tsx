@@ -1,16 +1,15 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import useColors from '@/hooks/useColors';
+import useOrientation from '@/hooks/useOrientation';
+import rpx, { vh } from '@/utils/rpx';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     BackHandler,
     DeviceEventEmitter,
-    EmitterSubscription,
-    Keyboard,
     KeyboardAvoidingView,
     NativeEventSubscription,
     Pressable,
     StyleSheet,
 } from 'react-native';
-import rpx, {vh} from '@/utils/rpx';
-
 import Animated, {
     Easing,
     EasingFunction,
@@ -20,10 +19,8 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import useColors from '@/hooks/useColors';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import useOrientation from '@/hooks/useOrientation';
-import {panelInfoStore} from '../usePanel';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { panelInfoStore } from '../usePanel';
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 250;
@@ -36,8 +33,9 @@ const timingConfig = {
 interface IPanelBaseProps {
     keyboardAvoidBehavior?: 'height' | 'padding' | 'position' | 'none';
     height?: number;
+    // 定位方式
+    positionMethod?: "top" | "bottom";
     renderBody: (loading: boolean) => JSX.Element;
-    awareKeyboard?: boolean;
 }
 
 export default function (props: IPanelBaseProps) {
@@ -45,7 +43,7 @@ export default function (props: IPanelBaseProps) {
         height = vh(60),
         renderBody,
         keyboardAvoidBehavior,
-        awareKeyboard,
+        positionMethod = 'bottom',
     } = props;
     const snapPoint = useSharedValue(0);
 
@@ -62,8 +60,6 @@ export default function (props: IPanelBaseProps) {
     const backHandlerRef = useRef<NativeEventSubscription>();
 
     const hideCallbackRef = useRef<Function[]>([]);
-
-    const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     useEffect(() => {
         snapPoint.value = withTiming(1, timingConfig);
@@ -96,24 +92,6 @@ export default function (props: IPanelBaseProps) {
             },
         );
 
-        let keyboardDidShowListener: EmitterSubscription;
-        let keyboardDidHideListener: EmitterSubscription;
-        if (awareKeyboard) {
-            keyboardDidShowListener = Keyboard.addListener(
-                'keyboardDidShow',
-                event => {
-                    setKeyboardHeight(event.endCoordinates.height);
-                },
-            );
-
-            keyboardDidHideListener = Keyboard.addListener(
-                'keyboardDidHide',
-                () => {
-                    setKeyboardHeight(0);
-                },
-            );
-        }
-
         return () => {
             if (timerRef.current) {
                 clearTimeout(timerRef.current);
@@ -124,8 +102,6 @@ export default function (props: IPanelBaseProps) {
                 backHandlerRef.current = undefined;
             }
             listenerSubscription.remove();
-            keyboardDidShowListener?.remove();
-            keyboardDidHideListener?.remove();
         };
     }, []);
 
@@ -140,11 +116,11 @@ export default function (props: IPanelBaseProps) {
             transform: [
                 orientation === 'vertical'
                     ? {
-                          translateY: (1 - snapPoint.value) * useAnimatedBase,
-                      }
+                        translateY: (1 - snapPoint.value) * useAnimatedBase,
+                    }
                     : {
-                          translateX: (1 - snapPoint.value) * useAnimatedBase,
-                      },
+                        translateX: (1 - snapPoint.value) * useAnimatedBase,
+                    },
             ],
         };
     }, [orientation]);
@@ -183,13 +159,16 @@ export default function (props: IPanelBaseProps) {
         <Animated.View
             style={[
                 style.wrapper,
+                orientation === 'horizontal' ? {
+                    height: vh(100) - safeAreaInsets.top,
+                    bottom: 0,
+                } : {
+                    top: positionMethod === 'top' ? vh(100) - height - safeAreaInsets.bottom : undefined,
+                    bottom: positionMethod === 'bottom' ? 0 : undefined,
+                    height: height
+                },
                 {
                     backgroundColor: colors.backdrop,
-                    height:
-                        orientation === 'horizontal'
-                            ? vh(100) - safeAreaInsets.top
-                            : height -
-                              (isFinite(keyboardHeight) ? keyboardHeight : 0),
                 },
                 panelAnimated,
             ]}>
@@ -239,7 +218,6 @@ const style = StyleSheet.create({
     wrapper: {
         position: 'absolute',
         width: rpx(750),
-        bottom: 0,
         right: 0,
         borderTopLeftRadius: rpx(28),
         borderTopRightRadius: rpx(28),
