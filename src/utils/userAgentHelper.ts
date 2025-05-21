@@ -4,5 +4,12 @@ import DeviceInfo from 'react-native-device-info';
 export function getAppUserAgent(): string {
     const appName = DeviceInfo.getApplicationName();
     const appVersion = DeviceInfo.getVersion();
-    return `${appName}/${appVersion} (${Platform.OS} ${DeviceInfo.getSystemVersion()}; ${DeviceInfo.getModel()})`;
+    
+    if (Platform.OS === 'android') {
+        return `${appName}/${appVersion} (Android ${DeviceInfo.getSystemVersion()}; ${DeviceInfo.getModel()})`;
+    } else if (Platform.OS === 'ios') {
+        return `${appName}/${appVersion} (iPhone; iOS ${DeviceInfo.getSystemVersion()}; ${DeviceInfo.getModel()})`;
+    }
+
+    return `${appName}/${appVersion}`;
 }
