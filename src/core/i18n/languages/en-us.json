@@ -1,0 +1,21 @@
+{
+    "common.setting": "Settings",
+    "common.software": "Software",
+    "common.language": "Language",
+    "common.theme": "Theme",
+    "common.other": "Other",
+    "common.about": "About",
+
+
+    "sidebar.basicSettings": "Basic Settings",
+    "sidebar.pluginManagement": "Plugin Management",
+    "sidebar.themeSettings": "Theme Settings",
+    "sidebar.scheduleClose": "Scheduled Close",
+    "sidebar.backupAndResume": "Backup & Restore",
+    "sidebar.permissionManagement": "Permission Management",
+    "sidebar.checkUpdate": "Check for Updates",
+    "sidebar.currentVersion": "V",
+    "sidebar.backToDesktop": "Back to Desktop",
+    "sidebar.exitApp": "Exit App",
+    "sidebar.languageSettings": "Language Settings"
+}

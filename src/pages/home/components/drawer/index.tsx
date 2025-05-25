@@ -1,21 +1,22 @@
-import React, {memo} from 'react';
-import {BackHandler, Platform, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import {DrawerContentScrollView} from '@react-navigation/drawer';
-import ListItem from '@/components/base/listItem';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
-import ThemeText from '@/components/base/themeText';
-import PageBackground from '@/components/base/pageBackground';
-import DeviceInfo from 'react-native-device-info';
-import deviceInfoModule from 'react-native-device-info';
-import NativeUtils from '@/native/utils';
-import {useScheduleCloseCountDown} from '@/utils/scheduleClose';
-import timeformat from '@/utils/timeformat';
-import {showPanel} from '@/components/panels/usePanel';
 import Divider from '@/components/base/divider';
+import { IIconName } from '@/components/base/icon.tsx';
+import ListItem from '@/components/base/listItem';
+import PageBackground from '@/components/base/pageBackground';
+import ThemeText from '@/components/base/themeText';
+import { showDialog } from '@/components/dialogs/useDialog';
+import { showPanel } from '@/components/panels/usePanel';
+import i18n, { useI18N, useI18NDataByKey } from '@/core/i18n';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
 import TrackPlayer from '@/core/trackPlayer';
-import {checkUpdateAndShowResult} from '@/hooks/useCheckUpdate.ts';
-import {IIconName} from '@/components/base/icon.tsx';
+import { checkUpdateAndShowResult } from '@/hooks/useCheckUpdate.ts';
+import NativeUtils from '@/native/utils';
+import rpx from '@/utils/rpx';
+import { useScheduleCloseCountDown } from '@/utils/scheduleClose';
+import timeformat from '@/utils/timeformat';
+import { DrawerContentScrollView } from '@react-navigation/drawer';
+import React, { memo } from 'react';
+import { BackHandler, Platform, StyleSheet, View } from 'react-native';
+import { default as DeviceInfo, default as deviceInfoModule } from 'react-native-device-info';
 
 const ITEM_HEIGHT = rpx(108);
 
@@ -33,24 +34,27 @@ function HomeDrawer(props: any) {
         });
     }
 
+    const currentLangInfo = useI18N();
+    const languageData = currentLangInfo.languageData;
+
     const basicSetting: ISettingOptions[] = [
         {
             icon: 'cog-8-tooth',
-            title: '基本设置',
+            title: languageData['sidebar.basicSettings'],
             onPress: () => {
                 navigateToSetting('basic');
             },
         },
         {
             icon: 'javascript',
-            title: '插件管理',
+            title: languageData['sidebar.pluginManagement'],
             onPress: () => {
                 navigateToSetting('plugin');
             },
         },
         {
             icon: 't-shirt-outline',
-            title: '主题设置',
+            title: languageData['sidebar.themeSettings'],
             onPress: () => {
                 navigateToSetting('theme');
             },
@@ -60,7 +64,7 @@ function HomeDrawer(props: any) {
     const otherSetting: ISettingOptions[] = [
         {
             icon: 'circle-stack',
-            title: '备份与恢复',
+            title: languageData['sidebar.backupAndResume'],
             onPress: () => {
                 navigateToSetting('backup');
             },
@@ -70,7 +74,7 @@ function HomeDrawer(props: any) {
     if (Platform.OS === 'android') {
         otherSetting.push({
             icon: 'shield-keyhole-outline',
-            title: '权限管理',
+            title: languageData['sidebar.permissionManagement'],
             onPress: () => {
                 navigate(ROUTE_PATH.PERMISSIONS);
             },
@@ -92,7 +96,7 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            设置
+                            {languageData['common.setting']}
                         </ListItem.ListItemText>
                     </ListItem>
                     {basicSetting.map(item => (
@@ -113,7 +117,7 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            其他
+                            {languageData['common.other']}
                         </ListItem.ListItemText>
                     </ListItem>
                     <CountDownItem />
@@ -129,6 +133,23 @@ function HomeDrawer(props: any) {
                             <ListItem.Content title={item.title} />
                         </ListItem>
                     ))}
+                    <ListItem withHorizontalPadding key='language' onPress={() => {
+                        showDialog("RadioDialog", {
+                            'content': i18n.supportedLanguages().map(item => ({
+                                title: item.name,
+                                value: item.locale,
+                                label: item.name,
+                            })),
+                            title: languageData['sidebar.languageSettings'],
+                            onOk(value) {
+                                i18n.setLanguage(value as string);
+                            },
+                        })
+                    }}>
+                        <ListItem.ListItemIcon icon='language' width={rpx(48)} />
+                        <ListItem.Content title={languageData['sidebar.languageSettings']} />
+                        <ListItem.ListItemText fontSize='subTitle' position='right'>{currentLangInfo.name}</ListItem.ListItemText>
+                    </ListItem>
                 </View>
 
                 <View style={style.card}>
@@ -136,7 +157,7 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            软件
+                            {languageData['common.software']}
                         </ListItem.ListItemText>
                     </ListItem>
 
@@ -150,11 +171,11 @@ function HomeDrawer(props: any) {
                             icon={'arrow-path'}
                             width={rpx(48)}
                         />
-                        <ListItem.Content title="检查更新" />
+                        <ListItem.Content title={languageData['sidebar.checkUpdate']} />
                         <ListItem.ListItemText
                             position="right"
                             fontSize="subTitle">
-                            {`当前版本: ${deviceInfoModule.getVersion()}`}
+                            {`${languageData['sidebar.currentVersion']}${deviceInfoModule.getVersion()}`}
                         </ListItem.ListItemText>
                     </ListItem>
                     <ListItem
@@ -168,7 +189,7 @@ function HomeDrawer(props: any) {
                             width={rpx(48)}
                         />
                         <ListItem.Content
-                            title={`关于 ${deviceInfoModule.getApplicationName()}`}
+                            title={`${languageData['common.about']} ${deviceInfoModule.getApplicationName()}`}
                         />
                     </ListItem>
                 </View>
@@ -184,7 +205,7 @@ function HomeDrawer(props: any) {
                         icon={'home-outline'}
                         width={rpx(48)}
                     />
-                    <ListItem.Content title={'返回桌面'} />
+                    <ListItem.Content title={languageData['sidebar.backToDesktop']} />
                 </ListItem>
                 <ListItem
                     withHorizontalPadding
@@ -196,7 +217,7 @@ function HomeDrawer(props: any) {
                         icon={'power-outline'}
                         width={rpx(48)}
                     />
-                    <ListItem.Content title={'退出应用'} />
+                    <ListItem.Content title={languageData['sidebar.exitApp']} />
                 </ListItem>
             </DrawerContentScrollView>
         </>
@@ -238,6 +259,7 @@ const style = StyleSheet.create({
 
 function _CountDownItem() {
     const countDown = useScheduleCloseCountDown();
+    const scheduleCloseText = useI18NDataByKey('sidebar.scheduleClose');
 
     return (
         <ListItem
@@ -246,7 +268,7 @@ function _CountDownItem() {
                 showPanel('TimingClose');
             }}>
             <ListItem.ListItemIcon icon="alarm-outline" width={rpx(48)} />
-            <ListItem.Content title="定时关闭" />
+            <ListItem.Content title={scheduleCloseText} />
             <ListItem.ListItemText position="right" fontSize="subTitle">
                 {countDown ? timeformat(countDown) : ''}
             </ListItem.ListItemText>

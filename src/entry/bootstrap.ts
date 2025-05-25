@@ -23,6 +23,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { Linking, Platform } from "react-native";
 import { PERMISSIONS, check, request } from "react-native-permissions";
 import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
+import i18n from "@/core/i18n";
 
 
 // 依赖管理
@@ -160,6 +161,10 @@ async function bootstrapImpl() {
     logger.mark('歌词初始化完成');
 
     extraMakeup();
+
+    i18n.setup();
+    logger.mark('语言模块初始化完成');
+    
     ErrorUtils.setGlobalHandler(error => {
         errorLog('未捕获的错误', error);
     });

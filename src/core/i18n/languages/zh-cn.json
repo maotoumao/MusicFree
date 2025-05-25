@@ -1,0 +1,21 @@
+{
+    "common.setting": "设置",
+    "common.software": "软件",
+    "common.language": "语言",
+    "common.theme": "主题",
+    "common.other": "其他",
+    "common.about": "关于",
+
+
+    "sidebar.basicSettings": "基本设置",
+    "sidebar.pluginManagement": "插件管理",
+    "sidebar.themeSettings": "主题设置",
+    "sidebar.scheduleClose": "定时关闭",
+    "sidebar.backupAndResume": "备份与恢复",
+    "sidebar.permissionManagement": "权限管理",
+    "sidebar.checkUpdate": "检查更新",
+    "sidebar.currentVersion": "当前版本: ",
+    "sidebar.backToDesktop": "返回桌面",
+    "sidebar.exitApp": "退出应用",
+    "sidebar.languageSettings": "语言设置"
+}
