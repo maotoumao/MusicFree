@@ -18,7 +18,6 @@ import PluginManager from "@/core/pluginManager";
 import downloader from "@/core/downloader";
 
 export default function Operations() {
-    //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
     const musicItem = useCurrentMusic();
     const currentQuality = useMusicQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
