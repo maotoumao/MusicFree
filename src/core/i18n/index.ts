@@ -16,7 +16,7 @@ const allLanguages: ILanguage[] = [{
 },{
     locale: "en-US",
     name: "English",
-    languageData: enUS
+    languageData: enUS as ILanguageData,
 }];
 
 const currentLanguageAtom = atom<ILanguage>(allLanguages[0]);
@@ -27,7 +27,7 @@ class I18N<K extends keyof ILanguageData> {
 
     }
 
-    supportedLanguages() {
+    getSupportedLanguages() {
         return allLanguages;
     }
 
@@ -40,63 +40,25 @@ class I18N<K extends keyof ILanguageData> {
         getDefaultStore().set(currentLanguageAtom, language);
     }
 
-    t(key: K): ILanguageData[K] | null {
+    t(key: K, args?: Record<string, any>): ILanguageData[K] {
         const language = getDefaultStore().get(currentLanguageAtom);
         if (!language) {
-            return null;
+            return "";
         }
-        const value = language.languageData[key];
+        const value = language.languageData[key] ?? '';
+        if (!args) {
+            return value as ILanguageData[K];
+        }
 
-        return value ?? null;
+        return value.replace(/{(\w+)}/g, (_, argKey) => args[argKey] ?? '');
     }
 }
 
 const i18n = new I18N();
 export default i18n;
 
-export function useI18N(): ILanguage {
-    const currentLanguage = useAtomValue(currentLanguageAtom);
+export function useI18N(): I18N<keyof ILanguageData> {
+    useAtomValue(currentLanguageAtom); // 用来通知组件刷新
 
-    return currentLanguage;
-}
-
-
-export function useI18NData(): ILanguageData {
-    const currentLanguage = useAtomValue(currentLanguageAtom);
-
-    if (!currentLanguage) {
-        return {} as ILanguageData;
-    }
-
-    return currentLanguage.languageData;
-}
-
-export function useI18NDataByKey<K extends keyof ILanguageData>(key: K): ILanguageData[K] | null {
-    const currentLanguage = useAtomValue(currentLanguageAtom);
-
-    if (!currentLanguage) {
-        return null;
-    }
-    const value = currentLanguage.languageData[key];
-    if (!value) {
-        return null;
-    }
-    return value;
-}
-
-interface I18NViewProps {
-    i18nKey: keyof ILanguageData;
-    children?: (value: ILanguageData[keyof ILanguageData] | null) => React.ReactNode;
-}
-
-export function I18NView(props: I18NViewProps) {
-    const { i18nKey, children } = props;
-
-    const i18nValue = useI18NDataByKey(i18nKey);
-
-    if (!children) {
-        return null;
-    }
-
-    return children(i18nValue);
+    return i18n;
 }

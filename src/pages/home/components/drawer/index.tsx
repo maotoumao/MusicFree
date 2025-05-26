@@ -5,7 +5,7 @@ import PageBackground from '@/components/base/pageBackground';
 import ThemeText from '@/components/base/themeText';
 import { showDialog } from '@/components/dialogs/useDialog';
 import { showPanel } from '@/components/panels/usePanel';
-import i18n, { useI18N, useI18NDataByKey } from '@/core/i18n';
+import { useI18N } from '@/core/i18n';
 import { ROUTE_PATH, useNavigate } from '@/core/router';
 import TrackPlayer from '@/core/trackPlayer';
 import { checkUpdateAndShowResult } from '@/hooks/useCheckUpdate.ts';
@@ -34,27 +34,25 @@ function HomeDrawer(props: any) {
         });
     }
 
-    const currentLangInfo = useI18N();
-    const languageData = currentLangInfo.languageData;
+    const { t, getSupportedLanguages, getLanguage, setLanguage } = useI18N();
 
     const basicSetting: ISettingOptions[] = [
         {
             icon: 'cog-8-tooth',
-            title: languageData['sidebar.basicSettings'],
+            title: t('sidebar.basicSettings'),
             onPress: () => {
                 navigateToSetting('basic');
             },
-        },
-        {
+        }, {
             icon: 'javascript',
-            title: languageData['sidebar.pluginManagement'],
+            title: t('sidebar.pluginManagement'),
             onPress: () => {
                 navigateToSetting('plugin');
             },
         },
         {
             icon: 't-shirt-outline',
-            title: languageData['sidebar.themeSettings'],
+            title: t('sidebar.themeSettings'),
             onPress: () => {
                 navigateToSetting('theme');
             },
@@ -64,7 +62,7 @@ function HomeDrawer(props: any) {
     const otherSetting: ISettingOptions[] = [
         {
             icon: 'circle-stack',
-            title: languageData['sidebar.backupAndResume'],
+            title: t('sidebar.backupAndResume'),
             onPress: () => {
                 navigateToSetting('backup');
             },
@@ -74,12 +72,13 @@ function HomeDrawer(props: any) {
     if (Platform.OS === 'android') {
         otherSetting.push({
             icon: 'shield-keyhole-outline',
-            title: languageData['sidebar.permissionManagement'],
+            title: t('sidebar.permissionManagement'),
             onPress: () => {
                 navigate(ROUTE_PATH.PERMISSIONS);
             },
         });
     }
+
 
     return (
         <>
@@ -96,13 +95,13 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            {languageData['common.setting']}
+                            {t('common.setting')}
                         </ListItem.ListItemText>
                     </ListItem>
-                    {basicSetting.map(item => (
+                    {basicSetting.map((item, index) => (
                         <ListItem
                             withHorizontalPadding
-                            key={item.title}
+                            key={"basic-setting-" + index}
                             onPress={item.onPress}>
                             <ListItem.ListItemIcon
                                 icon={item.icon}
@@ -117,14 +116,14 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            {languageData['common.other']}
+                            {t('common.other')}
                         </ListItem.ListItemText>
                     </ListItem>
                     <CountDownItem />
-                    {otherSetting.map(item => (
+                    {otherSetting.map((item, index) => (
                         <ListItem
                             withHorizontalPadding
-                            key={item.title}
+                            key={"other-setting-" + index}
                             onPress={item.onPress}>
                             <ListItem.ListItemIcon
                                 icon={item.icon}
@@ -135,20 +134,20 @@ function HomeDrawer(props: any) {
                     ))}
                     <ListItem withHorizontalPadding key='language' onPress={() => {
                         showDialog("RadioDialog", {
-                            'content': i18n.supportedLanguages().map(item => ({
+                            'content': getSupportedLanguages().map(item => ({
                                 title: item.name,
                                 value: item.locale,
                                 label: item.name,
                             })),
-                            title: languageData['sidebar.languageSettings'],
+                            title: t('sidebar.languageSettings'),
                             onOk(value) {
-                                i18n.setLanguage(value as string);
+                                setLanguage(value as string);
                             },
                         })
                     }}>
                         <ListItem.ListItemIcon icon='language' width={rpx(48)} />
-                        <ListItem.Content title={languageData['sidebar.languageSettings']} />
-                        <ListItem.ListItemText fontSize='subTitle' position='right'>{currentLangInfo.name}</ListItem.ListItemText>
+                        <ListItem.Content title={t('sidebar.languageSettings')} />
+                        <ListItem.ListItemText fontSize='subTitle' position='right'>{getLanguage().name}</ListItem.ListItemText>
                     </ListItem>
                 </View>
 
@@ -157,7 +156,7 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            {languageData['common.software']}
+                            {t('common.software')}
                         </ListItem.ListItemText>
                     </ListItem>
 
@@ -171,11 +170,11 @@ function HomeDrawer(props: any) {
                             icon={'arrow-path'}
                             width={rpx(48)}
                         />
-                        <ListItem.Content title={languageData['sidebar.checkUpdate']} />
+                        <ListItem.Content title={t('sidebar.checkUpdate')} />
                         <ListItem.ListItemText
                             position="right"
                             fontSize="subTitle">
-                            {`${languageData['sidebar.currentVersion']}${deviceInfoModule.getVersion()}`}
+                            {`${t('sidebar.currentVersion')}${deviceInfoModule.getVersion()}`}
                         </ListItem.ListItemText>
                     </ListItem>
                     <ListItem
@@ -189,7 +188,7 @@ function HomeDrawer(props: any) {
                             width={rpx(48)}
                         />
                         <ListItem.Content
-                            title={`${languageData['common.about']} ${deviceInfoModule.getApplicationName()}`}
+                            title={`${t('common.about')} ${deviceInfoModule.getApplicationName()}`}
                         />
                     </ListItem>
                 </View>
@@ -205,7 +204,7 @@ function HomeDrawer(props: any) {
                         icon={'home-outline'}
                         width={rpx(48)}
                     />
-                    <ListItem.Content title={languageData['sidebar.backToDesktop']} />
+                    <ListItem.Content title={t('sidebar.backToDesktop')} />
                 </ListItem>
                 <ListItem
                     withHorizontalPadding
@@ -217,7 +216,7 @@ function HomeDrawer(props: any) {
                         icon={'power-outline'}
                         width={rpx(48)}
                     />
-                    <ListItem.Content title={languageData['sidebar.exitApp']} />
+                    <ListItem.Content title={t('sidebar.exitApp')} />
                 </ListItem>
             </DrawerContentScrollView>
         </>
@@ -259,7 +258,7 @@ const style = StyleSheet.create({
 
 function _CountDownItem() {
     const countDown = useScheduleCloseCountDown();
-    const scheduleCloseText = useI18NDataByKey('sidebar.scheduleClose');
+    const { t } = useI18N();
 
     return (
         <ListItem
@@ -268,7 +267,7 @@ function _CountDownItem() {
                 showPanel('TimingClose');
             }}>
             <ListItem.ListItemIcon icon="alarm-outline" width={rpx(48)} />
-            <ListItem.Content title={scheduleCloseText} />
+            <ListItem.Content title={t('sidebar.scheduleClose')} />
             <ListItem.ListItemText position="right" fontSize="subTitle">
                 {countDown ? timeformat(countDown) : ''}
             </ListItem.ListItemText>

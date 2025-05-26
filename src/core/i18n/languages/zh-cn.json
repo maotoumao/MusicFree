@@ -17,5 +17,146 @@
     "sidebar.currentVersion": "当前版本: ",
     "sidebar.backToDesktop": "返回桌面",
     "sidebar.exitApp": "退出应用",
-    "sidebar.languageSettings": "语言设置"
+    "sidebar.languageSettings": "语言设置",
+
+    "i18n.simplifiedChinese": "简体中文",
+    "i18n.traditionalChinese": "繁体中文",
+
+    "storage.saveFailed": "存储失败",
+
+    "plugin.update": "更新插件",
+    "plugin.share": "分享插件",
+    "plugin.uninstall": "卸载插件",
+    "plugin.importSingle": "导入单曲",
+    "plugin.importPlaylist": "导入歌单",
+    "plugin.userVariables": "用户变量",
+    "plugin.updateSuccess": "已更新到最新版本",
+    "plugin.updateFailed": "更新失败",
+    "plugin.copiedToClipboard": "已复制到剪切板",
+    "plugin.shareFailed": "分享失败",
+    "plugin.uninstallConfirm": "确认卸载插件「{name}」吗",
+    "plugin.uninstallSuccess": "卸载成功~",
+    "plugin.uninstallFailed": "卸载失败",
+    "plugin.inputTargetSong": "输入目标歌曲",
+    "plugin.inputTargetPlaylist": "输入目标歌单",
+    "plugin.readyToImport": "准备导入",
+    "plugin.foundSongImportConfirm": "发现歌曲 {title} ! 现在开始导入吗?",
+    "plugin.importedSongsPrefix": "{pluginName}导入歌曲",
+    "plugin.cannotImport": "无法导入~",
+    "plugin.foundSongsImportConfirm": "发现{count}首歌曲! 现在开始导入吗?",
+    "plugin.importingProgress": "正在导入中...",
+    "plugin.linkErrorOrEmpty": "链接有误或目标歌单为空",
+    "plugin.settingsSuccess": "设置成功~",
+    "plugin.version": "版本号: ",
+    "plugin.author": "作者: ",
+
+    "quality.low": "低音质",
+    "quality.standard": "标准音质",
+    "quality.high": "高音质",
+    "quality.super": "超高音质",
+
+    "noPlugin.notInstalledYet": "还没有安装",
+    "noPlugin.supportTypeFunction": "支持「{type}」功能的",
+    "noPlugin.pluginText": "插件哦",
+    "noPlugin.installHint": "先去 侧边栏-插件管理 里安装插件吧~",
+
+    "search.clickToSearch": "点击这里开始搜索",
+    "search.searchType": "搜索",
+    "search.pending": "敬请期待",
+
+    "loading.default": "加载中...",
+
+    "empty.defaultText": "什么都没有呀~",
+
+    "listFooter.loading": "加载中...",
+    "listFooter.reachedEnd": "~~~ 到底啦 ~~~",
+
+    "home.openSidebar": "打开侧边栏",
+    "home.myPlaylists": "我的歌单",
+    "home.starredPlaylists": "收藏歌单",
+    "home.newPlaylist": "新建歌单",
+    "home.importPlaylist": "导入歌单",
+    "home.myPlaylistsCount": "我的歌单，共{count}个",
+    "home.starredPlaylistsCount": "收藏歌单，共{count}个",
+    "home.songCount": "{count}首",
+
+    "musicDetail.noLyrics": "暂无歌词",
+    "musicDetail.searchLyrics": "搜索歌词",
+    "musicDetail.lyricAssociation": "歌词关联自「{platform} - {title}」",
+    "musicDetail.unlinkLyrics": "解除关联",
+    "musicDetail.openDesktopLyrics": "开启桌面歌词",
+    "musicDetail.closeDesktopLyrics": "关闭桌面歌词",
+    "musicDetail.uploadLocalLyrics": "上传本地歌词",
+    "musicDetail.noTranslation": "当前歌曲无翻译",
+    "musicDetail.noComment": "当前歌曲暂无评论",
+    "musicDetail.copyAlbum": "专辑: {album}",
+    "musicDetail.copyFailed": "复制失败",
+
+    "lyric.autoSearchMissing": "歌词缺失时自动搜索歌词",
+    "lyric.enableDesktop": "开启桌面歌词",
+    "lyric.widthSize": "宽度大小",
+    "lyric.fontSize": "字体大小",
+    "lyric.leftRightDistance": "左右距离",
+    "lyric.topBottomDistance": "上下距离",
+    "lyric.alignment": "对齐方式",
+    "lyric.textColor": "文本颜色",
+    "lyric.textBackground": "文本背景色",
+    "lyric.alignLeft": "左对齐",
+    "lyric.alignCenter": "居中对齐",
+    "lyric.alignRight": "右对齐",
+    "lyric.noFloatingPermission": "无悬浮窗权限",
+
+    "cache.clearAudioCache": "清除音频缓存",
+    "cache.clearLyricCache": "清除歌词缓存",
+    "cache.clearImageCache": "清除图片缓存",
+
+    "debug.recordErrorLog": "记录错误日志",
+    "debug.recordDetailLog": "记录详细日志",
+    "debug.debugPanel": "调试面板",
+    "debug.viewErrorLog": "查看错误日志",
+
+    "theme.themeSettings": "主题设置",
+    "theme.lightMode": "浅色模式",
+
+    "about.developer": "软件作者: 猫头猫",
+    "about.wechatAccount": "公众号: 【一只猫头猫】",
+    "about.bilibiliAccount": "B站: ",
+    "about.xiaohongshuAccount": "小红书: ",
+    "about.developerWords": "开发者的话: ",
+    "about.authorDescription": "软件作者是猫头猫🐱，不是猫头鹰🦉，也不是什么其他的奇奇怪怪。软件没有其他版本，如果你下载到了付费版/广告版/挂羊头卖狗肉版，那说明你被坏蛋骗了😒。",
+    "about.freeAndOpenSource": "本软件完全免费，并基于 AGPL3.0 协议 开源，如果需要使用此代码进行二次开发，请遵守如下约定：",
+    "about.redistributeRule": "1. 二次分发版必须同样遵循 AGPL 3.0 协议，开源且免费",
+    "about.legalUseRule": "2. 合法合规使用代码，不要用于商业用途; 修改后的软件造成的任何问题由使用此代码的开发者承担",
+    "about.keepSourceRule": "3. 打包、二次分发时请保留代码出处：https://github.com/maotoumao/MusicFree",
+    "about.licenseChangeRule": "4. 如果开源协议变更，将在此 Github 仓库更新，不另行通知",
+    "about.pluginWarning": "本软件需要通过插件来完成包括播放、搜索在内的大部分功能，如果你是从第三方下载的插件，请一定谨慎识别这些插件的安全性，保护好自己。（注意：插件以及插件可能产生的数据与本软件无关，请使用者合理合法使用。）",
+    "about.projectStatus": "还请注意本软件只是个人的业余项目，距离正式版也有很长一段距离。",
+    "about.softwareRecommendation": "如果你在找成熟稳定的音乐软件，可以考虑其他优秀的软件。当然我会一直维护，让它变得尽可能的完善一些。业余时间用爱发电，进度慢还请见谅。",
+    "about.feedbackChannels": "如果有问题或者建议，可以直接去 Github issue 区留言，也可以去公众号【一只猫头猫】留言，也可以去 QQ 频道 发帖。",
+    "about.existenceReason": "开发这个软件的最初目的是自用，顺便分享出来给有需要的人。如果这个软件能对你有些帮助，那这就是 MusicFree 存在的意义。",
+    "about.signature": "by: 猫头猫",
+
+    "comment.title": "评论",
+
+    "playList.title": "播放列表",
+    "playList.songCount": "({count}首)",
+
+    "musicListEditor.nextPlay": "下一首播放",
+    "musicListEditor.addedToNext": "已添加到下一首播放",
+    "musicListEditor.selected": "(已选{count}首)",
+
+    "sheetDetail.totalSongs": "共{count}首",
+
+    "addToMusicSheet.songCount": "{count}首) ",
+
+    "plugin.updateAllFailed": "插件更新失败",
+    "plugin.updateFailedDetails": "以下插件更新失败: \n{details}",
+    "plugin.unknownError": "出现未知错误: {message}",
+
+    "recommendation.recommendPlaylists": "推荐歌单",
+
+    "sheetTags.unknown": "未知",
+
+    "searchLyric.searchLyricsType": "搜索歌词",
+    "searchLyric.unnamed": "(未命名)"
 }
