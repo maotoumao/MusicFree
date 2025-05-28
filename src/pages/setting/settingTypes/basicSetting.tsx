@@ -1,28 +1,28 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {SectionList, StyleSheet, TouchableOpacity, View} from "react-native";
 import rpx from "@/utils/rpx";
-import Config, { ConfigKey } from "@/core/config.ts";
+import Config, {ConfigKey} from "@/core/config.ts";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
 import ThemeSwitch from "@/components/base/switch";
-import { clearCache, getCacheSize, sizeFormatter } from "@/utils/fileUtils";
+import {clearCache, getCacheSize, sizeFormatter} from "@/utils/fileUtils";
 
 import Toast from "@/utils/toast";
 import toast from "@/utils/toast";
 import pathConst from "@/constants/pathConst";
-import { ROUTE_PATH, useNavigate } from "@/core/router";
-import { readdir } from "react-native-fs";
-import { qualityKeys, qualityText } from "@/utils/qualities";
-import { clearLog, getErrorLogContent } from "@/utils/log";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
-import { showDialog } from "@/components/dialogs/useDialog";
-import { showPanel } from "@/components/panels/usePanel";
+import {ROUTE_PATH, useNavigate} from "@/core/router";
+import {readdir} from "react-native-fs";
+import {qualityKeys, qualityText} from "@/utils/qualities";
+import {clearLog, getErrorLogContent} from "@/utils/log";
+import {FlatList, ScrollView} from "react-native-gesture-handler";
+import {showDialog} from "@/components/dialogs/useDialog";
+import {showPanel} from "@/components/panels/usePanel";
 import Paragraph from "@/components/base/paragraph";
-import LyricUtil, { NativeTextAlignment } from "@/native/lyricUtil";
+import LyricUtil, {NativeTextAlignment} from "@/native/lyricUtil";
 import Slider from "@react-native-community/slider";
 import useColors from "@/hooks/useColors";
 import ColorBlock from "@/components/base/colorBlock";
-import { SortType } from "@/constants/commonConst.ts";
+import {SortType} from "@/constants/commonConst.ts";
 import Clipboard from "@react-native-clipboard/clipboard";
 
 function createSwitch(
@@ -113,6 +113,7 @@ export default function BasicSetting() {
     const downloadPath = Config.useConfigValue('basic.downloadPath');
     const notInterrupt = Config.useConfigValue('basic.notInterrupt');
     const tempRemoteDuck = Config.useConfigValue('basic.tempRemoteDuck');
+    const tempRemoteDuckVolume = Config.useConfigValue('basic.tempRemoteDuckVolume');
     const autoStopWhenError = Config.useConfigValue('basic.autoStopWhenError');
     const maxCacheSize = Config.useConfigValue('basic.maxCacheSize');
     const defaultPlayQuality = Config.useConfigValue('basic.defaultPlayQuality');
@@ -276,7 +277,26 @@ export default function BasicSetting() {
                     'basic.tempRemoteDuck',
                     ['暂停', '降低音量'],
                     tempRemoteDuck ?? '暂停',
+                    undefined,
+                    (val) => {
+                        if (val === '降低音量' && !tempRemoteDuckVolume) {
+                            Config.setConfig('basic.tempRemoteDuckVolume', 0.5);
+                        }
+                    }
                 ),
+                ...(tempRemoteDuck === '降低音量' ? [
+                    createRadio(
+                        '音量降低幅度',
+                        'basic.tempRemoteDuckVolume',
+                        [0.3, 0.5, 0.8],
+                        tempRemoteDuckVolume ?? 0.5,
+                        {
+                            0.3: '30%',
+                            0.5: '50%',
+                            0.8: '80%'
+                        }
+                    )
+                ] : []),
                 createRadio(
                     '默认播放音质',
                     'basic.defaultPlayQuality',

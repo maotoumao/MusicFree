@@ -1,9 +1,9 @@
-import { CustomizedColors } from "@/hooks/useColors";
-import { getStorage, removeStorage } from "@/utils/storage";
-import { ResumeMode, SortType } from "@/constants/commonConst.ts";
+import {CustomizedColors} from "@/hooks/useColors";
+import {getStorage, removeStorage} from "@/utils/storage";
+import {ResumeMode, SortType} from "@/constants/commonConst.ts";
 import getOrCreateMMKV from "@/utils/getOrCreateMMKV.ts";
 import safeStringify from "@/utils/safeStringify.ts";
-import { useMMKVObject } from "react-native-mmkv";
+import {useMMKVObject} from "react-native-mmkv";
 
 
 const configStore = getOrCreateMMKV('App.config');
@@ -21,6 +21,7 @@ interface IConfig {
     "basic.downloadPath": string;
     "basic.notInterrupt": boolean;
     "basic.tempRemoteDuck": '暂停' | '降低音量';
+    "basic.tempRemoteDuckVolume": 0.2 | 0.5 | 0.8;
     "basic.autoStopWhenError": boolean;
     "basic.pluginCacheControl": string;
     "basic.maxCacheSize": number;

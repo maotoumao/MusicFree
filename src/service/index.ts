@@ -1,9 +1,9 @@
 import Config from "@/core/config.ts";
-import RNTrackPlayer, { Event, State } from "react-native-track-player";
+import RNTrackPlayer, {Event, State} from "react-native-track-player";
 import LyricManager from "@/core/lyricManager";
 import LyricUtil from "@/native/lyricUtil";
 import TrackPlayer from "@/core/trackPlayer";
-import { musicIsPaused } from "@/utils/trackUtils";
+import {musicIsPaused} from "@/utils/trackUtils";
 import PersistStatus from "@/core/persistStatus.ts";
 
 let resumeState: State | null;
@@ -32,7 +32,10 @@ module.exports = async function () {
             );
             if (tempRemoteDuckConf === '降低音量') {
                 if (paused) {
-                    return RNTrackPlayer.setVolume(0.5);
+                    const tempRemoteDuckVolume = Config.getConfig(
+                        'basic.tempRemoteDuckVolume',
+                    ) ?? 0.5;
+                    return RNTrackPlayer.setVolume(1 - tempRemoteDuckVolume);
                 } else {
                     return RNTrackPlayer.setVolume(1);
                 }
