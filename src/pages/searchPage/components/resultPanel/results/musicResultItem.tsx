@@ -20,7 +20,7 @@ export default function MusicResultItem(props: IMusicResultsProps) {
                 const clickBehavior = Config.getConfig(
                     'basic.clickMusicInSearch',
                 );
-                if (clickBehavior === '播放歌曲并替换播放列表') {
+                if (clickBehavior === 'playMusicAndReplace') {
                     TrackPlayer.playWithReplacePlayList(
                         musicItem,
                         (pluginSearchResultRef?.current?.data ?? [

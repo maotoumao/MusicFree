@@ -6,6 +6,7 @@ import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
 import { RequestStateCode } from '@/constants/commonConst';
 import { Pressable } from 'react-native-gesture-handler';
+import { useI18N } from '@/core/i18n';
 
 
 interface IProps {
@@ -17,6 +18,7 @@ export default function ListFooter(props: IProps) {
     const { state } = props;
 
     const colors = useColors();
+    const {t} = useI18N();
 
 
     if (state === RequestStateCode.ERROR) {
@@ -28,9 +30,9 @@ export default function ListFooter(props: IProps) {
                 right: rpx(72),
             }} onPress={props.onRetry}>
                 <ThemeText fontSize="content" fontColor="textSecondary">
-                    加载失败，<Text style={[style.underline, {
+                    {t("common.failToLoad")}<Text style={[style.underline, {
                         textDecorationColor: colors.textSecondary,
-                    }]}>点击重试</Text>
+                    }]}>{" "}{t("common.clickToRetry")}</Text>
                 </ThemeText>
             </Pressable>
         </View>
@@ -41,12 +43,12 @@ export default function ListFooter(props: IProps) {
                 color={colors.textSecondary}
                 size={fontSizeConst.appbar}
             />
-            <ThemeText fontColor='textSecondary'>加载中...</ThemeText>
+            <ThemeText fontColor='textSecondary'>{t("common.loading")}</ThemeText>
         </View>
     } else if (state === RequestStateCode.FINISHED) {
         return <View style={style.wrapper}>
             <ThemeText fontSize="content" fontColor="textSecondary">
-                ~~~ 到底啦 ~~~
+                {t("common.listReachEnd")}
             </ThemeText>
         </View>
     }

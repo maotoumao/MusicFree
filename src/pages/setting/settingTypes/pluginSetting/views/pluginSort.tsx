@@ -3,6 +3,7 @@ import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx
 import SortableFlatList from '@/components/base/SortableFlatList';
 import ThemeText from '@/components/base/themeText';
 import globalStyle from '@/constants/globalStyle';
+import { useI18N } from '@/core/i18n';
 import PluginManager, { Plugin, useSortedPlugins } from '@/core/pluginManager';
 import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
@@ -18,6 +19,7 @@ export default function PluginSort() {
     const [sortingPlugins, setSortingPlugins] = useState([...plugins]);
 
     const colors = useColors();
+    const { t } = useI18N();
 
     function renderSortingItem({ item }: { item: Plugin }) {
         return (
@@ -28,16 +30,16 @@ export default function PluginSort() {
     }
     return (
         <>
-            <AppBar>插件排序</AppBar>
+            <AppBar>{t("pluginSetting.menu.sort")}</AppBar>
             <HorizontalSafeAreaView style={style.sortWrapper}>
                 <>
-                    <ThemeText fontWeight="bold">插件排序</ThemeText>
+                    <ThemeText fontWeight="bold">{t("pluginSetting.menu.sort")}</ThemeText>
                     <TouchableOpacity
                         onPress={async () => {
                             PluginManager.setPluginOrder(sortingPlugins);
-                            Toast.success('已保存');
+                            Toast.success(t("toast.saveSuccess"));
                         }}>
-                        <ThemeText>完成</ThemeText>
+                        <ThemeText>{t("common.done")}</ThemeText>
                     </TouchableOpacity>
                 </>
             </HorizontalSafeAreaView>

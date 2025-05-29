@@ -22,6 +22,7 @@ import { readAsStringAsync } from "expo-file-system";
 import { FlatList } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PanelBase from "../base/panelBase";
+import { useI18N } from "@/core/i18n";
 
 interface IMusicItemLyricOptionsProps {
     /** 歌曲信息 */
@@ -43,6 +44,7 @@ export default function MusicItemLyricOptions(
     const { musicItem } = props ?? {};
 
     const safeAreaInsets = useSafeAreaInsets();
+    const { t } = useI18N();
 
     const options: IOption[] = [
         {
@@ -60,38 +62,40 @@ export default function MusicItemLyricOptions(
                         '',
                     ),
                 );
-                Toast.success('已复制到剪切板');
+                Toast.success(t('toast.copiedToClipboard'));
             },
         },
         {
             icon: 'user',
-            title: `作者: ${musicItem.artist}`,
+            title: t('panel.musicItemLyricOptions.author', { artist: musicItem.artist }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.artist.toString());
-                    Toast.success('已复制到剪切板');
+                    Toast.success(t('toast.copiedToClipboard'));
                 } catch {
-                    Toast.warn('复制失败');
+                    Toast.success(t('toast.copiedToClipboardFailed'));
                 }
             },
         },
         {
             icon: 'album-outline',
             show: !!musicItem.album,
-            title: `专辑: ${musicItem.album}`,
+            title: t('panel.musicItemLyricOptions.album', { album: musicItem.album }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.album.toString());
-                    Toast.success('已复制到剪切板');
+                    Toast.success(t('toast.copiedToClipboard'));
                 } catch {
-                    Toast.warn('复制失败');
+                    Toast.success(t('toast.copiedToClipboardFailed'));
                 }
             },
         },
         {
-            icon: 'lyric',
-            title: `${Config.getConfig('lyric.showStatusBarLyric') ? '关闭' : '开启'
-                }桌面歌词`,
+            icon: 'lyric', title: t('panel.musicItemLyricOptions.toggleDesktopLyric', {
+                status: Config.getConfig('lyric.showStatusBarLyric')
+                    ? t('panel.musicItemLyricOptions.disableDesktopLyric')
+                    : t('panel.musicItemLyricOptions.enableDesktopLyric')
+            }),
             async onPress() {
                 const showStatusBarLyric = Config.getConfig('lyric.showStatusBarLyric');
                 if (!showStatusBarLyric) {
@@ -113,9 +117,8 @@ export default function MusicItemLyricOptions(
                             statusBarLyricConfig ?? {}
                         );
                         Config.setConfig('lyric.showStatusBarLyric', true);
-                    } else {
-                        LyricUtil.requestSystemAlertPermission().finally(() => {
-                            Toast.warn('开启桌面歌词失败，无悬浮窗权限');
+                    } else {                        LyricUtil.requestSystemAlertPermission().finally(() => {
+                            Toast.warn(t('panel.musicItemLyricOptions.desktopLyricPermissionError'));
                         });
                     }
                 } else {
@@ -127,7 +130,7 @@ export default function MusicItemLyricOptions(
         },
         {
             icon: 'arrow-up-tray',
-            title: '上传本地歌词',
+            title: t('panel.musicItemLyricOptions.uploadLocalLyric'),
             async onPress() {
                 try {
                     const result = await getDocumentAsync({
@@ -139,20 +142,20 @@ export default function MusicItemLyricOptions(
                     const pickedDoc = result.assets[0].uri;
                     const lyricContent = await readAsStringAsync(pickedDoc, {
                         encoding: 'utf8',
-                    });
-
-                    await lyricManager.uploadLocalLyric(musicItem, lyricContent);
-                    Toast.success('设置成功');
+                    });                    await lyricManager.uploadLocalLyric(musicItem, lyricContent);
+                    Toast.success(t('toast.settingSuccess'));
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    Toast.warn('设置失败' + e.message);
+                    Toast.warn(t('panel.musicItemLyricOptions.settingFail', {
+                        reason: e?.message
+                    }));
                 }
             },
         },
         {
             icon: 'arrow-up-tray',
-            title: '上传本地歌词翻译',
+            title: t('panel.musicItemLyricOptions.uploadLocalLyricTranslation'),
             async onPress() {
                 try {
                     const result = await getDocumentAsync({
@@ -164,27 +167,29 @@ export default function MusicItemLyricOptions(
                     const pickedDoc = result.assets[0].uri;
                     const lyricContent = await readAsStringAsync(pickedDoc, {
                         encoding: 'utf8',
-                    });
-
-                    await lyricManager.uploadLocalLyric(musicItem, lyricContent, 'translation');
-                    Toast.success('设置成功');
+                    });                    await lyricManager.uploadLocalLyric(musicItem, lyricContent, 'translation');
+                    Toast.success(t('toast.settingSuccess'));
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    Toast.warn('设置失败' + e.message);
+                    Toast.warn(t('panel.musicItemLyricOptions.settingFail', {
+                        reason: e?.message
+                    }));
                 }
             },
         },
         {
             icon: 'trash-outline',
-            title: '删除本地歌词',
+            title: t('panel.musicItemLyricOptions.deleteLocalLyric'),
             async onPress() {
                 try {
                     lyricManager.removeLocalLyric(musicItem);
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    Toast.warn('删除失败' + e.message);
+                    Toast.warn(t('panel.musicItemLyricOptions.deleteFail', {
+                        reason: e?.message
+                    }));
                 }
             },
         },

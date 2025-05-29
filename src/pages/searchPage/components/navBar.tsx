@@ -1,7 +1,18 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import AppBar from '@/components/base/appBar';
+import Icon from '@/components/base/icon.tsx';
+import IconButton from '@/components/base/iconButton';
+import Input from '@/components/base/input';
+import Button from '@/components/base/textButton.tsx';
+import { iconSizeConst } from '@/constants/uiConst';
+import { useI18N } from '@/core/i18n';
+import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
-import {useAtom, useSetAtom} from 'jotai';
+import Color from 'color';
+import { useAtom, useSetAtom } from 'jotai';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { addHistory } from '../common/historySearch';
+import useSearch from '../hooks/useSearch';
 import {
     PageStatus,
     initSearchResults,
@@ -9,16 +20,6 @@ import {
     queryAtom,
     searchResultsAtom,
 } from '../store/atoms';
-import useSearch from '../hooks/useSearch';
-import {addHistory} from '../common/historySearch';
-import useColors from '@/hooks/useColors';
-import AppBar from '@/components/base/appBar';
-import Input from '@/components/base/input';
-import Color from 'color';
-import Button from '@/components/base/textButton.tsx';
-import IconButton from '@/components/base/iconButton';
-import {iconSizeConst} from '@/constants/uiConst';
-import Icon from '@/components/base/icon.tsx';
 
 export default function NavBar() {
     const search = useSearch();
@@ -26,6 +27,7 @@ export default function NavBar() {
     const setPageStatus = useSetAtom(pageStatusAtom);
     const colors = useColors();
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const { t } = useI18N();
 
     const onSearchSubmit = async () => {
         if (query === '') {
@@ -60,13 +62,13 @@ export default function NavBar() {
                         },
                     ]}
                     accessible
-                    accessibilityLabel="搜索框"
-                    accessibilityHint={'输入要搜索的歌曲'}
+                    accessibilityLabel={t("searchPage.searchLabel.a11y")}
+                    accessibilityHint={t("searchPage.searchPlaceHolder")}
                     onFocus={() => {
                         setPageStatus(PageStatus.EDITING);
                     }}
                     placeholderTextColor={hintTextColor}
-                    placeholder="输入要搜索的歌曲"
+                    placeholder={t("searchPage.searchPlaceHolder")}
                     onSubmitEditing={onSearchSubmit}
                     onChangeText={_ => {
                         if (_ === '') {
@@ -94,7 +96,7 @@ export default function NavBar() {
                 hitSlop={0}
                 fontColor={'appBarText'}
                 onPress={onSearchSubmit}>
-                搜索
+                {t("common.search")}
             </Button>
         </AppBar>
     );
@@ -108,6 +110,8 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(24),
         height: '100%',
         justifyContent: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     searchBarContainer: {
         flex: 1,

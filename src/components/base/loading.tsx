@@ -3,6 +3,7 @@ import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
+import { useI18N } from '@/core/i18n';
 
 interface ILoadingProps {
     text?: string;
@@ -11,8 +12,9 @@ interface ILoadingProps {
     color?: string;
 }
 export default function Loading(props: ILoadingProps) {
-    const colors = useColors();
     const {showText = true, height, text, color} = props;
+    const colors = useColors();
+    const {t} = useI18N();
 
     return (
         <View style={[style.wrapper, {height}]}>
@@ -23,7 +25,7 @@ export default function Loading(props: ILoadingProps) {
                     fontSize="title"
                     fontWeight="semibold"
                     style={style.text}>
-                    {text ?? '加载中...'}
+                    {text ?? t("common.loading")}
                 </ThemeText>
             ) : null}
         </View>

@@ -10,6 +10,7 @@ import Divider from '@/components/base/divider';
 import PanelHeader from '../base/panelHeader';
 import Checkbox from '@/components/base/checkbox';
 import { Pressable } from 'react-native-gesture-handler';
+import { useI18N } from '@/core/i18n';
 
 
 const shortCutTimes = [null, 10, 20, 30, 45, 60] as const;
@@ -17,14 +18,14 @@ const shortCutTimes = [null, 10, 20, 30, 45, 60] as const;
 
 function CountDownHeader() {
     const countDown = useScheduleCloseCountDown();
+    const { t } = useI18N();
 
     return (
         <PanelHeader
             hideDivider
-            hideButtons
-            title={countDown === null
-                ? '定时关闭'
-                : `关闭倒计时 ${timeformat(countDown)}`}
+            hideButtons            title={countDown === null
+                ? t('sidebar.scheduleClose')
+                : t('panel.timingClose.countdown', { time: timeformat(countDown) })}
         />
     );
 }
@@ -33,6 +34,7 @@ function CountDownHeader() {
 
 export default function TimingClose() {
     const closeAfterPlay = useCloseAfterPlayEnd();
+    const { t } = useI18N();
 
     return (
         <PanelBase
@@ -53,7 +55,7 @@ export default function TimingClose() {
                                     setScheduleClose(null);
                                 }
                             }}>
-                                <ThemeText>{time ?? '无'}</ThemeText>
+                                <ThemeText>{time ?? t('panel.timingClose.none')}</ThemeText>
                             </TouchableOpacity>
                         ))}
                     </View>
@@ -61,7 +63,7 @@ export default function TimingClose() {
                         setCloseAfterPlayEnd(!closeAfterPlay);
                     }}>
                         <Checkbox checked={closeAfterPlay}  />
-                        <ThemeText style={styles.bottomLineText}>播放完歌曲再关闭</ThemeText>
+                        <ThemeText style={styles.bottomLineText}>{t('panel.timingClose.closeAfterPlay')}</ThemeText>
                     </Pressable>
 
                 </>

@@ -10,8 +10,8 @@ import { showPanel } from "@/components/panels/usePanel";
 import axios from "axios";
 
 import { ResumeMode } from "@/constants/commonConst.ts";
-import strings from "@/constants/strings.ts";
 import Config, { useAppConfig } from "@/core/appConfig";
+import { useI18N } from "@/core/i18n";
 import delay from "@/utils/delay";
 import { writeInChunks } from "@/utils/fileUtils.ts";
 import { errorLog } from "@/utils/log.ts";
@@ -20,6 +20,7 @@ import { readAsStringAsync } from "expo-file-system";
 import { AuthType, createClient } from "webdav";
 
 export default function BackupSetting() {
+    const { t } = useI18N();
     const navigate = useNavigate();
 
     const resumeMode = useAppConfig('backup.resumeMode');
@@ -32,22 +33,21 @@ export default function BackupSetting() {
         navigate(ROUTE_PATH.FILE_SELECTOR, {
             fileType: 'folder',
             multi: false,
-            actionText: '开始备份',
+            actionText: t('backupAndResume.beginBackup'),
             async onAction(selectedFiles) {
                 const raw = Backup.backup();
                 const folder = selectedFiles[0]?.path;
                 return new Promise(resolve => {
                     showDialog('LoadingDialog', {
-                        title: '备份本地音乐',
-                        loadingText: '备份中...',
+                        title: t('backupAndResume.backupDialogTitle'),
+                        loadingText: t('backupAndResume.backuping'),
                         promise: writeInChunks(
-                            `${folder}${
-                                folder?.endsWith('/') ? '' : '/'
+                            `${folder}${folder?.endsWith('/') ? '' : '/'
                             }backup.json`,
                             raw,
                         ),
                         onResolve(_, hideDialog) {
-                            Toast.success('备份成功~');
+                            Toast.success(t('toast.backupSuccess'));
                             hideDialog();
                             resolve(true);
                         },
@@ -59,7 +59,7 @@ export default function BackupSetting() {
                             hideDialog();
                             resolve(false);
                             console.log(reason);
-                            Toast.warn(`备份失败 ${reason?.message ?? reason}`);
+                            Toast.warn(t('toast.backupFail', { reason: reason?.message ?? reason }));
                         },
                     });
                 });
@@ -79,14 +79,14 @@ export default function BackupSetting() {
             const result = await readAsStringAsync(pickResult.assets[0].uri);
             return new Promise(resolve => {
                 showDialog('LoadingDialog', {
-                    title: '从本地文件恢复',
-                    loadingText: '恢复中...',
+                    title: t('backupAndResume.resumeFromLocalFile'),
+                    loadingText: t('backupAndResume.resuming'),
                     async task() {
                         await delay(300, false);
                         return Backup.resume(result, resumeMode);
                     },
                     onResolve(_, hideDialog) {
-                        Toast.success('恢复成功~');
+                        Toast.success(t('toast.resumeSuccess'));
                         hideDialog();
                         resolve(true);
                     },
@@ -98,21 +98,20 @@ export default function BackupSetting() {
                         hideDialog();
                         resolve(false);
                         console.log(reason);
-                        Toast.warn(`恢复失败 ${reason?.message ?? reason}`);
+                        Toast.warn(t('toast.resumeFail', { reason: reason?.message ?? reason }));
                     },
                 });
             });
         } catch (e: any) {
             errorLog('恢复失败', e);
-            Toast.warn(`恢复失败 ${e?.message ?? e}`);
+            Toast.warn(t('toast.resumeFail', { reason: e?.message ?? e }));
         }
     }
 
-    // const [webDavState, setWebDavState] = useState('');
     async function onResumeFromUrl() {
         showPanel('SimpleInput', {
-            title: '恢复数据',
-            placeholder: '输入以json或txt结尾的URL',
+            title: t('backupAndResume.resumeFromUrlDialogTitle'),
+            placeholder: t('backupAndResume.resumeFromUrlDialogPlaceHolder'),
             maxLength: 1024,
             async onOk(text, closePanel) {
                 try {
@@ -120,13 +119,13 @@ export default function BackupSetting() {
                     if (url.endsWith('.json') || url.endsWith('.txt')) {
                         const raw = (await axios.get(text)).data;
                         await Backup.resume(raw, resumeMode);
-                        Toast.success('恢复成功~');
+                        Toast.success(t('toast.resumeSuccess'));
                         closePanel();
                     } else {
                         throw '无效的URL';
                     }
                 } catch (e: any) {
-                    Toast.warn(`恢复失败 ${e?.message ?? e}`);
+                    Toast.warn(t('toast.resumeFail', { reason: e?.message ?? e }));
                 }
             },
         });
@@ -138,7 +137,7 @@ export default function BackupSetting() {
         const password = Config.getConfig('webdav.password');
 
         if (!(username && password && url)) {
-            Toast.warn('请先在「Webdav设置」中完成配置，再执行恢复');
+            Toast.warn(t('toast.resumePreCheckFailed'));
             return;
         }
         const client = createClient(url, {
@@ -148,7 +147,7 @@ export default function BackupSetting() {
         });
 
         if (!(await client.exists('/MusicFree/MusicFreeBackup.json'))) {
-            Toast.warn('备份文件不存在');
+            Toast.warn(t('toast.backupFileNotFound'));
             return;
         }
 
@@ -163,9 +162,9 @@ export default function BackupSetting() {
                 resumeData,
                 Config.getConfig('backup.resumeMode'),
             );
-            Toast.success('恢复成功~');
+            Toast.success(t('toast.resumeSuccess'));
         } catch (e: any) {
-            Toast.warn(`恢复失败: ${e?.message ?? e}`);
+            Toast.warn(t('toast.resumeFail', { reason: e?.message ?? e }));
         }
     }
 
@@ -174,7 +173,7 @@ export default function BackupSetting() {
         const password = Config.getConfig('webdav.password');
         const url = Config.getConfig('webdav.url');
         if (!(username && password && url)) {
-            Toast.warn('请先在「Webdav设置」中完成配置，再执行恢复');
+            Toast.warn(t('toast.resumePreCheckFailed'));
             return;
         }
         try {
@@ -196,34 +195,32 @@ export default function BackupSetting() {
                     overwrite: true,
                 },
             );
-            Toast.success('备份成功');
+            Toast.success(t('toast.backupSuccess'));
         } catch (e: any) {
-            Toast.warn(`备份失败: ${e?.message ?? e}`);
+            Toast.warn(t('toast.backupFail', { reason: e?.message ?? e }));
         }
     }
 
     return (
         <ScrollView style={style.wrapper}>
-            <ListItemHeader>备份&恢复设置</ListItemHeader>
+            <ListItemHeader>{t('sidebar.backupAndResume')}</ListItemHeader>
 
             <ListItem
                 withHorizontalPadding
                 onPress={() => {
                     showDialog('RadioDialog', {
-                        title: '设置恢复方式',
+                        title: t('backupAndResume.setResumeMode'),
                         content: [
                             {
-                                label: strings.settings[ResumeMode.Append],
+                                label: t(("backupAndResume.resumeMode." + ResumeMode.Append) as any),
                                 value: ResumeMode.Append,
                             },
                             {
-                                label: strings.settings[
-                                    ResumeMode.OverwriteDefault
-                                ],
+                                label: t(("backupAndResume.resumeMode." + ResumeMode.OverwriteDefault) as any),
                                 value: ResumeMode.OverwriteDefault,
                             },
                             {
-                                label: strings.settings[ResumeMode.Overwrite],
+                                label: t(("backupAndResume.resumeMode." + ResumeMode.Overwrite) as any),
                                 value: ResumeMode.Overwrite,
                             },
                         ],
@@ -235,32 +232,30 @@ export default function BackupSetting() {
                         },
                     });
                 }}>
-                <ListItem.Content title="恢复方式" />
+                <ListItem.Content title={t('backupAndResume.resumeMode')} />
                 <ListItem.ListItemText>
                     {
-                        strings.settings[
-                            (resumeMode as ResumeMode) ||
-                                ResumeMode.Append
-                        ]
+                        t(("backupAndResume.resumeMode." + ((resumeMode as ResumeMode) ||
+                            ResumeMode.Append)) as any)
                     }
                 </ListItem.ListItemText>
             </ListItem>
-            <ListItemHeader>本地备份</ListItemHeader>
+            <ListItemHeader>{t('backupAndResume.localBackup')}</ListItemHeader>
             <ListItem withHorizontalPadding onPress={onBackupToLocal}>
-                <ListItem.Content title="备份到本地" />
+                <ListItem.Content title={t('backupAndResume.backupToLocal')} />
             </ListItem>
             <ListItem withHorizontalPadding onPress={onResumeFromLocal}>
-                <ListItem.Content title="从本地文件恢复" />
+                <ListItem.Content title={t('backupAndResume.resumeFromLocalFile')} />
             </ListItem>
             <ListItem withHorizontalPadding onPress={onResumeFromUrl}>
-                <ListItem.Content title="从远程URL中恢复" />
+                <ListItem.Content title={t('backupAndResume.resumeFromUrlDialogTitle')} />
             </ListItem>
             <ListItemHeader>Webdav</ListItemHeader>
             <ListItem
                 withHorizontalPadding
                 onPress={() => {
                     showPanel('SetUserVariables', {
-                        title: 'Webdav设置',
+                        title: t('backupAndResume.webdavSettings'),
                         initValues: {
                             url: webdavUrl ?? '',
                             username: webdavUsername ?? '',
@@ -270,15 +265,15 @@ export default function BackupSetting() {
                             {
                                 key: 'url',
                                 name: 'URL',
-                                hint: 'webdav服务地址',
+                                hint: t('backupAndResume.webdavUrl'),
                             },
                             {
                                 key: 'username',
-                                name: '用户名',
+                                name: t('common.username'),
                             },
                             {
                                 key: 'password',
-                                name: '密码',
+                                name: t('common.password'),
                             },
                         ],
                         onOk(values, closePanel) {
@@ -286,18 +281,18 @@ export default function BackupSetting() {
                             Config.setConfig('webdav.username', values?.username);
                             Config.setConfig('webdav.password', values?.password);
 
-                            Toast.success('保存成功');
+                            Toast.success(t('toast.saveSuccess'));
                             closePanel();
                         },
                     });
                 }}>
-                <ListItem.Content title="Webdav设置" />
+                <ListItem.Content title={t('backupAndResume.webdavSettings')} />
             </ListItem>
             <ListItem withHorizontalPadding onPress={onBackupToWebdav}>
-                <ListItem.Content title="备份到Webdav" />
+                <ListItem.Content title={t('backupAndResume.backupToWebdav')} />
             </ListItem>
             <ListItem withHorizontalPadding onPress={onResumeFromWebdav}>
-                <ListItem.Content title="从Webdav中恢复" />
+                <ListItem.Content title={t('backupAndResume.resumeFromWebdav')} />
             </ListItem>
         </ScrollView>
     );

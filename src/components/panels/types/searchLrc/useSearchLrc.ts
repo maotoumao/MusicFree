@@ -134,7 +134,6 @@ export default function useSearchLrc() {
                     }),
                 );
             } catch (e: any) {
-                console.log('shibai', e);
                 errorLog('搜索失败', e?.message);
                 devLog(
                     'error',

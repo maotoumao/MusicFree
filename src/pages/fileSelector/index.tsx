@@ -1,26 +1,27 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
+import Empty from '@/components/base/empty';
+import IconButton from '@/components/base/iconButton';
+import Loading from '@/components/base/loading';
+import StatusBar from '@/components/base/statusBar';
+import Button from '@/components/base/textButton.tsx';
 import ThemeText from '@/components/base/themeText';
+import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
+import globalStyle from '@/constants/globalStyle';
+import i18n from '@/core/i18n';
+import { useParams } from '@/core/router';
+import useColors from '@/hooks/useColors';
+import useHardwareBack from '@/hooks/useHardwareBack';
+import rpx from '@/utils/rpx';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import {
     ExternalStorageDirectoryPath,
     exists,
     getAllExternalFilesDirs,
     readDir,
 } from 'react-native-fs';
-import {FlatList} from 'react-native-gesture-handler';
-import useColors from '@/hooks/useColors';
-import IconButton from '@/components/base/iconButton';
+import { FlatList } from 'react-native-gesture-handler';
 import FileItem from './fileItem';
-import Empty from '@/components/base/empty';
-import useHardwareBack from '@/hooks/useHardwareBack';
-import {useNavigation} from '@react-navigation/native';
-import Loading from '@/components/base/loading';
-import {useParams} from '@/core/router';
-import StatusBar from '@/components/base/statusBar';
-import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
-import globalStyle from '@/constants/globalStyle';
-import Button from '@/components/base/textButton.tsx';
 
 interface IPathItem {
     path: string;
@@ -38,7 +39,7 @@ export default function FileSelector() {
     const {
         fileType = 'file-and-folder',
         multi = true,
-        actionText = '确定',
+        actionText = i18n.t("common.sure"),
         matchExtension,
         onAction,
     } = useParams<'file-selector'>() ?? {};

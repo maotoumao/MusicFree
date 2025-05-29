@@ -1,31 +1,29 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
-import rpx from "@/utils/rpx";
-import Config, { useAppConfig } from "@/core/appConfig";
+import ColorBlock from "@/components/base/colorBlock";
 import ListItem from "@/components/base/listItem";
-import ThemeText from "@/components/base/themeText";
+import Paragraph from "@/components/base/paragraph";
 import ThemeSwitch from "@/components/base/switch";
-import { clearCache, getCacheSize, sizeFormatter } from "@/utils/fileUtils";
-
-import Toast from "@/utils/toast";
-import toast from "@/utils/toast";
-import pathConst from "@/constants/pathConst";
-import { ROUTE_PATH, useNavigate } from "@/core/router";
-import { readdir } from "react-native-fs";
-import { qualityKeys, qualityText } from "@/utils/qualities";
-import { clearLog, getErrorLogContent } from "@/utils/log";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import ThemeText from "@/components/base/themeText";
 import { showDialog } from "@/components/dialogs/useDialog";
 import { showPanel } from "@/components/panels/usePanel";
-import Paragraph from "@/components/base/paragraph";
-import LyricUtil, { NativeTextAlignment } from "@/native/lyricUtil";
-import Slider from "@react-native-community/slider";
-import useColors from "@/hooks/useColors";
-import ColorBlock from "@/components/base/colorBlock";
 import { SortType } from "@/constants/commonConst.ts";
-import Clipboard from "@react-native-clipboard/clipboard";
-
+import pathConst from "@/constants/pathConst";
+import Config, { useAppConfig } from "@/core/appConfig";
+import { useI18N } from "@/core/i18n";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import useColors from "@/hooks/useColors";
+import LyricUtil, { NativeTextAlignment } from "@/native/lyricUtil";
 import { AppConfigPropertyKey } from "@/types/core/config";
+import { clearCache, getCacheSize, sizeFormatter } from "@/utils/fileUtils";
+import { clearLog, getErrorLogContent } from "@/utils/log";
+import { qualityKeys } from "@/utils/qualities";
+import rpx from "@/utils/rpx";
+import Toast from "@/utils/toast";
+import Clipboard from "@react-native-clipboard/clipboard";
+import Slider from "@react-native-community/slider";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { readdir } from "react-native-fs";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 
 function createSwitch(
     title: string,
@@ -60,9 +58,9 @@ const createRadio = function (
             title,
             content: valueMap
                 ? candidates.map(_ => ({
-                      label: valueMap[_] as string,
-                      value: _,
-                  }))
+                    label: valueMap[_] as string,
+                    value: _,
+                }))
                 : candidates,
             onOk(val) {
                 Config.setConfig(changeKey, val);
@@ -131,6 +129,7 @@ export default function BasicSetting() {
     const musicOrderInLocalSheet = useAppConfig('basic.musicOrderInLocalSheet');
     const tryChangeSourceWhenPlayFail = useAppConfig('basic.tryChangeSourceWhenPlayFail');
 
+    const { t } = useI18N();
 
     const debugEnableErrorLog = useAppConfig('debug.errorLog');
     const debugEnableTraceLog = useAppConfig('debug.traceLog');
@@ -149,73 +148,81 @@ export default function BasicSetting() {
 
     const basicOptions = [
         {
-            title: '常规',
+            title: t("basicSettings.common"),
             data: [
                 createRadio(
-                    '历史记录最多保存条数',
+                    t("basicSettings.maxHistoryLength"),
                     'basic.maxHistoryLen',
                     [20, 50, 100, 200, 500],
                     maxHistoryLen ?? 50,
                 ),
                 createRadio(
-                    '打开歌曲详情页时',
+                    t("basicSettings.musicDetailDefault"),
                     'basic.musicDetailDefault',
                     ['album', 'lyric'],
                     musicDetailDefault ?? 'album',
                     {
-                        album: '默认展示歌曲封面',
-                        lyric: '默认展示歌词页',
+                        album: t("basicSettings.musicDetailDefault.album"),
+                        lyric: t("basicSettings.musicDetailDefault.lyric"),
                     },
                 ),
                 createSwitch(
-                    '处于歌曲详情页时常亮',
+                    t('basicSettings.musicDetailAwake'),
                     'basic.musicDetailAwake',
                     musicDetailAwake ?? false,
                 ),
                 createRadio(
-                    '关联歌词方式',
+                    t('basicSettings.associateLyricType'),
                     'basic.associateLyricType',
                     ['input', 'search'],
                     associateLyricType ?? 'search',
                     {
-                        input: '输入歌曲ID',
-                        search: '搜索歌词',
+                        input: t('basicSettings.associateLyricType.input'),
+                        search: t('basicSettings.associateLyricType.search'),
                     },
                 ),
                 createSwitch(
-                    '通知栏显示关闭按钮 (重启后生效)',
+                    t('basicSettings.showExitOnNotification'),
                     'basic.showExitOnNotification',
                     showExitOnNotification ?? false,
                 ),
             ],
         },
         {
-            title: '歌单&专辑',
+            title: t('basicSettings.sheetAndAlbum'),
             data: [
                 createRadio(
-                    '点击搜索结果内单曲时',
+                    t('basicSettings.clickMusicInSearch'),
                     'basic.clickMusicInSearch',
-                    ['播放歌曲', '播放歌曲并替换播放列表'],
-                    clickMusicInSearch ?? '播放歌曲',
+                    ['playMusic', 'playMusicAndReplace'],
+                    clickMusicInSearch ?? 'playMusic',
+                    {
+                        playMusic: t('basicSettings.clickMusicInSearch.playMusic'),
+                        playMusicAndReplace: t('basicSettings.clickMusicInSearch.playMusicAndReplace'),
+                    },
                 ),
                 createRadio(
-                    '点击专辑内单曲时',
+                    t("basicSettings.clickMusicInAlbum"),
                     'basic.clickMusicInAlbum',
-                    ['播放单曲', '播放专辑'],
-                    clickMusicInAlbum ?? '播放专辑',
+                    ['playMusic', 'playAlbum'],
+                    clickMusicInAlbum ?? 'playAlbum',
+                    {
+                        playMusic: t("basicSettings.clickMusicInAlbum.playMusic"),
+                        playAlbum: t("basicSettings.clickMusicInAlbum.playAlbum"),
+                    },
                 ),
                 createRadio(
-                    '打开歌曲详情页时',
+                    t('basicSettings.musicDetailDefault'),
                     'basic.musicDetailDefault',
                     ['album', 'lyric'],
                     musicDetailDefault ?? 'album',
                     {
-                        album: '默认展示歌曲封面',
-                        lyric: '默认展示歌词页',
+                        album: t('basicSettings.musicDetailDefault.album'),
+                        lyric: t('basicSettings.musicDetailDefault.lyric'),
                     },
                 ),
                 createRadio(
-                    '新建歌单时默认歌曲排序',
+                    t("basicSettings.musicOrderInLocalSheet"),
                     'basic.musicOrderInLocalSheet',
                     [
                         SortType.Title,
@@ -226,83 +233,92 @@ export default function BasicSetting() {
                     ],
                     musicOrderInLocalSheet ?? 'end',
                     {
-                        [SortType.Title]: '按歌曲名排序',
-                        [SortType.Artist]: '按作者名排序',
-                        [SortType.Album]: '按专辑名排序',
-                        [SortType.Newest]: '按收藏时间从新到旧排序',
-                        [SortType.Oldest]: '按收藏时间从旧到新排序',
+                        [SortType.Title]: t('basicSettings.musicOrderInLocalSheet.title'),
+                        [SortType.Artist]: t('basicSettings.musicOrderInLocalSheet.artist'),
+                        [SortType.Album]: t('basicSettings.musicOrderInLocalSheet.album'),
+                        [SortType.Newest]: t('basicSettings.musicOrderInLocalSheet.newest'),
+                        [SortType.Oldest]: t('basicSettings.musicOrderInLocalSheet.oldest'),
                     },
                 ),
             ],
         },
         {
-            title: '插件',
+            title: t('basicSettings.plugin'),
             data: [
                 createSwitch(
-                    '软件启动时自动更新插件',
+                    t('basicSettings.autoUpdatePlugin'),
                     'basic.autoUpdatePlugin',
                     autoUpdatePlugin ?? false,
                 ),
                 createSwitch(
-                    '安装插件时不校验版本',
+                    t('basicSettings.notCheckPluginVersion'),
                     'basic.notCheckPluginVersion',
                     notCheckPluginVersion ?? false,
                 ),
             ],
         },
         {
-            title: '播放',
+            title: t('basicSettings.playback'),
             data: [
                 createSwitch(
-                    '允许与其他应用同时播放',
+                    t('basicSettings.notInterrupt'),
                     'basic.notInterrupt',
                     notInterrupt ?? false,
                 ),
                 createSwitch(
-                    '软件启动时自动播放歌曲',
+                    t('basicSettings.autoPlayWhenAppStart'),
                     'basic.autoPlayWhenAppStart',
                     autoPlayWhenAppStart ?? false,
                 ),
                 createSwitch(
-                    '播放失败时尝试更换音源',
+                    t('basicSettings.tryChangeSourceWhenPlayFail'),
                     'basic.tryChangeSourceWhenPlayFail',
                     tryChangeSourceWhenPlayFail ?? false,
                 ),
                 createSwitch(
-                    '播放失败时自动暂停',
+                    t('basicSettings.autoStopWhenError'),
                     'basic.autoStopWhenError',
                     autoStopWhenError ?? false,
                 ),
                 createRadio(
-                    '播放被暂时打断时',
+                    t('basicSettings.tempRemoteDuck'),
                     'basic.tempRemoteDuck',
-                    ['暂停', '降低音量'],
-                    tempRemoteDuck ?? '暂停',
+                    ['pause', 'lowerVolume'],
+                    tempRemoteDuck ?? 'pause',
+                    {
+                        pause: t('basicSettings.tempRemoteDuck.pause'),
+                        'lowerVolume': t('basicSettings.tempRemoteDuck.lowerVolume'),
+                    }
                 ),
                 createRadio(
-                    '默认播放音质',
+                    t('basicSettings.defaultPlayQuality'),
                     'basic.defaultPlayQuality',
                     qualityKeys,
                     defaultPlayQuality ?? 'standard',
-                    qualityText,
+                    {
+                        low: t("musicQuality.low"),
+                        standard: t("musicQuality.standard"),
+                        high: t("musicQuality.high"),
+                        super: t("musicQuality.super"),
+                    },
                 ),
                 createRadio(
-                    '默认播放音质缺失时',
+                    t('basicSettings.playQualityOrder'),
                     'basic.playQualityOrder',
                     ['asc', 'desc'],
                     playQualityOrder ?? 'asc',
                     {
-                        asc: '播放更高音质',
-                        desc: '播放更低音质',
+                        asc: t('basicSettings.playQualityOrder.asc'),
+                        desc: t('basicSettings.playQualityOrder.desc'),
                     },
                 ),
             ],
         },
         {
-            title: '下载',
+            title: t('basicSettings.download'),
             data: [
                 {
-                    title: '下载路径',
+                    title: t('basicSettings.downloadPath'),
                     right: (
                         <ThemeText
                             fontSize="subTitle"
@@ -316,7 +332,7 @@ export default function BasicSetting() {
                         navigate<'file-selector'>(ROUTE_PATH.FILE_SELECTOR, {
                             fileType: 'folder',
                             multi: false,
-                            actionText: '选择文件夹',
+                            actionText: t('basicSettings.fileSelector.selectFolder'),
                             async onAction(selectedFiles) {
                                 try {
                                     const targetDir = selectedFiles[0];
@@ -327,7 +343,7 @@ export default function BasicSetting() {
                                     );
                                     return true;
                                 } catch {
-                                    Toast.warn('文件夹不存在或无权限');
+                                    Toast.warn(t('toast.folderNotExistOrNoPermission'));
                                     return false;
                                 }
                             },
@@ -335,55 +351,60 @@ export default function BasicSetting() {
                     },
                 },
                 createRadio(
-                    '最大同时下载数目',
+                    t('basicSettings.maxDownload'),
                     'basic.maxDownload',
                     [1, 3, 5, 7],
                     maxDownload ?? 3,
                 ),
                 createRadio(
-                    '默认下载音质',
+                    t('basicSettings.defaultDownloadQuality'),
                     'basic.defaultDownloadQuality',
                     qualityKeys,
                     defaultDownloadQuality ?? 'standard',
-                    qualityText,
+                    {
+                        low: t("musicQuality.low"),
+                        standard: t("musicQuality.standard"),
+                        high: t("musicQuality.high"),
+                        super: t("musicQuality.super"),
+                    },
                 ),
                 createRadio(
-                    '默认下载音质缺失时',
+                    t('basicSettings.downloadQualityOrder'),
                     'basic.downloadQualityOrder',
                     ['asc', 'desc'],
                     downloadQualityOrder ?? 'asc',
                     {
-                        asc: '下载更高音质',
-                        desc: '下载更低音质',
+                        asc: t('basicSettings.downloadQualityOrder.asc'),
+                        desc: t('basicSettings.downloadQualityOrder.desc'),
                     },
                 ),
             ],
         },
         {
-            title: '网络',
+            title: t('basicSettings.network'),
             data: [
                 createSwitch(
-                    '使用移动网络播放',
+                    t('basicSettings.useCelluarNetworkPlay'),
                     'basic.useCelluarNetworkPlay',
                     useCelluarNetworkPlay ?? false,
                 ),
                 createSwitch(
-                    '使用移动网络下载',
+                    t('basicSettings.useCelluarNetworkDownload'),
                     'basic.useCelluarNetworkDownload',
                     useCelluarNetworkDownload ?? false,
                 ),
             ],
         },
         {
-            title: '歌词',
+            title: t('basicSettings.lyric'),
             data: [],
             footer: <LyricSetting />,
         },
         {
-            title: '缓存',
+            title: t('basicSettings.cache'),
             data: [
                 {
-                    title: '音乐缓存上限',
+                    title: t('basicSettings.cache.musicCacheLimit'),
                     right: (
                         <ThemeText style={styles.centerText}>
                             {maxCacheSize
@@ -393,8 +414,8 @@ export default function BasicSetting() {
                     ),
                     onPress() {
                         showPanel('SimpleInput', {
-                            title: '设置缓存',
-                            placeholder: '输入缓存占用上限，100M-8192M，单位M',
+                            title: t('dialog.setCacheTitle'),
+                            placeholder: t('dialog.setCachePlaceholder'),
                             onOk(text, closePanel) {
                                 let val = parseInt(text);
                                 if (val < 100) {
@@ -408,7 +429,7 @@ export default function BasicSetting() {
                                         val * 1024 * 1024,
                                     );
                                     closePanel();
-                                    Toast.success('设置成功');
+                                    Toast.success(t('toast.cacheSetSuccess'));
                                 }
                             },
                         });
@@ -416,7 +437,7 @@ export default function BasicSetting() {
                 },
 
                 {
-                    title: '清除音乐缓存',
+                    title: t('basicSettings.cache.clearMusicCache'),
                     right: (
                         <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.music)}
@@ -424,18 +445,18 @@ export default function BasicSetting() {
                     ),
                     onPress() {
                         showDialog('SimpleDialog', {
-                            title: '清除音乐缓存',
-                            content: '确定清除音乐缓存吗?',
+                            title: t('dialog.clearMusicCacheTitle'),
+                            content: t('dialog.clearMusicCacheContent'),
                             async onOk() {
                                 await clearCache('music');
-                                Toast.success('已清除音乐缓存');
+                                Toast.success(t('toast.musicCacheCleared'));
                                 refreshCacheSize();
                             },
                         });
                     },
                 },
                 {
-                    title: '清除歌词缓存',
+                    title: t('basicSettings.cache.clearLyricCache'),
                     right: (
                         <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.lyric)}
@@ -443,18 +464,18 @@ export default function BasicSetting() {
                     ),
                     onPress() {
                         showDialog('SimpleDialog', {
-                            title: '清除歌词缓存',
-                            content: '确定清除歌词缓存吗?',
+                            title: t('dialog.clearLyricCacheTitle'),
+                            content: t('dialog.clearLyricCacheContent'),
                             async onOk() {
                                 await clearCache('lyric');
-                                Toast.success('已清除歌词缓存');
+                                Toast.success(t('toast.lyricCacheCleared'));
                                 refreshCacheSize();
                             },
                         });
                     },
                 },
                 {
-                    title: '清除图片缓存',
+                    title: t('basicSettings.cache.clearImageCache'),
                     right: (
                         <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.image)}
@@ -462,11 +483,11 @@ export default function BasicSetting() {
                     ),
                     onPress() {
                         showDialog('SimpleDialog', {
-                            title: '清除图片缓存',
-                            content: '确定清除图片缓存吗?',
+                            title: t('dialog.clearImageCacheTitle'),
+                            content: t('dialog.clearImageCacheContent'),
                             async onOk() {
                                 await clearCache('image');
-                                Toast.success('已清除图片缓存');
+                                Toast.success(t('toast.imageCacheCleared'));
                                 refreshCacheSize();
                             },
                         });
@@ -475,57 +496,55 @@ export default function BasicSetting() {
             ],
         },
         {
-            title: '开发选项',
+            title: t('basicSettings.developer'),
             data: [
                 createSwitch(
-                    '记录错误日志',
+                    t('basicSettings.developer.errorLog'),
                     'debug.errorLog',
                     debugEnableErrorLog ?? false,
                 ),
                 createSwitch(
-                    '记录详细日志',
+                    t('basicSettings.developer.traceLog'),
                     'debug.traceLog',
                     debugEnableTraceLog ?? false,
                 ),
                 createSwitch(
-                    '调试面板',
+                    t('basicSettings.developer.devLog'),
                     'debug.devLog',
                     debugEnableDevLog ?? false,
                 ),
                 {
-                    title: '查看错误日志',
+                    title: t('basicSettings.developer.viewErrorLog'),
                     right: undefined,
                     async onPress() {
                         // 获取日志文件夹
                         const errorLogContent = await getErrorLogContent();
                         showDialog('SimpleDialog', {
-                            title: '错误日志',
+                            title: t('dialog.errorLogTitle'),
                             content: (
                                 <ScrollView>
                                     <Paragraph>
-                                        {errorLogContent || '暂无记录'}
+                                        {errorLogContent || t('dialog.errorLogNoRecord')}
                                     </Paragraph>
                                 </ScrollView>
                             ),
-                            cancelText: '我知道了',
-                            okText: '复制日志',
+                            cancelText: t('dialog.errorLogKnow'),
+                            okText: t('dialog.errorLogCopy'),
                             onOk() {
-                                if (errorLogContent) {
-                                    Clipboard.setString(errorLogContent);
-                                    toast.success('复制成功');
-                                }
+                                Clipboard.setString(errorLogContent);
+                                Toast.success(t('toast.copiedToClipboard'));
                             },
                         });
                     },
                 },
                 {
-                    title: '清空日志',
+                    title: t('basicSettings.developer.clearLog'),
                     right: undefined,
                     async onPress() {
                         try {
                             await clearLog();
-                            Toast.success('日志已清空');
-                        } catch {}
+                            Toast.success(t('toast.logCleared'));
+                        } catch { }
                     },
                 },
             ],
@@ -540,7 +559,7 @@ export default function BasicSetting() {
                 contentContainerStyle={styles.headerContentContainer}
                 horizontal
                 data={basicOptions.map(it => it.title)}
-                renderItem={({item, index}) => (
+                renderItem={({ item, index }) => (
                     <TouchableOpacity
                         onPress={() => {
                             sectionListRef.current?.scrollToLocation({
@@ -556,7 +575,7 @@ export default function BasicSetting() {
             />
             <SectionList
                 sections={basicOptions}
-                renderSectionHeader={({section}) => (
+                renderSectionHeader={({ section }) => (
                     <View style={styles.sectionHeader}>
                         <ThemeText
                             fontSize="subTitle"
@@ -567,10 +586,10 @@ export default function BasicSetting() {
                     </View>
                 )}
                 ref={sectionListRef}
-                renderSectionFooter={({section}) => {
+                renderSectionFooter={({ section }) => {
                     return section.footer ?? null;
                 }}
-                renderItem={({item}) => {
+                renderItem={({ item }) => {
                     const Right = item.right;
 
                     return (
@@ -649,14 +668,16 @@ function LyricSetting() {
 
     const colors = useColors();
 
+    const { t } = useI18N();
+
     const autoSearchLyric = createSwitch(
-        '歌词缺失时自动搜索歌词',
+        t('basicSettings.lyric.autoSearchLyric'),
         'lyric.autoSearchLyric',
-      enableAutoSearchLyric ?? false,
+        enableAutoSearchLyric ?? false,
     );
 
     const openStatusBarLyric = createSwitch(
-        '开启桌面歌词',
+        t('basicSettings.lyric.showStatusBarLyric'),
         'lyric.showStatusBarLyric',
         showStatusBarLyric ?? false,
         async newValue => {
@@ -676,25 +697,25 @@ function LyricSetting() {
                             fontSize: Config.getConfig("lyric.fontSize")
                         };
                         LyricUtil.showStatusBarLyric(
-                          "MusicFree",
-                          statusBarLyricConfig ?? {}
+                            "MusicFree",
+                            statusBarLyricConfig ?? {}
                         );
                         Config.setConfig('lyric.showStatusBarLyric', true);
                     } else {
                         LyricUtil.requestSystemAlertPermission().finally(() => {
-                            Toast.warn('无悬浮窗权限');
+                            Toast.warn(t('toast.noFloatWindowPermission'));
                         });
                     }
                 } else {
                     LyricUtil.hideStatusBarLyric();
                     Config.setConfig('lyric.showStatusBarLyric', false);
                 }
-            } catch {}
+            } catch { }
         },
     );
 
     const alignStatusBarLyric = createRadio(
-        '对齐方式',
+        t('basicSettings.lyric.align'),
         'lyric.align',
         [
             NativeTextAlignment.LEFT,
@@ -703,9 +724,9 @@ function LyricSetting() {
         ],
         align ?? NativeTextAlignment.CENTER,
         {
-            [NativeTextAlignment.LEFT]: '左对齐',
-            [NativeTextAlignment.CENTER]: '居中对齐',
-            [NativeTextAlignment.RIGHT]: '右对齐',
+            [NativeTextAlignment.LEFT]: t('basicSettings.lyric.align.left'),
+            [NativeTextAlignment.CENTER]: t('basicSettings.lyric.align.center'),
+            [NativeTextAlignment.RIGHT]: t('basicSettings.lyric.align.right'),
         },
         newVal => {
             if (showStatusBarLyric) {
@@ -731,7 +752,7 @@ function LyricSetting() {
                 {openStatusBarLyric.right}
             </ListItem>
             <View style={lyricStyles.sliderContainer}>
-                <ThemeText>左右距离</ThemeText>
+                <ThemeText>{t('basicSettings.lyric.leftRightDistance')}</ThemeText>
                 <Slider
                     style={lyricStyles.slider}
                     minimumTrackTintColor={colors.primary}
@@ -752,7 +773,7 @@ function LyricSetting() {
                 />
             </View>
             <View style={lyricStyles.sliderContainer}>
-                <ThemeText>上下距离</ThemeText>
+                <ThemeText>{t('basicSettings.lyric.topBottomDistance')}</ThemeText>
                 <Slider
                     style={lyricStyles.slider}
                     minimumTrackTintColor={colors.primary}
@@ -773,7 +794,7 @@ function LyricSetting() {
                 />
             </View>
             <View style={lyricStyles.sliderContainer}>
-                <ThemeText>歌词宽度</ThemeText>
+                <ThemeText>{t('basicSettings.lyric.width')}</ThemeText>
                 <Slider
                     style={lyricStyles.slider}
                     minimumTrackTintColor={colors.primary}
@@ -794,7 +815,7 @@ function LyricSetting() {
                 />
             </View>
             <View style={lyricStyles.sliderContainer}>
-                <ThemeText>字体大小</ThemeText>
+                <ThemeText>{t('basicSettings.lyric.fontSize')}</ThemeText>
                 <Slider
                     style={lyricStyles.slider}
                     minimumTrackTintColor={colors.primary}
@@ -837,7 +858,7 @@ function LyricSetting() {
                         },
                     });
                 }}>
-                <ListItem.Content title="文本颜色" />
+                <ListItem.Content title={t('basicSettings.lyric.textColor')} />
                 <ColorBlock color={color ?? '#FFE9D2FF'} />
             </ListItem>
             <ListItem
@@ -860,7 +881,7 @@ function LyricSetting() {
                         },
                     });
                 }}>
-                <ListItem.Content title="文本背景色" />
+                <ListItem.Content title={t('basicSettings.lyric.backgroundColor')} />
                 <ColorBlock
                     color={backgroundColor ?? '#84888153'}
                 />

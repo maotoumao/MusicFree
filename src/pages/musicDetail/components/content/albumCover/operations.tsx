@@ -16,6 +16,7 @@ import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";
 import PluginManager from "@/core/pluginManager";
 import downloader from "@/core/downloader";
+import i18n from "@/core/i18n";
 
 export default function Operations() {
     const musicItem = useCurrentMusic();
@@ -49,7 +50,7 @@ export default function Operations() {
                             const changeResult =
                                 await TrackPlayer.changeQuality(quality);
                             if (!changeResult) {
-                                Toast.warn('当前暂无此音质音乐');
+                                Toast.warn(i18n.t("toast.currentQualityNotAvailableForCurrentMusic"));
                             }
                         },
                     });
@@ -100,7 +101,7 @@ export default function Operations() {
                 opacity={supportComment ? 1 : 0.2}
                 onPress={() => {
                     if (!supportComment) {
-                        toast.warn('当前歌曲暂无评论');
+                        toast.warn(i18n.t("toast.commmentNotAvaliableForCurrentMusic"));
                         return;
                     }
                     if (musicItem) {

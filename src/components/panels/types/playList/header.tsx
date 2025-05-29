@@ -1,6 +1,7 @@
 import IconTextButton from '@/components/base/iconTextButton';
 import ThemeText from '@/components/base/themeText';
 import repeatModeConst from '@/constants/repeatModeConst';
+import { useI18N } from '@/core/i18n';
 import TrackPlayer, { usePlayList, useRepeatMode } from '@/core/trackPlayer';
 import delay from '@/utils/delay';
 import rpx from '@/utils/rpx';
@@ -10,6 +11,7 @@ import { InteractionManager, StyleSheet, View } from 'react-native';
 export default function Header() {
     const repeatMode = useRepeatMode();
     const playList = usePlayList();
+    const { t } = useI18N();
 
     return (
         <View style={style.wrapper}>
@@ -17,10 +19,11 @@ export default function Header() {
                 style={style.headerText}
                 fontSize="title"
                 fontWeight="bold">
-                播放列表
+                {t("panel.playList.title")}
                 <ThemeText fontColor="textSecondary">
-                    {' '}
-                    ({playList.length}首)
+                    {t("panel.playList.count", {
+                        count: playList.length
+                    })}
                 </ThemeText>
             </ThemeText>
             <IconTextButton
@@ -31,14 +34,14 @@ export default function Header() {
                     });
                 }}
                 icon={repeatModeConst[repeatMode].icon}>
-                {repeatModeConst[repeatMode].text}
+                {t(("repeatMode." + repeatMode) as any)}
             </IconTextButton>
             <IconTextButton
                 icon="trash-outline"
                 onPress={() => {
                     TrackPlayer.clearPlayList();
                 }}>
-                清空
+                {t("common.clear")}
             </IconTextButton>
         </View>
     );

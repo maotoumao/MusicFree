@@ -2,17 +2,17 @@ import type {ResumeMode, SortType} from '@/constants/commonConst.ts';
 import type {CustomizedColors} from '@/hooks/useColors';
 
 export interface IAppConfigProperties {
-    $schema: '1';
+    $schema: '2';
     // Basic
     'basic.autoPlayWhenAppStart': boolean;
     'basic.useCelluarNetworkPlay': boolean;
     'basic.useCelluarNetworkDownload': boolean;
     'basic.maxDownload': number;
-    'basic.clickMusicInSearch': '播放歌曲' | '播放歌曲并替换播放列表';
-    'basic.clickMusicInAlbum': '播放专辑' | '播放单曲';
+    'basic.clickMusicInSearch': 'playMusic' | 'playMusicAndReplace';
+    'basic.clickMusicInAlbum': 'playAlbum' | 'playMusic';
     'basic.downloadPath': string;
     'basic.notInterrupt': boolean;
-    'basic.tempRemoteDuck': '暂停' | '降低音量';
+    'basic.tempRemoteDuck': 'pause' | 'lowerVolume';
     'basic.autoStopWhenError': boolean;
     'basic.pluginCacheControl': string;
     'basic.maxCacheSize': number;

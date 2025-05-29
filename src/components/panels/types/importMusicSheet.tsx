@@ -13,9 +13,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import PanelHeader from '../base/panelHeader';
 import { showPanel } from '../usePanel';
+import { useI18N } from '@/core/i18n';
 
 export default function ImportMusicSheet() {
     const validPlugins = PluginManager.getSortedPluginsWithAbility('importMusicSheet');
+    const { t } = useI18N();
 
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -24,7 +26,7 @@ export default function ImportMusicSheet() {
             height={vmax(60)}
             renderBody={() => (
                 <>
-                    <PanelHeader hideButtons title={'导入歌单'} />
+                    <PanelHeader hideButtons title={t('panel.importMusicSheet.title')} />
                     {validPlugins.length ? (
                         <View style={globalStyle.fwflex1}>
                             <FlatList
@@ -37,16 +39,14 @@ export default function ImportMusicSheet() {
                                     <ListItem
                                         withHorizontalPadding
                                         key={`${plugin.hash}`}
-                                        onPress={async () => {
-                                            showPanel('SimpleInput', {
-                                                title: '导入歌单',
-                                                placeholder: '输入目标歌单',
+                                        onPress={async () => {                                            showPanel('SimpleInput', {
+                                                title: t('panel.importMusicSheet.title'),
+                                                placeholder: t('panel.importMusicSheet.placeholder'),
                                                 hints: plugin.instance.hints
                                                     ?.importMusicSheet,
-                                                maxLength: 1000,
-                                                async onOk(text, closePanel) {
+                                                maxLength: 1000,                                                async onOk(text, closePanel) {
                                                     Toast.success(
-                                                        '正在导入中...',
+                                                        t('panel.importMusicSheet.importing'),
                                                     );
                                                     closePanel();
                                                     const result =
@@ -57,8 +57,8 @@ export default function ImportMusicSheet() {
                                                         showDialog(
                                                             'SimpleDialog',
                                                             {
-                                                                title: '准备导入',
-                                                                content: `发现${result.length}首歌曲! 现在开始导入吗?`,
+                                                                title: t('panel.importMusicSheet.prepareImport'),
+                                                                content: t('panel.importMusicSheet.foundSongs', { count: result.length }),
                                                                 onOk() {
                                                                     showPanel(
                                                                         'AddToMusicSheet',
@@ -69,10 +69,9 @@ export default function ImportMusicSheet() {
                                                                     );
                                                                 },
                                                             },
-                                                        );
-                                                    } else {
+                                                        );                                                    } else {
                                                         Toast.warn(
-                                                            '链接有误或目标歌单为空',
+                                                            t('panel.importMusicSheet.invalidLink'),
                                                         );
                                                     }
                                                 },
@@ -82,9 +81,8 @@ export default function ImportMusicSheet() {
                                     </ListItem>
                                 )}
                             />
-                        </View>
-                    ) : (
-                        <NoPlugin notSupportType="导入歌单" />
+                        </View>                    ) : (
+                        <NoPlugin notSupportType={t('panel.importMusicSheet.title')} />
                     )}
                 </>
             )}

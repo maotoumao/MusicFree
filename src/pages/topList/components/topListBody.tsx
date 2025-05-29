@@ -7,6 +7,7 @@ import { fontWeightConst } from '@/constants/uiConst';
 import BoardPanelWrapper from './boardPanelWrapper';
 import useColors from '@/hooks/useColors';
 import NoPlugin from '@/components/base/noPlugin';
+import i18n from '@/core/i18n';
 
 export default function TopListBody() {
     const routes = PluginManager.getSortedPluginsWithAbility('getTopLists').map(_ => ({
@@ -23,7 +24,7 @@ export default function TopListBody() {
         [],
     );
     if (!routes?.length) {
-        return <NoPlugin notSupportType="榜单" />;
+        return <NoPlugin notSupportType={i18n.t("topList.title")} />;
     }
 
     return (

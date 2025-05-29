@@ -12,6 +12,7 @@ import Toast from '@/utils/toast';
 import Icon from '@/components/base/icon.tsx';
 import MusicSheet, { useSheetIsStarred } from '@/core/musicSheet';
 import { MusicRepeatMode } from '@/constants/repeatModeConst';
+import { useI18N } from '@/core/i18n';
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
@@ -26,6 +27,7 @@ export default function (props: IProps) {
 
     const colors = useColors();
     const navigate = useNavigate();
+    const {t} = useI18N();
 
     const starred = useSheetIsStarred(musicSheet);
 
@@ -57,7 +59,7 @@ export default function (props: IProps) {
                     size={iconSizeConst.normal}
                     color={colors.text}
                 />
-                <ThemeText fontWeight="bold">播放全部</ThemeText>
+                <ThemeText fontWeight="bold">{t("playAllBar.title")}</ThemeText>
             </Pressable>
             {canStar && musicSheet ? (
                 <IconButton
@@ -68,10 +70,10 @@ export default function (props: IProps) {
                     onPress={async () => {
                         if (!starred) {
                             MusicSheet.starMusicSheet(musicSheet);
-                            Toast.success('收藏歌单成功');
+                            Toast.success(t("toast.hasStarred"));
                         } else {
                             MusicSheet.unstarMusicSheet(musicSheet);
-                            Toast.success('已取消收藏歌单');
+                            Toast.success(t("toast.hasUnstarred"));
                         }
                     }}
                 />

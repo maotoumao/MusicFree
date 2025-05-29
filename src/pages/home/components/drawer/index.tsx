@@ -143,6 +143,7 @@ function HomeDrawer(props: any) {
                             onOk(value) {
                                 setLanguage(value as string);
                             },
+                            defaultSelected: getLanguage().locale,
                         })
                     }}>
                         <ListItem.ListItemIcon icon='language' width={rpx(48)} />

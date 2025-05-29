@@ -14,6 +14,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import PanelBase from '../base/panelBase';
 import PanelHeader from '../base/panelHeader';
 import { hidePanel } from '../usePanel';
+import { useI18N } from '@/core/i18n';
 
 interface INewMusicSheetProps {
     musicItem: IMusic.IMusicItem;
@@ -24,6 +25,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
 
     const [input, setInput] = useState('');
     const colors = useColors();
+    const { t } = useI18N();
 
     return (
         <PanelBase
@@ -32,7 +34,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title="关联歌词"
+                        title={t("panel.associateLrc.title")}
                         onCancel={hidePanel}
                         onOk={async () => {
                             const inputValue =
@@ -47,7 +49,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                         mediaCache.getMediaCache(targetMedia);
                                     if (!targetCache) {
                                         Toast.warn(
-                                            '地址失效了，重新复制一下吧~',
+                                            t("panel.associateLrc.targetExpired"),
                                         );
                                         // TODO: ERROR CODE
                                         throw new Error('CLIPBOARD TIMEOUT');
@@ -57,17 +59,17 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                         ...targetMedia,
                                         ...targetCache,
                                     })
-                                    Toast.success('关联歌词成功');
+                                    Toast.success(t('panel.associateLrc.toast.success'));
                                     hidePanel();
                                 } catch (e: any) {
                                     if (e.message !== 'CLIPBOARD TIMEOUT') {
-                                        Toast.warn('关联歌词失败');
+                                        Toast.warn(t('panel.associateLrc.toast.fail'));
                                     }
                                     errorLog('关联歌词失败', e?.message);
                                 }
                             } else {
                                 lyricManager.unassociateLyric(musicItem);
-                                Toast.success('取消关联歌词成功');
+                                Toast.success(t('panel.associateLrc.toast.unlinkSuccess'));
                                 hidePanel();
                             }
                         }}
@@ -86,7 +88,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                             },
                         ]}
                         placeholderTextColor={colors.textSecondary}
-                        placeholder={'输入要关联歌词的歌曲ID'}
+                        placeholder={t('panel.associateLrc.inputPlaceholder')}
                         maxLength={80}
                     />
                 </>

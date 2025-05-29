@@ -12,6 +12,7 @@ import globalStyle from "@/constants/globalStyle";
 import { showDialog } from "@/components/dialogs/useDialog";
 import AppBar from "@/components/base/appBar";
 import Fab from "@/components/base/fab";
+import { useI18N } from "@/core/i18n";
 
 interface ISubscribeItem {
     name: string;
@@ -23,6 +24,8 @@ const ITEM_HEIGHT = rpx(108);
 export default function PluginSubscribe() {
     const urls = useAppConfig('plugin.subscribeUrl') ?? '';
     const [subscribes, setSubscribes] = useState<Array<ISubscribeItem>>([]);
+
+    const { t } = useI18N();
 
     useEffect(() => {
         try {
@@ -36,7 +39,7 @@ export default function PluginSubscribe() {
             if (urls.length) {
                 setSubscribes([
                     {
-                        name: '默认',
+                        name: t("common.default"),
                         url: urls,
                     },
                 ]);
@@ -72,19 +75,19 @@ export default function PluginSubscribe() {
             }
             hideDialog();
         } else {
-            Toast.warn('订阅地址必须以.js或.json结尾');
+            Toast.warn(t("toast.subscriptionHaveToEndWithJs"));
         }
     };
 
     return (
         <>
-            <AppBar>订阅设置</AppBar>
+            <AppBar>{t("pluginSetting.menu.subscriptionSetting")}</AppBar>
             <HorizontalSafeAreaView style={globalStyle.flex1}>
                 <FlatList
                     style={style.listWrapper}
                     ListEmptyComponent={Empty}
                     data={subscribes}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                         return (
                             <ListItem
                                 withHorizontalPadding
@@ -107,7 +110,7 @@ export default function PluginSubscribe() {
                                                 ]),
                                             );
                                             hideDialog();
-                                            Toast.success('删除成功');
+                                            Toast.success(t("toast.deleteSuccess"));
                                         },
                                     });
                                 }}>
@@ -120,7 +123,7 @@ export default function PluginSubscribe() {
                                     position="right"
                                     onPress={() => {
                                         Clipboard.setString(item.url);
-                                        Toast.success('已复制到剪切板');
+                                        Toast.success(t("toast.copiedToClipboard"));
                                     }}
                                 />
                             </ListItem>

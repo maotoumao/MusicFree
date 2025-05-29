@@ -1,25 +1,26 @@
-import React, {useMemo} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
+import Icon, { IIconName } from '@/components/base/icon.tsx';
 import ThemeText from '@/components/base/themeText';
-import {iconSizeConst} from '@/constants/uiConst';
-import useColors from '@/hooks/useColors';
-import {useAtom, useSetAtom} from 'jotai';
-import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
-import Toast from '@/utils/toast';
-
-import {useParams} from '@/core/router';
-import {showPanel} from '@/components/panels/usePanel';
-import TrackPlayer from '@/core/trackPlayer';
-import {produce} from 'immer';
-import Icon, {IIconName} from '@/components/base/icon.tsx';
+import { showPanel } from '@/components/panels/usePanel';
+import { iconSizeConst } from '@/constants/uiConst';
 import downloader from '@/core/downloader';
+import { useI18N } from '@/core/i18n';
+import { useParams } from '@/core/router';
+import TrackPlayer from '@/core/trackPlayer';
+import useColors from '@/hooks/useColors';
+import rpx from '@/utils/rpx';
+import Toast from '@/utils/toast';
+import { produce } from 'immer';
+import { useAtom, useSetAtom } from 'jotai';
+import React, { useMemo } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { editingMusicListAtom, musicListChangedAtom } from '../store/atom';
 
 export default function Bottom() {
-    const {musicSheet} = useParams<'music-list-editor'>();
+    const { musicSheet } = useParams<'music-list-editor'>();
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
+    const { t } = useI18N();
 
     const selectedEditorItems = useMemo(
         () => editingMusicList.filter(_ => _.checked),
@@ -44,16 +45,16 @@ export default function Bottom() {
         <View style={style.wrapper}>
             <BottomIcon
                 icon="motion-play"
-                title="下一首播放"
+                title={t("musicListEditor.addToNextPlay")}
                 onPress={async () => {
                     TrackPlayer.addNext(selectedItems);
                     resetSelectedIndices();
-                    Toast.success('已添加到下一首播放');
+                    Toast.success(t("toast.addToNextPlay"));
                 }}
             />
             <BottomIcon
                 icon="folder-plus"
-                title="加入歌单"
+                title={t("musicListEditor.addToSheet")}
                 onPress={() => {
                     if (selectedItems.length) {
                         showPanel('AddToMusicSheet', {
@@ -65,12 +66,12 @@ export default function Bottom() {
             />
             <BottomIcon
                 icon="arrow-down-tray"
-                title="下载"
+                title={t("common.download")}
                 onPress={() => {
                     if (selectedItems.length) {
                         downloader.download(selectedItems);
                         Toast.success(
-                            '开始下载；全部下载完成之前请不要关闭应用',
+                            t("toast.beginDownload"),
                         );
                         resetSelectedIndices();
                     }
@@ -78,7 +79,7 @@ export default function Bottom() {
             />
             <BottomIcon
                 icon="trash-outline"
-                title="删除"
+                title={t("common.delete")}
                 color={
                     selectedItems.length && musicSheet?.id
                         ? 'text'
@@ -90,7 +91,7 @@ export default function Bottom() {
                             produce(prev => prev.filter(_ => !_.checked)),
                         );
                         setMusicListChanged(true);
-                        Toast.warn('记得保存哦');
+                        Toast.warn(t("toast.rememberToSave"));
                     }
                 }}
             />
@@ -105,16 +106,16 @@ interface IBottomIconProps {
     onPress: () => void;
 }
 function BottomIcon(props: IBottomIconProps) {
-    const {icon, title, onPress, color = 'text'} = props;
+    const { icon, title, onPress, color = 'text' } = props;
     const colors = useColors();
     return (
         <Pressable
             onPress={onPress}
-            style={[style.bottomIconWrapper, {backgroundColor: colors.appBar}]}>
+            style={[style.bottomIconWrapper, { backgroundColor: colors.appBar }]}>
             <Icon
                 name={icon}
                 color={colors.appBarText}
-                style={color === 'textSecondary' ? {opacity: 0.6} : undefined}
+                style={color === 'textSecondary' ? style.opacity_06 : undefined}
                 size={iconSizeConst.big}
                 onPress={onPress}
             />
@@ -145,4 +146,7 @@ const style = StyleSheet.create({
     bottomIconText: {
         marginTop: rpx(12),
     },
+    opacity_06: {
+        opacity: 0.6,
+    }
 });

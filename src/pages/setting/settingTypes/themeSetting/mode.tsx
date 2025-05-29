@@ -6,8 +6,10 @@ import ListItem from "@/components/base/listItem";
 import ThemeSwitch from "@/components/base/switch";
 import Config, { useAppConfig } from "@/core/appConfig";
 import Theme from "@/core/theme";
+import { useI18N } from "@/core/i18n";
 
 export default function Mode() {
+    const { t } = useI18N();
     const mode = useAppConfig('theme.followSystem') ?? false;
     return (
         <View>
@@ -15,13 +17,13 @@ export default function Mode() {
                 fontSize="subTitle"
                 fontWeight="bold"
                 style={styles.header}>
-                显示样式
+                {t('themeSettings.displayStyle')}
             </ThemeText>
             <View style={styles.sectionWrapper}>
                 <ListItem withHorizontalPadding>
                     <ListItem.Content>
                         <View style={styles.itemRow}>
-                            <ThemeText>跟随系统深色设置</ThemeText>
+                            <ThemeText>{t('themeSettings.followSystemTheme')}</ThemeText>
                             <ThemeSwitch
                                 value={mode}
                                 onValueChange={e => {
