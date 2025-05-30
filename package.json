@@ -76,7 +76,7 @@
     "react-native-share": "^10.2.1",
     "react-native-svg": "^15.11.2",
     "react-native-tab-view": "^3.5.2",
-    "react-native-track-player": "^4.1.1",
+    "react-native-track-player": "github:CTZZG/react-native-track-player#v4.1.1-ffmpeg",
     "react-native-url-polyfill": "^2.0.0",
     "recyclerlistview": "^4.2.1",
     "webdav": "^5.7.0"
