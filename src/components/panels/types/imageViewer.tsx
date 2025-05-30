@@ -7,6 +7,7 @@ import { saveToGallery } from '@/utils/fileUtils.ts';
 import { errorLog } from '@/utils/log.ts';
 import PanelFullscreen from '@/components/panels/base/panelFullscreen.tsx';
 import { Button } from '@/components/base/button.tsx';
+import { useI18N } from '@/core/i18n';
 
 interface IImageViewerProps {
     // 图片路径
@@ -16,6 +17,7 @@ interface IImageViewerProps {
 export default function ImageViewer(props: IImageViewerProps) {
     const { url } = props;
     const orientation = useOrientation();
+    const { t } = useI18N();
 
     return (
         <PanelFullscreen
@@ -43,17 +45,20 @@ export default function ImageViewer(props: IImageViewerProps) {
                 }}
             />
             <Button
-                text={'保存图片'}
+                text={t('panel.imageViewer.saveImage')}
                 type="primary"
                 style={styles.button}
                 onPress={() => {
                     saveToGallery(url)
                         .then((resultPath) => {
-                            Toast.success(`图片已保存到 ${resultPath}`);
-                        })
-                        .catch(e => {
-                            errorLog('保存失败', e?.message ?? e);
-                            Toast.warn(`保存失败: ${e?.message ?? e}`);
+                            Toast.success(t('panel.imageViewer.saveImageSuccess', {
+                                path: resultPath,
+                            }));
+                        }).catch(e => {
+                            errorLog('Save failed', e?.message ?? e);
+                            Toast.warn(t('panel.imageViewer.saveImageFail', {
+                                reason: e?.message ?? e,
+                            }));
                         });
                 }}
             />

@@ -6,6 +6,7 @@ import { showDialog } from '@/components/dialogs/useDialog';
 import { showPanel } from '@/components/panels/usePanel';
 import { ImgAsset } from '@/constants/assetsConst';
 import { localPluginPlatform } from '@/constants/commonConst';
+import { useI18N } from '@/core/i18n';
 import MusicSheet, { useSheetsBase, useStarredSheets } from '@/core/musicSheet';
 import { ROUTE_PATH, useNavigate } from '@/core/router';
 import useColors from '@/hooks/useColors';
@@ -23,6 +24,7 @@ export default function Sheets() {
 
     const allSheets = useSheetsBase();
     const staredSheets = useStarredSheets();
+    const { t } = useI18N();
 
     const selectedTabTextStyle = useMemo(() => {
         return [
@@ -33,13 +35,16 @@ export default function Sheets() {
         ];
     }, [colors]);
 
+
     return (
         <>
             <View style={styles.subTitleContainer}>
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
                     accessible
-                    accessibilityLabel={`我的歌单，共${allSheets.length}个`}
+                    accessibilityLabel={t('home.myPlaylistsCount.a11y', {
+                        count: allSheets.length,
+                    })}
                     onPress={() => {
                         setIndex(0);
                     }}>
@@ -50,7 +55,7 @@ export default function Sheets() {
                             styles.tabText,
                             index === 0 ? selectedTabTextStyle : null,
                         ]}>
-                        我的歌单
+                        {t('home.myPlaylists')}
                     </ThemeText>
                     <ThemeText
                         accessible={false}
@@ -64,7 +69,9 @@ export default function Sheets() {
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
                     accessible
-                    accessibilityLabel={`收藏歌单，共${staredSheets.length}个`}
+                    accessibilityLabel={t('home.starredPlaylistsCount.a11y', {
+                        count: allSheets.length,
+                    })}
                     onPress={() => {
                         setIndex(1);
                     }}>
@@ -75,7 +82,7 @@ export default function Sheets() {
                             styles.tabText,
                             index === 1 ? selectedTabTextStyle : null,
                         ]}>
-                        收藏歌单
+                        {t('home.starredPlaylists')}
                     </ThemeText>
                     <ThemeText
                         fontColor="textSecondary"
@@ -91,7 +98,7 @@ export default function Sheets() {
                         name="plus"
                         style={styles.newSheetButton}
                         sizeType="normal"
-                        accessibilityLabel="新建歌单"
+                        accessibilityLabel={t('home.newPlaylist.a11y')}
                         onPress={() => {
                             showPanel('CreateMusicSheet');
                         }}
@@ -99,7 +106,7 @@ export default function Sheets() {
                     <IconButton
                         name="inbox-arrow-down"
                         sizeType="normal"
-                        accessibilityLabel="导入歌单"
+                        accessibilityLabel={t("home.importPlaylist.a11y")}
                         onPress={() => {
                             showPanel('ImportMusicSheet');
                         }}
@@ -108,12 +115,14 @@ export default function Sheets() {
             </View>
             <FlashList
                 ListEmptyComponent={<Empty />}
+                extraData={{ t }}
                 data={(index === 0 ? allSheets : staredSheets) ?? []}
                 estimatedItemSize={ListItem.Size.big}
-                renderItem={({item: sheet}) => {
+                renderItem={({ item: sheet }) => {
                     const isLocalSheet = !(
                         sheet.platform && sheet.platform !== localPluginPlatform
                     );
+
 
                     return (
                         <ListItem
@@ -144,8 +153,8 @@ export default function Sheets() {
                                 title={sheet.title}
                                 description={
                                     isLocalSheet
-                                        ? `${sheet.worksNum}首`
-                                        : `${sheet.artist}`
+                                        ? t("home.songCount", { count: sheet.worksNum })
+                                        : `${sheet.artist ?? ''}`
                                 }
                             />
                             {sheet.id !== MusicSheet.defaultSheet.id ? (
@@ -154,19 +163,21 @@ export default function Sheets() {
                                     icon="trash-outline"
                                     onPress={() => {
                                         showDialog('SimpleDialog', {
-                                            title: '删除歌单',
-                                            content: `确定删除歌单「${sheet.title}」吗?`,
+                                            title: t("dialog.deleteSheetTitle"),
+                                            content: t("dialog.deleteSheetContent", {
+                                                name: sheet.title
+                                            }),
                                             onOk: async () => {
                                                 if (isLocalSheet) {
                                                     await MusicSheet.removeSheet(
                                                         sheet.id,
                                                     );
-                                                    Toast.success('已删除');
+                                                    Toast.success(t("toast.deleteSuccess"));
                                                 } else {
                                                     await MusicSheet.unstarMusicSheet(
                                                         sheet,
                                                     );
-                                                    Toast.success('已取消收藏');
+                                                    Toast.success(t("toast.hasUnstarred"));
                                                 }
                                             },
                                         });

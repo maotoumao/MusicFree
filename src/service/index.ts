@@ -18,7 +18,7 @@ module.exports = async function () {
     );
     RNTrackPlayer.addEventListener(
         Event.RemoteDuck,
-        async ({paused, permanent}) => {
+        async ({ paused, permanent }) => {
             if (Config.getConfig('basic.notInterrupt')) {
                 return;
             }
@@ -28,7 +28,7 @@ module.exports = async function () {
             const tempRemoteDuckConf = Config.getConfig(
                 'basic.tempRemoteDuck',
             );
-            if (tempRemoteDuckConf === '降低音量') {
+            if (tempRemoteDuckConf === 'lowerVolume') {
                 if (paused) {
                     return RNTrackPlayer.setVolume(0.5);
                 } else {

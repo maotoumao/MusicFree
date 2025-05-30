@@ -1,18 +1,19 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import {useAtomValue} from 'jotai';
-import {scrollToTopAtom} from '../store/atoms';
+import { useAtomValue } from 'jotai';
+import { scrollToTopAtom } from '../store/atoms';
 import ThemeText from '@/components/base/themeText';
 import Tag from '@/components/base/tag';
-import {useParams} from '@/core/router';
+import { useParams } from '@/core/router';
 import Image from '@/components/base/image';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
+import { useI18N } from '@/core/i18n';
 
 const headerHeight = rpx(350);
 
@@ -21,13 +22,15 @@ interface IHeaderProps {
 }
 
 export default function Header(props: IHeaderProps) {
-    const {neverFold} = props;
+    const { neverFold } = props;
 
-    const {artistItem} = useParams<'artist-detail'>();
+    const { artistItem } = useParams<'artist-detail'>();
 
     const heightValue = useSharedValue(headerHeight);
     const opacityValue = useSharedValue(1);
     const scrollToTopState = useAtomValue(scrollToTopAtom);
+
+    const { t } = useI18N();
 
     const heightStyle = useAnimatedStyle(() => {
         return {
@@ -82,7 +85,9 @@ export default function Header(props: IHeaderProps) {
                         <ThemeText
                             fontSize="subTitle"
                             fontColor="textSecondary">
-                            粉丝数: {artistItem.fans}
+                            {t("artistDetail.fansCount", {
+                                count: artistItem.fans
+                            })}
                         </ThemeText>
                     ) : null}
                 </View>

@@ -11,6 +11,7 @@ import searchResultStore, { ISearchLyricResult } from './searchResultStore';
 import ListEmpty from '@/components/base/listEmpty';
 import ListFooter from '@/components/base/listFooter';
 import { FlashList } from '@shopify/flash-list';
+import { useI18N } from '@/core/i18n';
 
 interface ILyricListWrapperProps {
     route: {
@@ -33,6 +34,8 @@ function LyricListImpl(props: ILyricListProps) {
     const data = props.data;
     const searchState = data?.state ?? RequestStateCode.IDLE;
 
+    const {t} = useI18N();
+
     return searchState === RequestStateCode.PENDING_FIRST_PAGE ? (
         <Loading />
     ) : (
@@ -49,11 +52,11 @@ function LyricListImpl(props: ILyricListProps) {
                             }
 
                             lyricManager.associateLyric(currentMusic, item);
-                            Toast.success('设置成功~');
+                            Toast.success(t("panel.searchLrc.toast.settingSuccess"));
                             hidePanel();
                             // 触发刷新歌词
                         } catch {
-                            Toast.warn('设置失败!');
+                            Toast.warn(t("panel.searchLrc.toast.failToSearch"));
                         }
                     }}
                 />

@@ -27,7 +27,7 @@ export default function NavBar() {
             />
             <View style={styles.headerContent}>
                 <Text numberOfLines={1} style={styles.headerTitleText}>
-                    {musicItem?.title ?? '无音乐'}
+                    {musicItem?.title ?? '--'}
                 </Text>
                 <View style={styles.headerDesc}>
                     <Text style={styles.headerArtistText} numberOfLines={1}>

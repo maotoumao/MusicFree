@@ -1,5 +1,6 @@
 import NoPlugin from '@/components/base/noPlugin';
 import { fontWeightConst } from '@/constants/uiConst';
+import { useI18N } from '@/core/i18n';
 import PluginManager from '@/core/pluginManager';
 import useColors from '@/hooks/useColors';
 import rpx, { vw } from '@/utils/rpx';
@@ -17,6 +18,7 @@ export default function Body() {
             title: _.name,
         }),
     );
+    const { t } = useI18N();
 
     const renderTabBar = (_: any) => (
         <TabBar
@@ -44,7 +46,7 @@ export default function Body() {
                         color,
                         textAlign: 'center',
                     }}>
-                    {route.title ?? '(未命名)'}
+                    {route.title ?? `(${t('common.unknownName')})`}
                 </Text>
             )}
             indicatorStyle={{
@@ -55,7 +57,7 @@ export default function Body() {
     );
 
     if (!routes?.length) {
-        return <NoPlugin notSupportType="推荐歌单" />;
+        return <NoPlugin notSupportType={t("recommendSheet.title")} />;
     }
     return (
         <TabView

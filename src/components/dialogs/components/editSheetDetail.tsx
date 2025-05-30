@@ -15,6 +15,7 @@ import Input from '@/components/base/input';
 import {fontSizeConst} from '@/constants/uiConst';
 import {copyAsync, deleteAsync, getInfoAsync} from 'expo-file-system';
 import MusicSheet from '@/core/musicSheet';
+import { useI18N } from '@/core/i18n';
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
@@ -25,6 +26,8 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
 
     const [coverImg, setCoverImg] = useState(musicSheet?.coverImg);
     const [title, setTitle] = useState(musicSheet?.title);
+
+    const {t} = useI18N();
 
     // onCover
 
@@ -94,7 +97,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
         <Dialog onDismiss={hideDialog}>
             <Dialog.Content>
                 <View style={style.row}>
-                    <ThemeText>封面</ThemeText>
+                    <ThemeText>{t("common.cover")}</ThemeText>
                     <TouchableOpacity
                         onPress={onChangeCoverPress}
                         onLongPress={() => {
@@ -108,7 +111,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
                     </TouchableOpacity>
                 </View>
                 <View style={style.row}>
-                    <ThemeText>歌单名</ThemeText>
+                    <ThemeText>{t("dialog.editSheetDetail.sheetName")}</ThemeText>
                     <Input
                         numberOfLines={1}
                         textAlign="right"
@@ -128,12 +131,12 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
             <Dialog.Actions
                 actions={[
                     {
-                        title: '取消',
+                        title: t("common.cancel"),
                         type: 'normal',
                         onPress: hideDialog,
                     },
                     {
-                        title: '确认',
+                        title: t("common.confirm"),
                         type: 'primary',
                         onPress: onConfirm,
                     },

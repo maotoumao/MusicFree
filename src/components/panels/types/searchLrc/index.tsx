@@ -13,6 +13,7 @@ import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import LyricList from './LyricList';
 import globalStyle from '@/constants/globalStyle';
 import NoPlugin from '@/components/base/noPlugin';
+import { useI18N } from '@/core/i18n';
 
 interface INewMusicSheetProps {
     musicItem?: IMusic.IMusicItem | null;
@@ -24,6 +25,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
         musicItem?.alias ?? musicItem?.title ?? '',
     );
     const colors = useColors();
+    const {t} = useI18N();
 
     const searchLrc = useSearchLrc();
 
@@ -57,7 +59,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
                                 },
                             ]}
                             placeholderTextColor={colors.textSecondary}
-                            placeholder={'歌曲名称'}
+                            placeholder={t("panel.searchLrc.inputPlaceholder")}
                             maxLength={80}
                         />
                         <Button
@@ -65,7 +67,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
                             onPress={() => {
                                 searchLrc(input, 1);
                             }}>
-                            搜索
+                            {t("common.search")}
                         </Button>
                     </View>
                     <LyricResultBodyWrapper />
@@ -110,6 +112,7 @@ const style = StyleSheet.create({
 
 function LyricResultBodyWrapper() {
     const [index, setIndex] = useState(0);
+    const { t } = useI18N();
 
     const routes = PluginManager.getSortedSearchablePlugins('lyric')?.map?.(
         _ => ({
@@ -163,7 +166,7 @@ function LyricResultBodyWrapper() {
                                 color,
                                 textAlign: 'center',
                             }}>
-                            {route.title ?? '(未命名)'}
+                            {route.title ?? t('panel.searchLrc.unnamed')}
                         </Text>
                     )}
                     indicatorStyle={{
@@ -177,6 +180,6 @@ function LyricResultBodyWrapper() {
             initialLayout={{width: vw(100)}}
         />
     ) : (
-        <NoPlugin notSupportType="搜索歌词" />
+        <NoPlugin notSupportType={t('panel.searchLrc.notSupported')} />
     );
 }

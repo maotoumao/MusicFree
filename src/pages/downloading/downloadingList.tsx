@@ -5,6 +5,7 @@ import ListItem from '@/components/base/listItem';
 import { sizeFormatter } from '@/utils/fileUtils';
 import { DownloadFailReason, DownloadStatus, useDownloadQueue, useDownloadTask } from '@/core/downloader';
 import { FlashList } from '@shopify/flash-list';
+import { useI18N } from '@/core/i18n';
 
 
 interface DownloadingListItemProps {
@@ -13,6 +14,7 @@ interface DownloadingListItemProps {
 function DownloadingListItem(props: DownloadingListItemProps) {
     const { musicItem } = props;
     const taskInfo = useDownloadTask(musicItem);
+    const { t } = useI18N();
 
     const status = taskInfo?.status ?? DownloadStatus.Error;
 
@@ -22,30 +24,33 @@ function DownloadingListItem(props: DownloadingListItemProps) {
         const reason = taskInfo?.errorReason;
 
         if (reason === DownloadFailReason.NoWritePermission) {
-            description = "没有写入文件的权限";
+            description = t("downloading.downloadFailReason.noWritePermission");
         } else if (reason === DownloadFailReason.FailToFetchSource) {
-            description = "获取音乐源失败";
+            description = t("downloading.downloadFailReason.failToFetchSource");
         } else {
-            description = "未知错误";
+            description = t("downloading.downloadFailReason.unknown");
         }
     } else if (status === DownloadStatus.Completed) {
-        description = "下载完成";
+        description = t("downloading.downloadStatus.completed");
     } else if (status === DownloadStatus.Downloading) {
         const progress = taskInfo?.downloadedSize ? sizeFormatter(taskInfo.downloadedSize) : '-';
         const totalSize = taskInfo?.fileSize ? sizeFormatter(taskInfo.fileSize) : '-';
 
-        description = "下载中: " + progress + " / " + totalSize;
+        description = t("downloading.downloadStatus.downloadProgress", {
+            progress,
+            totalSize
+        });
     } else if (status === DownloadStatus.Pending) {
-        description = "等待下载";
+        description = t("downloading.downloadStatus.pending");
     } else if (status === DownloadStatus.Preparing) {
-        description = "正在获取音乐资源链接";
+        description = t("downloading.downloadStatus.preparing");
     }
 
     return <ListItem withHorizontalPadding>
         <ListItem.Content
             title={musicItem.title}
             description={description}
-         />
+        />
     </ListItem>
 
 }

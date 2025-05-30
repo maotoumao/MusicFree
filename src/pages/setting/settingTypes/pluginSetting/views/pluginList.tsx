@@ -20,6 +20,7 @@ import Fab from "@/components/base/fab";
 import PluginItem from "../components/pluginItem";
 import { IIconName } from "@/components/base/icon.tsx";
 import { IInstallPluginResult } from "@/types/core/pluginManager";
+import { useI18N } from "@/core/i18n";
 
 interface IOption {
     icon: IIconName;
@@ -29,7 +30,8 @@ interface IOption {
 
 export default function PluginList() {
     const plugins = useSortedPlugins();
-    console.log("uuuuuusesorted", plugins);
+    const { t } = useI18N();
+
     const [loading, setLoading] = useState(false);
 
     const navigator = useNavigation<any>();
@@ -37,25 +39,25 @@ export default function PluginList() {
     const menuOptions: IOption[] = [
         {
             icon: 'bookmark-square',
-            title: '订阅设置',
+            title: t("pluginSetting.menu.subscriptionSetting"),
             async onPress() {
                 navigator.navigate('/pluginsetting/subscribe');
             },
         },
         {
             icon: 'bars-3',
-            title: '插件排序',
+            title: t("pluginSetting.menu.sort"),
             onPress() {
                 navigator.navigate('/pluginsetting/sort');
             },
         },
         {
             icon: 'trash-outline',
-            title: '卸载全部插件',
+            title: t("pluginSetting.menu.uninstallAll"),
             onPress() {
                 showDialog('SimpleDialog', {
-                    title: '卸载插件',
-                    content: '确认卸载全部插件吗？此操作不可恢复！',
+                    title: t("pluginSetting.menu.uninstallAll"),
+                    content: t("pluginSetting.menu.uninstallAllContent"),
                     async onOk() {
                         setLoading(true);
                         await PluginManager.uninstallAllPlugins();
@@ -91,18 +93,20 @@ export default function PluginList() {
             );
             // 初步过滤
 
-            Toast.success('插件安装成功~');
+            Toast.success(t("toast.installPluginSuccess"));
         } catch (e: any) {
             trace('插件安装失败', e?.message);
-            Toast.warn(`插件安装失败: ${e?.message ?? ''}`);
+            Toast.warn(t("toast.installPluginFail", {
+                reason: e?.message ?? '',
+            }));
         }
         setLoading(false);
     }
 
     async function onInstallFromNetworkClick() {
         showPanel('SimpleInput', {
-            title: '安装插件',
-            placeholder: '输入插件URL',
+            title: t("pluginSetting.menu.installPlugin"),
+            placeholder: t("pluginSetting.menu.installPluginDialogPlaceholder"),
             maxLength: 200,
             async onOk(text, closePanel) {
                 setLoading(true);
@@ -122,15 +126,19 @@ export default function PluginList() {
                 }
 
                 if (!failResults.length) {
-                    Toast.success('插件安装成功');
+                    Toast.success(t("toast.installPluginSuccess"));
                 } else {
-                    Toast.warn((successResults.length ? "部分" : "全部") + "插件安装失败", {
+                    Toast.warn(successResults.length ? t("toast.partialPluginInstallFailed") : t("toast.allPluginInstallFailed"), {
                         'type': 'warn',
-                        'actionText': "查看",
+                        'actionText': t("common.view"),
                         'onActionClick': () => {
                             showDialog('SimpleDialog', {
-                                title: "插件安装失败",
-                                content: "以下插件安装失败: \n" + failResults.map(it => (it.pluginUrl ?? "") + "\n失败原因：" + it.message).join('\n-----\n'),
+                                title: t("pluginSetting.menu.pluginInstallFailedDialogTitle"),
+                                content: t("pluginSetting.pluginInstallFailedDialogContent", {
+                                    detail: failResults.map(it => (it.pluginUrl ?? "") + "\n" + t("pluginSetting.failReason", {
+                                        reason: it.message ?? ''
+                                    })).join('\n-----\n')
+                                })
                             })
                         }
                     });
@@ -145,7 +153,7 @@ export default function PluginList() {
     async function onSubscribeClick() {
         const urls = Config.getConfig('plugin.subscribeUrl');
         if (!urls) {
-            Toast.warn('暂无订阅');
+            Toast.warn(t("toast.noSubscription"));
         }
         setLoading(true);
 
@@ -170,15 +178,19 @@ export default function PluginList() {
             }
 
             if (!failResults.length) {
-                Toast.success('插件安装成功');
+                Toast.success(t("toast.installPluginSuccess"));
             } else {
-                Toast.warn((successResults.length ? "部分" : "全部") + "插件安装失败", {
+                Toast.warn((successResults.length ? t("toast.partialPluginInstallFailed") : t("toast.allPluginInstallFailed")), {
                     'type': 'warn',
-                    'actionText': "查看",
+                    'actionText': t("common.view"),
                     'onActionClick': () => {
                         showDialog('SimpleDialog', {
-                            title: "插件安装失败",
-                            content: "以下插件安装失败: \n" + failResults.map(it => (it.pluginUrl ?? "") + "\n失败原因：" + it.message).join('\n-----\n'),
+                            title: t("pluginSetting.menu.pluginInstallFailedDialogTitle"),
+                            content: t("pluginSetting.pluginInstallFailedDialogContent", {
+                                detail: failResults.map(it => (it.pluginUrl ?? "") + "\n" + t("pluginSetting.failReason", {
+                                    reason: it.message ?? ''
+                                })).join('\n-----\n')
+                            })
                         })
                     }
                 });
@@ -189,12 +201,14 @@ export default function PluginList() {
                 const result = await installPluginFromUrl(urls);
                 if (result[0]) {
                     if (result[0].success) {
-                        Toast.success('插件安装成功');
+                        Toast.success(t("toast.installPluginSuccess"));
                     } else {
-                        Toast.warn(`部分插件安装失败: ${result[0].message ?? ''}`);
+                        Toast.warn(t("toast.partialPluginInstallFailedWithReason", {
+                            reason: result[0].message ?? '',
+                        }))
                     }
                 } else {
-                    Toast.warn('订阅无效');
+                    Toast.warn(t("toast.subscriptionInvalid"));
                 }
             }
             setLoading(false);
@@ -224,29 +238,35 @@ export default function PluginList() {
             }
 
             if (!failResults.length) {
-                Toast.success('插件更新成功');
+                Toast.success(t("toast.updatePluginSuccess"));
             } else {
-                Toast.warn((successResults.length ? "部分" : "全部") + "插件更新失败", {
+                Toast.warn((successResults.length ? t("toast.partialPluginUpdateFailed") : t("toast.allPluginUpdateFailed")), {
                     'type': 'warn',
-                    'actionText': "查看",
+                    'actionText': t("common.view"),
                     'onActionClick': () => {
                         showDialog('SimpleDialog', {
-                            title: "插件更新失败",
-                            content: "以下插件更新失败: \n" + failResults.map(it => (it.pluginUrl ?? "") + "\n失败原因：" + it.message).join('\n-----\n'),
+                            title: t("pluginSetting.menu.pluginUpdateFailedDialogTitle"),
+                            content: t("pluginSetting.pluginUpdateFailedDialogContent", {
+                                detail: failResults.map(it => (it.pluginUrl ?? "") + "\n" + t("pluginSetting.failReason", {
+                                    reason: it.message ?? ''
+                                })).join('\n-----\n')
+                            })
                         })
                     }
                 });
             }
 
         } catch (e: any) {
-            Toast.warn(`出现未知错误: ${e.message ?? e}`);
+            Toast.warn(t("toast.unknownError", {
+                reason: e?.message ?? e
+            }));
         }
         setLoading(false);
     }
 
     return (
         <>
-            <AppBar menu={menuOptions}>插件管理</AppBar>
+            <AppBar menu={menuOptions}>{t("sidebar.pluginManagement")}</AppBar>
             <HorizontalSafeAreaView style={style.wrapper}>
                 <>
                     {loading ? (
@@ -258,7 +278,7 @@ export default function PluginList() {
                             data={plugins ?? []}
                             keyExtractor={_ => _.hash}
                             renderItem={({ item: plugin }) => (
-                                <PluginItem key={plugin.hash} plugin={plugin}/>
+                                <PluginItem key={plugin.hash} plugin={plugin} />
                             )}
                         />
                     )}
@@ -267,19 +287,23 @@ export default function PluginList() {
                         icon="plus"
                         onPress={() => {
                             showPanel('SimpleSelect', {
-                                header: '安装插件',
+                                header: t("pluginSetting.menu.installPlugin"),
                                 candidates: [
                                     {
                                         value: '从本地安装插件',
+                                        title: t("pluginSetting.fabOptions.installFromLocal"),
                                     },
                                     {
                                         value: '从网络安装插件',
+                                        title: t("pluginSetting.fabOptions.installFromNetwork"),
                                     },
                                     {
                                         value: '更新全部插件',
+                                        title: t("pluginSetting.fabOptions.updateAllPlugins"),
                                     },
                                     {
                                         value: '更新订阅',
+                                        title: t("pluginSetting.fabOptions.updateSubscription"),
                                     },
                                 ],
                                 onPress(item) {

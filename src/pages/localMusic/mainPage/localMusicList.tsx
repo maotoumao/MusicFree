@@ -4,9 +4,11 @@ import LocalMusicSheet from '@/core/localMusicSheet';
 import { localMusicSheetId, localPluginPlatform, RequestStateCode } from '@/constants/commonConst';
 import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';
+import { useI18N } from '@/core/i18n';
 
 export default function LocalMusicList() {
     const musicList = LocalMusicSheet.useMusicList();
+    const { t } = useI18N();
 
     return (
         <HorizontalSafeAreaView style={globalStyle.flex1}>
@@ -16,7 +18,7 @@ export default function LocalMusicList() {
                 state={RequestStateCode.IDLE}
                 musicSheet={{
                     id: localMusicSheetId,
-                    title: '本地',
+                    title: t("common.local"),
                     platform: localPluginPlatform,
                     musicList: musicList,
                 }}

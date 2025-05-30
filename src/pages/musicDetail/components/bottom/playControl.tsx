@@ -16,6 +16,8 @@ export default function () {
 
     const orientation = useOrientation();
 
+    console.log(repeatMode, repeatModeConst[repeatMode]);
+
     return (
         <>
             <View

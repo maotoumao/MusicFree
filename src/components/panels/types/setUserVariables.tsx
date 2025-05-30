@@ -49,7 +49,7 @@ export default function SetUserVariables(props: IUserVariablesProps) {
                         style={globalStyle.flex1}>
                         <ScrollView
                             contentContainerStyle={{
-                                paddingBottom: vmax(20), // TODO: 先这样吧，keyboardAvoidingView没用好，之后再优化吧
+                                paddingBottom: vmax(20),
                             }}>
                             {variables.map(it => (
                                 <ListItem

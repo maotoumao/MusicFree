@@ -46,7 +46,7 @@ export default function SheetMusicList(props: IMusicListProps) {
                             if (
                                 Config.getConfig(
                                     'basic.clickMusicInAlbum',
-                                ) === '播放单曲'
+                                ) === 'playMusic'
                             ) {
                                 TrackPlayer.play(musicItem);
                             } else {

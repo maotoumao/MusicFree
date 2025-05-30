@@ -18,6 +18,7 @@ import { IParsedLrcItem } from "@/utils/lrcParser";
 import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
 import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager, { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
+import { useI18N } from "@/core/i18n";
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -58,6 +59,7 @@ export default function Lyric(props: IProps) {
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
         useDelayFalsy<number | undefined>(undefined, 2000);
     const musicState = useMusicState();
+    const { t } = useI18N();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
 
@@ -262,14 +264,11 @@ export default function Lyric(props: IProps) {
                                                     ]}
                                                     ellipsizeMode="middle"
                                                     numberOfLines={1}>
-                                                    歌词关联自「
-                                                    {
-                                                        associateMusicItem.platform
-                                                    }{' '}
-                                                    -{' '}
-                                                    {associateMusicItem.title ||
-                                                        ''}
-                                                    」
+                                                    {t("lyric.lyricLinkedFrom", {
+                                                        platform: associateMusicItem.platform,
+                                                        title: associateMusicItem.title || '',
+                                                    })}
+
                                                 </Text>
 
                                                 <GestureDetector
@@ -279,7 +278,7 @@ export default function Lyric(props: IProps) {
                                                             styles.linkText,
                                                             fontSizeStyle,
                                                         ]}>
-                                                        解除关联
+                                                        {t("lyric.unlinkLyric")}
                                                     </Text>
                                                 </GestureDetector>
                                             </>
@@ -320,7 +319,7 @@ export default function Lyric(props: IProps) {
                     ) : (
                         <View style={globalStyle.fullCenter}>
                             <Text style={[styles.white, fontSizeStyle]}>
-                                暂无歌词
+                                {t("lyric.noLyric")}
                             </Text>
                             <TapGestureHandler
                                 onActivated={() => {
@@ -331,7 +330,7 @@ export default function Lyric(props: IProps) {
                                 }}>
                                 <Text
                                     style={[styles.searchLyric, fontSizeStyle]}>
-                                    搜索歌词
+                                    {t("lyric.searchLyric")}
                                 </Text>
                             </TapGestureHandler>
                         </View>

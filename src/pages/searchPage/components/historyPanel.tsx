@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import Loading from '@/components/base/loading';
 import Chip from '@/components/base/chip';
@@ -10,7 +10,7 @@ import {
     removeAllHistory,
     removeHistory,
 } from '../common/historySearch';
-import {useSetAtom} from 'jotai';
+import { useSetAtom } from 'jotai';
 import {
     PageStatus,
     initSearchResults,
@@ -21,6 +21,7 @@ import {
 import ThemeText from '@/components/base/themeText';
 import Button from '@/components/base/textButton.tsx';
 import Empty from '@/components/base/empty';
+import { useI18N } from '@/core/i18n';
 
 export default function () {
     const [history, setHistory] = useState<string[] | null>(null);
@@ -29,6 +30,7 @@ export default function () {
     const setQuery = useSetAtom(queryAtom);
     const setPageStatus = useSetAtom(pageStatusAtom);
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const { t } = useI18N();
 
     useEffect(() => {
         getHistory().then(setHistory);
@@ -42,7 +44,7 @@ export default function () {
                 <>
                     <View style={style.header}>
                         <ThemeText fontSize="title" fontWeight="semibold">
-                            历史记录
+                            {t("searchPage.history")}
                         </ThemeText>
                         <Button
                             fontColor="textSecondary"
@@ -50,7 +52,7 @@ export default function () {
                                 await removeAllHistory();
                                 getHistory().then(setHistory);
                             }}>
-                            清空
+                            {t("common.clear")}
                         </Button>
                     </View>
                     <ScrollView

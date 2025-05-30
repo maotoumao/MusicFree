@@ -9,6 +9,7 @@ import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
 import {ImgAsset} from '@/constants/assetsConst';
 import PanelHeader from '../base/panelHeader';
+import { useI18N } from '@/core/i18n';
 
 interface IColorPickerProps {
     defaultColor?: string;
@@ -24,6 +25,8 @@ export default function ColorPicker(props: IColorPickerProps) {
         defaultColor = '#66ccff',
         closePanelWhenSelected = true,
     } = props;
+    
+    const { t } = useI18N();
 
     const [currentHue, setCurrentHue] = useState(Color(defaultColor).hue());
     const [currentSaturation, setCurrentSaturation] = useState(
@@ -126,7 +129,7 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 hidePanel();
                             }
                         }}
-                        title="选择颜色"
+                        title={t('panel.colorPicker.title')}
                     />
 
                     <View style={styles.container}>

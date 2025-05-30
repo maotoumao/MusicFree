@@ -5,6 +5,7 @@ import rpx from '@/utils/rpx';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ThemeText from './themeText';
+import { useI18N } from '@/core/i18n';
 
 interface IEmptyProps {
     state: RequestStateCode
@@ -14,11 +15,12 @@ export default function ListEmpty(props: IEmptyProps) {
     const { state, onRetry } = props;
 
     const colors = useColors();
+    const {t} = useI18N();
 
     if (state === RequestStateCode.FINISHED || state === RequestStateCode.PARTLY_DONE) {
         return <View style={style.wrapper}>
             <ThemeText fontSize="title">
-                什么都没有呀~
+                {t('common.emptyList')}
             </ThemeText>
         </View>
     } else if (state === RequestStateCode.PENDING_FIRST_PAGE) {
@@ -27,16 +29,16 @@ export default function ListEmpty(props: IEmptyProps) {
             <ThemeText
                 fontSize="title"
                 fontWeight="semibold">
-                加载中...
+                {t('common.loading')}
             </ThemeText>
         </View>
     } else if (state === RequestStateCode.ERROR) {
         return <View style={style.wrapper}>
             <ThemeText fontSize="title">
-                出错啦...
+                {t('common.error')}
             </ThemeText>
             <TouchableOpacity onPress={onRetry} style={style.retryButton}>
-                <ThemeText>点击重试</ThemeText>
+                <ThemeText>{t("common.clickToRetry")}</ThemeText>
             </TouchableOpacity>
         </View>
     }

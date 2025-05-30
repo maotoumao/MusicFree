@@ -2,15 +2,18 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
+import { useI18N } from '@/core/i18n';
 
 interface IEmptyProps {
     content?: string;
 }
 export default function Empty(props: IEmptyProps) {
+    const {t} = useI18N();
+
     return (
         <View style={style.wrapper}>
             <ThemeText fontSize="title">
-                {props?.content ?? '什么都没有呀~'}
+                {props?.content ?? t('common.emptyList')}
             </ThemeText>
         </View>
     );

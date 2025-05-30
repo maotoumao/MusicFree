@@ -10,6 +10,7 @@ import Checkbox from "@/components/base/checkbox";
 import Button from "@/components/base/textButton.tsx";
 import Dialog from "./base";
 import PersistStatus from "@/utils/persistStatus";
+import { useI18N } from "@/core/i18n";
 
 interface IDownloadDialogProps {
     version: string;
@@ -21,6 +22,8 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
     const {content, fromUrl, backUrl, version} = props;
     const [skipState, setSkipState] = useState(false);
 
+    const {t} = useI18N();
+
     return (
         <Dialog
             onDismiss={() => {
@@ -29,7 +32,9 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                 }
                 hideDialog();
             }}>
-            <Dialog.Title stringContent>发现新版本({version})</Dialog.Title>
+            <Dialog.Title stringContent>{t("dialog.downloadDialog.title", {
+                version: version,
+            })}</Dialog.Title>
             <ScrollView style={style.scrollView}>
                 {content?.map?.(_ => (
                     <ThemeText key={_} style={style.item}>
@@ -45,7 +50,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                     <View style={style.checkboxGroup}>
                         <Checkbox checked={skipState} />
                         <ThemeText style={style.checkboxHint}>
-                            跳过此版本
+                            {t("dialog.downloadDialog.skipThisVersion")}
                         </ThemeText>
                     </View>
                 </TouchableOpacity>
@@ -58,7 +63,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                                 PersistStatus.set('app.skipVersion', version);
                             }
                         }}>
-                        取消
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         style={style.button}
@@ -67,7 +72,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                             openUrl(fromUrl);
                             Clipboard.setString(fromUrl);
                         }}>
-                        从浏览器下载
+                        {t("dialog.downloadDialog.downloadUsingBrowser")}
                     </Button>
                     {backUrl && (
                         <Button
@@ -77,7 +82,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                                 openUrl(backUrl);
                                 Clipboard.setString(backUrl);
                             }}>
-                            备用链接
+                            {t("dialog.downloadDialog.backupUrl")}
                         </Button>
                     )}
                 </View>

@@ -9,6 +9,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import PanelBase from '../base/panelBase';
 import PanelHeader from '../base/panelHeader';
 import { hidePanel } from '../usePanel';
+import { useI18N } from '@/core/i18n';
 
 interface ICreateMusicSheetProps {
     defaultName?: string;
@@ -17,7 +18,9 @@ interface ICreateMusicSheetProps {
 }
 
 export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
-    const { onSheetCreated, onCancel, defaultName = '新建歌单' } = props;
+    const { t } = useI18N();
+
+    const { onSheetCreated, onCancel, defaultName = t("panel.createMusicSheet.title") } = props;
 
     const [input, setInput] = useState('');
     const colors = useColors();
@@ -29,7 +32,7 @@ export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title="新建歌单"
+                        title={t("panel.createMusicSheet.title")}
                         onCancel={() => {
                             onCancel ? onCancel() : hidePanel();
                         }}
@@ -48,8 +51,8 @@ export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
                         }}
                         autoFocus
                         accessible
-                        accessibilityLabel="输入框"
-                        accessibilityHint={'新建歌单'}
+                        accessibilityLabel={t("panel.createMusicSheet.inputLabel")}
+                        accessibilityHint={t("panel.createMusicSheet.title")}
                         style={[
                             style.input,
                             {
