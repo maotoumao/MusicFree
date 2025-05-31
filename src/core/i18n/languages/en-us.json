@@ -43,6 +43,7 @@
     "sidebar.backToDesktop": "Back to Desktop",
     "sidebar.exitApp": "Exit App",
     "sidebar.languageSettings": "Language Settings",
+    "checkUpdate.error.latestVersion": "Already the latest version",
     "home.recommendSheet": "Recommended Playlists",
     "home.topList": "Charts",
     "home.playHistory": "Play History",

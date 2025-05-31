@@ -18,6 +18,7 @@ import { copyFile, readDir, readFile, unlink, writeFile } from "react-native-fs"
 import { devLog, errorLog, trace } from "../../utils/log";
 import pluginMeta from "./meta";
 import { localFilePlugin, Plugin, PluginState } from "./plugin";
+import i18n from "../i18n";
 
 const pluginsAtom = atom<Plugin[]>([]);
 
@@ -348,7 +349,7 @@ class PluginManager implements IPluginManager {
             await this.installPluginFromUrl(updateUrl);
         } catch (e: any) {
             if (e.message === '插件已安装') {
-                throw new Error('当前已是最新版本');
+                throw new Error(i18n.t('checkUpdate.error.latestVersion'));
             } else {
                 throw e;
             }

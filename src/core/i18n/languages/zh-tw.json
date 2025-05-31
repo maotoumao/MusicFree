@@ -43,6 +43,7 @@
     "sidebar.backToDesktop": "返回桌面",
     "sidebar.exitApp": "退出應用",
     "sidebar.languageSettings": "語言設定",
+    "checkUpdate.error.latestVersion": "當前已是最新版本",
     "home.recommendSheet": "推薦歌單",
     "home.topList": "榜單",
     "home.playHistory": "播放歷史",

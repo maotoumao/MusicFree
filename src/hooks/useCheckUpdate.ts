@@ -29,7 +29,7 @@ export const checkUpdateAndShowResult = (
             });
         } else {
             if (showToast) {
-                Toast.success('当前是最新版本~');
+                Toast.success('当前是版本~');
             }
         }
     });

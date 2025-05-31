@@ -54,6 +54,9 @@ export interface ILanguageData {
     "sidebar.exitApp": string; // 退出应用
     "sidebar.languageSettings": string; // 语言设置
 
+    // 检查更新相关
+    "checkUpdate.error.latestVersion": string; // 当前已是最新版本
+
     // 首页相关
     "home.recommendSheet": string; // 推荐歌单
     "home.topList": string; // 榜单
