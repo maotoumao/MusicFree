@@ -1,13 +1,12 @@
-import React, {useMemo, useRef, useState, useCallback} from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
+import { Image, StyleSheet, View, TextInput } from 'react-native';
 import rpx from '@/utils/rpx';
 import PanelBase from '../base/panelBase';
 import LinearGradient from 'react-native-linear-gradient';
 import Color from 'color';
-import ThemeText from '@/components/base/themeText';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import {hidePanel} from '../usePanel';
-import {ImgAsset} from '@/constants/assetsConst';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { hidePanel } from '../usePanel';
+import { ImgAsset } from '@/constants/assetsConst';
 import PanelHeader from '../base/panelHeader';
 import { useI18N } from '@/core/i18n';
 
@@ -25,7 +24,7 @@ export default function ColorPicker(props: IColorPickerProps) {
         defaultColor = '#66ccff',
         closePanelWhenSelected = true,
     } = props;
-    
+
     const { t } = useI18N();
 
     const [currentHue, setCurrentHue] = useState(Color(defaultColor).hue());
@@ -37,6 +36,10 @@ export default function ColorPicker(props: IColorPickerProps) {
     );
     const [currentAlpha, setCurrentAlpha] = useState(
         Color(defaultColor).alpha(),
+    );
+
+    const [inputValue, setInputValue] = useState(() =>
+        Color(defaultColor).rgb().hexa().toString()
     );
 
     const hueColor = useMemo(
@@ -59,6 +62,16 @@ export default function ColorPicker(props: IColorPickerProps) {
     const currentColorWithAlphaString = useMemo(() => currentColorWithAlpha.toString(), [currentColorWithAlpha]);
     const currentColorAlpha0String = useMemo(() => currentColor.alpha(0).toString(), [currentColor]);
     const colorHexString = useMemo(() => currentColorWithAlpha.rgb().hexa().toString(), [currentColorWithAlpha]);
+
+    // 同步colorHexString到inputValue
+    const syncInputValue = useCallback(() => {
+        setInputValue(colorHexString);
+    }, [colorHexString]);
+
+    // 当颜色通过滑块改变时，同步输入框
+    useEffect(() => {
+        syncInputValue();
+    }, [syncInputValue]);
 
     const slThumbStyle = useMemo(() => ({
         left: -rpx(15) + (currentSaturation / 100) * areaSize,
@@ -93,7 +106,7 @@ export default function ColorPicker(props: IColorPickerProps) {
 
     const slTap = Gesture.Tap()
         .onStart(event => {
-            const {x, y} = event;
+            const { x, y } = event;
             handleSLUpdate(x, y);
         })
         .runOnJS(true);
@@ -104,7 +117,7 @@ export default function ColorPicker(props: IColorPickerProps) {
             const newTimeStamp = Date.now();
             if (newTimeStamp - lastTimestampRef.current > 32) {
                 lastTimestampRef.current = newTimeStamp;
-                const {x, y} = event;
+                const { x, y } = event;
                 handleSLUpdate(x, y);
             }
         })
@@ -114,14 +127,14 @@ export default function ColorPicker(props: IColorPickerProps) {
 
     const hueTap = Gesture.Tap()
         .onStart(event => {
-            const {y} = event;
+            const { y } = event;
             handleHueUpdate(y);
         })
         .runOnJS(true);
 
     const huePan = Gesture.Pan()
         .onUpdate(event => {
-            const {y} = event;
+            const { y } = event;
             handleHueUpdate(y);
         })
         .runOnJS(true);
@@ -130,23 +143,47 @@ export default function ColorPicker(props: IColorPickerProps) {
 
     const alphaTap = Gesture.Tap()
         .onStart(event => {
-            const {y} = event;
+            const { y } = event;
             handleAlphaUpdate(y);
         })
         .runOnJS(true);
 
     const alphaPan = Gesture.Pan()
         .onUpdate(event => {
-            const {y} = event;
+            const { y } = event;
             handleAlphaUpdate(y);
         })
         .runOnJS(true);
 
     const alphaComposed = Gesture.Race(alphaTap, alphaPan);
 
+    const handleColorInputChange = useCallback((text: string) => {
+        setInputValue(text);
+    }, []);
+
+    const handleColorInputSubmit = useCallback(() => {
+        try {
+            const color = Color(inputValue);
+            const hsl = color.hsl();
+
+            setCurrentHue(hsl.hue() || 0);
+            setCurrentSaturation(hsl.saturationl());
+            setCurrentLightness(hsl.lightness());
+            setCurrentAlpha(color.alpha());
+        } catch (error) {
+            // 如果输入的颜色无效，恢复到当前颜色
+            setInputValue(colorHexString);
+        }
+    }, [inputValue, colorHexString]);
+
+    const handleColorInputBlur = useCallback(() => {
+        handleColorInputSubmit();
+    }, [handleColorInputSubmit]);
+
     return (
         <PanelBase
             height={rpx(750)}
+            keyboardAvoidBehavior="height"
             renderBody={() => (
                 <>
                     <PanelHeader
@@ -170,14 +207,14 @@ export default function ColorPicker(props: IColorPickerProps) {
                                     },
                                 ]}>
                                 <LinearGradient
-                                    start={{x: 0, y: 0}}
-                                    end={{x: 1, y: 0}}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 0 }}
                                     colors={['#808080', 'rgba(0,0,0,0)']}
                                     style={[styles.slContainer, styles.layer1]}
                                 />
                                 <LinearGradient
-                                    start={{x: 0, y: 0}}
-                                    end={{x: 0, y: 1}}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 0, y: 1 }}
                                     colors={['#fff', 'rgba(0,0,0,0)', '#000']}
                                     style={[styles.slContainer, styles.layer2]}
                                 />
@@ -265,9 +302,18 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 ]}
                             />
                         </View>
-                        <ThemeText style={styles.colorStr}>
-                            {colorHexString}
-                        </ThemeText>
+                        <TextInput
+                            style={styles.colorInput}
+                            value={inputValue}
+                            onChangeText={handleColorInputChange}
+                            onSubmitEditing={handleColorInputSubmit}
+                            onBlur={handleColorInputBlur}
+                            placeholder="#RRGGBBAA"
+                            placeholderTextColor="#999"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            returnKeyType="done"
+                        />
                     </View>
                 </>
             )}
@@ -365,5 +411,18 @@ const styles = StyleSheet.create({
         height: '100%',
         left: 0,
         top: 0,
+    },
+    colorInput: {
+        marginLeft: rpx(24),
+        minWidth: rpx(150),
+        height: rpx(40),
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: rpx(4),
+        paddingHorizontal: rpx(12),
+        paddingVertical: 0,
+        fontSize: rpx(28),
+        color: '#333',
+        backgroundColor: '#fff',
     },
 });
