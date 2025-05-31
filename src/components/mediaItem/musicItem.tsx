@@ -115,5 +115,6 @@ const styles = StyleSheet.create({
     indexText: {
         fontStyle: 'italic',
         textAlign: 'center',
+        padding: rpx(2)
     },
 });

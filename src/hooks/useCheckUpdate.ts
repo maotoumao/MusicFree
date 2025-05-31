@@ -1,5 +1,5 @@
 import { showDialog } from "@/components/dialogs/useDialog";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 import checkUpdate from "@/utils/checkUpdate";
 import Toast from "@/utils/toast";
 import { compare } from "compare-versions";
@@ -29,7 +29,7 @@ export const checkUpdateAndShowResult = (
             });
         } else {
             if (showToast) {
-                Toast.success('当前是最新版本~');
+                Toast.success('当前是版本~');
             }
         }
     });

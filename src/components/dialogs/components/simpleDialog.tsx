@@ -1,6 +1,7 @@
 import React from 'react';
 import {hideDialog} from '../useDialog';
 import Dialog from './base';
+import { useI18N } from '@/core/i18n';
 
 interface ISimpleDialogProps {
     title: string;
@@ -12,15 +13,17 @@ interface ISimpleDialogProps {
 export default function SimpleDialog(props: ISimpleDialogProps) {
     const {title, content, onOk, okText, cancelText} = props;
 
+    const {t} = useI18N();
+
     const actions = onOk
         ? [
               {
-                  title: cancelText ?? '取消',
+                  title: cancelText ?? t("common.cancel"),
                   type: 'normal',
                   onPress: hideDialog,
               },
               {
-                  title: okText ?? '确认',
+                  title: okText ?? t("common.confirm"),
                   type: 'primary',
                   onPress() {
                       onOk?.();
@@ -30,7 +33,7 @@ export default function SimpleDialog(props: ISimpleDialogProps) {
           ]
         : ([
               {
-                  title: okText ?? '我知道了',
+                  title: okText ?? t("dialog.errorLogKnow"),
                   type: 'primary',
                   onPress() {
                       hideDialog();

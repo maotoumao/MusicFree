@@ -1,21 +1,23 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import {ImgAsset} from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
-import {useParams} from '@/core/router';
 import PlayAllBar from '@/components/base/playAllBar';
+import ThemeText from '@/components/base/themeText';
+import { ImgAsset } from '@/constants/assetsConst';
+import { useI18N } from '@/core/i18n';
+import { useSheetItem } from '@/core/musicSheet';
+import { useParams } from '@/core/router';
 import useColors from '@/hooks/useColors';
-import MusicSheet from '@/core/musicSheet';
+import rpx from '@/utils/rpx';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
 export default function Header() {
-    const {id = 'favorite'} = useParams<'local-sheet-detail'>();
-    const sheet = MusicSheet.useSheetItem(id);
+    const { id = 'favorite' } = useParams<'local-sheet-detail'>();
+    const sheet = useSheetItem(id);
     const colors = useColors();
+    const { t } = useI18N();
 
     return (
-        <View style={{backgroundColor: colors.card}}>
+        <View style={{ backgroundColor: colors.card }}>
             <View style={style.content}>
                 <FastImage
                     style={style.coverImg}
@@ -27,7 +29,9 @@ export default function Header() {
                         {sheet?.title}
                     </ThemeText>
                     <ThemeText fontColor="textSecondary" fontSize="subTitle">
-                        共{sheet?.musicList?.length ?? 0}首
+                        {t("sheetDetail.totalMusicCount", {
+                            count: sheet?.musicList?.length ?? 0
+                        })}
                     </ThemeText>
                 </View>
             </View>

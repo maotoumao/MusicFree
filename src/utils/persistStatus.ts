@@ -1,6 +1,10 @@
+/**
+ * 全局持久化的状态
+ */
+
 import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
-import safeParse from "@/utils/safeParse";
 import { useEffect, useState } from "react";
+import { safeParse } from "./jsonUtil";
 
 // Internal Method
 const getStore = () => {
@@ -24,6 +28,8 @@ interface IPersistStatus {
     'app.skipVersion': string;
     /** 开屏弹窗 */
     'app.skipBootstrapStorageDialog': boolean;
+    /** 语言设置 */
+    'app.language': string;
     /** 上次更新插件的时间 */
     'app.pluginUpdateTime': number;
     /** 歌词-是否启用翻译 */

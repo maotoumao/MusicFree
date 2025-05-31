@@ -15,6 +15,7 @@ import Comment from "@/components/panels/types/musicComment/comment.tsx";
 import useComments from "@/components/panels/types/musicComment/useComments.ts";
 import { RequestStateCode } from "@/constants/commonConst.ts";
 import Empty from "@/components/base/empty.tsx";
+import { useI18N } from "@/core/i18n";
 
 interface IMusicCommentProps {
     musicItem: IMusic.IMusicItem;
@@ -25,6 +26,7 @@ export default function MusicComment(props: IMusicCommentProps) {
     const {musicItem} = props;
 
     const [reqState, comments] = useComments(musicItem);
+    const {t} = useI18N();
 
     let listBody = <></>;
 
@@ -48,7 +50,7 @@ export default function MusicComment(props: IMusicCommentProps) {
     return (
         <PanelFullscreen>
             <VerticalSafeAreaView style={globalStyle.fwflex1}>
-                <AppBar withStatusBar children="评论" onBackPress={hidePanel} />
+                <AppBar withStatusBar children={t("common.comment")} onBackPress={hidePanel} />
                 <View style={styles.musicItemContainer}>
                     <FastImage
                         style={styles.musicItemArtwork}

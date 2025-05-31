@@ -1,8 +1,8 @@
-import {devLog, errorLog} from '@/utils/log';
-import {RequestStateCode} from '@/constants/commonConst';
-import {produce} from 'immer';
-import {useCallback, useRef} from 'react';
-import PluginManager, {Plugin} from '@/core/pluginManager';
+import { RequestStateCode } from '@/constants/commonConst';
+import PluginManager, { Plugin } from '@/core/pluginManager';
+import { devLog, errorLog } from '@/utils/log';
+import { produce } from 'immer';
+import { useCallback, useRef } from 'react';
 import searchResultStore from './searchResultStore';
 
 export default function useSearchLrc() {
@@ -56,7 +56,8 @@ export default function useSearchLrc() {
             /** 上一份搜索还没返回/已经结束 */
             if (
                 (prevPluginResult?.state ===
-                    RequestStateCode.PENDING_REST_PAGE ||
+                    RequestStateCode.PENDING_FIRST_PAGE ||
+                    prevPluginResult?.state === RequestStateCode.PENDING_REST_PAGE ||
                     prevPluginResult?.state === RequestStateCode.FINISHED) &&
                 undefined === query
             ) {
@@ -118,21 +119,21 @@ export default function useSearchLrc() {
 
                         prevMediaResult[_hash] = {
                             state:
-                                result?.isEnd === false && result?.data?.length
-                                    ? RequestStateCode.PARTLY_DONE
-                                    : RequestStateCode.FINISHED,
+                                // result?.isEnd === false && result?.data?.length
+                                //     ? RequestStateCode.PARTLY_DONE
+                                //     : RequestStateCode.FINISHED,
+                                RequestStateCode.FINISHED,
                             page,
                             data: newSearch
                                 ? currResult
                                 : (prevPluginResult.data ?? []).concat(
-                                      currResult,
-                                  ),
+                                    currResult,
+                                ),
                         };
                         return draft;
                     }),
                 );
             } catch (e: any) {
-                console.log('shibai', e);
                 errorLog('搜索失败', e?.message);
                 devLog(
                     'error',
@@ -152,14 +153,14 @@ export default function useSearchLrc() {
                             data: [],
                         };
 
-                        prevPluginResult.state = RequestStateCode.PARTLY_DONE;
+                        prevPluginResult.state = RequestStateCode.FINISHED;
                         return draft;
                     }),
                 );
             }
         });
     },
-    []);
+        []);
 
     return search;
 }

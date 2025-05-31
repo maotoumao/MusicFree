@@ -6,6 +6,7 @@ import {hideDialog} from '../useDialog';
 import Dialog from './base';
 import Input from '@/components/base/input';
 import useColors from '@/hooks/useColors';
+import { useI18N } from '@/core/i18n';
 
 interface ISubscribeItem {
     name: string;
@@ -30,6 +31,7 @@ export default function SubscribePluginDialog(
     const [url, setUrl] = useState(subscribeItem?.url ?? '');
 
     const colors = useColors();
+    const {t} = useI18N();
 
     const textColors = {
         color: colors.text,
@@ -38,10 +40,10 @@ export default function SubscribePluginDialog(
 
     return (
         <Dialog onDismiss={hideDialog}>
-            <Dialog.Title>订阅</Dialog.Title>
+            <Dialog.Title>{t("dialog.subscriptionPluginDialog.title")}</Dialog.Title>
             <Dialog.Content>
                 <View style={style.headerWrapper}>
-                    <ThemeText>名称: </ThemeText>
+                    <ThemeText>{t("common.name")}: </ThemeText>
                     <Input
                         hasHorizontalPadding={false}
                         style={[style.textInput, textColors]}
@@ -88,7 +90,7 @@ export default function SubscribePluginDialog(
                 actions={[
                     {
                         type: 'normal',
-                        title: '删除',
+                        title: t("common.delete"),
                         show: editingIndex !== undefined,
                         onPress() {
                             onDelete?.(editingIndex!, hideDialog);
@@ -96,7 +98,7 @@ export default function SubscribePluginDialog(
                     },
                     {
                         type: 'primary',
-                        title: '保存',
+                        title: t("common.save"),
                         onPress() {
                             onSubmit(
                                 {

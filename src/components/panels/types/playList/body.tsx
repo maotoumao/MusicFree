@@ -4,12 +4,12 @@ import rpx from '@/utils/rpx';
 import Tag from '@/components/base/tag';
 import ThemeText from '@/components/base/themeText';
 import {fontSizeConst} from '@/constants/uiConst';
-import {isSameMediaItem} from '@/utils/mediaItem';
+import {isSameMediaItem} from '@/utils/mediaUtils';
 import IconButton from '@/components/base/iconButton';
 import Loading from '@/components/base/loading';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import useColors from '@/hooks/useColors';
-import TrackPlayer from '@/core/trackPlayer';
+import TrackPlayer, { useCurrentMusic, usePlayList } from '@/core/trackPlayer';
 import {FlashList} from '@shopify/flash-list';
 import Icon from '@/components/base/icon.tsx';
 
@@ -83,8 +83,8 @@ interface IBodyProps {
 }
 export default function Body(props: IBodyProps) {
     const {loading} = props;
-    const playList = TrackPlayer.usePlayList();
-    const currentMusicItem = TrackPlayer.useCurrentMusic();
+    const playList = usePlayList();
+    const currentMusicItem = useCurrentMusic();
     const listRef = useRef<FlashList<IMusic.IMusicItem> | null>();
     const safeAreaInsets = useSafeAreaInsets();
 

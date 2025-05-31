@@ -11,6 +11,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
 import Divider from '@/components/base/divider';
 import PanelHeader from '../base/panelHeader';
+import {useI18N} from '@/core/i18n';
 
 interface IMusicQualityProps {
     type?: 'play' | 'download';
@@ -25,6 +26,7 @@ interface IMusicQualityProps {
 
 export default function MusicQuality(props: IMusicQualityProps) {
     const safeAreaInsets = useSafeAreaInsets();
+    const i18n = useI18N();
 
     const {musicItem, onQualityPress, type = 'play'} = props ?? {};
 
@@ -34,7 +36,12 @@ export default function MusicQuality(props: IMusicQualityProps) {
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title={`设置${type === 'play' ? '播放' : '下载'}音质`}
+                        title={i18n.t('panel.musicQuality.title', {
+                            type:
+                                type === 'play'
+                                    ? i18n.t('common.play')
+                                    : i18n.t('common.download'),
+                        })}
                         hideButtons
                     />
                     <Divider />

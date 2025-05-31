@@ -1,24 +1,25 @@
-import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import rpx from "@/utils/rpx";
+import AppBar from "@/components/base/appBar.tsx";
+import Image from "@/components/base/image.tsx";
+import Input from "@/components/base/input.tsx";
+import ThemeText from "@/components/base/themeText.tsx";
+import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView.tsx";
 import PanelFullscreen from "@/components/panels/base/panelFullscreen.tsx";
 import { hidePanel } from "@/components/panels/usePanel.ts";
-import ThemeText from "@/components/base/themeText.tsx";
-import Toast from "@/utils/toast.ts";
-import useColors from "@/hooks/useColors.ts";
-import MusicSheet from "@/core/musicSheet";
-import Input from "@/components/base/input.tsx";
-import { fontSizeConst } from "@/constants/uiConst.ts";
-import AppBar from "@/components/base/appBar.tsx";
-import globalStyle from "@/constants/globalStyle.ts";
-import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView.tsx";
-import Image from "@/components/base/image.tsx";
 import { ImgAsset } from "@/constants/assetsConst.ts";
-import { launchImageLibrary } from "react-native-image-picker";
-import { addFileScheme, addRandomHash } from "@/utils/fileUtils.ts";
+import globalStyle from "@/constants/globalStyle.ts";
 import pathConst from "@/constants/pathConst.ts";
+import { fontSizeConst } from "@/constants/uiConst.ts";
+import { useI18N } from "@/core/i18n";
+import MusicSheet from "@/core/musicSheet";
+import useColors from "@/hooks/useColors.ts";
+import { addFileScheme, addRandomHash } from "@/utils/fileUtils.ts";
+import rpx from "@/utils/rpx";
+import Toast from "@/utils/toast.ts";
 import { readAsStringAsync } from "expo-file-system";
+import React, { useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { exists, unlink, writeFile } from "react-native-fs";
+import { launchImageLibrary } from "react-native-image-picker";
 
 interface IEditSheetDetailProps {
   musicSheet: IMusic.IMusicSheetItem;
@@ -27,6 +28,7 @@ interface IEditSheetDetailProps {
 export default function EditMusicSheetInfo(props: IEditSheetDetailProps) {
   const { musicSheet } = props;
   const colors = useColors();
+  const {t} = useI18N();
 
   const [coverImg, setCoverImg] = useState(musicSheet?.coverImg);
   const [title, setTitle] = useState(musicSheet?.title);
@@ -91,7 +93,7 @@ export default function EditMusicSheetInfo(props: IEditSheetDetailProps) {
       coverImg: newCoverImg ? addRandomHash(newCoverImg) : undefined,
       title: _title
     }).then(() => {
-      Toast.success("更新歌单信息成功~");
+      Toast.success(t("panel.editMusicSheetInfo.toast.updateSuccess"));
     });
     hidePanel();
   }
@@ -100,10 +102,10 @@ export default function EditMusicSheetInfo(props: IEditSheetDetailProps) {
     <PanelFullscreen>
       <VerticalSafeAreaView style={globalStyle.fwflex1}>
         <AppBar onBackPress={hidePanel} withStatusBar>
-          编辑歌单信息
+          {t("panel.editMusicSheetInfo.title")}
         </AppBar>
         <View style={style.row}>
-            <ThemeText>封面</ThemeText>
+            <ThemeText>{t("common.cover")}</ThemeText>
             <TouchableOpacity
                 onPress={onChangeCoverPress}
                 onLongPress={() => {
@@ -117,7 +119,7 @@ export default function EditMusicSheetInfo(props: IEditSheetDetailProps) {
             </TouchableOpacity>
         </View>
         <View style={style.row}>
-          <ThemeText>歌单名</ThemeText>
+          <ThemeText>{t("panel.editMusicSheetInfo.sheetName")}</ThemeText>
           <Input
             numberOfLines={1}
             textAlign="right"
@@ -142,7 +144,7 @@ export default function EditMusicSheetInfo(props: IEditSheetDetailProps) {
             },
             style.button
           ]}>
-          <ThemeText color={"white"}>确认</ThemeText>
+          <ThemeText color={"white"}>{t("common.confirm")}</ThemeText>
         </TouchableOpacity>
       </VerticalSafeAreaView>
     </PanelFullscreen>

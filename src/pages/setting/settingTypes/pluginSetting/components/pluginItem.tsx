@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 
 import useColors from "@/hooks/useColors";
-import PluginManager, { Plugin } from "@/core/pluginManager";
+import PluginManager, { Plugin, usePluginEnabled } from "@/core/pluginManager";
 
 import Toast from "@/utils/toast";
 import Clipboard from "@react-native-clipboard/clipboard";
@@ -11,13 +11,12 @@ import rpx from "@/utils/rpx";
 import { StyleSheet, View } from "react-native";
 import ThemeText from "@/components/base/themeText";
 import IconTextButton from "@/components/base/iconTextButton";
-import { PluginMeta } from "@/core/pluginMeta";
 import ThemeSwitch from "@/components/base/switch";
 import { IIconName } from "@/components/base/icon.tsx";
+import { useI18N } from "@/core/i18n";
 
 interface IPluginItemProps {
     plugin: Plugin;
-    enabled: boolean;
 }
 
 interface IOption {
@@ -28,61 +27,66 @@ interface IOption {
 }
 
 function _PluginItem(props: IPluginItemProps) {
-    const {plugin, enabled} = props;
+    const { plugin } = props;
     const colors = useColors();
+    const enabled = usePluginEnabled(plugin);
+    const { t } = useI18N();
+
     const options: IOption[] = [
         {
-            title: '更新插件',
+            title: t("pluginSetting.pluginItem.options.updatePlugin"),
             icon: 'arrow-path',
             async onPress() {
                 try {
                     await PluginManager.updatePlugin(plugin);
-                    Toast.success('已更新到最新版本');
+                    Toast.success(t("toast.pluginUpdateSuccess"));
                 } catch (e: any) {
-                    Toast.warn(e?.message ?? '更新失败');
+                    Toast.warn(e?.message ?? t("toast.failToUpdatePlugin"));
                 }
             },
             show: !!plugin.instance.srcUrl,
         },
         {
-            title: '分享插件',
+            title: t("pluginSetting.pluginItem.options.sharePlugin"),
             icon: 'share',
             async onPress() {
                 try {
                     Clipboard.setString(plugin.instance.srcUrl!);
-                    Toast.success('已复制到剪切板');
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch (e: any) {
-                    Toast.warn(e?.message ?? '分享失败');
+                    Toast.warn(e?.message ?? t("toast.failToSharePlugin"));
                 }
             },
             show: !!plugin.instance.srcUrl,
         },
         {
-            title: '卸载插件',
+            title: t("pluginSetting.pluginItem.options.uninstallPlugin"),
             icon: 'trash-outline',
             show: true,
             onPress() {
                 showDialog('SimpleDialog', {
-                    title: '卸载插件',
-                    content: `确认卸载插件「${plugin.name}」吗`,
+                    title: t("pluginSetting.pluginItem.options.uninstallPlugin"),
+                    content: t("pluginSetting.pluginItem.options.uninstallPluginContent", {
+                        name: plugin.name,
+                    }),
                     async onOk() {
                         try {
                             await PluginManager.uninstallPlugin(plugin.hash);
-                            Toast.success('卸载成功~');
+                            Toast.success(t("toast.pluginUninstalled"));
                         } catch {
-                            Toast.warn('卸载失败');
+                            Toast.warn(t("toast.failToUpdatePlugin"));
                         }
                     },
                 });
             },
         },
         {
-            title: '导入单曲',
+            title: t("pluginSetting.pluginItem.options.importMusic"),
             icon: 'arrow-right-end-on-rectangle',
             onPress() {
                 showPanel('SimpleInput', {
-                    title: '导入单曲',
-                    placeholder: '输入目标歌曲',
+                    title: t("pluginSetting.pluginItem.options.importMusic"),
+                    placeholder: t("pluginSetting.pluginItem.options.importMusicPlaceHolder"),
                     hints: plugin.instance.hints?.importMusicItem,
                     maxLength: 1000,
                     async onOk(text) {
@@ -91,17 +95,21 @@ function _PluginItem(props: IPluginItemProps) {
                         );
                         if (result) {
                             showDialog('SimpleDialog', {
-                                title: '准备导入',
-                                content: `发现歌曲 ${result.title} ! 现在开始导入吗?`,
+                                title: t("pluginSetting.pluginItem.options.importDialogTitle"),
+                                content: t("pluginSetting.pluginItem.options.importMusicDialogContent", {
+                                    name: result.title
+                                }),
                                 onOk() {
                                     showPanel('AddToMusicSheet', {
                                         musicItem: result,
-                                        newSheetDefaultName: `${plugin.name}导入歌曲`,
+                                        newSheetDefaultName: t("pluginSetting.pluginItem.options.importMusicToSheetName", {
+                                            name: plugin.name
+                                        }),
                                     });
                                 },
                             });
                         } else {
-                            Toast.warn('无法导入~');
+                            Toast.warn(t("toast.failToImportMusic"));
                         }
                     },
                 });
@@ -109,24 +117,26 @@ function _PluginItem(props: IPluginItemProps) {
             show: !!plugin.instance.importMusicItem,
         },
         {
-            title: '导入歌单',
+            title: t("pluginSetting.pluginItem.options.importSheet"),
             icon: 'arrow-right-end-on-rectangle',
             onPress() {
                 showPanel('SimpleInput', {
-                    title: '导入歌单',
-                    placeholder: '输入目标歌单',
+                    title: t("pluginSetting.pluginItem.options.importSheet"),
+                    placeholder: t("pluginSetting.pluginItem.options.importSheetPlaceHolder"),
                     hints: plugin.instance.hints?.importMusicSheet,
                     maxLength: 1000,
                     async onOk(text, closePanel) {
-                        Toast.success('正在导入中...');
+                        Toast.success(t("toast.importing"));
                         closePanel();
                         const result = await plugin.methods.importMusicSheet(
                             text,
                         );
-                        if (result.length > 0) {
+                        if (result && result.length > 0) {
                             showDialog('SimpleDialog', {
-                                title: '准备导入',
-                                content: `发现${result.length}首歌曲! 现在开始导入吗?`,
+                                title: t("pluginSetting.pluginItem.options.importDialogTitle"),
+                                content: t("pluginSetting.pluginItem.options.importSheetDialogContent", {
+                                    count: result.length
+                                }),
                                 onOk() {
                                     showPanel('AddToMusicSheet', {
                                         musicItem: result,
@@ -134,7 +144,7 @@ function _PluginItem(props: IPluginItemProps) {
                                 },
                             });
                         } else {
-                            Toast.warn('链接有误或目标歌单为空');
+                            Toast.warn(t("toast.failToImportSheet"));
                         }
                     },
                 });
@@ -142,23 +152,18 @@ function _PluginItem(props: IPluginItemProps) {
             show: !!plugin.instance.importMusicSheet,
         },
         {
-            title: '用户变量',
+            title: t("pluginSetting.pluginItem.options.userVariables"),
             icon: 'code-bracket-square',
             onPress() {
                 if (Array.isArray(plugin.instance.userVariables)) {
                     showPanel('SetUserVariables', {
                         async onOk(newValue, closePanel) {
-                            await PluginMeta.setPluginMetaProp(
-                                plugin,
-                                'userVariables',
-                                newValue,
-                            );
-                            Toast.success('设置成功~');
+                            PluginManager.setUserVariables(plugin, newValue);
+                            Toast.success(t("toast.settingSuccess"));
                             closePanel();
                         },
                         variables: plugin.instance.userVariables,
-                        initValues:
-                            PluginMeta.getPluginMeta(plugin)?.userVariables,
+                        initValues: PluginManager.getUserVariables(plugin),
                     });
                 }
             },
@@ -190,7 +195,9 @@ function _PluginItem(props: IPluginItemProps) {
             </View>
             <View style={styles.description}>
                 <ThemeText fontSize="subTitle" fontColor="textSecondary">
-                    版本号: {plugin.instance.version}
+                    {t("pluginSetting.pluginItem.versionHint", {
+                        version: plugin.instance.version
+                    })}
                 </ThemeText>
                 {plugin.instance.author ? (
                     <ThemeText
@@ -198,7 +205,9 @@ function _PluginItem(props: IPluginItemProps) {
                         fontColor="textSecondary"
                         numberOfLines={1}
                         style={styles.author}>
-                        作者: {plugin.instance.author}
+                        {t("pluginSetting.pluginItem.author", {
+                            author: plugin.instance.author
+                        })}
                     </ThemeText>
                 ) : null}
             </View>
@@ -258,7 +267,7 @@ function _PluginItem(props: IPluginItemProps) {
 }
 
 const PluginItem = memo(_PluginItem, (prev, curr) => {
-    return prev.plugin === curr.plugin && prev.enabled === curr.enabled;
+    return prev.plugin === curr.plugin;
 });
 export default PluginItem;
 

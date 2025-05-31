@@ -1,25 +1,27 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import globalStyle from '@/constants/globalStyle';
 import Image from '@/components/base/image';
-import {ImgAsset} from '@/constants/assetsConst';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import {launchImageLibrary} from 'react-native-image-picker';
-import pathConst from '@/constants/pathConst';
-import {copyFile} from 'react-native-fs';
-import ImageColors from 'react-native-image-colors';
 import ThemeText from '@/components/base/themeText';
-import Slider from '@react-native-community/slider';
+import { showPanel } from '@/components/panels/usePanel';
+import { ImgAsset } from '@/constants/assetsConst';
+import globalStyle from '@/constants/globalStyle';
+import pathConst from '@/constants/pathConst';
+import { useI18N } from '@/core/i18n';
 import Theme from '@/core/theme';
+import { CustomizedColors } from '@/hooks/useColors';
+import { grayRate } from '@/utils/colorUtil';
+import rpx from '@/utils/rpx';
+import Slider from '@react-native-community/slider';
 import Color from 'color';
-import {showPanel} from '@/components/panels/usePanel';
-import {grayRate} from '@/utils/colorUtil';
-import {CustomizedColors} from '@/hooks/useColors';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { copyFile } from 'react-native-fs';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import ImageColors from 'react-native-image-colors';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 export default function Body() {
     const theme = Theme.useTheme();
     const backgroundInfo = Theme.useBackground();
+    const { t } = useI18N();
 
     async function onImageClick() {
         try {
@@ -44,20 +46,20 @@ export default function Body() {
                     colorsResult.platform === 'android'
                         ? colorsResult.dominant
                         : colorsResult.platform === 'ios'
-                        ? colorsResult.primary
-                        : colorsResult.vibrant,
+                            ? colorsResult.primary
+                            : colorsResult.vibrant,
                 average:
                     colorsResult.platform === 'android'
                         ? colorsResult.average
                         : colorsResult.platform === 'ios'
-                        ? colorsResult.detail
-                        : colorsResult.dominant,
+                            ? colorsResult.detail
+                            : colorsResult.dominant,
                 vibrant:
                     colorsResult.platform === 'android'
                         ? colorsResult.vibrant
                         : colorsResult.platform === 'ios'
-                        ? colorsResult.secondary
-                        : colorsResult.vibrant,
+                            ? colorsResult.secondary
+                            : colorsResult.vibrant,
             };
 
             const primaryGrayRate = grayRate(colors.primary!);
@@ -132,7 +134,7 @@ export default function Body() {
             </TouchableOpacity>
 
             <View style={styles.sliderWrapper}>
-                <ThemeText>模糊度</ThemeText>
+                <ThemeText>{t("setCustomTheme.blur")}</ThemeText>
                 <Slider
                     style={styles.slider}
                     minimumTrackTintColor={theme.colors.primary}
@@ -150,7 +152,7 @@ export default function Body() {
                 />
             </View>
             <View style={styles.sliderWrapper}>
-                <ThemeText>透明度</ThemeText>
+                <ThemeText>{t("setCustomTheme.opacity")}</ThemeText>
                 <Slider
                     style={styles.slider}
                     minimumTrackTintColor={theme.colors.primary}
@@ -170,7 +172,7 @@ export default function Body() {
             <View style={styles.colorsContainer}>
                 {Theme.configableColorKey.map(key => (
                     <View key={key} style={styles.colorItem}>
-                        <ThemeText>{Theme.colorDesc[key]}</ThemeText>
+                        <ThemeText>{t("setCustomTheme." + key + "Color" as any)}</ThemeText>
                         <TouchableOpacity
                             onPress={() => {
                                 showPanel('ColorPicker', {
