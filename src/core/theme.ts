@@ -200,20 +200,9 @@ const configableColorKey: Array<keyof CustomizedColors> = [
     'backdrop',
     'card',
     'placeholder',
+    'tabBar'
 ];
 
-const colorDesc: Record<string, string> = {
-    text: '文字颜色',
-    primary: '主题色',
-    appBar: '标题栏背景色',
-    appBarText: '标题栏文字颜色',
-    musicBar: '音乐栏背景色',
-    musicBarText: '音乐栏文字颜色',
-    pageBackground: '页面背景色',
-    backdrop: '弹窗、浮层背景色',
-    card: '卡片背景色',
-    placeholder: '输入框背景色',
-};
 
 const Theme = {
     setup,
@@ -224,7 +213,6 @@ const Theme = {
     getTheme: themeStore.getValue,
     useBackground: backgroundStore.useValue,
     configableColorKey,
-    colorDesc,
 };
 
 export default Theme;

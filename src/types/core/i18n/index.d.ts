@@ -240,6 +240,9 @@ export interface ILanguageData {
     "setCustomTheme.musicBarTextColor": string; // 音乐栏文字色
     "setCustomTheme.pageBackgroundColor": string; // 页面背景色
     "setCustomTheme.backdropColor": string; // 背景色
+    "setCustomTheme.cardColor": string; // 卡片背景色
+    "setCustomTheme.placeholderColor": string; // 输入框背景色
+    "setCustomTheme.tabBarColor": string; // 导航栏背景色
 
     // 备份与恢复相关
     "backupAndResume.beginBackup": string; // 开始备份
