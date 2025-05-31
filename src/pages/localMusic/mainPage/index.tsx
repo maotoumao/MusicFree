@@ -13,12 +13,6 @@ export default function MainPage() {
     const navigate = useNavigate();
     const { t } = useI18N();
 
-    /**
-     * 
-    "localMusic.scanLocalMusic": "扫描本地音乐",
-    "localMusic.beginScan": "开始扫描",
-    "localMusic.downloadList": "下载列表",
-     */
     return (
         <>
             <AppBar
