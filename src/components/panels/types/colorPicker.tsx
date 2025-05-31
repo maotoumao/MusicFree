@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState, useCallback} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import rpx from '@/utils/rpx';
 import PanelBase from '../base/panelBase';
@@ -39,6 +39,11 @@ export default function ColorPicker(props: IColorPickerProps) {
         Color(defaultColor).alpha(),
     );
 
+    const hueColor = useMemo(
+        () => Color.hsl(currentHue, 100, 50),
+        [currentHue]
+    );
+
     const currentColor = useMemo(
         () => Color.hsl(currentHue, currentSaturation, currentLightness),
         [currentHue, currentSaturation, currentLightness],
@@ -49,14 +54,47 @@ export default function ColorPicker(props: IColorPickerProps) {
         [currentColor, currentAlpha],
     );
 
+    const hueColorString = useMemo(() => hueColor.toString(), [hueColor]);
+    const currentColorString = useMemo(() => currentColor.toString(), [currentColor]);
+    const currentColorWithAlphaString = useMemo(() => currentColorWithAlpha.toString(), [currentColorWithAlpha]);
+    const currentColorAlpha0String = useMemo(() => currentColor.alpha(0).toString(), [currentColor]);
+    const colorHexString = useMemo(() => currentColorWithAlpha.rgb().hexa().toString(), [currentColorWithAlpha]);
+
+    const slThumbStyle = useMemo(() => ({
+        left: -rpx(15) + (currentSaturation / 100) * areaSize,
+        bottom: -rpx(15) + (currentLightness / 100) * areaSize,
+        backgroundColor: currentColorString,
+    }), [currentSaturation, currentLightness, currentColorString]);
+
+    const hueThumbStyle = useMemo(() => ({
+        top: -rpx(7) + (currentHue / 360) * areaSize,
+    }), [currentHue]);
+
+    const alphaThumbStyle = useMemo(() => ({
+        top: -rpx(7) + (1 - currentAlpha) * areaSize,
+    }), [currentAlpha]);
+
+    const handleSLUpdate = useCallback((x: number, y: number) => {
+        const xRate = Math.min(1, Math.max(0, x / areaSize));
+        const yRate = Math.min(1, Math.max(0, y / areaSize));
+        setCurrentSaturation(xRate * 100);
+        setCurrentLightness((1 - yRate) * 100);
+    }, []);
+
+    const handleHueUpdate = useCallback((y: number) => {
+        const yRate = Math.min(1, Math.max(0, y / areaSize));
+        setCurrentHue(yRate * 360);
+    }, []);
+
+    const handleAlphaUpdate = useCallback((y: number) => {
+        const yRate = Math.min(1, Math.max(0, y / areaSize));
+        setCurrentAlpha(1 - yRate);
+    }, []);
+
     const slTap = Gesture.Tap()
         .onStart(event => {
             const {x, y} = event;
-
-            const xRate = Math.min(1, Math.max(0, x / areaSize));
-            const yRate = Math.min(1, Math.max(0, y / areaSize));
-            setCurrentSaturation(xRate * 100);
-            setCurrentLightness((1 - yRate) * 100);
+            handleSLUpdate(x, y);
         })
         .runOnJS(true);
 
@@ -64,17 +102,11 @@ export default function ColorPicker(props: IColorPickerProps) {
     const slPan = Gesture.Pan()
         .onUpdate(event => {
             const newTimeStamp = Date.now();
-            if (newTimeStamp - lastTimestampRef.current > 60) {
+            if (newTimeStamp - lastTimestampRef.current > 32) {
                 lastTimestampRef.current = newTimeStamp;
-            } else {
-                return;
+                const {x, y} = event;
+                handleSLUpdate(x, y);
             }
-            const {x, y} = event;
-
-            const xRate = Math.min(1, Math.max(0, x / areaSize));
-            const yRate = Math.min(1, Math.max(0, y / areaSize));
-            setCurrentSaturation(xRate * 100);
-            setCurrentLightness((1 - yRate) * 100);
         })
         .runOnJS(true);
 
@@ -83,16 +115,14 @@ export default function ColorPicker(props: IColorPickerProps) {
     const hueTap = Gesture.Tap()
         .onStart(event => {
             const {y} = event;
-            const yRate = Math.min(1, Math.max(0, y / areaSize));
-            setCurrentHue(yRate * 360);
+            handleHueUpdate(y);
         })
         .runOnJS(true);
 
     const huePan = Gesture.Pan()
         .onUpdate(event => {
             const {y} = event;
-            const yRate = Math.min(1, Math.max(0, y / areaSize));
-            setCurrentHue(yRate * 360);
+            handleHueUpdate(y);
         })
         .runOnJS(true);
 
@@ -101,16 +131,14 @@ export default function ColorPicker(props: IColorPickerProps) {
     const alphaTap = Gesture.Tap()
         .onStart(event => {
             const {y} = event;
-            const yRate = Math.min(1, Math.max(0, y / areaSize));
-            setCurrentAlpha(1 - yRate);
+            handleAlphaUpdate(y);
         })
         .runOnJS(true);
 
     const alphaPan = Gesture.Pan()
         .onUpdate(event => {
             const {y} = event;
-            const yRate = Math.min(1, Math.max(0, y / areaSize));
-            setCurrentAlpha(1 - yRate);
+            handleAlphaUpdate(y);
         })
         .runOnJS(true);
 
@@ -138,11 +166,7 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 style={[
                                     styles.slContainer,
                                     {
-                                        backgroundColor: Color.hsl(
-                                            currentHue,
-                                            100,
-                                            50,
-                                        ).toString(),
+                                        backgroundColor: hueColorString,
                                     },
                                 ]}>
                                 <LinearGradient
@@ -160,18 +184,7 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 <View
                                     style={[
                                         styles.slThumb,
-                                        {
-                                            left:
-                                                -rpx(15) +
-                                                (currentSaturation / 100) *
-                                                    areaSize,
-                                            bottom:
-                                                -rpx(15) +
-                                                (currentLightness / 100) *
-                                                    areaSize,
-                                            backgroundColor:
-                                                currentColor.toString(),
-                                        },
+                                        slThumbStyle,
                                     ]}
                                 />
                             </View>
@@ -199,11 +212,7 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 <View
                                     style={[
                                         styles.hueThumb,
-                                        {
-                                            top:
-                                                -rpx(7) +
-                                                (currentHue / 360) * areaSize,
-                                        },
+                                        hueThumbStyle,
                                     ]}
                                 />
                             </LinearGradient>
@@ -219,8 +228,8 @@ export default function ColorPicker(props: IColorPickerProps) {
                                     y: 1,
                                 }}
                                 colors={[
-                                    currentColor.toString(),
-                                    currentColor.alpha(0).toString(),
+                                    currentColorString,
+                                    currentColorAlpha0String,
                                 ]}
                                 style={[
                                     styles.hueContainer,
@@ -229,11 +238,7 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 <View
                                     style={[
                                         styles.hueThumb,
-                                        {
-                                            top:
-                                                -rpx(7) +
-                                                (1 - currentAlpha) * areaSize,
-                                        },
+                                        alphaThumbStyle,
                                     ]}
                                 />
                                 <Image
@@ -255,14 +260,13 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 style={[
                                     styles.showBarContent,
                                     {
-                                        backgroundColor:
-                                            currentColorWithAlpha.toString(),
+                                        backgroundColor: currentColorWithAlphaString,
                                     },
                                 ]}
                             />
                         </View>
                         <ThemeText style={styles.colorStr}>
-                            {currentColorWithAlpha.rgb().hexa().toString()}
+                            {colorHexString}
                         </ThemeText>
                     </View>
                 </>
