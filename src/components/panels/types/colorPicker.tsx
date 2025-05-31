@@ -1,10 +1,10 @@
 import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
-import { Image, StyleSheet, View, TextInput } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import PanelBase from '../base/panelBase';
 import LinearGradient from 'react-native-linear-gradient';
 import Color from 'color';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector, TextInput } from 'react-native-gesture-handler';
 import { hidePanel } from '../usePanel';
 import { ImgAsset } from '@/constants/assetsConst';
 import PanelHeader from '../base/panelHeader';
