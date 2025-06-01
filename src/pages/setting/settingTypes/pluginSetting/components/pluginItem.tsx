@@ -14,6 +14,7 @@ import IconTextButton from "@/components/base/iconTextButton";
 import ThemeSwitch from "@/components/base/switch";
 import { IIconName } from "@/components/base/icon.tsx";
 import { useI18N } from "@/core/i18n";
+import IconButton from "@/components/base/iconButton";
 
 interface IPluginItemProps {
     plugin: Plugin;
@@ -180,12 +181,22 @@ function _PluginItem(props: IPluginItemProps) {
                 },
             ]}>
             <View style={styles.header}>
-                <ThemeText
-                    style={styles.headerPluginName}
-                    numberOfLines={1}
-                    fontSize="title">
-                    {plugin.name}
-                </ThemeText>
+                <View style={styles.headerPluginContainer}>
+                    <ThemeText
+                        numberOfLines={1}
+                        fontSize="title">
+                        {plugin.name}
+                    </ThemeText>
+                    {
+                        plugin.instance.description?.length ? <IconButton name='question-mark-circle' sizeType='light' onPress={() => {
+                            showDialog('MarkdownDialog', {
+                                title: plugin.name,
+                                markdownContent: plugin.instance.description!,
+                            })
+                        }} /> : null
+                    }
+
+                </View>
                 <ThemeSwitch
                     value={enabled}
                     onValueChange={val => {
@@ -284,9 +295,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    headerPluginName: {
+    headerPluginContainer: {
         flexShrink: 1,
         flexGrow: 1,
+        flexDirection: 'row',
+        gap: rpx(8),
+        alignItems: 'center',
     },
     author: {
         marginLeft: rpx(24),

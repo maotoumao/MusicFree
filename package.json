@@ -49,6 +49,7 @@
     "immer": "^10.1.1",
     "jotai": "^2.9.1",
     "lodash.shuffle": "^4.2.0",
+    "marked": "^15.0.12",
     "nanoid": "5.0.8",
     "object-path": "^0.11.8",
     "p-queue": "^8.0.1",
@@ -78,6 +79,7 @@
     "react-native-tab-view": "^3.5.2",
     "react-native-track-player": "^4.1.1",
     "react-native-url-polyfill": "^2.0.0",
+    "react-native-webview": "^13.13.5",
     "recyclerlistview": "^4.2.1",
     "webdav": "^5.7.0"
   },

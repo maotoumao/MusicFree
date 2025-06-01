@@ -57,6 +57,7 @@ import PlayIcon from '@/assets/icons/play.svg';
 import PlaylistIcon from '@/assets/icons/playlist.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
 import PowerOutlineIcon from '@/assets/icons/power-outline.svg';
+import QuestionMarkCircleIcon from '@/assets/icons/question-mark-circle.svg';
 import RepeatSong1Icon from '@/assets/icons/repeat-song-1.svg';
 import RepeatSongIcon from '@/assets/icons/repeat-song.svg';
 import ShareIcon from '@/assets/icons/share.svg';
@@ -129,6 +130,7 @@ export type IIconName =
     | 'playlist'
     | 'plus'
     | 'power-outline'
+    | 'question-mark-circle'
     | 'repeat-song-1'
     | 'repeat-song'
     | 'share'
@@ -208,6 +210,7 @@ const iconMap = {
     playlist: PlaylistIcon,
     plus: PlusIcon,
     'power-outline': PowerOutlineIcon,
+    'question-mark-circle': QuestionMarkCircleIcon,
     'repeat-song-1': RepeatSong1Icon,
     'repeat-song': RepeatSongIcon,
     share: ShareIcon,
