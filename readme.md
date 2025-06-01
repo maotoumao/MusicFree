@@ -109,35 +109,91 @@
 ## 应用截图
 
 **以下截图仅为 UI 样例，软件内部不提供任何音源，不代表实际使用时表现如下图。**
-
 #### 主界面
 
-![主界面](./.imgs/main.jpg)
+<img src="./.imgs/main-v0.6.jpg" width="320px" alt="主界面">
 
 #### 侧边栏
 
+- 侧边栏
+
+<img src="./.imgs/sidebar-v0.6.jpg" width="320px" alt="侧边栏">
+
 - 基础设置
-  ![基础设置](./.imgs/basic-setting.jpg)
+
+<img src="./.imgs/basic-setting-v0.6.jpg" width="320px" alt="基础设置">
 
 - 主题设置
-  ![主题设置](./.imgs/theme-setting.jpg)
+
+<img src="./.imgs/theme-setting-v0.6.jpg" width="320px" alt="主题设置">
 
 #### 音乐相关
 
 - 歌单页
-  ![歌单页](./.imgs/song-sheet.jpg)
+
+<img src="./.imgs/song-sheet-v0.6.jpg" width="320px" alt="歌单页">
 
 - 歌单内检索
-  ![歌单内检索](./.imgs/search-in-sheet.jpg)
+
+<img src="./.imgs/search-in-sheet-v0.6.jpg" width="320px" alt="歌单内检索">
 
 - 播放页
-  ![播放页](./.imgs/song-cover.jpg)
+
+<img src="./.imgs/song-cover-v0.6.jpg" width="320px" alt="播放页">
 
 - 歌词页
-  ![歌词页](./.imgs/song-lrc.jpg)
 
+<img src="./.imgs/song-lrc-v0.6.jpg" width="320px" alt="歌词页">
 
 #### 搜索相关
 
 - 作者信息
-  ![专辑信息](./.imgs/artist-detail.jpg)
+
+<img src="./.imgs/artist-detail-v0.6.jpg" width="320px" alt="作者信息">
+
+
+<details>
+
+
+<summary>以下是软件早期版本的 UI</summary>
+
+#### 主界面
+
+<img src="./.imgs/main.jpg" width="320px" alt="主界面">
+
+#### 侧边栏
+
+- 基础设置
+
+<img src="./.imgs/basic-setting.jpg" width="320px" alt="基础设置">
+
+- 主题设置
+
+<img src="./.imgs/theme-setting.jpg" width="320px" alt="主题设置">
+
+#### 音乐相关
+
+- 歌单页
+
+<img src="./.imgs/song-sheet.jpg" width="320px" alt="歌单页">
+
+- 歌单内检索
+
+<img src="./.imgs/search-in-sheet.jpg" width="320px" alt="歌单内检索">
+
+- 播放页
+
+<img src="./.imgs/song-cover.jpg" width="320px" alt="播放页">
+
+- 歌词页
+
+<img src="./.imgs/song-lrc.jpg" width="320px" alt="歌词页">
+
+#### 搜索相关
+
+- 作者信息
+
+<img src="./.imgs/artist-detail.jpg" width="320px" alt="作者信息">
+
+
+</details>
