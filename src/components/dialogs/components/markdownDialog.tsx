@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { hideDialog } from '../useDialog';
 import Dialog from './base';
-import { useI18N } from '@/core/i18n';
+import i18n, { useI18N } from '@/core/i18n';
 import { WebView } from 'react-native-webview';
 import rpx, { vh } from '@/utils/rpx';
 import { StyleSheet } from 'react-native';
@@ -9,6 +9,9 @@ import { Marked } from 'marked';
 import Loading from '@/components/base/loading';
 import { useOnMounted } from '@/hooks/useMounted';
 import useColors from '@/hooks/useColors';
+import { sanitizeHtml } from '@/utils/htmlUtil';
+import Toast from '@/utils/toast';
+import openUrl from '@/utils/openUrl';
 
 interface IMarkdownDialogProps {
     title: string;
@@ -151,6 +154,36 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
                 height: auto;
                 border-radius: 8px;
                 margin: 8px 0;
+                display: none;
+            }
+            
+            .img-placeholder {
+                max-width: 100%;
+                height: 120px;
+                border: 2px dashed ${colors.border || 'rgba(0, 0, 0, 0.2)'};
+                border-radius: 8px;
+                margin: 8px 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: rgba(0, 0, 0, 0.02);
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-size: 14px;
+                color: ${colors.text};
+            }
+            
+            .img-placeholder:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+                border-color: ${colors.primary || '#007AFF'};
+            }
+            
+            .img-placeholder.loading {
+                color: ${colors.primary || '#007AFF'};
+            }
+            
+            .img-loaded {
+                display: block !important;
             }
             
             hr {
@@ -168,9 +201,47 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
                 font-style: italic;
             }
         </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const images = document.querySelectorAll('img');
+                
+                images.forEach(function(img) {
+                    // 保存原始src
+                    const originalSrc = img.src;
+                    
+                    // 创建占位符
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'img-placeholder';
+                    placeholder.textContent = '${i18n.t('dialog.markdownDialog.clickToShowImage')}';
+                    
+                    // 插入占位符并隐藏原图
+                    img.parentNode.insertBefore(placeholder, img);
+                    img.style.display = 'none';
+                    
+                    // 点击占位符加载图片
+                    placeholder.addEventListener('click', function() {
+                        placeholder.textContent = '${i18n.t('common.loading')}';
+                        placeholder.className = 'img-placeholder loading';
+                        
+                        // 预加载图片
+                        const tempImg = new Image();
+                        tempImg.onload = function() {
+                            img.src = originalSrc;
+                            img.style.display = 'block';
+                            placeholder.style.display = 'none';
+                        };
+                        tempImg.onerror = function() {
+                            placeholder.textContent = '${i18n.t('dialog.markdownDialog.loadFailed')}';
+                            placeholder.className = 'img-placeholder';
+                        };
+                        tempImg.src = originalSrc;
+                    });
+                });
+            });
+        </script>
     </head>
 <body>
-    ${html}
+    ${sanitizeHtml(html)}
 </body>
 </html>
                     `);
@@ -202,7 +273,22 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
             <Dialog.Content style={[{ height: vh(60), maxHeight: vh(60) }, styles.dialogContent]}>
                 {loading ? <Loading /> : <WebView style={styles.webView} originWhitelist={["*"]} source={{
                     html: htmlContent,
-                }} />}
+                }}
+                    onShouldStartLoadWithRequest={(event) => {
+                        if (event.url.startsWith('http') || event.url.startsWith('https')) {
+                            Toast.warn(i18n.t("dialog.markdownDialog.openExternalLink"), {
+                                type: 'warn',
+                                duration: 3000,
+                                actionText: i18n.t('common.open'),
+                                onActionClick() {
+                                    openUrl(event.url);
+                                },
+                            });
+                        }
+                        return false;
+                    }}
+
+                />}
             </Dialog.Content>
             <Dialog.Actions actions={actions} />
         </Dialog>
