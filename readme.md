@@ -1,7 +1,10 @@
 # MusicFree
 
+**中文** | [English](./readme-en.md)
+
 > [!CAUTION]
-> 👎 小米/华为/vivo等<ins>应用市场的 MusicFree </ins>和本软件无关，**是套用本软件名称和 Logo 的广告软件**。
+> ### 👎 Hall of Shame
+> 👎 小米/华为/vivo等<ins>应用市场的 MusicFree </ins>和本软件无关，**是套用本软件名称和 Logo 的广告软件**，谨防上当受骗。
 >
 > 👎 速悦音乐基于本软件二次开发，改动点仅仅是内置插件、修改一些 UI 以及引流，**并未遵守本项目的开源协议，且拒绝沟通**。
 
@@ -90,6 +93,7 @@
 
 1. Star 这个项目，分享给你身边的人；
 2. 关注公众号👇或 b 站 [不想睡觉猫头猫](https://space.bilibili.com/12866223) 获取最新信息；
+3. 关注猫头猫的 [小红书](https://www.xiaohongshu.com/user/profile/5ce6085200000000050213a6?xhsshare=CopyLink&appuid=5ce6085200000000050213a6&apptime=1714394544)，虽然可能不会在这里更新软件相关的信息，但也算支持啦~
 
 ![微信公众号](./src/assets/imgs/wechat_channel.jpg)
 
