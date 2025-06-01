@@ -120,7 +120,7 @@ export function ToastBaseComponent() {
                     style={[
                         styles.contentContainer,
                         {
-                            backgroundColor: colors.backdrop,
+                            backgroundColor: colors.notification,
                             shadowColor: colors.shadow,
                         },
                         toastAnimStyle,

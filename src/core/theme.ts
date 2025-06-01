@@ -30,6 +30,7 @@ export const lightTheme = {
         danger: '#FC5F5F',
         info: '#0A95C8',
         card: '#e2e2e288',
+        notification: '#f0f0f0'
     },
 };
 
@@ -58,6 +59,7 @@ export const darkTheme = {
         danger: '#FC5F5F',
         info: '#0A95C8',
         card: '#33333388',
+        notification: '#303030'
     },
 };
 
@@ -200,7 +202,8 @@ const configableColorKey: Array<keyof CustomizedColors> = [
     'backdrop',
     'card',
     'placeholder',
-    'tabBar'
+    'tabBar',
+    'notification'
 ];
 
 

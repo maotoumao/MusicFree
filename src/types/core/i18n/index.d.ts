@@ -168,6 +168,10 @@ export interface ILanguageData {
     "pluginSetting.pluginItem.options.sharePlugin": string; // 分享插件
     "pluginSetting.pluginItem.options.uninstallPlugin": string; // 卸载插件
     "pluginSetting.pluginItem.options.uninstallPluginContent": string; // 确定卸载该插件吗？
+    "pluginSetting.pluginItem.options.alternativePlugin": string; // 替代插件
+    "pluginSetting.pluginItem.alternativePlugin": string; // 该插件实际使用的插件
+    "pluginSetting.pluginItem.dialog.setAlternativePluginTitle": string; // 设置替代插件
+    "pluginSetting.pluginItem.dialog.setAlternativePluginTip": string; // 将使用替代插件解析此插件的音乐源提示
     "pluginSetting.pluginItem.options.importMusic": string; // 导入音乐
     "pluginSetting.pluginItem.options.importMusicPlaceHolder": string; // 导入音乐链接
     "pluginSetting.pluginItem.options.importDialogTitle": string; // 导入音乐对话框标题
@@ -244,6 +248,7 @@ export interface ILanguageData {
     "setCustomTheme.cardColor": string; // 卡片背景色
     "setCustomTheme.placeholderColor": string; // 输入框背景色
     "setCustomTheme.tabBarColor": string; // 导航栏背景色
+    "setCustomTheme.notificationColor": string; // 提示、tips背景色
 
     // 备份与恢复相关
     "backupAndResume.beginBackup": string; // 开始备份

@@ -66,6 +66,7 @@ import ShuffleIcon from '@/assets/icons/shuffle.svg';
 import SkipLeftIcon from '@/assets/icons/skip-left.svg';
 import SkipRightIcon from '@/assets/icons/skip-right.svg';
 import SortOutlineIcon from '@/assets/icons/sort-outline.svg';
+import StrategyIcon from '@/assets/icons/strategy.svg';
 import TShirtOutlineIcon from '@/assets/icons/t-shirt-outline.svg';
 import TranslationIcon from '@/assets/icons/translation.svg';
 import TrashOutlineIcon from '@/assets/icons/trash-outline.svg';
@@ -139,6 +140,7 @@ export type IIconName =
     | 'skip-left'
     | 'skip-right'
     | 'sort-outline'
+    | 'strategy'
     | 't-shirt-outline'
     | 'translation'
     | 'trash-outline'
@@ -219,6 +221,7 @@ const iconMap = {
     'skip-left': SkipLeftIcon,
     'skip-right': SkipRightIcon,
     'sort-outline': SortOutlineIcon,
+    strategy: StrategyIcon,
     't-shirt-outline': TShirtOutlineIcon,
     translation: TranslationIcon,
     'trash-outline': TrashOutlineIcon,
@@ -228,7 +231,7 @@ const iconMap = {
 } as const;
 
 export default function Icon(props: IProps) {
-    const {name, size} = props;
+    const { name, size } = props;
 
     const newProps = {
         ...props,

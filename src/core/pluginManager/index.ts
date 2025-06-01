@@ -508,6 +508,22 @@ class PluginManager implements IPluginManager {
         return pluginMeta.getUserVariables(plugin.name);
     }
 
+    setAlternativePluginName(plugin: Plugin, alternativePluginName: string) {
+        pluginMeta.setAlternativePlugin(plugin.name, alternativePluginName)
+    }
+
+    getAlternativePluginName(plugin: Plugin) {
+        return pluginMeta.getAlternativePlugin(plugin.name);
+    }
+
+    getAlternativePlugin(plugin: Plugin) {
+        const alternativePluginName = this.getAlternativePluginName(plugin);
+        if (alternativePluginName) {
+            return this.getByName(alternativePluginName);
+        }
+        return null;
+    }
+
 }
 
 const pluginManager = new PluginManager();
