@@ -216,8 +216,16 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                     mediaCache.userAgent ?? mediaCache.headers?.['user-agent'],
             };
         }
-        // 3. 插件解析
-        if (!this.plugin.instance.getMediaSource) {
+        // 3. 替代插件
+        const alternativePlugin = Plugin.pluginManager?.getAlternativePlugin(this.plugin) as Plugin | null;
+        const parserPlugin = alternativePlugin?.instance?.getMediaSource ? alternativePlugin : this.plugin;
+
+        if (alternativePlugin) {
+            devLog("info", "设置了替代插件，实际使用的插件为", parserPlugin.name);
+        }
+
+        // 4. 插件解析
+        if (!parserPlugin.instance.getMediaSource) {
             const { url, auth } = formatAuthUrl(
                 musicItem?.qualities?.[quality]?.url ?? musicItem.url,
             );
@@ -231,7 +239,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             };
         }
         try {
-            const { url, headers } = (await this.plugin.instance.getMediaSource(
+            const { url, headers } = (await parserPlugin.instance.getMediaSource(
                 musicItem,
                 quality,
             )) ?? { url: musicItem?.qualities?.[quality]?.url };

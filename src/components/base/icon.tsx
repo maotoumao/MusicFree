@@ -57,6 +57,7 @@ import PlayIcon from '@/assets/icons/play.svg';
 import PlaylistIcon from '@/assets/icons/playlist.svg';
 import PlusIcon from '@/assets/icons/plus.svg';
 import PowerOutlineIcon from '@/assets/icons/power-outline.svg';
+import QuestionMarkCircleIcon from '@/assets/icons/question-mark-circle.svg';
 import RepeatSong1Icon from '@/assets/icons/repeat-song-1.svg';
 import RepeatSongIcon from '@/assets/icons/repeat-song.svg';
 import ShareIcon from '@/assets/icons/share.svg';
@@ -65,6 +66,7 @@ import ShuffleIcon from '@/assets/icons/shuffle.svg';
 import SkipLeftIcon from '@/assets/icons/skip-left.svg';
 import SkipRightIcon from '@/assets/icons/skip-right.svg';
 import SortOutlineIcon from '@/assets/icons/sort-outline.svg';
+import StrategyIcon from '@/assets/icons/strategy.svg';
 import TShirtOutlineIcon from '@/assets/icons/t-shirt-outline.svg';
 import TranslationIcon from '@/assets/icons/translation.svg';
 import TrashOutlineIcon from '@/assets/icons/trash-outline.svg';
@@ -129,6 +131,7 @@ export type IIconName =
     | 'playlist'
     | 'plus'
     | 'power-outline'
+    | 'question-mark-circle'
     | 'repeat-song-1'
     | 'repeat-song'
     | 'share'
@@ -137,6 +140,7 @@ export type IIconName =
     | 'skip-left'
     | 'skip-right'
     | 'sort-outline'
+    | 'strategy'
     | 't-shirt-outline'
     | 'translation'
     | 'trash-outline'
@@ -208,6 +212,7 @@ const iconMap = {
     playlist: PlaylistIcon,
     plus: PlusIcon,
     'power-outline': PowerOutlineIcon,
+    'question-mark-circle': QuestionMarkCircleIcon,
     'repeat-song-1': RepeatSong1Icon,
     'repeat-song': RepeatSongIcon,
     share: ShareIcon,
@@ -216,6 +221,7 @@ const iconMap = {
     'skip-left': SkipLeftIcon,
     'skip-right': SkipRightIcon,
     'sort-outline': SortOutlineIcon,
+    strategy: StrategyIcon,
     't-shirt-outline': TShirtOutlineIcon,
     translation: TranslationIcon,
     'trash-outline': TrashOutlineIcon,
@@ -225,7 +231,7 @@ const iconMap = {
 } as const;
 
 export default function Icon(props: IProps) {
-    const {name, size} = props;
+    const { name, size } = props;
 
     const newProps = {
         ...props,

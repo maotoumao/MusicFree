@@ -9,6 +9,7 @@ interface IPluginMetaStorage {
     $version: number;
     order: Record<IPluginPlatform, number>;
     disabledPlugins: Array<IPluginPlatform>;
+    [key: `${IPluginPlatform}.alternativePlugin`]: IPluginPlatform | null;
     [key: `${IPluginPlatform}.userVariables`]: Record<string, string>;
 
 }
@@ -113,6 +114,18 @@ class PluginMeta {
 
     setUserVariables(pluginPlatform: IPluginPlatform, userVariables: Record<string, string>) {
         this.setMetaStorage(`${pluginPlatform}.userVariables`, userVariables);
+    }
+
+    setAlternativePlugin(pluginPlatform: IPluginPlatform, alternativePluginPlatform: IPluginPlatform) {
+        this.setMetaStorage(`${pluginPlatform}.alternativePlugin`, alternativePluginPlatform);
+    }
+
+    getAlternativePlugin(pluginPlatform: IPluginPlatform): IPluginPlatform | null {
+        const alternativePlugin = this.getMetaStorage(`${pluginPlatform}.alternativePlugin`);
+        if (alternativePlugin) {
+            return alternativePlugin;
+        }
+        return null;
     }
 }
 

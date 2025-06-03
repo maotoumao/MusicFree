@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 
 import useColors from "@/hooks/useColors";
-import PluginManager, { Plugin, usePluginEnabled } from "@/core/pluginManager";
+import pluginManager, { Plugin, usePluginEnabled } from "@/core/pluginManager";
 
 import Toast from "@/utils/toast";
 import Clipboard from "@react-native-clipboard/clipboard";
@@ -14,6 +14,8 @@ import IconTextButton from "@/components/base/iconTextButton";
 import ThemeSwitch from "@/components/base/switch";
 import { IIconName } from "@/components/base/icon.tsx";
 import { useI18N } from "@/core/i18n";
+import IconButton from "@/components/base/iconButton";
+import useRerender from "@/hooks/useRerender";
 
 interface IPluginItemProps {
     plugin: Plugin;
@@ -31,6 +33,9 @@ function _PluginItem(props: IPluginItemProps) {
     const colors = useColors();
     const enabled = usePluginEnabled(plugin);
     const { t } = useI18N();
+    const rerender = useRerender();
+
+    const alternativePluginName = pluginManager.getAlternativePluginName(plugin);
 
     const options: IOption[] = [
         {
@@ -38,7 +43,7 @@ function _PluginItem(props: IPluginItemProps) {
             icon: 'arrow-path',
             async onPress() {
                 try {
-                    await PluginManager.updatePlugin(plugin);
+                    await pluginManager.updatePlugin(plugin);
                     Toast.success(t("toast.pluginUpdateSuccess"));
                 } catch (e: any) {
                     Toast.warn(e?.message ?? t("toast.failToUpdatePlugin"));
@@ -71,13 +76,36 @@ function _PluginItem(props: IPluginItemProps) {
                     }),
                     async onOk() {
                         try {
-                            await PluginManager.uninstallPlugin(plugin.hash);
+                            await pluginManager.uninstallPlugin(plugin.hash);
                             Toast.success(t("toast.pluginUninstalled"));
                         } catch {
                             Toast.warn(t("toast.failToUpdatePlugin"));
                         }
                     },
                 });
+            },
+        },
+        {
+            title: t('pluginSetting.pluginItem.options.alternativePlugin'),
+            icon: 'strategy',
+            show: true,
+            onPress() {
+                showDialog('RadioDialog', {
+                    content: (pluginManager.getSortedPluginsWithAbility('getMediaSource').map(it => it.name)),
+                    title: t('pluginSetting.pluginItem.dialog.setAlternativePluginTitle'),
+                    defaultSelected: pluginManager.getAlternativePluginName(plugin) as any,
+                    onOk(value) {
+                        if (value === plugin.name) {
+                            pluginManager.setAlternativePluginName(plugin, null as any);
+                        } else {
+                            pluginManager.setAlternativePluginName(plugin, value as any);
+                        }
+                        rerender();
+                    },
+                    tip: t('pluginSetting.pluginItem.dialog.setAlternativePluginTip'),
+
+                })
+
             },
         },
         {
@@ -158,12 +186,12 @@ function _PluginItem(props: IPluginItemProps) {
                 if (Array.isArray(plugin.instance.userVariables)) {
                     showPanel('SetUserVariables', {
                         async onOk(newValue, closePanel) {
-                            PluginManager.setUserVariables(plugin, newValue);
+                            pluginManager.setUserVariables(plugin, newValue);
                             Toast.success(t("toast.settingSuccess"));
                             closePanel();
                         },
                         variables: plugin.instance.userVariables,
-                        initValues: PluginManager.getUserVariables(plugin),
+                        initValues: pluginManager.getUserVariables(plugin),
                     });
                 }
             },
@@ -180,16 +208,26 @@ function _PluginItem(props: IPluginItemProps) {
                 },
             ]}>
             <View style={styles.header}>
-                <ThemeText
-                    style={styles.headerPluginName}
-                    numberOfLines={1}
-                    fontSize="title">
-                    {plugin.name}
-                </ThemeText>
+                <View style={styles.headerPluginContainer}>
+                    <ThemeText
+                        numberOfLines={1}
+                        fontSize="title">
+                        {plugin.name}
+                    </ThemeText>
+                    {
+                        plugin.instance.description?.length ? <IconButton name='question-mark-circle' sizeType='light' onPress={() => {
+                            showDialog('MarkdownDialog', {
+                                title: plugin.name,
+                                markdownContent: plugin.instance.description!,
+                            })
+                        }} /> : null
+                    }
+
+                </View>
                 <ThemeSwitch
                     value={enabled}
                     onValueChange={val => {
-                        PluginManager.setPluginEnabled(plugin, val);
+                        pluginManager.setPluginEnabled(plugin, val);
                     }}
                 />
             </View>
@@ -211,6 +249,13 @@ function _PluginItem(props: IPluginItemProps) {
                     </ThemeText>
                 ) : null}
             </View>
+            {alternativePluginName ? <View style={styles.alternativePluginDescription}>
+                <ThemeText fontSize="subTitle" fontColor="textSecondary">
+                    {t('pluginSetting.pluginItem.alternativePlugin', {
+                        name: alternativePluginName
+                    })}
+                </ThemeText>
+            </View> : null}
             <View style={styles.contents}>
                 {options.map((it, index) =>
                     it.show !== false ? (
@@ -284,9 +329,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    headerPluginName: {
+    headerPluginContainer: {
         flexShrink: 1,
         flexGrow: 1,
+        flexDirection: 'row',
+        gap: rpx(8),
+        alignItems: 'center',
     },
     author: {
         marginLeft: rpx(24),
@@ -296,6 +344,11 @@ const styles = StyleSheet.create({
     description: {
         marginHorizontal: rpx(16),
         marginVertical: rpx(24),
+        flexDirection: 'row',
+    },
+    alternativePluginDescription: {
+        marginHorizontal: rpx(16),
+        marginBottom: rpx(24),
         flexDirection: 'row',
     },
     contents: {

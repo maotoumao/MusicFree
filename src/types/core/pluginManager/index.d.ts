@@ -157,5 +157,40 @@ export interface IPluginManager {
      * @param sortedPlugins - 按期望顺序排列的插件实例数组
      */
     setPluginOrder(sortedPlugins: Plugin[]): void;
+
+    /**
+     * 设置插件的用户变量
+     * @param plugin - 要设置用户变量的插件实例
+     * @param userVariables - 用户变量键值对
+     */
+    setUserVariables(plugin: Plugin, userVariables: Record<string, string>): void;
+
+    /**
+     * 获取插件的用户变量
+     * @param plugin - 要获取用户变量的插件实例
+     * @returns 用户变量键值对
+     */
+    getUserVariables(plugin: Plugin): Record<string, string>;
+
+    /**
+     * 设置插件的替代插件名称
+     * @param plugin - 要设置替代插件的插件实例
+     * @param alternativePluginName - 替代插件的名称
+     */
+    setAlternativePluginName(plugin: Plugin, alternativePluginName: string): void;
+
+    /**
+     * 获取插件的替代插件名称
+     * @param plugin - 要获取替代插件名称的插件实例
+     * @returns 替代插件的名称
+     */
+    getAlternativePluginName(plugin: Plugin): string | null;
+
+    /**
+     * 获取插件的替代插件实例
+     * @param plugin - 要获取替代插件的插件实例
+     * @returns 替代插件实例或null
+     */
+    getAlternativePlugin(plugin: Plugin): Plugin | null;
 }
 

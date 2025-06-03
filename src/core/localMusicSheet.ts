@@ -116,7 +116,7 @@ function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
 }
 
 function localMediaFilter(filename: string) {
-    return supportLocalMediaType.some(ext => filename.endsWith(ext));
+    return supportLocalMediaType.some(ext => filename.toLowerCase().endsWith(ext));
 }
 
 let importToken: string | null = null;

@@ -80,6 +80,8 @@ declare namespace IPlugin {
         cacheControl?: 'cache' | 'no-cache' | 'no-store';
         /** 插件作者 */
         author?: string;
+        /** 插件描述，支持markdown */
+        description?: string;
         /** 用户自定义输入 */
         userVariables?: IUserVariable[];
         /** 提示文本 */
