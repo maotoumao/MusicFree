@@ -1,0 +1,163 @@
+name: 自动构建安卓应用
+
+on:
+  workflow_dispatch: # 允许手动触发
+  pull_request:
+    types:
+      - closed # 当 Pull Request 关闭时触发
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          # 如果您希望提交到特定的分支，可以在这里指定
+          # ref: ${{ github.head_ref || github.ref_name }} # 尝试获取PR分支或当前触发分支
+          # 为了确保提交到主分支（或其他您定义的主开发分支），您可能需要更复杂的逻辑或固定分支名
+          # 如果是PR合并触发的，通常是提交到合并的目标分支
+          token: ${{ secrets.GITHUB_TOKEN }} # 确保有权限推送
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 设置 Java (JDK) 环境
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 清理 Gradle 缓存 (如果需要)
+        run: |
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/wrapper
+
+      - name: 配置 Gradle 缓存
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm # 或者 node_modules，取决于你的偏好和 npm 版本
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: 安装 Node.js 依赖并生成 package-lock.json
+        run: npm install # 使用 npm install 来生成或更新 package-lock.json
+
+      - name: 提交 package-lock.json (如果发生变化)
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add package-lock.json
+          # 检查是否有暂存的更改
+          if git diff --staged --quiet; then
+            echo "package-lock.json 未发生变化，无需提交。"
+          else
+            git commit -m "chore: 更新 package-lock.json [skip ci]"
+            git push
+            echo "package-lock.json 已提交。"
+          fi
+        # [skip ci] 通常用于告知一些CI系统跳过本次提交触发的构建，但具体效果取决于您的CI配置
+
+      - name: 获取应用版本号
+        id: get_version
+        run: echo "APP_VERSION=$(node -p -e 'require("./package.json").version')" >> $GITHUB_ENV
+
+      - name: 设置签名密钥 (从 Secrets)
+        if: env.ANDROID_RELEASE_KEYSTORE_BASE64 != '' # 仅当 Secret存在时执行
+        run: |
+          echo "从 Secrets 创建签名密钥库..."
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > release.jks
+
+          echo "从 Secrets 创建 keystore.properties..."
+          echo "RELEASE_STORE_FILE=../../release.jks" > android/keystore.properties # 路径相对于 android 目录
+          echo "RELEASE_STORE_PASSWORD=${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}" >> android/keystore.properties
+          echo "RELEASE_KEY_ALIAS=${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}" >> android/keystore.properties
+          echo "RELEASE_KEY_PASSWORD=${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}" >> android/keystore.properties
+        env:
+          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}
+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+
+      - name: 验证 keystore 文件和 properties 文件
+        run: |
+          echo "当前工作目录 (pwd): $(pwd)"
+          echo "--- 项目根目录内容 ---"
+          ls -lA
+          echo "--- android 目录内容 ---"
+          ls -lA android
+          echo "--- android/keystore.properties 内容 ---"
+          cat android/keystore.properties
+          echo "--- 检查 release.jks 是否在项目根目录 ---"
+          if [ -f "release.jks" ]; then
+            echo "release.jks 存在于 $(pwd)/release.jks"
+          else
+            echo "release.jks 不存在于 $(pwd)/release.jks"
+          fi
+          echo "--- 检查 release.jks 是否在 android 目录 ---"
+          if [ -f "android/release.jks" ]; then
+            echo "release.jks 存在于 $(pwd)/android/release.jks"
+          else
+            echo "release.jks 不存在于 $(pwd)/android/release.jks"
+          fi
+          echo "--- 检查 release.jks 是否在 android/app 目录 ---"
+          if [ -f "android/app/release.jks" ]; then
+            echo "release.jks 存在于 $(pwd)/android/app/release.jks"
+          else
+            echo "release.jks 不存在于 $(pwd)/android/app/release.jks"
+          fi
+      
+      - name: 赋予 Gradle Wrapper 执行权限
+        run: chmod +x ./android/gradlew
+
+      - name: 检查 react-native-track-player 的依赖
+        working-directory: ./android
+        run: |
+          echo "--- 正在输出 react-native-track-player 的依赖树 (针对 release 构建配置) ---"
+          ./gradlew :react-native-track-player:dependencies --configuration releaseCompileClasspath --console=plain || echo "获取 react-native-track-player 依赖失败，可能是模块名不匹配或配置问题。"
+          echo "--- 正在输出 app 模块的依赖树 (针对 release 构建配置, 可以看到最终解析的版本) ---"
+          ./gradlew app:dependencies --configuration releaseCompileClasspath --console=plain || echo "获取 app 模块依赖失败。"
+          echo "--- react-native-track-player/android/build.gradle 内容 ---"
+          cat ../node_modules/react-native-track-player/android/build.gradle || echo "无法读取 react-native-track-player/android/build.gradle"
+
+      - name: 检查 RNGP 路径和内容
+        run: |
+          echo "RNGP Path: $(pwd)/node_modules/@react-native/gradle-plugin"
+          ls -la node_modules/@react-native/gradle-plugin
+          cat node_modules/@react-native/gradle-plugin/package.json || echo "RNGP package.json not found"
+
+      - name: 构建 Release APK
+        working-directory: ./android
+        run: |
+          ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: 确保 Release APK 文件存在
+        id: find_apk
+        run: |
+          if ! ls ./android/app/build/outputs/apk/release/*.apk 1> /dev/null 2>&1; then
+            echo "错误：未找到任何 .apk 文件在 ./android/app/build/outputs/apk/release/ 目录下。"
+            ls -R ./android/app/build/outputs/apk/ # 帮助调试
+            exit 1
+          fi
+          echo "找到的 Release APKs:"
+          ls -lA ./android/app/build/outputs/apk/release/*.apk
+
+      - name: 上传所有构建产物 (APKs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: MusicFree-v${{ env.APP_VERSION }}-${{ github.sha }}-All-APKs
+          path: ./android/app/build/outputs/apk/release/*.apk # 使用通配符匹配所有 .apk 文件
+          if-no-files-found: error
