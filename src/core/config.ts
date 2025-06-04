@@ -21,7 +21,7 @@ interface IConfig {
     "basic.downloadPath": string;
     "basic.notInterrupt": boolean;
     "basic.tempRemoteDuck": '暂停' | '降低音量';
-    "basic.tempRemoteDuckVolume": 0.2 | 0.5 | 0.8;
+    "basic.tempRemoteDuckVolume": 0.3 | 0.5 | 0.8;
     "basic.autoStopWhenError": boolean;
     "basic.pluginCacheControl": string;
     "basic.maxCacheSize": number;
