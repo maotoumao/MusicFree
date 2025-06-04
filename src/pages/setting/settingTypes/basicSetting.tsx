@@ -277,12 +277,6 @@ export default function BasicSetting() {
                     'basic.tempRemoteDuck',
                     ['暂停', '降低音量'],
                     tempRemoteDuck ?? '暂停',
-                    undefined,
-                    (val) => {
-                        if (val === '降低音量' && !tempRemoteDuckVolume) {
-                            Config.setConfig('basic.tempRemoteDuckVolume', 0.5);
-                        }
-                    }
                 ),
                 ...(tempRemoteDuck === '降低音量' ? [
                     createRadio(
