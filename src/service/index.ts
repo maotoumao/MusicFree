@@ -30,7 +30,10 @@ module.exports = async function () {
             );
             if (tempRemoteDuckConf === 'lowerVolume') {
                 if (paused) {
-                    return RNTrackPlayer.setVolume(0.5);
+                    const tempRemoteDuckVolume = Config.getConfig(
+                        'basic.tempRemoteDuckVolume',
+                    ) ?? 0.5;
+                    return RNTrackPlayer.setVolume(1 - tempRemoteDuckVolume);
                 } else {
                     return RNTrackPlayer.setVolume(1);
                 }

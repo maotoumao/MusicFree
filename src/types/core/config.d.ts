@@ -13,6 +13,7 @@ export interface IAppConfigProperties {
     'basic.downloadPath': string;
     'basic.notInterrupt': boolean;
     'basic.tempRemoteDuck': 'pause' | 'lowerVolume';
+    "basic.tempRemoteDuckVolume": 0.3 | 0.5 | 0.8;
     'basic.autoStopWhenError': boolean;
     'basic.pluginCacheControl': string;
     'basic.maxCacheSize': number;

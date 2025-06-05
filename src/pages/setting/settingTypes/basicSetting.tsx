@@ -3,27 +3,27 @@ import ListItem from "@/components/base/listItem";
 import Paragraph from "@/components/base/paragraph";
 import ThemeSwitch from "@/components/base/switch";
 import ThemeText from "@/components/base/themeText";
-import { showDialog } from "@/components/dialogs/useDialog";
-import { showPanel } from "@/components/panels/usePanel";
-import { SortType } from "@/constants/commonConst.ts";
+import {showDialog} from "@/components/dialogs/useDialog";
+import {showPanel} from "@/components/panels/usePanel";
+import {SortType} from "@/constants/commonConst.ts";
 import pathConst from "@/constants/pathConst";
-import Config, { useAppConfig } from "@/core/appConfig";
-import { useI18N } from "@/core/i18n";
-import { ROUTE_PATH, useNavigate } from "@/core/router";
+import Config, {useAppConfig} from "@/core/appConfig";
+import {useI18N} from "@/core/i18n";
+import {ROUTE_PATH, useNavigate} from "@/core/router";
 import useColors from "@/hooks/useColors";
-import LyricUtil, { NativeTextAlignment } from "@/native/lyricUtil";
-import { AppConfigPropertyKey } from "@/types/core/config";
-import { clearCache, getCacheSize, sizeFormatter } from "@/utils/fileUtils";
-import { clearLog, getErrorLogContent } from "@/utils/log";
-import { qualityKeys } from "@/utils/qualities";
+import LyricUtil, {NativeTextAlignment} from "@/native/lyricUtil";
+import {AppConfigPropertyKey} from "@/types/core/config";
+import {clearCache, getCacheSize, sizeFormatter} from "@/utils/fileUtils";
+import {clearLog, getErrorLogContent} from "@/utils/log";
+import {qualityKeys} from "@/utils/qualities";
 import rpx from "@/utils/rpx";
 import Toast from "@/utils/toast";
 import Clipboard from "@react-native-clipboard/clipboard";
 import Slider from "@react-native-community/slider";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
-import { readdir } from "react-native-fs";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {SectionList, StyleSheet, TouchableOpacity, View} from "react-native";
+import {readdir} from "react-native-fs";
+import {FlatList, ScrollView} from "react-native-gesture-handler";
 
 function createSwitch(
     title: string,
@@ -113,6 +113,7 @@ export default function BasicSetting() {
     const downloadPath = useAppConfig('basic.downloadPath');
     const notInterrupt = useAppConfig('basic.notInterrupt');
     const tempRemoteDuck = useAppConfig('basic.tempRemoteDuck');
+    const tempRemoteDuckVolume = useAppConfig('basic.tempRemoteDuckVolume');
     const autoStopWhenError = useAppConfig('basic.autoStopWhenError');
     const maxCacheSize = useAppConfig('basic.maxCacheSize');
     const defaultPlayQuality = useAppConfig('basic.defaultPlayQuality');
@@ -290,6 +291,19 @@ export default function BasicSetting() {
                         'lowerVolume': t('basicSettings.tempRemoteDuck.lowerVolume'),
                     }
                 ),
+                ...(tempRemoteDuck === 'lowerVolume' ? [
+                    createRadio(
+                        t('basicSettings.tempRemoteDuck.volumeDecreaseLevel'),
+                        'basic.tempRemoteDuckVolume',
+                        [0.3, 0.5, 0.8],
+                        tempRemoteDuckVolume ?? 0.5,
+                        {
+                            0.3: '30%',
+                            0.5: '50%',
+                            0.8: '80%'
+                        }
+                    )
+                ] : []),
                 createRadio(
                     t('basicSettings.defaultPlayQuality'),
                     'basic.defaultPlayQuality',
