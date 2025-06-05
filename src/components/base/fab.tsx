@@ -1,16 +1,16 @@
 import React from 'react';
-import {Pressable, StyleSheet} from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
-import {iconSizeConst} from '@/constants/uiConst';
-import Icon, {IIconName} from '@/components/base/icon.tsx';
+import { iconSizeConst } from '@/constants/uiConst';
+import Icon, { IIconName } from '@/components/base/icon.tsx';
 
 interface IFabProps {
     icon?: IIconName;
     onPress?: () => void;
 }
 export default function Fab(props: IFabProps) {
-    const {icon, onPress} = props;
+    const { icon, onPress } = props;
 
     const colors = useColors();
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
 import ListItem from '@/components/base/listItem';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
 import TitleAndTag from './titleAndTag';
 
 interface IAlbumResultsProps {
@@ -9,7 +9,7 @@ interface IAlbumResultsProps {
 }
 
 export default function AlbumItem(props: IAlbumResultsProps) {
-    const {albumItem} = props;
+    const { albumItem } = props;
     const navigate = useNavigate();
 
     return (

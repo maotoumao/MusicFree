@@ -1,4 +1,4 @@
-import {Easing, EasingFunction} from 'react-native-reanimated';
+import { Easing, EasingFunction } from 'react-native-reanimated';
 
 export const internalSymbolKey = Symbol.for('$');
 // 加入播放列表的时间；app内使用，无法被序列化
@@ -16,7 +16,7 @@ export const internalFakeSoundKey = 'fake-key';
 
 const emptyFunction = () => {};
 Object.freeze(emptyFunction);
-export {emptyFunction};
+export { emptyFunction };
 
 export enum RequestStateCode {
     /** 空闲 */

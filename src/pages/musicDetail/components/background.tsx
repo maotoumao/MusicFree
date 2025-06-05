@@ -1,6 +1,6 @@
 import React from 'react';
-import {Image, StyleSheet, View} from 'react-native';
-import {ImgAsset} from '@/constants/assetsConst';
+import { Image, StyleSheet, View } from 'react-native';
+import { ImgAsset } from '@/constants/assetsConst';
 import { useCurrentMusic } from '@/core/trackPlayer';
 
 export default function Background() {

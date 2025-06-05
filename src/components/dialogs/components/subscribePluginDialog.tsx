@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import rpx from '@/utils/rpx';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import ThemeText from '@/components/base/themeText';
-import {hideDialog} from '../useDialog';
+import { hideDialog } from '../useDialog';
 import Dialog from './base';
 import Input from '@/components/base/input';
 import useColors from '@/hooks/useColors';
@@ -26,12 +26,12 @@ interface ISubscribePluginDialogProps {
 export default function SubscribePluginDialog(
     props: ISubscribePluginDialogProps,
 ) {
-    const {subscribeItem, onSubmit, editingIndex, onDelete} = props;
+    const { subscribeItem, onSubmit, editingIndex, onDelete } = props;
     const [name, setName] = useState(subscribeItem?.name ?? '');
     const [url, setUrl] = useState(subscribeItem?.url ?? '');
 
     const colors = useColors();
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     const textColors = {
         color: colors.text,

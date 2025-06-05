@@ -50,7 +50,7 @@ export default class LyricParser {
             translation = undefined;
         }
 
-        const {lrcItems, meta} = this.parseLyricImpl(raw);
+        const { lrcItems, meta } = this.parseLyricImpl(raw);
         if (this.extra.offset) {
             meta.offset = (meta.offset ?? 0) + this.extra.offset;
         }
@@ -133,7 +133,7 @@ export default class LyricParser {
         withTimestamp?: boolean;
         type?: 'raw' | 'translation';
     }) {
-        const {type = 'raw', withTimestamp = true} = options || {};
+        const { type = 'raw', withTimestamp = true } = options || {};
 
         if (withTimestamp) {
             return this.lrcItems

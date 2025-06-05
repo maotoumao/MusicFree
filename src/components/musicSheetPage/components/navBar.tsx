@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ROUTE_PATH, useNavigate} from '@/core/router';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
 import AppBar from '@/components/base/appBar';
 
 interface INavBarProps {
@@ -10,7 +10,7 @@ interface INavBarProps {
 
 export default function (props: INavBarProps) {
     const navigate = useNavigate();
-    const {navTitle, musicList = []} = props;
+    const { navTitle, musicList = [] } = props;
 
     return (
         <AppBar

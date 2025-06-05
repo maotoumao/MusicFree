@@ -1,7 +1,7 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
 import ImageBtn from '../base/imageBtn';
 
 interface ISheetItemProps {
@@ -12,7 +12,7 @@ interface ISheetItemProps {
 const marginBottom = rpx(16);
 
 export default function SheetItem(props: ISheetItemProps) {
-    const {sheetInfo, pluginHash} = props ?? {};
+    const { sheetInfo, pluginHash } = props ?? {};
     const navigate = useNavigate();
     return (
         <View style={style.imageWrapper}>

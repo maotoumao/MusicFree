@@ -5,6 +5,6 @@ interface IMusicContentProps {
     item: IMusic.IMusicItem;
 }
 export default function MusicContentItem(props: IMusicContentProps) {
-    const {item} = props;
+    const { item } = props;
     return <MusicItem musicItem={item} />;
 }

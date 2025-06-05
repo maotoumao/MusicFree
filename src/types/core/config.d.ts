@@ -1,5 +1,5 @@
-import type {ResumeMode, SortType} from '@/constants/commonConst.ts';
-import type {CustomizedColors} from '@/hooks/useColors';
+import type { ResumeMode, SortType } from '@/constants/commonConst.ts';
+import type { CustomizedColors } from '@/hooks/useColors';
 
 export interface IAppConfigProperties {
     $schema: '2';

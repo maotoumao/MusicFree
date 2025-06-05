@@ -1,9 +1,9 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import FastImage from '@/components/base/fastImage.tsx';
 import ThemeText from '@/components/base/themeText.tsx';
-import {fontSizeConst} from '@/constants/uiConst.ts';
+import { fontSizeConst } from '@/constants/uiConst.ts';
 import dayjs from 'dayjs';
 import Icon from '@/components/base/icon.tsx';
 import useColors from '@/hooks/useColors.ts';
@@ -13,7 +13,7 @@ interface ICommentProps {
 }
 
 export default function Comment(props: ICommentProps) {
-    const {comment} = props;
+    const { comment } = props;
 
     const hasFooter = comment.like || comment.createAt || comment.location;
     const colors = useColors();

@@ -15,7 +15,7 @@ export default function ListEmpty(props: IEmptyProps) {
     const { state, onRetry } = props;
 
     const colors = useColors();
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     if (state === RequestStateCode.FINISHED || state === RequestStateCode.PARTLY_DONE) {
         return <View style={style.wrapper}>

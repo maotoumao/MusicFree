@@ -1,11 +1,11 @@
 import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
-import {iconSizeConst} from '@/constants/uiConst';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
+import { iconSizeConst } from '@/constants/uiConst';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
-import {showPanel} from '../panels/usePanel';
+import { showPanel } from '../panels/usePanel';
 import IconButton from './iconButton';
 import TrackPlayer from '@/core/trackPlayer';
 import Toast from '@/utils/toast';
@@ -20,14 +20,14 @@ interface IProps {
     musicSheet?: IMusic.IMusicSheetItem | null;
 }
 export default function (props: IProps) {
-    const {musicList, canStar, musicSheet} = props;
+    const { musicList, canStar, musicSheet } = props;
 
     const sheetName = musicSheet?.title;
     const sheetId = musicSheet?.id;
 
     const colors = useColors();
     const navigate = useNavigate();
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     const starred = useSheetIsStarred(musicSheet);
 

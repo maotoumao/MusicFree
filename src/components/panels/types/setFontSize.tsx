@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 
@@ -7,7 +7,7 @@ import PanelBase from '../base/panelBase';
 import Slider from '@react-native-community/slider';
 import useColors from '@/hooks/useColors';
 import PanelHeader from '../base/panelHeader';
-import {useI18N} from '@/core/i18n';
+import { useI18N } from '@/core/i18n';
 
 interface IProps {
     defaultSelect?: number;
@@ -16,7 +16,7 @@ interface IProps {
 }
 
 export default function SetFontSize(props: IProps) {
-    const {defaultSelect, onSelectChange} = props ?? {};
+    const { defaultSelect, onSelectChange } = props ?? {};
     const colors = useColors();
     const i18n = useI18N();
     const [selected, setSelected] = useState(defaultSelect ?? 1);

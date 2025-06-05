@@ -1,9 +1,9 @@
-import React, {memo, useCallback} from 'react';
-import {StatusBar, StyleSheet, View} from 'react-native';
+import React, { memo, useCallback } from 'react';
+import { StatusBar, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import MusicItem from '@/components/mediaItem/musicItem';
-import {produce} from 'immer';
-import {useAtom, useSetAtom} from 'jotai';
+import { produce } from 'immer';
+import { useAtom, useSetAtom } from 'jotai';
 import {
     IEditorMusicItem,
     editingMusicListAtom,
@@ -22,7 +22,7 @@ interface IMusicEditorItemProps {
     editorMusicItem: IEditorMusicItem;
 }
 function _MusicEditorItem(props: IMusicEditorItemProps) {
-    const {index, editorMusicItem} = props;
+    const { index, editorMusicItem } = props;
     const setEditingMusicList = useSetAtom(editingMusicListAtom);
 
     const onPress = useCallback(() => {
@@ -63,7 +63,7 @@ export default function MusicList() {
     const setMusicListChanged = useSetAtom(musicListChangedAtom);
 
     const renderItem = useCallback(
-        ({index, item}: any) => {
+        ({ index, item }: any) => {
             return <MusicEditorItem editorMusicItem={item} index={index!} />;
         },
         [editingMusicList],

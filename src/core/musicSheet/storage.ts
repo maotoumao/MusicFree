@@ -1,6 +1,6 @@
 import getOrCreateMMKV from '@/utils/getOrCreateMMKV.ts';
-import {InteractionManager} from 'react-native';
-import {SortType} from '@/constants/commonConst.ts';
+import { InteractionManager } from 'react-native';
+import { SortType } from '@/constants/commonConst.ts';
 import { safeParse, safeStringify } from '@/utils/jsonUtil';
 
 function getStorageData(key: string) {

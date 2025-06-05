@@ -8,7 +8,8 @@ module.exports = {
                 '@typescript-eslint/no-shadow': 'warn',
                 'no-shadow': 'off',
                 'no-undef': 'off',
-                'react-hooks/exhaustive-deps': 'warn'
+                'react-hooks/exhaustive-deps': 'warn',
+                '@typescript-eslint/object-curly-spacing': ['error', 'always'],
             },
         },
     ],

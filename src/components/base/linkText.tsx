@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
-import {GestureResponderEvent, StyleSheet, TextProps} from 'react-native';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import React, { useState } from 'react';
+import { GestureResponderEvent, StyleSheet, TextProps } from 'react-native';
+import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
 import openUrl from '@/utils/openUrl';
 import ThemeText from './themeText';
 import Color from 'color';

@@ -1,11 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text} from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import rpx from '@/utils/rpx';
 import timeformat from '@/utils/timeformat';
-import {fontSizeConst} from '@/constants/uiConst';
+import { fontSizeConst } from '@/constants/uiConst';
 import { useProgress } from '@/core/trackPlayer';
 
-export default function DraggingTime(props: {time: number}) {
+export default function DraggingTime(props: { time: number }) {
     const progress = useProgress();
 
     return (

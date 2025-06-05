@@ -1,4 +1,4 @@
-import {Linking} from 'react-native';
+import { Linking } from 'react-native';
 import Toast from './toast';
 
 export default async function (url: string) {

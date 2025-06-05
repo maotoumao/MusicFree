@@ -1,5 +1,5 @@
-import React, {ReactNode} from 'react';
-import {Pressable, StyleProp, StyleSheet, ViewStyle} from 'react-native';
+import React, { ReactNode } from 'react';
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
@@ -12,7 +12,7 @@ interface IChipProps {
     onClose?: () => void;
 }
 export default function Chip(props: IChipProps) {
-    const {containerStyle, children, onPress, onClose} = props;
+    const { containerStyle, children, onPress, onClose } = props;
     const colors = useColors();
 
     return (

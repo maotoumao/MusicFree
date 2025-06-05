@@ -1,11 +1,11 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import NavBar from './components/navBar';
 import MusicBar from '@/components/musicBar';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeDrawer from './components/drawer';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import StatusBar from '@/components/base/statusBar';
 import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
 import globalStyle from '@/constants/globalStyle';

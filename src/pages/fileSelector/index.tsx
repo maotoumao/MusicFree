@@ -176,7 +176,7 @@ export default function FileSelector() {
         [],
     );
 
-    const renderItem = ({item}: {item: IFileItem}) => (
+    const renderItem = ({ item }: { item: IFileItem }) => (
         <FileItem
             path={item.path}
             type={item.type}
@@ -225,7 +225,7 @@ export default function FileSelector() {
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
-            <View style={[style.header, {backgroundColor: colors.appBar}]}>
+            <View style={[style.header, { backgroundColor: colors.appBar }]}>
                 <IconButton
                     sizeType="small"
                     name="arrow-long-left"

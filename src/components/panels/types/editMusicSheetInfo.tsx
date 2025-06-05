@@ -28,7 +28,7 @@ interface IEditSheetDetailProps {
 export default function EditMusicSheetInfo(props: IEditSheetDetailProps) {
   const { musicSheet } = props;
   const colors = useColors();
-  const {t} = useI18N();
+  const { t } = useI18N();
 
   const [coverImg, setCoverImg] = useState(musicSheet?.coverImg);
   const [title, setTitle] = useState(musicSheet?.title);

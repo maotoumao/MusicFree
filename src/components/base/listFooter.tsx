@@ -18,7 +18,7 @@ export default function ListFooter(props: IProps) {
     const { state } = props;
 
     const colors = useColors();
-    const {t} = useI18N();
+    const { t } = useI18N();
 
 
     if (state === RequestStateCode.ERROR) {

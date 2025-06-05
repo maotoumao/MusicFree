@@ -11,7 +11,7 @@ interface IMusicResultsProps {
 }
 
 export default function MusicResultItem(props: IMusicResultsProps) {
-    const {item: musicItem, pluginSearchResultRef} = props;
+    const { item: musicItem, pluginSearchResultRef } = props;
 
     return (
         <MusicItem

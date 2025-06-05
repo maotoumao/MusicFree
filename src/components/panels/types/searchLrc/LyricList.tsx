@@ -34,7 +34,7 @@ function LyricListImpl(props: ILyricListProps) {
     const data = props.data;
     const searchState = data?.state ?? RequestStateCode.IDLE;
 
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     return searchState === RequestStateCode.PENDING_FIRST_PAGE ? (
         <Loading />

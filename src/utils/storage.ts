@@ -1,4 +1,4 @@
-import {errorLog} from '@/utils/log';
+import { errorLog } from '@/utils/log';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function setStorage(key: string, value: any) {

@@ -1,11 +1,11 @@
 import React from 'react';
-import {StyleProp, StyleSheet, ViewStyle} from 'react-native';
+import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
-import {iconSizeConst} from '@/constants/uiConst';
+import { iconSizeConst } from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import Icon, {IIconName} from '@/components/base/icon.tsx';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Icon, { IIconName } from '@/components/base/icon.tsx';
 
 interface IProps {
     icon: IIconName;
@@ -14,7 +14,7 @@ interface IProps {
     children?: string;
 }
 export default function (props: IProps) {
-    const {icon, children, onPress, containerStyle} = props;
+    const { icon, children, onPress, containerStyle } = props;
     const colors = useColors();
 
     return (

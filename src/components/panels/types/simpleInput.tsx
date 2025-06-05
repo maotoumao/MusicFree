@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx, {vmax} from '@/utils/rpx';
-import {fontSizeConst} from '@/constants/uiConst';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import rpx, { vmax } from '@/utils/rpx';
+import { fontSizeConst } from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
 
 import ThemeText from '@/components/base/themeText';
-import {ScrollView, TextInput} from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import PanelBase from '../base/panelBase';
-import {hidePanel} from '../usePanel';
+import { hidePanel } from '../usePanel';
 import PanelHeader from '../base/panelHeader';
 import { useI18N } from '@/core/i18n';
 

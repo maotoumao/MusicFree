@@ -23,10 +23,10 @@ interface IMusicCommentProps {
 
 
 export default function MusicComment(props: IMusicCommentProps) {
-    const {musicItem} = props;
+    const { musicItem } = props;
 
     const [reqState, comments] = useComments(musicItem);
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     let listBody = <></>;
 
@@ -39,7 +39,7 @@ export default function MusicComment(props: IMusicCommentProps) {
             <FlashList
                 ListEmptyComponent={<Empty />}
                 estimatedItemSize={100}
-                renderItem={({item}) => {
+                renderItem={({ item }) => {
                     return <Comment comment={item} />;
                 }}
                 data={comments}

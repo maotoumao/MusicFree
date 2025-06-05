@@ -1,8 +1,8 @@
-import React, {memo} from 'react';
-import {StyleSheet, Text} from 'react-native';
+import React, { memo } from 'react';
+import { StyleSheet, Text } from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
-import {fontSizeConst} from '@/constants/uiConst';
+import { fontSizeConst } from '@/constants/uiConst';
 
 interface ILyricItemComponentProps {
     // 行号
@@ -20,13 +20,13 @@ interface ILyricItemComponentProps {
 }
 
 function _LyricItemComponent(props: ILyricItemComponentProps) {
-    const {light, highlight, text, onLayout, index, fontSize} = props;
+    const { light, highlight, text, onLayout, index, fontSize } = props;
 
     const colors = useColors();
 
     return (
         <Text
-            onLayout={({nativeEvent}) => {
+            onLayout={({ nativeEvent }) => {
                 if (index !== undefined) {
                     onLayout?.(index, nativeEvent.layout.height);
                 }

@@ -1,11 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import rpx from '@/utils/rpx';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Tag from '@/components/base/tag';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
 import Share from 'react-native-share';
-import {B64Asset} from '@/constants/assetsConst';
+import { B64Asset } from '@/constants/assetsConst';
 import IconButton from '@/components/base/iconButton';
 import { useCurrentMusic } from '@/core/trackPlayer';
 
