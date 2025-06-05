@@ -256,6 +256,7 @@
     "basicSettings.tempRemoteDuck": "When playback is temporarily interrupted",
     "basicSettings.tempRemoteDuck.pause": "Pause playback",
     "basicSettings.tempRemoteDuck.lowerVolume": "Lower volume",
+    "basicSettings.tempRemoteDuck.volumeDecreaseLevel": "Volume Decrease Level",
     "basicSettings.defaultPlayQuality": "Default Playback Quality",
     "basicSettings.playQualityOrder": "When default playback quality is unavailable",
     "basicSettings.playQualityOrder.asc": "Play higher quality",
