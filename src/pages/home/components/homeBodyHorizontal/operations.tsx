@@ -1,38 +1,41 @@
-import React from 'react';
-import {StyleSheet} from 'react-native';
+import { useI18N } from '@/core/i18n';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
 import rpx from '@/utils/rpx';
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import ActionButton from '../ActionButton';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
-import {ScrollView} from 'react-native-gesture-handler';
 
 export default function Operations() {
     const navigate = useNavigate();
+    const { t } = useI18N();
+
 
     const actionButtons = [
         {
             iconName: 'fire',
-            title: '推荐歌单',
+            title: t("home.recommendSheet"),
             action() {
                 navigate(ROUTE_PATH.RECOMMEND_SHEETS);
             },
         },
         {
             iconName: 'trophy',
-            title: '榜单',
+            title: t("home.topList"),
             action() {
                 navigate(ROUTE_PATH.TOP_LIST);
             },
         },
         {
             iconName: 'clock-outline',
-            title: '播放记录',
+            title: t("home.playHistory"),
             action() {
                 navigate(ROUTE_PATH.HISTORY);
             },
         },
         {
             iconName: 'folder-music-outline',
-            title: '本地音乐',
+            title: t("home.localMusic"),
             action() {
                 navigate(ROUTE_PATH.LOCAL);
             },

@@ -1,10 +1,10 @@
-import {devLog, errorLog, trace} from '@/utils/log';
-import {RequestStateCode} from '@/constants/commonConst';
-import {produce} from 'immer';
-import {getDefaultStore, useAtom, useSetAtom} from 'jotai';
-import {useCallback, useRef} from 'react';
-import {PageStatus, pageStatusAtom, searchResultsAtom} from '../store/atoms';
-import PluginManager, {Plugin} from '@/core/pluginManager';
+import { devLog, errorLog, trace } from '@/utils/log';
+import { RequestStateCode } from '@/constants/commonConst';
+import { produce } from 'immer';
+import { getDefaultStore, useAtom, useSetAtom } from 'jotai';
+import { useCallback, useRef } from 'react';
+import { PageStatus, pageStatusAtom, searchResultsAtom } from '../store/atoms';
+import PluginManager, { Plugin } from '@/core/pluginManager';
 
 export default function useSearch() {
     const setPageStatus = useSetAtom(pageStatusAtom);
@@ -58,7 +58,7 @@ export default function useSearch() {
                     (prevPluginResult?.state ===
                         RequestStateCode.PENDING_REST_PAGE ||
                         prevPluginResult?.state ===
-                            RequestStateCode.FINISHED) &&
+                        RequestStateCode.FINISHED) &&
                     undefined === query
                 ) {
                     return;
@@ -115,7 +115,11 @@ export default function useSearch() {
                         return;
                     }
                     /** 切换到结果页 */
-                    setPageStatus(PageStatus.RESULT);
+                    const currentPageStatus =
+                        getDefaultStore().get(pageStatusAtom);
+                    if (currentPageStatus !== PageStatus.EDITING) {
+                        setPageStatus(PageStatus.RESULT);
+                    }
                     if (!result) {
                         throw new Error('搜索结果为空');
                     }
@@ -132,7 +136,7 @@ export default function useSearch() {
                             prevMediaResult[_hash] = {
                                 state:
                                     result?.isEnd === false &&
-                                    result?.data?.length
+                                        result?.data?.length
                                         ? RequestStateCode.PARTLY_DONE
                                         : RequestStateCode.FINISHED,
                                 query,
@@ -140,8 +144,8 @@ export default function useSearch() {
                                 data: newSearch
                                     ? currResult
                                     : (prevPluginResult.data ?? []).concat(
-                                          currResult,
-                                      ),
+                                        currResult,
+                                    ),
                             };
                             return draft;
                         }),
@@ -168,7 +172,7 @@ export default function useSearch() {
                             };
 
                             prevPluginResult.state =
-                                RequestStateCode.PARTLY_DONE;
+                                RequestStateCode.ERROR;
                             return draft;
                         }),
                     );

@@ -9,7 +9,7 @@ import Bottom from "./components/bottom";
 import Content from "./components/content";
 import Lyric from "./components/content/lyric";
 import NavBar from "./components/navBar";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 
 export default function MusicDetail() {

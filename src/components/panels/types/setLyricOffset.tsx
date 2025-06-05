@@ -4,13 +4,14 @@ import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 
 import PanelBase from '../base/panelBase';
-import MediaExtra from '@/core/mediaExtra';
 import {iconSizeConst} from '@/constants/uiConst';
 import PanelHeader from '../base/panelHeader';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {hidePanel} from '../usePanel';
 import useColors from '@/hooks/useColors';
 import Icon from '@/components/base/icon.tsx';
+import { getMediaExtraProperty } from '@/utils/mediaExtra';
+import { useI18N } from '@/core/i18n';
 
 interface IProps {
     musicItem: IMusic.IMusicItem;
@@ -20,19 +21,20 @@ interface IProps {
 
 export default function SetLyricOffset(props: IProps) {
     const {musicItem, onSubmit} = props ?? {};
+    const { t } = useI18N();
 
     const [offset, setOffset] = useState(
-        MediaExtra.get(musicItem)?.lyricOffset ?? 0,
+        getMediaExtraProperty(musicItem, 'lyricOffset') ?? 0
     );
 
     const colors = useColors();
 
     let titleStr =
         offset === 0
-            ? '正常'
+            ? t('panel.setLyricOffset.normal')
             : offset < 0
-            ? `延后${(-offset).toFixed(1)}s`
-            : `提前${offset.toFixed(1)}s`;
+            ? t('panel.setLyricOffset.delay', { time: (-offset).toFixed(1) })
+            : t('panel.setLyricOffset.advance', { time: offset.toFixed(1) });
 
     return (
         <PanelBase
@@ -41,7 +43,7 @@ export default function SetLyricOffset(props: IProps) {
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title={`设置歌词进度 (${titleStr})`}
+                        title={t('panel.setLyricOffset.title', { status: titleStr })}
                         onOk={() => {
                             onSubmit?.(offset);
                         }}
@@ -70,7 +72,7 @@ export default function SetLyricOffset(props: IProps) {
                                 size={iconSizeConst.big}
                                 color={colors.text}
                             />
-                            <ThemeText>重置</ThemeText>
+                            <ThemeText>{t('panel.setLyricOffset.reset')}</ThemeText>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.btn}

@@ -45,7 +45,7 @@ export default function useGetTopList() {
             } catch {
                 setPluginsTopList(
                     produce(draft => {
-                        draft[pluginHash].state = RequestStateCode.FINISHED;
+                        draft[pluginHash].state = RequestStateCode.ERROR;
                     }),
                 );
             }

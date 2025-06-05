@@ -5,8 +5,8 @@ import MusicItem from '@/components/mediaItem/musicItem';
 import {produce} from 'immer';
 import {useAtom, useSetAtom} from 'jotai';
 import {
-    editingMusicListAtom,
     IEditorMusicItem,
+    editingMusicListAtom,
     musicListChangedAtom,
 } from '../store/atom';
 import SortableFlatList from '@/components/base/SortableFlatList';

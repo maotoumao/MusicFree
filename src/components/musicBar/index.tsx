@@ -7,14 +7,14 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {showPanel} from '../panels/usePanel';
 import useColors from '@/hooks/useColors';
 import IconButton from '../base/iconButton';
-import TrackPlayer from '@/core/trackPlayer';
+import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from '@/core/trackPlayer';
 import {musicIsPaused} from '@/utils/trackUtils';
 import MusicInfo from './musicInfo';
 import Icon from '@/components/base/icon.tsx';
 
 function CircularPlayBtn() {
-    const progress = TrackPlayer.useProgress();
-    const musicState = TrackPlayer.useMusicState();
+    const progress = useProgress();
+    const musicState = useMusicState();
     const colors = useColors();
 
     const isPaused = musicIsPaused(musicState);
@@ -56,7 +56,7 @@ function CircularPlayBtn() {
     );
 }
 function MusicBar() {
-    const musicItem = TrackPlayer.useCurrentMusic();
+    const musicItem = useCurrentMusic();
 
     const [showKeyboard, setKeyboardStatus] = useState(false);
 

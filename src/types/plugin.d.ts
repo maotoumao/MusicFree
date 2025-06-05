@@ -80,6 +80,8 @@ declare namespace IPlugin {
         cacheControl?: 'cache' | 'no-cache' | 'no-store';
         /** 插件作者 */
         author?: string;
+        /** 插件描述，支持markdown */
+        description?: string;
         /** 用户自定义输入 */
         userVariables?: IUserVariable[];
         /** 提示文本 */
@@ -138,14 +140,6 @@ declare namespace IPlugin {
         getMusicComments?: (
             musicItem: IMusic.IMusicItem,
         ) => Promise<ICommon.PaginationResponse<IMedia.IComment>>;
-        /** 迁移插件 */
-        migrateFromOtherPlugin?: (
-            mediaItem: ICommon.IMediaBase,
-            fromPlatform: string,
-        ) => Promise<{
-            isOk: boolean; // 是否迁移成功
-            data?: ICommon.IMediaBase; // 迁移后的数据
-        }>;
     }
 
     export interface IPluginInstance extends IPluginDefine {
