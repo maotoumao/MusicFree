@@ -256,6 +256,7 @@
     "basicSettings.tempRemoteDuck": "播放被暂时打断时",
     "basicSettings.tempRemoteDuck.pause": "暂停播放",
     "basicSettings.tempRemoteDuck.lowerVolume": "降低音量",
+    "basicSettings.tempRemoteDuck.volumeDecreaseLevel": "音量降低幅度",
     "basicSettings.defaultPlayQuality": "默认播放音质",
     "basicSettings.playQualityOrder": "默认播放音质缺失时",
     "basicSettings.playQualityOrder.asc": "播放更高音质",
