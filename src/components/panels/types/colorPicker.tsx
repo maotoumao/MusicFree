@@ -189,7 +189,29 @@ export default function ColorPicker(props: IColorPickerProps) {
                     <PanelHeader
                         onCancel={hidePanel}
                         onOk={async () => {
-                            onSelected?.(currentColorWithAlpha);
+                            // 检查输入框的值是否与当前颜色不同
+                            if (inputValue !== colorHexString) {
+                                try {
+                                    const color = Color(inputValue);
+                                    const hsl = color.hsl();
+                                    
+                                    // 更新颜色状态
+                                    setCurrentHue(hsl.hue() || 0);
+                                    setCurrentSaturation(hsl.saturationl());
+                                    setCurrentLightness(hsl.lightness());
+                                    setCurrentAlpha(color.alpha());
+                                    
+                                    // 使用输入的颜色进行提交
+                                    onSelected?.(color);
+                                } catch (error) {
+                                    // 如果输入的颜色无效，使用当前颜色
+                                    onSelected?.(currentColorWithAlpha);
+                                }
+                            } else {
+                                // 输入值与当前颜色相同，直接使用当前颜色
+                                onSelected?.(currentColorWithAlpha);
+                            }
+                            
                             if (closePanelWhenSelected) {
                                 hidePanel();
                             }

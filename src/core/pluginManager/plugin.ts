@@ -775,9 +775,11 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
 
     async getMusicComments(
         musicItem: IMusic.IMusicItem,
+        page?: number
     ): Promise<ICommon.PaginationResponse<IMedia.IComment>> {
         const result = await this.plugin.instance?.getMusicComments?.(
             musicItem,
+            page ?? 1
         );
         if (!result) {
             throw new Error();
