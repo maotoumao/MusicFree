@@ -390,6 +390,7 @@
     "panel.musicItemOptions.author": "Artist: {artist}",
     "panel.musicItemOptions.album": "Album: {album}",
     "panel.musicItemOptions.downloaded": "Downloaded",
+    "panel.musicItemOptions.readComment": "Read Comments",
     "panel.musicItemOptions.deleteLocalDownload": "Delete Local Download",
     "panel.musicItemOptions.deleteLocalDownloadConfirm": "This will delete the downloaded local file, continue?",
     "panel.musicItemOptions.associatedLyric": "Associated lyrics {platform}@{id}",

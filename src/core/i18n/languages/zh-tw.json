@@ -390,6 +390,7 @@
     "panel.musicItemOptions.author": "作者: {artist}",
     "panel.musicItemOptions.album": "專輯: {album}",
     "panel.musicItemOptions.downloaded": "已下載",
+    "panel.musicItemOptions.readComment": "查看評論",
     "panel.musicItemOptions.deleteLocalDownload": "刪除本機下載",
     "panel.musicItemOptions.deleteLocalDownloadConfirm": "將會刪除已下載的本機檔案，確定繼續嗎？",
     "panel.musicItemOptions.associatedLyric": "已關聯歌詞 {platform}@{id}",
