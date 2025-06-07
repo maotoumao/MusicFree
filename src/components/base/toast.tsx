@@ -1,11 +1,11 @@
-import {timingConfig} from '@/constants/commonConst';
-import {fontSizeConst} from '@/constants/uiConst';
+import { timingConfig } from '@/constants/commonConst';
+import { fontSizeConst } from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
-import {GlobalState} from '@/utils/stateMapper';
-import {nanoid} from 'nanoid';
-import React, {useCallback, useEffect} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import { GlobalState } from '@/utils/stateMapper';
+import { nanoid } from 'nanoid';
+import React, { useCallback, useEffect } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
     Directions,
     Gesture,
@@ -120,7 +120,7 @@ export function ToastBaseComponent() {
                     style={[
                         styles.contentContainer,
                         {
-                            backgroundColor: colors.backdrop,
+                            backgroundColor: colors.notification,
                             shadowColor: colors.shadow,
                         },
                         toastAnimStyle,
@@ -132,14 +132,14 @@ export function ToastBaseComponent() {
                     />
                     <Text
                         numberOfLines={2}
-                        style={[styles.text, {color: colors.text}]}>
+                        style={[styles.text, { color: colors.text }]}>
                         {activeToast.message}
                     </Text>
                     {activeToast.actionText && activeToast.onActionClick ? (
                         <Pressable
                             style={[
                                 styles.actionTextContainer,
-                                {backgroundColor: colors.primary},
+                                { backgroundColor: colors.primary },
                             ]}
                             onPress={activeToast.onActionClick}>
                             <Text style={styles.actionText} numberOfLines={1}>

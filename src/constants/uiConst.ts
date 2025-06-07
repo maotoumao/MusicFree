@@ -1,4 +1,4 @@
-import {CustomizedColors} from '@/hooks/useColors';
+import { CustomizedColors } from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
 
 const fontSizeConst = {
@@ -40,5 +40,5 @@ const colorMap: Record<ColorKey, keyof CustomizedColors> = {
     primary: 'primary',
 } as const;
 
-export {fontSizeConst, fontWeightConst, iconSizeConst, colorMap};
-export type {ColorKey};
+export { fontSizeConst, fontWeightConst, iconSizeConst, colorMap };
+export type { ColorKey };

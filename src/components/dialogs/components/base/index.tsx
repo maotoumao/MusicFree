@@ -1,4 +1,4 @@
-import React, {ReactNode, useEffect, useMemo, useRef} from 'react';
+import React, { ReactNode, useEffect, useMemo, useRef } from 'react';
 import {
     BackHandler,
     NativeEventSubscription,
@@ -9,18 +9,18 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
-import rpx, {vh, vw} from '@/utils/rpx';
+import rpx, { vh, vw } from '@/utils/rpx';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import {timingConfig} from '@/constants/commonConst';
+import { timingConfig } from '@/constants/commonConst';
 import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/base/themeText';
 import Divider from '@/components/base/divider';
-import {fontSizeConst} from '@/constants/uiConst';
-import {ScrollView} from 'react-native-gesture-handler';
+import { fontSizeConst } from '@/constants/uiConst';
+import { ScrollView } from 'react-native-gesture-handler';
 import useOrientation from '@/hooks/useOrientation.ts';
 
 interface IDialogProps {
@@ -29,7 +29,7 @@ interface IDialogProps {
 }
 
 function Dialog(props: IDialogProps) {
-    const {children, onDismiss} = props;
+    const { children, onDismiss } = props;
 
     const sharedShowValue = useSharedValue(0);
     const colors = useColors();
@@ -40,11 +40,11 @@ function Dialog(props: IDialogProps) {
     const dialogContainerStyle: ViewStyle =
         orientation === 'vertical'
             ? {
-                  width: vw(100) - rpx(72),
-              }
+                width: vw(100) - rpx(72),
+            }
             : {
-                  width: '80%',
-              };
+                width: '80%',
+            };
 
     useEffect(() => {
         sharedShowValue.value = 1;
@@ -119,14 +119,15 @@ interface IDialogTitleProps {
     children?: ReactNode;
     withDivider?: boolean;
     stringContent?: boolean;
+    containerStyle?: StyleProp<ViewStyle>;
 }
 
 function Title(props: IDialogTitleProps) {
-    const {children, withDivider, stringContent} = props;
+    const { children, withDivider, stringContent, containerStyle } = props;
 
     return (
         <>
-            <View style={styles.titleContainer}>
+            <View style={[styles.titleContainer, containerStyle]}>
                 {typeof children === 'string' || stringContent ? (
                     <ThemeText
                         fontSize="title"
@@ -150,7 +151,7 @@ interface IDialogContentProps {
 }
 
 function Content(props: IDialogContentProps) {
-    const {children, style, needScroll} = props;
+    const { children, style, needScroll } = props;
 
     const content =
         typeof children === 'string' ? (
@@ -187,7 +188,7 @@ interface IDialogActionsProps {
 }
 
 function Actions(props: IDialogActionsProps) {
-    const {children, style, actions} = props;
+    const { children, style, actions } = props;
 
     const validActions = useMemo(
         () => actions?.filter(it => it.show !== false),
@@ -231,7 +232,7 @@ function BottomButton(props: {
     style?: StyleProp<ViewStyle>;
     onPress?: () => void;
 }) {
-    const {type = 'normal', text, style, onPress} = props;
+    const { type = 'normal', text, style, onPress } = props;
     const colors = useColors();
 
     return (
@@ -306,6 +307,7 @@ const styles = StyleSheet.create({
         height: rpx(88),
         width: '100%',
         alignItems: 'center',
+        justifyContent: 'center',
         flexDirection: 'row',
         paddingHorizontal: rpx(24),
     },

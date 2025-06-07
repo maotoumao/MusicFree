@@ -1,24 +1,29 @@
-import React, {memo, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, { memo, useMemo, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import globalStyle from '@/constants/globalStyle';
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import TypeTag from '../../../../components/base/typeTag';
 
 import useRecommendList from '../../hooks/useRecommendListTags';
 import SheetList from './sheetList';
-import {hidePanel, showPanel} from '@/components/panels/usePanel';
+import { hidePanel, showPanel } from '@/components/panels/usePanel';
+import { useI18N } from '@/core/i18n';
 
 interface IProps {
     hash: string;
 }
 
-const defaultTag: ICommon.IUnique = {
-    title: '默认',
-    id: '',
-};
+
 function SheetBody(props: IProps) {
-    const {hash} = props;
+    const { hash } = props;
+
+    const { t } = useI18N();
+
+    const defaultTag: ICommon.IUnique = useMemo(() => ({
+        title: t("common.default"),
+        id: '',
+    }), [t]);
 
     // 选中的tag
     const [selectedTag, setSelectedTag] = useState<ICommon.IUnique>(defaultTag);

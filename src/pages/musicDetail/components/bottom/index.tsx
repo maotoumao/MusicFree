@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import SeekBar from './seekBar';
 import PlayControl from './playControl';

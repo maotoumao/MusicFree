@@ -7,7 +7,7 @@ interface IAlbumResultsProps {
 }
 
 export default function AlbumResultItem(props: IAlbumResultsProps) {
-    const {item: albumItem} = props;
+    const { item: albumItem } = props;
 
     return <AlbumItem albumItem={albumItem} />;
 }

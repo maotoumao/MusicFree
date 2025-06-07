@@ -1,7 +1,10 @@
 # MusicFree
 
+**中文** | [English](./readme-en.md)
+
 > [!CAUTION]
-> 👎 小米/华为/vivo等<ins>应用市场的 MusicFree </ins>和本软件无关，**是套用本软件名称和 Logo 的广告软件**。
+> ### 👎 Hall of Shame
+> 👎 小米/华为/vivo等<ins>应用市场的 MusicFree </ins>和本软件无关，**是套用本软件名称和 Logo 的广告软件**，谨防上当受骗。
 >
 > 👎 速悦音乐基于本软件二次开发，改动点仅仅是内置插件、修改一些 UI 以及引流，**并未遵守本项目的开源协议，且拒绝沟通**。
 
@@ -90,6 +93,7 @@
 
 1. Star 这个项目，分享给你身边的人；
 2. 关注公众号👇或 b 站 [不想睡觉猫头猫](https://space.bilibili.com/12866223) 获取最新信息；
+3. 关注猫头猫的 [小红书](https://www.xiaohongshu.com/user/profile/5ce6085200000000050213a6?xhsshare=CopyLink&appuid=5ce6085200000000050213a6&apptime=1714394544)，虽然可能不会在这里更新软件相关的信息，但也算支持啦~
 
 ![微信公众号](./src/assets/imgs/wechat_channel.jpg)
 
@@ -109,35 +113,91 @@
 ## 应用截图
 
 **以下截图仅为 UI 样例，软件内部不提供任何音源，不代表实际使用时表现如下图。**
-
 #### 主界面
 
-![主界面](./.imgs/main.jpg)
+<img src="./.imgs/main-v0.6.jpg" width="320px" alt="主界面">
 
 #### 侧边栏
 
+- 侧边栏
+
+<img src="./.imgs/sidebar-v0.6.jpg" width="320px" alt="侧边栏">
+
 - 基础设置
-  ![基础设置](./.imgs/basic-setting.jpg)
+
+<img src="./.imgs/basic-setting-v0.6.jpg" width="320px" alt="基础设置">
 
 - 主题设置
-  ![主题设置](./.imgs/theme-setting.jpg)
+
+<img src="./.imgs/theme-setting-v0.6.jpg" width="320px" alt="主题设置">
 
 #### 音乐相关
 
 - 歌单页
-  ![歌单页](./.imgs/song-sheet.jpg)
+
+<img src="./.imgs/song-sheet-v0.6.jpg" width="320px" alt="歌单页">
 
 - 歌单内检索
-  ![歌单内检索](./.imgs/search-in-sheet.jpg)
+
+<img src="./.imgs/search-in-sheet-v0.6.jpg" width="320px" alt="歌单内检索">
 
 - 播放页
-  ![播放页](./.imgs/song-cover.jpg)
+
+<img src="./.imgs/song-cover-v0.6.jpg" width="320px" alt="播放页">
 
 - 歌词页
-  ![歌词页](./.imgs/song-lrc.jpg)
 
+<img src="./.imgs/song-lrc-v0.6.jpg" width="320px" alt="歌词页">
 
 #### 搜索相关
 
 - 作者信息
-  ![专辑信息](./.imgs/artist-detail.jpg)
+
+<img src="./.imgs/artist-detail-v0.6.jpg" width="320px" alt="作者信息">
+
+
+<details>
+
+
+<summary>以下是软件早期版本的 UI</summary>
+
+#### 主界面
+
+<img src="./.imgs/main.jpg" width="320px" alt="主界面">
+
+#### 侧边栏
+
+- 基础设置
+
+<img src="./.imgs/basic-setting.jpg" width="320px" alt="基础设置">
+
+- 主题设置
+
+<img src="./.imgs/theme-setting.jpg" width="320px" alt="主题设置">
+
+#### 音乐相关
+
+- 歌单页
+
+<img src="./.imgs/song-sheet.jpg" width="320px" alt="歌单页">
+
+- 歌单内检索
+
+<img src="./.imgs/search-in-sheet.jpg" width="320px" alt="歌单内检索">
+
+- 播放页
+
+<img src="./.imgs/song-cover.jpg" width="320px" alt="播放页">
+
+- 歌词页
+
+<img src="./.imgs/song-lrc.jpg" width="320px" alt="歌词页">
+
+#### 搜索相关
+
+- 作者信息
+
+<img src="./.imgs/artist-detail.jpg" width="320px" alt="作者信息">
+
+
+</details>

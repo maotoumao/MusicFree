@@ -1,5 +1,5 @@
-import React, {memo} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, { memo } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Image from './image';
 import useColors from '@/hooks/useColors';
 import Theme from '@/core/theme';

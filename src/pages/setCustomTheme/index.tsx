@@ -1,15 +1,18 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import rpx from '@/utils/rpx';
 import AppBar from '@/components/base/appBar';
 import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
 import globalStyle from '@/constants/globalStyle';
 import Button from '@/components/base/textButton.tsx';
 import Body from './body';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { useI18N } from '@/core/i18n';
 
 export default function SetCustomTheme() {
     const navigation = useNavigation();
+    const { t } = useI18N();
+
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <AppBar
@@ -21,10 +24,10 @@ export default function SetCustomTheme() {
                             navigation.goBack();
                         }}
                         fontColor="appBarText">
-                        完成
+                        {t("common.done")}
                     </Button>
                 }>
-                自定义背景
+                {t("setCustomTheme.customizeBackground")}
             </AppBar>
             <Body />
         </VerticalSafeAreaView>

@@ -1,5 +1,5 @@
-import {Platform} from 'react-native';
-import RNFS, {CachesDirectoryPath} from 'react-native-fs';
+import { Platform } from 'react-native';
+import RNFS, { CachesDirectoryPath } from 'react-native-fs';
 
 export const basePath =
     Platform.OS === 'android'
