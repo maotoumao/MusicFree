@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/widget_background"
+    android:padding="8dp">
+
+    <!-- Album Cover -->
+    <ImageView
+        android:id="@+id/album_cover"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="12dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/album_cover_background"
+        android:src="@drawable/ic_music_note" />
+
+    <!-- Right Section -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Song Info Section -->
+        <TextView
+            android:id="@+id/song_info"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="No music playing"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:scrollHorizontally="true" />
+
+        <!-- Control Buttons Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btn_previous"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/control_button_background"
+                android:src="@drawable/ic_skip_previous"
+                android:scaleType="centerInside"
+                android:contentDescription="Previous" />
+
+            <ImageButton
+                android:id="@+id/btn_play_pause"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/control_button_background"
+                android:src="@drawable/ic_play"
+                android:scaleType="centerInside"
+                android:contentDescription="Play/Pause" />
+
+            <ImageButton
+                android:id="@+id/btn_next"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/control_button_background"
+                android:src="@drawable/ic_skip_next"
+                android:scaleType="centerInside"
+                android:contentDescription="Next" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

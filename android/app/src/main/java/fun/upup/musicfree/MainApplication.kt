@@ -17,6 +17,7 @@ import com.facebook.soloader.SoLoader
 import `fun`.upup.musicfree.lyricUtil.LyricUtilPackage
 import `fun`.upup.musicfree.mp3Util.Mp3UtilPackage
 import `fun`.upup.musicfree.utils.UtilsPackage
+import `fun`.upup.musicfree.widget.MusicWidgetPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -25,10 +26,10 @@ class MainApplication : Application(), ReactApplication {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
-              // add(MyReactNativePackage())
-              add(UtilsPackage())
+              // add(MyReactNativePackage())              add(UtilsPackage())
               add(Mp3UtilPackage())
               add(LyricUtilPackage())
+              add(MusicWidgetPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

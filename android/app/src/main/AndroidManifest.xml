@@ -53,8 +53,22 @@
               <data android:pathSuffix=".mp3" />
               <data android:pathSuffix=".flac" />
               <data android:pathSuffix=".m4a" />
-              <data android:pathSuffix=".wav" />
-          </intent-filter>
+              <data android:pathSuffix=".wav" />          </intent-filter>
       </activity>
+      
+      <!-- Music Widget Provider -->
+      <receiver android:name=".widget.MusicWidgetProvider"
+          android:exported="true">
+          <intent-filter>
+              <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+              <action android:name="fun.upup.musicfree.widget.MusicWidgetProvider.ACTION_PREVIOUS" />
+              <action android:name="fun.upup.musicfree.widget.MusicWidgetProvider.ACTION_PLAY_PAUSE" />
+              <action android:name="fun.upup.musicfree.widget.MusicWidgetProvider.ACTION_NEXT" />
+              <action android:name="fun.upup.musicfree.widget.MusicWidgetProvider.ACTION_WIDGET_UPDATE" />
+          </intent-filter>
+          <meta-data android:name="android.appwidget.provider"
+              android:resource="@xml/music_widget_info" />
+      </receiver>
+      
     </application>
 </manifest>

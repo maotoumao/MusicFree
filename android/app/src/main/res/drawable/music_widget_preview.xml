@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="250dp"
+    android:height="40dp"
+    android:viewportWidth="250"
+    android:viewportHeight="40">
+    
+    <!-- Background -->
+    <path
+        android:pathData="M8,0L242,0A8,8 0,0 1,250 8L250,32A8,8 0,0 1,242 40L8,40A8,8 0,0 1,0 32L0,8A8,8 0,0 1,8 0z"
+        android:fillColor="#E0000000"
+        android:strokeColor="#40FFFFFF"
+        android:strokeWidth="1"/>
+    
+    <!-- Album cover placeholder -->
+    <path
+        android:pathData="M10,8 L30,8 A2,2 0,0 1,32 10 L32,30 A2,2 0,0 1,30 32 L10,32 A2,2 0,0 1,8 30 L8,10 A2,2 0,0 1,10 8 Z"
+        android:fillColor="#40FFFFFF"/>
+    
+    <!-- Music note icon -->
+    <path
+        android:pathData="M18,12v6.55c-0.59,-0.34 -1.27,-0.55 -2,-0.55 -1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2V16h3v-4h-3z"
+        android:fillColor="@android:color/white"/>
+    
+    <!-- Song title area -->
+    <path
+        android:pathData="M42,8 L188,8 A2,2 0,0 1,190 10 L190,18 A2,2 0,0 1,188 20 L42,20 A2,2 0,0 1,40 18 L40,10 A2,2 0,0 1,42 8 Z"
+        android:fillColor="#60FFFFFF"/>
+    
+    <!-- Control buttons -->
+    <path
+        android:pathData="M50,22 A6,6 0,1 1,50 34 A6,6 0,1 1,50 22 Z"
+        android:fillColor="#30FFFFFF"/>
+    
+    <path
+        android:pathData="M70,20 A8,8 0,1 1,70 36 A8,8 0,1 1,70 20 Z"
+        android:fillColor="#30FFFFFF"/>
+    
+    <path
+        android:pathData="M90,22 A6,6 0,1 1,90 34 A6,6 0,1 1,90 22 Z"
+        android:fillColor="#30FFFFFF"/>
+    
+</vector>

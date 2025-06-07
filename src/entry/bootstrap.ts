@@ -13,6 +13,7 @@ import MusicSheet from "@/core/musicSheet";
 import PluginManager from "@/core/pluginManager";
 import Theme from "@/core/theme";
 import TrackPlayer from "@/core/trackPlayer";
+import MusicWidgetService from "@/core/musicWidget";
 import NativeUtils from "@/native/utils";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import { errorLog, trace } from "@/utils/log";
@@ -143,10 +144,14 @@ async function bootstrapImpl() {
     await PluginManager.setup();
     logger.mark('插件初始化完成');
 
-    trace('插件初始化完成');
-    await TrackPlayer.setupTrackPlayer();
+    trace('插件初始化完成');    await TrackPlayer.setupTrackPlayer();
     trace('播放列表初始化完成');
     logger.mark('播放列表初始化完成');
+
+    // 初始化小部件服务
+    MusicWidgetService.getInstance();
+    trace('小部件服务初始化完成');
+    logger.mark('小部件服务初始化完成');
 
     await LocalMusicSheet.setup();
     trace('本地音乐初始化完成');
