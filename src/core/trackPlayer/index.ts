@@ -37,6 +37,7 @@ import type { IMusicHistory } from '@/types/core/musicHistory';
 import { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import minDistance from '@/utils/minDistance';
 import { IPluginManager } from '@/types/core/pluginManager';
+import { ImgAsset } from '@/constants/assetsConst';
 
 
 
@@ -458,7 +459,8 @@ class TrackPlayer extends EventEmitter<{
             this.setCurrentMusic(musicItem);
             await ReactNativeTrackPlayer.setQueue([{
                 ...musicItem,
-                url: TrackPlayer.proposedAudioUrl
+                url: TrackPlayer.proposedAudioUrl,
+                artwork: musicItem.artwork?.trim()?.length ? musicItem.artwork : ImgAsset.albumDefault,
             }, this.getFakeNextTrack()]);
 
             // 5. 获取音源
@@ -783,7 +785,7 @@ class TrackPlayer extends EventEmitter<{
     // 设置音源
     private async setTrackSource(track: Track, autoPlay = true) {
         if (!track.artwork?.trim()?.length) {
-            track.artwork = undefined;
+            track.artwork = ImgAsset.albumDefault;
         }
         await ReactNativeTrackPlayer.setQueue([track, this.getFakeNextTrack()]);
         PersistStatus.set('music.musicItem', track as IMusic.IMusicItem);
