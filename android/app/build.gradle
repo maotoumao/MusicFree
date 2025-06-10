@@ -176,7 +176,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
 
     // 添加ffmpeg扩展
-    implementation 'com.github.CTZZG:jellyfin-androidx-media:main'
+    implementation 'com.github.CTZZG:jellyfin-androidx-media:ec40e43a31097142e25413fb2a8111539bdbb755'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
