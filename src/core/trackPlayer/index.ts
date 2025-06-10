@@ -38,6 +38,8 @@ import { ITrackPlayer } from '@/types/core/trackPlayer/index';
 import minDistance from '@/utils/minDistance';
 import { IPluginManager } from '@/types/core/pluginManager';
 import { getAppUserAgent } from '@/utils/userAgentHelper'; // <--- 新增UA统一导入
+import { ImgAsset } from '@/constants/assetsConst';
+
 
 
 const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
@@ -468,6 +470,7 @@ class TrackPlayer extends EventEmitter<{
                 ...musicItem,
                 url: TrackPlayer.proposedAudioUrl,
                 userAgent: getAppUserAgent(), // <--- 设置UA
+                artwork: musicItem.artwork?.trim()?.length ? musicItem.artwork : ImgAsset.albumDefault,
             }, this.getFakeNextTrack()]);
 
             this.emit(TrackPlayerEvents.ProgressChanged, { position: 0, duration: musicItem.duration || 0 });
@@ -798,7 +801,7 @@ class TrackPlayer extends EventEmitter<{
     // 设置音源
     private async setTrackSource(track: Track, autoPlay = true) {
         if (!track.artwork?.trim()?.length) {
-            track.artwork = undefined;
+            track.artwork = ImgAsset.albumDefault;
         }
         track.userAgent = getAppUserAgent(); // <--- 确保设置UA
         await ReactNativeTrackPlayer.setQueue([track, this.getFakeNextTrack()]);

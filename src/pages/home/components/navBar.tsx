@@ -1,7 +1,7 @@
-import {ROUTE_PATH} from '@/core/router';
-import {useNavigation} from '@react-navigation/native';
+import { ROUTE_PATH } from '@/core/router';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/base/themeText';
@@ -14,7 +14,7 @@ import { useI18N } from '@/core/i18n';
 export default function NavBar() {
     const navigation = useNavigation<any>();
     const colors = useColors();
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     return (
         <View style={styles.appbar}>

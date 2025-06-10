@@ -1,4 +1,4 @@
-import {NativeModule, NativeModules} from 'react-native';
+import { NativeModule, NativeModules } from 'react-native';
 
 interface INativeUtils extends NativeModule {
     exitApp: () => void;

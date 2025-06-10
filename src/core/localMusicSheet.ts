@@ -147,7 +147,7 @@ async function getMusicStats(folderPaths: string[]) {
         });
     }
 
-    return {musicList, token: _importToken};
+    return { musicList, token: _importToken };
 }
 
 function cancelImportLocal() {
@@ -158,7 +158,7 @@ function cancelImportLocal() {
 const groupNum = 25;
 async function importLocal(_folderPaths: string[]) {
     const folderPaths = [..._folderPaths.map(it => addFileScheme(it))];
-    const {musicList, token} = await getMusicStats(folderPaths);
+    const { musicList, token } = await getMusicStats(folderPaths);
     if (token !== importToken) {
         throw new Error('Import Broken');
     }
@@ -177,7 +177,7 @@ async function importLocal(_folderPaths: string[]) {
     }
     const musicItems: IMusic.IMusicItem[] = await Promise.all(
         musicList.map(async (musicPath, index) => {
-            let {platform, id, title, artist} =
+            let { platform, id, title, artist } =
                 parseFilename(getFileName(musicPath, true)) ?? {};
             const meta = metas[index];
             if (!platform || !id) {

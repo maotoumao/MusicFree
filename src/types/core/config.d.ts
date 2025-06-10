@@ -1,5 +1,5 @@
-import type {ResumeMode, SortType} from '@/constants/commonConst.ts';
-import type {CustomizedColors} from '@/hooks/useColors';
+import type { ResumeMode, SortType } from '@/constants/commonConst.ts';
+import type { CustomizedColors } from '@/hooks/useColors';
 
 export interface IAppConfigProperties {
     $schema: '2';
@@ -13,6 +13,7 @@ export interface IAppConfigProperties {
     'basic.downloadPath': string;
     'basic.notInterrupt': boolean;
     'basic.tempRemoteDuck': 'pause' | 'lowerVolume';
+    "basic.tempRemoteDuckVolume": 0.3 | 0.5 | 0.8;
     'basic.autoStopWhenError': boolean;
     'basic.pluginCacheControl': string;
     'basic.maxCacheSize': number;

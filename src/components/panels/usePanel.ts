@@ -1,5 +1,5 @@
-import {GlobalState} from '@/utils/stateMapper';
-import {DeviceEventEmitter} from 'react-native';
+import { GlobalState } from '@/utils/stateMapper';
+import { DeviceEventEmitter } from 'react-native';
 import panels from './types';
 
 type IPanel = typeof panels;

@@ -1,14 +1,14 @@
-import React, {memo, useEffect, useState} from 'react';
-import {Keyboard, StyleSheet, View} from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { Keyboard, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
-import {CircularProgressBase} from 'react-native-circular-progress-indicator';
+import { CircularProgressBase } from 'react-native-circular-progress-indicator';
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {showPanel} from '../panels/usePanel';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { showPanel } from '../panels/usePanel';
 import useColors from '@/hooks/useColors';
 import IconButton from '../base/iconButton';
 import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from '@/core/trackPlayer';
-import {musicIsPaused} from '@/utils/trackUtils';
+import { musicIsPaused } from '@/utils/trackUtils';
 import MusicInfo from './musicInfo';
 import Icon from '@/components/base/icon.tsx';
 

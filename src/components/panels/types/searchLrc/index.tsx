@@ -1,15 +1,15 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import rpx, {vmax, vw} from '@/utils/rpx';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import rpx, { vmax, vw } from '@/utils/rpx';
 
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
 import Button from '@/components/base/textButton.tsx';
 import useColors from '@/hooks/useColors';
 import PanelBase from '../../base/panelBase';
-import {TextInput} from 'react-native-gesture-handler';
+import { TextInput } from 'react-native-gesture-handler';
 import useSearchLrc from './useSearchLrc';
 import PluginManager from '@/core/pluginManager';
-import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import LyricList from './LyricList';
 import globalStyle from '@/constants/globalStyle';
 import NoPlugin from '@/components/base/noPlugin';
@@ -20,12 +20,12 @@ interface INewMusicSheetProps {
 }
 
 export default function SearchLrc(props: INewMusicSheetProps) {
-    const {musicItem} = props;
+    const { musicItem } = props;
     const [input, setInput] = useState(
         musicItem?.alias ?? musicItem?.title ?? '',
     );
     const colors = useColors();
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     const searchLrc = useSearchLrc();
 
@@ -155,7 +155,7 @@ function LyricResultBodyWrapper() {
                     pressColor="transparent"
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
-                    renderLabel={({route, focused, color}) => (
+                    renderLabel={({ route, focused, color }) => (
                         <Text
                             numberOfLines={1}
                             style={{
@@ -177,7 +177,7 @@ function LyricResultBodyWrapper() {
             )}
             renderScene={sceneMap.current}
             onIndexChange={setIndex}
-            initialLayout={{width: vw(100)}}
+            initialLayout={{ width: vw(100) }}
         />
     ) : (
         <NoPlugin notSupportType={t('panel.searchLrc.notSupported')} />

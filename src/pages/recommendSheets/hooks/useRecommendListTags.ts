@@ -1,5 +1,5 @@
 import PluginManager from '@/core/pluginManager';
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function (hash: string) {
     const [tags, setTags] =

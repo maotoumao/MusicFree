@@ -115,4 +115,4 @@ export function devLog(
     }
 }
 
-export {log};
+export { log };

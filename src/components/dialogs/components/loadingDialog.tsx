@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import Loading from '@/components/base/loading';
 import rpx from '@/utils/rpx';
-import {StyleSheet} from 'react-native';
-import {hideDialog} from '../useDialog';
+import { StyleSheet } from 'react-native';
+import { hideDialog } from '../useDialog';
 import Dialog from './base';
 import { useI18N } from '@/core/i18n';
 
@@ -16,10 +16,10 @@ interface ILoadingDialogProps<T extends any = any> {
     onCancel?: (hideDialog: () => void) => void;
 }
 export default function LoadingDialog(props: ILoadingDialogProps) {
-    const {title, loadingText, onResolve, onReject, promise, task, onCancel} =
+    const { title, loadingText, onResolve, onReject, promise, task, onCancel } =
         props;
     
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     useEffect(() => {
         const _promise = promise || task?.();

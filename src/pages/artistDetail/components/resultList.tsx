@@ -17,10 +17,10 @@ interface IResultListProps<T = IArtist.ArtistMediaType> {
     renderItem: (...args: any) => any;
 }
 export default function ResultList(props: IResultListProps) {
-    const {data, renderItem, tab} = props;
+    const { data, renderItem, tab } = props;
     const [scrollToTopState, setScrollToTopState] = useAtom(scrollToTopAtom);
     const lastScrollY = useRef<number>(0);
-    const {pluginHash, artistItem} = useParams<'artist-detail'>();
+    const { pluginHash, artistItem } = useParams<'artist-detail'>();
     const [queryState, setQueryState] = useState<RequestStateCode>(
         data?.state ?? RequestStateCode.IDLE,
     );

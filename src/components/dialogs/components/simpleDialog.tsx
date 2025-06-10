@@ -1,5 +1,5 @@
 import React from 'react';
-import {hideDialog} from '../useDialog';
+import { hideDialog } from '../useDialog';
 import Dialog from './base';
 import { useI18N } from '@/core/i18n';
 
@@ -11,9 +11,9 @@ interface ISimpleDialogProps {
     onOk?: () => void;
 }
 export default function SimpleDialog(props: ISimpleDialogProps) {
-    const {title, content, onOk, okText, cancelText} = props;
+    const { title, content, onOk, okText, cancelText } = props;
 
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     const actions = onOk
         ? [

@@ -113,6 +113,7 @@ export default function BasicSetting() {
     const downloadPath = useAppConfig('basic.downloadPath');
     const notInterrupt = useAppConfig('basic.notInterrupt');
     const tempRemoteDuck = useAppConfig('basic.tempRemoteDuck');
+    const tempRemoteDuckVolume = useAppConfig('basic.tempRemoteDuckVolume');
     const autoStopWhenError = useAppConfig('basic.autoStopWhenError');
     const maxCacheSize = useAppConfig('basic.maxCacheSize');
     const defaultPlayQuality = useAppConfig('basic.defaultPlayQuality');
@@ -290,6 +291,19 @@ export default function BasicSetting() {
                         'lowerVolume': t('basicSettings.tempRemoteDuck.lowerVolume'),
                     }
                 ),
+                ...(tempRemoteDuck === 'lowerVolume' ? [
+                    createRadio(
+                        t('basicSettings.tempRemoteDuck.volumeDecreaseLevel'),
+                        'basic.tempRemoteDuckVolume',
+                        [0.3, 0.5, 0.8],
+                        tempRemoteDuckVolume ?? 0.5,
+                        {
+                            0.3: '30%',
+                            0.5: '50%',
+                            0.8: '80%'
+                        }
+                    )
+                ] : []),
                 createRadio(
                     t('basicSettings.defaultPlayQuality'),
                     'basic.defaultPlayQuality',

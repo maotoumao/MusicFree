@@ -1,6 +1,6 @@
-import {RequestStateCode} from '@/constants/commonConst';
+import { RequestStateCode } from '@/constants/commonConst';
 import PluginManager from '@/core/pluginManager';
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function useTopListDetail(
     topListItem: IMusic.IMusicSheetItemBase | null,

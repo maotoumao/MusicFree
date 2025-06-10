@@ -139,6 +139,7 @@ declare namespace IPlugin {
         /** 获取评论 */
         getMusicComments?: (
             musicItem: IMusic.IMusicItem,
+            page?: number
         ) => Promise<ICommon.PaginationResponse<IMedia.IComment>>;
     }
 

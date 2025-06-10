@@ -1,4 +1,4 @@
-import {getStorage as oldGetStorage} from '@/utils/storage';
+import { getStorage as oldGetStorage } from '@/utils/storage';
 import storage from '@/core/musicSheet/storage.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import appMeta from '../appMeta';

@@ -12,7 +12,7 @@ export const checkUpdateAndShowResult = (
 ) => {
     checkUpdate().then(updateInfo => {
         if (updateInfo?.needUpdate) {
-            const {data} = updateInfo;
+            const { data } = updateInfo;
             const skipVersion = PersistStatus.get('app.skipVersion');
             console.log(skipVersion, data);
             if (

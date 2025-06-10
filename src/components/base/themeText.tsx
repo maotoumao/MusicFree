@@ -1,7 +1,7 @@
 import React from 'react';
-import {Text, TextProps} from 'react-native';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-import useColors, {CustomizedColors} from '@/hooks/useColors';
+import { Text, TextProps } from 'react-native';
+import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
+import useColors, { CustomizedColors } from '@/hooks/useColors';
 
 type IThemeTextProps = TextProps & {
     color?: string;

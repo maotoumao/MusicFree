@@ -1,13 +1,13 @@
 import React from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
 
 interface IColorBlockProps {
     color: string;
 }
 export default function ColorBlock(props: IColorBlockProps) {
-    const {color} = props;
+    const { color } = props;
 
     return (
         <View style={[styles.showBar]}>

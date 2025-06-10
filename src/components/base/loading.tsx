@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
@@ -12,12 +12,12 @@ interface ILoadingProps {
     color?: string;
 }
 export default function Loading(props: ILoadingProps) {
-    const {showText = true, height, text, color} = props;
+    const { showText = true, height, text, color } = props;
     const colors = useColors();
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     return (
-        <View style={[style.wrapper, {height}]}>
+        <View style={[style.wrapper, { height }]}>
             <ActivityIndicator animating color={color ?? colors.text} />
             {showText ? (
                 <ThemeText

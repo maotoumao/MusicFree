@@ -1,10 +1,10 @@
 import React from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import rpx from '@/utils/rpx';
 import ListItem from '../base/listItem';
 
 import LocalMusicSheet from '@/core/localMusicSheet';
-import {showPanel} from '../panels/usePanel';
+import { showPanel } from '../panels/usePanel';
 import TitleAndTag from './titleAndTag';
 import ThemeText from '../base/themeText';
 import TrackPlayer from '@/core/trackPlayer';

@@ -1,14 +1,14 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx, {vh} from '@/utils/rpx';
+import { StyleSheet, View } from 'react-native';
+import rpx, { vh } from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import TypeTag from '@/components/base/typeTag';
 import PanelHeader from '../base/panelHeader';
-import {useI18N} from '@/core/i18n';
+import { useI18N } from '@/core/i18n';
 
 interface ISheetTagsProps {
     tags: IMusic.IMusicSheetGroupItem[];
@@ -17,7 +17,7 @@ interface ISheetTagsProps {
 }
 
 export default function SheetTags(props: ISheetTagsProps) {
-    const {tags, onTagPressed} = props ?? {};
+    const { tags, onTagPressed } = props ?? {};
     const i18n = useI18N();
 
     const safeAreaInsets = useSafeAreaInsets();
@@ -31,7 +31,7 @@ export default function SheetTags(props: ISheetTagsProps) {
                     <ScrollView
                         style={[
                             style.body,
-                            {marginBottom: safeAreaInsets.bottom},
+                            { marginBottom: safeAreaInsets.bottom },
                         ]}>
                         <View style={style.groupItem}>
                             <TypeTag

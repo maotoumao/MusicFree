@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import PlayAllBar from '@/components/base/playAllBar';
 import useColors from '@/hooks/useColors';
@@ -13,7 +13,7 @@ interface IHeaderProps {
     canStar?: boolean;
 }
 export default function Header(props: IHeaderProps) {
-    const {musicSheet, musicList, canStar} = props;
+    const { musicSheet, musicList, canStar } = props;
     const colors = useColors();
 
     const [maxLines, setMaxLines] = useState<number | undefined>(6);
@@ -27,7 +27,7 @@ export default function Header(props: IHeaderProps) {
     };
 
     return (
-        <View style={{backgroundColor: colors.card}}>
+        <View style={{ backgroundColor: colors.card }}>
             <View style={style.wrapper}>
                 <View style={style.content}>
                     <FastImage

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import FastImage, {FastImageProps} from 'react-native-fast-image';
+import React, { useEffect, useState } from 'react';
+import FastImage, { FastImageProps } from 'react-native-fast-image';
 
 interface IFastImageProps {
     style: FastImageProps['style'];
@@ -8,7 +8,7 @@ interface IFastImageProps {
     uri?: string;
 }
 export default function (props: IFastImageProps) {
-    const {style, emptySrc, uri, defaultSource} = props ?? {};
+    const { style, emptySrc, uri, defaultSource } = props ?? {};
     const [isError, setIsError] = useState(false);
     const source = uri
         ? {

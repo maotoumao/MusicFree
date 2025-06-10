@@ -1,4 +1,4 @@
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import {
     LayoutRectangle,
     StatusBar as OriginalStatusBar,
@@ -15,7 +15,7 @@ import color from 'color';
 import IconButton from './iconButton';
 import globalStyle from '@/constants/globalStyle';
 import ThemeText from './themeText';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Animated, {
     Easing,
     useAnimatedStyle,
@@ -24,7 +24,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Portal from './portal';
 import ListItem from './listItem';
-import {IIconName} from '@/components/base/icon.tsx';
+import { IIconName } from '@/components/base/icon.tsx';
 
 interface IAppBarProps {
     titleTextOpacity?: number;
@@ -103,7 +103,7 @@ export default function AppBar(props: IAppBarProps) {
                 style={[
                     styles.container,
                     containerStyle,
-                    {backgroundColor: bgColor},
+                    { backgroundColor: bgColor },
                 ]}>
                 <IconButton
                     name="arrow-left"

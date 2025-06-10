@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
     BackHandler,
     DeviceEventEmitter,
@@ -18,8 +18,8 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import useColors from '@/hooks/useColors';
-import {panelInfoStore} from '../usePanel';
-import {vh} from '@/utils/rpx.ts';
+import { panelInfoStore } from '../usePanel';
+import { vh } from '@/utils/rpx.ts';
 import useOrientation from '@/hooks/useOrientation.ts';
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);

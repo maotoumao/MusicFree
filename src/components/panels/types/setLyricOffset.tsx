@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 
 import PanelBase from '../base/panelBase';
-import {iconSizeConst} from '@/constants/uiConst';
+import { iconSizeConst } from '@/constants/uiConst';
 import PanelHeader from '../base/panelHeader';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {hidePanel} from '../usePanel';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { hidePanel } from '../usePanel';
 import useColors from '@/hooks/useColors';
 import Icon from '@/components/base/icon.tsx';
 import { getMediaExtraProperty } from '@/utils/mediaExtra';
@@ -20,7 +20,7 @@ interface IProps {
 }
 
 export default function SetLyricOffset(props: IProps) {
-    const {musicItem, onSubmit} = props ?? {};
+    const { musicItem, onSubmit } = props ?? {};
     const { t } = useI18N();
 
     const [offset, setOffset] = useState(

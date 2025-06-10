@@ -30,6 +30,7 @@ import downloader from "@/core/downloader";
 import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager from "@/core/lyricManager";
 import { useI18N } from "@/core/i18n";
+import pluginManager from "@/core/pluginManager";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -81,7 +82,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             icon: 'user',
             title: t('panel.musicItemOptions.author', { artist: musicItem.artist }),
             onPress: () => {
-                try {                    Clipboard.setString(musicItem.artist.toString());
+                try {
+                    Clipboard.setString(musicItem.artist.toString());
                     Toast.success(t('toast.copiedToClipboard'));
                 } catch {
                     Toast.warn(t('toast.copiedToClipboardFailed'));
@@ -93,7 +95,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             show: !!musicItem.album,
             title: t('panel.musicItemOptions.album', { album: musicItem.album }),
             onPress: () => {
-                try {                    Clipboard.setString(musicItem.album.toString());
+                try {
+                    Clipboard.setString(musicItem.album.toString());
                     Toast.success(t('toast.copiedToClipboard'));
                 } catch {
                     Toast.warn(t('toast.copiedToClipboardFailed'));
@@ -161,12 +164,26 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     async onOk() {
                         try {
                             await LocalMusicSheet.removeMusic(musicItem, true);
-                            Toast.success(t('toast.deleteSuccess'));                        } catch (e: any) {
+                            Toast.success(t('toast.deleteSuccess'));
+                        } catch (e: any) {
                             Toast.warn(`${t('panel.musicItemOptions.deleteFailed')} ${e?.message ?? e}`);
                         }
                     },
                 });
                 hidePanel();
+            },
+        },
+        {
+            icon: 'chat-bubble-oval-left-ellipsis',
+            title: t('panel.musicItemOptions.readComment'),
+            show: !!pluginManager.getByMedia(musicItem)?.instance.getMusicComments,
+            onPress: () => {
+                if (!musicItem) {
+                    return;
+                }
+                showPanel('MusicComment', {
+                    musicItem: musicItem
+                });
             },
         },
         {

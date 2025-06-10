@@ -5,10 +5,10 @@
  */
 
 import globalStyle from '@/constants/globalStyle';
-import {iconSizeConst} from '@/constants/uiConst';
+import { iconSizeConst } from '@/constants/uiConst';
 import useTextColor from '@/hooks/useTextColor';
 import rpx from '@/utils/rpx';
-import {FlashList} from '@shopify/flash-list';
+import { FlashList } from '@shopify/flash-list';
 import React, {
     ForwardedRef,
     forwardRef,
@@ -18,7 +18,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import {LayoutRectangle, Pressable, StyleSheet, View} from 'react-native';
+import { LayoutRectangle, Pressable, StyleSheet, View } from 'react-native';
 import {
     runOnJS,
     useDerivedValue,
@@ -30,7 +30,7 @@ const defaultZIndex = 10;
 
 interface ISortableFlatListProps<T> {
     data: T[];
-    renderItem: (props: {item: T; index: number}) => JSX.Element;
+    renderItem: (props: { item: T; index: number }) => JSX.Element;
     // 高度
     itemHeight: number;
     itemJustifyContent?:
@@ -296,7 +296,7 @@ export default function SortableFlatList<T extends any = any>(
                         scrollToTarget(true);
                     }
                 }}
-                renderItem={({item, index}) => {
+                renderItem={({ item, index }) => {
                     return (
                         <SortableFlatListItem
                             setScrollEnabled={setScrollEnabled}
@@ -328,7 +328,7 @@ interface ISortableFlatListItemProps<T extends any = any> {
         | 'space-around'
         | 'space-evenly';
     setScrollEnabled: (scrollEnabled: boolean) => void;
-    renderItem: (props: {item: T; index: number}) => JSX.Element;
+    renderItem: (props: { item: T; index: number }) => JSX.Element;
     setActiveItem: (item: T | null) => void;
     activeRef: React.MutableRefObject<number>;
 }
@@ -370,7 +370,7 @@ function _SortableFlatListItem(props: ISortableFlatListItemProps) {
 
     return (
         <View style={styleRef.current.viewWrapper}>
-            {renderItem({item, index})}
+            {renderItem({ item, index })}
             <Pressable
                 onTouchStart={() => {
                     if (activeRef.current !== -1) {
@@ -407,7 +407,7 @@ const FakeFlatListItem = forwardRef(function (
     },
     ref: ForwardedRef<View>,
 ) {
-    const {itemHeight, renderItem, item, backgroundColor, itemJustifyContent} =
+    const { itemHeight, renderItem, item, backgroundColor, itemJustifyContent } =
         props;
 
     const styleRef = useRef(
@@ -440,9 +440,9 @@ const FakeFlatListItem = forwardRef(function (
             style={[
                 styleRef.current.viewWrapper,
                 style.activeItemDefault,
-                backgroundColor ? {backgroundColor} : {},
+                backgroundColor ? { backgroundColor } : {},
             ]}>
-            {item ? renderItem({item, index: -1}) : null}
+            {item ? renderItem({ item, index: -1 }) : null}
             <Pressable style={styleRef.current.btn}>
                 <Icon
                     name="bars-3"

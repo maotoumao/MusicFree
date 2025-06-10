@@ -1,19 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import useColors from '@/hooks/useColors';
 import rpx from '@/utils/rpx';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import ThemeText from '@/components/base/themeText';
-import {ImgAsset} from '@/constants/assetsConst';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { ImgAsset } from '@/constants/assetsConst';
+import { launchImageLibrary } from 'react-native-image-picker';
 import pathConst from '@/constants/pathConst';
 import Image from '@/components/base/image';
-import {addFileScheme, addRandomHash} from '@/utils/fileUtils';
+import { addFileScheme, addRandomHash } from '@/utils/fileUtils';
 import Toast from '@/utils/toast';
-import {hideDialog} from '../useDialog';
+import { hideDialog } from '../useDialog';
 import Dialog from './base';
 import Input from '@/components/base/input';
-import {fontSizeConst} from '@/constants/uiConst';
-import {copyAsync, deleteAsync, getInfoAsync} from 'expo-file-system';
+import { fontSizeConst } from '@/constants/uiConst';
+import { copyAsync, deleteAsync, getInfoAsync } from 'expo-file-system';
 import MusicSheet from '@/core/musicSheet';
 import { useI18N } from '@/core/i18n';
 
@@ -21,13 +21,13 @@ interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
 }
 export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
-    const {musicSheet} = props;
+    const { musicSheet } = props;
     const colors = useColors();
 
     const [coverImg, setCoverImg] = useState(musicSheet?.coverImg);
     const [title, setTitle] = useState(musicSheet?.title);
 
-    const {t} = useI18N();
+    const { t } = useI18N();
 
     // onCover
 

@@ -314,6 +314,7 @@ export interface ILanguageData {
     "basicSettings.tempRemoteDuck": string; // 播放被暂时打断时
     "basicSettings.tempRemoteDuck.pause": string; // 暂停播放
     "basicSettings.tempRemoteDuck.lowerVolume": string; // 降低音量
+    "basicSettings.tempRemoteDuck.volumeDecreaseLevel": string; // 音量降低幅度
     "basicSettings.defaultPlayQuality": string; // 默认播放音质
     "basicSettings.playQualityOrder": string; // 默认播放音质缺失时
     "basicSettings.playQualityOrder.asc": string; // 播放更高音质
@@ -470,6 +471,7 @@ export interface ILanguageData {
     "panel.musicItemOptions.author": string; // 作者
     "panel.musicItemOptions.album": string; // 专辑
     "panel.musicItemOptions.downloaded": string; // 已下载
+    "panel.musicItemOptions.readComment": string; // 查看评论
     "panel.musicItemOptions.deleteLocalDownload": string; // 删除本地下载
     "panel.musicItemOptions.deleteLocalDownloadConfirm": string; // 删除本地下载确认
     "panel.musicItemOptions.associatedLyric": string; // 已关联歌词
