@@ -36,7 +36,12 @@ export default function (pluginHash: string, tag: ICommon.IUnique) {
                     tag,
                     pageRef.current,
                 );
-                console.log(res.isEnd);
+                
+                if (res.isEnd) {
+                    setRequestState(RequestStateCode.FINISHED);
+                } else {
+                    setRequestState(RequestStateCode.PARTLY_DONE);
+                }
                 if (tag.id === currentTagRef.current) {
                     setSheets(prev => [
                         ...prev,
@@ -46,11 +51,6 @@ export default function (pluginHash: string, tag: ICommon.IUnique) {
                     ]);
                 }
 
-                if (res.isEnd) {
-                    setRequestState(RequestStateCode.FINISHED);
-                } else {
-                    setRequestState(RequestStateCode.PARTLY_DONE);
-                }
             } else {
                 setRequestState(RequestStateCode.FINISHED);
                 setSheets([]);
