@@ -1,20 +1,25 @@
 import pathConst from '@/constants/pathConst';
 import FastImage from 'react-native-fast-image';
 import RNFS, {
+    PicturesDirectoryPath,
     copyFile,
     downloadFile,
     exists,
     mkdir,
-    PicturesDirectoryPath,
     readDir,
     unlink,
     writeFile,
 } from 'react-native-fs';
-import {errorLog} from './log';
+import { errorLog } from './log';
 import path from 'path-browserify';
 
-export const galleryBasePath = `${PicturesDirectoryPath}/MusicFree/`;
+const galleryBasePath = `${PicturesDirectoryPath}/MusicFree/`;
 
+/**
+ * 将图片保存到相册
+ * @param src 图片地址
+ * @returns 保存后的文件路径
+ */
 export async function saveToGallery(src: string) {
     const fileName = `${galleryBasePath}${Date.now()}.png`;
     if (!(await exists(galleryBasePath))) {
@@ -28,15 +33,18 @@ export async function saveToGallery(src: string) {
         }
     }
     if (src.startsWith('http')) {
-        await downloadFile({
+        const { promise } = downloadFile({
             fromUrl: src,
             toFile: fileName,
             background: true,
         });
+        await promise;
     }
     if (src.startsWith('data')) {
         await writeFile(fileName, src);
     }
+
+    return fileName;
 }
 
 export function sizeFormatter(bytes: number | string) {
@@ -59,7 +67,7 @@ export async function checkAndCreateDir(dirPath: string) {
             await mkdir(filePath);
         }
     } catch (e) {
-        errorLog('无法初始化目录', {path: dirPath, e});
+        errorLog('无法初始化目录', { path: dirPath, e });
     }
 }
 
@@ -193,7 +201,6 @@ export async function writeInChunks(
     chunkSize = 1024 * 1024 * 2,
 ) {
     let offset = 0;
-    console.log('here');
     if (await exists(filePath)) {
         await unlink(filePath);
     }

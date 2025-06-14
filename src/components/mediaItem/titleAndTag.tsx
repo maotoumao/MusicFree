@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import ThemeText from '../base/themeText';
 import Tag from '../base/tag';
 
@@ -8,7 +8,7 @@ interface ITitleAndTagProps {
     tag?: string;
 }
 export default function TitleAndTag(props: ITitleAndTagProps) {
-    const {title, tag} = props;
+    const { title, tag } = props;
     return (
         <View style={styles.container}>
             <ThemeText numberOfLines={1} style={styles.title}>

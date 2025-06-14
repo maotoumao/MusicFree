@@ -1,9 +1,9 @@
-import React, {Fragment} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import React, { Fragment } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 import rpx from '@/utils/rpx';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
-import {hidePanel} from '../usePanel';
+import { hidePanel } from '../usePanel';
 import ListItem from '@/components/base/listItem';
 import PanelHeader from '../base/panelHeader';
 
@@ -39,7 +39,7 @@ export default function SimpleSelect(props: ISimpleSelectProps) {
                     <ScrollView
                         style={[
                             styles.body,
-                            {marginBottom: safeAreaInsets.bottom},
+                            { marginBottom: safeAreaInsets.bottom },
                         ]}>
                         {candidates.map((it, index) => {
                             return (

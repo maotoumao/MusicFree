@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Pressable, StyleSheet, View} from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
 import ThemeText from '@/components/base/themeText';
@@ -11,7 +11,7 @@ interface ILogoCardProps {
     title?: string;
 }
 export default function LogoCard(props: ILogoCardProps) {
-    const {selected, logo, onPress, title} = props;
+    const { selected, logo, onPress, title } = props;
 
     const colors = useColors();
 

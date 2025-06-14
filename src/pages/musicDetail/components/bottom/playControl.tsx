@@ -1,20 +1,22 @@
-import React from 'react';
-import {InteractionManager, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
 import repeatModeConst from '@/constants/repeatModeConst';
+import rpx from '@/utils/rpx';
+import React from 'react';
+import { InteractionManager, StyleSheet, View } from 'react-native';
 
-import useOrientation from '@/hooks/useOrientation';
-import {showPanel} from '@/components/panels/usePanel';
-import TrackPlayer from '@/core/trackPlayer';
-import {musicIsPaused} from '@/utils/trackUtils';
 import Icon from '@/components/base/icon.tsx';
-import sleep from '@/utils/sleep.ts';
+import { showPanel } from '@/components/panels/usePanel';
+import TrackPlayer, { useMusicState, useRepeatMode } from '@/core/trackPlayer';
+import useOrientation from '@/hooks/useOrientation';
+import delay from '@/utils/delay';
+import { musicIsPaused } from '@/utils/trackUtils';
 
 export default function () {
-    const repeatMode = TrackPlayer.useRepeatMode();
-    const musicState = TrackPlayer.useMusicState();
+    const repeatMode = useRepeatMode();
+    const musicState = useMusicState();
 
     const orientation = useOrientation();
+
+    console.log(repeatMode, repeatModeConst[repeatMode]);
 
     return (
         <>
@@ -33,7 +35,7 @@ export default function () {
                     size={rpx(56)}
                     onPress={async () => {
                         InteractionManager.runAfterInteractions(async () => {
-                            await sleep(20);
+                            await delay(20, false);
                             TrackPlayer.toggleRepeatMode();
                         });
                     }}

@@ -1,6 +1,6 @@
-import React, {ReactNode, useEffect, useRef} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {atom, useAtomValue, useSetAtom} from 'jotai';
+import React, { ReactNode, useEffect, useRef } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
 
 interface IPortalNode {
     key: string | null;
@@ -13,7 +13,7 @@ interface IPortalProps {
     children: ReactNode;
 }
 export default function Portal(props: IPortalProps) {
-    const {children} = props;
+    const { children } = props;
 
     const keyRef = useRef<string | null>(null);
     const setPortalsAtoms = useSetAtom(portalsAtom);
@@ -25,14 +25,14 @@ export default function Portal(props: IPortalProps) {
             // console.log("MOUNT!", keyRef.current);
             setPortalsAtoms(portals => [
                 ...portals,
-                {key: keyRef.current, children},
+                { key: keyRef.current, children },
             ]);
         } else {
             // update
             // console.log("UPDATE!", keyRef.current);
             setPortalsAtoms(portals =>
                 portals.map(it =>
-                    it.key === keyRef.current ? {...it, children} : it,
+                    it.key === keyRef.current ? { ...it, children } : it,
                 ),
             );
         }
@@ -57,7 +57,7 @@ export function PortalHost() {
 
     return (
         <>
-            {portals.map(({key, children}) => (
+            {portals.map(({ key, children }) => (
                 <View
                     key={key}
                     collapsable={false}

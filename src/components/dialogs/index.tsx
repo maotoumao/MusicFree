@@ -1,6 +1,6 @@
 import React from 'react';
 import components from './components';
-import {dialogInfoStore} from './useDialog';
+import { dialogInfoStore } from './useDialog';
 import Portal from '../base/portal';
 
 export default function () {

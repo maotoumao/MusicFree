@@ -1,17 +1,17 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import rpx from '@/utils/rpx';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Tag from '@/components/base/tag';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
 import Share from 'react-native-share';
-import {B64Asset} from '@/constants/assetsConst';
+import { B64Asset } from '@/constants/assetsConst';
 import IconButton from '@/components/base/iconButton';
-import TrackPlayer from '@/core/trackPlayer';
+import { useCurrentMusic } from '@/core/trackPlayer';
 
 export default function NavBar() {
     const navigation = useNavigation();
-    const musicItem = TrackPlayer.useCurrentMusic();
+    const musicItem = useCurrentMusic();
     // const {showShare} = useShare();
 
     return (
@@ -27,7 +27,7 @@ export default function NavBar() {
             />
             <View style={styles.headerContent}>
                 <Text numberOfLines={1} style={styles.headerTitleText}>
-                    {musicItem?.title ?? '无音乐'}
+                    {musicItem?.title ?? '--'}
                 </Text>
                 <View style={styles.headerDesc}>
                     <Text style={styles.headerArtistText} numberOfLines={1}>
