@@ -58,8 +58,8 @@ export default function AlbumCover(props: IProps) {
                 <View style={globalStyle.fullCenter}>
                     <FastImage
                         style={artworkStyle}
-                        uri={musicItem?.artwork}
-                        emptySrc={ImgAsset.albumDefault}
+                        source={musicItem?.artwork}
+                        placeholderSource={ImgAsset.albumDefault}
                     />
                 </View>
             </GestureDetector>

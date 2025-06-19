@@ -213,8 +213,8 @@ function ListItemImage(props: IListItemImageProps) {
         <View style={[styles.actionBase, defaultStyle, containerStyle]}>
             <FastImage
                 style={[styles.leftImage, contentStyle]}
-                uri={uri}
-                emptySrc={fallbackImg}
+                source={uri}
+                placeholderSource={fallbackImg}
             />
             {maskIcon ? (
                 <View style={[styles.leftImage, styles.imageMask]}>

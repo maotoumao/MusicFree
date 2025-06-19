@@ -21,8 +21,8 @@ export default function Header() {
             <View style={style.content}>
                 <FastImage
                     style={style.coverImg}
-                    uri={sheet?.coverImg}
-                    emptySrc={ImgAsset.albumDefault}
+                    source={sheet?.coverImg}
+                    placeholderSource={ImgAsset.albumDefault}
                 />
                 <View style={style.details}>
                     <ThemeText fontSize="title" numberOfLines={3}>

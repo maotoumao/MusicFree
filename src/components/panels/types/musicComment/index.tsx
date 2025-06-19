@@ -52,8 +52,8 @@ export default function MusicComment(props: IMusicCommentProps) {
                 <View style={styles.musicItemContainer}>
                     <FastImage
                         style={styles.musicItemArtwork}
-                        uri={musicItem?.artwork}
-                        emptySrc={ImgAsset.albumDefault}
+                        source={musicItem?.artwork}
+                        placeholderSource={ImgAsset.albumDefault}
                     />
                     <View style={styles.musicItemContent}>
                         <ThemeText fontSize="subTitle" numberOfLines={1}>

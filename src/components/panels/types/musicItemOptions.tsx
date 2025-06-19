@@ -240,8 +240,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     <View style={style.header}>
                         <FastImage
                             style={style.artwork}
-                            uri={musicItem?.artwork}
-                            emptySrc={ImgAsset.albumDefault}
+                            source={musicItem?.artwork}
+                            placeholderSource={ImgAsset.albumDefault}
                         />
                         <View style={style.content}>
                             <ThemeText numberOfLines={2} style={style.title}>

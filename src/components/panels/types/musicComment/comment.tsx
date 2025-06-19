@@ -21,7 +21,7 @@ export default function Comment(props: ICommentProps) {
     return (
         <View style={styles.container}>
             <View style={styles.headerLine}>
-                <FastImage uri={comment.avatar} style={styles.avatar} />
+                <FastImage source={comment.avatar} style={styles.avatar} />
                 <ThemeText numberOfLines={1} fontSize={'subTitle'}>
                     {comment.nickName}
                 </ThemeText>

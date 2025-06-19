@@ -50,8 +50,8 @@ function _BarMusicItem(props: IBarMusicItemProps) {
             ]}>
             <FastImage
                 style={styles.artworkImg}
-                uri={musicItem.artwork}
-                emptySrc={ImgAsset.albumDefault}
+                source={musicItem.artwork}
+                placeholderSource={ImgAsset.albumDefault}
             />
             <Text
                 ellipsizeMode="tail"

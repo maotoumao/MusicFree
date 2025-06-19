@@ -12,6 +12,7 @@ import RNFS, {
 } from 'react-native-fs';
 import { errorLog } from './log';
 import path from 'path-browserify';
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 const galleryBasePath = `${PicturesDirectoryPath}/MusicFree/`;
 
@@ -214,4 +215,19 @@ export async function writeInChunks(
         }
         offset += chunkSize;
     }
+}
+
+
+export function resolveImportedAssetOrPath(pathOrAsset: string | number | undefined) {
+  return pathOrAsset === undefined
+    ? undefined
+    : typeof pathOrAsset === 'string'
+    ? pathOrAsset
+    : resolveImportedAsset(pathOrAsset);
+}
+
+function resolveImportedAsset(id?: number) {
+  return id
+    ? (resolveAssetSource(id) as { uri: string } | null) ?? undefined
+    : undefined;
 }

@@ -32,8 +32,8 @@ export default function Header(props: IHeaderProps) {
                 <View style={style.content}>
                     <FastImage
                         style={style.coverImg}
-                        uri={musicSheet?.artwork ?? musicSheet?.coverImg}
-                        emptySrc={ImgAsset.albumDefault}
+                        source={musicSheet?.artwork ?? musicSheet?.coverImg}
+                        placeholderSource={ImgAsset.albumDefault}
                     />
                     <View style={style.details}>
                         <ThemeText numberOfLines={3}>
