@@ -7,7 +7,7 @@ interface IImageProps extends ImageProps {
 }
 export default function (props: Omit<IImageProps, 'source'>) {
     const { uri, emptySrc } = props;
-    const source = uri
+    const source = typeof uri === "string"
         ? {
               uri,
           }

@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { ImgAsset } from '@/constants/assetsConst';
 import { useCurrentMusic } from '@/core/trackPlayer';
 
 export default function Background() {
     const musicItem = useCurrentMusic();
-    const source = musicItem?.artwork
-        ? {
-              uri: musicItem.artwork,
-          }
-        : ImgAsset.albumDefault;
+
+    const artworkSource = useMemo(() => {
+        if (!musicItem?.artwork) {
+            return ImgAsset.albumDefault;
+        }
+
+        if(typeof musicItem.artwork === 'string') {
+            return {
+                uri: musicItem.artwork
+            };
+        }
+        return musicItem.artwork;
+
+    }, [musicItem?.artwork])
+
     return (
         <>
             <View style={style.background} />
-            <Image style={style.blur} blurRadius={50} source={source} />
+            <Image style={style.blur} blurRadius={50} source={artworkSource} />
         </>
     );
 }
