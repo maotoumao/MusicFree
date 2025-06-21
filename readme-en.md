@@ -2,11 +2,14 @@
 
 [中文](./readme.md) | **English**
 
-> [!CAUTION]
-> ### 👎 Hall of Shame
-> 👎 MusicFree apps on <ins>Xiaomi/Huawei/Vivo app stores</ins> are not related to this software. **They are adware that misappropriates this software's name and logo**. Please be cautious to avoid being deceived.
->
-> 👎 速悦音乐 is based on secondary development of this software, with changes only including built-in plugins, UI modifications, and traffic diversion. **It has not complied with this project's open source license and refuses to communicate**.
+![GitHub Repo stars](https://img.shields.io/github/stars/maotoumao/MusicFree) 
+![GitHub forks](https://img.shields.io/github/forks/maotoumao/MusicFree)
+![star](https://gitcode.com/maotoumao/MusicFree/star/badge.svg)
+
+![GitHub License](https://img.shields.io/github/license/maotoumao/MusicFree)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/maotoumao/MusicFree/total)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/maotoumao/MusicFree)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/maotoumao/MusicFree)
 
 ---
 
@@ -36,6 +39,12 @@ In addition, please ensure you understand the following additional notes when us
 1. For packaging and redistribution, **please retain the code source**: https://github.com/maotoumao/MusicFree
 2. Please do not use for commercial purposes; use the code legally and compliantly;
 3. If the open source license changes, it will be updated in this GitHub repository without separate notice.
+
+> [!CAUTION]
+> ### 👎 Hall of Shame
+> 👎 MusicFree apps on <ins>Xiaomi/Huawei/Vivo app stores</ins> are not related to this software. **They are adware that misappropriates this software's name and logo**. Please be cautious to avoid being deceived.
+>
+> 👎 速悦音乐 is based on secondary development of this software, with changes only including built-in plugins, UI modifications, and traffic diversion. **It has not complied with this project's open source license and refuses to communicate**.
 
 ## Features
 

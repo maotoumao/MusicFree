@@ -2,13 +2,14 @@
 
 **中文** | [English](./readme-en.md)
 
-> [!CAUTION]
-> ### 👎 Hall of Shame
-> 👎 小米/华为/vivo等<ins>应用市场的 MusicFree </ins>和本软件无关，**是套用本软件名称和 Logo 的广告软件**，谨防上当受骗。
->
-> 👎 速悦音乐基于本软件二次开发，改动点仅仅是内置插件、修改一些 UI 以及引流，**并未遵守本项目的开源协议，且拒绝沟通**。
+![GitHub Repo stars](https://img.shields.io/github/stars/maotoumao/MusicFree) 
+![GitHub forks](https://img.shields.io/github/forks/maotoumao/MusicFree)
+![star](https://gitcode.com/maotoumao/MusicFree/star/badge.svg)
 
----
+![GitHub License](https://img.shields.io/github/license/maotoumao/MusicFree)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/maotoumao/MusicFree/total)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/maotoumao/MusicFree)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/maotoumao/MusicFree)
 
 ## 简介
 
@@ -37,6 +38,14 @@
 1. 打包、二次分发 **请保留代码出处**：https://github.com/maotoumao/MusicFree
 2. 请不要用于商业用途，合法合规使用代码；
 3. 如果开源协议变更，将在此 Github 仓库更新，不另行通知。
+
+> [!CAUTION]
+> ### 👎 Hall of Shame
+> 👎 小米/华为/vivo等<ins>应用市场的 MusicFree </ins>和本软件无关，**是套用本软件名称和 Logo 的广告软件**。
+>
+> 👎 速悦音乐基于本软件二次开发，改动点仅仅是内置插件、修改一些 UI 以及引流，**并未遵守本项目的开源协议，且拒绝沟通**。
+
+---
 
 ## 特性
 
