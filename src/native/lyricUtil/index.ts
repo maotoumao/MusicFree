@@ -1,4 +1,4 @@
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import Toast from "@/utils/toast";
 import { NativeModule, NativeModules } from "react-native";
 import { errorLog } from "@/utils/log.ts";

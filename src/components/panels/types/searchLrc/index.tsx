@@ -1,29 +1,31 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import rpx, {vmax, vw} from '@/utils/rpx';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import rpx, { vmax, vw } from '@/utils/rpx';
 
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
+import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
 import Button from '@/components/base/textButton.tsx';
 import useColors from '@/hooks/useColors';
 import PanelBase from '../../base/panelBase';
-import {TextInput} from 'react-native-gesture-handler';
+import { TextInput } from 'react-native-gesture-handler';
 import useSearchLrc from './useSearchLrc';
 import PluginManager from '@/core/pluginManager';
-import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import LyricList from './LyricList';
 import globalStyle from '@/constants/globalStyle';
 import NoPlugin from '@/components/base/noPlugin';
+import { useI18N } from '@/core/i18n';
 
 interface INewMusicSheetProps {
     musicItem?: IMusic.IMusicItem | null;
 }
 
 export default function SearchLrc(props: INewMusicSheetProps) {
-    const {musicItem} = props;
+    const { musicItem } = props;
     const [input, setInput] = useState(
         musicItem?.alias ?? musicItem?.title ?? '',
     );
     const colors = useColors();
+    const { t } = useI18N();
 
     const searchLrc = useSearchLrc();
 
@@ -36,8 +38,8 @@ export default function SearchLrc(props: INewMusicSheetProps) {
     return (
         <PanelBase
             keyboardAvoidBehavior="none"
-            awareKeyboard
             height={vmax(80)}
+            positionMethod='top'
             renderBody={() => (
                 <View style={style.wrapper}>
                     <View style={style.titleContainer}>
@@ -57,7 +59,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
                                 },
                             ]}
                             placeholderTextColor={colors.textSecondary}
-                            placeholder={'歌曲名称'}
+                            placeholder={t("panel.searchLrc.inputPlaceholder")}
                             maxLength={80}
                         />
                         <Button
@@ -65,7 +67,7 @@ export default function SearchLrc(props: INewMusicSheetProps) {
                             onPress={() => {
                                 searchLrc(input, 1);
                             }}>
-                            搜索
+                            {t("common.search")}
                         </Button>
                     </View>
                     <LyricResultBodyWrapper />
@@ -110,6 +112,7 @@ const style = StyleSheet.create({
 
 function LyricResultBodyWrapper() {
     const [index, setIndex] = useState(0);
+    const { t } = useI18N();
 
     const routes = PluginManager.getSortedSearchablePlugins('lyric')?.map?.(
         _ => ({
@@ -152,7 +155,7 @@ function LyricResultBodyWrapper() {
                     pressColor="transparent"
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
-                    renderLabel={({route, focused, color}) => (
+                    renderLabel={({ route, focused, color }) => (
                         <Text
                             numberOfLines={1}
                             style={{
@@ -163,7 +166,7 @@ function LyricResultBodyWrapper() {
                                 color,
                                 textAlign: 'center',
                             }}>
-                            {route.title ?? '(未命名)'}
+                            {route.title ?? t('panel.searchLrc.unnamed')}
                         </Text>
                     )}
                     indicatorStyle={{
@@ -174,9 +177,9 @@ function LyricResultBodyWrapper() {
             )}
             renderScene={sceneMap.current}
             onIndexChange={setIndex}
-            initialLayout={{width: vw(100)}}
+            initialLayout={{ width: vw(100) }}
         />
     ) : (
-        <NoPlugin notSupportType="搜索歌词" />
+        <NoPlugin notSupportType={t('panel.searchLrc.notSupported')} />
     );
 }

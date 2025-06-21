@@ -4,7 +4,7 @@ import Header from './header';
 import Body from './body';
 import PanelBase from '../../base/panelBase';
 import Divider from '@/components/base/divider';
-import {vh} from '@/utils/rpx';
+import { vh } from '@/utils/rpx';
 
 export default function () {
     return (

@@ -1,23 +1,23 @@
-import React, {useMemo} from 'react';
+import React, { useMemo } from 'react';
 import rpx from '@/utils/rpx';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
 import FastImage from '@/components/base/fastImage';
 import useOrientation from '@/hooks/useOrientation';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import TrackPlayer from '@/core/trackPlayer';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { useCurrentMusic } from '@/core/trackPlayer';
 import globalStyle from '@/constants/globalStyle';
-import {View} from 'react-native';
+import { View } from 'react-native';
 import Operations from './operations';
-import {showPanel} from '@/components/panels/usePanel.ts';
+import { showPanel } from '@/components/panels/usePanel.ts';
 
 interface IProps {
     onTurnPageClick?: () => void;
 }
 
 export default function AlbumCover(props: IProps) {
-    const {onTurnPageClick} = props;
+    const { onTurnPageClick } = props;
 
-    const musicItem = TrackPlayer.useCurrentMusic();
+    const musicItem = useCurrentMusic();
     const orientation = useOrientation();
 
     const artworkStyle = useMemo(() => {
@@ -58,8 +58,8 @@ export default function AlbumCover(props: IProps) {
                 <View style={globalStyle.fullCenter}>
                     <FastImage
                         style={artworkStyle}
-                        uri={musicItem?.artwork}
-                        emptySrc={ImgAsset.albumDefault}
+                        source={musicItem?.artwork}
+                        placeholderSource={ImgAsset.albumDefault}
                     />
                 </View>
             </GestureDetector>

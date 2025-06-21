@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {compare} from 'compare-versions';
+import { compare } from 'compare-versions';
 import DeviceInfo from 'react-native-device-info';
 
 const updateList = [

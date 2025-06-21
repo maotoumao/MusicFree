@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleProp, StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
+import { StyleProp, StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from './themeText';
 import useColors from '@/hooks/useColors';
@@ -15,7 +15,7 @@ export default function Tag(props: ITagProps) {
         <View
             style={[
                 styles.tag,
-                {backgroundColor: colors.card, borderColor: colors.divider},
+                { backgroundColor: colors.card, borderColor: colors.divider },
                 props.containerStyle,
             ]}>
             <ThemeText style={[styles.tagText, props.style]} fontSize="tag">

@@ -1,5 +1,5 @@
-import {RequestStateCode} from '@/constants/commonConst';
-import {atom} from 'jotai';
+import { RequestStateCode } from '@/constants/commonConst';
+import { atom } from 'jotai';
 
 /** 搜索状态 */
 
@@ -48,4 +48,4 @@ const pageStatusAtom = atom<PageStatus>(PageStatus.EDITING);
 
 const queryAtom = atom<string>('');
 
-export {pageStatusAtom, searchResultsAtom, queryAtom};
+export { pageStatusAtom, searchResultsAtom, queryAtom };

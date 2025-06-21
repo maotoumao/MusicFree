@@ -1,6 +1,6 @@
 import React from 'react';
 import ListItem from '@/components/base/listItem';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
 import TitleAndTag from './titleAndTag';
 
 interface IAlbumResultsProps {
@@ -8,7 +8,7 @@ interface IAlbumResultsProps {
     onPress?: (musicItem: ILyric.ILyricItem) => void;
 }
 export default function LyricItem(props: IAlbumResultsProps) {
-    const {lyricItem, onPress} = props;
+    const { lyricItem, onPress } = props;
 
     return (
         <ListItem

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
     StyleSheet,
     SwitchProps,
@@ -12,14 +12,14 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import {timingConfig} from '@/constants/commonConst';
+import { timingConfig } from '@/constants/commonConst';
 
 interface ISwitchProps extends SwitchProps {}
 
 const fixedWidth = rpx(40);
 
 export default function ThemeSwitch(props: ISwitchProps) {
-    const {value, onValueChange} = props;
+    const { value, onValueChange } = props;
     const colors = useColors();
 
     const sharedValue = useSharedValue(value ? 1 : 0);

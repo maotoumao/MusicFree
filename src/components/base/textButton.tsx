@@ -1,8 +1,8 @@
 import React from 'react';
-import {Pressable} from 'react-native';
+import { Pressable } from 'react-native';
 import ThemeText from './themeText';
 import rpx from '@/utils/rpx';
-import {CustomizedColors} from '@/hooks/useColors';
+import { CustomizedColors } from '@/hooks/useColors';
 
 interface IButtonProps {
     withHorizontalPadding?: boolean;
@@ -13,7 +13,7 @@ interface IButtonProps {
     onPress?: () => void;
 }
 export default function (props: IButtonProps) {
-    const {children, onPress, fontColor, hitSlop, withHorizontalPadding} =
+    const { children, onPress, fontColor, hitSlop, withHorizontalPadding } =
         props;
     return (
         <Pressable

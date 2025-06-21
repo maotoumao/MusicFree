@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 import {
     StyleProp,
     StyleSheet,
@@ -18,8 +18,8 @@ import {
     iconSizeConst,
 } from '@/constants/uiConst';
 import FastImage from './fastImage';
-import {ImageStyle} from 'react-native-fast-image';
-import Icon, {IIconName} from '@/components/base/icon.tsx';
+import { ImageStyle } from 'react-native-fast-image';
+import Icon, { IIconName } from '@/components/base/icon.tsx';
 
 interface IListItemProps {
     // 是否有左右边距
@@ -213,8 +213,8 @@ function ListItemImage(props: IListItemImageProps) {
         <View style={[styles.actionBase, defaultStyle, containerStyle]}>
             <FastImage
                 style={[styles.leftImage, contentStyle]}
-                uri={uri}
-                emptySrc={fallbackImg}
+                source={uri}
+                placeholderSource={fallbackImg}
             />
             {maskIcon ? (
                 <View style={[styles.leftImage, styles.imageMask]}>
@@ -275,8 +275,8 @@ function Content(props: IContentProps) {
     );
 }
 
-export function ListItemHeader(props: {children?: ReactNode}) {
-    const {children} = props;
+export function ListItemHeader(props: { children?: ReactNode }) {
+    const { children } = props;
     return (
         <ListItem
             withHorizontalPadding
