@@ -6,10 +6,12 @@ import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx
 import globalStyle from '@/constants/globalStyle';
 import { useSheetItem } from '@/core/musicSheet';
 import { RequestStateCode } from '@/constants/commonConst';
+import { useCurrentMusic } from '@/core/trackPlayer';
 
 export default function SheetMusicList() {
     const { id = 'favorite' } = useParams<'local-sheet-detail'>();
     const musicSheet = useSheetItem(id);
+    const currentMusic = useCurrentMusic();
 
     return (
         <HorizontalSafeAreaView style={globalStyle.flex1}>
@@ -19,6 +21,7 @@ export default function SheetMusicList() {
                 musicSheet={musicSheet}
                 showIndex
                 state={RequestStateCode.IDLE}
+                highlightMusicItem={currentMusic}
 
             />
         </HorizontalSafeAreaView>

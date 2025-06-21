@@ -7,6 +7,7 @@ import { FlatListProps } from 'react-native';
 import ListEmpty from '../base/listEmpty';
 import ListFooter from '../base/listFooter';
 import MusicItem from '../mediaItem/musicItem';
+import { isSameMediaItem } from '@/utils/mediaUtils';
 
 interface IMusicListProps {
     /** 顶部 */
@@ -24,6 +25,8 @@ interface IMusicListProps {
     ) => void;
     // 状态
     state: RequestStateCode;
+    /** 高亮的音乐 */
+    highlightMusicItem?: IMusic.IMusicItem | null;
     onRetry?: () => void;
     onLoadMore?: () => void;
 }
@@ -40,6 +43,7 @@ export default function MusicList(props: IMusicListProps) {
         state,
         onRetry,
         onLoadMore,
+        highlightMusicItem
     } = props;
 
     // ! keyExtractor需要保证整个生命周期统一？ 有些奇怪
@@ -56,6 +60,7 @@ export default function MusicList(props: IMusicListProps) {
             ListFooterComponent={
                 musicList?.length ? <ListFooter state={state} onRetry={onRetry} /> : null
             }
+            extraData={highlightMusicItem}
             data={musicList ?? []}
             // keyExtractor={keyExtractor}
             estimatedItemSize={ITEM_HEIGHT}
@@ -75,6 +80,7 @@ export default function MusicList(props: IMusicListProps) {
                             }
                         }}
                         musicSheet={musicSheet}
+                        highlight={isSameMediaItem(musicItem, highlightMusicItem)}
                     />
                 );
             }}

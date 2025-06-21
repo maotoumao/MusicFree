@@ -42,7 +42,7 @@ export default function SheetMusicList(props: IMusicListProps) {
                         onRetry={onRetry}
                         state={state}
                         musicList={musicList}
-                        onItemPress={(musicItem, musicList) => {
+                        onItemPress={(musicItem, currentMusicList) => {
                             if (
                                 Config.getConfig(
                                     'basic.clickMusicInAlbum',
@@ -52,7 +52,7 @@ export default function SheetMusicList(props: IMusicListProps) {
                             } else {
                                 TrackPlayer.playWithReplacePlayList(
                                     musicItem,
-                                    musicList ?? [musicItem],
+                                    currentMusicList ?? [musicItem],
                                 );
                             }
                         }}
