@@ -72,7 +72,6 @@ export default function Body() {
             }}
             onIndexChange={setIndex}
             initialLayout={{ width: vw(100) }}
-            swipeEnabled={false}
         />
     );
 }
