@@ -211,8 +211,8 @@ export default function PluginList() {
                     Toast.warn(t("toast.subscriptionInvalid"));
                 }
             }
-            setLoading(false);
         }
+        setLoading(false);
     }
 
     async function onUpdateAllClick() {
