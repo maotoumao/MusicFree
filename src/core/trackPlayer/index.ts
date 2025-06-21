@@ -329,9 +329,10 @@ class TrackPlayer extends EventEmitter<{
     }
 
     addNext(musicItem: IMusic.IMusicItem | IMusic.IMusicItem[]): void {
+        const shouldAutoPlay = this.isPlayListEmpty() || !this.currentMusic;
+
         this.add(musicItem, this.currentIndex + 1);
 
-        const shouldAutoPlay = this.isPlayListEmpty();
         if (shouldAutoPlay) {
             this.play(Array.isArray(musicItem) ? musicItem[0] : musicItem);
         }
