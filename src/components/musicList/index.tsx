@@ -8,7 +8,6 @@ import ListEmpty from '../base/listEmpty';
 import ListFooter from '../base/listFooter';
 import MusicItem from '../mediaItem/musicItem';
 import { isSameMediaItem } from '@/utils/mediaUtils';
-import Portal from '../base/portal';
 import Icon from '../base/icon';
 import { iconSizeConst } from '@/constants/uiConst';
 import useColors from '@/hooks/useColors';
@@ -104,10 +103,10 @@ export default function MusicList(props: IMusicListProps) {
                 clearTimeout(hideTimeoutRef.current);
             }
         };
-    }, []);
-
+    }, []);    
+    
     return (
-        <>
+        <View style={styles.container}>
             <FlashList
                 ref={flashListRef}
                 ListHeaderComponent={Header}
@@ -149,29 +148,30 @@ export default function MusicList(props: IMusicListProps) {
                 onEndReachedThreshold={0.1}
             />              
             {showBadge && (
-                <Portal>
-                    <View style={styles.badge} pointerEvents="box-none">
-                        <Pressable
-                            style={[styles.badgeButton, { backgroundColor: colors.notification }]}
-                            onPress={scrollToHighlight}
-                        >
-                            <Icon
-                                name="crosshair"
-                                size={iconSizeConst.normal}
-                                color={colors.text}
-                            />
-                        </Pressable>
-                    </View>
-                </Portal>
+                <View style={styles.badge} pointerEvents="box-none">
+                    <Pressable
+                        style={[styles.badgeButton, { backgroundColor: colors.notification }]}
+                        onPress={scrollToHighlight}
+                    >
+                        <Icon
+                            name="crosshair"
+                            size={iconSizeConst.normal}
+                            color={colors.text}
+                        />
+                    </Pressable>
+                </View>
             )}
-        </>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
     badge: {
         position: 'absolute',
-        bottom: rpx(180),
+        bottom: rpx(80),
         right: rpx(84),
         zIndex: 1000,
     },
