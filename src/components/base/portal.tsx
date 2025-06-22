@@ -52,6 +52,13 @@ export default function Portal(props: IPortalProps) {
     return null;
 }
 
+const styles = StyleSheet.create({
+    portalContainer: {
+        zIndex: 20000,
+    },
+});
+const composedStyle = [StyleSheet.absoluteFill, styles.portalContainer];
+
 export function PortalHost() {
     const portals = useAtomValue(portalsAtom);
 
@@ -62,10 +69,11 @@ export function PortalHost() {
                     key={key}
                     collapsable={false}
                     pointerEvents="box-none"
-                    style={StyleSheet.absoluteFill}>
+                    style={composedStyle}>
                     {children}
                 </View>
             ))}
         </>
     );
 }
+

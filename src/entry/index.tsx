@@ -52,13 +52,12 @@ export default function Pages() {
                                     component={route.component}
                                 />
                             ))}
-                        </Stack.Navigator>
-
+                        </Stack.Navigator>                        
                         <Panels />
                         <Dialogs />
                         <Debug />
-                        <PortalHost />
                         <ToastBaseComponent />
+                        <PortalHost />
                     </NavigationContainer>
                 </SafeAreaProvider>
             </GestureHandlerRootView>
