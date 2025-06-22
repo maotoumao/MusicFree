@@ -32,6 +32,8 @@ interface IPersistStatus {
     'app.language': string;
     /** 上次更新插件的时间 */
     'app.pluginUpdateTime': number;
+    /** 缓存的定时关闭自定义时间（分钟） */
+    'app.scheduleCloseTime': number;
     /** 歌词-是否启用翻译 */
     'lyric.showTranslation': boolean;
     /** 歌词-详情页字体大小 */

@@ -373,6 +373,10 @@ export interface ILanguageData {
     "dialog.errorLogNoRecord": string; // 暂无记录
     "dialog.errorLogKnow": string; // 我知道了
     "dialog.errorLogCopy": string; // 复制日志
+    "dialog.setScheduleCloseTime.title": string; // 设置定时关闭时间
+    "dialog.setScheduleCloseTime.placeholder": string; // 请输入时间
+    "dialog.setScheduleCloseTime.unit": string; // 分钟
+    "dialog.setScheduleCloseTime.hint": string; // 最长支持设置24小时（1440分钟）
     
     // 提示消息相关 - 缓存和日志
     "toast.cacheSetSuccess": string; // 设置成功
@@ -509,7 +513,8 @@ export interface ILanguageData {
 
     // 面板相关 - 定时关闭
     "panel.timingClose.countdown": string; // 关闭倒计时
-    "panel.timingClose.none": string; // 无
+    "panel.timingClose.customize": string; // 自定义
+    "panel.timingClose.cancelScheduleClose": string; // 取消定时关闭
     "panel.timingClose.closeAfterPlay": string; // 播放完歌曲再关闭
 
     // 面板相关 - 播放速度

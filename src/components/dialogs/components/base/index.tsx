@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     },
     backContainer: {
         position: 'absolute',
-        zIndex: 10299,
+        zIndex: 16299,
         width: '100%',
         height: '100%',
         left: 0,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     container: {
-        zIndex: 10300,
+        zIndex: 16300,
         position: 'absolute',
         width: '100%',
         height: '100%',
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     dialogContainer: {
         position: 'absolute',
         width: '80%',
-        zIndex: 10310,
+        zIndex: 16310,
         borderRadius: rpx(16),
         backgroundColor: 'red',
         shadowOffset: {

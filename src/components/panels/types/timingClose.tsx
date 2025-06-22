@@ -11,9 +11,10 @@ import PanelHeader from '../base/panelHeader';
 import Checkbox from '@/components/base/checkbox';
 import { Pressable } from 'react-native-gesture-handler';
 import { useI18N } from '@/core/i18n';
+import { showDialog } from '@/components/dialogs/useDialog';
 
 
-const shortCutTimes = [null, 10, 20, 30, 45, 60] as const;
+const shortCutTimes = [10, 20, 30, 45, 60] as const;
 
 
 function CountDownHeader() {
@@ -23,7 +24,8 @@ function CountDownHeader() {
     return (
         <PanelHeader
             hideDivider
-            hideButtons            title={countDown === null
+            hideButtons
+            title={countDown === null
                 ? t('sidebar.scheduleClose')
                 : t('panel.timingClose.countdown', { time: timeformat(countDown) })}
         />
@@ -34,10 +36,15 @@ function CountDownHeader() {
 
 export default function TimingClose() {
     const closeAfterPlay = useCloseAfterPlayEnd();
+    const countDown = useScheduleCloseCountDown();
+
+    const isCountingDown = countDown !== null;
     const { t } = useI18N();
 
     return (
         <PanelBase
+            keyboardAvoidBehavior="none"
+            positionMethod='top'
             height={rpx(450)}
             renderBody={() => (
                 <>
@@ -46,25 +53,38 @@ export default function TimingClose() {
                     <View style={styles.bodyContainer}>
                         {shortCutTimes.map((time, index) => (
                             <TouchableOpacity style={styles.timeItem} key={index} activeOpacity={0.6} onPress={() => {
-                                if (time) {
-                                    setScheduleClose(
-                                        Date.now() + time * 60000,
-                                    );
-                                } else {
-                                    // 取消定时关闭
-                                    setScheduleClose(null);
-                                }
+                                setScheduleClose(
+                                    Date.now() + time * 60000,
+                                );
                             }}>
-                                <ThemeText>{time ?? t('panel.timingClose.none')}</ThemeText>
+                                <ThemeText>{time}</ThemeText>
                             </TouchableOpacity>
                         ))}
+                        <TouchableOpacity style={styles.timeItem} key='customize' activeOpacity={0.6} onPress={() => {
+                            showDialog('SetScheduleCloseTimeDialog', {
+                                onOk: (minutes: number) => {
+                                    setScheduleClose(Date.now() + minutes * 60000);
+                                }
+                            });
+                        }}>
+                            <ThemeText>{t("panel.timingClose.customize")}</ThemeText>
+                        </TouchableOpacity>
                     </View>
-                    <Pressable style={styles.bottomLine} onPress={() => {
-                        setCloseAfterPlayEnd(!closeAfterPlay);
-                    }}>
-                        <Checkbox checked={closeAfterPlay}  />
-                        <ThemeText style={styles.bottomLineText}>{t('panel.timingClose.closeAfterPlay')}</ThemeText>
-                    </Pressable>
+                    <View style={styles.bottomLine}>
+                        <Pressable style={styles.closeAfterPlayContainer} onPress={() => {
+                            setCloseAfterPlayEnd(!closeAfterPlay);
+                        }}>
+                            <Checkbox checked={closeAfterPlay} />
+                            <ThemeText style={styles.bottomLineText}>{t('panel.timingClose.closeAfterPlay')}</ThemeText>
+                        </Pressable>
+                        {isCountingDown && (
+                            <TouchableOpacity style={styles.cancelButton} onPress={() => {
+                                setScheduleClose(null);
+                            }}>
+                                <ThemeText style={styles.cancelButtonText}>{t('panel.timingClose.cancelScheduleClose')}</ThemeText>
+                            </TouchableOpacity>
+                        )}
+                    </View>
 
                 </>
             )}
@@ -99,9 +119,25 @@ const styles = StyleSheet.create({
     bottomLine: {
         width: "100%",
         marginTop: rpx(36),
-        paddingRight: rpx(24),
+        height: rpx(64),
+        paddingHorizontal: rpx(24),
         flexDirection: 'row',
-        justifyContent: 'flex-end'
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    cancelButton: {
+        paddingHorizontal: rpx(16),
+        paddingVertical: rpx(8),
+        backgroundColor: '#ff666699',
+        borderRadius: rpx(8),
+    },
+    cancelButtonText: {
+        color: '#ffffff',
+        fontSize: rpx(24),
+    },
+    closeAfterPlayContainer: {
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     bottomLineText: {
         marginLeft: rpx(12),

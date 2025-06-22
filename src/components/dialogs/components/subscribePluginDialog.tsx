@@ -33,57 +33,53 @@ export default function SubscribePluginDialog(
     const colors = useColors();
     const { t } = useI18N();
 
-    const textColors = {
+
+    const inputStyles = {
+        backgroundColor: colors.card,
+        borderColor: colors.divider,
         color: colors.text,
-        borderBottomColor: colors.textSecondary,
+    };
+
+    const containerStyles = {
+        backgroundColor: colors.backdrop,
     };
 
     return (
         <Dialog onDismiss={hideDialog}>
             <Dialog.Title>{t("dialog.subscriptionPluginDialog.title")}</Dialog.Title>
-            <Dialog.Content>
-                <View style={style.headerWrapper}>
-                    <ThemeText>{t("common.name")}: </ThemeText>
-                    <Input
-                        hasHorizontalPadding={false}
-                        style={[style.textInput, textColors]}
-                        value={name}
-                        onChangeText={t => {
-                            setName(t);
-                        }}
-                    />
+            <Dialog.Content style={[style.dialogContent, containerStyles]}>
+                <View style={style.inputSection}>
+                    <View style={style.labelContainer}>
+                        <ThemeText style={style.label}>{t("common.name")}</ThemeText>
+                    </View>
+                    <View style={[style.inputContainer, { borderColor: colors.divider, backgroundColor: colors.card }]}>
+                        <Input
+                            hasHorizontalPadding={false}
+                            style={[style.textInput, inputStyles]}
+                            value={name}
+                            onChangeText={text => {
+                                setName(text);
+                            }}
+                            placeholder={t("common.name")}
+                            placeholderTextColor={colors.textSecondary}
+                        />
+                    </View>
                 </View>
-                <View style={style.headerWrapper}>
-                    <ThemeText>URL: </ThemeText>
-                    <Input
-                        hasHorizontalPadding={false}
-                        style={[style.textInput, textColors]}
-                        value={url}
-                        onChangeText={t => {
-                            setUrl(t);
-                        }}
-                    />
-                    {/* <Button
-                        fontColor={
-                            subscribeUrl && subscribeUrl === text
-                                ? 'secondary'
-                                : 'normal'
-                        }
-                        onPress={() => {
-                            if (subscribeUrl !== text) {
-                                if (text?.trim?.()?.endsWith?.('.json')) {
-                                    Config.set(
-                                        'setting.plugin.subscribeUrl',
-                                        text?.trim(),
-                                    );
-                                    Toast.success('更新订阅成功');
-                                } else {
-                                    Toast.warn('订阅链接有误，请检查订阅链接');
-                                }
-                            }
-                        }}>
-                        保存
-                    </Button> */}
+                
+                <View style={style.inputSection}>
+                    <View style={style.labelContainer}>
+                        <ThemeText style={style.label}>URL</ThemeText>
+                    </View>
+                    <View style={[style.inputContainer, { borderColor: colors.divider, backgroundColor: colors.card }]}>
+                        <Input
+                            hasHorizontalPadding={false}
+                            style={[style.textInput, inputStyles]}
+                            value={url}
+                            onChangeText={text => {
+                                setUrl(text);
+                            }}
+                        />
+                    </View>
                 </View>
             </Dialog.Content>
             <Dialog.Actions
@@ -117,15 +113,47 @@ export default function SubscribePluginDialog(
 }
 
 const style = StyleSheet.create({
+    dialogContent: {
+        paddingHorizontal: rpx(24),
+        paddingVertical: rpx(16),
+        borderRadius: rpx(12),
+    },
+    inputSection: {
+        marginBottom: rpx(24),
+    },
+    labelContainer: {
+        marginBottom: rpx(8),
+    },
+    label: {
+        fontSize: rpx(28),
+        fontWeight: '500',
+        opacity: 0.9,
+    },
+    inputContainer: {
+        borderWidth: rpx(2),
+        borderRadius: rpx(8),
+        paddingHorizontal: rpx(16),
+        paddingVertical: rpx(4),
+        minHeight: rpx(72),
+        justifyContent: 'center',
+        shadowOffset: {
+            width: 0,
+            height: rpx(2),
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: rpx(4),
+        elevation: 2,
+    },
+    textInput: {
+        fontSize: rpx(28),
+        includeFontPadding: false,
+        paddingVertical: rpx(12),
+        borderWidth: 0,
+        backgroundColor: 'transparent',
+    },
     headerWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
         height: rpx(92),
-    },
-    textInput: {
-        flex: 1,
-        includeFontPadding: false,
-        marginLeft: rpx(12),
-        borderBottomWidth: 1,
     },
 });
