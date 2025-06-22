@@ -462,7 +462,7 @@ class TrackPlayer extends EventEmitter<{
             await ReactNativeTrackPlayer.setQueue([{
                 ...musicItem,
                 url: TrackPlayer.proposedAudioUrl,
-                artwork: resolveImportedAssetOrPath(musicItem.artwork?.trim()?.length ? musicItem.artwork : ImgAsset.albumDefault) as unknown as any,
+                artwork: resolveImportedAssetOrPath(musicItem.artwork?.trim?.()?.length ? musicItem.artwork : ImgAsset.albumDefault) as unknown as any,
             }, this.getFakeNextTrack()]);
 
             // 5. 获取音源
@@ -977,7 +977,7 @@ class TrackPlayer extends EventEmitter<{
         return {
             ...track,
             artwork: resolveImportedAssetOrPath(
-                track.artwork?.trim()?.length ? track.artwork : ImgAsset.albumDefault,
+                track.artwork?.trim?.()?.length ? track.artwork : ImgAsset.albumDefault,
             ) as unknown as any,
         }
     }
