@@ -22,6 +22,7 @@ import CircleStackIcon from '@/assets/icons/circle-stack.svg';
 import ClockOutlineIcon from '@/assets/icons/clock-outline.svg';
 import CodeBracketSquareIcon from '@/assets/icons/code-bracket-square.svg';
 import Cog8ToothIcon from '@/assets/icons/cog-8-tooth.svg';
+import CrossHairIcon from '@/assets/icons/crosshair.svg';
 import DocumentOutlineIcon from '@/assets/icons/document-outline.svg';
 import EllipsisVerticalIcon from '@/assets/icons/ellipsis-vertical.svg';
 import ExclamationCircleIcon from '@/assets/icons/exclamation-circle.svg';
@@ -96,6 +97,7 @@ export type IIconName =
     | 'clock-outline'
     | 'code-bracket-square'
     | 'cog-8-tooth'
+    | 'crosshair'
     | 'document-outline'
     | 'ellipsis-vertical'
     | 'exclamation-circle'
@@ -177,6 +179,7 @@ const iconMap = {
     'clock-outline': ClockOutlineIcon,
     'code-bracket-square': CodeBracketSquareIcon,
     'cog-8-tooth': Cog8ToothIcon,
+    crosshair: CrossHairIcon,
     'document-outline': DocumentOutlineIcon,
     'ellipsis-vertical': EllipsisVerticalIcon,
     'exclamation-circle': ExclamationCircleIcon,
