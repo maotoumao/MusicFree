@@ -1,8 +1,8 @@
 import React from 'react';
-import {StyleProp, StyleSheet, View, ViewProps} from 'react-native';
+import { StyleProp, StyleSheet, View, ViewProps } from 'react-native';
 import rpx from '@/utils/rpx';
 import useColors from '@/hooks/useColors';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from '@/components/base/icon.tsx';
 
 interface ICheckboxProps {
@@ -14,7 +14,7 @@ interface ICheckboxProps {
 const slop = rpx(24);
 
 export default function Checkbox(props: ICheckboxProps) {
-    const {checked, onPress, style} = props;
+    const { checked, onPress, style } = props;
     const colors = useColors();
 
     const innerNode = (

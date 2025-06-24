@@ -1,34 +1,40 @@
-import { check, PERMISSIONS, request } from "react-native-permissions";
-import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 import "react-native-get-random-values";
-import Config from "@/core/config.ts";
+
+import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog.ts";
+import { ImgAsset } from "@/constants/assetsConst";
+import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
 import pathConst from "@/constants/pathConst";
+import Config from "@/core/appConfig";
+import downloader, { DownloadFailReason, DownloaderEvent } from "@/core/downloader";
+import LocalMusicSheet from "@/core/localMusicSheet";
+import lyricManager from "@/core/lyricManager";
+import musicHistory from "@/core/musicHistory";
+import MusicSheet from "@/core/musicSheet";
+import PluginManager from "@/core/pluginManager";
+import Theme from "@/core/theme";
+import TrackPlayer from "@/core/trackPlayer";
+import NativeUtils from "@/native/utils";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import { errorLog, trace } from "@/utils/log";
-import PluginManager from "@/core/pluginManager";
-import Network from "@/core/network";
-import { ImgAsset } from "@/constants/assetsConst";
-import LocalMusicSheet from "@/core/localMusicSheet";
-import { Linking, Platform } from "react-native";
-import Theme from "@/core/theme";
-import LyricManager from "@/core/lyricManager";
-import Toast from "@/utils/toast";
-import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
-import TrackPlayer from "@/core/trackPlayer";
-import musicHistory from "@/core/musicHistory";
-import PersistStatus from "@/core/persistStatus.ts";
 import { perfLogger } from "@/utils/perfLogger";
+import PersistStatus from "@/utils/persistStatus";
+import Toast from "@/utils/toast";
 import * as SplashScreen from "expo-splash-screen";
-import MusicSheet from "@/core/musicSheet";
-import NativeUtils from "@/native/utils";
-import { showDialog } from "@/components/dialogs/useDialog.ts";
+import { Linking, Platform } from "react-native";
+import { PERMISSIONS, check, request } from "react-native-permissions";
+import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
+import i18n from "@/core/i18n";
 
-/** app加载前执行
- * 1. 检查权限
- * 2. 数据初始化
- */
 
-async function _bootstrap() {
+// 依赖管理
+musicHistory.injectDependencies(Config);
+TrackPlayer.injectDependencies(Config, musicHistory, PluginManager);
+downloader.injectDependencies(Config, PluginManager);
+lyricManager.injectDependencies(TrackPlayer, Config, PluginManager);
+MusicSheet.injectDependencies(Config);
+
+
+async function bootstrapImpl() {
     await SplashScreen.preventAutoHideAsync()
         .then(result =>
             console.log(
@@ -70,6 +76,10 @@ async function _bootstrap() {
     trace('文件夹初始化完成');
     logger.mark('文件夹初始化完成');
 
+
+
+
+
     // 加载配置
     await Promise.all([
         Config.setup().then(() => {
@@ -78,7 +88,7 @@ async function _bootstrap() {
         MusicSheet.setup().then(() => {
             logger.mark('MusicSheet');
         }),
-        musicHistory.setupMusicHistory().then(() => {
+        musicHistory.setup().then(() => {
             logger.mark('musicHistory');
         }),
     ]);
@@ -103,18 +113,18 @@ async function _bootstrap() {
 
     const capabilities = Config.getConfig('basic.showExitOnNotification')
         ? [
-              Capability.Play,
-              Capability.Pause,
-              Capability.SkipToNext,
-              Capability.SkipToPrevious,
-              Capability.Stop,
-          ]
+            Capability.Play,
+            Capability.Pause,
+            Capability.SkipToNext,
+            Capability.SkipToPrevious,
+            Capability.Stop,
+        ]
         : [
-              Capability.Play,
-              Capability.Pause,
-              Capability.SkipToNext,
-              Capability.SkipToPrevious,
-          ];
+            Capability.Play,
+            Capability.Pause,
+            Capability.SkipToNext,
+            Capability.SkipToPrevious,
+        ];
     await RNTrackPlayer.updateOptions({
         icon: ImgAsset.logoTransparent,
         progressUpdateEventInterval: 1,
@@ -146,11 +156,15 @@ async function _bootstrap() {
     trace('主题初始化完成');
     logger.mark('主题初始化完成');
 
-    await LyricManager.setup();
+    await lyricManager.setup();
 
     logger.mark('歌词初始化完成');
 
     extraMakeup();
+
+    i18n.setup();
+    logger.mark('语言模块初始化完成');
+    
     ErrorUtils.setGlobalHandler(error => {
         errorLog('未捕获的错误', error);
     });
@@ -174,7 +188,8 @@ async function setupFolder() {
 
 export default async function () {
     try {
-        await _bootstrap();
+        await bootstrapImpl();
+        bindEvents();
     } catch (e) {
         errorLog('初始化出错', e);
     }
@@ -187,15 +202,12 @@ export default async function () {
 async function extraMakeup() {
     // 自动更新
     try {
-        // 初始化网络状态
-        Network.setup();
-
         if (Config.getConfig('basic.autoUpdatePlugin')) {
             const lastUpdated = PersistStatus.get('app.pluginUpdateTime') || 0;
             const now = Date.now();
             if (Math.abs(now - lastUpdated) > 86400000) {
                 PersistStatus.set('app.pluginUpdateTime', now);
-                const plugins = PluginManager.getValidPlugins();
+                const plugins = PluginManager.getEnabledPlugins();
                 for (let i = 0; i < plugins.length; ++i) {
                     const srcUrl = plugins[i].instance.srcUrl;
                     if (srcUrl) {
@@ -205,7 +217,7 @@ async function extraMakeup() {
                 }
             }
         }
-    } catch {}
+    } catch { }
 
     async function handleLinkingUrl(url: string) {
         // 插件
@@ -248,7 +260,7 @@ async function extraMakeup() {
                     TrackPlayer.play(musicItem);
                 }
             }
-        } catch {}
+        } catch { }
     }
 
     // 开启监听
@@ -265,4 +277,25 @@ async function extraMakeup() {
     if (Config.getConfig('basic.autoPlayWhenAppStart')) {
         TrackPlayer.play();
     }
+}
+
+
+function bindEvents() {
+    // 下载事件
+    downloader.on(DownloaderEvent.DownloadError, (reason) => {
+        if (reason === DownloadFailReason.NetworkOffline) {
+            Toast.warn("当前无网络连接，请等待网络恢复后重试");
+        } else if (reason === DownloadFailReason.NotAllowToDownloadInCellular) {
+            if (getCurrentDialog()?.name !== "SimpleDialog") {
+                showDialog("SimpleDialog", {
+                    title: "流量提醒",
+                    content: '当前非WIFI环境，为节省流量，请到侧边栏设置中打开【使用移动网络下载】功能后方可继续下载'
+                })
+            }
+        }
+    });
+
+    downloader.on(DownloaderEvent.DownloadQueueCompleted, () => {
+        Toast.success("下载任务已完成");
+    })
 }

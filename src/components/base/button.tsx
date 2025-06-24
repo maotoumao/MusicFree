@@ -16,7 +16,7 @@ export function Button(props: {
     style?: StyleProp<ViewStyle>;
     onPress?: (evt: GestureResponderEvent) => void;
 }) {
-    const {type = 'normal', text, style, onPress} = props;
+    const { type = 'normal', text, style, onPress } = props;
     const colors = useColors();
 
     return (

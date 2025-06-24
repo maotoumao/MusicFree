@@ -14,11 +14,8 @@ import Theme from "@/core/theme";
 import { BootstrapComp } from "./useBootstrap";
 import { ToastBaseComponent } from "@/components/base/toast";
 import { StatusBar } from "react-native";
-import { ReducedMotionConfig, ReduceMotion } from "react-native-reanimated";
+import { ReduceMotion, ReducedMotionConfig } from "react-native-reanimated";
 import { routes } from "@/core/router/routes.tsx";
-/**
- * 字体颜色
- */
 
 /**
  * 字体颜色
@@ -55,13 +52,12 @@ export default function Pages() {
                                     component={route.component}
                                 />
                             ))}
-                        </Stack.Navigator>
-
+                        </Stack.Navigator>                        
                         <Panels />
                         <Dialogs />
                         <Debug />
-                        <PortalHost />
                         <ToastBaseComponent />
+                        <PortalHost />
                     </NavigationContainer>
                 </SafeAreaProvider>
             </GestureHandlerRootView>

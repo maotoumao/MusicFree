@@ -1,12 +1,12 @@
-import React, {memo} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import React, { memo } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import ThemeText from '@/components/base/themeText';
 import useTextColor from '@/hooks/useTextColor';
 import Checkbox from '@/components/base/checkbox';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from '@/components/base/icon.tsx';
-import {iconSizeConst} from '@/constants/uiConst.ts';
+import { iconSizeConst } from '@/constants/uiConst.ts';
 
 const ITEM_HEIGHT = rpx(96);
 

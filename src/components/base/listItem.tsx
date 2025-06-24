@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 import {
     StyleProp,
     StyleSheet,
@@ -10,7 +10,7 @@ import {
     ViewStyle,
 } from 'react-native';
 import rpx from '@/utils/rpx';
-import useColors from '@/hooks/useColors';
+import useColors, { CustomizedColors } from '@/hooks/useColors';
 import ThemeText from './themeText';
 import {
     fontSizeConst,
@@ -18,8 +18,8 @@ import {
     iconSizeConst,
 } from '@/constants/uiConst';
 import FastImage from './fastImage';
-import {ImageStyle} from 'react-native-fast-image';
-import Icon, {IIconName} from '@/components/base/icon.tsx';
+import { ImageStyle } from 'react-native-fast-image';
+import Icon, { IIconName } from '@/components/base/icon.tsx';
 
 interface IListItemProps {
     // 是否有左右边距
@@ -84,6 +84,7 @@ function ListItem(props: IListItemProps) {
 interface IListItemTextProps {
     children?: number | string;
     fontSize?: keyof typeof fontSizeConst;
+    fontColor?: keyof CustomizedColors;
     fontWeight?: keyof typeof fontWeightConst;
     width?: number;
     position?: 'left' | 'right' | 'none';
@@ -98,6 +99,7 @@ function ListItemText(props: IListItemTextProps) {
         children,
         fontSize,
         fontWeight,
+        fontColor,
         position = 'left',
         fixedWidth,
         width,
@@ -119,6 +121,7 @@ function ListItemText(props: IListItemTextProps) {
                 fontSize={fontSize}
                 style={contentStyle}
                 fontWeight={fontWeight}
+                fontColor={fontColor}
                 {...contentProps}>
                 {children}
             </ThemeText>
@@ -213,8 +216,8 @@ function ListItemImage(props: IListItemImageProps) {
         <View style={[styles.actionBase, defaultStyle, containerStyle]}>
             <FastImage
                 style={[styles.leftImage, contentStyle]}
-                uri={uri}
-                emptySrc={fallbackImg}
+                source={uri}
+                placeholderSource={fallbackImg}
             />
             {maskIcon ? (
                 <View style={[styles.leftImage, styles.imageMask]}>
@@ -275,8 +278,8 @@ function Content(props: IContentProps) {
     );
 }
 
-export function ListItemHeader(props: {children?: ReactNode}) {
-    const {children} = props;
+export function ListItemHeader(props: { children?: ReactNode }) {
+    const { children } = props;
     return (
         <ListItem
             withHorizontalPadding

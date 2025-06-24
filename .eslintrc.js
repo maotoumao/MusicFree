@@ -9,6 +9,7 @@ module.exports = {
                 'no-shadow': 'off',
                 'no-undef': 'off',
                 'react-hooks/exhaustive-deps': 'warn',
+                '@typescript-eslint/object-curly-spacing': ['error', 'always'],
             },
         },
     ],

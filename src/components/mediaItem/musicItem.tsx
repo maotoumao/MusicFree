@@ -1,10 +1,10 @@
 import React from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import rpx from '@/utils/rpx';
 import ListItem from '../base/listItem';
 
 import LocalMusicSheet from '@/core/localMusicSheet';
-import {showPanel} from '../panels/usePanel';
+import { showPanel } from '../panels/usePanel';
 import TitleAndTag from './titleAndTag';
 import ThemeText from '../base/themeText';
 import TrackPlayer from '@/core/trackPlayer';
@@ -20,6 +20,7 @@ interface IMusicItemProps {
     itemPaddingRight?: number;
     left?: () => JSX.Element;
     containerStyle?: StyleProp<ViewStyle>;
+    highlight?: boolean
 }
 export default function MusicItem(props: IMusicItemProps) {
     const {
@@ -32,6 +33,7 @@ export default function MusicItem(props: IMusicItemProps) {
         showMoreIcon = true,
         left: Left,
         containerStyle,
+        highlight = false
     } = props;
 
     return (
@@ -55,6 +57,7 @@ export default function MusicItem(props: IMusicItemProps) {
                     width={rpx(82)}
                     position="none"
                     fixedWidth
+                    fontColor={highlight ? 'primary' : 'text'}
                     contentStyle={styles.indexText}>
                     {index}
                 </ListItem.ListItemText>
@@ -63,6 +66,7 @@ export default function MusicItem(props: IMusicItemProps) {
                 title={
                     <TitleAndTag
                         title={musicItem.title}
+                        titleFontColor={highlight ? 'primary': 'text'}
                         tag={musicItem.platform}
                     />
                 }
@@ -79,7 +83,7 @@ export default function MusicItem(props: IMusicItemProps) {
                         <ThemeText
                             numberOfLines={1}
                             fontSize="description"
-                            fontColor="textSecondary">
+                            fontColor={highlight ? 'primary' : 'textSecondary'}>
                             {musicItem.artist}
                             {musicItem.album ? ` - ${musicItem.album}` : ''}
                         </ThemeText>
@@ -115,5 +119,6 @@ const styles = StyleSheet.create({
     indexText: {
         fontStyle: 'italic',
         textAlign: 'center',
+        padding: rpx(2)
     },
 });

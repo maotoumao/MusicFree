@@ -7,7 +7,7 @@ import {
     View,
 } from 'react-native';
 import rpx from '@/utils/rpx';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
 import ThemeText from '@/components/base/themeText';
 import LinkText from '@/components/base/linkText';
 import useCheckUpdate from '@/hooks/useCheckUpdate.ts';
@@ -24,8 +24,8 @@ export default function AboutSetting() {
                 style.wrapper,
                 orientation === 'horizontal'
                     ? {
-                          flexDirection: 'row',
-                      }
+                        flexDirection: 'row',
+                    }
                     : null,
             ]}>
             <View
@@ -47,12 +47,20 @@ export default function AboutSetting() {
                 <ThemeText style={style.margin}>
                     公众号: 【一只猫头猫】
                 </ThemeText>
-                <ThemeText style={style.margin}>
-                    B站:{' '}
-                    <LinkText linkTo="https://space.bilibili.com/12866223">
-                        不想睡觉猫头猫
-                    </LinkText>
-                </ThemeText>
+                <View style={style.contactContainer}>
+                    <ThemeText style={style.margin}>
+                        B站:{' '}
+                        <LinkText linkTo="https://space.bilibili.com/12866223">
+                            不想睡觉猫头猫
+                        </LinkText>
+                    </ThemeText>
+                    <ThemeText style={style.margin}>
+                        小红书:{' '}
+                        <LinkText linkTo="https://www.xiaohongshu.com/user/profile/5ce6085200000000050213a6?xsec_token=YBqVNCKP4kpvphpU5sZI8WC93c5JINc3NhGtRBymgKvuo%3D&xsec_source=app_share&xhsshare=CopyLink&appuid=5ce6085200000000050213a6&apptime=1747275535&share_id=faef5820564a43be80e5b77da887e4b9&share_channel=copy_link">
+                            一只猫头猫
+                        </LinkText>
+                    </ThemeText>
+                </View>
             </View>
             <ScrollView
                 contentContainerStyle={style.scrollViewContainer}
@@ -102,7 +110,7 @@ export default function AboutSetting() {
                     <LinkText linkTo="https://github.com/maotoumao/MusicFree">
                         Github
                     </LinkText>
-                    ，如果打不开试试把链接中的 github 换成 gitee。
+                    ，如果打不开试试把链接中的 github 换成 gitcode。
                 </ThemeText>
 
                 <Divider style={style.content} />
@@ -116,7 +124,7 @@ export default function AboutSetting() {
 
                 <ThemeText style={style.content}>
                     <ThemeText fontWeight="bold">
-                        还请注意本软件只是个人的业余项目，距离正式版也有很长一段距离。
+                        还请注意本软件只是个人的业余项目，距离稳定版也有很长一段距离。
                     </ThemeText>
                     如果你在找成熟稳定的音乐软件，可以考虑其他优秀的软件。当然我会一直维护，让它变得尽可能的完善一些。业余时间用爱发电，进度慢还请见谅。
                 </ThemeText>
@@ -151,6 +159,12 @@ const style = StyleSheet.create({
         height: rpx(400),
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    contactContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: rpx(24),
     },
     horizontalSize: {
         width: rpx(600),

@@ -1,6 +1,6 @@
-import {Theme, useTheme} from '@react-navigation/native';
+import { Theme, useTheme } from '@react-navigation/native';
 import Color from 'color';
-import {useMemo} from 'react';
+import { useMemo } from 'react';
 
 type IColors = Theme['colors'];
 
@@ -38,7 +38,7 @@ export interface CustomizedColors extends IColors {
 }
 
 export default function useColors() {
-    const {colors} = useTheme();
+    const { colors } = useTheme();
 
     const cColors: CustomizedColors = useMemo(() => {
         return {

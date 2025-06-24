@@ -1,23 +1,23 @@
-import React, {memo, useLayoutEffect, useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, { memo, useLayoutEffect, useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import rpx from '@/utils/rpx';
 import FastImage from '../base/fastImage';
-import {ImgAsset} from '@/constants/assetsConst';
+import { ImgAsset } from '@/constants/assetsConst';
 import Color from 'color';
 import ThemeText from '../base/themeText';
 import useColors from '@/hooks/useColors';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import TrackPlayer from '@/core/trackPlayer';
+import { ROUTE_PATH, useNavigate } from '@/core/router';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import TrackPlayer, { usePlayList } from '@/core/trackPlayer';
 import Animated, {
-    runOnJS,
     SharedValue,
+    runOnJS,
     useAnimatedStyle,
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {timingConfig} from '@/constants/commonConst';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { timingConfig } from '@/constants/commonConst';
 
 interface IBarMusicItemProps {
     musicItem: IMusic.IMusicItem | null;
@@ -25,7 +25,7 @@ interface IBarMusicItemProps {
     transformSharedValue: SharedValue<number>;
 }
 function _BarMusicItem(props: IBarMusicItemProps) {
-    const {musicItem, activeIndex, transformSharedValue} = props;
+    const { musicItem, activeIndex, transformSharedValue } = props;
     const colors = useColors();
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -50,8 +50,8 @@ function _BarMusicItem(props: IBarMusicItemProps) {
             ]}>
             <FastImage
                 style={styles.artworkImg}
-                uri={musicItem.artwork}
-                emptySrc={ImgAsset.albumDefault}
+                source={musicItem.artwork}
+                placeholderSource={ImgAsset.albumDefault}
             />
             <Text
                 ellipsizeMode="tail"
@@ -116,9 +116,9 @@ function skipMusicItem(direction: number) {
 }
 
 export default function MusicInfo(props: IMusicInfoProps) {
-    const {musicItem} = props;
+    const { musicItem } = props;
     const navigate = useNavigate();
-    const playLists = TrackPlayer.usePlayList();
+    const playLists = usePlayList();
     const siblingMusicItems = useMemo(() => {
         if (!musicItem) {
             return {
@@ -127,8 +127,8 @@ export default function MusicInfo(props: IMusicInfoProps) {
             };
         }
         return {
-            prev: TrackPlayer.getPreviousMusic(),
-            next: TrackPlayer.getNextMusic(),
+            prev: TrackPlayer.previousMusic,
+            next: TrackPlayer.nextMusic,
         };
     }, [musicItem, playLists]);
 
