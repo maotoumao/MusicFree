@@ -21,6 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { panelInfoStore } from '../usePanel';
+import NativeUtils from '@/native/utils';
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 250;
@@ -163,7 +164,7 @@ export default function (props: IPanelBaseProps) {
                     height: vh(100) - safeAreaInsets.top,
                     bottom: 0,
                 } : {
-                    top: positionMethod === 'top' ? vh(100) - height - safeAreaInsets.bottom : undefined,
+                    top: positionMethod === 'top' ? (NativeUtils.getWindowDimensions().height + safeAreaInsets.top) - height - safeAreaInsets.bottom : undefined,
                     bottom: positionMethod === 'bottom' ? 0 : undefined,
                     height: height
                 },
