@@ -110,7 +110,7 @@ export default function AboutSetting() {
                     <LinkText linkTo="https://github.com/maotoumao/MusicFree">
                         Github
                     </LinkText>
-                    ，如果打不开试试把链接中的 github 换成 gitee。
+                    ，如果打不开试试把链接中的 github 换成 gitcode。
                 </ThemeText>
 
                 <Divider style={style.content} />
@@ -124,7 +124,7 @@ export default function AboutSetting() {
 
                 <ThemeText style={style.content}>
                     <ThemeText fontWeight="bold">
-                        还请注意本软件只是个人的业余项目，距离正式版也有很长一段距离。
+                        还请注意本软件只是个人的业余项目，距离稳定版也有很长一段距离。
                     </ThemeText>
                     如果你在找成熟稳定的音乐软件，可以考虑其他优秀的软件。当然我会一直维护，让它变得尽可能的完善一些。业余时间用爱发电，进度慢还请见谅。
                 </ThemeText>
