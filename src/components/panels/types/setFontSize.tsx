@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
 
-import PanelBase from '../base/panelBase';
-import Slider from '@react-native-community/slider';
-import useColors from '@/hooks/useColors';
-import PanelHeader from '../base/panelHeader';
-import { useI18N } from '@/core/i18n';
+import PanelBase from "../base/panelBase";
+import Slider from "@react-native-community/slider";
+import useColors from "@/hooks/useColors";
+import PanelHeader from "../base/panelHeader";
+import { useI18N } from "@/core/i18n";
 
 interface IProps {
     defaultSelect?: number;
@@ -27,7 +27,7 @@ export default function SetFontSize(props: IProps) {
             keyboardAvoidBehavior="none"
             renderBody={() => (
                 <>
-                    <PanelHeader title={i18n.t('panel.setFontSize.title')} hideButtons />
+                    <PanelHeader title={i18n.t("panel.setFontSize.title")} hideButtons />
                     <View style={styles.container}>
                         <Slider
                             style={styles.sliderContainer}
@@ -42,15 +42,15 @@ export default function SetFontSize(props: IProps) {
                             minimumValue={0}
                             maximumValue={3}
                         />
-                        <ThemeText style={styles.label}>{i18n.t('panel.setFontSize.small')}</ThemeText>
+                        <ThemeText style={styles.label}>{i18n.t("panel.setFontSize.small")}</ThemeText>
                         <ThemeText style={[styles.label, styles.label1]}>
-                            {i18n.t('panel.setFontSize.standard')}
+                            {i18n.t("panel.setFontSize.standard")}
                         </ThemeText>
                         <ThemeText style={[styles.label, styles.label2]}>
-                            {i18n.t('panel.setFontSize.large')}
+                            {i18n.t("panel.setFontSize.large")}
                         </ThemeText>
                         <ThemeText style={[styles.label, styles.label3]}>
-                            {i18n.t('panel.setFontSize.extraLarge')}
+                            {i18n.t("panel.setFontSize.extraLarge")}
                         </ThemeText>
                     </View>
                 </>
@@ -61,24 +61,24 @@ export default function SetFontSize(props: IProps) {
 
 const styles = StyleSheet.create({
     header: {
-        width: '100%',
-        flexDirection: 'row',
+        width: "100%",
+        flexDirection: "row",
         padding: rpx(24),
     },
     container: {
         flex: 1,
         paddingHorizontal: rpx(24),
-        width: '100%',
+        width: "100%",
         marginTop: rpx(88),
     },
     sliderContainer: {
         height: rpx(80),
     },
     label: {
-        position: 'absolute',
+        position: "absolute",
         top: rpx(80),
         width: rpx(72),
-        textAlign: 'center',
+        textAlign: "center",
         left: rpx(24),
         opacity: 0.5,
     },

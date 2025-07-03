@@ -1,8 +1,8 @@
 import {
     internalSerializeKey,
     localPluginPlatform,
-} from '@/constants/commonConst';
-import { getMediaExtraProperty } from './mediaExtra';
+} from "@/constants/commonConst";
+import { getMediaExtraProperty } from "./mediaExtra";
 
 /**
  * 获取媒体资源的唯一key
@@ -22,14 +22,14 @@ export function parseMediaUniqueKey(key: string): ICommon.IMediaBase {
     try {
         const str = JSON.parse(key.trim());
         let platform, id;
-        if (typeof str === 'string') {
-            [platform, id] = str.split('@');
+        if (typeof str === "string") {
+            [platform, id] = str.split("@");
         } else {
             platform = str?.platform;
             id = str?.id;
         }
         if (!platform || !id) {
-            throw new Error('mediakey不完整');
+            throw new Error("mediakey不完整");
         }
         return {
             platform,
@@ -92,18 +92,18 @@ export function getLocalPath(mediaItem: ICommon.IMediaBase) {
     }
 
     // 如果本身就是一个内部音乐
-    if (mediaItem.url && (mediaItem.url.startsWith('file://') || mediaItem.url.startsWith('content://'))) {
+    if (mediaItem.url && (mediaItem.url.startsWith("file://") || mediaItem.url.startsWith("content://"))) {
         return mediaItem.url;
     }
 
     // 尝试从内部数据中获取 -- legacy logic
-    const legacyLocalPath = mediaItem?.[internalSerializeKey]?.localPath
-    if (legacyLocalPath && typeof legacyLocalPath === 'string') {
+    const legacyLocalPath = mediaItem?.[internalSerializeKey]?.localPath;
+    if (legacyLocalPath && typeof legacyLocalPath === "string") {
         return legacyLocalPath;
     }
 
     // 从附加信息中获取
-    const localPathInMediaExtra = getMediaExtraProperty(mediaItem, 'localPath');
+    const localPathInMediaExtra = getMediaExtraProperty(mediaItem, "localPath");
 
     return localPathInMediaExtra ?? null;
 }

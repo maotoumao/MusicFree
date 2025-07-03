@@ -1,17 +1,17 @@
-import Empty from '@/components/base/empty';
-import { fontWeightConst } from '@/constants/uiConst';
-import { useI18N } from '@/core/i18n';
-import PluginManager from '@/core/pluginManager';
-import useColors from '@/hooks/useColors';
-import rpx, { vw } from '@/utils/rpx';
-import { useAtomValue } from 'jotai';
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { Text } from 'react-native';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
-import { searchResultsAtom } from '../../store/atoms';
-import { renderMap } from './results';
-import DefaultResults from './results/defaultResults';
-import ResultWrapper from './resultWrapper';
+import Empty from "@/components/base/empty";
+import { fontWeightConst } from "@/constants/uiConst";
+import { useI18N } from "@/core/i18n";
+import PluginManager from "@/core/pluginManager";
+import useColors from "@/hooks/useColors";
+import rpx, { vw } from "@/utils/rpx";
+import { useAtomValue } from "jotai";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import { Text } from "react-native";
+import { SceneMap, TabBar, TabView } from "react-native-tab-view";
+import { searchResultsAtom } from "../../store/atoms";
+import { renderMap } from "./results";
+import DefaultResults from "./results/defaultResults";
+import ResultWrapper from "./resultWrapper";
 
 interface IResultSubPanelProps {
     tab: ICommon.SupportMediaType;
@@ -94,14 +94,14 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                     {..._}
                     scrollEnabled
                     style={{
-                        backgroundColor: 'transparent',
-                        shadowColor: 'transparent',
-                        borderColor: 'transparent',
+                        backgroundColor: "transparent",
+                        shadowColor: "transparent",
+                        borderColor: "transparent",
                     }}
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
                     tabStyle={{
-                        width: 'auto',
+                        width: "auto",
                     }}
                     renderIndicator={() => null}
                     pressColor="transparent"
@@ -114,7 +114,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
-                                textAlign: 'center',
+                                textAlign: "center",
                             }}>
                             {route.title ?? `(${t("common.unknownName")})`}
                         </Text>

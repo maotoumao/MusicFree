@@ -1,18 +1,18 @@
-import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, LayoutRectangle, Text } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { View, StyleSheet, LayoutRectangle, Text } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withTiming,
     runOnJS,
-} from 'react-native-reanimated';
-import Portal from './portal';
-import rpx from '@/utils/rpx';
-import useColors from '@/hooks/useColors';
-import { timingConfig } from '@/constants/commonConst';
+} from "react-native-reanimated";
+import Portal from "./portal";
+import rpx from "@/utils/rpx";
+import useColors from "@/hooks/useColors";
+import { timingConfig } from "@/constants/commonConst";
 
-type TipPosition = 'top' | 'bottom' | 'left' | 'right';
+type TipPosition = "top" | "bottom" | "left" | "right";
 
 interface ITipProps {
     children: ReactNode;
@@ -50,34 +50,34 @@ const calculateTipPosition = (
     let triangleLeft = 0;
     let triangleTop = 0;
     let triangleRotation = 0; switch (position) {
-        case 'top':
-            tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
-            tipTop = childRect.y - tipHeight - margin - triangleSize;
-            triangleLeft = tipWidth / 2 - triangleSize / 2;
-            triangleTop = tipHeight;
-            triangleRotation = 180; // 指向下方
-            break;
-        case 'bottom':
-            tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
-            tipTop = childRect.y + childRect.height + margin + triangleSize;
-            triangleLeft = tipWidth / 2 - triangleSize / 2;
-            triangleTop = -triangleSize;
-            triangleRotation = 0; // 指向上方
-            break;
-        case 'left':
-            tipLeft = childRect.x - tipWidth - margin - triangleSize;
-            tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
-            triangleLeft = tipWidth;
-            triangleTop = tipHeight / 2 - triangleSize / 2;
-            triangleRotation = 90; // 指向右方
-            break;
-        case 'right':
-            tipLeft = childRect.x + childRect.width + margin + triangleSize;
-            tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
-            triangleLeft = -triangleSize;
-            triangleTop = tipHeight / 2 - triangleSize / 2;
-            triangleRotation = -90; // 指向左方
-            break;
+    case "top":
+        tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
+        tipTop = childRect.y - tipHeight - margin - triangleSize;
+        triangleLeft = tipWidth / 2 - triangleSize / 2;
+        triangleTop = tipHeight;
+        triangleRotation = 180; // 指向下方
+        break;
+    case "bottom":
+        tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
+        tipTop = childRect.y + childRect.height + margin + triangleSize;
+        triangleLeft = tipWidth / 2 - triangleSize / 2;
+        triangleTop = -triangleSize;
+        triangleRotation = 0; // 指向上方
+        break;
+    case "left":
+        tipLeft = childRect.x - tipWidth - margin - triangleSize;
+        tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
+        triangleLeft = tipWidth;
+        triangleTop = tipHeight / 2 - triangleSize / 2;
+        triangleRotation = 90; // 指向右方
+        break;
+    case "right":
+        tipLeft = childRect.x + childRect.width + margin + triangleSize;
+        tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
+        triangleLeft = -triangleSize;
+        triangleTop = tipHeight / 2 - triangleSize / 2;
+        triangleRotation = -90; // 指向左方
+        break;
     }
 
     return {
@@ -99,8 +99,8 @@ const Triangle = ({ size, color, style }: { size: number; color: string; style?:
                 borderLeftWidth: size / 2,
                 borderRightWidth: size / 2,
                 borderBottomWidth: size,
-                borderLeftColor: 'transparent',
-                borderRightColor: 'transparent',
+                borderLeftColor: "transparent",
+                borderRightColor: "transparent",
                 borderBottomColor: color,
             },
             style,
@@ -224,7 +224,7 @@ const TipPortal = ({
 export default function Tip({
     children,
     content,
-    position = 'top',
+    position = "top",
     autoHideDuration = 3000,
     backgroundColor,
     textColor,
@@ -286,8 +286,8 @@ export default function Tip({
 
 const styles = StyleSheet.create({
     tipContainer: {
-        position: 'absolute',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        position: "absolute",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
         paddingHorizontal: rpx(16),
         paddingVertical: rpx(8),
         borderRadius: rpx(8),
@@ -296,15 +296,15 @@ const styles = StyleSheet.create({
     },
     measurementContainer: {
         opacity: 0,
-        position: 'absolute',
+        position: "absolute",
         top: -1000,
     },
     tipText: {
         fontSize: rpx(24),
         lineHeight: rpx(32),
-        textAlign: 'center',
+        textAlign: "center",
     },
     triangle: {
-        position: 'absolute',
+        position: "absolute",
     },
 });

@@ -22,7 +22,7 @@ interface ISubscribeItem {
 const ITEM_HEIGHT = rpx(108);
 
 export default function PluginSubscribe() {
-    const urls = useAppConfig('plugin.subscribeUrl') ?? '';
+    const urls = useAppConfig("plugin.subscribeUrl") ?? "";
     const [subscribes, setSubscribes] = useState<Array<ISubscribeItem>>([]);
 
     const { t } = useI18N();
@@ -55,12 +55,12 @@ export default function PluginSubscribe() {
         editingIndex?: number,
     ) => {
         if (
-            subscribeItem.url.endsWith('.js') ||
-            subscribeItem.url.endsWith('.json')
+            subscribeItem.url.endsWith(".js") ||
+            subscribeItem.url.endsWith(".json")
         ) {
             if (editingIndex !== undefined) {
                 Config.setConfig(
-                    'plugin.subscribeUrl',
+                    "plugin.subscribeUrl",
                     JSON.stringify([
                         ...subscribes.slice(0, editingIndex),
                         subscribeItem,
@@ -69,7 +69,7 @@ export default function PluginSubscribe() {
                 );
             } else {
                 Config.setConfig(
-                    'plugin.subscribeUrl',
+                    "plugin.subscribeUrl",
                     JSON.stringify([...subscribes, subscribeItem]),
                 );
             }
@@ -92,13 +92,13 @@ export default function PluginSubscribe() {
                             <ListItem
                                 withHorizontalPadding
                                 onPress={() => {
-                                    showDialog('SubscribePluginDialog', {
+                                    showDialog("SubscribePluginDialog", {
                                         subscribeItem: item,
                                         onSubmit,
                                         editingIndex: index,
                                         onDelete(editingIndex, hideDialog) {
                                             Config.setConfig(
-                                                'plugin.subscribeUrl',
+                                                "plugin.subscribeUrl",
                                                 JSON.stringify([
                                                     ...subscribes.slice(
                                                         0,
@@ -139,7 +139,7 @@ export default function PluginSubscribe() {
             <Fab
                 icon="plus"
                 onPress={() => {
-                    showDialog('SubscribePluginDialog', {
+                    showDialog("SubscribePluginDialog", {
                         onSubmit,
                     });
                 }}
@@ -157,7 +157,7 @@ const style = StyleSheet.create({
         marginTop: rpx(24),
     },
     fab: {
-        position: 'absolute',
+        position: "absolute",
         right: rpx(36),
         bottom: rpx(36),
     },

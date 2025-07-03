@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { hideDialog } from '../useDialog';
-import Dialog from './base';
-import i18n, { useI18N } from '@/core/i18n';
-import { WebView } from 'react-native-webview';
-import rpx, { vh } from '@/utils/rpx';
-import { StyleSheet } from 'react-native';
-import { Marked } from 'marked';
-import Loading from '@/components/base/loading';
-import { useOnMounted } from '@/hooks/useMounted';
-import useColors from '@/hooks/useColors';
-import { sanitizeHtml } from '@/utils/htmlUtil';
-import Toast from '@/utils/toast';
-import openUrl from '@/utils/openUrl';
+import React, { useEffect, useRef, useState } from "react";
+import { hideDialog } from "../useDialog";
+import Dialog from "./base";
+import i18n, { useI18N } from "@/core/i18n";
+import { WebView } from "react-native-webview";
+import rpx, { vh } from "@/utils/rpx";
+import { StyleSheet } from "react-native";
+import { Marked } from "marked";
+import Loading from "@/components/base/loading";
+import { useOnMounted } from "@/hooks/useMounted";
+import useColors from "@/hooks/useColors";
+import { sanitizeHtml } from "@/utils/htmlUtil";
+import Toast from "@/utils/toast";
+import openUrl from "@/utils/openUrl";
 
 interface IMarkdownDialogProps {
     title: string;
@@ -22,7 +22,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
     const { title, markdownContent, okText } = props;
     const markedRef = useRef<Marked>(new Marked());
     const [loading, setLoading] = useState(true);
-    const [htmlContent, setHtmlContent] = useState<string>('');
+    const [htmlContent, setHtmlContent] = useState<string>("");
     const { onMounted } = useOnMounted();
 
     const { t } = useI18N();
@@ -33,7 +33,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
         const md = markedRef.current;
 
         md.parse(markdownContent, {
-            async: true
+            async: true,
         }).then(html => {
             if (onMounted()) {
                 setHtmlContent(`
@@ -96,7 +96,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
             blockquote {
                 margin: 16px 0;
                 padding: 4px 16px;
-                border-left: 4px solid ${colors.primary || '#007AFF'};
+                border-left: 4px solid ${colors.primary || "#007AFF"};
                 background-color: rgba(0, 122, 255, 0.05);
                 border-radius: 4px;
             }
@@ -121,14 +121,14 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
             }
             
             a {
-                color: ${colors.primary || '#007AFF'};
+                color: ${colors.primary || "#007AFF"};
                 text-decoration: none;
                 border-bottom: 1px solid transparent;
                 transition: border-color 0.2s ease;
             }
             
             a:hover {
-                border-bottom-color: ${colors.primary || '#007AFF'};
+                border-bottom-color: ${colors.primary || "#007AFF"};
             }
             
             table {
@@ -141,7 +141,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
             th, td {
                 padding: 12px;
                 text-align: left;
-                border-bottom: 1px solid ${colors.border || 'rgba(0, 0, 0, 0.1)'};
+                border-bottom: 1px solid ${colors.border || "rgba(0, 0, 0, 0.1)"};
             }
             
             th {
@@ -160,7 +160,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
             .img-placeholder {
                 max-width: 100%;
                 height: 120px;
-                border: 2px dashed ${colors.border || 'rgba(0, 0, 0, 0.2)'};
+                border: 2px dashed ${colors.border || "rgba(0, 0, 0, 0.2)"};
                 border-radius: 8px;
                 margin: 8px 0;
                 display: flex;
@@ -175,11 +175,11 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
             
             .img-placeholder:hover {
                 background-color: rgba(0, 0, 0, 0.05);
-                border-color: ${colors.primary || '#007AFF'};
+                border-color: ${colors.primary || "#007AFF"};
             }
             
             .img-placeholder.loading {
-                color: ${colors.primary || '#007AFF'};
+                color: ${colors.primary || "#007AFF"};
             }
             
             .img-loaded {
@@ -189,7 +189,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
             hr {
                 border: none;
                 height: 1px;
-                background-color: ${colors.border || 'rgba(0, 0, 0, 0.1)'};
+                background-color: ${colors.border || "rgba(0, 0, 0, 0.1)"};
                 margin: 24px 0;
             }
             
@@ -212,7 +212,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
                     // 创建占位符
                     const placeholder = document.createElement('div');
                     placeholder.className = 'img-placeholder';
-                    placeholder.textContent = '${i18n.t('dialog.markdownDialog.clickToShowImage')}';
+                    placeholder.textContent = '${i18n.t("dialog.markdownDialog.clickToShowImage")}';
                     
                     // 插入占位符并隐藏原图
                     img.parentNode.insertBefore(placeholder, img);
@@ -220,7 +220,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
                     
                     // 点击占位符加载图片
                     placeholder.addEventListener('click', function() {
-                        placeholder.textContent = '${i18n.t('common.loading')}';
+                        placeholder.textContent = '${i18n.t("common.loading")}';
                         placeholder.className = 'img-placeholder loading';
                         
                         // 预加载图片
@@ -231,7 +231,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
                             placeholder.style.display = 'none';
                         };
                         tempImg.onerror = function() {
-                            placeholder.textContent = '${i18n.t('dialog.markdownDialog.loadFailed')}';
+                            placeholder.textContent = '${i18n.t("dialog.markdownDialog.loadFailed")}';
                             placeholder.className = 'img-placeholder';
                         };
                         tempImg.src = originalSrc;
@@ -253,14 +253,14 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
                 setHtmlContent(markdownContent);
                 setLoading(false);
             }
-        })
+        });
 
     }, [markdownContent, onMounted, colors]);
 
     const actions = [
         {
             title: okText ?? t("dialog.errorLogKnow"),
-            type: 'primary',
+            type: "primary",
             onPress() {
                 hideDialog();
             },
@@ -274,19 +274,19 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
                 {loading ? <Loading /> : <WebView style={styles.webView} originWhitelist={["*"]} source={{
                     html: htmlContent,
                 }}
-                    onShouldStartLoadWithRequest={(event) => {
-                        if (event.url.startsWith('http') || event.url.startsWith('https')) {
-                            Toast.warn(i18n.t("dialog.markdownDialog.openExternalLink"), {
-                                type: 'warn',
-                                duration: 3000,
-                                actionText: i18n.t('common.open'),
-                                onActionClick() {
-                                    openUrl(event.url);
-                                },
-                            });
-                        }
-                        return false;
-                    }}
+                onShouldStartLoadWithRequest={(event) => {
+                    if (event.url.startsWith("http") || event.url.startsWith("https")) {
+                        Toast.warn(i18n.t("dialog.markdownDialog.openExternalLink"), {
+                            type: "warn",
+                            duration: 3000,
+                            actionText: i18n.t("common.open"),
+                            onActionClick() {
+                                openUrl(event.url);
+                            },
+                        });
+                    }
+                    return false;
+                }}
 
                 />}
             </Dialog.Content>
@@ -299,11 +299,11 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
 const styles = StyleSheet.create({
     webView: {
         flex: 1,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'transparent',
+        width: "100%",
+        height: "100%",
+        backgroundColor: "transparent",
     },
     dialogContent: {
-        paddingVertical: 0, paddingHorizontal: 0, paddingBottom: rpx(8)
-    }
+        paddingVertical: 0, paddingHorizontal: 0, paddingBottom: rpx(8),
+    },
 });

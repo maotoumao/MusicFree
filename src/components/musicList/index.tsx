@@ -1,20 +1,20 @@
-import { RequestStateCode } from '@/constants/commonConst';
-import TrackPlayer from '@/core/trackPlayer';
-import rpx from '@/utils/rpx';
-import { FlashList } from '@shopify/flash-list';
-import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { FlatListProps, Pressable, StyleSheet, View } from 'react-native';
-import ListEmpty from '../base/listEmpty';
-import ListFooter from '../base/listFooter';
-import MusicItem from '../mediaItem/musicItem';
-import { isSameMediaItem } from '@/utils/mediaUtils';
-import Icon from '../base/icon';
-import { iconSizeConst } from '@/constants/uiConst';
-import useColors from '@/hooks/useColors';
+import { RequestStateCode } from "@/constants/commonConst";
+import TrackPlayer from "@/core/trackPlayer";
+import rpx from "@/utils/rpx";
+import { FlashList } from "@shopify/flash-list";
+import React, { useRef, useCallback, useState, useEffect } from "react";
+import { FlatListProps, Pressable, StyleSheet, View } from "react-native";
+import ListEmpty from "../base/listEmpty";
+import ListFooter from "../base/listFooter";
+import MusicItem from "../mediaItem/musicItem";
+import { isSameMediaItem } from "@/utils/mediaUtils";
+import Icon from "../base/icon";
+import { iconSizeConst } from "@/constants/uiConst";
+import useColors from "@/hooks/useColors";
 
 interface IMusicListProps {
     /** 顶部 */
-    Header?: FlatListProps<IMusic.IMusicItem>['ListHeaderComponent'];
+    Header?: FlatListProps<IMusic.IMusicItem>["ListHeaderComponent"];
     /** 音乐列表 */
     musicList?: IMusic.IMusicItem[];
     /** 所在歌单 */
@@ -46,7 +46,7 @@ export default function MusicList(props: IMusicListProps) {
         state,
         onRetry,
         onLoadMore,
-        highlightMusicItem
+        highlightMusicItem,
     } = props;    
     const colors = useColors();
     const flashListRef = useRef<FlashList<IMusic.IMusicItem>>(null);
@@ -86,7 +86,7 @@ export default function MusicList(props: IMusicListProps) {
             flashListRef.current.scrollToIndex({
                 index: highlightIndex,
                 animated: false,
-                viewPosition: 0
+                viewPosition: 0,
             });
             // 立即隐藏角标
             setShowBadge(false);
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     badge: {
-        position: 'absolute',
+        position: "absolute",
         bottom: rpx(80),
         right: rpx(84),
         zIndex: 1000,
@@ -179,9 +179,9 @@ const styles = StyleSheet.create({
         width: rpx(64),
         height: rpx(64),
         borderRadius: rpx(32),
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
+        justifyContent: "center",
+        alignItems: "center",
+        shadowColor: "#000",
         shadowOffset: {
             width: 0,
             height: 2,

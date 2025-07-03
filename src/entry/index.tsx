@@ -21,7 +21,7 @@ import { routes } from "@/core/router/routes.tsx";
  * 字体颜色
  */
 
-StatusBar.setBackgroundColor('transparent');
+StatusBar.setBackgroundColor("transparent");
 StatusBar.setTranslucent(true);
 
 bootstrap();
@@ -42,7 +42,7 @@ export default function Pages() {
                             initialRouteName={routes[0].path}
                             screenOptions={{
                                 headerShown: false,
-                                animation: 'slide_from_right',
+                                animation: "slide_from_right",
                                 animationDuration: 100,
                             }}>
                             {routes.map(route => (

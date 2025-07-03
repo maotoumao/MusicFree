@@ -1,17 +1,17 @@
-import { devLog, errorLog, trace } from '@/utils/log';
-import { RequestStateCode } from '@/constants/commonConst';
-import { produce } from 'immer';
-import { getDefaultStore, useAtom, useSetAtom } from 'jotai';
-import { useCallback, useRef } from 'react';
-import { PageStatus, pageStatusAtom, searchResultsAtom } from '../store/atoms';
-import PluginManager, { Plugin } from '@/core/pluginManager';
+import { devLog, errorLog, trace } from "@/utils/log";
+import { RequestStateCode } from "@/constants/commonConst";
+import { produce } from "immer";
+import { getDefaultStore, useAtom, useSetAtom } from "jotai";
+import { useCallback, useRef } from "react";
+import { PageStatus, pageStatusAtom, searchResultsAtom } from "../store/atoms";
+import PluginManager, { Plugin } from "@/core/pluginManager";
 
 export default function useSearch() {
     const setPageStatus = useSetAtom(pageStatusAtom);
     const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
     // 当前正在搜索
-    const currentQueryRef = useRef<string>('');
+    const currentQueryRef = useRef<string>("");
 
     /**
      * query: 搜索词
@@ -50,7 +50,7 @@ export default function useSearch() {
                 }
 
                 const searchType =
-                    type ?? plugin.instance.defaultSearchType ?? 'music';
+                    type ?? plugin.instance.defaultSearchType ?? "music";
                 // 上一份搜索结果
                 const prevPluginResult = searchResults[searchType][plugin.hash];
                 /** 上一份搜索还没返回/已经结束 */
@@ -72,7 +72,7 @@ export default function useSearch() {
 
                 // 本次搜索关键词
                 currentQueryRef.current = query =
-                    query ?? prevPluginResult?.query ?? '';
+                    query ?? prevPluginResult?.query ?? "";
 
                 /** 搜索的页码 */
                 const page =
@@ -80,7 +80,7 @@ export default function useSearch() {
                         ? 1
                         : (prevPluginResult?.page ?? 0) + 1;
 
-                trace('开始搜索', {
+                trace("开始搜索", {
                     _platform,
                     query,
                     page,
@@ -121,7 +121,7 @@ export default function useSearch() {
                         setPageStatus(PageStatus.RESULT);
                     }
                     if (!result) {
-                        throw new Error('搜索结果为空');
+                        throw new Error("搜索结果为空");
                     }
                     setSearchResults(
                         produce(draft => {
@@ -151,10 +151,10 @@ export default function useSearch() {
                         }),
                     );
                 } catch (e: any) {
-                    errorLog('搜索失败', e?.message);
+                    errorLog("搜索失败", e?.message);
                     devLog(
-                        'error',
-                        '搜索失败',
+                        "error",
+                        "搜索失败",
                         `Plugin: ${plugin.name} Query: ${query} Page: ${page}`,
                         e,
                         e?.message,

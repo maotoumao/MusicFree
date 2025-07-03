@@ -1,13 +1,13 @@
-import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
+import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
 
 class AppMeta {
     private getAppMeta(key: string) {
-        const metaMMKV = getOrCreateMMKV('App.meta');
+        const metaMMKV = getOrCreateMMKV("App.meta");
 
         return metaMMKV.getString(key);
     }
     private setAppMeta(key: string, value: any) {
-        const metaMMKV = getOrCreateMMKV('App.meta');
+        const metaMMKV = getOrCreateMMKV("App.meta");
 
         return metaMMKV.set(key, value);
     }
@@ -15,7 +15,7 @@ class AppMeta {
 
     /// 歌单的版本号
     get musicSheetVersion(): number {
-        const version = this.getAppMeta('MusicSheetVersion');
+        const version = this.getAppMeta("MusicSheetVersion");
         if (version?.length) {
             return +version;
         }
@@ -23,7 +23,7 @@ class AppMeta {
     }
 
     setMusicSheetVersion(version: number) {
-        this.setAppMeta('MusicSheetVersion', "" + version);
+        this.setAppMeta("MusicSheetVersion", "" + version);
     }
 
 

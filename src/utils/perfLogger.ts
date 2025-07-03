@@ -3,7 +3,7 @@ export function perfLogger() {
 
     return {
         mark(label?: string) {
-            console.log(`[${label || 'log'}] ${Date.now() - s}ms`);
+            console.log(`[${label || "log"}] ${Date.now() - s}ms`);
         },
     };
 }

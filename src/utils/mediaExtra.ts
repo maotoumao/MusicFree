@@ -1,10 +1,10 @@
 /**
  * 媒体资源的附加属性
  */
-import getOrCreateMMKV from '@/utils/getOrCreateMMKV';
-import { getMediaUniqueKey } from '@/utils/mediaUtils';
-import { useEffect, useState } from 'react';
-import { safeParse } from './jsonUtil';
+import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
+import { getMediaUniqueKey } from "@/utils/mediaUtils";
+import { useEffect, useState } from "react";
+import { safeParse } from "./jsonUtil";
 
 // Internal Method
 const getPluginStore = (pluginName: string) => {
@@ -196,7 +196,7 @@ function useMediaExtra(mediaItem: ICommon.IMediaBase) {
                 }
 
             }
-        }
+        };
     }, [mediaItem]);
 
     return mediaExtraState;
@@ -238,7 +238,7 @@ function useMediaExtraProperty<K extends keyof IMediaExtraProperties>(mediaItem:
                     }
                 }
             }
-        }
+        };
     }, [mediaItem]);
 
     return mediaExtraPropertyState;
@@ -254,4 +254,4 @@ export {
     removeAllMediaExtra,
     useMediaExtra,
     useMediaExtraProperty,
-}
+};

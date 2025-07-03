@@ -10,33 +10,33 @@ import { useI18N } from "@/core/i18n";
 
 export default function Mode() {
     const { t } = useI18N();
-    const mode = useAppConfig('theme.followSystem') ?? false;
+    const mode = useAppConfig("theme.followSystem") ?? false;
     return (
         <View>
             <ThemeText
                 fontSize="subTitle"
                 fontWeight="bold"
                 style={styles.header}>
-                {t('themeSettings.displayStyle')}
+                {t("themeSettings.displayStyle")}
             </ThemeText>
             <View style={styles.sectionWrapper}>
                 <ListItem withHorizontalPadding>
                     <ListItem.Content>
                         <View style={styles.itemRow}>
-                            <ThemeText>{t('themeSettings.followSystemTheme')}</ThemeText>
+                            <ThemeText>{t("themeSettings.followSystemTheme")}</ThemeText>
                             <ThemeSwitch
                                 value={mode}
                                 onValueChange={e => {
                                     if (e) {
                                         const colorScheme =
                                             Appearance.getColorScheme();
-                                        if (colorScheme === 'dark') {
-                                            Theme.setTheme('p-dark');
-                                        } else if (colorScheme === 'light') {
-                                            Theme.setTheme('p-light');
+                                        if (colorScheme === "dark") {
+                                            Theme.setTheme("p-dark");
+                                        } else if (colorScheme === "light") {
+                                            Theme.setTheme("p-light");
                                         }
                                     }
-                                    Config.setConfig('theme.followSystem', e);
+                                    Config.setConfig("theme.followSystem", e);
                                 }}
                             />
                         </View>
@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
         marginTop: rpx(24),
     },
     itemRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
 });

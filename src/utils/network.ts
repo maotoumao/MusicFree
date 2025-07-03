@@ -1,10 +1,10 @@
-import { emptyFunction } from '@/constants/commonConst';
-import NetInfo from '@react-native-community/netinfo';
+import { emptyFunction } from "@/constants/commonConst";
+import NetInfo from "@react-native-community/netinfo";
 
 enum NetworkState {
-    Offline = 'Offline',
-    Wifi = 'Wifi',
-    Cellular = 'Cellular',
+    Offline = "Offline",
+    Wifi = "Wifi",
+    Cellular = "Cellular",
 }
 
 class Network {
@@ -46,9 +46,9 @@ class Network {
     }
 
     private mapState(state: any) {
-        if (state.type === 'none') {
+        if (state.type === "none") {
             this._state = NetworkState.Offline;
-        } else if (state.type === 'wifi') {
+        } else if (state.type === "wifi") {
             this._state = NetworkState.Wifi;
         } else {
             this._state = NetworkState.Cellular;

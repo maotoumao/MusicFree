@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import i18n from '@/core/i18n';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import rpx from "@/utils/rpx";
+import i18n from "@/core/i18n";
 
 export default function DefaultResults() {
     return (

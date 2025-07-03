@@ -1,12 +1,12 @@
-import IconTextButton from '@/components/base/iconTextButton';
-import ThemeText from '@/components/base/themeText';
-import repeatModeConst from '@/constants/repeatModeConst';
-import { useI18N } from '@/core/i18n';
-import TrackPlayer, { usePlayList, useRepeatMode } from '@/core/trackPlayer';
-import delay from '@/utils/delay';
-import rpx from '@/utils/rpx';
-import React from 'react';
-import { InteractionManager, StyleSheet, View } from 'react-native';
+import IconTextButton from "@/components/base/iconTextButton";
+import ThemeText from "@/components/base/themeText";
+import repeatModeConst from "@/constants/repeatModeConst";
+import { useI18N } from "@/core/i18n";
+import TrackPlayer, { usePlayList, useRepeatMode } from "@/core/trackPlayer";
+import delay from "@/utils/delay";
+import rpx from "@/utils/rpx";
+import React from "react";
+import { InteractionManager, StyleSheet, View } from "react-native";
 
 export default function Header() {
     const repeatMode = useRepeatMode();
@@ -22,7 +22,7 @@ export default function Header() {
                 {t("panel.playList.title")}
                 <ThemeText fontColor="textSecondary">
                     {t("panel.playList.count", {
-                        count: playList.length
+                        count: playList.length,
                     })}
                 </ThemeText>
             </ThemeText>
@@ -54,9 +54,9 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(24),
         marginTop: rpx(18),
         marginBottom: rpx(12),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     headerText: {
         flex: 1,

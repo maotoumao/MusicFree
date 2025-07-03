@@ -34,28 +34,28 @@ export enum DownloadStatus {
 
 export enum DownloaderEvent {
     // 某次下载行为出错
-    DownloadError = 'download-error',
+    DownloadError = "download-error",
 
     // 下载任务更新
-    DownloadTaskUpdate = 'download-task-update',
+    DownloadTaskUpdate = "download-task-update",
 
     // 下载某个音乐时出错
-    DownloadTaskError = 'download-task-error',
+    DownloadTaskError = "download-task-error",
 
     // 下载完成
-    DownloadQueueCompleted = 'download-queue-completed',
+    DownloadQueueCompleted = "download-queue-completed",
 }
 
 export enum DownloadFailReason {
     /** 无网络 */
-    NetworkOffline = 'network-offline',
+    NetworkOffline = "network-offline",
     /** 设置-禁止在移动网络下下载 */
-    NotAllowToDownloadInCellular = 'not-allow-to-download-in-cellular',
+    NotAllowToDownloadInCellular = "not-allow-to-download-in-cellular",
     /** 无法获取到媒体源 */
-    FailToFetchSource = 'no-valid-source',
+    FailToFetchSource = "no-valid-source",
     /** 没有文件写入的权限 */
-    NoWritePermission = 'no-write-permission',
-    Unknown = 'unknown',
+    NoWritePermission = "no-write-permission",
+    Unknown = "unknown",
 }
 
 interface IDownloadTaskInfo {
@@ -153,18 +153,18 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
             /^https?\:\/\/.+\.([^\?\.]+?$)|(?:([^\.]+?)\?.+$)/,
         );
         if (regResult) {
-            return regResult[1] ?? regResult[2] ?? 'mp3';
+            return regResult[1] ?? regResult[2] ?? "mp3";
         } else {
-            return 'mp3';
+            return "mp3";
         }
     };
 
     /** 获取下载路径 */
     private getDownloadPath(fileName: string) {
         const dlPath =
-            this.configService.getConfig('basic.downloadPath') ?? pathConst.downloadMusicPath;
-        if (!dlPath.endsWith('/')) {
-            return `${dlPath}/${fileName ?? ''}`;
+            this.configService.getConfig("basic.downloadPath") ?? pathConst.downloadMusicPath;
+        if (!dlPath.endsWith("/")) {
+            return `${dlPath}/${fileName ?? ""}`;
         }
         return fileName ? dlPath + fileName : dlPath;
     };
@@ -172,15 +172,15 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
     /** 获取缓存的下载路径 */
     private getCacheDownloadPath(fileName: string) {
         const cachePath = pathConst.downloadCachePath;
-        if (!cachePath.endsWith('/')) {
-            return `${cachePath}/${fileName ?? ''}`;
+        if (!cachePath.endsWith("/")) {
+            return `${cachePath}/${fileName ?? ""}`;
         }
         return fileName ? cachePath + fileName : cachePath;
     }
 
 
     private async downloadNextPendingTask() {
-        const maxDownloadCount = Math.max(1, Math.min(+(this.configService.getConfig('basic.maxDownload') || 3), 10));
+        const maxDownloadCount = Math.max(1, Math.min(+(this.configService.getConfig("basic.maxDownload") || 3), 10));
         const downloadQueue = getDefaultStore().get(downloadQueueAtom);
 
         // 如果超过最大下载数量，或者没有下载任务，则不执行
@@ -221,9 +221,9 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
             if (plugin) {
                 const qualityOrder = getQualityOrder(
                     nextTask.quality ??
-                    this.configService.getConfig('basic.defaultDownloadQuality') ??
-                    'standard',
-                    this.configService.getConfig('basic.downloadQualityOrder') ?? 'asc',
+                    this.configService.getConfig("basic.defaultDownloadQuality") ??
+                    "standard",
+                    this.configService.getConfig("basic.downloadQualityOrder") ?? "asc",
                 );
                 let data: IPlugin.IMediaSourceResult | null = null;
                 for (let quality of qualityOrder) {
@@ -248,7 +248,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
             }
         } catch (e: any) {
             /** 无法下载，跳过 */
-            errorLog('下载失败-无法获取下载链接', {
+            errorLog("下载失败-无法获取下载链接", {
                 item: {
                     id: musicItem.id,
                     title: musicItem.title,
@@ -273,7 +273,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
         // 识别文件后缀
         let extension = this.getExtensionName(url);
         if (supportLocalMediaType.every(item => item !== ("." + extension))) {
-            extension = 'mp3';
+            extension = "mp3";
         }
 
         // 缓存下载地址
@@ -300,7 +300,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
 
         // 下载
         const { promise } = downloadFile({
-            fromUrl: url ?? '',
+            fromUrl: url ?? "",
             toFile: cacheDownloadPath,
             headers: headers,
             background: true,
@@ -309,17 +309,17 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
                     status: DownloadStatus.Downloading,
                     downloadedSize: 0,
                     fileSize: res.contentLength,
-                    jobId: res.jobId
-                })
+                    jobId: res.jobId,
+                });
             },
             progress: (res) => {
                 this.updateDownloadTask(musicItem, {
                     status: DownloadStatus.Downloading,
                     downloadedSize: res.bytesWritten,
                     fileSize: res.contentLength,
-                    jobId: res.jobId
-                })
-            }
+                    jobId: res.jobId,
+                });
+            },
         });
 
         try {
@@ -336,8 +336,8 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
 
             patchMediaExtra(musicItem, {
                 downloaded: true,
-                localPath: targetDownloadPath
-            })
+                localPath: targetDownloadPath,
+            });
 
             this.markTaskAsCompleted(musicItem);
         } catch (e: any) {
@@ -364,7 +364,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
             return;
         }
 
-        if (network.isCellular && !this.configService.getConfig('basic.useCelluarNetworkDownload')) {
+        if (network.isCellular && !this.configService.getConfig("basic.useCelluarNetworkDownload")) {
             this.emit(DownloaderEvent.DownloadError, DownloadFailReason.NotAllowToDownloadInCellular);
             return;
         }
@@ -391,8 +391,8 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
                 status: DownloadStatus.Pending,
                 filename: Downloader.generateFilename(m),
                 quality: quality,
-                musicItem: m
-            })
+                musicItem: m,
+            });
 
             return true;
         });
@@ -439,12 +439,12 @@ export function useDownloadTask(musicItem: IMusic.IMusicItem) {
             if (isSameMediaItem(task?.musicItem, musicItem)) {
                 setDownloadStatus(task);
             }
-        }
-        downloader.on(DownloaderEvent.DownloadTaskUpdate, callback)
+        };
+        downloader.on(DownloaderEvent.DownloadTaskUpdate, callback);
 
         return () => {
             downloader.off(DownloaderEvent.DownloadTaskUpdate, callback);
-        }
+        };
     }, [musicItem]);
 
     return downloadStatus;

@@ -1,4 +1,4 @@
-import { atom } from 'jotai';
+import { atom } from "jotai";
 
 export interface IEditorMusicItem {
     musicItem: IMusic.IMusicItem;

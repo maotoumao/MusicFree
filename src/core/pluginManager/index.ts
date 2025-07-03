@@ -1,7 +1,7 @@
 import {
     emptyFunction,
     localPluginHash,
-    localPluginPlatform
+    localPluginPlatform,
 } from "@/constants/commonConst";
 import pathConst from "@/constants/pathConst";
 import { IInstallPluginConfig, IInstallPluginResult, IPluginManager } from "@/types/core/pluginManager";
@@ -24,8 +24,8 @@ const pluginsAtom = atom<Plugin[]>([]);
 
 
 const ee = new EventEmitter<{
-    'order-updated': () => void;
-    'enabled-updated': (pluginName: string, enabled: boolean) => void;
+    "order-updated": () => void;
+    "enabled-updated": (pluginName: string, enabled: boolean) => void;
 }>();
 
 class PluginManager implements IPluginManager {
@@ -60,13 +60,13 @@ class PluginManager implements IPluginManager {
 
             for (let i = 0; i < pluginsFileItems.length; ++i) {
                 const pluginFileItem = pluginsFileItems[i];
-                trace('初始化插件', pluginFileItem);
+                trace("初始化插件", pluginFileItem);
                 if (
                     pluginFileItem.isFile() &&
-                    (pluginFileItem.name?.endsWith?.('.js') ||
-                        pluginFileItem.path?.endsWith?.('.js'))
+                    (pluginFileItem.name?.endsWith?.(".js") ||
+                        pluginFileItem.path?.endsWith?.(".js"))
                 ) {
-                    const funcCode = await readFile(pluginFileItem.path, 'utf8');
+                    const funcCode = await readFile(pluginFileItem.path, "utf8");
                     const plugin = new Plugin(funcCode, pluginFileItem.path);
 
                     const _pluginIndex = allPlugins.findIndex(
@@ -88,7 +88,7 @@ class PluginManager implements IPluginManager {
                 `插件初始化失败:${e?.message ?? e}`,
                 ToastAndroid.LONG,
             );
-            errorLog('插件初始化失败', e?.message);
+            errorLog("插件初始化失败", e?.message);
             throw e;
         }
 
@@ -113,7 +113,7 @@ class PluginManager implements IPluginManager {
         if (config?.useExpoFs) {
             funcCode = await readAsStringAsync(pluginPath);
         } else {
-            funcCode = await readFile(pluginPath, 'utf8');
+            funcCode = await readFile(pluginPath, "utf8");
         }
 
         if (funcCode) {
@@ -125,7 +125,7 @@ class PluginManager implements IPluginManager {
                 // 静默忽略
                 return {
                     success: true,
-                    message: '插件已安装',
+                    message: "插件已安装",
                     pluginName: plugin.name,
                     pluginHash: plugin.hash,
                 };
@@ -134,14 +134,14 @@ class PluginManager implements IPluginManager {
             if (oldVersionPlugin && !config?.notCheckVersion) {
                 if (
                     compare(
-                        oldVersionPlugin.instance.version ?? '',
-                        plugin.instance.version ?? '',
-                        '>',
+                        oldVersionPlugin.instance.version ?? "",
+                        plugin.instance.version ?? "",
+                        ">",
                     )
                 ) {
                     return {
                         success: false,
-                        message: '已安装更新版本的插件',
+                        message: "已安装更新版本的插件",
                         pluginName: plugin.name,
                         pluginHash: plugin.hash,
                     };
@@ -170,12 +170,12 @@ class PluginManager implements IPluginManager {
             }
             return {
                 success: false,
-                message: '插件无法解析',
-            }
+                message: "插件无法解析",
+            };
         }
         return {
             success: false,
-            message: '插件无法识别',
+            message: "插件无法识别",
         };
     }
 
@@ -194,21 +194,21 @@ class PluginManager implements IPluginManager {
             const funcCode = (
                 await axios.get(url, {
                     headers: {
-                        'Cache-Control': 'no-cache',
-                        Pragma: 'no-cache',
-                        Expires: '0',
+                        "Cache-Control": "no-cache",
+                        Pragma: "no-cache",
+                        Expires: "0",
                     },
                 })
             ).data;
             if (funcCode) {
-                const plugin = new Plugin(funcCode, '');
+                const plugin = new Plugin(funcCode, "");
                 let allPlugins = [...this.getPlugins()];
                 const pluginIndex = allPlugins.findIndex(p => p.hash === plugin.hash);
                 if (pluginIndex !== -1) {
                     // 静默忽略
                     return {
                         success: true,
-                        message: '插件已安装',
+                        message: "插件已安装",
                         pluginName: plugin.name,
                         pluginHash: plugin.hash,
                         pluginUrl: url,
@@ -218,14 +218,14 @@ class PluginManager implements IPluginManager {
                 if (oldVersionPlugin && !config?.notCheckVersion) {
                     if (
                         compare(
-                            oldVersionPlugin.instance.version ?? '',
-                            plugin.instance.version ?? '',
-                            '>',
+                            oldVersionPlugin.instance.version ?? "",
+                            plugin.instance.version ?? "",
+                            ">",
                         )
                     ) {
                         return {
                             success: false,
-                            message: '已安装更新版本的插件',
+                            message: "已安装更新版本的插件",
                             pluginName: plugin.name,
                             pluginHash: plugin.hash,
                             pluginUrl: url,
@@ -233,10 +233,10 @@ class PluginManager implements IPluginManager {
                     }
                 }
 
-                if (plugin.hash !== '') {
+                if (plugin.hash !== "") {
                     const fn = nanoid();
                     const _pluginPath = `${pathConst.pluginPath}${fn}.js`;
-                    await writeFile(_pluginPath, funcCode, 'utf8');
+                    await writeFile(_pluginPath, funcCode, "utf8");
                     plugin.path = _pluginPath;
                     allPlugins = allPlugins.concat(plugin);
                     if (oldVersionPlugin) {
@@ -253,36 +253,36 @@ class PluginManager implements IPluginManager {
                         pluginName: plugin.name,
                         pluginHash: plugin.hash,
                         pluginUrl: url,
-                    }
+                    };
                 }
                 return {
                     success: false,
-                    message: '插件无法解析',
+                    message: "插件无法解析",
                     pluginUrl: url,
-                }
+                };
             } else {
                 return {
                     success: false,
-                    message: '插件无法识别',
+                    message: "插件无法识别",
                     pluginUrl: url,
-                }
+                };
             }
         } catch (e: any) {
-            devLog('error', 'URL安装插件失败', e, e?.message);
-            errorLog('URL安装插件失败', e);
+            devLog("error", "URL安装插件失败", e, e?.message);
+            errorLog("URL安装插件失败", e);
 
             if (e?.response?.statusCode === 404) {
                 return {
                     success: false,
-                    message: '插件不存在，请联系插件作者',
+                    message: "插件不存在，请联系插件作者",
                     pluginUrl: url,
-                }
+                };
             } else {
                 return {
                     success: false,
-                    message: e?.message ?? '',
+                    message: e?.message ?? "",
                     pluginUrl: url,
-                }
+                };
             }
         }
     }
@@ -343,13 +343,13 @@ class PluginManager implements IPluginManager {
     async updatePlugin(plugin: Plugin) {
         const updateUrl = plugin.instance.srcUrl;
         if (!updateUrl) {
-            throw new Error('没有更新源');
+            throw new Error("没有更新源");
         }
         try {
             await this.installPluginFromUrl(updateUrl);
         } catch (e: any) {
-            if (e.message === '插件已安装') {
-                throw new Error(i18n.t('checkUpdate.error.latestVersion'));
+            if (e.message === "插件已安装") {
+                throw new Error(i18n.t("checkUpdate.error.latestVersion"));
             } else {
                 throw e;
             }
@@ -451,7 +451,7 @@ class PluginManager implements IPluginManager {
      * @returns 具有指定功能的插件实例数组
      */
     getPluginsWithAbility(ability: keyof IPlugin.IPluginInstanceMethods) {
-        return this.getPlugins().filter(it => pluginMeta.isPluginEnabled(it.name) && it.instance[ability])
+        return this.getPlugins().filter(it => pluginMeta.isPluginEnabled(it.name) && it.instance[ability]);
     }
 
     /**
@@ -474,7 +474,7 @@ class PluginManager implements IPluginManager {
      * @param enabled - 是否启用插件
      */
     setPluginEnabled(plugin: Plugin, enabled: boolean) {
-        ee.emit('enabled-updated', plugin.name, enabled);
+        ee.emit("enabled-updated", plugin.name, enabled);
         pluginMeta.setPluginEnabled(plugin.name, enabled);
     }
 
@@ -497,7 +497,7 @@ class PluginManager implements IPluginManager {
             orderMap[plugin.name] = index;
         });
         pluginMeta.setPluginOrder(orderMap);
-        ee.emit('order-updated');
+        ee.emit("order-updated");
     }
 
     setUserVariables(plugin: Plugin, userVariables: Record<string, string>) {
@@ -509,7 +509,7 @@ class PluginManager implements IPluginManager {
     }
 
     setAlternativePluginName(plugin: Plugin, alternativePluginName: string) {
-        pluginMeta.setAlternativePlugin(plugin.name, alternativePluginName)
+        pluginMeta.setAlternativePlugin(plugin.name, alternativePluginName);
     }
 
     getAlternativePluginName(plugin: Plugin) {
@@ -546,11 +546,11 @@ export function useSortedPlugins() {
             );
         };
 
-        ee.on('order-updated', callback);
+        ee.on("order-updated", callback);
         callback();
         return () => {
-            ee.off('order-updated', callback);
-        }
+            ee.off("order-updated", callback);
+        };
     }, [plugins]);
 
     return sortedPlugins;
@@ -566,10 +566,10 @@ export function usePluginEnabled(plugin: Plugin) {
             }
         };
 
-        ee.on('enabled-updated', callback);
+        ee.on("enabled-updated", callback);
         return () => {
-            ee.off('enabled-updated', callback);
-        }
+            ee.off("enabled-updated", callback);
+        };
     }, [plugin]);
 
     return enabled;

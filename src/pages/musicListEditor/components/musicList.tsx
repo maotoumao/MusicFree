@@ -1,19 +1,19 @@
-import React, { memo, useCallback } from 'react';
-import { StatusBar, StyleSheet, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import MusicItem from '@/components/mediaItem/musicItem';
-import { produce } from 'immer';
-import { useAtom, useSetAtom } from 'jotai';
+import React, { memo, useCallback } from "react";
+import { StatusBar, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import MusicItem from "@/components/mediaItem/musicItem";
+import { produce } from "immer";
+import { useAtom, useSetAtom } from "jotai";
 import {
     IEditorMusicItem,
     editingMusicListAtom,
     musicListChangedAtom,
-} from '../store/atom';
-import SortableFlatList from '@/components/base/SortableFlatList';
+} from "../store/atom";
+import SortableFlatList from "@/components/base/SortableFlatList";
 
-import CheckBox from '@/components/base/checkbox';
-import useColors from '@/hooks/useColors';
-import Empty from '@/components/base/empty';
+import CheckBox from "@/components/base/checkbox";
+import useColors from "@/hooks/useColors";
+import Empty from "@/components/base/empty";
 
 const ITEM_HEIGHT = rpx(120);
 
@@ -89,8 +89,8 @@ export default function MusicList() {
 
 const style = StyleSheet.create({
     checkBox: {
-        height: '100%',
-        justifyContent: 'center',
+        height: "100%",
+        justifyContent: "center",
         marginRight: rpx(16),
     },
 });

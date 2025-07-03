@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import Loading from '@/components/base/loading';
-import rpx from '@/utils/rpx';
-import { StyleSheet } from 'react-native';
-import { hideDialog } from '../useDialog';
-import Dialog from './base';
-import { useI18N } from '@/core/i18n';
+import React, { useEffect } from "react";
+import Loading from "@/components/base/loading";
+import rpx from "@/utils/rpx";
+import { StyleSheet } from "react-native";
+import { hideDialog } from "../useDialog";
+import Dialog from "./base";
+import { useI18N } from "@/core/i18n";
 
 interface ILoadingDialogProps<T extends any = any> {
     promise?: Promise<T>;

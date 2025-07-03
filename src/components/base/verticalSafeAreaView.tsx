@@ -1,9 +1,9 @@
-import React from 'react';
-import { StyleProp, ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from "react";
+import { StyleProp, ViewStyle } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface IVerticalSafeAreaViewProps {
-    mode?: 'margin' | 'padding';
+    mode?: "margin" | "padding";
     children: JSX.Element | JSX.Element[];
     style?: StyleProp<ViewStyle>;
 }
@@ -12,7 +12,7 @@ export default function VerticalSafeAreaView(
 ) {
     const { children, style, mode } = props;
     return (
-        <SafeAreaView style={style} mode={mode} edges={['top', 'bottom']}>
+        <SafeAreaView style={style} mode={mode} edges={["top", "bottom"]}>
             {children}
         </SafeAreaView>
     );

@@ -1,21 +1,21 @@
-import Empty from '@/components/base/empty';
-import IconButton from '@/components/base/iconButton';
-import ListItem from '@/components/base/listItem';
-import ThemeText from '@/components/base/themeText';
-import { showDialog } from '@/components/dialogs/useDialog';
-import { showPanel } from '@/components/panels/usePanel';
-import { ImgAsset } from '@/constants/assetsConst';
-import { localPluginPlatform } from '@/constants/commonConst';
-import { useI18N } from '@/core/i18n';
-import MusicSheet, { useSheetsBase, useStarredSheets } from '@/core/musicSheet';
-import { ROUTE_PATH, useNavigate } from '@/core/router';
-import useColors from '@/hooks/useColors';
-import rpx from '@/utils/rpx';
-import Toast from '@/utils/toast';
-import { FlashList } from '@shopify/flash-list';
-import React, { useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Empty from "@/components/base/empty";
+import IconButton from "@/components/base/iconButton";
+import ListItem from "@/components/base/listItem";
+import ThemeText from "@/components/base/themeText";
+import { showDialog } from "@/components/dialogs/useDialog";
+import { showPanel } from "@/components/panels/usePanel";
+import { ImgAsset } from "@/constants/assetsConst";
+import { localPluginPlatform } from "@/constants/commonConst";
+import { useI18N } from "@/core/i18n";
+import MusicSheet, { useSheetsBase, useStarredSheets } from "@/core/musicSheet";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
+import Toast from "@/utils/toast";
+import { FlashList } from "@shopify/flash-list";
+import React, { useMemo, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export default function Sheets() {
     const [index, setIndex] = useState(0);
@@ -42,7 +42,7 @@ export default function Sheets() {
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
                     accessible
-                    accessibilityLabel={t('home.myPlaylistsCount.a11y', {
+                    accessibilityLabel={t("home.myPlaylistsCount.a11y", {
                         count: allSheets.length,
                     })}
                     onPress={() => {
@@ -55,21 +55,21 @@ export default function Sheets() {
                             styles.tabText,
                             index === 0 ? selectedTabTextStyle : null,
                         ]}>
-                        {t('home.myPlaylists')}
+                        {t("home.myPlaylists")}
                     </ThemeText>
                     <ThemeText
                         accessible={false}
                         fontColor="textSecondary"
                         fontSize="subTitle"
                         style={styles.tabText}>
-                        {' '}
+                        {" "}
                         ({allSheets.length})
                     </ThemeText>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
                     accessible
-                    accessibilityLabel={t('home.starredPlaylistsCount.a11y', {
+                    accessibilityLabel={t("home.starredPlaylistsCount.a11y", {
                         count: allSheets.length,
                     })}
                     onPress={() => {
@@ -82,14 +82,14 @@ export default function Sheets() {
                             styles.tabText,
                             index === 1 ? selectedTabTextStyle : null,
                         ]}>
-                        {t('home.starredPlaylists')}
+                        {t("home.starredPlaylists")}
                     </ThemeText>
                     <ThemeText
                         fontColor="textSecondary"
                         fontSize="subTitle"
                         accessible={false}
                         style={styles.tabText}>
-                        {' '}
+                        {" "}
                         ({staredSheets.length})
                     </ThemeText>
                 </TouchableWithoutFeedback>
@@ -98,9 +98,9 @@ export default function Sheets() {
                         name="plus"
                         style={styles.newSheetButton}
                         sizeType="normal"
-                        accessibilityLabel={t('home.newPlaylist.a11y')}
+                        accessibilityLabel={t("home.newPlaylist.a11y")}
                         onPress={() => {
-                            showPanel('CreateMusicSheet');
+                            showPanel("CreateMusicSheet");
                         }}
                     />
                     <IconButton
@@ -108,7 +108,7 @@ export default function Sheets() {
                         sizeType="normal"
                         accessibilityLabel={t("home.importPlaylist.a11y")}
                         onPress={() => {
-                            showPanel('ImportMusicSheet');
+                            showPanel("ImportMusicSheet");
                         }}
                     />
                 </View>
@@ -145,7 +145,7 @@ export default function Sheets() {
                                 fallbackImg={ImgAsset.albumDefault}
                                 maskIcon={
                                     sheet.id === MusicSheet.defaultSheet.id
-                                        ? 'heart'
+                                        ? "heart"
                                         : null
                                 }
                             />
@@ -154,7 +154,7 @@ export default function Sheets() {
                                 description={
                                     isLocalSheet
                                         ? t("home.songCount", { count: sheet.worksNum })
-                                        : `${sheet.artist ?? ''}`
+                                        : `${sheet.artist ?? ""}`
                                 }
                             />
                             {sheet.id !== MusicSheet.defaultSheet.id ? (
@@ -162,10 +162,10 @@ export default function Sheets() {
                                     position="right"
                                     icon="trash-outline"
                                     onPress={() => {
-                                        showDialog('SimpleDialog', {
+                                        showDialog("SimpleDialog", {
                                             title: t("dialog.deleteSheetTitle"),
                                             content: t("dialog.deleteSheetContent", {
-                                                name: sheet.title
+                                                name: sheet.title,
                                             }),
                                             onOk: async () => {
                                                 if (isLocalSheet) {
@@ -196,15 +196,15 @@ export default function Sheets() {
 const styles = StyleSheet.create({
     subTitleContainer: {
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'flex-start',
+        flexDirection: "row",
+        alignItems: "flex-start",
         marginBottom: rpx(12),
     },
     subTitleLeft: {
-        flexDirection: 'row',
+        flexDirection: "row",
     },
     tabContainer: {
-        flexDirection: 'row',
+        flexDirection: "row",
         marginRight: rpx(32),
     },
 
@@ -213,14 +213,14 @@ const styles = StyleSheet.create({
     },
     selectTabText: {
         borderBottomWidth: rpx(6),
-        fontWeight: 'bold',
+        fontWeight: "bold",
     },
     more: {
         height: rpx(64),
         marginTop: rpx(3),
         flexGrow: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
+        flexDirection: "row",
+        justifyContent: "flex-end",
     },
     newSheetButton: {
         marginRight: rpx(24),

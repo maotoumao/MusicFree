@@ -40,7 +40,7 @@ function _PluginItem(props: IPluginItemProps) {
     const options: IOption[] = [
         {
             title: t("pluginSetting.pluginItem.options.updatePlugin"),
-            icon: 'arrow-path',
+            icon: "arrow-path",
             async onPress() {
                 try {
                     await pluginManager.updatePlugin(plugin);
@@ -53,7 +53,7 @@ function _PluginItem(props: IPluginItemProps) {
         },
         {
             title: t("pluginSetting.pluginItem.options.sharePlugin"),
-            icon: 'share',
+            icon: "share",
             async onPress() {
                 try {
                     Clipboard.setString(plugin.instance.srcUrl!);
@@ -66,10 +66,10 @@ function _PluginItem(props: IPluginItemProps) {
         },
         {
             title: t("pluginSetting.pluginItem.options.uninstallPlugin"),
-            icon: 'trash-outline',
+            icon: "trash-outline",
             show: true,
             onPress() {
-                showDialog('SimpleDialog', {
+                showDialog("SimpleDialog", {
                     title: t("pluginSetting.pluginItem.options.uninstallPlugin"),
                     content: t("pluginSetting.pluginItem.options.uninstallPluginContent", {
                         name: plugin.name,
@@ -86,13 +86,13 @@ function _PluginItem(props: IPluginItemProps) {
             },
         },
         {
-            title: t('pluginSetting.pluginItem.options.alternativePlugin'),
-            icon: 'strategy',
+            title: t("pluginSetting.pluginItem.options.alternativePlugin"),
+            icon: "strategy",
             show: true,
             onPress() {
-                showDialog('RadioDialog', {
-                    content: (pluginManager.getSortedPluginsWithAbility('getMediaSource').map(it => it.name)),
-                    title: t('pluginSetting.pluginItem.dialog.setAlternativePluginTitle'),
+                showDialog("RadioDialog", {
+                    content: (pluginManager.getSortedPluginsWithAbility("getMediaSource").map(it => it.name)),
+                    title: t("pluginSetting.pluginItem.dialog.setAlternativePluginTitle"),
                     defaultSelected: pluginManager.getAlternativePluginName(plugin) as any,
                     onOk(value) {
                         if (value === plugin.name) {
@@ -102,17 +102,17 @@ function _PluginItem(props: IPluginItemProps) {
                         }
                         rerender();
                     },
-                    tip: t('pluginSetting.pluginItem.dialog.setAlternativePluginTip'),
+                    tip: t("pluginSetting.pluginItem.dialog.setAlternativePluginTip"),
 
-                })
+                });
 
             },
         },
         {
             title: t("pluginSetting.pluginItem.options.importMusic"),
-            icon: 'arrow-right-end-on-rectangle',
+            icon: "arrow-right-end-on-rectangle",
             onPress() {
-                showPanel('SimpleInput', {
+                showPanel("SimpleInput", {
                     title: t("pluginSetting.pluginItem.options.importMusic"),
                     placeholder: t("pluginSetting.pluginItem.options.importMusicPlaceHolder"),
                     hints: plugin.instance.hints?.importMusicItem,
@@ -122,16 +122,16 @@ function _PluginItem(props: IPluginItemProps) {
                             text,
                         );
                         if (result) {
-                            showDialog('SimpleDialog', {
+                            showDialog("SimpleDialog", {
                                 title: t("pluginSetting.pluginItem.options.importDialogTitle"),
                                 content: t("pluginSetting.pluginItem.options.importMusicDialogContent", {
-                                    name: result.title
+                                    name: result.title,
                                 }),
                                 onOk() {
-                                    showPanel('AddToMusicSheet', {
+                                    showPanel("AddToMusicSheet", {
                                         musicItem: result,
                                         newSheetDefaultName: t("pluginSetting.pluginItem.options.importMusicToSheetName", {
-                                            name: plugin.name
+                                            name: plugin.name,
                                         }),
                                     });
                                 },
@@ -146,9 +146,9 @@ function _PluginItem(props: IPluginItemProps) {
         },
         {
             title: t("pluginSetting.pluginItem.options.importSheet"),
-            icon: 'arrow-right-end-on-rectangle',
+            icon: "arrow-right-end-on-rectangle",
             onPress() {
-                showPanel('SimpleInput', {
+                showPanel("SimpleInput", {
                     title: t("pluginSetting.pluginItem.options.importSheet"),
                     placeholder: t("pluginSetting.pluginItem.options.importSheetPlaceHolder"),
                     hints: plugin.instance.hints?.importMusicSheet,
@@ -160,13 +160,13 @@ function _PluginItem(props: IPluginItemProps) {
                             text,
                         );
                         if (result && result.length > 0) {
-                            showDialog('SimpleDialog', {
+                            showDialog("SimpleDialog", {
                                 title: t("pluginSetting.pluginItem.options.importDialogTitle"),
                                 content: t("pluginSetting.pluginItem.options.importSheetDialogContent", {
-                                    count: result.length
+                                    count: result.length,
                                 }),
                                 onOk() {
-                                    showPanel('AddToMusicSheet', {
+                                    showPanel("AddToMusicSheet", {
                                         musicItem: result,
                                     });
                                 },
@@ -181,10 +181,10 @@ function _PluginItem(props: IPluginItemProps) {
         },
         {
             title: t("pluginSetting.pluginItem.options.userVariables"),
-            icon: 'code-bracket-square',
+            icon: "code-bracket-square",
             onPress() {
                 if (Array.isArray(plugin.instance.userVariables)) {
-                    showPanel('SetUserVariables', {
+                    showPanel("SetUserVariables", {
                         async onOk(newValue, closePanel) {
                             pluginManager.setUserVariables(plugin, newValue);
                             Toast.success(t("toast.settingSuccess"));
@@ -216,10 +216,10 @@ function _PluginItem(props: IPluginItemProps) {
                     </ThemeText>
                     {
                         plugin.instance.description?.length ? <IconButton name='question-mark-circle' sizeType='light' onPress={() => {
-                            showDialog('MarkdownDialog', {
+                            showDialog("MarkdownDialog", {
                                 title: plugin.name,
                                 markdownContent: plugin.instance.description!,
-                            })
+                            });
                         }} /> : null
                     }
 
@@ -234,7 +234,7 @@ function _PluginItem(props: IPluginItemProps) {
             <View style={styles.description}>
                 <ThemeText fontSize="subTitle" fontColor="textSecondary">
                     {t("pluginSetting.pluginItem.versionHint", {
-                        version: plugin.instance.version
+                        version: plugin.instance.version,
                     })}
                 </ThemeText>
                 {plugin.instance.author ? (
@@ -244,15 +244,15 @@ function _PluginItem(props: IPluginItemProps) {
                         numberOfLines={1}
                         style={styles.author}>
                         {t("pluginSetting.pluginItem.author", {
-                            author: plugin.instance.author
+                            author: plugin.instance.author,
                         })}
                     </ThemeText>
                 ) : null}
             </View>
             {alternativePluginName ? <View style={styles.alternativePluginDescription}>
                 <ThemeText fontSize="subTitle" fontColor="textSecondary">
-                    {t('pluginSetting.pluginItem.alternativePlugin', {
-                        name: alternativePluginName
+                    {t("pluginSetting.pluginItem.alternativePlugin", {
+                        name: alternativePluginName,
                     })}
                 </ThemeText>
             </View> : null}
@@ -326,15 +326,15 @@ const styles = StyleSheet.create({
     },
     header: {
         paddingHorizontal: rpx(16),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     headerPluginContainer: {
         flexShrink: 1,
         flexGrow: 1,
-        flexDirection: 'row',
+        flexDirection: "row",
         gap: rpx(8),
-        alignItems: 'center',
+        alignItems: "center",
     },
     author: {
         marginLeft: rpx(24),
@@ -344,17 +344,17 @@ const styles = StyleSheet.create({
     description: {
         marginHorizontal: rpx(16),
         marginVertical: rpx(24),
-        flexDirection: 'row',
+        flexDirection: "row",
     },
     alternativePluginDescription: {
         marginHorizontal: rpx(16),
         marginBottom: rpx(24),
-        flexDirection: 'row',
+        flexDirection: "row",
     },
     contents: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
+        flexDirection: "row",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
         gap: rpx(16),
     },
 });

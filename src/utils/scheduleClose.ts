@@ -1,9 +1,9 @@
-import { TrackPlayerEvents } from '@/core.defination/trackPlayer';
-import TrackPlayer from '@/core/trackPlayer';
-import NativeUtils from '@/native/utils';
-import { atom, getDefaultStore, useAtomValue } from 'jotai';
-import { useEffect, useRef, useState } from 'react';
-import BackgroundTimer from 'react-native-background-timer';
+import { TrackPlayerEvents } from "@/core.defination/trackPlayer";
+import TrackPlayer from "@/core/trackPlayer";
+import NativeUtils from "@/native/utils";
+import { atom, getDefaultStore, useAtomValue } from "jotai";
+import { useEffect, useRef, useState } from "react";
+import BackgroundTimer from "react-native-background-timer";
 
 
 const deadlineAtom = atom<number | null>(null);
@@ -76,7 +76,7 @@ function useScheduleCloseCountDown() {
             // 清除定时器
             intervalRef.current && clearInterval(intervalRef.current);
             intervalRef.current = null;
-        }
+        };
     }, [deadline]);
 
     return countDown;

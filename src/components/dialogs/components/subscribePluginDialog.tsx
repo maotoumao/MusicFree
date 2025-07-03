@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import rpx from '@/utils/rpx';
-import { StyleSheet, View } from 'react-native';
-import ThemeText from '@/components/base/themeText';
-import { hideDialog } from '../useDialog';
-import Dialog from './base';
-import Input from '@/components/base/input';
-import useColors from '@/hooks/useColors';
-import { useI18N } from '@/core/i18n';
+import React, { useState } from "react";
+import rpx from "@/utils/rpx";
+import { StyleSheet, View } from "react-native";
+import ThemeText from "@/components/base/themeText";
+import { hideDialog } from "../useDialog";
+import Dialog from "./base";
+import Input from "@/components/base/input";
+import useColors from "@/hooks/useColors";
+import { useI18N } from "@/core/i18n";
 
 interface ISubscribeItem {
     name: string;
@@ -27,8 +27,8 @@ export default function SubscribePluginDialog(
     props: ISubscribePluginDialogProps,
 ) {
     const { subscribeItem, onSubmit, editingIndex, onDelete } = props;
-    const [name, setName] = useState(subscribeItem?.name ?? '');
-    const [url, setUrl] = useState(subscribeItem?.url ?? '');
+    const [name, setName] = useState(subscribeItem?.name ?? "");
+    const [url, setUrl] = useState(subscribeItem?.url ?? "");
 
     const colors = useColors();
     const { t } = useI18N();
@@ -85,7 +85,7 @@ export default function SubscribePluginDialog(
             <Dialog.Actions
                 actions={[
                     {
-                        type: 'normal',
+                        type: "normal",
                         title: t("common.delete"),
                         show: editingIndex !== undefined,
                         onPress() {
@@ -93,7 +93,7 @@ export default function SubscribePluginDialog(
                         },
                     },
                     {
-                        type: 'primary',
+                        type: "primary",
                         title: t("common.save"),
                         onPress() {
                             onSubmit(
@@ -126,7 +126,7 @@ const style = StyleSheet.create({
     },
     label: {
         fontSize: rpx(28),
-        fontWeight: '500',
+        fontWeight: "500",
         opacity: 0.9,
     },
     inputContainer: {
@@ -135,7 +135,7 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(16),
         paddingVertical: rpx(4),
         minHeight: rpx(72),
-        justifyContent: 'center',
+        justifyContent: "center",
         shadowOffset: {
             width: 0,
             height: rpx(2),
@@ -149,11 +149,11 @@ const style = StyleSheet.create({
         includeFontPadding: false,
         paddingVertical: rpx(12),
         borderWidth: 0,
-        backgroundColor: 'transparent',
+        backgroundColor: "transparent",
     },
     headerWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         height: rpx(92),
     },
 });

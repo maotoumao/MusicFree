@@ -12,8 +12,8 @@ import { useI18N } from "@/core/i18n";
 export default function Background() {
     const { t } = useI18N();
 
-    const themeBackground = useAppConfig('theme.background');
-    const themeSelectedTheme = useAppConfig('theme.selectedTheme');
+    const themeBackground = useAppConfig("theme.background");
+    const themeSelectedTheme = useAppConfig("theme.selectedTheme");
 
     const navigate = useNavigate();
 
@@ -86,42 +86,42 @@ export default function Background() {
                 fontSize="subTitle"
                 fontWeight="bold"
                 style={style.header}>
-                {t('themeSettings.setTheme')}
+                {t("themeSettings.setTheme")}
             </ThemeText>
             <View style={style.sectionWrapper}>
                 <ThemeCard
                     preview="#fff"
-                    title={t('themeSettings.lightMode')}
-                    selected={themeSelectedTheme === 'p-light'}
+                    title={t("themeSettings.lightMode")}
+                    selected={themeSelectedTheme === "p-light"}
                     onPress={() => {
-                        if (themeSelectedTheme !== 'p-light') {
-                            Theme.setTheme('p-light');
-                            Config.setConfig('theme.followSystem', false);
+                        if (themeSelectedTheme !== "p-light") {
+                            Theme.setTheme("p-light");
+                            Config.setConfig("theme.followSystem", false);
                         }
                     }}
                 />
                 <ThemeCard
                     preview="#131313"
-                    title={t('themeSettings.darkMode')}
-                    selected={themeSelectedTheme === 'p-dark'}
+                    title={t("themeSettings.darkMode")}
+                    selected={themeSelectedTheme === "p-dark"}
                     onPress={() => {
-                        if (themeSelectedTheme !== 'p-dark') {
-                            Theme.setTheme('p-dark');
-                            Config.setConfig('theme.followSystem', false);
+                        if (themeSelectedTheme !== "p-dark") {
+                            Theme.setTheme("p-dark");
+                            Config.setConfig("theme.followSystem", false);
                         }
                     }}
                 />
 
                 <ThemeCard
-                    title={t('themeSettings.customMode')}
-                    selected={themeSelectedTheme === 'custom'}
+                    title={t("themeSettings.customMode")}
+                    selected={themeSelectedTheme === "custom"}
                     preview={themeBackground}
                     onPress={() => {
-                        if (themeSelectedTheme !== 'custom') {
-                            Config.setConfig('theme.followSystem', false);
-                            Theme.setTheme('custom', {
+                        if (themeSelectedTheme !== "custom") {
+                            Config.setConfig("theme.followSystem", false);
+                            Theme.setTheme("custom", {
                                 colors: Config.getConfig(
-                                    'theme.customColors',
+                                    "theme.customColors",
                                 ),
                             });
                         }
@@ -154,8 +154,8 @@ const style = StyleSheet.create({
     },
     sectionWrapper: {
         marginTop: rpx(28),
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        flexDirection: "row",
+        flexWrap: "wrap",
         paddingHorizontal: rpx(24),
     },
 });

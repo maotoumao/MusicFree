@@ -19,19 +19,19 @@ module.exports = async function () {
     RNTrackPlayer.addEventListener(
         Event.RemoteDuck,
         async ({ paused, permanent }) => {
-            if (Config.getConfig('basic.notInterrupt')) {
+            if (Config.getConfig("basic.notInterrupt")) {
                 return;
             }
             if (permanent) {
                 return TrackPlayer.pause();
             }
             const tempRemoteDuckConf = Config.getConfig(
-                'basic.tempRemoteDuck',
+                "basic.tempRemoteDuck",
             );
-            if (tempRemoteDuckConf === 'lowerVolume') {
+            if (tempRemoteDuckConf === "lowerVolume") {
                 if (paused) {
                     const tempRemoteDuckVolume = Config.getConfig(
-                        'basic.tempRemoteDuckVolume',
+                        "basic.tempRemoteDuckVolume",
                     ) ?? 0.5;
                     return RNTrackPlayer.setVolume(1 - tempRemoteDuckVolume);
                 } else {
@@ -56,7 +56,7 @@ module.exports = async function () {
 
 
     RNTrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
-        PersistStatus.set('music.progress', evt.position);
+        PersistStatus.set("music.progress", evt.position);
     });
 
     RNTrackPlayer.addEventListener(Event.RemoteStop, async () => {

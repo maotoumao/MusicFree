@@ -1,9 +1,9 @@
 /** 备份与恢复 */
 /** 歌单、插件 */
-import { compare } from 'compare-versions';
-import PluginManager from './pluginManager';
-import MusicSheet from '@/core/musicSheet';
-import { ResumeMode } from '@/constants/commonConst.ts';
+import { compare } from "compare-versions";
+import PluginManager from "./pluginManager";
+import MusicSheet from "@/core/musicSheet";
+import { ResumeMode } from "@/constants/commonConst.ts";
 
 /**
  * 结果：一份大的json文件
@@ -37,7 +37,7 @@ async function resume(
     resumeMode: ResumeMode = ResumeMode.Append,
 ) {
     let obj: IBackJson;
-    if (typeof raw === 'string') {
+    if (typeof raw === "string") {
         obj = JSON.parse(raw);
     } else {
         obj = raw as IBackJson;
@@ -53,9 +53,9 @@ async function resume(
                 plugin =>
                     plugin.instance.srcUrl === _.srcUrl &&
                     compare(
-                        plugin.instance.version ?? '0.0.0',
-                        _.version ?? '0.0.1',
-                        '>=',
+                        plugin.instance.version ?? "0.0.0",
+                        _.version ?? "0.0.1",
+                        ">=",
                     ),
             )
         ) {

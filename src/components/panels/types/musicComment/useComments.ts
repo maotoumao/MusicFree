@@ -1,8 +1,8 @@
-import { atom, getDefaultStore, useAtomValue } from 'jotai';
-import { RequestStateCode } from '@/constants/commonConst.ts';
-import { useCallback, useEffect, useRef } from 'react';
-import { isSameMediaItem } from '@/utils/mediaUtils';
-import PluginManager from '@/core/pluginManager';
+import { atom, getDefaultStore, useAtomValue } from "jotai";
+import { RequestStateCode } from "@/constants/commonConst.ts";
+import { useCallback, useEffect, useRef } from "react";
+import { isSameMediaItem } from "@/utils/mediaUtils";
+import PluginManager from "@/core/pluginManager";
 
 
 const commentsAtom = atom<{
@@ -15,7 +15,7 @@ const commentsAtom = atom<{
     comments: [],
     page: 1,
     state: RequestStateCode.PENDING_FIRST_PAGE,
-})
+});
 
 export default function useComments(mediaItem: ICommon.IMediaBase) {
     const mountedRef = useRef(true);
@@ -77,7 +77,7 @@ export default function useComments(mediaItem: ICommon.IMediaBase) {
             comments,
             page: nextPage,
             state: nextPage === 1 ? RequestStateCode.PENDING_FIRST_PAGE : RequestStateCode.PENDING_REST_PAGE,
-        })
+        });
 
         try {
             const result = await plugin.methods
@@ -110,7 +110,7 @@ export default function useComments(mediaItem: ICommon.IMediaBase) {
 
     useEffect(() => {
         getComments();
-    }, [])
+    }, []);
 
 
     return [commentsValue.state, commentsValue.comments, getComments] as const;

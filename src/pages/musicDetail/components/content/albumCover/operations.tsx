@@ -23,7 +23,7 @@ export default function Operations() {
     const currentQuality = useMusicQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
-    const rate = PersistStatus.useValue('music.rate', 100);
+    const rate = PersistStatus.useValue("music.rate", 100);
     const orientation = useOrientation();
 
     const supportComment = useMemo(() => {
@@ -36,7 +36,7 @@ export default function Operations() {
         <View
             style={[
                 styles.wrapper,
-                orientation === 'horizontal' ? styles.horizontalWrapper : null,
+                orientation === "horizontal" ? styles.horizontalWrapper : null,
             ]}>
             <HeartIcon />
             <Pressable
@@ -44,7 +44,7 @@ export default function Operations() {
                     if (!musicItem) {
                         return;
                     }
-                    showPanel('MusicQuality', {
+                    showPanel("MusicQuality", {
                         musicItem,
                         async onQualityPress(quality) {
                             const changeResult =
@@ -61,13 +61,13 @@ export default function Operations() {
                 />
             </Pressable>
             <Icon
-                name={isDownloaded ? 'check-circle-outline' : 'arrow-down-tray'}
+                name={isDownloaded ? "check-circle-outline" : "arrow-down-tray"}
                 size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
                     if (musicItem && !isDownloaded) {
-                        showPanel('MusicQuality', {
-                            type: 'download',
+                        showPanel("MusicQuality", {
+                            type: "download",
                             musicItem,
                             async onQualityPress(quality) {
                                 downloader.download(musicItem, quality);
@@ -81,12 +81,12 @@ export default function Operations() {
                     if (!musicItem) {
                         return;
                     }
-                    showPanel('PlayRate', {
+                    showPanel("PlayRate", {
                         async onRatePress(newRate) {
                             if (rate !== newRate) {
                                 try {
                                     await TrackPlayer.setRate(newRate / 100);
-                                    PersistStatus.set('music.rate', newRate);
+                                    PersistStatus.set("music.rate", newRate);
                                 } catch { }
                             }
                         },
@@ -105,7 +105,7 @@ export default function Operations() {
                         return;
                     }
                     if (musicItem) {
-                        showPanel('MusicComment', {
+                        showPanel("MusicComment", {
                             musicItem,
                         });
                     }
@@ -117,7 +117,7 @@ export default function Operations() {
                 color="white"
                 onPress={() => {
                     if (musicItem) {
-                        showPanel('MusicItemOptions', {
+                        showPanel("MusicItemOptions", {
                             musicItem: musicItem,
                             from: ROUTE_PATH.MUSIC_DETAIL,
                         });
@@ -130,12 +130,12 @@ export default function Operations() {
 
 const styles = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         height: rpx(80),
         marginBottom: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
     },
     horizontalWrapper: {
         marginBottom: 0,

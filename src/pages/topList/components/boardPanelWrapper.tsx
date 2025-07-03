@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo } from 'react';
-import useGetTopList from '../hooks/useGetTopList';
-import { useAtomValue } from 'jotai';
-import { pluginsTopListAtom } from '../store/atoms';
-import BoardPanel from './boardPanel';
+import React, { useEffect, useMemo } from "react";
+import useGetTopList from "../hooks/useGetTopList";
+import { useAtomValue } from "jotai";
+import { pluginsTopListAtom } from "../store/atoms";
+import BoardPanel from "./boardPanel";
 
 interface IBoardPanelProps {
     hash: string;

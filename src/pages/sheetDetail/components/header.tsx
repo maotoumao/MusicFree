@@ -1,17 +1,17 @@
-import FastImage from '@/components/base/fastImage';
-import PlayAllBar from '@/components/base/playAllBar';
-import ThemeText from '@/components/base/themeText';
-import { ImgAsset } from '@/constants/assetsConst';
-import { useI18N } from '@/core/i18n';
-import { useSheetItem } from '@/core/musicSheet';
-import { useParams } from '@/core/router';
-import useColors from '@/hooks/useColors';
-import rpx from '@/utils/rpx';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import FastImage from "@/components/base/fastImage";
+import PlayAllBar from "@/components/base/playAllBar";
+import ThemeText from "@/components/base/themeText";
+import { ImgAsset } from "@/constants/assetsConst";
+import { useI18N } from "@/core/i18n";
+import { useSheetItem } from "@/core/musicSheet";
+import { useParams } from "@/core/router";
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
 export default function Header() {
-    const { id = 'favorite' } = useParams<'local-sheet-detail'>();
+    const { id = "favorite" } = useParams<"local-sheet-detail">();
     const sheet = useSheetItem(id);
     const colors = useColors();
     const { t } = useI18N();
@@ -30,7 +30,7 @@ export default function Header() {
                     </ThemeText>
                     <ThemeText fontColor="textSecondary" fontSize="subTitle">
                         {t("sheetDetail.totalMusicCount", {
-                            count: sheet?.musicList?.length ?? 0
+                            count: sheet?.musicList?.length ?? 0,
                         })}
                     </ThemeText>
                 </View>
@@ -42,12 +42,12 @@ export default function Header() {
 
 const style = StyleSheet.create({
     content: {
-        width: '100%',
+        width: "100%",
         height: rpx(300),
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
     },
     coverImg: {
         width: rpx(210),
@@ -58,7 +58,7 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(36),
         flex: 1,
         height: rpx(140),
-        justifyContent: 'space-between',
+        justifyContent: "space-between",
         gap: rpx(14),
     },
 });

@@ -1,17 +1,17 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
 
-import { setCloseAfterPlayEnd, setScheduleClose, useCloseAfterPlayEnd, useScheduleCloseCountDown } from '@/utils/scheduleClose';
-import timeformat from '@/utils/timeformat';
-import PanelBase from '../base/panelBase';
-import Divider from '@/components/base/divider';
-import PanelHeader from '../base/panelHeader';
-import Checkbox from '@/components/base/checkbox';
-import { Pressable } from 'react-native-gesture-handler';
-import { useI18N } from '@/core/i18n';
-import { showDialog } from '@/components/dialogs/useDialog';
+import { setCloseAfterPlayEnd, setScheduleClose, useCloseAfterPlayEnd, useScheduleCloseCountDown } from "@/utils/scheduleClose";
+import timeformat from "@/utils/timeformat";
+import PanelBase from "../base/panelBase";
+import Divider from "@/components/base/divider";
+import PanelHeader from "../base/panelHeader";
+import Checkbox from "@/components/base/checkbox";
+import { Pressable } from "react-native-gesture-handler";
+import { useI18N } from "@/core/i18n";
+import { showDialog } from "@/components/dialogs/useDialog";
 
 
 const shortCutTimes = [10, 20, 30, 45, 60] as const;
@@ -26,8 +26,8 @@ function CountDownHeader() {
             hideDivider
             hideButtons
             title={countDown === null
-                ? t('sidebar.scheduleClose')
-                : t('panel.timingClose.countdown', { time: timeformat(countDown) })}
+                ? t("sidebar.scheduleClose")
+                : t("panel.timingClose.countdown", { time: timeformat(countDown) })}
         />
     );
 }
@@ -61,10 +61,10 @@ export default function TimingClose() {
                             </TouchableOpacity>
                         ))}
                         <TouchableOpacity style={styles.timeItem} key='customize' activeOpacity={0.6} onPress={() => {
-                            showDialog('SetScheduleCloseTimeDialog', {
+                            showDialog("SetScheduleCloseTimeDialog", {
                                 onOk: (minutes: number) => {
                                     setScheduleClose(Date.now() + minutes * 60000);
-                                }
+                                },
                             });
                         }}>
                             <ThemeText>{t("panel.timingClose.customize")}</ThemeText>
@@ -75,13 +75,13 @@ export default function TimingClose() {
                             setCloseAfterPlayEnd(!closeAfterPlay);
                         }}>
                             <Checkbox checked={closeAfterPlay} />
-                            <ThemeText style={styles.bottomLineText}>{t('panel.timingClose.closeAfterPlay')}</ThemeText>
+                            <ThemeText style={styles.bottomLineText}>{t("panel.timingClose.closeAfterPlay")}</ThemeText>
                         </Pressable>
                         {isCountingDown && (
                             <TouchableOpacity style={styles.cancelButton} onPress={() => {
                                 setScheduleClose(null);
                             }}>
-                                <ThemeText style={styles.cancelButtonText}>{t('panel.timingClose.cancelScheduleClose')}</ThemeText>
+                                <ThemeText style={styles.cancelButtonText}>{t("panel.timingClose.cancelScheduleClose")}</ThemeText>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -98,48 +98,48 @@ const styles = StyleSheet.create({
         width: rpx(750),
         paddingHorizontal: rpx(24),
         height: rpx(90),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     bodyContainer: {
         width: "100%",
         height: rpx(160),
         padding: rpx(24),
         gap: rpx(16),
-        flexDirection: 'row',
+        flexDirection: "row",
     },
     timeItem: {
         flex: 1,
-        backgroundColor: '#99999999',
+        backgroundColor: "#99999999",
         borderRadius: rpx(12),
-        alignItems: 'center',
-        justifyContent: 'center'
+        alignItems: "center",
+        justifyContent: "center",
     },
     bottomLine: {
         width: "100%",
         marginTop: rpx(36),
         height: rpx(64),
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     cancelButton: {
         paddingHorizontal: rpx(16),
         paddingVertical: rpx(8),
-        backgroundColor: '#ff666699',
+        backgroundColor: "#ff666699",
         borderRadius: rpx(8),
     },
     cancelButtonText: {
-        color: '#ffffff',
+        color: "#ffffff",
         fontSize: rpx(24),
     },
     closeAfterPlayContainer: {
-        flexDirection: 'row',
-        alignItems: 'center'
+        flexDirection: "row",
+        alignItems: "center",
     },
     bottomLineText: {
         marginLeft: rpx(12),
-    }
+    },
 });

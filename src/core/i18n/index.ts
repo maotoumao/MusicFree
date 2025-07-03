@@ -8,12 +8,12 @@ import zhTW from "./languages/zh-tw.json";
 
 
 const allLanguages: ILanguage[] = [{
-    locale: 'zh-CN',
-    name: '简体中文',
+    locale: "zh-CN",
+    name: "简体中文",
     languageData: zhCN,
 }, {
-    locale: 'zh-TW',
-    name: '繁体中文',
+    locale: "zh-TW",
+    name: "繁体中文",
     languageData: zhTW,
 }, {
     locale: "en-US",
@@ -54,7 +54,7 @@ class I18N<K extends keyof ILanguageData> {
             return value as ILanguageData[K];
         }
 
-        return value.replace(/{(\w+)}/g, (_, argKey) => args[argKey] ?? '');
+        return value.replace(/{(\w+)}/g, (_, argKey) => args[argKey] ?? "");
     }
 }
 

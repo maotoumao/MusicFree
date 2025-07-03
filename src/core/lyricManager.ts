@@ -29,8 +29,8 @@ interface ILyricState {
 const defaultLyricState = {
     loading: true,
     lyrics: [],
-    hasTranslation: false
-}
+    hasTranslation: false,
+};
 
 const lyricStateAtom = atom<ILyricState>(defaultLyricState);
 const currentLyricItemAtom = atom<IParsedLrcItem | null>(null);
@@ -64,12 +64,12 @@ class LyricManager implements IInjectable {
         this.trackPlayer.on(TrackPlayerEvents.CurrentMusicChanged, (musicItem) => {
             this.refreshLyric(true, true);
 
-            if (this.appConfig.getConfig('lyric.showStatusBarLyric')) {
+            if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
                 if (musicItem) {
                     LyricUtil.setStatusBarLyricText(
-                        `${musicItem.title} - ${musicItem.artist}`,)
+                        `${musicItem.title} - ${musicItem.artist}`,);
                 } else {
-                    LyricUtil.setStatusBarLyricText('MusicFree');
+                    LyricUtil.setStatusBarLyricText("MusicFree");
                 }
             }
         });
@@ -89,21 +89,21 @@ class LyricManager implements IInjectable {
                 getDefaultStore().set(currentLyricItemAtom, newLyricItem ?? null);
 
                 // 更新状态栏歌词
-                const showTranslation = PersistStatus.get('lyric.showTranslation');
+                const showTranslation = PersistStatus.get("lyric.showTranslation");
 
-                if (this.appConfig.getConfig('lyric.showStatusBarLyric')) {
+                if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
                     LyricUtil.setStatusBarLyricText(
-                        (newLyricItem?.lrc ?? '') +
+                        (newLyricItem?.lrc ?? "") +
                         (showTranslation
-                            ? `\n${newLyricItem?.translation ?? ''}`
-                            : ''),
+                            ? `\n${newLyricItem?.translation ?? ""}`
+                            : ""),
                     );
                 }
             }
-        })
+        });
 
 
-        if (this.appConfig.getConfig('lyric.showStatusBarLyric')) {
+        if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
             const statusBarLyricConfig = {
                 topPercent: this.appConfig.getConfig("lyric.topPercent"),
                 leftPercent: this.appConfig.getConfig("lyric.leftPercent"),
@@ -111,7 +111,7 @@ class LyricManager implements IInjectable {
                 color: this.appConfig.getConfig("lyric.color"),
                 backgroundColor: this.appConfig.getConfig("lyric.backgroundColor"),
                 widthPercent: this.appConfig.getConfig("lyric.widthPercent"),
-                fontSize: this.appConfig.getConfig("lyric.fontSize")
+                fontSize: this.appConfig.getConfig("lyric.fontSize"),
             };
             LyricUtil.showStatusBarLyric(
                 "MusicFree",
@@ -130,12 +130,12 @@ class LyricManager implements IInjectable {
         // 如果当前音乐项和关联的音乐项相同，则不需要重新关联
         if (isSameMediaItem(musicItem, linkToMusicItem)) {
             patchMediaExtra(musicItem, {
-                associatedLrc: undefined
+                associatedLrc: undefined,
             });
             return false;
         } else {
             patchMediaExtra(musicItem, {
-                associatedLrc: linkToMusicItem
+                associatedLrc: linkToMusicItem,
             });
             if (this.trackPlayer.isCurrentMusic(musicItem)) {
                 this.refreshLyric(false);
@@ -150,7 +150,7 @@ class LyricManager implements IInjectable {
         }
 
         patchMediaExtra(musicItem, {
-            associatedLrc: undefined
+            associatedLrc: undefined,
         });
 
         if (this.trackPlayer.isCurrentMusic(musicItem)) {
@@ -158,7 +158,7 @@ class LyricManager implements IInjectable {
         }
     }
 
-    async uploadLocalLyric(musicItem: IMusic.IMusicItem, lyricContent: string, type: 'raw' | 'translation' = 'raw') {
+    async uploadLocalLyric(musicItem: IMusic.IMusicItem, lyricContent: string, type: "raw" | "translation" = "raw") {
         if (!musicItem) {
             return;
         }
@@ -174,10 +174,10 @@ class LyricManager implements IInjectable {
         await checkAndCreateDir(pathConst.localLrcPath + platformHash);
         await writeFile(pathConst.localLrcPath +
             platformHash +
-            '/' +
+            "/" +
             idHash +
-            (type === 'raw' ? '' : '.tran') +
-            '.lrc', lyricContent, 'utf8');
+            (type === "raw" ? "" : ".tran") +
+            ".lrc", lyricContent, "utf8");
 
         if (this.trackPlayer.isCurrentMusic(musicItem)) {
             this.refreshLyric(false, false);
@@ -197,10 +197,10 @@ class LyricManager implements IInjectable {
         );
 
         const basePath =
-            pathConst.localLrcPath + platformHash + '/' + idHash;
+            pathConst.localLrcPath + platformHash + "/" + idHash;
 
-        await unlink(basePath + '.lrc').catch(() => { });
-        await unlink(basePath + '.tran.lrc').catch(() => { });
+        await unlink(basePath + ".lrc").catch(() => { });
+        await unlink(basePath + ".tran.lrc").catch(() => { });
 
         if (this.trackPlayer.isCurrentMusic(musicItem)) {
             this.refreshLyric(false, false);
@@ -216,7 +216,7 @@ class LyricManager implements IInjectable {
 
         // 更新歌词偏移
         patchMediaExtra(musicItem, {
-            lyricOffset: offset
+            lyricOffset: offset,
         });
 
         if (this.trackPlayer.isCurrentMusic(musicItem)) {
@@ -228,7 +228,7 @@ class LyricManager implements IInjectable {
         getDefaultStore().set(lyricStateAtom, {
             loading: true,
             lyrics: [],
-            hasTranslation: false
+            hasTranslation: false,
         });
         getDefaultStore().set(currentLyricItemAtom, null);
     }
@@ -237,12 +237,12 @@ class LyricManager implements IInjectable {
         getDefaultStore().set(lyricStateAtom, {
             loading: false,
             lyrics: [],
-            hasTranslation: false
+            hasTranslation: false,
         });
         getDefaultStore().set(currentLyricItemAtom, null);
-        if (this.appConfig.getConfig('lyric.showStatusBarLyric')) {
+        if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
             const musicItem = this.trackPlayer.currentMusic;
-            LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : 'MusicFree');
+            LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree");
         }
     }
 
@@ -273,7 +273,7 @@ class LyricManager implements IInjectable {
             }
 
             // 如果歌词源不存在，并且开启自动搜索歌词
-            if (!lrcSource && this.appConfig.getConfig('lyric.autoSearchLyric')) {
+            if (!lrcSource && this.appConfig.getConfig("lyric.autoSearchLyric")) {
                 // 重置歌词状态
                 this.setLyricAsLoadingState();
 
@@ -294,34 +294,34 @@ class LyricManager implements IInjectable {
 
             this.lyricParser = new LyricParser(lrcSource.rawLrc!, {
                 extra: {
-                    offset: (getMediaExtraProperty(currentMusicItem, 'lyricOffset') || 0) * -1
+                    offset: (getMediaExtraProperty(currentMusicItem, "lyricOffset") || 0) * -1,
                 },
                 musicItem: currentMusicItem,
                 lyricSource: lrcSource,
-                translation: lrcSource.translation
+                translation: lrcSource.translation,
             });
 
             getDefaultStore().set(lyricStateAtom, {
                 loading: false,
                 lyrics: this.lyricParser.getLyricItems(),
                 hasTranslation: !!lrcSource.translation,
-                meta: this.lyricParser.getMeta()
-            })
+                meta: this.lyricParser.getMeta(),
+            });
 
             const currentLyric = ignoreProgress ? (this.lyricParser.getLyricItems()?.[0] ?? null) : this.lyricParser.getPosition((await this.trackPlayer.getProgress()).position);
             getDefaultStore().set(currentLyricItemAtom, currentLyric || null);
 
-            if (this.appConfig.getConfig('lyric.showStatusBarLyric')) {
+            if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
                 if (currentLyric) {
                     LyricUtil.setStatusBarLyricText(
-                        (currentLyric?.lrc ?? '') +
+                        (currentLyric?.lrc ?? "") +
                         (this.lyricParser.hasTranslation
-                            ? `\n${currentLyric?.translation ?? ''}`
-                            : ''),
+                            ? `\n${currentLyric?.translation ?? ""}`
+                            : ""),
                     );
                 } else {
                     const musicItem = this.trackPlayer.currentMusic;
-                    LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : 'MusicFree');
+                    LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree");
                 }
             }
         } catch (err) {

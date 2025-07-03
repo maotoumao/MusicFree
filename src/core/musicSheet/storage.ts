@@ -1,18 +1,18 @@
-import getOrCreateMMKV from '@/utils/getOrCreateMMKV.ts';
-import { InteractionManager } from 'react-native';
-import { SortType } from '@/constants/commonConst.ts';
-import { safeParse, safeStringify } from '@/utils/jsonUtil';
+import getOrCreateMMKV from "@/utils/getOrCreateMMKV.ts";
+import { InteractionManager } from "react-native";
+import { SortType } from "@/constants/commonConst.ts";
+import { safeParse, safeStringify } from "@/utils/jsonUtil";
 
 function getStorageData(key: string) {
     const mmkv = getOrCreateMMKV(`LocalSheet.${key}`);
 
-    return safeParse(mmkv.getString('data'));
+    return safeParse(mmkv.getString("data"));
 }
 
 async function setStorageData(key: string, value: any) {
     return InteractionManager.runAfterInteractions(() => {
         const mmkv = getOrCreateMMKV(`LocalSheet.${key}`);
-        mmkv.set('data', safeStringify(value));
+        mmkv.set("data", safeStringify(value));
     });
 }
 
@@ -26,14 +26,14 @@ function removeStorageData(key: string) {
  * @param sheets 歌单数据
  */
 async function setSheets(sheets: IMusic.IMusicSheetItemBase[]) {
-    return await setStorageData('music-sheets', sheets);
+    return await setStorageData("music-sheets", sheets);
 }
 
 /**
  * 获取歌单的基本信息
  */
 function getSheets(): IMusic.IMusicSheetItemBase[] {
-    return getStorageData('music-sheets');
+    return getStorageData("music-sheets");
 }
 
 /**
@@ -41,14 +41,14 @@ function getSheets(): IMusic.IMusicSheetItemBase[] {
  * @param sheets 歌单数据
  */
 async function setStarredSheets(sheets: IMusic.IMusicSheetItemBase[]) {
-    return await setStorageData('starred-sheets', sheets);
+    return await setStorageData("starred-sheets", sheets);
 }
 
 /**
  * 获取歌单的基本信息
  */
 function getStarredSheets(): IMusic.IMusicSheetItem[] {
-    return getStorageData('starred-sheets');
+    return getStorageData("starred-sheets");
 }
 
 /**
@@ -87,7 +87,7 @@ function setSheetMeta<K extends keyof IMusicSheetMeta>(
     value: IMusicSheetMeta[K],
 ) {
     const mmkv = getOrCreateMMKV(`LocalSheet.${sheetId}`);
-    mmkv.set('meta.' + key, value);
+    mmkv.set("meta." + key, value);
 }
 
 function getSheetMeta<K extends keyof IMusicSheetMeta>(
@@ -95,7 +95,7 @@ function getSheetMeta<K extends keyof IMusicSheetMeta>(
     key: K,
 ): IMusicSheetMeta[K] | null {
     const mmkv = getOrCreateMMKV(`LocalSheet.${sheetId}`);
-    return mmkv.getString('meta.' + key) || null;
+    return mmkv.getString("meta." + key) || null;
 }
 
 const storage = {

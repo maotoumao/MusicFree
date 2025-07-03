@@ -1,22 +1,22 @@
-import Divider from '@/components/base/divider';
-import { IIconName } from '@/components/base/icon.tsx';
-import ListItem from '@/components/base/listItem';
-import PageBackground from '@/components/base/pageBackground';
-import ThemeText from '@/components/base/themeText';
-import { showDialog } from '@/components/dialogs/useDialog';
-import { showPanel } from '@/components/panels/usePanel';
-import { useI18N } from '@/core/i18n';
-import { ROUTE_PATH, useNavigate } from '@/core/router';
-import TrackPlayer from '@/core/trackPlayer';
-import { checkUpdateAndShowResult } from '@/hooks/useCheckUpdate.ts';
-import NativeUtils from '@/native/utils';
-import rpx from '@/utils/rpx';
-import { useScheduleCloseCountDown } from '@/utils/scheduleClose';
-import timeformat from '@/utils/timeformat';
-import { DrawerContentScrollView } from '@react-navigation/drawer';
-import React, { memo } from 'react';
-import { BackHandler, Platform, StyleSheet, View } from 'react-native';
-import { default as DeviceInfo, default as deviceInfoModule } from 'react-native-device-info';
+import Divider from "@/components/base/divider";
+import { IIconName } from "@/components/base/icon.tsx";
+import ListItem from "@/components/base/listItem";
+import PageBackground from "@/components/base/pageBackground";
+import ThemeText from "@/components/base/themeText";
+import { showDialog } from "@/components/dialogs/useDialog";
+import { showPanel } from "@/components/panels/usePanel";
+import { useI18N } from "@/core/i18n";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import TrackPlayer from "@/core/trackPlayer";
+import { checkUpdateAndShowResult } from "@/hooks/useCheckUpdate.ts";
+import NativeUtils from "@/native/utils";
+import rpx from "@/utils/rpx";
+import { useScheduleCloseCountDown } from "@/utils/scheduleClose";
+import timeformat from "@/utils/timeformat";
+import { DrawerContentScrollView } from "@react-navigation/drawer";
+import React, { memo } from "react";
+import { BackHandler, Platform, StyleSheet, View } from "react-native";
+import { default as DeviceInfo, default as deviceInfoModule } from "react-native-device-info";
 
 const ITEM_HEIGHT = rpx(108);
 
@@ -38,41 +38,41 @@ function HomeDrawer(props: any) {
 
     const basicSetting: ISettingOptions[] = [
         {
-            icon: 'cog-8-tooth',
-            title: t('sidebar.basicSettings'),
+            icon: "cog-8-tooth",
+            title: t("sidebar.basicSettings"),
             onPress: () => {
-                navigateToSetting('basic');
+                navigateToSetting("basic");
             },
         }, {
-            icon: 'javascript',
-            title: t('sidebar.pluginManagement'),
+            icon: "javascript",
+            title: t("sidebar.pluginManagement"),
             onPress: () => {
-                navigateToSetting('plugin');
+                navigateToSetting("plugin");
             },
         },
         {
-            icon: 't-shirt-outline',
-            title: t('sidebar.themeSettings'),
+            icon: "t-shirt-outline",
+            title: t("sidebar.themeSettings"),
             onPress: () => {
-                navigateToSetting('theme');
+                navigateToSetting("theme");
             },
         },
     ];
 
     const otherSetting: ISettingOptions[] = [
         {
-            icon: 'circle-stack',
-            title: t('sidebar.backupAndResume'),
+            icon: "circle-stack",
+            title: t("sidebar.backupAndResume"),
             onPress: () => {
-                navigateToSetting('backup');
+                navigateToSetting("backup");
             },
         },
     ];
 
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
         otherSetting.push({
-            icon: 'shield-keyhole-outline',
-            title: t('sidebar.permissionManagement'),
+            icon: "shield-keyhole-outline",
+            title: t("sidebar.permissionManagement"),
             onPress: () => {
                 navigate(ROUTE_PATH.PERMISSIONS);
             },
@@ -95,7 +95,7 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            {t('common.setting')}
+                            {t("common.setting")}
                         </ListItem.ListItemText>
                     </ListItem>
                     {basicSetting.map((item, index) => (
@@ -116,7 +116,7 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            {t('common.other')}
+                            {t("common.other")}
                         </ListItem.ListItemText>
                     </ListItem>
                     <CountDownItem />
@@ -134,20 +134,20 @@ function HomeDrawer(props: any) {
                     ))}
                     <ListItem withHorizontalPadding key='language' onPress={() => {
                         showDialog("RadioDialog", {
-                            'content': getSupportedLanguages().map(item => ({
+                            "content": getSupportedLanguages().map(item => ({
                                 title: item.name,
                                 value: item.locale,
                                 label: item.name,
                             })),
-                            title: t('sidebar.languageSettings'),
+                            title: t("sidebar.languageSettings"),
                             onOk(value) {
                                 setLanguage(value as string);
                             },
                             defaultSelected: getLanguage().locale,
-                        })
+                        });
                     }}>
                         <ListItem.ListItemIcon icon='language' width={rpx(48)} />
-                        <ListItem.Content title={t('sidebar.languageSettings')} />
+                        <ListItem.Content title={t("sidebar.languageSettings")} />
                         <ListItem.ListItemText fontSize='subTitle' position='right'>{getLanguage().name}</ListItem.ListItemText>
                     </ListItem>
                 </View>
@@ -157,39 +157,39 @@ function HomeDrawer(props: any) {
                         <ListItem.ListItemText
                             fontSize="subTitle"
                             fontWeight="bold">
-                            {t('common.software')}
+                            {t("common.software")}
                         </ListItem.ListItemText>
                     </ListItem>
 
                     <ListItem
                         withHorizontalPadding
-                        key={'update'}
+                        key={"update"}
                         onPress={() => {
                             checkUpdateAndShowResult(true);
                         }}>
                         <ListItem.ListItemIcon
-                            icon={'arrow-path'}
+                            icon={"arrow-path"}
                             width={rpx(48)}
                         />
-                        <ListItem.Content title={t('sidebar.checkUpdate')} />
+                        <ListItem.Content title={t("sidebar.checkUpdate")} />
                         <ListItem.ListItemText
                             position="right"
                             fontSize="subTitle">
-                            {`${t('sidebar.currentVersion')}${deviceInfoModule.getVersion()}`}
+                            {`${t("sidebar.currentVersion")}${deviceInfoModule.getVersion()}`}
                         </ListItem.ListItemText>
                     </ListItem>
                     <ListItem
                         withHorizontalPadding
-                        key={'about'}
+                        key={"about"}
                         onPress={() => {
-                            navigateToSetting('about');
+                            navigateToSetting("about");
                         }}>
                         <ListItem.ListItemIcon
-                            icon={'information-circle'}
+                            icon={"information-circle"}
                             width={rpx(48)}
                         />
                         <ListItem.Content
-                            title={`${t('common.about')} ${deviceInfoModule.getApplicationName()}`}
+                            title={`${t("common.about")} ${deviceInfoModule.getApplicationName()}`}
                         />
                     </ListItem>
                 </View>
@@ -202,10 +202,10 @@ function HomeDrawer(props: any) {
                         BackHandler.exitApp();
                     }}>
                     <ListItem.ListItemIcon
-                        icon={'home-outline'}
+                        icon={"home-outline"}
                         width={rpx(48)}
                     />
-                    <ListItem.Content title={t('sidebar.backToDesktop')} />
+                    <ListItem.Content title={t("sidebar.backToDesktop")} />
                 </ListItem>
                 <ListItem
                     withHorizontalPadding
@@ -214,10 +214,10 @@ function HomeDrawer(props: any) {
                         NativeUtils.exitApp();
                     }}>
                     <ListItem.ListItemIcon
-                        icon={'power-outline'}
+                        icon={"power-outline"}
                         width={rpx(48)}
                     />
-                    <ListItem.Content title={t('sidebar.exitApp')} />
+                    <ListItem.Content title={t("sidebar.exitApp")} />
                 </ListItem>
             </DrawerContentScrollView>
         </>
@@ -229,7 +229,7 @@ export default memo(HomeDrawer, () => true);
 const style = StyleSheet.create({
     wrapper: {
         flex: 1,
-        backgroundColor: '#999999',
+        backgroundColor: "#999999",
     },
     scrollWrapper: {
         paddingTop: rpx(12),
@@ -237,10 +237,10 @@ const style = StyleSheet.create({
 
     header: {
         height: rpx(120),
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
         marginLeft: rpx(24),
     },
     card: {
@@ -253,7 +253,7 @@ const style = StyleSheet.create({
     /** 倒计时 */
     countDownText: {
         height: ITEM_HEIGHT,
-        textAlignVertical: 'center',
+        textAlignVertical: "center",
     },
 });
 
@@ -265,12 +265,12 @@ function _CountDownItem() {
         <ListItem
             withHorizontalPadding
             onPress={() => {
-                showPanel('TimingClose');
+                showPanel("TimingClose");
             }}>
             <ListItem.ListItemIcon icon="alarm-outline" width={rpx(48)} />
-            <ListItem.Content title={t('sidebar.scheduleClose')} />
+            <ListItem.Content title={t("sidebar.scheduleClose")} />
             <ListItem.ListItemText position="right" fontSize="subTitle">
-                {countDown ? timeformat(countDown) : ''}
+                {countDown ? timeformat(countDown) : ""}
             </ListItem.ListItemText>
         </ListItem>
     );

@@ -1,14 +1,14 @@
-import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import PanelBase from '../base/panelBase';
-import LinearGradient from 'react-native-linear-gradient';
-import Color from 'color';
-import { Gesture, GestureDetector, TextInput } from 'react-native-gesture-handler';
-import { hidePanel } from '../usePanel';
-import { ImgAsset } from '@/constants/assetsConst';
-import PanelHeader from '../base/panelHeader';
-import { useI18N } from '@/core/i18n';
+import React, { useMemo, useRef, useState, useCallback, useEffect } from "react";
+import { Image, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import PanelBase from "../base/panelBase";
+import LinearGradient from "react-native-linear-gradient";
+import Color from "color";
+import { Gesture, GestureDetector, TextInput } from "react-native-gesture-handler";
+import { hidePanel } from "../usePanel";
+import { ImgAsset } from "@/constants/assetsConst";
+import PanelHeader from "../base/panelHeader";
+import { useI18N } from "@/core/i18n";
 
 interface IColorPickerProps {
     defaultColor?: string;
@@ -21,7 +21,7 @@ const areaSize = rpx(420);
 export default function ColorPicker(props: IColorPickerProps) {
     const {
         onSelected,
-        defaultColor = '#66ccff',
+        defaultColor = "#66ccff",
         closePanelWhenSelected = true,
     } = props;
 
@@ -216,7 +216,7 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 hidePanel();
                             }
                         }}
-                        title={t('panel.colorPicker.title')}
+                        title={t("panel.colorPicker.title")}
                     />
 
                     <View style={styles.container}>
@@ -231,13 +231,13 @@ export default function ColorPicker(props: IColorPickerProps) {
                                 <LinearGradient
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 0 }}
-                                    colors={['#808080', 'rgba(0,0,0,0)']}
+                                    colors={["#808080", "rgba(0,0,0,0)"]}
                                     style={[styles.slContainer, styles.layer1]}
                                 />
                                 <LinearGradient
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 0, y: 1 }}
-                                    colors={['#fff', 'rgba(0,0,0,0)', '#000']}
+                                    colors={["#fff", "rgba(0,0,0,0)", "#000"]}
                                     style={[styles.slContainer, styles.layer2]}
                                 />
                                 <View
@@ -259,13 +259,13 @@ export default function ColorPicker(props: IColorPickerProps) {
                                     y: 1,
                                 }}
                                 colors={[
-                                    '#f00',
-                                    '#ff0',
-                                    '#0f0',
-                                    '#0ff',
-                                    '#00f',
-                                    '#f0f',
-                                    '#f00',
+                                    "#f00",
+                                    "#ff0",
+                                    "#0f0",
+                                    "#0ff",
+                                    "#00f",
+                                    "#f0f",
+                                    "#f00",
                                 ]}
                                 style={styles.hueContainer}>
                                 <View
@@ -345,31 +345,31 @@ export default function ColorPicker(props: IColorPickerProps) {
 
 const styles = StyleSheet.create({
     opeartions: {
-        width: '100%',
+        width: "100%",
         paddingHorizontal: rpx(36),
-        flexDirection: 'row',
+        flexDirection: "row",
         height: rpx(100),
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     container: {
-        width: '100%',
+        width: "100%",
         paddingHorizontal: rpx(48),
         paddingTop: rpx(36),
-        flexDirection: 'row',
+        flexDirection: "row",
     },
     slContainer: {
         width: areaSize,
         height: areaSize,
     },
     layer1: {
-        position: 'absolute',
+        position: "absolute",
         zIndex: 1,
         left: 0,
         top: 0,
     },
     layer2: {
-        position: 'absolute',
+        position: "absolute",
         zIndex: 2,
         left: 0,
         top: 0,
@@ -383,54 +383,54 @@ const styles = StyleSheet.create({
         marginLeft: rpx(48),
     },
     slThumb: {
-        position: 'absolute',
+        position: "absolute",
         width: rpx(24),
         height: rpx(24),
         borderRadius: rpx(12),
         borderWidth: rpx(3),
-        borderStyle: 'solid',
-        borderColor: '#ccc',
+        borderStyle: "solid",
+        borderColor: "#ccc",
         zIndex: 3,
     },
     hueThumb: {
-        position: 'absolute',
+        position: "absolute",
         width: rpx(56),
         height: rpx(8),
         left: -rpx(4),
         top: 0,
         borderWidth: rpx(3),
-        borderStyle: 'solid',
-        borderColor: '#ccc',
+        borderStyle: "solid",
+        borderColor: "#ccc",
     },
     showBar: {
         width: rpx(76),
         height: rpx(50),
         borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: '#ccc',
+        borderStyle: "solid",
+        borderColor: "#ccc",
     },
     showBarContent: {
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
+        width: "100%",
+        height: "100%",
+        position: "absolute",
         left: 0,
         top: 0,
     },
     showArea: {
-        width: '100%',
+        width: "100%",
         marginTop: rpx(36),
         paddingHorizontal: rpx(48),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     colorStr: {
         marginLeft: rpx(24),
     },
     transparentBg: {
-        position: 'absolute',
+        position: "absolute",
         zIndex: -1,
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         left: 0,
         top: 0,
     },
@@ -439,12 +439,12 @@ const styles = StyleSheet.create({
         minWidth: rpx(150),
         height: rpx(40),
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: "#ccc",
         borderRadius: rpx(4),
         paddingHorizontal: rpx(12),
         paddingVertical: 0,
         fontSize: rpx(28),
-        color: '#333',
-        backgroundColor: '#fff',
+        color: "#333",
+        backgroundColor: "#fff",
     },
 });

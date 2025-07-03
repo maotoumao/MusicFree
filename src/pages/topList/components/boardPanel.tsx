@@ -1,12 +1,12 @@
-import React, { memo } from 'react';
-import { SectionList, SectionListProps, StyleSheet, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import { IPluginTopListResult } from '../store/atoms';
-import { RequestStateCode } from '@/constants/commonConst';
-import Loading from '@/components/base/loading';
-import TopListItem from '@/components/mediaItem/topListItem';
-import ThemeText from '@/components/base/themeText';
-import ListEmpty from '@/components/base/listEmpty';
+import React, { memo } from "react";
+import { SectionList, SectionListProps, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import { IPluginTopListResult } from "../store/atoms";
+import { RequestStateCode } from "@/constants/commonConst";
+import Loading from "@/components/base/loading";
+import TopListItem from "@/components/mediaItem/topListItem";
+import ThemeText from "@/components/base/themeText";
+import ListEmpty from "@/components/base/listEmpty";
 
 interface IBoardPanelProps {
     hash: string;
@@ -15,12 +15,12 @@ interface IBoardPanelProps {
 function BoardPanel(props: IBoardPanelProps) {
     const { hash, topListData } = props ?? {};
 
-    const renderItem: SectionListProps<IMusic.IMusicSheetItemBase>['renderItem'] =
+    const renderItem: SectionListProps<IMusic.IMusicSheetItemBase>["renderItem"] =
         ({ item }) => {
             return <TopListItem topListItem={item} pluginHash={hash} />;
         };
 
-    const renderSectionHeader: SectionListProps<IMusic.IMusicSheetItemBase>['renderSectionHeader'] =
+    const renderSectionHeader: SectionListProps<IMusic.IMusicSheetItemBase>["renderSectionHeader"] =
         ({ section: { title } }) => {
             return (
                 <View style={style.sectionHeader}>

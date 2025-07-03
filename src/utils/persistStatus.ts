@@ -8,36 +8,36 @@ import { safeParse } from "./jsonUtil";
 
 // Internal Method
 const getStore = () => {
-    return getOrCreateMMKV('App.PersistStatus');
+    return getOrCreateMMKV("App.PersistStatus");
 };
 
 interface IPersistStatus {
     /** 当前的音乐 */
-    'music.musicItem': IMusic.IMusicItem;
+    "music.musicItem": IMusic.IMusicItem;
     /** 进度 */
-    'music.progress': number;
+    "music.progress": number;
     /** 模式 */
-    'music.repeatMode': string;
+    "music.repeatMode": string;
     /** 列表 */
-    'music.playList': IMusic.IMusicItem[];
+    "music.playList": IMusic.IMusicItem[];
     /** 速度 */
-    'music.rate': number;
+    "music.rate": number;
     /** 音质 */
-    'music.quality': IMusic.IQualityKey;
+    "music.quality": IMusic.IQualityKey;
     /** app */
-    'app.skipVersion': string;
+    "app.skipVersion": string;
     /** 开屏弹窗 */
-    'app.skipBootstrapStorageDialog': boolean;
+    "app.skipBootstrapStorageDialog": boolean;
     /** 语言设置 */
-    'app.language': string;
+    "app.language": string;
     /** 上次更新插件的时间 */
-    'app.pluginUpdateTime': number;
+    "app.pluginUpdateTime": number;
     /** 缓存的定时关闭自定义时间（分钟） */
-    'app.scheduleCloseTime': number;
+    "app.scheduleCloseTime": number;
     /** 歌词-是否启用翻译 */
-    'lyric.showTranslation': boolean;
+    "lyric.showTranslation": boolean;
     /** 歌词-详情页字体大小 */
-    'lyric.detailFontSize': number;
+    "lyric.detailFontSize": number;
 }
 
 function set<K extends keyof IPersistStatus>(

@@ -1,18 +1,18 @@
-import AppBar from '@/components/base/appBar';
-import ListItem from '@/components/base/listItem';
-import StatusBar from '@/components/base/statusBar';
-import ThemeSwitch from '@/components/base/switch';
-import ThemeText from '@/components/base/themeText';
-import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
-import globalStyle from '@/constants/globalStyle';
-import { useI18N } from '@/core/i18n';
-import LyricUtil from '@/native/lyricUtil';
-import NativeUtils from '@/native/utils';
-import rpx from '@/utils/rpx';
-import React, { useEffect, useRef, useState } from 'react';
-import { AppState, StyleSheet } from 'react-native';
+import AppBar from "@/components/base/appBar";
+import ListItem from "@/components/base/listItem";
+import StatusBar from "@/components/base/statusBar";
+import ThemeSwitch from "@/components/base/switch";
+import ThemeText from "@/components/base/themeText";
+import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView";
+import globalStyle from "@/constants/globalStyle";
+import { useI18N } from "@/core/i18n";
+import LyricUtil from "@/native/lyricUtil";
+import NativeUtils from "@/native/utils";
+import rpx from "@/utils/rpx";
+import React, { useEffect, useRef, useState } from "react";
+import { AppState, StyleSheet } from "react-native";
 
-type IPermissionTypes = 'floatingWindow' | 'fileStorage';
+type IPermissionTypes = "floatingWindow" | "fileStorage";
 
 export default function Permissions() {
     const appState = useRef(AppState.currentState);
@@ -29,13 +29,13 @@ export default function Permissions() {
         let newPermission = {
             ...permissions,
         };
-        if (!type || type === 'floatingWindow') {
+        if (!type || type === "floatingWindow") {
             const hasPermission = await LyricUtil.checkSystemAlertPermission();
             newPermission.floatingWindow = hasPermission;
         }
-        if (!type || type === 'fileStorage') {
+        if (!type || type === "fileStorage") {
             const hasPermission = await NativeUtils.checkStoragePermission();
-            console.log('HAS', hasPermission);
+            console.log("HAS", hasPermission);
             newPermission.fileStorage = hasPermission;
         }
         // if (!type || type === 'background') {
@@ -48,11 +48,11 @@ export default function Permissions() {
     useEffect(() => {
         checkPermission();
         const subscription = AppState.addEventListener(
-            'change',
+            "change",
             nextAppState => {
                 if (
                     appState.current.match(/inactive|background/) &&
-                    nextAppState === 'active'
+                    nextAppState === "active"
                 ) {
                     checkPermission();
                 }
@@ -109,7 +109,7 @@ export default function Permissions() {
 
 const styles = StyleSheet.create({
     description: {
-        width: '100%',
+        width: "100%",
         paddingHorizontal: rpx(24),
         marginVertical: rpx(36),
     },

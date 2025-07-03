@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
-import rpx from '@/utils/rpx';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
-import { fontWeightConst } from '@/constants/uiConst';
-import ResultList from './resultList';
-import { useAtomValue } from 'jotai';
-import { queryResultAtom } from '../store/atoms';
-import content from './content';
-import useColors from '@/hooks/useColors';
-import { useI18N } from '@/core/i18n';
+import React, { useState } from "react";
+import { StyleSheet, Text } from "react-native";
+import rpx from "@/utils/rpx";
+import { SceneMap, TabBar, TabView } from "react-native-tab-view";
+import { fontWeightConst } from "@/constants/uiConst";
+import ResultList from "./resultList";
+import { useAtomValue } from "jotai";
+import { queryResultAtom } from "../store/atoms";
+import content from "./content";
+import useColors from "@/hooks/useColors";
+import { useI18N } from "@/core/i18n";
 
 const sceneMap: Record<string, React.FC> = {
     album: BodyContentWrapper,
@@ -17,14 +17,14 @@ const sceneMap: Record<string, React.FC> = {
 
 const routes = [
     {
-        key: 'music',
+        key: "music",
         i18nKey: "common.singleMusic",
-        title: '单曲',
+        title: "单曲",
     },
     {
-        key: 'album',
+        key: "album",
         i18nKey: "common.album",
-        title: '专辑',
+        title: "专辑",
     },
 ];
 
@@ -46,7 +46,7 @@ export default function Body() {
                     {...props}
                     style={style.transparentColor}
                     tabStyle={{
-                        width: 'auto',
+                        width: "auto",
                     }}
                     renderIndicator={() => null}
                     pressColor="transparent"
@@ -61,7 +61,7 @@ export default function Body() {
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
-                                textAlign: 'center',
+                                textAlign: "center",
                             }}>
                             {t(route.i18nKey as any) ?? route.title}
                         </Text>
@@ -94,8 +94,8 @@ const style = StyleSheet.create({
         zIndex: 100,
     },
     transparentColor: {
-        backgroundColor: 'transparent',
-        shadowColor: 'transparent',
-        borderColor: 'transparent',
+        backgroundColor: "transparent",
+        shadowColor: "transparent",
+        borderColor: "transparent",
     },
 });

@@ -1,5 +1,5 @@
-import React from 'react';
-import AlbumItem from '@/components/mediaItem/albumItem';
+import React from "react";
+import AlbumItem from "@/components/mediaItem/albumItem";
 
 interface IAlbumContentProps {
     item: IAlbum.IAlbumItem;

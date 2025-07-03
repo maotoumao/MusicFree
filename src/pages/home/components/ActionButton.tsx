@@ -1,10 +1,10 @@
-import ThemeText from '@/components/base/themeText';
-import useColors from '@/hooks/useColors';
-import rpx from '@/utils/rpx';
-import React from 'react';
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import Icon, { IIconName } from '@/components/base/icon.tsx';
+import ThemeText from "@/components/base/themeText";
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
+import React from "react";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Icon, { IIconName } from "@/components/base/icon.tsx";
 
 interface IActionButtonProps {
     iconName: IIconName;
@@ -54,9 +54,9 @@ const styles = StyleSheet.create({
         borderRadius: rpx(12),
         flexGrow: 1,
         flexShrink: 0,
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
     },
     text: {
         marginTop: rpx(12),

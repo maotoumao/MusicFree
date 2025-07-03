@@ -17,7 +17,7 @@ export default function CheckStorage() {
 
     const onCancel = () => {
         if (skipState) {
-            PersistStatus.set('app.skipBootstrapStorageDialog', true);
+            PersistStatus.set("app.skipBootstrapStorageDialog", true);
         }
         hideDialog();
     };
@@ -55,12 +55,12 @@ export default function CheckStorage() {
                 actions={[
                     {
                         title: t("common.cancel"),
-                        type: 'normal',
+                        type: "normal",
                         onPress: onCancel,
                     },
                     {
                         title: t("dialog.checkStorage.button.doNotShowAgain"),
-                        type: 'primary',
+                        type: "primary",
                         onPress: () => {
                             NativeUtils.requestStoragePermission();
                             hideDialog();
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
         marginVertical: rpx(36),
     },
     checkboxGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     checkboxHint: {
         marginLeft: rpx(12),

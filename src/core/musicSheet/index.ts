@@ -19,10 +19,10 @@ const produce = new Immer({
 }).produce;
 
 const _defaultSheet: IMusic.IMusicSheetItemBase = {
-    id: 'favorite',
+    id: "favorite",
     platform: localPluginPlatform,
     coverImg: undefined,
-    title: '我喜欢',
+    title: "我喜欢",
     worksNum: 0,
 };
 
@@ -37,7 +37,7 @@ const musicListMap = new Map<string, SortedMusicList>();
 const ee = new EventEmitter<{
     UpdateMusicList: (updateInfo: {
         sheetId: string;
-        updateType: 'length' | 'resort'; // 更新类型
+        updateType: "length" | "resort"; // 更新类型
     }) => void;
     UpdateSheetBasic: (data: {
         sheetId: string;
@@ -61,7 +61,7 @@ class MusicSheetClazz implements IInjectable {
             const allSheets: IMusic.IMusicSheetItemBase[] = storage.getSheets();
 
             if (!Array.isArray(allSheets)) {
-                throw new Error('not exist');
+                throw new Error("not exist");
             }
 
             let needRestore = false;
@@ -93,7 +93,7 @@ class MusicSheetClazz implements IInjectable {
 
             for (let sheet of allSheets) {
                 const musicList = storage.getMusicList(sheet.id);
-                const sortType = storage.getSheetMeta(sheet.id, 'sort') as SortType;
+                const sortType = storage.getSheetMeta(sheet.id, "sort") as SortType;
                 sheet.worksNum = musicList.length;
                 migrateV2.migrate(sheet.id, musicList);
                 musicListMap.set(
@@ -101,9 +101,9 @@ class MusicSheetClazz implements IInjectable {
                     new SortedMusicList(musicList, sortType, true),
                 );
                 sheet.worksNum = musicList.length;
-                ee.emit('UpdateMusicList', {
+                ee.emit("UpdateMusicList", {
                     sheetId: sheet.id,
-                    updateType: 'length',
+                    updateType: "length",
                 });
             }
             migrateV2.done();
@@ -116,7 +116,7 @@ class MusicSheetClazz implements IInjectable {
             getDefaultStore().set(starredMusicSheetsAtom, starredSheets);
 
         } catch (e: any) {
-            if (e.message === 'not exist') {
+            if (e.message === "not exist") {
                 await storage.setSheets([_defaultSheet]);
                 await storage.setMusicList(_defaultSheet.id, []);
                 getDefaultStore().set(musicSheetsBaseAtom, [_defaultSheet]);
@@ -169,7 +169,7 @@ class MusicSheetClazz implements IInjectable {
         });
         await storage.setSheets(newMusicSheets);
         getDefaultStore().set(musicSheetsBaseAtom, newMusicSheets);
-        ee.emit('UpdateSheetBasic', {
+        ee.emit("UpdateSheetBasic", {
             sheetId,
         });
     }
@@ -201,7 +201,7 @@ class MusicSheetClazz implements IInjectable {
 
         // 更新状态
         getDefaultStore().set(musicSheetsBaseAtom, newSheets);
-        let defaultSortType = this.appConfig.getConfig('basic.musicOrderInLocalSheet');
+        let defaultSortType = this.appConfig.getConfig("basic.musicOrderInLocalSheet");
         if (
             defaultSortType &&
             [
@@ -212,7 +212,7 @@ class MusicSheetClazz implements IInjectable {
                 SortType.Title,
             ].includes(defaultSortType)
         ) {
-            storage.setSheetMeta(newId, 'sort', defaultSortType);
+            storage.setSheetMeta(newId, "sort", defaultSortType);
         } else {
             defaultSortType = SortType.None;
         }
@@ -237,7 +237,7 @@ class MusicSheetClazz implements IInjectable {
         if (resumeMode === ResumeMode.Append) {
             // 逆序恢复，最新创建的在最上方
             for (let i = sheets.length - 1; i >= 0; --i) {
-                const newSheetId = await this.addSheet(sheets[i].title || '');
+                const newSheetId = await this.addSheet(sheets[i].title || "");
                 await this.addMusic(newSheetId, sheets[i].musicList || []);
             }
             return;
@@ -258,7 +258,7 @@ class MusicSheetClazz implements IInjectable {
         if (resumeMode === ResumeMode.OverwriteDefault) {
             // 逆序恢复，最新创建的在最上方
             for (let i = sheets.length - 1; i >= 0; --i) {
-                const newSheetId = await this.addSheet(sheets[i].title || '');
+                const newSheetId = await this.addSheet(sheets[i].title || "");
                 await this.addMusic(newSheetId, sheets[i].musicList || []);
             }
         } else {
@@ -269,9 +269,9 @@ class MusicSheetClazz implements IInjectable {
                 existsSheetIdMap[it.title!] = it.id;
             });
             for (let i = sheets.length - 1; i >= 0; --i) {
-                let newSheetId = existsSheetIdMap[sheets[i].title || ''];
+                let newSheetId = existsSheetIdMap[sheets[i].title || ""];
                 if (!newSheetId) {
-                    newSheetId = await this.addSheet(sheets[i].title || '');
+                    newSheetId = await this.addSheet(sheets[i].title || "");
                 }
                 await this.addMusic(newSheetId, sheets[i].musicList || []);
             }
@@ -333,7 +333,7 @@ class MusicSheetClazz implements IInjectable {
         if (
             !musicSheets
                 .find(_ => _.id === sheetId)
-                ?.coverImg?.startsWith('file://')
+                ?.coverImg?.startsWith("file://")
         ) {
             await this.updateMusicSheetBase(sheetId, {
                 coverImg: musicList.at(0)?.artwork,
@@ -352,9 +352,9 @@ class MusicSheetClazz implements IInjectable {
         );
 
         await storage.setMusicList(sheetId, musicList.musicList);
-        ee.emit('UpdateMusicList', {
+        ee.emit("UpdateMusicList", {
             sheetId,
-            updateType: 'length',
+            updateType: "length",
         });
     }
 
@@ -373,7 +373,7 @@ class MusicSheetClazz implements IInjectable {
         if (
             !musicSheets
                 .find(_ => _.id === sheetId)
-                ?.coverImg?.startsWith('file://')
+                ?.coverImg?.startsWith("file://")
         ) {
             await this.updateMusicSheetBase(sheetId, {
                 coverImg: musicList.at(0)?.artwork,
@@ -390,9 +390,9 @@ class MusicSheetClazz implements IInjectable {
             }),
         );
         await storage.setMusicList(sheetId, musicList.musicList);
-        ee.emit('UpdateMusicList', {
+        ee.emit("UpdateMusicList", {
             sheetId,
-            updateType: 'length',
+            updateType: "length",
         });
     }
 
@@ -415,7 +415,7 @@ class MusicSheetClazz implements IInjectable {
         if (
             !musicSheets
                 .find(_ => _.id === sheetId)
-                ?.coverImg?.startsWith('file://')
+                ?.coverImg?.startsWith("file://")
         ) {
             patchData.coverImg = musicList.at(0)?.artwork;
         }
@@ -425,9 +425,9 @@ class MusicSheetClazz implements IInjectable {
         });
 
         await storage.setMusicList(sheetId, musicList.musicList);
-        ee.emit('UpdateMusicList', {
+        ee.emit("UpdateMusicList", {
             sheetId,
-            updateType: 'length',
+            updateType: "length",
         });
     }
 
@@ -438,10 +438,10 @@ class MusicSheetClazz implements IInjectable {
 
         // update
         await storage.setMusicList(sheetId, musicList.musicList);
-        storage.setSheetMeta(sheetId, 'sort', sortType);
-        ee.emit('UpdateMusicList', {
+        storage.setSheetMeta(sheetId, "sort", sortType);
+        ee.emit("UpdateMusicList", {
             sheetId,
-            updateType: 'resort',
+            updateType: "resort",
         });
     }
 
@@ -454,11 +454,11 @@ class MusicSheetClazz implements IInjectable {
 
         // update
         await storage.setMusicList(sheetId, musicList.musicList);
-        storage.setSheetMeta(sheetId, 'sort', SortType.None);
+        storage.setSheetMeta(sheetId, "sort", SortType.None);
 
-        ee.emit('UpdateMusicList', {
+        ee.emit("UpdateMusicList", {
             sheetId,
-            updateType: 'resort',
+            updateType: "resort",
         });
     }
 
@@ -539,12 +539,12 @@ function useSheetItem(sheetId: string) {
                     .find(it => it.id === sheetId) || {}),
             }));
         };
-        ee.on('UpdateMusicList', onUpdateMusicList);
-        ee.on('UpdateSheetBasic', onUpdateSheetBasic);
+        ee.on("UpdateMusicList", onUpdateMusicList);
+        ee.on("UpdateSheetBasic", onUpdateSheetBasic);
 
         return () => {
-            ee.off('UpdateMusicList', onUpdateMusicList);
-            ee.off('UpdateSheetBasic', onUpdateSheetBasic);
+            ee.off("UpdateMusicList", onUpdateMusicList);
+            ee.off("UpdateSheetBasic", onUpdateSheetBasic);
         };
     }, []);
 
@@ -556,16 +556,16 @@ function useFavorite(musicItem: IMusic.IMusicItem | null) {
 
     useEffect(() => {
         const onUpdateMusicList = ({ sheetId: updatedSheetId, updateType }) => {
-            if (updatedSheetId !== _defaultSheet.id || updateType === 'resort') {
+            if (updatedSheetId !== _defaultSheet.id || updateType === "resort") {
                 return;
             }
             setFav(musicListMap.get(_defaultSheet.id)?.has(musicItem) || false);
         };
-        ee.on('UpdateMusicList', onUpdateMusicList);
+        ee.on("UpdateMusicList", onUpdateMusicList);
 
         setFav(musicListMap.get(_defaultSheet.id)?.has(musicItem) || false);
         return () => {
-            ee.off('UpdateMusicList', onUpdateMusicList);
+            ee.off("UpdateMusicList", onUpdateMusicList);
         };
     }, [musicItem]);
 

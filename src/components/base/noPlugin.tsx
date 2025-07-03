@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import { useI18N } from '@/core/i18n';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
+import { useI18N } from "@/core/i18n";
 
 interface IProps {
     notSupportType?: string;
@@ -32,8 +32,8 @@ const style = StyleSheet.create({
     wrapper: {
         width: rpx(750),
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     mt: {
         marginTop: rpx(24),

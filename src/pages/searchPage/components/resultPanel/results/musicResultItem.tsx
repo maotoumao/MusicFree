@@ -7,7 +7,7 @@ import TrackPlayer from "@/core/trackPlayer";
 interface IMusicResultsProps {
     item: IMusic.IMusicItem;
     index: number;
-    pluginSearchResultRef: React.MutableRefObject<ISearchResult<'music'>>;
+    pluginSearchResultRef: React.MutableRefObject<ISearchResult<"music">>;
 }
 
 export default function MusicResultItem(props: IMusicResultsProps) {
@@ -18,9 +18,9 @@ export default function MusicResultItem(props: IMusicResultsProps) {
             musicItem={musicItem}
             onItemPress={() => {
                 const clickBehavior = Config.getConfig(
-                    'basic.clickMusicInSearch',
+                    "basic.clickMusicInSearch",
                 );
-                if (clickBehavior === 'playMusicAndReplace') {
+                if (clickBehavior === "playMusicAndReplace") {
                     TrackPlayer.playWithReplacePlayList(
                         musicItem,
                         (pluginSearchResultRef?.current?.data ?? [

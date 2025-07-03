@@ -13,16 +13,16 @@ export const checkUpdateAndShowResult = (
     checkUpdate().then(updateInfo => {
         if (updateInfo?.needUpdate) {
             const { data } = updateInfo;
-            const skipVersion = PersistStatus.get('app.skipVersion');
+            const skipVersion = PersistStatus.get("app.skipVersion");
             console.log(skipVersion, data);
             if (
                 checkSkip &&
                 skipVersion &&
-                compare(skipVersion, data.version, '>=')
+                compare(skipVersion, data.version, ">=")
             ) {
                 return;
             }
-            showDialog('DownloadDialog', {
+            showDialog("DownloadDialog", {
                 version: data.version,
                 content: data.changeLog,
                 fromUrl: data.download[0],

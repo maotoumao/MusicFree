@@ -4,11 +4,11 @@
  * 点击会出现
  */
 
-import globalStyle from '@/constants/globalStyle';
-import { iconSizeConst } from '@/constants/uiConst';
-import useTextColor from '@/hooks/useTextColor';
-import rpx from '@/utils/rpx';
-import { FlashList } from '@shopify/flash-list';
+import globalStyle from "@/constants/globalStyle";
+import { iconSizeConst } from "@/constants/uiConst";
+import useTextColor from "@/hooks/useTextColor";
+import rpx from "@/utils/rpx";
+import { FlashList } from "@shopify/flash-list";
 import React, {
     ForwardedRef,
     forwardRef,
@@ -17,14 +17,14 @@ import React, {
     useMemo,
     useRef,
     useState,
-} from 'react';
-import { LayoutRectangle, Pressable, StyleSheet, View } from 'react-native';
+} from "react";
+import { LayoutRectangle, Pressable, StyleSheet, View } from "react-native";
 import {
     runOnJS,
     useDerivedValue,
     useSharedValue,
-} from 'react-native-reanimated';
-import Icon from '@/components/base/icon.tsx';
+} from "react-native-reanimated";
+import Icon from "@/components/base/icon.tsx";
 
 const defaultZIndex = 10;
 
@@ -34,12 +34,12 @@ interface ISortableFlatListProps<T> {
     // 高度
     itemHeight: number;
     itemJustifyContent?:
-        | 'flex-start'
-        | 'flex-end'
-        | 'center'
-        | 'space-between'
-        | 'space-around'
-        | 'space-evenly';
+        | "flex-start"
+        | "flex-end"
+        | "center"
+        | "space-between"
+        | "space-around"
+        | "space-evenly";
     // 滚动list距离顶部的距离, 这里写的不好
     marginTop: number;
     /** 拖拽时的背景色 */
@@ -321,12 +321,12 @@ interface ISortableFlatListItemProps<T extends any = any> {
     // 高度
     itemHeight: number;
     itemJustifyContent?:
-        | 'flex-start'
-        | 'flex-end'
-        | 'center'
-        | 'space-between'
-        | 'space-around'
-        | 'space-evenly';
+        | "flex-start"
+        | "flex-end"
+        | "center"
+        | "space-between"
+        | "space-around"
+        | "space-evenly";
     setScrollEnabled: (scrollEnabled: boolean) => void;
     renderItem: (props: { item: T; index: number }) => JSX.Element;
     setActiveItem: (item: T | null) => void;
@@ -349,20 +349,20 @@ function _SortableFlatListItem(props: ISortableFlatListItemProps) {
         StyleSheet.create({
             viewWrapper: {
                 height: itemHeight,
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: itemJustifyContent ?? 'flex-end',
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: itemJustifyContent ?? "flex-end",
                 zIndex: defaultZIndex,
             },
             btn: {
                 height: itemHeight,
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'absolute',
+                justifyContent: "center",
+                alignItems: "center",
+                position: "absolute",
                 top: 0,
                 right: 0,
                 width: rpx(100),
-                textAlignVertical: 'center',
+                textAlignVertical: "center",
             },
         }),
     );
@@ -401,7 +401,7 @@ const SortableFlatListItem = memo(
 const FakeFlatListItem = forwardRef(function (
     props: Pick<
         ISortableFlatListItemProps,
-        'itemHeight' | 'renderItem' | 'item' | 'itemJustifyContent'
+        "itemHeight" | "renderItem" | "item" | "itemJustifyContent"
     > & {
         backgroundColor?: string;
     },
@@ -414,21 +414,21 @@ const FakeFlatListItem = forwardRef(function (
         StyleSheet.create({
             viewWrapper: {
                 height: itemHeight,
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: itemJustifyContent ?? 'flex-end',
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: itemJustifyContent ?? "flex-end",
                 zIndex: defaultZIndex,
             },
             btn: {
                 height: itemHeight,
                 paddingHorizontal: rpx(28),
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'absolute',
+                justifyContent: "center",
+                alignItems: "center",
+                position: "absolute",
                 top: 0,
                 right: 0,
                 width: rpx(100),
-                textAlignVertical: 'center',
+                textAlignVertical: "center",
             },
         }),
     );
@@ -458,7 +458,7 @@ const style = StyleSheet.create({
     activeItemDefault: {
         opacity: 0,
         zIndex: -1,
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 0,
     },

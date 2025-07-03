@@ -1,7 +1,7 @@
-import { getStorage as oldGetStorage } from '@/utils/storage';
-import storage from '@/core/musicSheet/storage.ts';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import appMeta from '../appMeta';
+import { getStorage as oldGetStorage } from "@/utils/storage";
+import storage from "@/core/musicSheet/storage.ts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import appMeta from "../appMeta";
 
 export default async function migrate() {
     const dbUpdated = appMeta.musicSheetVersion > 1;
@@ -11,7 +11,7 @@ export default async function migrate() {
     try {
         // 原来的musicSheets
         const musicSheets: IMusic.IMusicSheetItemBase[] = await oldGetStorage(
-            'music-sheets',
+            "music-sheets",
         );
         if (!musicSheets) {
             appMeta.setMusicSheetVersion(1);
@@ -19,7 +19,7 @@ export default async function migrate() {
         }
 
         await storage.setSheets(musicSheets);
-        await AsyncStorage.removeItem('music-sheets');
+        await AsyncStorage.removeItem("music-sheets");
         for (let sheet of musicSheets) {
             const musicList = await oldGetStorage(sheet.id);
             await storage.setMusicList(sheet.id, musicList);
@@ -27,7 +27,7 @@ export default async function migrate() {
         }
         appMeta.setMusicSheetVersion(1);
     } catch (e) {
-        console.warn('升级失败', e);
+        console.warn("升级失败", e);
     }
 }
 

@@ -1,11 +1,11 @@
-import React, { memo, useCallback } from 'react';
-import rpx from '@/utils/rpx';
-import { FlashList } from '@shopify/flash-list';
-import useRecommendSheets from '../../hooks/useRecommendSheets';
-import SheetItem from '@/components/mediaItem/sheetItem';
-import useOrientation from '@/hooks/useOrientation';
-import ListEmpty from '@/components/base/listEmpty';
-import ListFooter from '@/components/base/listFooter';
+import React, { memo, useCallback } from "react";
+import rpx from "@/utils/rpx";
+import { FlashList } from "@shopify/flash-list";
+import useRecommendSheets from "../../hooks/useRecommendSheets";
+import SheetItem from "@/components/mediaItem/sheetItem";
+import useOrientation from "@/hooks/useOrientation";
+import ListEmpty from "@/components/base/listEmpty";
+import ListFooter from "@/components/base/listFooter";
 
 interface ISheetListProps {
     tag: ICommon.IUnique;
@@ -41,7 +41,7 @@ function SheetList(props: ISheetListProps) {
             }}
             onEndReachedThreshold={0.1}
             estimatedItemSize={rpx(306)}
-            numColumns={orientation === 'vertical' ? 3 : 4}
+            numColumns={orientation === "vertical" ? 3 : 4}
             renderItem={renderItem}
             data={sheets}
             keyExtractor={keyExtractor}

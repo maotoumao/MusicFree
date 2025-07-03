@@ -1,15 +1,15 @@
-import { fontSizeConst } from '@/constants/uiConst';
-import useColors from '@/hooks/useColors';
-import rpx, { vmax } from '@/utils/rpx';
-import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { fontSizeConst } from "@/constants/uiConst";
+import useColors from "@/hooks/useColors";
+import rpx, { vmax } from "@/utils/rpx";
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 
-import MusicSheet from '@/core/musicSheet';
-import { TextInput } from 'react-native-gesture-handler';
-import PanelBase from '../base/panelBase';
-import PanelHeader from '../base/panelHeader';
-import { hidePanel } from '../usePanel';
-import { useI18N } from '@/core/i18n';
+import MusicSheet from "@/core/musicSheet";
+import { TextInput } from "react-native-gesture-handler";
+import PanelBase from "../base/panelBase";
+import PanelHeader from "../base/panelHeader";
+import { hidePanel } from "../usePanel";
+import { useI18N } from "@/core/i18n";
 
 interface ICreateMusicSheetProps {
     defaultName?: string;
@@ -22,7 +22,7 @@ export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
 
     const { onSheetCreated, onCancel, defaultName = t("panel.createMusicSheet.title") } = props;
 
-    const [input, setInput] = useState('');
+    const [input, setInput] = useState("");
     const colors = useColors();
 
     return (
@@ -77,10 +77,10 @@ const style = StyleSheet.create({
     operations: {
         width: rpx(750),
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
+        flexDirection: "row",
         height: rpx(100),
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     input: {
         margin: rpx(24),

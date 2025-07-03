@@ -1,15 +1,15 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { FlatList } from 'react-native-gesture-handler';
-import { hideDialog } from '../useDialog';
-import Dialog from './base';
-import ListItem from '@/components/base/listItem';
-import useOrientation from '@/hooks/useOrientation';
-import rpx, { vmax, vmin } from '@/utils/rpx';
-import Icon, { IIconName } from '@/components/base/icon.tsx';
-import useColors from '@/hooks/useColors.ts';
-import ThemeText from '@/components/base/themeText';
-import Tip from '@/components/base/tip';
-import { iconSizeConst } from '@/constants/uiConst';
+import React, { useEffect, useMemo, useRef } from "react";
+import { FlatList } from "react-native-gesture-handler";
+import { hideDialog } from "../useDialog";
+import Dialog from "./base";
+import ListItem from "@/components/base/listItem";
+import useOrientation from "@/hooks/useOrientation";
+import rpx, { vmax, vmin } from "@/utils/rpx";
+import Icon, { IIconName } from "@/components/base/icon.tsx";
+import useColors from "@/hooks/useColors.ts";
+import ThemeText from "@/components/base/themeText";
+import Tip from "@/components/base/tip";
+import { iconSizeConst } from "@/constants/uiConst";
 
 interface IKV<T extends string | number = string | number> {
     label: string;
@@ -26,7 +26,7 @@ interface IRadioDialogProps<T extends string | number = string | number> {
 }
 
 function isObject(v: string | number | IKV): v is IKV {
-    return !(typeof v === 'string' || typeof v === 'number');
+    return !(typeof v === "string" || typeof v === "number");
 }
 
 export default function RadioDialog(props: IRadioDialogProps) {
@@ -41,7 +41,7 @@ export default function RadioDialog(props: IRadioDialogProps) {
                 return item.value === defaultSelected;
             }
             return item === defaultSelected;
-        })
+        });
     }, [content, defaultSelected]);
 
 
@@ -75,7 +75,7 @@ export default function RadioDialog(props: IRadioDialogProps) {
                 ref={ref}
                 style={{
                     maxHeight:
-                        orientation === 'horizontal' ? vmin(60) : vmax(60),
+                        orientation === "horizontal" ? vmin(60) : vmax(60),
                 }}
                 data={content}
                 getItemLayout={(_, index) => ({
@@ -107,11 +107,11 @@ export default function RadioDialog(props: IRadioDialogProps) {
                             {defaultSelected !== undefined &&
                                 defaultSelected ===
                                 (isConfig ? item.value : item) ? (
-                                <ListItem.ListItemIcon
-                                    icon={'check'}
-                                    color={colors.primary}
-                                />
-                            ) : null}
+                                    <ListItem.ListItemIcon
+                                        icon={"check"}
+                                        color={colors.primary}
+                                    />
+                                ) : null}
                         </ListItem>
                     );
                 }}

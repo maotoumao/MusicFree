@@ -1,6 +1,6 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { atom, useAtomValue, useSetAtom } from 'jotai';
+import React, { ReactNode, useEffect, useRef } from "react";
+import { StyleSheet, View } from "react-native";
+import { atom, useAtomValue, useSetAtom } from "jotai";
 
 interface IPortalNode {
     key: string | null;

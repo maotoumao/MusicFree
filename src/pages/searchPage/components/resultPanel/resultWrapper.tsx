@@ -1,15 +1,15 @@
-import ListEmpty from '@/components/base/listEmpty';
-import ListFooter from '@/components/base/listFooter';
-import Loading from '@/components/base/loading';
-import { RequestStateCode } from '@/constants/commonConst';
-import useOrientation from '@/hooks/useOrientation';
-import rpx from '@/utils/rpx';
-import { FlashList } from '@shopify/flash-list';
-import { useAtomValue } from 'jotai';
-import React, { memo, useCallback, useEffect, useState } from 'react';
-import useSearch from '../../hooks/useSearch';
-import { ISearchResult, queryAtom } from '../../store/atoms';
-import { renderMap } from './results';
+import ListEmpty from "@/components/base/listEmpty";
+import ListFooter from "@/components/base/listFooter";
+import Loading from "@/components/base/loading";
+import { RequestStateCode } from "@/constants/commonConst";
+import useOrientation from "@/hooks/useOrientation";
+import rpx from "@/utils/rpx";
+import { FlashList } from "@shopify/flash-list";
+import { useAtomValue } from "jotai";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import useSearch from "../../hooks/useSearch";
+import { ISearchResult, queryAtom } from "../../store/atoms";
+import { renderMap } from "./results";
 
 interface IResultWrapperProps<
     T extends ICommon.SupportMediaType = ICommon.SupportMediaType,
@@ -77,9 +77,9 @@ function ResultWrapper(props: IResultWrapperProps) {
                     searchState === RequestStateCode.IDLE) &&
                     search(undefined, undefined, tab, pluginHash);
             }}
-            estimatedItemSize={tab === 'sheet' ? rpx(306) : rpx(120)}
+            estimatedItemSize={tab === "sheet" ? rpx(306) : rpx(120)}
             numColumns={
-                tab === 'sheet' ? (orientation === 'vertical' ? 3 : 4) : 1
+                tab === "sheet" ? (orientation === "vertical" ? 3 : 4) : 1
             }
             renderItem={renderItem}
             keyExtractor={keyExtractor}

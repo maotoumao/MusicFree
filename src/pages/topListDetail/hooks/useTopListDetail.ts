@@ -1,6 +1,6 @@
-import { RequestStateCode } from '@/constants/commonConst';
-import PluginManager from '@/core/pluginManager';
-import { useEffect, useRef, useState } from 'react';
+import { RequestStateCode } from "@/constants/commonConst";
+import PluginManager from "@/core/pluginManager";
+import { useEffect, useRef, useState } from "react";
 
 export default function useTopListDetail(
     topListItem: IMusic.IMusicSheetItemBase | null,
@@ -48,9 +48,9 @@ export default function useTopListDetail(
                             currentPage === 1
                                 ? result.musicList ?? []
                                 : [
-                                      ...(prev?.musicList ?? []),
-                                      ...(result.musicList ?? []),
-                                  ],
+                                    ...(prev?.musicList ?? []),
+                                    ...(result.musicList ?? []),
+                                ],
                     } as IMusic.IMusicSheetItem),
             );
 

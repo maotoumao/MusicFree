@@ -1,17 +1,17 @@
-import React, { useMemo, useRef } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import Tag from '@/components/base/tag';
-import ThemeText from '@/components/base/themeText';
-import { fontSizeConst } from '@/constants/uiConst';
-import { isSameMediaItem } from '@/utils/mediaUtils';
-import IconButton from '@/components/base/iconButton';
-import Loading from '@/components/base/loading';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import useColors from '@/hooks/useColors';
-import TrackPlayer, { useCurrentMusic, usePlayList } from '@/core/trackPlayer';
-import { FlashList } from '@shopify/flash-list';
-import Icon from '@/components/base/icon.tsx';
+import React, { useMemo, useRef } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import rpx from "@/utils/rpx";
+import Tag from "@/components/base/tag";
+import ThemeText from "@/components/base/themeText";
+import { fontSizeConst } from "@/constants/uiConst";
+import { isSameMediaItem } from "@/utils/mediaUtils";
+import IconButton from "@/components/base/iconButton";
+import Loading from "@/components/base/loading";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useColors from "@/hooks/useColors";
+import TrackPlayer, { useCurrentMusic, usePlayList } from "@/core/trackPlayer";
+import { FlashList } from "@shopify/flash-list";
+import Icon from "@/components/base/icon.tsx";
 
 const ITEM_HEIGHT = rpx(108);
 const ITEM_WIDTH = rpx(750);
@@ -53,7 +53,7 @@ function _PlayListItem(props: IPlayListProps) {
                 {item.title}
                 {item.artist && (
                     <Text style={{ fontSize: fontSizeConst.description }}>
-                        {' '}
+                        {" "}
                         - {item.artist}
                     </Text>
                 )}
@@ -144,8 +144,8 @@ const style = StyleSheet.create({
         width: ITEM_WIDTH,
         height: ITEM_HEIGHT,
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     musicItemTitle: {
         flex: 1,

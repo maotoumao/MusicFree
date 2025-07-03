@@ -77,7 +77,7 @@ declare namespace IPlugin {
         /** 有效搜索类型 */
         supportedSearchType?: ICommon.SupportMediaType[];
         /** 插件缓存控制 */
-        cacheControl?: 'cache' | 'no-cache' | 'no-store';
+        cacheControl?: "cache" | "no-cache" | "no-store";
         /** 插件作者 */
         author?: string;
         /** 插件描述，支持markdown */

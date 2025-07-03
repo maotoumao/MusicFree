@@ -1,18 +1,18 @@
-import NoPlugin from '@/components/base/noPlugin';
-import { fontWeightConst } from '@/constants/uiConst';
-import { useI18N } from '@/core/i18n';
-import PluginManager from '@/core/pluginManager';
-import useColors from '@/hooks/useColors';
-import rpx, { vw } from '@/utils/rpx';
-import React, { useState } from 'react';
-import { Text } from 'react-native';
-import { TabBar, TabView } from 'react-native-tab-view';
-import SheetBody from './sheetBody';
+import NoPlugin from "@/components/base/noPlugin";
+import { fontWeightConst } from "@/constants/uiConst";
+import { useI18N } from "@/core/i18n";
+import PluginManager from "@/core/pluginManager";
+import useColors from "@/hooks/useColors";
+import rpx, { vw } from "@/utils/rpx";
+import React, { useState } from "react";
+import { Text } from "react-native";
+import { TabBar, TabView } from "react-native-tab-view";
+import SheetBody from "./sheetBody";
 
 export default function Body() {
     const [index, setIndex] = useState(0);
     const colors = useColors();
-    const routes = PluginManager.getSortedPluginsWithAbility('getRecommendSheetsByTag').map(
+    const routes = PluginManager.getSortedPluginsWithAbility("getRecommendSheetsByTag").map(
         _ => ({
             key: _.hash,
             title: _.name,
@@ -25,12 +25,12 @@ export default function Body() {
             {..._}
             scrollEnabled
             style={{
-                backgroundColor: 'transparent',
-                shadowColor: 'transparent',
-                borderColor: 'transparent',
+                backgroundColor: "transparent",
+                shadowColor: "transparent",
+                borderColor: "transparent",
             }}
             tabStyle={{
-                width: 'auto',
+                width: "auto",
             }}
             pressColor="transparent"
             inactiveColor={colors.text}
@@ -44,9 +44,9 @@ export default function Body() {
                             ? fontWeightConst.bolder
                             : fontWeightConst.medium,
                         color,
-                        textAlign: 'center',
+                        textAlign: "center",
                     }}>
-                    {route.title ?? `(${t('common.unknownName')})`}
+                    {route.title ?? `(${t("common.unknownName")})`}
                 </Text>
             )}
             indicatorStyle={{

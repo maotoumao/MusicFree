@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import rpx from '@/utils/rpx';
-import { StyleSheet, View } from 'react-native';
-import ThemeText from '@/components/base/themeText';
-import { hideDialog } from '../useDialog';
-import Dialog from './base';
-import Input from '@/components/base/input';
-import useColors from '@/hooks/useColors';
-import { useI18N } from '@/core/i18n';
-import PersistStatus from '@/utils/persistStatus';
+import React, { useState } from "react";
+import rpx from "@/utils/rpx";
+import { StyleSheet, View } from "react-native";
+import ThemeText from "@/components/base/themeText";
+import { hideDialog } from "../useDialog";
+import Dialog from "./base";
+import Input from "@/components/base/input";
+import useColors from "@/hooks/useColors";
+import { useI18N } from "@/core/i18n";
+import PersistStatus from "@/utils/persistStatus";
 
 interface ISetScheduleCloseTimeDialogProps {
     onOk?: (minutes: number) => void;
@@ -17,14 +17,14 @@ export default function SetScheduleCloseTimeDialog(
     props: ISetScheduleCloseTimeDialogProps,
 ) {
     const { onOk } = props;
-    const [timeInput, setTimeInput] = useState('');
+    const [timeInput, setTimeInput] = useState("");
     
     const colors = useColors();
     const { t } = useI18N();
 
     // Get last custom time as placeholder
-    const lastCustomTime = PersistStatus.get('app.scheduleCloseTime');
-    const placeholder = lastCustomTime ? String(lastCustomTime) : '';
+    const lastCustomTime = PersistStatus.get("app.scheduleCloseTime");
+    const placeholder = lastCustomTime ? String(lastCustomTime) : "";
 
     const handleConfirm = () => {
         let minutes = 0;
@@ -41,7 +41,7 @@ export default function SetScheduleCloseTimeDialog(
         }
         
         // Save to persistent storage
-        PersistStatus.set('app.scheduleCloseTime', minutes);
+        PersistStatus.set("app.scheduleCloseTime", minutes);
         
         onOk?.(minutes);
         hideDialog();
@@ -70,7 +70,7 @@ export default function SetScheduleCloseTimeDialog(
                                 value={timeInput}
                                 onChangeText={text => {
                                     // Only allow numbers
-                                    const numericText = text.replace(/[^0-9]/g, '');
+                                    const numericText = text.replace(/[^0-9]/g, "");
                                     // Limit to 4 digits (max 1440 minutes = 24 hours)
                                     if (numericText.length <= 4) {
                                         setTimeInput(numericText);
@@ -98,14 +98,14 @@ export default function SetScheduleCloseTimeDialog(
             <Dialog.Actions
                 actions={[
                     {
-                        type: 'normal',
+                        type: "normal",
                         title: t("common.cancel"),
                         onPress() {
                             hideDialog();
                         },
                     },
                     {
-                        type: 'primary',
+                        type: "primary",
                         title: t("common.confirm"),
                         onPress: handleConfirm,
                     },
@@ -125,8 +125,8 @@ const style = StyleSheet.create({
         marginBottom: rpx(8),
     },
     inputRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         marginBottom: rpx(16),
     },
     inputContainer: {
@@ -136,7 +136,7 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(16),
         paddingVertical: rpx(4),
         minHeight: rpx(72),
-        justifyContent: 'center',
+        justifyContent: "center",
         shadowOffset: {
             width: 0,
             height: rpx(2),
@@ -150,8 +150,8 @@ const style = StyleSheet.create({
         includeFontPadding: false,
         paddingVertical: rpx(12),
         borderWidth: 0,
-        backgroundColor: 'transparent',
-        textAlign: 'center',
+        backgroundColor: "transparent",
+        textAlign: "center",
     },
     unitContainer: {
         marginLeft: rpx(16),
@@ -159,13 +159,13 @@ const style = StyleSheet.create({
     },
     unitText: {
         fontSize: rpx(28),
-        fontWeight: '500',
+        fontWeight: "500",
     },
     hintContainer: {
         paddingHorizontal: rpx(4),
     },
     hintText: {
         lineHeight: rpx(32),
-        textAlign: 'center',
+        textAlign: "center",
     },
 });

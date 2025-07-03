@@ -1,9 +1,9 @@
-import { useI18N } from '@/core/i18n';
-import { ROUTE_PATH, useNavigate } from '@/core/router';
-import rpx from '@/utils/rpx';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import ActionButton from '../ActionButton';
+import { useI18N } from "@/core/i18n";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import rpx from "@/utils/rpx";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import ActionButton from "../ActionButton";
 
 export default function Operations() {
     const navigate = useNavigate();
@@ -11,28 +11,28 @@ export default function Operations() {
 
     const actionButtons = [
         {
-            iconName: 'fire',
+            iconName: "fire",
             title: t("home.recommendSheet"),
             action() {
                 navigate(ROUTE_PATH.RECOMMEND_SHEETS);
             },
         },
         {
-            iconName: 'trophy',
+            iconName: "trophy",
             title: t("home.topList"),
             action() {
                 navigate(ROUTE_PATH.TOP_LIST);
             },
         },
         {
-            iconName: 'clock-outline',
+            iconName: "clock-outline",
             title: t("home.playHistory"),
             action() {
                 navigate(ROUTE_PATH.HISTORY);
             },
         },
         {
-            iconName: 'folder-music-outline',
+            iconName: "folder-music-outline",
             title: t("home.localMusic"),
             action() {
                 navigate(ROUTE_PATH.LOCAL);
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
         width: rpx(750),
         paddingHorizontal: rpx(24),
         marginVertical: rpx(32),
-        flexDirection: 'row',
-        flexWrap: 'nowrap',
+        flexDirection: "row",
+        flexWrap: "nowrap",
     },
     actionButtonStyle: {
         width: rpx(157.5),

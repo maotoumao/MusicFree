@@ -28,7 +28,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
         <Dialog
             onDismiss={() => {
                 if (skipState) {
-                    PersistStatus.set('app.skipVersion', version);
+                    PersistStatus.set("app.skipVersion", version);
                 }
                 hideDialog();
             }}>
@@ -60,7 +60,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         onPress={() => {
                             hideDialog();
                             if (skipState) {
-                                PersistStatus.set('app.skipVersion', version);
+                                PersistStatus.set("app.skipVersion", version);
                             }
                         }}>
                         {t("common.cancel")}
@@ -68,7 +68,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                     <Button
                         style={style.button}
                         onPress={async () => {
-                            PersistStatus.set('app.skipVersion', undefined);
+                            PersistStatus.set("app.skipVersion", undefined);
                             openUrl(fromUrl);
                             Clipboard.setString(fromUrl);
                         }}>
@@ -78,7 +78,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         <Button
                             style={style.button}
                             onPress={async () => {
-                                PersistStatus.set('app.skipVersion', undefined);
+                                PersistStatus.set("app.skipVersion", undefined);
                                 openUrl(backUrl);
                                 Clipboard.setString(backUrl);
                             }}>
@@ -108,19 +108,19 @@ const style = StyleSheet.create({
         marginTop: rpx(24),
         height: rpx(120),
         marginBottom: rpx(12),
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
     },
     checkboxGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     buttonGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
-        justifyContent: 'flex-end',
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        justifyContent: "flex-end",
     },
     checkboxHint: {
         marginLeft: rpx(12),
@@ -129,6 +129,6 @@ const style = StyleSheet.create({
         paddingLeft: rpx(28),
         paddingVertical: rpx(14),
         marginLeft: rpx(16),
-        alignItems: 'flex-end',
+        alignItems: "flex-end",
     },
 });

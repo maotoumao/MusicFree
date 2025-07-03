@@ -1,13 +1,13 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import rpx from '@/utils/rpx';
-import AppBar from '@/components/base/appBar';
-import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
-import globalStyle from '@/constants/globalStyle';
-import Button from '@/components/base/textButton.tsx';
-import Body from './body';
-import { useNavigation } from '@react-navigation/native';
-import { useI18N } from '@/core/i18n';
+import React from "react";
+import { StyleSheet } from "react-native";
+import rpx from "@/utils/rpx";
+import AppBar from "@/components/base/appBar";
+import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView";
+import globalStyle from "@/constants/globalStyle";
+import Button from "@/components/base/textButton.tsx";
+import Body from "./body";
+import { useNavigation } from "@react-navigation/native";
+import { useI18N } from "@/core/i18n";
 
 export default function SetCustomTheme() {
     const navigation = useNavigation();
@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
         width: rpx(750),
     },
     submit: {
-        justifyContent: 'center',
+        justifyContent: "center",
     },
 });

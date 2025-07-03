@@ -1,5 +1,5 @@
-import React from 'react';
-import SheetItem from '@/components/mediaItem/sheetItem';
+import React from "react";
+import SheetItem from "@/components/mediaItem/sheetItem";
 
 interface IMusicSheetResultItemProps {
     item: IMusic.IMusicSheetItem;

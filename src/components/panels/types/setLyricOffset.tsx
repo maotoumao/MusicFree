@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
 
-import PanelBase from '../base/panelBase';
-import { iconSizeConst } from '@/constants/uiConst';
-import PanelHeader from '../base/panelHeader';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { hidePanel } from '../usePanel';
-import useColors from '@/hooks/useColors';
-import Icon from '@/components/base/icon.tsx';
-import { getMediaExtraProperty } from '@/utils/mediaExtra';
-import { useI18N } from '@/core/i18n';
+import PanelBase from "../base/panelBase";
+import { iconSizeConst } from "@/constants/uiConst";
+import PanelHeader from "../base/panelHeader";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { hidePanel } from "../usePanel";
+import useColors from "@/hooks/useColors";
+import Icon from "@/components/base/icon.tsx";
+import { getMediaExtraProperty } from "@/utils/mediaExtra";
+import { useI18N } from "@/core/i18n";
 
 interface IProps {
     musicItem: IMusic.IMusicItem;
@@ -24,17 +24,17 @@ export default function SetLyricOffset(props: IProps) {
     const { t } = useI18N();
 
     const [offset, setOffset] = useState(
-        getMediaExtraProperty(musicItem, 'lyricOffset') ?? 0
+        getMediaExtraProperty(musicItem, "lyricOffset") ?? 0
     );
 
     const colors = useColors();
 
     let titleStr =
         offset === 0
-            ? t('panel.setLyricOffset.normal')
+            ? t("panel.setLyricOffset.normal")
             : offset < 0
-            ? t('panel.setLyricOffset.delay', { time: (-offset).toFixed(1) })
-            : t('panel.setLyricOffset.advance', { time: offset.toFixed(1) });
+                ? t("panel.setLyricOffset.delay", { time: (-offset).toFixed(1) })
+                : t("panel.setLyricOffset.advance", { time: offset.toFixed(1) });
 
     return (
         <PanelBase
@@ -43,7 +43,7 @@ export default function SetLyricOffset(props: IProps) {
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title={t('panel.setLyricOffset.title', { status: titleStr })}
+                        title={t("panel.setLyricOffset.title", { status: titleStr })}
                         onOk={() => {
                             onSubmit?.(offset);
                         }}
@@ -72,7 +72,7 @@ export default function SetLyricOffset(props: IProps) {
                                 size={iconSizeConst.big}
                                 color={colors.text}
                             />
-                            <ThemeText>{t('panel.setLyricOffset.reset')}</ThemeText>
+                            <ThemeText>{t("panel.setLyricOffset.reset")}</ThemeText>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.btn}
@@ -95,23 +95,23 @@ export default function SetLyricOffset(props: IProps) {
 
 const styles = StyleSheet.create({
     header: {
-        width: '100%',
-        flexDirection: 'row',
+        width: "100%",
+        flexDirection: "row",
         padding: rpx(24),
     },
     container: {
         flex: 1,
         paddingHorizontal: rpx(24),
         paddingBottom: rpx(36),
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
+        width: "100%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
     },
     btn: {
         width: rpx(144),
         height: rpx(144),
-        alignItems: 'center',
-        justifyContent: 'space-around',
+        alignItems: "center",
+        justifyContent: "space-around",
     },
 });

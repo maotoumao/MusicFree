@@ -54,7 +54,7 @@ const createRadio = function (
     onChange?: (value: string | number) => void,
 ) {
     const onPress = () => {
-        showDialog('RadioDialog', {
+        showDialog("RadioDialog", {
             title,
             content: valueMap
                 ? candidates.map(_ => ({
@@ -88,9 +88,9 @@ function useCacheSize() {
 
     const refreshCacheSize = useCallback(async () => {
         const [musicCache, lyricCache, imageCache] = await Promise.all([
-            getCacheSize('music'),
-            getCacheSize('lyric'),
-            getCacheSize('image'),
+            getCacheSize("music"),
+            getCacheSize("lyric"),
+            getCacheSize("image"),
         ]);
         setCacheSize({
             music: musicCache,
@@ -104,37 +104,37 @@ function useCacheSize() {
 
 export default function BasicSetting() {
 
-    const autoPlayWhenAppStart = useAppConfig('basic.autoPlayWhenAppStart');
-    const useCelluarNetworkPlay = useAppConfig('basic.useCelluarNetworkPlay');
-    const useCelluarNetworkDownload = useAppConfig('basic.useCelluarNetworkDownload');
-    const maxDownload = useAppConfig('basic.maxDownload');
-    const clickMusicInSearch = useAppConfig('basic.clickMusicInSearch');
-    const clickMusicInAlbum = useAppConfig('basic.clickMusicInAlbum');
-    const downloadPath = useAppConfig('basic.downloadPath');
-    const notInterrupt = useAppConfig('basic.notInterrupt');
-    const tempRemoteDuck = useAppConfig('basic.tempRemoteDuck');
-    const tempRemoteDuckVolume = useAppConfig('basic.tempRemoteDuckVolume');
-    const autoStopWhenError = useAppConfig('basic.autoStopWhenError');
-    const maxCacheSize = useAppConfig('basic.maxCacheSize');
-    const defaultPlayQuality = useAppConfig('basic.defaultPlayQuality');
-    const playQualityOrder = useAppConfig('basic.playQualityOrder');
-    const defaultDownloadQuality = useAppConfig('basic.defaultDownloadQuality');
-    const downloadQualityOrder = useAppConfig('basic.downloadQualityOrder');
-    const musicDetailDefault = useAppConfig('basic.musicDetailDefault');
-    const musicDetailAwake = useAppConfig('basic.musicDetailAwake');
-    const maxHistoryLen = useAppConfig('basic.maxHistoryLen');
-    const autoUpdatePlugin = useAppConfig('basic.autoUpdatePlugin');
-    const notCheckPluginVersion = useAppConfig('basic.notCheckPluginVersion');
-    const associateLyricType = useAppConfig('basic.associateLyricType');
-    const showExitOnNotification = useAppConfig('basic.showExitOnNotification');
-    const musicOrderInLocalSheet = useAppConfig('basic.musicOrderInLocalSheet');
-    const tryChangeSourceWhenPlayFail = useAppConfig('basic.tryChangeSourceWhenPlayFail');
+    const autoPlayWhenAppStart = useAppConfig("basic.autoPlayWhenAppStart");
+    const useCelluarNetworkPlay = useAppConfig("basic.useCelluarNetworkPlay");
+    const useCelluarNetworkDownload = useAppConfig("basic.useCelluarNetworkDownload");
+    const maxDownload = useAppConfig("basic.maxDownload");
+    const clickMusicInSearch = useAppConfig("basic.clickMusicInSearch");
+    const clickMusicInAlbum = useAppConfig("basic.clickMusicInAlbum");
+    const downloadPath = useAppConfig("basic.downloadPath");
+    const notInterrupt = useAppConfig("basic.notInterrupt");
+    const tempRemoteDuck = useAppConfig("basic.tempRemoteDuck");
+    const tempRemoteDuckVolume = useAppConfig("basic.tempRemoteDuckVolume");
+    const autoStopWhenError = useAppConfig("basic.autoStopWhenError");
+    const maxCacheSize = useAppConfig("basic.maxCacheSize");
+    const defaultPlayQuality = useAppConfig("basic.defaultPlayQuality");
+    const playQualityOrder = useAppConfig("basic.playQualityOrder");
+    const defaultDownloadQuality = useAppConfig("basic.defaultDownloadQuality");
+    const downloadQualityOrder = useAppConfig("basic.downloadQualityOrder");
+    const musicDetailDefault = useAppConfig("basic.musicDetailDefault");
+    const musicDetailAwake = useAppConfig("basic.musicDetailAwake");
+    const maxHistoryLen = useAppConfig("basic.maxHistoryLen");
+    const autoUpdatePlugin = useAppConfig("basic.autoUpdatePlugin");
+    const notCheckPluginVersion = useAppConfig("basic.notCheckPluginVersion");
+    const associateLyricType = useAppConfig("basic.associateLyricType");
+    const showExitOnNotification = useAppConfig("basic.showExitOnNotification");
+    const musicOrderInLocalSheet = useAppConfig("basic.musicOrderInLocalSheet");
+    const tryChangeSourceWhenPlayFail = useAppConfig("basic.tryChangeSourceWhenPlayFail");
 
     const { t } = useI18N();
 
-    const debugEnableErrorLog = useAppConfig('debug.errorLog');
-    const debugEnableTraceLog = useAppConfig('debug.traceLog');
-    const debugEnableDevLog = useAppConfig('debug.devLog');
+    const debugEnableErrorLog = useAppConfig("debug.errorLog");
+    const debugEnableTraceLog = useAppConfig("debug.traceLog");
+    const debugEnableDevLog = useAppConfig("debug.devLog");
 
     const navigate = useNavigate();
 
@@ -153,78 +153,78 @@ export default function BasicSetting() {
             data: [
                 createRadio(
                     t("basicSettings.maxHistoryLength"),
-                    'basic.maxHistoryLen',
+                    "basic.maxHistoryLen",
                     [20, 50, 100, 200, 500],
                     maxHistoryLen ?? 50,
                 ),
                 createRadio(
                     t("basicSettings.musicDetailDefault"),
-                    'basic.musicDetailDefault',
-                    ['album', 'lyric'],
-                    musicDetailDefault ?? 'album',
+                    "basic.musicDetailDefault",
+                    ["album", "lyric"],
+                    musicDetailDefault ?? "album",
                     {
                         album: t("basicSettings.musicDetailDefault.album"),
                         lyric: t("basicSettings.musicDetailDefault.lyric"),
                     },
                 ),
                 createSwitch(
-                    t('basicSettings.musicDetailAwake'),
-                    'basic.musicDetailAwake',
+                    t("basicSettings.musicDetailAwake"),
+                    "basic.musicDetailAwake",
                     musicDetailAwake ?? false,
                 ),
                 createRadio(
-                    t('basicSettings.associateLyricType'),
-                    'basic.associateLyricType',
-                    ['input', 'search'],
-                    associateLyricType ?? 'search',
+                    t("basicSettings.associateLyricType"),
+                    "basic.associateLyricType",
+                    ["input", "search"],
+                    associateLyricType ?? "search",
                     {
-                        input: t('basicSettings.associateLyricType.input'),
-                        search: t('basicSettings.associateLyricType.search'),
+                        input: t("basicSettings.associateLyricType.input"),
+                        search: t("basicSettings.associateLyricType.search"),
                     },
                 ),
                 createSwitch(
-                    t('basicSettings.showExitOnNotification'),
-                    'basic.showExitOnNotification',
+                    t("basicSettings.showExitOnNotification"),
+                    "basic.showExitOnNotification",
                     showExitOnNotification ?? false,
                 ),
             ],
         },
         {
-            title: t('basicSettings.sheetAndAlbum'),
+            title: t("basicSettings.sheetAndAlbum"),
             data: [
                 createRadio(
-                    t('basicSettings.clickMusicInSearch'),
-                    'basic.clickMusicInSearch',
-                    ['playMusic', 'playMusicAndReplace'],
-                    clickMusicInSearch ?? 'playMusic',
+                    t("basicSettings.clickMusicInSearch"),
+                    "basic.clickMusicInSearch",
+                    ["playMusic", "playMusicAndReplace"],
+                    clickMusicInSearch ?? "playMusic",
                     {
-                        playMusic: t('basicSettings.clickMusicInSearch.playMusic'),
-                        playMusicAndReplace: t('basicSettings.clickMusicInSearch.playMusicAndReplace'),
+                        playMusic: t("basicSettings.clickMusicInSearch.playMusic"),
+                        playMusicAndReplace: t("basicSettings.clickMusicInSearch.playMusicAndReplace"),
                     },
                 ),
                 createRadio(
                     t("basicSettings.clickMusicInAlbum"),
-                    'basic.clickMusicInAlbum',
-                    ['playMusic', 'playAlbum'],
-                    clickMusicInAlbum ?? 'playAlbum',
+                    "basic.clickMusicInAlbum",
+                    ["playMusic", "playAlbum"],
+                    clickMusicInAlbum ?? "playAlbum",
                     {
                         playMusic: t("basicSettings.clickMusicInAlbum.playMusic"),
                         playAlbum: t("basicSettings.clickMusicInAlbum.playAlbum"),
                     },
                 ),
                 createRadio(
-                    t('basicSettings.musicDetailDefault'),
-                    'basic.musicDetailDefault',
-                    ['album', 'lyric'],
-                    musicDetailDefault ?? 'album',
+                    t("basicSettings.musicDetailDefault"),
+                    "basic.musicDetailDefault",
+                    ["album", "lyric"],
+                    musicDetailDefault ?? "album",
                     {
-                        album: t('basicSettings.musicDetailDefault.album'),
-                        lyric: t('basicSettings.musicDetailDefault.lyric'),
+                        album: t("basicSettings.musicDetailDefault.album"),
+                        lyric: t("basicSettings.musicDetailDefault.lyric"),
                     },
                 ),
                 createRadio(
                     t("basicSettings.musicOrderInLocalSheet"),
-                    'basic.musicOrderInLocalSheet',
+                    "basic.musicOrderInLocalSheet",
                     [
                         SortType.Title,
                         SortType.Artist,
@@ -232,83 +232,83 @@ export default function BasicSetting() {
                         SortType.Newest,
                         SortType.Oldest,
                     ],
-                    musicOrderInLocalSheet ?? 'end',
+                    musicOrderInLocalSheet ?? "end",
                     {
-                        [SortType.Title]: t('basicSettings.musicOrderInLocalSheet.title'),
-                        [SortType.Artist]: t('basicSettings.musicOrderInLocalSheet.artist'),
-                        [SortType.Album]: t('basicSettings.musicOrderInLocalSheet.album'),
-                        [SortType.Newest]: t('basicSettings.musicOrderInLocalSheet.newest'),
-                        [SortType.Oldest]: t('basicSettings.musicOrderInLocalSheet.oldest'),
+                        [SortType.Title]: t("basicSettings.musicOrderInLocalSheet.title"),
+                        [SortType.Artist]: t("basicSettings.musicOrderInLocalSheet.artist"),
+                        [SortType.Album]: t("basicSettings.musicOrderInLocalSheet.album"),
+                        [SortType.Newest]: t("basicSettings.musicOrderInLocalSheet.newest"),
+                        [SortType.Oldest]: t("basicSettings.musicOrderInLocalSheet.oldest"),
                     },
                 ),
             ],
         },
         {
-            title: t('basicSettings.plugin'),
+            title: t("basicSettings.plugin"),
             data: [
                 createSwitch(
-                    t('basicSettings.autoUpdatePlugin'),
-                    'basic.autoUpdatePlugin',
+                    t("basicSettings.autoUpdatePlugin"),
+                    "basic.autoUpdatePlugin",
                     autoUpdatePlugin ?? false,
                 ),
                 createSwitch(
-                    t('basicSettings.notCheckPluginVersion'),
-                    'basic.notCheckPluginVersion',
+                    t("basicSettings.notCheckPluginVersion"),
+                    "basic.notCheckPluginVersion",
                     notCheckPluginVersion ?? false,
                 ),
             ],
         },
         {
-            title: t('basicSettings.playback'),
+            title: t("basicSettings.playback"),
             data: [
                 createSwitch(
-                    t('basicSettings.notInterrupt'),
-                    'basic.notInterrupt',
+                    t("basicSettings.notInterrupt"),
+                    "basic.notInterrupt",
                     notInterrupt ?? false,
                 ),
                 createSwitch(
-                    t('basicSettings.autoPlayWhenAppStart'),
-                    'basic.autoPlayWhenAppStart',
+                    t("basicSettings.autoPlayWhenAppStart"),
+                    "basic.autoPlayWhenAppStart",
                     autoPlayWhenAppStart ?? false,
                 ),
                 createSwitch(
-                    t('basicSettings.tryChangeSourceWhenPlayFail'),
-                    'basic.tryChangeSourceWhenPlayFail',
+                    t("basicSettings.tryChangeSourceWhenPlayFail"),
+                    "basic.tryChangeSourceWhenPlayFail",
                     tryChangeSourceWhenPlayFail ?? false,
                 ),
                 createSwitch(
-                    t('basicSettings.autoStopWhenError'),
-                    'basic.autoStopWhenError',
+                    t("basicSettings.autoStopWhenError"),
+                    "basic.autoStopWhenError",
                     autoStopWhenError ?? false,
                 ),
                 createRadio(
-                    t('basicSettings.tempRemoteDuck'),
-                    'basic.tempRemoteDuck',
-                    ['pause', 'lowerVolume'],
-                    tempRemoteDuck ?? 'pause',
+                    t("basicSettings.tempRemoteDuck"),
+                    "basic.tempRemoteDuck",
+                    ["pause", "lowerVolume"],
+                    tempRemoteDuck ?? "pause",
                     {
-                        pause: t('basicSettings.tempRemoteDuck.pause'),
-                        'lowerVolume': t('basicSettings.tempRemoteDuck.lowerVolume'),
+                        pause: t("basicSettings.tempRemoteDuck.pause"),
+                        "lowerVolume": t("basicSettings.tempRemoteDuck.lowerVolume"),
                     }
                 ),
-                ...(tempRemoteDuck === 'lowerVolume' ? [
+                ...(tempRemoteDuck === "lowerVolume" ? [
                     createRadio(
-                        t('basicSettings.tempRemoteDuck.volumeDecreaseLevel'),
-                        'basic.tempRemoteDuckVolume',
+                        t("basicSettings.tempRemoteDuck.volumeDecreaseLevel"),
+                        "basic.tempRemoteDuckVolume",
                         [0.3, 0.5, 0.8],
                         tempRemoteDuckVolume ?? 0.5,
                         {
-                            0.3: '30%',
-                            0.5: '50%',
-                            0.8: '80%'
+                            0.3: "30%",
+                            0.5: "50%",
+                            0.8: "80%",
                         }
-                    )
+                    ),
                 ] : []),
                 createRadio(
-                    t('basicSettings.defaultPlayQuality'),
-                    'basic.defaultPlayQuality',
+                    t("basicSettings.defaultPlayQuality"),
+                    "basic.defaultPlayQuality",
                     qualityKeys,
-                    defaultPlayQuality ?? 'standard',
+                    defaultPlayQuality ?? "standard",
                     {
                         low: t("musicQuality.low"),
                         standard: t("musicQuality.standard"),
@@ -317,22 +317,22 @@ export default function BasicSetting() {
                     },
                 ),
                 createRadio(
-                    t('basicSettings.playQualityOrder'),
-                    'basic.playQualityOrder',
-                    ['asc', 'desc'],
-                    playQualityOrder ?? 'asc',
+                    t("basicSettings.playQualityOrder"),
+                    "basic.playQualityOrder",
+                    ["asc", "desc"],
+                    playQualityOrder ?? "asc",
                     {
-                        asc: t('basicSettings.playQualityOrder.asc'),
-                        desc: t('basicSettings.playQualityOrder.desc'),
+                        asc: t("basicSettings.playQualityOrder.asc"),
+                        desc: t("basicSettings.playQualityOrder.desc"),
                     },
                 ),
             ],
         },
         {
-            title: t('basicSettings.download'),
+            title: t("basicSettings.download"),
             data: [
                 {
-                    title: t('basicSettings.downloadPath'),
+                    title: t("basicSettings.downloadPath"),
                     right: (
                         <ThemeText
                             fontSize="subTitle"
@@ -343,21 +343,21 @@ export default function BasicSetting() {
                         </ThemeText>
                     ),
                     onPress() {
-                        navigate<'file-selector'>(ROUTE_PATH.FILE_SELECTOR, {
-                            fileType: 'folder',
+                        navigate<"file-selector">(ROUTE_PATH.FILE_SELECTOR, {
+                            fileType: "folder",
                             multi: false,
-                            actionText: t('basicSettings.fileSelector.selectFolder'),
+                            actionText: t("basicSettings.fileSelector.selectFolder"),
                             async onAction(selectedFiles) {
                                 try {
                                     const targetDir = selectedFiles[0];
                                     await readdir(targetDir.path);
                                     Config.setConfig(
-                                        'basic.downloadPath',
+                                        "basic.downloadPath",
                                         targetDir.path,
                                     );
                                     return true;
                                 } catch {
-                                    Toast.warn(t('toast.folderNotExistOrNoPermission'));
+                                    Toast.warn(t("toast.folderNotExistOrNoPermission"));
                                     return false;
                                 }
                             },
@@ -365,16 +365,16 @@ export default function BasicSetting() {
                     },
                 },
                 createRadio(
-                    t('basicSettings.maxDownload'),
-                    'basic.maxDownload',
+                    t("basicSettings.maxDownload"),
+                    "basic.maxDownload",
                     [1, 3, 5, 7],
                     maxDownload ?? 3,
                 ),
                 createRadio(
-                    t('basicSettings.defaultDownloadQuality'),
-                    'basic.defaultDownloadQuality',
+                    t("basicSettings.defaultDownloadQuality"),
+                    "basic.defaultDownloadQuality",
                     qualityKeys,
-                    defaultDownloadQuality ?? 'standard',
+                    defaultDownloadQuality ?? "standard",
                     {
                         low: t("musicQuality.low"),
                         standard: t("musicQuality.standard"),
@@ -383,53 +383,53 @@ export default function BasicSetting() {
                     },
                 ),
                 createRadio(
-                    t('basicSettings.downloadQualityOrder'),
-                    'basic.downloadQualityOrder',
-                    ['asc', 'desc'],
-                    downloadQualityOrder ?? 'asc',
+                    t("basicSettings.downloadQualityOrder"),
+                    "basic.downloadQualityOrder",
+                    ["asc", "desc"],
+                    downloadQualityOrder ?? "asc",
                     {
-                        asc: t('basicSettings.downloadQualityOrder.asc'),
-                        desc: t('basicSettings.downloadQualityOrder.desc'),
+                        asc: t("basicSettings.downloadQualityOrder.asc"),
+                        desc: t("basicSettings.downloadQualityOrder.desc"),
                     },
                 ),
             ],
         },
         {
-            title: t('basicSettings.network'),
+            title: t("basicSettings.network"),
             data: [
                 createSwitch(
-                    t('basicSettings.useCelluarNetworkPlay'),
-                    'basic.useCelluarNetworkPlay',
+                    t("basicSettings.useCelluarNetworkPlay"),
+                    "basic.useCelluarNetworkPlay",
                     useCelluarNetworkPlay ?? false,
                 ),
                 createSwitch(
-                    t('basicSettings.useCelluarNetworkDownload'),
-                    'basic.useCelluarNetworkDownload',
+                    t("basicSettings.useCelluarNetworkDownload"),
+                    "basic.useCelluarNetworkDownload",
                     useCelluarNetworkDownload ?? false,
                 ),
             ],
         },
         {
-            title: t('basicSettings.lyric'),
+            title: t("basicSettings.lyric"),
             data: [],
             footer: <LyricSetting />,
         },
         {
-            title: t('basicSettings.cache'),
+            title: t("basicSettings.cache"),
             data: [
                 {
-                    title: t('basicSettings.cache.musicCacheLimit'),
+                    title: t("basicSettings.cache.musicCacheLimit"),
                     right: (
                         <ThemeText style={styles.centerText}>
                             {maxCacheSize
                                 ? sizeFormatter(maxCacheSize)
-                                : '512M'}
+                                : "512M"}
                         </ThemeText>
                     ),
                     onPress() {
-                        showPanel('SimpleInput', {
-                            title: t('dialog.setCacheTitle'),
-                            placeholder: t('dialog.setCachePlaceholder'),
+                        showPanel("SimpleInput", {
+                            title: t("dialog.setCacheTitle"),
+                            placeholder: t("dialog.setCachePlaceholder"),
                             onOk(text, closePanel) {
                                 let val = parseInt(text);
                                 if (val < 100) {
@@ -439,11 +439,11 @@ export default function BasicSetting() {
                                 }
                                 if (val >= 100 && val <= 8192) {
                                     Config.setConfig(
-                                        'basic.maxCacheSize',
+                                        "basic.maxCacheSize",
                                         val * 1024 * 1024,
                                     );
                                     closePanel();
-                                    Toast.success(t('toast.cacheSetSuccess'));
+                                    Toast.success(t("toast.cacheSetSuccess"));
                                 }
                             },
                         });
@@ -451,57 +451,57 @@ export default function BasicSetting() {
                 },
 
                 {
-                    title: t('basicSettings.cache.clearMusicCache'),
+                    title: t("basicSettings.cache.clearMusicCache"),
                     right: (
                         <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.music)}
                         </ThemeText>
                     ),
                     onPress() {
-                        showDialog('SimpleDialog', {
-                            title: t('dialog.clearMusicCacheTitle'),
-                            content: t('dialog.clearMusicCacheContent'),
+                        showDialog("SimpleDialog", {
+                            title: t("dialog.clearMusicCacheTitle"),
+                            content: t("dialog.clearMusicCacheContent"),
                             async onOk() {
-                                await clearCache('music');
-                                Toast.success(t('toast.musicCacheCleared'));
+                                await clearCache("music");
+                                Toast.success(t("toast.musicCacheCleared"));
                                 refreshCacheSize();
                             },
                         });
                     },
                 },
                 {
-                    title: t('basicSettings.cache.clearLyricCache'),
+                    title: t("basicSettings.cache.clearLyricCache"),
                     right: (
                         <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.lyric)}
                         </ThemeText>
                     ),
                     onPress() {
-                        showDialog('SimpleDialog', {
-                            title: t('dialog.clearLyricCacheTitle'),
-                            content: t('dialog.clearLyricCacheContent'),
+                        showDialog("SimpleDialog", {
+                            title: t("dialog.clearLyricCacheTitle"),
+                            content: t("dialog.clearLyricCacheContent"),
                             async onOk() {
-                                await clearCache('lyric');
-                                Toast.success(t('toast.lyricCacheCleared'));
+                                await clearCache("lyric");
+                                Toast.success(t("toast.lyricCacheCleared"));
                                 refreshCacheSize();
                             },
                         });
                     },
                 },
                 {
-                    title: t('basicSettings.cache.clearImageCache'),
+                    title: t("basicSettings.cache.clearImageCache"),
                     right: (
                         <ThemeText style={styles.centerText}>
                             {sizeFormatter(cacheSize.image)}
                         </ThemeText>
                     ),
                     onPress() {
-                        showDialog('SimpleDialog', {
-                            title: t('dialog.clearImageCacheTitle'),
-                            content: t('dialog.clearImageCacheContent'),
+                        showDialog("SimpleDialog", {
+                            title: t("dialog.clearImageCacheTitle"),
+                            content: t("dialog.clearImageCacheContent"),
                             async onOk() {
-                                await clearCache('image');
-                                Toast.success(t('toast.imageCacheCleared'));
+                                await clearCache("image");
+                                Toast.success(t("toast.imageCacheCleared"));
                                 refreshCacheSize();
                             },
                         });
@@ -510,54 +510,54 @@ export default function BasicSetting() {
             ],
         },
         {
-            title: t('basicSettings.developer'),
+            title: t("basicSettings.developer"),
             data: [
                 createSwitch(
-                    t('basicSettings.developer.errorLog'),
-                    'debug.errorLog',
+                    t("basicSettings.developer.errorLog"),
+                    "debug.errorLog",
                     debugEnableErrorLog ?? false,
                 ),
                 createSwitch(
-                    t('basicSettings.developer.traceLog'),
-                    'debug.traceLog',
+                    t("basicSettings.developer.traceLog"),
+                    "debug.traceLog",
                     debugEnableTraceLog ?? false,
                 ),
                 createSwitch(
-                    t('basicSettings.developer.devLog'),
-                    'debug.devLog',
+                    t("basicSettings.developer.devLog"),
+                    "debug.devLog",
                     debugEnableDevLog ?? false,
                 ),
                 {
-                    title: t('basicSettings.developer.viewErrorLog'),
+                    title: t("basicSettings.developer.viewErrorLog"),
                     right: undefined,
                     async onPress() {
                         // 获取日志文件夹
                         const errorLogContent = await getErrorLogContent();
-                        showDialog('SimpleDialog', {
-                            title: t('dialog.errorLogTitle'),
+                        showDialog("SimpleDialog", {
+                            title: t("dialog.errorLogTitle"),
                             content: (
                                 <ScrollView>
                                     <Paragraph>
-                                        {errorLogContent || t('dialog.errorLogNoRecord')}
+                                        {errorLogContent || t("dialog.errorLogNoRecord")}
                                     </Paragraph>
                                 </ScrollView>
                             ),
-                            cancelText: t('dialog.errorLogKnow'),
-                            okText: t('dialog.errorLogCopy'),
+                            cancelText: t("dialog.errorLogKnow"),
+                            okText: t("dialog.errorLogCopy"),
                             onOk() {
                                 Clipboard.setString(errorLogContent);
-                                Toast.success(t('toast.copiedToClipboard'));
+                                Toast.success(t("toast.copiedToClipboard"));
                             },
                         });
                     },
                 },
                 {
-                    title: t('basicSettings.developer.clearLog'),
+                    title: t("basicSettings.developer.clearLog"),
                     right: undefined,
                     async onPress() {
                         try {
                             await clearLog();
-                            Toast.success(t('toast.logCleared'));
+                            Toast.success(t("toast.logCleared"));
                         } catch { }
                     },
                 },
@@ -623,19 +623,19 @@ export default function BasicSetting() {
 
 const styles = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         paddingBottom: rpx(24),
         flex: 1,
     },
     centerText: {
-        textAlignVertical: 'center',
+        textAlignVertical: "center",
         maxWidth: rpx(400),
     },
     sectionHeader: {
         paddingHorizontal: rpx(24),
         height: rpx(72),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         marginTop: rpx(20),
     },
     headerContainer: {
@@ -643,14 +643,14 @@ const styles = StyleSheet.create({
     },
     headerContentContainer: {
         height: rpx(80),
-        alignItems: 'center',
+        alignItems: "center",
         paddingHorizontal: rpx(24),
     },
     headerItemStyle: {
         paddingHorizontal: rpx(36),
         height: rpx(80),
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 
@@ -668,15 +668,15 @@ function LyricSetting() {
      *     "lyric.detailFontSize": number;
      *     "lyric.autoSearchLyric": boolean;
      */
-    const showStatusBarLyric = useAppConfig('lyric.showStatusBarLyric');
-    const topPercent = useAppConfig('lyric.topPercent');
-    const leftPercent = useAppConfig('lyric.leftPercent');
-    const align = useAppConfig('lyric.align');
-    const color = useAppConfig('lyric.color');
-    const backgroundColor = useAppConfig('lyric.backgroundColor');
-    const widthPercent = useAppConfig('lyric.widthPercent');
-    const fontSize = useAppConfig('lyric.fontSize');
-    const enableAutoSearchLyric = useAppConfig('lyric.autoSearchLyric');
+    const showStatusBarLyric = useAppConfig("lyric.showStatusBarLyric");
+    const topPercent = useAppConfig("lyric.topPercent");
+    const leftPercent = useAppConfig("lyric.leftPercent");
+    const align = useAppConfig("lyric.align");
+    const color = useAppConfig("lyric.color");
+    const backgroundColor = useAppConfig("lyric.backgroundColor");
+    const widthPercent = useAppConfig("lyric.widthPercent");
+    const fontSize = useAppConfig("lyric.fontSize");
+    const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");
 
 
 
@@ -685,14 +685,14 @@ function LyricSetting() {
     const { t } = useI18N();
 
     const autoSearchLyric = createSwitch(
-        t('basicSettings.lyric.autoSearchLyric'),
-        'lyric.autoSearchLyric',
+        t("basicSettings.lyric.autoSearchLyric"),
+        "lyric.autoSearchLyric",
         enableAutoSearchLyric ?? false,
     );
 
     const openStatusBarLyric = createSwitch(
-        t('basicSettings.lyric.showStatusBarLyric'),
-        'lyric.showStatusBarLyric',
+        t("basicSettings.lyric.showStatusBarLyric"),
+        "lyric.showStatusBarLyric",
         showStatusBarLyric ?? false,
         async newValue => {
             try {
@@ -708,29 +708,29 @@ function LyricSetting() {
                             color: Config.getConfig("lyric.color"),
                             backgroundColor: Config.getConfig("lyric.backgroundColor"),
                             widthPercent: Config.getConfig("lyric.widthPercent"),
-                            fontSize: Config.getConfig("lyric.fontSize")
+                            fontSize: Config.getConfig("lyric.fontSize"),
                         };
                         LyricUtil.showStatusBarLyric(
                             "MusicFree",
                             statusBarLyricConfig ?? {}
                         );
-                        Config.setConfig('lyric.showStatusBarLyric', true);
+                        Config.setConfig("lyric.showStatusBarLyric", true);
                     } else {
                         LyricUtil.requestSystemAlertPermission().finally(() => {
-                            Toast.warn(t('toast.noFloatWindowPermission'));
+                            Toast.warn(t("toast.noFloatWindowPermission"));
                         });
                     }
                 } else {
                     LyricUtil.hideStatusBarLyric();
-                    Config.setConfig('lyric.showStatusBarLyric', false);
+                    Config.setConfig("lyric.showStatusBarLyric", false);
                 }
             } catch { }
         },
     );
 
     const alignStatusBarLyric = createRadio(
-        t('basicSettings.lyric.align'),
-        'lyric.align',
+        t("basicSettings.lyric.align"),
+        "lyric.align",
         [
             NativeTextAlignment.LEFT,
             NativeTextAlignment.CENTER,
@@ -738,9 +738,9 @@ function LyricSetting() {
         ],
         align ?? NativeTextAlignment.CENTER,
         {
-            [NativeTextAlignment.LEFT]: t('basicSettings.lyric.align.left'),
-            [NativeTextAlignment.CENTER]: t('basicSettings.lyric.align.center'),
-            [NativeTextAlignment.RIGHT]: t('basicSettings.lyric.align.right'),
+            [NativeTextAlignment.LEFT]: t("basicSettings.lyric.align.left"),
+            [NativeTextAlignment.CENTER]: t("basicSettings.lyric.align.center"),
+            [NativeTextAlignment.RIGHT]: t("basicSettings.lyric.align.right"),
         },
         newVal => {
             if (showStatusBarLyric) {
@@ -766,11 +766,11 @@ function LyricSetting() {
                 {openStatusBarLyric.right}
             </ListItem>
             <View style={lyricStyles.sliderContainer}>
-                <ThemeText>{t('basicSettings.lyric.leftRightDistance')}</ThemeText>
+                <ThemeText>{t("basicSettings.lyric.leftRightDistance")}</ThemeText>
                 <Slider
                     style={lyricStyles.slider}
                     minimumTrackTintColor={colors.primary}
-                    maximumTrackTintColor={colors.text ?? '#999999'}
+                    maximumTrackTintColor={colors.text ?? "#999999"}
                     thumbTintColor={colors.primary}
                     minimumValue={0}
                     step={0.01}
@@ -782,16 +782,16 @@ function LyricSetting() {
                         }
                     }}
                     onSlidingComplete={val => {
-                        Config.setConfig('lyric.leftPercent', val);
+                        Config.setConfig("lyric.leftPercent", val);
                     }}
                 />
             </View>
             <View style={lyricStyles.sliderContainer}>
-                <ThemeText>{t('basicSettings.lyric.topBottomDistance')}</ThemeText>
+                <ThemeText>{t("basicSettings.lyric.topBottomDistance")}</ThemeText>
                 <Slider
                     style={lyricStyles.slider}
                     minimumTrackTintColor={colors.primary}
-                    maximumTrackTintColor={colors.text ?? '#999999'}
+                    maximumTrackTintColor={colors.text ?? "#999999"}
                     thumbTintColor={colors.primary}
                     minimumValue={0}
                     value={topPercent ?? 0}
@@ -803,16 +803,16 @@ function LyricSetting() {
                         }
                     }}
                     onSlidingComplete={val => {
-                        Config.setConfig('lyric.topPercent', val);
+                        Config.setConfig("lyric.topPercent", val);
                     }}
                 />
             </View>
             <View style={lyricStyles.sliderContainer}>
-                <ThemeText>{t('basicSettings.lyric.width')}</ThemeText>
+                <ThemeText>{t("basicSettings.lyric.width")}</ThemeText>
                 <Slider
                     style={lyricStyles.slider}
                     minimumTrackTintColor={colors.primary}
-                    maximumTrackTintColor={colors.text ?? '#999999'}
+                    maximumTrackTintColor={colors.text ?? "#999999"}
                     thumbTintColor={colors.primary}
                     minimumValue={0}
                     step={0.01}
@@ -824,16 +824,16 @@ function LyricSetting() {
                         }
                     }}
                     onSlidingComplete={val => {
-                        Config.setConfig('lyric.widthPercent', val);
+                        Config.setConfig("lyric.widthPercent", val);
                     }}
                 />
             </View>
             <View style={lyricStyles.sliderContainer}>
-                <ThemeText>{t('basicSettings.lyric.fontSize')}</ThemeText>
+                <ThemeText>{t("basicSettings.lyric.fontSize")}</ThemeText>
                 <Slider
                     style={lyricStyles.slider}
                     minimumTrackTintColor={colors.primary}
-                    maximumTrackTintColor={colors.text ?? '#999999'}
+                    maximumTrackTintColor={colors.text ?? "#999999"}
                     thumbTintColor={colors.primary}
                     minimumValue={Math.round(rpx(18))}
                     step={0.5}
@@ -845,7 +845,7 @@ function LyricSetting() {
                         }
                     }}
                     onSlidingComplete={val => {
-                        Config.setConfig('lyric.fontSize', val);
+                        Config.setConfig("lyric.fontSize", val);
                     }}
                 />
             </View>
@@ -860,44 +860,44 @@ function LyricSetting() {
                 withHorizontalPadding
                 heightType="small"
                 onPress={() => {
-                    showPanel('ColorPicker', {
+                    showPanel("ColorPicker", {
                         closePanelWhenSelected: true,
-                        defaultColor: color ?? 'transparent',
+                        defaultColor: color ?? "transparent",
                         onSelected(color) {
                             if (showStatusBarLyric) {
                                 const colorStr = color.hexa();
                                 LyricUtil.setStatusBarColors(colorStr, null);
-                                Config.setConfig('lyric.color', colorStr);
+                                Config.setConfig("lyric.color", colorStr);
                             }
                         },
                     });
                 }}>
-                <ListItem.Content title={t('basicSettings.lyric.textColor')} />
-                <ColorBlock color={color ?? '#FFE9D2FF'} />
+                <ListItem.Content title={t("basicSettings.lyric.textColor")} />
+                <ColorBlock color={color ?? "#FFE9D2FF"} />
             </ListItem>
             <ListItem
                 withHorizontalPadding
                 heightType="small"
                 onPress={() => {
-                    showPanel('ColorPicker', {
+                    showPanel("ColorPicker", {
                         closePanelWhenSelected: true,
                         defaultColor:
-                            backgroundColor ?? 'transparent',
+                            backgroundColor ?? "transparent",
                         onSelected(color) {
                             if (showStatusBarLyric) {
                                 const colorStr = color.hexa();
                                 LyricUtil.setStatusBarColors(null, colorStr);
                                 Config.setConfig(
-                                    'lyric.backgroundColor',
+                                    "lyric.backgroundColor",
                                     colorStr,
                                 );
                             }
                         },
                     });
                 }}>
-                <ListItem.Content title={t('basicSettings.lyric.backgroundColor')} />
+                <ListItem.Content title={t("basicSettings.lyric.backgroundColor")} />
                 <ColorBlock
-                    color={backgroundColor ?? '#84888153'}
+                    color={backgroundColor ?? "#84888153"}
                 />
             </ListItem>
         </View>
@@ -911,9 +911,9 @@ const lyricStyles = StyleSheet.create({
     },
     sliderContainer: {
         height: rpx(96),
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
+        width: "100%",
+        flexDirection: "row",
+        alignItems: "center",
         paddingHorizontal: rpx(24),
     },
 });

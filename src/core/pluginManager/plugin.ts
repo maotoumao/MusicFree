@@ -1,7 +1,7 @@
 import {
     CacheControl,
     internalSerializeKey,
-    localPluginPlatform
+    localPluginPlatform,
 } from "@/constants/commonConst";
 import pathConst from "@/constants/pathConst";
 import Mp3Util from "@/native/mp3Util";
@@ -45,13 +45,13 @@ const deprecatedCookieManager = {
 
 const packages: Record<string, any> = {
     cheerio,
-    'crypto-js': CryptoJs,
+    "crypto-js": CryptoJs,
     axios,
     dayjs,
-    'big-integer': bigInt,
+    "big-integer": bigInt,
     qs,
     he,
-    '@react-native-cookies/cookies': deprecatedCookieManager,
+    "@react-native-cookies/cookies": deprecatedCookieManager,
     webdav,
 };
 
@@ -62,7 +62,7 @@ const _require = (packageName: string) => {
 };
 
 const _consoleBind = function (
-    method: 'log' | 'error' | 'info' | 'warn',
+    method: "log" | "error" | "info" | "warn",
     ...args: any
 ) {
     const fn = console[method];
@@ -73,10 +73,10 @@ const _consoleBind = function (
 };
 
 const _console = {
-    log: _consoleBind.bind(null, 'log'),
-    warn: _consoleBind.bind(null, 'warn'),
-    info: _consoleBind.bind(null, 'info'),
-    error: _consoleBind.bind(null, 'error'),
+    log: _consoleBind.bind(null, "log"),
+    warn: _consoleBind.bind(null, "warn"),
+    info: _consoleBind.bind(null, "info"),
+    error: _consoleBind.bind(null, "error"),
 };
 
 const appVersion = deviceInfoModule.getVersion();
@@ -91,8 +91,8 @@ function formatAuthUrl(url: string) {
                     urlObj.password,
                 )}`,
             )}`;
-            urlObj.username = '';
-            urlObj.password = '';
+            urlObj.username = "";
+            urlObj.password = "";
 
             return {
                 url: urlObj.toString(),
@@ -166,19 +166,19 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
     /** 获取真实源 */
     async getMediaSource(
         musicItem: IMusic.IMusicItemBase,
-        quality: IMusic.IQualityKey = 'standard',
+        quality: IMusic.IQualityKey = "standard",
         retryCount = 1,
         notUpdateCache = false,
     ): Promise<IPlugin.IMediaSourceResult | null> {
         // 1. 本地搜索 其实直接读mediameta就好了
-        const localPathInMediaExtra = getMediaExtraProperty(musicItem, 'localPath');
+        const localPathInMediaExtra = getMediaExtraProperty(musicItem, "localPath");
         const localPath = getLocalPath(musicItem);
         if (localPath && (await exists(localPath))) {
-            trace('本地播放', localPath);
+            trace("本地播放", localPath);
             if (localPathInMediaExtra !== localPath) {
                 // 修正一下本地数据
                 patchMediaExtra(musicItem, {
-                    localPath
+                    localPath,
                 });
 
             }
@@ -188,18 +188,18 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
         } else if (localPathInMediaExtra) {
             patchMediaExtra(musicItem, {
                 localPath: undefined,
-            })
+            });
         }
 
         if (musicItem.platform === localPluginPlatform) {
-            throw new Error('本地音乐不存在');
+            throw new Error("本地音乐不存在");
         }
         // 2. 缓存播放
         const mediaCache = MediaCache.getMediaCache(
             musicItem,
         ) as IMusic.IMusicItem | null;
         const pluginCacheControl =
-            this.plugin.instance.cacheControl ?? 'no-cache';
+            this.plugin.instance.cacheControl ?? "no-cache";
         if (
             mediaCache &&
             mediaCache?.source?.[quality]?.url &&
@@ -207,13 +207,13 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                 (pluginCacheControl === CacheControl.NoCache &&
                     Network.isOffline))
         ) {
-            trace('播放', '缓存播放');
+            trace("播放", "缓存播放");
             const qualityInfo = mediaCache.source[quality];
             return {
                 url: qualityInfo!.url,
                 headers: mediaCache.headers,
                 userAgent:
-                    mediaCache.userAgent ?? mediaCache.headers?.['user-agent'],
+                    mediaCache.userAgent ?? mediaCache.headers?.["user-agent"],
             };
         }
         // 3. 替代插件
@@ -244,13 +244,13 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                 quality,
             )) ?? { url: musicItem?.qualities?.[quality]?.url };
             if (!url) {
-                throw new Error('NOT RETRY');
+                throw new Error("NOT RETRY");
             }
-            trace('播放', '插件播放');
+            trace("播放", "插件播放");
             const result = {
                 url,
                 headers,
-                userAgent: headers?.['user-agent'],
+                userAgent: headers?.["user-agent"],
             } as IPlugin.IMediaSourceResult;
             const authFormattedResult = formatAuthUrl(result.url!);
             if (authFormattedResult.auth) {
@@ -284,12 +284,12 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             }
             return result;
         } catch (e: any) {
-            if (retryCount > 0 && e?.message !== 'NOT RETRY') {
+            if (retryCount > 0 && e?.message !== "NOT RETRY") {
                 await delay(150);
                 return this.getMediaSource(musicItem, quality, --retryCount);
             }
-            errorLog('获取真实源失败', e?.message);
-            devLog('error', '获取真实源失败', e, e?.message);
+            errorLog("获取真实源失败", e?.message);
+            devLog("error", "获取真实源失败", e, e?.message);
             return null;
         }
     }
@@ -308,7 +308,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                 ) ?? null
             );
         } catch (e: any) {
-            devLog('error', '获取音乐详情失败', e, e?.message);
+            devLog("error", "获取音乐详情失败", e, e?.message);
             return null;
         }
     }
@@ -326,7 +326,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
         originalMusicItem: IMusic.IMusicItemBase,
     ): Promise<ILyric.ILyricSource | null> {
         // 1.额外存储的meta信息（关联歌词）
-        const associatedLrc = getMediaExtraProperty(originalMusicItem, 'associatedLrc');
+        const associatedLrc = getMediaExtraProperty(originalMusicItem, "associatedLrc");
         let musicItem: IMusic.IMusicItem;
         if (associatedLrc) {
             musicItem = associatedLrc as IMusic.IMusicItem;
@@ -349,31 +349,31 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
         const idHash = CryptoJs.MD5(musicItem.id).toString(CryptoJs.enc.Hex);
         if (
             await RNFS.exists(
-                pathConst.localLrcPath + platformHash + '/' + idHash + '.lrc',
+                pathConst.localLrcPath + platformHash + "/" + idHash + ".lrc",
             )
         ) {
             rawLrc = await RNFS.readFile(
-                pathConst.localLrcPath + platformHash + '/' + idHash + '.lrc',
-                'utf8',
+                pathConst.localLrcPath + platformHash + "/" + idHash + ".lrc",
+                "utf8",
             );
 
             if (
                 await RNFS.exists(
                     pathConst.localLrcPath +
                     platformHash +
-                    '/' +
+                    "/" +
                     idHash +
-                    '.tran.lrc',
+                    ".tran.lrc",
                 )
             ) {
                 translation =
                     (await RNFS.readFile(
                         pathConst.localLrcPath +
                         platformHash +
-                        '/' +
+                        "/" +
                         idHash +
-                        '.tran.lrc',
-                        'utf8',
+                        ".tran.lrc",
+                        "utf8",
                     )) || null;
             }
 
@@ -404,7 +404,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             if (localLyric) {
                 let needRefetch = false;
                 if (localLyric.rawLrc && (await exists(localLyric.rawLrc))) {
-                    rawLrc = await readFile(localLyric.rawLrc, 'utf8');
+                    rawLrc = await readFile(localLyric.rawLrc, "utf8");
                 } else if (localLyric.rawLrc) {
                     needRefetch = true;
                 }
@@ -414,7 +414,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                 ) {
                     translation = await readFile(
                         localLyric.translation,
-                        'utf8',
+                        "utf8",
                     );
                 } else if (localLyric.translation) {
                     needRefetch = true;
@@ -453,9 +453,9 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
 
             // 本地的文件名
             let filename: string | undefined = `${pathConst.lrcCachePath
-                }${nanoid()}.lrc`;
+            }${nanoid()}.lrc`;
             let filenameTrans: string | undefined = `${pathConst.lrcCachePath
-                }${nanoid()}.lrc`;
+            }${nanoid()}.lrc`;
 
             // 旧版本兼容
             if (!(rawLrc || translation)) {
@@ -471,12 +471,12 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             }
 
             if (rawLrc) {
-                await writeFile(filename, rawLrc, 'utf8');
+                await writeFile(filename, rawLrc, "utf8");
             } else {
                 filename = undefined;
             }
             if (translation) {
-                await writeFile(filenameTrans, translation, 'utf8');
+                await writeFile(filenameTrans, translation, "utf8");
             } else {
                 filenameTrans = undefined;
             }
@@ -485,10 +485,10 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                 MediaCache.setMediaCache(
                     produce(musicItemCache || musicItem, draft => {
                         musicItemCache?.$localLyric?.rawLrc;
-                        objectPath.set(draft, '$localLyric.rawLrc', filename);
+                        objectPath.set(draft, "$localLyric.rawLrc", filename);
                         objectPath.set(
                             draft,
-                            '$localLyric.translation',
+                            "$localLyric.translation",
                             filenameTrans,
                         );
                         return draft;
@@ -508,13 +508,13 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             localFilePath
         ) {
             const res = await localFilePluginDefine!.getLyric!(originalMusicItem);
-            devLog('info', '本地文件歌词');
+            devLog("info", "本地文件歌词");
 
             if (res) {
                 return res;
             }
         }
-        devLog('warn', '无歌词');
+        devLog("warn", "无歌词");
 
         return null;
     }
@@ -563,8 +563,8 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                 };
             }
         } catch (e: any) {
-            trace('获取专辑信息失败', e?.message);
-            devLog('error', '获取专辑信息失败', e, e?.message);
+            trace("获取专辑信息失败", e?.message);
+            devLog("error", "获取专辑信息失败", e, e?.message);
 
             return null;
         }
@@ -608,8 +608,8 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                 };
             }
         } catch (e: any) {
-            trace('获取歌单信息失败', e, e?.message);
-            devLog('error', '获取歌单信息失败', e, e?.message);
+            trace("获取歌单信息失败", e, e?.message);
+            devLog("error", "获取歌单信息失败", e, e?.message);
 
             return null;
         }
@@ -645,8 +645,8 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                 data: result.data,
             };
         } catch (e: any) {
-            trace('查询作者信息失败', e?.message);
-            devLog('error', '查询作者信息失败', e, e?.message);
+            trace("查询作者信息失败", e?.message);
+            devLog("error", "查询作者信息失败", e, e?.message);
 
             throw e;
         }
@@ -661,7 +661,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             return result;
         } catch (e: any) {
             console.log(e);
-            devLog('error', '导入歌单失败', e, e?.message);
+            devLog("error", "导入歌单失败", e, e?.message);
 
             return [];
         }
@@ -679,7 +679,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             resetMediaItem(result, this.plugin.name);
             return result;
         } catch (e: any) {
-            devLog('error', '导入单曲失败', e, e?.message);
+            devLog("error", "导入单曲失败", e, e?.message);
 
             return null;
         }
@@ -694,7 +694,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             }
             return result;
         } catch (e: any) {
-            devLog('error', '获取榜单失败', e, e?.message);
+            devLog("error", "获取榜单失败", e, e?.message);
             return [];
         }
     }
@@ -734,7 +734,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             }
             return result;
         } catch (e: any) {
-            devLog('error', '获取推荐歌单失败', e, e?.message);
+            devLog("error", "获取推荐歌单失败", e, e?.message);
             return {
                 data: [],
             };
@@ -765,7 +765,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
 
             return result;
         } catch (e: any) {
-            devLog('error', '获取推荐歌单详情失败', e, e?.message);
+            devLog("error", "获取推荐歌单详情失败", e, e?.message);
             return {
                 isEnd: true,
                 data: [],
@@ -813,7 +813,7 @@ export class Plugin {
     public methods: IPlugin.IPluginInstanceMethods;
 
 
-    static pluginManager: IPluginManager
+    static pluginManager: IPluginManager;
 
     static injectDependencies(
         pluginManager: IPluginManager,
@@ -829,7 +829,7 @@ export class Plugin {
 
         const _module: any = { exports: {} };
         try {
-            if (typeof funcCode === 'string') {
+            if (typeof funcCode === "string") {
                 // 插件的环境变量
                 const env = {
                     getUserVariables: () => {
@@ -838,17 +838,17 @@ export class Plugin {
                         );
                     },
                     get userVariables() {
-                        return this.getUserVariables() ?? {}
+                        return this.getUserVariables() ?? {};
                     },
                     appVersion,
-                    os: 'android',
-                    lang: 'zh-CN'
+                    os: "android",
+                    lang: "zh-CN",
                 };
                 const _process = {
-                    platform: 'android',
+                    platform: "android",
                     version: appVersion,
                     env,
-                }
+                };
 
                 // eslint-disable-next-line no-new-func
                 _instance = Function(`
@@ -892,8 +892,8 @@ export class Plugin {
                 stack: e?.stack,
             });
             _instance = e?.instance ?? {
-                platform: '',
-                appVersion: '',
+                platform: "",
+                appVersion: "",
                 async getMediaSource() {
                     return null;
                 },
@@ -912,14 +912,14 @@ export class Plugin {
 
         // 检测name & 计算hash
         if (
-            this.name === '' ||
+            this.name === "" ||
             !this.name
         ) {
-            this.hash = '';
+            this.hash = "";
             this.state = PluginState.Error;
             this.errorReason = this.errorReason ?? PluginErrorReason.CannotParse;
         } else {
-            if (typeof funcCode === 'string') {
+            if (typeof funcCode === "string") {
                 this.hash = sha256(funcCode).toString();
             } else {
                 this.hash = sha256(pluginPath + "@" + appVersion).toString();
@@ -971,16 +971,16 @@ const localFilePluginDefine: IPlugin.IPluginDefine = {
             try {
                 rawLrc = await Mp3Util.getLyric(localPath);
             } catch (e) {
-                console.log('读取内嵌歌词失败', e);
+                console.log("读取内嵌歌词失败", e);
             }
             if (!rawLrc) {
                 // 读取配置歌词
-                const lastDot = localPath.lastIndexOf('.');
-                const lrcPath = localPath.slice(0, lastDot) + '.lrc';
+                const lastDot = localPath.lastIndexOf(".");
+                const lrcPath = localPath.slice(0, lastDot) + ".lrc";
 
                 try {
                     if (await exists(lrcPath)) {
-                        rawLrc = await readFile(lrcPath, 'utf8');
+                        rawLrc = await readFile(lrcPath, "utf8");
                     }
                 } catch { }
             }
@@ -1011,28 +1011,28 @@ const localFilePluginDefine: IPlugin.IPluginDefine = {
             id: id,
             platform: localPluginPlatform,
             title: meta?.title ?? getFileName(urlLike),
-            artist: meta?.artist ?? '未知歌手',
-            duration: parseInt(meta?.duration ?? '0', 10) / 1000,
-            album: meta?.album ?? '未知专辑',
-            artwork: '',
+            artist: meta?.artist ?? "未知歌手",
+            duration: parseInt(meta?.duration ?? "0", 10) / 1000,
+            album: meta?.album ?? "未知专辑",
+            artwork: "",
             [internalSerializeKey]: {
                 localPath: urlLike,
             },
-            url: urlLike
+            url: urlLike,
         };
     },
     async getMediaSource(musicItem, quality) {
-        if (quality === 'standard') {
+        if (quality === "standard") {
             return {
                 url: addFileScheme(musicItem.$?.localPath || musicItem.url),
             };
         }
         return null;
-    }
+    },
 
 };
 
 export const localFilePlugin = new Plugin(function () {
-    return localFilePluginDefine
+    return localFilePluginDefine;
 }, "internal-plugin://local-file-plugin");
 

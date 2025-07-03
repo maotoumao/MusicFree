@@ -1,11 +1,11 @@
-import React from 'react';
-import NavBar from './components/navBar';
-import MusicBar from '@/components/musicBar';
-import SheetMusicList from './components/sheetMusicList';
-import StatusBar from '@/components/base/statusBar';
-import globalStyle from '@/constants/globalStyle';
-import VerticalSafeAreaView from '../base/verticalSafeAreaView';
-import { RequestStateCode } from '@/constants/commonConst';
+import React from "react";
+import NavBar from "./components/navBar";
+import MusicBar from "@/components/musicBar";
+import SheetMusicList from "./components/sheetMusicList";
+import StatusBar from "@/components/base/statusBar";
+import globalStyle from "@/constants/globalStyle";
+import VerticalSafeAreaView from "../base/verticalSafeAreaView";
+import { RequestStateCode } from "@/constants/commonConst";
 
 interface IMusicSheetPageProps {
     navTitle: string;

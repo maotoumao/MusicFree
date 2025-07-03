@@ -1,16 +1,16 @@
-import React, { useRef } from 'react';
-import { KeyboardAvoidingView, StyleSheet } from 'react-native';
-import rpx, { vmax } from '@/utils/rpx';
-import useColors from '@/hooks/useColors';
+import React, { useRef } from "react";
+import { KeyboardAvoidingView, StyleSheet } from "react-native";
+import rpx, { vmax } from "@/utils/rpx";
+import useColors from "@/hooks/useColors";
 
-import ThemeText from '@/components/base/themeText';
-import { ScrollView } from 'react-native-gesture-handler';
-import PanelBase from '../base/panelBase';
-import { hidePanel } from '../usePanel';
-import ListItem from '@/components/base/listItem';
-import Input from '@/components/base/input';
-import globalStyle from '@/constants/globalStyle';
-import PanelHeader from '../base/panelHeader';
+import ThemeText from "@/components/base/themeText";
+import { ScrollView } from "react-native-gesture-handler";
+import PanelBase from "../base/panelBase";
+import { hidePanel } from "../usePanel";
+import ListItem from "@/components/base/listItem";
+import Input from "@/components/base/input";
+import globalStyle from "@/constants/globalStyle";
+import PanelHeader from "../base/panelHeader";
 
 interface IUserVariablesProps {
     title?: string;
@@ -35,7 +35,7 @@ export default function SetUserVariables(props: IUserVariablesProps) {
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title={title ?? '设置用户变量'}
+                        title={title ?? "设置用户变量"}
                         onCancel={() => {
                             onCancel?.();
                             hidePanel();
@@ -92,19 +92,19 @@ const styles = StyleSheet.create({
     opeartions: {
         width: rpx(750),
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
+        flexDirection: "row",
         height: rpx(100),
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     listItem: {
-        justifyContent: 'space-between',
+        justifyContent: "space-between",
     },
     varName: {
-        maxWidth: '35%',
+        maxWidth: "35%",
     },
     input: {
-        width: '50%',
+        width: "50%",
         paddingVertical: rpx(8),
         paddingHorizontal: rpx(12),
         borderRadius: rpx(8),

@@ -43,7 +43,7 @@ export default function MusicComment(props: IMusicCommentProps) {
             }
         }}
         data={comments}
-    />
+    />;
 
     return (
         <PanelFullscreen>
@@ -75,8 +75,8 @@ export default function MusicComment(props: IMusicCommentProps) {
 
 const styles = StyleSheet.create({
     musicItemContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         gap: rpx(16),
         paddingHorizontal: rpx(24),
         height: rpx(120),

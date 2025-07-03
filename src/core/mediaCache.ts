@@ -5,7 +5,7 @@ import { getMediaUniqueKey } from "@/utils/mediaUtils";
 import { exists, unlink } from "react-native-fs";
 
 // Internal Method
-const mediaCacheStore = getOrCreateMMKV('cache.MediaCache', true);
+const mediaCacheStore = getOrCreateMMKV("cache.MediaCache", true);
 
 // 最多缓存800条数据
 const maxCacheCount = 800;

@@ -1,11 +1,11 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import ListItem from '@/components/base/listItem';
-import { sizeFormatter } from '@/utils/fileUtils';
-import { DownloadFailReason, DownloadStatus, useDownloadQueue, useDownloadTask } from '@/core/downloader';
-import { FlashList } from '@shopify/flash-list';
-import { useI18N } from '@/core/i18n';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ListItem from "@/components/base/listItem";
+import { sizeFormatter } from "@/utils/fileUtils";
+import { DownloadFailReason, DownloadStatus, useDownloadQueue, useDownloadTask } from "@/core/downloader";
+import { FlashList } from "@shopify/flash-list";
+import { useI18N } from "@/core/i18n";
 
 
 interface DownloadingListItemProps {
@@ -33,12 +33,12 @@ function DownloadingListItem(props: DownloadingListItemProps) {
     } else if (status === DownloadStatus.Completed) {
         description = t("downloading.downloadStatus.completed");
     } else if (status === DownloadStatus.Downloading) {
-        const progress = taskInfo?.downloadedSize ? sizeFormatter(taskInfo.downloadedSize) : '-';
-        const totalSize = taskInfo?.fileSize ? sizeFormatter(taskInfo.fileSize) : '-';
+        const progress = taskInfo?.downloadedSize ? sizeFormatter(taskInfo.downloadedSize) : "-";
+        const totalSize = taskInfo?.fileSize ? sizeFormatter(taskInfo.fileSize) : "-";
 
         description = t("downloading.downloadStatus.downloadProgress", {
             progress,
-            totalSize
+            totalSize,
         });
     } else if (status === DownloadStatus.Pending) {
         description = t("downloading.downloadStatus.pending");
@@ -51,7 +51,7 @@ function DownloadingListItem(props: DownloadingListItemProps) {
             title={musicItem.title}
             description={description}
         />
-    </ListItem>
+    </ListItem>;
 
 }
 
@@ -66,7 +66,7 @@ export default function DownloadingList() {
                 data={downloadQueue}
                 keyExtractor={_ => `dl${_.platform}.${_.id}`}
                 renderItem={({ item }) => {
-                    return <DownloadingListItem musicItem={item} />
+                    return <DownloadingListItem musicItem={item} />;
                 }}
             />
         </View>

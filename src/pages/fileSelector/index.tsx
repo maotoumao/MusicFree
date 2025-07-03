@@ -1,27 +1,27 @@
-import Empty from '@/components/base/empty';
-import IconButton from '@/components/base/iconButton';
-import Loading from '@/components/base/loading';
-import StatusBar from '@/components/base/statusBar';
-import Button from '@/components/base/textButton.tsx';
-import ThemeText from '@/components/base/themeText';
-import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
-import globalStyle from '@/constants/globalStyle';
-import i18n from '@/core/i18n';
-import { useParams } from '@/core/router';
-import useColors from '@/hooks/useColors';
-import useHardwareBack from '@/hooks/useHardwareBack';
-import rpx from '@/utils/rpx';
-import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import Empty from "@/components/base/empty";
+import IconButton from "@/components/base/iconButton";
+import Loading from "@/components/base/loading";
+import StatusBar from "@/components/base/statusBar";
+import Button from "@/components/base/textButton.tsx";
+import ThemeText from "@/components/base/themeText";
+import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView";
+import globalStyle from "@/constants/globalStyle";
+import i18n from "@/core/i18n";
+import { useParams } from "@/core/router";
+import useColors from "@/hooks/useColors";
+import useHardwareBack from "@/hooks/useHardwareBack";
+import rpx from "@/utils/rpx";
+import { useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import {
     ExternalStorageDirectoryPath,
     exists,
     getAllExternalFilesDirs,
     readDir,
-} from 'react-native-fs';
-import { FlatList } from 'react-native-gesture-handler';
-import FileItem from './fileItem';
+} from "react-native-fs";
+import { FlatList } from "react-native-gesture-handler";
+import FileItem from "./fileItem";
 
 interface IPathItem {
     path: string;
@@ -30,22 +30,22 @@ interface IPathItem {
 
 interface IFileItem {
     path: string;
-    type: 'file' | 'folder';
+    type: "file" | "folder";
 }
 
 const ITEM_HEIGHT = rpx(96);
 
 export default function FileSelector() {
     const {
-        fileType = 'file-and-folder',
+        fileType = "file-and-folder",
         multi = true,
         actionText = i18n.t("common.sure"),
         matchExtension,
         onAction,
-    } = useParams<'file-selector'>() ?? {};
+    } = useParams<"file-selector">() ?? {};
 
     const [currentPath, setCurrentPath] = useState<IPathItem>({
-        path: '/',
+        path: "/",
         parent: null,
     });
     const currentPathRef = useRef<IPathItem>(currentPath);
@@ -65,12 +65,12 @@ export default function FileSelector() {
             // 路径变化时，重新读取
             setLoading(true);
             try {
-                if (currentPath.path === '/') {
+                if (currentPath.path === "/") {
                     try {
                         const allExt = await getAllExternalFilesDirs();
                         if (allExt.length > 1) {
                             const sdCardPaths = allExt.map(sdp =>
-                                sdp.substring(0, sdp.indexOf('/Android')),
+                                sdp.substring(0, sdp.indexOf("/Android")),
                             );
                             if (
                                 (
@@ -81,7 +81,7 @@ export default function FileSelector() {
                             ) {
                                 setFilesData(
                                     sdCardPaths.map(_ => ({
-                                        type: 'folder',
+                                        type: "folder",
                                         path: _,
                                     })),
                                 );
@@ -105,17 +105,17 @@ export default function FileSelector() {
                     let folders: IFileItem[] = [];
                     let files: IFileItem[] = [];
                     if (
-                        fileType === 'folder' ||
-                        fileType === 'file-and-folder'
+                        fileType === "folder" ||
+                        fileType === "file-and-folder"
                     ) {
                         folders = res
                             .filter(_ => _.isDirectory())
                             .map(_ => ({
-                                type: 'folder',
+                                type: "folder",
                                 path: _.path,
                             }));
                     }
-                    if (fileType === 'file' || fileType === 'file-and-folder') {
+                    if (fileType === "file" || fileType === "file-and-folder") {
                         files = res
                             .filter(
                                 _ =>
@@ -125,7 +125,7 @@ export default function FileSelector() {
                                         : true),
                             )
                             .map(_ => ({
-                                type: 'file',
+                                type: "file",
                                 path: _.path,
                             }));
                     }
@@ -182,7 +182,7 @@ export default function FileSelector() {
             type={item.type}
             parentPath={currentPath.path}
             onItemPress={currentChecked => {
-                if (item.type === 'folder') {
+                if (item.type === "folder") {
                     setCurrentPath(prev => ({
                         parent: prev,
                         path: item.path,
@@ -216,7 +216,7 @@ export default function FileSelector() {
                             selectPath(filesData, true);
                         }
                     }}>
-                    {currentPageAllChecked ? '全不选' : '全选'}
+                    {currentPageAllChecked ? "全不选" : "全选"}
                 </Button>
             </View>
         ) : null;
@@ -240,7 +240,7 @@ export default function FileSelector() {
                 <ThemeText
                     numberOfLines={2}
                     ellipsizeMode="head"
-                    fontColor={'appBarText'}
+                    fontColor={"appBarText"}
                     style={style.headerPath}>
                     {currentPath.path}
                 </ThemeText>
@@ -280,12 +280,12 @@ export default function FileSelector() {
                         },
                     ]}>
                     <ThemeText
-                        fontColor={'appBarText'}
+                        fontColor={"appBarText"}
                         opacity={checkedItems.length > 0 ? undefined : 0.6}>
                         {actionText}
                         {multi && checkedItems?.length > 0
                             ? ` (选中${checkedItems.length})`
-                            : ''}
+                            : ""}
                     </ThemeText>
                 </View>
             </Pressable>
@@ -296,25 +296,25 @@ export default function FileSelector() {
 const style = StyleSheet.create({
     header: {
         height: rpx(88),
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
         paddingHorizontal: rpx(24),
     },
     headerPath: {
         marginLeft: rpx(28),
     },
     scanBtn: {
-        width: '100%',
+        width: "100%",
         height: rpx(120),
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     selectAll: {
-        width: '100%',
+        width: "100%",
         height: ITEM_HEIGHT,
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
 });

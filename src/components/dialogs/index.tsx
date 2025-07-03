@@ -1,6 +1,6 @@
-import React from 'react';
-import components from './components';
-import { dialogInfoStore } from './useDialog';
+import React from "react";
+import components from "./components";
+import { dialogInfoStore } from "./useDialog";
 
 export default function () {
     const dialogInfoState = dialogInfoStore.useValue();

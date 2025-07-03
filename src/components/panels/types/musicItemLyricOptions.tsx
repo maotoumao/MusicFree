@@ -48,7 +48,7 @@ export default function MusicItemLyricOptions(
 
     const options: IOption[] = [
         {
-            icon: 'identification',
+            icon: "identification",
             title: `ID: ${getMediaUniqueKey(musicItem)}`,
             onPress: () => {
                 mediaCache.setMediaCache(musicItem);
@@ -59,45 +59,45 @@ export default function MusicItemLyricOptions(
                             id: musicItem.id,
                         },
                         null,
-                        '',
+                        "",
                     ),
                 );
-                Toast.success(t('toast.copiedToClipboard'));
+                Toast.success(t("toast.copiedToClipboard"));
             },
         },
         {
-            icon: 'user',
-            title: t('panel.musicItemLyricOptions.author', { artist: musicItem.artist }),
+            icon: "user",
+            title: t("panel.musicItemLyricOptions.author", { artist: musicItem.artist }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.artist.toString());
-                    Toast.success(t('toast.copiedToClipboard'));
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch {
-                    Toast.success(t('toast.copiedToClipboardFailed'));
+                    Toast.success(t("toast.copiedToClipboardFailed"));
                 }
             },
         },
         {
-            icon: 'album-outline',
+            icon: "album-outline",
             show: !!musicItem.album,
-            title: t('panel.musicItemLyricOptions.album', { album: musicItem.album }),
+            title: t("panel.musicItemLyricOptions.album", { album: musicItem.album }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.album.toString());
-                    Toast.success(t('toast.copiedToClipboard'));
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch {
-                    Toast.success(t('toast.copiedToClipboardFailed'));
+                    Toast.success(t("toast.copiedToClipboardFailed"));
                 }
             },
         },
         {
-            icon: 'lyric', title: t('panel.musicItemLyricOptions.toggleDesktopLyric', {
-                status: Config.getConfig('lyric.showStatusBarLyric')
-                    ? t('panel.musicItemLyricOptions.disableDesktopLyric')
-                    : t('panel.musicItemLyricOptions.enableDesktopLyric')
+            icon: "lyric", title: t("panel.musicItemLyricOptions.toggleDesktopLyric", {
+                status: Config.getConfig("lyric.showStatusBarLyric")
+                    ? t("panel.musicItemLyricOptions.disableDesktopLyric")
+                    : t("panel.musicItemLyricOptions.enableDesktopLyric"),
             }),
             async onPress() {
-                const showStatusBarLyric = Config.getConfig('lyric.showStatusBarLyric');
+                const showStatusBarLyric = Config.getConfig("lyric.showStatusBarLyric");
                 if (!showStatusBarLyric) {
                     const hasPermission =
                         await LyricUtil.checkSystemAlertPermission();
@@ -110,27 +110,28 @@ export default function MusicItemLyricOptions(
                             color: Config.getConfig("lyric.color"),
                             backgroundColor: Config.getConfig("lyric.backgroundColor"),
                             widthPercent: Config.getConfig("lyric.widthPercent"),
-                            fontSize: Config.getConfig("lyric.fontSize")
+                            fontSize: Config.getConfig("lyric.fontSize"),
                         };
                         LyricUtil.showStatusBarLyric(
                             "MusicFree",
                             statusBarLyricConfig ?? {}
                         );
-                        Config.setConfig('lyric.showStatusBarLyric', true);
-                    } else {                        LyricUtil.requestSystemAlertPermission().finally(() => {
-                            Toast.warn(t('panel.musicItemLyricOptions.desktopLyricPermissionError'));
+                        Config.setConfig("lyric.showStatusBarLyric", true);
+                    } else {
+                        LyricUtil.requestSystemAlertPermission().finally(() => {
+                            Toast.warn(t("panel.musicItemLyricOptions.desktopLyricPermissionError"));
                         });
                     }
                 } else {
                     LyricUtil.hideStatusBarLyric();
-                    Config.setConfig('lyric.showStatusBarLyric', false);
+                    Config.setConfig("lyric.showStatusBarLyric", false);
                 }
                 hidePanel();
             },
         },
         {
-            icon: 'arrow-up-tray',
-            title: t('panel.musicItemLyricOptions.uploadLocalLyric'),
+            icon: "arrow-up-tray",
+            title: t("panel.musicItemLyricOptions.uploadLocalLyric"),
             async onPress() {
                 try {
                     const result = await getDocumentAsync({
@@ -141,21 +142,21 @@ export default function MusicItemLyricOptions(
                     }
                     const pickedDoc = result.assets[0].uri;
                     const lyricContent = await readAsStringAsync(pickedDoc, {
-                        encoding: 'utf8',
+                        encoding: "utf8",
                     });                    await lyricManager.uploadLocalLyric(musicItem, lyricContent);
-                    Toast.success(t('toast.settingSuccess'));
+                    Toast.success(t("toast.settingSuccess"));
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    Toast.warn(t('panel.musicItemLyricOptions.settingFail', {
-                        reason: e?.message
+                    Toast.warn(t("panel.musicItemLyricOptions.settingFail", {
+                        reason: e?.message,
                     }));
                 }
             },
         },
         {
-            icon: 'arrow-up-tray',
-            title: t('panel.musicItemLyricOptions.uploadLocalLyricTranslation'),
+            icon: "arrow-up-tray",
+            title: t("panel.musicItemLyricOptions.uploadLocalLyricTranslation"),
             async onPress() {
                 try {
                     const result = await getDocumentAsync({
@@ -166,29 +167,29 @@ export default function MusicItemLyricOptions(
                     }
                     const pickedDoc = result.assets[0].uri;
                     const lyricContent = await readAsStringAsync(pickedDoc, {
-                        encoding: 'utf8',
-                    });                    await lyricManager.uploadLocalLyric(musicItem, lyricContent, 'translation');
-                    Toast.success(t('toast.settingSuccess'));
+                        encoding: "utf8",
+                    });                    await lyricManager.uploadLocalLyric(musicItem, lyricContent, "translation");
+                    Toast.success(t("toast.settingSuccess"));
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    Toast.warn(t('panel.musicItemLyricOptions.settingFail', {
-                        reason: e?.message
+                    Toast.warn(t("panel.musicItemLyricOptions.settingFail", {
+                        reason: e?.message,
                     }));
                 }
             },
         },
         {
-            icon: 'trash-outline',
-            title: t('panel.musicItemLyricOptions.deleteLocalLyric'),
+            icon: "trash-outline",
+            title: t("panel.musicItemLyricOptions.deleteLocalLyric"),
             async onPress() {
                 try {
                     lyricManager.removeLocalLyric(musicItem);
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    Toast.warn(t('panel.musicItemLyricOptions.deleteFail', {
-                        reason: e?.message
+                    Toast.warn(t("panel.musicItemLyricOptions.deleteFail", {
+                        reason: e?.message,
                     }));
                 }
             },
@@ -213,8 +214,8 @@ export default function MusicItemLyricOptions(
                                 fontColor="textSecondary"
                                 fontSize="description"
                                 numberOfLines={2}>
-                                {musicItem?.artist}{' '}
-                                {musicItem?.album ? `- ${musicItem.album}` : ''}
+                                {musicItem?.artist}{" "}
+                                {musicItem?.album ? `- ${musicItem.album}` : ""}
                             </ThemeText>
                         </View>
                     </View>
@@ -266,7 +267,7 @@ const style = StyleSheet.create({
     header: {
         width: rpx(750),
         height: rpx(200),
-        flexDirection: 'row',
+        flexDirection: "row",
         padding: rpx(24),
     },
     listWrapper: {
@@ -281,7 +282,7 @@ const style = StyleSheet.create({
         marginLeft: rpx(36),
         width: rpx(526),
         height: rpx(140),
-        justifyContent: 'space-around',
+        justifyContent: "space-around",
     },
     title: {
         paddingRight: rpx(24),

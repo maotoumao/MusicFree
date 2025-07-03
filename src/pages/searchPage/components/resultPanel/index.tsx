@@ -1,15 +1,15 @@
 /**
  * 搜索结果面板 一级页
  */
-import React, { memo, useState } from 'react';
-import { Text } from 'react-native';
-import rpx, { vw } from '@/utils/rpx';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
-import ResultSubPanel from './resultSubPanel';
-import results from './results';
-import { fontWeightConst } from '@/constants/uiConst';
-import useColors from '@/hooks/useColors';
-import { useI18N } from '@/core/i18n';
+import React, { memo, useState } from "react";
+import { Text } from "react-native";
+import rpx, { vw } from "@/utils/rpx";
+import { SceneMap, TabBar, TabView } from "react-native-tab-view";
+import ResultSubPanel from "./resultSubPanel";
+import results from "./results";
+import { fontWeightConst } from "@/constants/uiConst";
+import useColors from "@/hooks/useColors";
+import { useI18N } from "@/core/i18n";
 
 const routes = results;
 
@@ -43,13 +43,13 @@ function ResultPanel() {
                     scrollEnabled
                     style={{
                         backgroundColor: colors.tabBar,
-                        shadowColor: 'transparent',
-                        borderColor: 'transparent',
+                        shadowColor: "transparent",
+                        borderColor: "transparent",
                     }}
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
                     tabStyle={{
-                        width: 'auto',
+                        width: "auto",
                     }}
                     renderLabel={({ route, focused, color }) => (
                         <Text
@@ -60,7 +60,7 @@ function ResultPanel() {
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
-                                textAlign: 'center',
+                                textAlign: "center",
                             }}>
                             {route.i18nKey ? t(route.i18nKey as any) : route.title}
                         </Text>

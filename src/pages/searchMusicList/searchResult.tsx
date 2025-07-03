@@ -1,8 +1,8 @@
-import React from 'react';
-import MusicItem from '@/components/mediaItem/musicItem';
-import Empty from '@/components/base/empty';
-import { FlashList } from '@shopify/flash-list';
-import rpx from '@/utils/rpx.ts';
+import React from "react";
+import MusicItem from "@/components/mediaItem/musicItem";
+import Empty from "@/components/base/empty";
+import { FlashList } from "@shopify/flash-list";
+import rpx from "@/utils/rpx.ts";
 
 interface ISearchResultProps {
     result: IMusic.IMusicItem[];

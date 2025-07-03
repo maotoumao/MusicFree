@@ -1,14 +1,14 @@
-import React, { memo, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import rpx from '@/utils/rpx';
-import globalStyle from '@/constants/globalStyle';
-import { ScrollView } from 'react-native-gesture-handler';
-import TypeTag from '../../../../components/base/typeTag';
+import React, { memo, useMemo, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import globalStyle from "@/constants/globalStyle";
+import { ScrollView } from "react-native-gesture-handler";
+import TypeTag from "../../../../components/base/typeTag";
 
-import useRecommendList from '../../hooks/useRecommendListTags';
-import SheetList from './sheetList';
-import { hidePanel, showPanel } from '@/components/panels/usePanel';
-import { useI18N } from '@/core/i18n';
+import useRecommendList from "../../hooks/useRecommendListTags";
+import SheetList from "./sheetList";
+import { hidePanel, showPanel } from "@/components/panels/usePanel";
+import { useI18N } from "@/core/i18n";
 
 interface IProps {
     hash: string;
@@ -22,7 +22,7 @@ function SheetBody(props: IProps) {
 
     const defaultTag: ICommon.IUnique = useMemo(() => ({
         title: t("common.default"),
-        id: '',
+        id: "",
     }), [t]);
 
     // 选中的tag
@@ -46,7 +46,7 @@ function SheetBody(props: IProps) {
                     selected={selectedTag.id === firstTag.id}
                     onPress={() => {
                         // 拉起浮层
-                        showPanel('SheetTags', {
+                        showPanel("SheetTags", {
                             tags: tags?.data ?? [],
                             onTagPressed(tag) {
                                 setSelectedTag(tag);
@@ -59,7 +59,7 @@ function SheetBody(props: IProps) {
                 {(tags?.pinned ?? []).map(_ => (
                     <TypeTag
                         key={`pinned-${_.id}`}
-                        title={_?.title ?? ''}
+                        title={_?.title ?? ""}
                         selected={selectedTag.id === _.id}
                         onPress={() => {
                             setSelectedTag(_);
@@ -81,6 +81,6 @@ const style = StyleSheet.create({
     },
     header: {
         height: rpx(100),
-        alignItems: 'center',
+        alignItems: "center",
     },
 });

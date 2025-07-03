@@ -45,8 +45,8 @@ export default function SheetMusicList(props: IMusicListProps) {
                         onItemPress={(musicItem, currentMusicList) => {
                             if (
                                 Config.getConfig(
-                                    'basic.clickMusicInAlbum',
-                                ) === 'playMusic'
+                                    "basic.clickMusicInAlbum",
+                                ) === "playMusic"
                             ) {
                                 TrackPlayer.play(musicItem);
                             } else {

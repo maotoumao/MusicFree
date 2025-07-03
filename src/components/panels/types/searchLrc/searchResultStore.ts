@@ -1,5 +1,5 @@
-import { RequestStateCode } from '@/constants/commonConst';
-import { GlobalState } from '@/utils/stateMapper';
+import { RequestStateCode } from "@/constants/commonConst";
+import { GlobalState } from "@/utils/stateMapper";
 
 export interface ISearchLyricResult {
     data: ILyric.ILyricItem[];

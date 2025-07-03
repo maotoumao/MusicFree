@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import { ROUTE_PATH, useNavigate } from '@/core/router';
-import AppBar from '@/components/base/appBar';
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import AppBar from "@/components/base/appBar";
 
 interface INavBarProps {
     navTitle: string;
@@ -16,7 +16,7 @@ export default function (props: INavBarProps) {
         <AppBar
             actions={[
                 {
-                    icon: 'magnifying-glass',
+                    icon: "magnifying-glass",
                     onPress() {
                         navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                             musicList: musicList,
@@ -26,8 +26,8 @@ export default function (props: INavBarProps) {
             ]}
             menu={[
                 {
-                    icon: 'pencil-square',
-                    title: '批量编辑',
+                    icon: "pencil-square",
+                    title: "批量编辑",
                     onPress() {
                         navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                             musicList: musicList,

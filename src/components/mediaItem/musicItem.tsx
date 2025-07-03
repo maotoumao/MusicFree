@@ -1,14 +1,14 @@
-import React from 'react';
-import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import rpx from '@/utils/rpx';
-import ListItem from '../base/listItem';
+import React from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import rpx from "@/utils/rpx";
+import ListItem from "../base/listItem";
 
-import LocalMusicSheet from '@/core/localMusicSheet';
-import { showPanel } from '../panels/usePanel';
-import TitleAndTag from './titleAndTag';
-import ThemeText from '../base/themeText';
-import TrackPlayer from '@/core/trackPlayer';
-import Icon from '@/components/base/icon.tsx';
+import LocalMusicSheet from "@/core/localMusicSheet";
+import { showPanel } from "../panels/usePanel";
+import TitleAndTag from "./titleAndTag";
+import ThemeText from "../base/themeText";
+import TrackPlayer from "@/core/trackPlayer";
+import Icon from "@/components/base/icon.tsx";
 
 interface IMusicItemProps {
     index?: string | number;
@@ -33,7 +33,7 @@ export default function MusicItem(props: IMusicItemProps) {
         showMoreIcon = true,
         left: Left,
         containerStyle,
-        highlight = false
+        highlight = false,
     } = props;
 
     return (
@@ -57,7 +57,7 @@ export default function MusicItem(props: IMusicItemProps) {
                     width={rpx(82)}
                     position="none"
                     fixedWidth
-                    fontColor={highlight ? 'primary' : 'text'}
+                    fontColor={highlight ? "primary" : "text"}
                     contentStyle={styles.indexText}>
                     {index}
                 </ListItem.ListItemText>
@@ -66,7 +66,7 @@ export default function MusicItem(props: IMusicItemProps) {
                 title={
                     <TitleAndTag
                         title={musicItem.title}
-                        titleFontColor={highlight ? 'primary': 'text'}
+                        titleFontColor={highlight ? "primary": "text"}
                         tag={musicItem.platform}
                     />
                 }
@@ -83,9 +83,9 @@ export default function MusicItem(props: IMusicItemProps) {
                         <ThemeText
                             numberOfLines={1}
                             fontSize="description"
-                            fontColor={highlight ? 'primary' : 'textSecondary'}>
+                            fontColor={highlight ? "primary" : "textSecondary"}>
                             {musicItem.artist}
-                            {musicItem.album ? ` - ${musicItem.album}` : ''}
+                            {musicItem.album ? ` - ${musicItem.album}` : ""}
                         </ThemeText>
                     </View>
                 }
@@ -96,7 +96,7 @@ export default function MusicItem(props: IMusicItemProps) {
                     position="none"
                     icon="ellipsis-vertical"
                     onPress={() => {
-                        showPanel('MusicItemOptions', {
+                        showPanel("MusicItemOptions", {
                             musicItem,
                             musicSheet,
                         });
@@ -112,13 +112,13 @@ const styles = StyleSheet.create({
         marginRight: rpx(6),
     },
     descContainer: {
-        flexDirection: 'row',
+        flexDirection: "row",
         marginTop: rpx(16),
     },
 
     indexText: {
-        fontStyle: 'italic',
-        textAlign: 'center',
-        padding: rpx(2)
+        fontStyle: "italic",
+        textAlign: "center",
+        padding: rpx(2),
     },
 });

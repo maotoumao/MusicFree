@@ -67,16 +67,16 @@ class PluginMeta {
             }
 
 
-            storage.set("$version", 1)
+            storage.set("$version", 1);
         }
     }
 
     getPluginOrder() {
-        return this.getMetaStorage('order') ?? {};
+        return this.getMetaStorage("order") ?? {};
     }
 
     setPluginOrder(orderMap: Record<IPluginPlatform, number>) {
-        this.setMetaStorage('order', orderMap);
+        this.setMetaStorage("order", orderMap);
     }
 
 
@@ -84,7 +84,7 @@ class PluginMeta {
         if (this.cachedDisabledPlugins) {
             return this.cachedDisabledPlugins;
         }
-        const disabledPlugins = this.getMetaStorage('disabledPlugins') ?? [];
+        const disabledPlugins = this.getMetaStorage("disabledPlugins") ?? [];
         this.cachedDisabledPlugins = new Set(disabledPlugins);
         return this.cachedDisabledPlugins;
     }
@@ -103,7 +103,7 @@ class PluginMeta {
         } else {
             disabledPluginsSet.add(pluginPlatform);
         }
-        this.setMetaStorage('disabledPlugins', Array.from(disabledPluginsSet));
+        this.setMetaStorage("disabledPlugins", Array.from(disabledPluginsSet));
         this.cachedDisabledPlugins = disabledPluginsSet;
     }
 

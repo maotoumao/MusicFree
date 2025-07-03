@@ -1,9 +1,9 @@
-import React from 'react';
-import ListItem from '@/components/base/listItem';
-import { ImgAsset } from '@/constants/assetsConst';
-import { ROUTE_PATH, useNavigate } from '@/core/router';
-import TitleAndTag from '@/components/mediaItem/titleAndTag';
-import { useI18N } from '@/core/i18n';
+import React from "react";
+import ListItem from "@/components/base/listItem";
+import { ImgAsset } from "@/constants/assetsConst";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import TitleAndTag from "@/components/mediaItem/titleAndTag";
+import { useI18N } from "@/core/i18n";
 
 interface IArtistResultsProps {
     item: IArtist.IArtistItem;
@@ -37,8 +37,8 @@ export default function ArtistResultItem(props: IArtistResultsProps) {
                             ? t("searchPage.artistResultWorksNum", {
                                 count: artistItem.worksNum,
                             })
-                            : ''
-                        }    ${artistItem.description ?? ''}`
+                            : ""
+                        }    ${artistItem.description ?? ""}`
                 }
                 title={
                     <TitleAndTag

@@ -1,6 +1,6 @@
-import { GlobalState } from '@/utils/stateMapper';
-import { useCallback } from 'react';
-import { IDialogKey, IDialogType } from './components';
+import { GlobalState } from "@/utils/stateMapper";
+import { useCallback } from "react";
+import { IDialogKey, IDialogType } from "./components";
 
 interface IDialogInfo {
     name: IDialogKey | null;

@@ -45,10 +45,10 @@ export default function Lyric(props: IProps) {
         useLyricState();
     const currentLrcItem = useCurrentLyricItem();
     const showTranslation = PersistStatus.useValue(
-        'lyric.showTranslation',
+        "lyric.showTranslation",
         false,
     );
-    const fontSizeKey = PersistStatus.useValue('lyric.detailFontSize', 1);
+    const fontSizeKey = PersistStatus.useValue("lyric.detailFontSize", 1);
     const fontSizeStyle = useMemo(
         () => ({
             fontSize: fontSizeMap[fontSizeKey!],
@@ -66,7 +66,7 @@ export default function Lyric(props: IProps) {
     const listRef = useRef<FlatList<IParsedLrcItem> | null>();
 
     const currentMusicItem = useCurrentMusic();
-    const associateMusicItem = getMediaExtraProperty(currentMusicItem, 'associatedLrc');
+    const associateMusicItem = getMediaExtraProperty(currentMusicItem, "associatedLrc");
 
     // 是否展示拖拽
     const dragShownRef = useRef(false);
@@ -266,7 +266,7 @@ export default function Lyric(props: IProps) {
                                                     numberOfLines={1}>
                                                     {t("lyric.lyricLinkedFrom", {
                                                         platform: associateMusicItem.platform,
-                                                        title: associateMusicItem.title || '',
+                                                        title: associateMusicItem.title || "",
                                                     })}
 
                                                 </Text>
@@ -299,7 +299,7 @@ export default function Lyric(props: IProps) {
                             renderItem={({ item, index }) => {
                                 let text = item.lrc;
                                 if (showTranslation && hasTranslation) {
-                                    text += `\n${item?.translation ?? ''}`;
+                                    text += `\n${item?.translation ?? ""}`;
                                 }
 
                                 return (
@@ -323,7 +323,7 @@ export default function Lyric(props: IProps) {
                             </Text>
                             <TapGestureHandler
                                 onActivated={() => {
-                                    showPanel('SearchLrc', {
+                                    showPanel("SearchLrc", {
                                         musicItem:
                                             TrackPlayer.currentMusic,
                                     });
@@ -373,70 +373,70 @@ export default function Lyric(props: IProps) {
 
 const styles = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         marginVertical: rpx(48),
         flex: 1,
     },
     empty: {
-        paddingTop: '70%',
+        paddingTop: "70%",
     },
     white: {
-        color: 'white',
+        color: "white",
     },
     lyricMeta: {
-        position: 'absolute',
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        position: "absolute",
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
         left: 0,
         paddingHorizontal: rpx(48),
         bottom: rpx(48),
     },
     lyricMetaText: {
-        color: 'white',
+        color: "white",
         opacity: 0.8,
-        maxWidth: '80%',
+        maxWidth: "80%",
     },
     linkText: {
-        color: '#66ccff',
-        textDecorationLine: 'underline',
+        color: "#66ccff",
+        textDecorationLine: "underline",
     },
     draggingTime: {
-        position: 'absolute',
-        width: '100%',
+        position: "absolute",
+        width: "100%",
         height: ITEM_HEIGHT,
-        top: '40%',
+        top: "40%",
         marginTop: rpx(48),
         paddingHorizontal: rpx(18),
         right: 0,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     draggingTimeText: {
-        color: '#dddddd',
+        color: "#dddddd",
         fontSize: fontSizeConst.description,
         width: rpx(90),
     },
     singleLine: {
-        width: '67%',
+        width: "67%",
         height: 1,
-        backgroundColor: '#cccccc',
+        backgroundColor: "#cccccc",
         opacity: 0.4,
     },
     playIcon: {
         width: rpx(100),
-        textAlign: 'right',
-        color: 'white',
+        textAlign: "right",
+        color: "white",
     },
     searchLyric: {
         width: rpx(180),
         marginTop: rpx(14),
         paddingVertical: rpx(10),
-        textAlign: 'center',
-        alignSelf: 'center',
-        color: '#66eeff',
-        textDecorationLine: 'underline',
+        textAlign: "center",
+        alignSelf: "center",
+        color: "#66eeff",
+        textDecorationLine: "underline",
     },
 });

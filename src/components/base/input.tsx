@@ -1,8 +1,8 @@
-import useColors from '@/hooks/useColors';
-import rpx from '@/utils/rpx';
-import Color from 'color';
-import React from 'react';
-import { StyleSheet, TextInput, TextInputProps } from 'react-native';
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
+import Color from "color";
+import React from "react";
+import { StyleSheet, TextInput, TextInputProps } from "react-native";
 
 interface IInputProps extends TextInputProps {
     fontColor?: string;

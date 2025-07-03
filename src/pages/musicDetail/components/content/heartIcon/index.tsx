@@ -1,8 +1,8 @@
-import React from 'react';
-import { iconSizeConst } from '@/constants/uiConst';
-import { useCurrentMusic } from '@/core/trackPlayer';
-import Icon from '@/components/base/icon.tsx';
-import MusicSheet, { useFavorite } from '@/core/musicSheet';
+import React from "react";
+import { iconSizeConst } from "@/constants/uiConst";
+import { useCurrentMusic } from "@/core/trackPlayer";
+import Icon from "@/components/base/icon.tsx";
+import MusicSheet, { useFavorite } from "@/core/musicSheet";
 
 export default function () {
     const musicItem = useCurrentMusic();

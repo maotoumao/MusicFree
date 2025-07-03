@@ -31,7 +31,7 @@ class MusicHistory implements IMusicHistory, IInjectable {
             musicItem,
             ...this.history
                 .filter(item => !isSameMediaItem(item, musicItem)),
-        ].slice(0, this.configService.getConfig('basic.maxHistoryLen') ?? 50);
+        ].slice(0, this.configService.getConfig("basic.maxHistoryLen") ?? 50);
         await setStorage(musicHistorySheetId, newMusicHistory);
 
         getDefaultStore().set(musicHistoryAtom, newMusicHistory);

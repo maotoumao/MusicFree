@@ -1,10 +1,10 @@
-import { errorLog } from '@/utils/log';
-import { RequestStateCode } from '@/constants/commonConst';
-import { produce } from 'immer';
-import { useAtom } from 'jotai';
-import { useCallback } from 'react';
-import { queryResultAtom } from '../store/atoms';
-import PluginManager from '@/core/pluginManager';
+import { errorLog } from "@/utils/log";
+import { RequestStateCode } from "@/constants/commonConst";
+import { produce } from "immer";
+import { useAtom } from "jotai";
+import { useCallback } from "react";
+import { queryResultAtom } from "../store/atoms";
+import PluginManager from "@/core/pluginManager";
 
 export default function useQueryArtist(pluginHash: string) {
     const [queryResults, setQueryResults] = useAtom(queryResultAtom);
@@ -13,7 +13,7 @@ export default function useQueryArtist(pluginHash: string) {
         async (
             artist: IArtist.IArtistItem,
             page?: number,
-            type: IArtist.ArtistMediaType = 'music',
+            type: IArtist.ArtistMediaType = "music",
         ) => {
             const plugin = PluginManager.getByHash(pluginHash);
 
@@ -55,7 +55,7 @@ export default function useQueryArtist(pluginHash: string) {
                     }),
                 );
             } catch (e) {
-                errorLog('拉取作者信息失败', e);
+                errorLog("拉取作者信息失败", e);
                 setQueryResults(
                     produce(draft => {
                         draft[type].state = RequestStateCode.ERROR;

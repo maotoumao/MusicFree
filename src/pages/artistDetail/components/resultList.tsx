@@ -1,13 +1,13 @@
-import ListEmpty from '@/components/base/listEmpty';
-import ListFooter from '@/components/base/listFooter';
-import { RequestStateCode } from '@/constants/commonConst';
-import { useParams } from '@/core/router';
-import rpx from '@/utils/rpx';
-import { FlashList } from '@shopify/flash-list';
-import { useAtom } from 'jotai';
-import React, { useEffect, useRef, useState } from 'react';
-import useQueryArtist from '../hooks/useQuery';
-import { IQueryResult, scrollToTopAtom } from '../store/atoms';
+import ListEmpty from "@/components/base/listEmpty";
+import ListFooter from "@/components/base/listFooter";
+import { RequestStateCode } from "@/constants/commonConst";
+import { useParams } from "@/core/router";
+import rpx from "@/utils/rpx";
+import { FlashList } from "@shopify/flash-list";
+import { useAtom } from "jotai";
+import React, { useEffect, useRef, useState } from "react";
+import useQueryArtist from "../hooks/useQuery";
+import { IQueryResult, scrollToTopAtom } from "../store/atoms";
 
 const ITEM_HEIGHT = rpx(120);
 
@@ -20,7 +20,7 @@ export default function ResultList(props: IResultListProps) {
     const { data, renderItem, tab } = props;
     const [scrollToTopState, setScrollToTopState] = useAtom(scrollToTopAtom);
     const lastScrollY = useRef<number>(0);
-    const { pluginHash, artistItem } = useParams<'artist-detail'>();
+    const { pluginHash, artistItem } = useParams<"artist-detail">();
     const [queryState, setQueryState] = useState<RequestStateCode>(
         data?.state ?? RequestStateCode.IDLE,
     );

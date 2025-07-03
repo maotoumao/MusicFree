@@ -38,24 +38,24 @@ export default function PluginList() {
 
     const menuOptions: IOption[] = [
         {
-            icon: 'bookmark-square',
+            icon: "bookmark-square",
             title: t("pluginSetting.menu.subscriptionSetting"),
             async onPress() {
-                navigator.navigate('/pluginsetting/subscribe');
+                navigator.navigate("/pluginsetting/subscribe");
             },
         },
         {
-            icon: 'bars-3',
+            icon: "bars-3",
             title: t("pluginSetting.menu.sort"),
             onPress() {
-                navigator.navigate('/pluginsetting/sort');
+                navigator.navigate("/pluginsetting/sort");
             },
         },
         {
-            icon: 'trash-outline',
+            icon: "trash-outline",
             title: t("pluginSetting.menu.uninstallAll"),
             onPress() {
-                showDialog('SimpleDialog', {
+                showDialog("SimpleDialog", {
                     title: t("pluginSetting.menu.uninstallAll"),
                     content: t("pluginSetting.menu.uninstallAllContent"),
                     async onOk() {
@@ -73,7 +73,7 @@ export default function PluginList() {
             const results = await DocumentPicker.getDocumentAsync({
                 copyToCacheDirectory: true,
                 multiple: true,
-                type: ['application/javascript', 'text/javascript'],
+                type: ["application/javascript", "text/javascript"],
             });
             if (results.canceled) {
                 // 用户取消
@@ -85,26 +85,26 @@ export default function PluginList() {
                 results.assets.map(async it => {
                     await PluginManager.installPluginFromLocalFile(it.uri, {
                         notCheckVersion: Config.getConfig(
-                            'basic.notCheckPluginVersion',
+                            "basic.notCheckPluginVersion",
                         ),
-                        useExpoFs: true
-                    })
+                        useExpoFs: true,
+                    });
                 }),
             );
             // 初步过滤
 
             Toast.success(t("toast.installPluginSuccess"));
         } catch (e: any) {
-            trace('插件安装失败', e?.message);
+            trace("插件安装失败", e?.message);
             Toast.warn(t("toast.installPluginFail", {
-                reason: e?.message ?? '',
+                reason: e?.message ?? "",
             }));
         }
         setLoading(false);
     }
 
     async function onInstallFromNetworkClick() {
-        showPanel('SimpleInput', {
+        showPanel("SimpleInput", {
             title: t("pluginSetting.menu.installPlugin"),
             placeholder: t("pluginSetting.menu.installPluginDialogPlaceholder"),
             maxLength: 200,
@@ -129,18 +129,18 @@ export default function PluginList() {
                     Toast.success(t("toast.installPluginSuccess"));
                 } else {
                     Toast.warn(successResults.length ? t("toast.partialPluginInstallFailed") : t("toast.allPluginInstallFailed"), {
-                        'type': 'warn',
-                        'actionText': t("common.view"),
-                        'onActionClick': () => {
-                            showDialog('SimpleDialog', {
+                        "type": "warn",
+                        "actionText": t("common.view"),
+                        "onActionClick": () => {
+                            showDialog("SimpleDialog", {
                                 title: t("pluginSetting.menu.pluginInstallFailedDialogTitle"),
                                 content: t("pluginSetting.pluginInstallFailedDialogContent", {
                                     detail: failResults.map(it => (it.pluginUrl ?? "") + "\n" + t("pluginSetting.failReason", {
-                                        reason: it.message ?? ''
-                                    })).join('\n-----\n')
-                                })
-                            })
-                        }
+                                        reason: it.message ?? "",
+                                    })).join("\n-----\n"),
+                                }),
+                            });
+                        },
                     });
                 }
 
@@ -151,7 +151,7 @@ export default function PluginList() {
     }
 
     async function onSubscribeClick() {
-        const urls = Config.getConfig('plugin.subscribeUrl');
+        const urls = Config.getConfig("plugin.subscribeUrl");
         if (!urls) {
             Toast.warn(t("toast.noSubscription"));
         }
@@ -181,18 +181,18 @@ export default function PluginList() {
                 Toast.success(t("toast.installPluginSuccess"));
             } else {
                 Toast.warn((successResults.length ? t("toast.partialPluginInstallFailed") : t("toast.allPluginInstallFailed")), {
-                    'type': 'warn',
-                    'actionText': t("common.view"),
-                    'onActionClick': () => {
-                        showDialog('SimpleDialog', {
+                    "type": "warn",
+                    "actionText": t("common.view"),
+                    "onActionClick": () => {
+                        showDialog("SimpleDialog", {
                             title: t("pluginSetting.menu.pluginInstallFailedDialogTitle"),
                             content: t("pluginSetting.pluginInstallFailedDialogContent", {
                                 detail: failResults.map(it => (it.pluginUrl ?? "") + "\n" + t("pluginSetting.failReason", {
-                                    reason: it.message ?? ''
-                                })).join('\n-----\n')
-                            })
-                        })
-                    }
+                                    reason: it.message ?? "",
+                                })).join("\n-----\n"),
+                            }),
+                        });
+                    },
                 });
             }
 
@@ -204,8 +204,8 @@ export default function PluginList() {
                         Toast.success(t("toast.installPluginSuccess"));
                     } else {
                         Toast.warn(t("toast.partialPluginInstallFailedWithReason", {
-                            reason: result[0].message ?? '',
-                        }))
+                            reason: result[0].message ?? "",
+                        }));
                     }
                 } else {
                     Toast.warn(t("toast.subscriptionInvalid"));
@@ -241,24 +241,24 @@ export default function PluginList() {
                 Toast.success(t("toast.updatePluginSuccess"));
             } else {
                 Toast.warn((successResults.length ? t("toast.partialPluginUpdateFailed") : t("toast.allPluginUpdateFailed")), {
-                    'type': 'warn',
-                    'actionText': t("common.view"),
-                    'onActionClick': () => {
-                        showDialog('SimpleDialog', {
+                    "type": "warn",
+                    "actionText": t("common.view"),
+                    "onActionClick": () => {
+                        showDialog("SimpleDialog", {
                             title: t("pluginSetting.menu.pluginUpdateFailedDialogTitle"),
                             content: t("pluginSetting.pluginUpdateFailedDialogContent", {
                                 detail: failResults.map(it => (it.pluginUrl ?? "") + "\n" + t("pluginSetting.failReason", {
-                                    reason: it.message ?? ''
-                                })).join('\n-----\n')
-                            })
-                        })
-                    }
+                                    reason: it.message ?? "",
+                                })).join("\n-----\n"),
+                            }),
+                        });
+                    },
                 });
             }
 
         } catch (e: any) {
             Toast.warn(t("toast.unknownError", {
-                reason: e?.message ?? e
+                reason: e?.message ?? e,
             }));
         }
         setLoading(false);
@@ -286,36 +286,36 @@ export default function PluginList() {
                     <Fab
                         icon="plus"
                         onPress={() => {
-                            showPanel('SimpleSelect', {
+                            showPanel("SimpleSelect", {
                                 header: t("pluginSetting.menu.installPlugin"),
                                 candidates: [
                                     {
-                                        value: '从本地安装插件',
+                                        value: "从本地安装插件",
                                         title: t("pluginSetting.fabOptions.installFromLocal"),
                                     },
                                     {
-                                        value: '从网络安装插件',
+                                        value: "从网络安装插件",
                                         title: t("pluginSetting.fabOptions.installFromNetwork"),
                                     },
                                     {
-                                        value: '更新全部插件',
+                                        value: "更新全部插件",
                                         title: t("pluginSetting.fabOptions.updateAllPlugins"),
                                     },
                                     {
-                                        value: '更新订阅',
+                                        value: "更新订阅",
                                         title: t("pluginSetting.fabOptions.updateSubscription"),
                                     },
                                 ],
                                 onPress(item) {
-                                    if (item.value === '从本地安装插件') {
+                                    if (item.value === "从本地安装插件") {
                                         onInstallFromLocalClick();
                                     } else if (
-                                        item.value === '从网络安装插件'
+                                        item.value === "从网络安装插件"
                                     ) {
                                         onInstallFromNetworkClick();
-                                    } else if (item.value === '更新订阅') {
+                                    } else if (item.value === "更新订阅") {
                                         onSubscribeClick();
-                                    } else if (item.value === '更新全部插件') {
+                                    } else if (item.value === "更新全部插件") {
                                         onUpdateAllClick();
                                     }
                                 },
@@ -330,7 +330,7 @@ export default function PluginList() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         flex: 1,
     },
     blank: {
@@ -344,13 +344,13 @@ async function installPluginFromUrl(text: string): Promise<IInstallPluginResult[
     try {
         let urls: string[] = [];
         const inputUrl = text.trim();
-        if (text.endsWith('.json')) {
+        if (text.endsWith(".json")) {
             const jsonFile = (
                 await axios.get(inputUrl, {
                     headers: {
-                        'Cache-Control': 'no-cache',
-                        Pragma: 'no-cache',
-                        Expires: '0',
+                        "Cache-Control": "no-cache",
+                        Pragma: "no-cache",
+                        Expires: "0",
                     },
                 })
             ).data;
@@ -370,7 +370,7 @@ async function installPluginFromUrl(text: string): Promise<IInstallPluginResult[
             urls.map(url =>
                 PluginManager.installPluginFromUrl(url, {
                     notCheckVersion: Config.getConfig(
-                        'basic.notCheckPluginVersion',
+                        "basic.notCheckPluginVersion",
                     ),
                 }),
             ),

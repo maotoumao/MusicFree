@@ -1,13 +1,13 @@
-import { RequestStateCode } from '@/constants/commonConst';
-import PluginManager, { Plugin } from '@/core/pluginManager';
-import { devLog, errorLog } from '@/utils/log';
-import { produce } from 'immer';
-import { useCallback, useRef } from 'react';
-import searchResultStore from './searchResultStore';
+import { RequestStateCode } from "@/constants/commonConst";
+import PluginManager, { Plugin } from "@/core/pluginManager";
+import { devLog, errorLog } from "@/utils/log";
+import { produce } from "immer";
+import { useCallback, useRef } from "react";
+import searchResultStore from "./searchResultStore";
 
 export default function useSearchLrc() {
     // 当前正在搜索
-    const currentQueryRef = useRef<string>('');
+    const currentQueryRef = useRef<string>("");
 
     /**
      * query: 搜索词
@@ -20,13 +20,13 @@ export default function useSearchLrc() {
         pluginHash?: string,
     ) {
         /** 如果没有指定插件，就用所有插件搜索 */
-        console.log('SEARCH LRC', query, queryPage);
+        console.log("SEARCH LRC", query, queryPage);
         let plugins: Plugin[] = [];
         if (pluginHash) {
             const tgtPlugin = PluginManager.getByHash(pluginHash);
             tgtPlugin && (plugins = [tgtPlugin]);
         } else {
-            plugins = PluginManager.getSearchablePlugins('lyric');
+            plugins = PluginManager.getSearchablePlugins("lyric");
         }
         if (plugins.length === 0) {
             searchResultStore.setValue(
@@ -72,7 +72,7 @@ export default function useSearchLrc() {
 
             // 本次搜索关键词
             currentQueryRef.current = query =
-                query ?? searchResultStore.getValue().query ?? '';
+                query ?? searchResultStore.getValue().query ?? "";
 
             /** 搜索的页码 */
             const page =
@@ -96,7 +96,7 @@ export default function useSearchLrc() {
                 const result = await plugin?.methods?.search?.(
                     query,
                     page,
-                    'lyric',
+                    "lyric",
                 );
                 /** 如果搜索结果不是本次结果 */
                 if (currentQueryRef.current !== query) {
@@ -104,7 +104,7 @@ export default function useSearchLrc() {
                 }
                 /** 切换到结果页 */
                 if (!result) {
-                    throw new Error('搜索结果为空');
+                    throw new Error("搜索结果为空");
                 }
                 searchResultStore.setValue(
                     produce(draft => {
@@ -134,10 +134,10 @@ export default function useSearchLrc() {
                     }),
                 );
             } catch (e: any) {
-                errorLog('搜索失败', e?.message);
+                errorLog("搜索失败", e?.message);
                 devLog(
-                    'error',
-                    '搜索失败',
+                    "error",
+                    "搜索失败",
                     `Plugin: ${plugin.name} Query: ${query} Page: ${page}`,
                     e,
                     e?.message,
@@ -160,7 +160,7 @@ export default function useSearchLrc() {
             }
         });
     },
-        []);
+    []);
 
     return search;
 }

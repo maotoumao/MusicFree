@@ -1,5 +1,5 @@
-import AlbumContentItem from './albumContentItem';
-import MusicContentItem from './musicContentItem';
+import AlbumContentItem from "./albumContentItem";
+import MusicContentItem from "./musicContentItem";
 
 const content: Record<IArtist.ArtistMediaType, (...args: any) => JSX.Element> =
     {

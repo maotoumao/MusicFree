@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react';
-import rpx from '@/utils/rpx';
-import { ImgAsset } from '@/constants/assetsConst';
-import FastImage from '@/components/base/fastImage';
-import useOrientation from '@/hooks/useOrientation';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { useCurrentMusic } from '@/core/trackPlayer';
-import globalStyle from '@/constants/globalStyle';
-import { View } from 'react-native';
-import Operations from './operations';
-import { showPanel } from '@/components/panels/usePanel.ts';
+import React, { useMemo } from "react";
+import rpx from "@/utils/rpx";
+import { ImgAsset } from "@/constants/assetsConst";
+import FastImage from "@/components/base/fastImage";
+import useOrientation from "@/hooks/useOrientation";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useCurrentMusic } from "@/core/trackPlayer";
+import globalStyle from "@/constants/globalStyle";
+import { View } from "react-native";
+import Operations from "./operations";
+import { showPanel } from "@/components/panels/usePanel.ts";
 
 interface IProps {
     onTurnPageClick?: () => void;
@@ -21,7 +21,7 @@ export default function AlbumCover(props: IProps) {
     const orientation = useOrientation();
 
     const artworkStyle = useMemo(() => {
-        if (orientation === 'vertical') {
+        if (orientation === "vertical") {
             return {
                 width: rpx(500),
                 height: rpx(500),
@@ -37,7 +37,7 @@ export default function AlbumCover(props: IProps) {
     const longPress = Gesture.LongPress()
         .onStart(() => {
             if (musicItem?.artwork) {
-                showPanel('ImageViewer', {
+                showPanel("ImageViewer", {
                     url: musicItem.artwork,
                 });
             }

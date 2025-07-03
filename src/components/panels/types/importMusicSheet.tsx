@@ -1,22 +1,22 @@
-import ListItem from '@/components/base/listItem';
-import { vmax } from '@/utils/rpx';
-import Toast from '@/utils/toast';
-import React from 'react';
-import { View } from 'react-native';
+import ListItem from "@/components/base/listItem";
+import { vmax } from "@/utils/rpx";
+import Toast from "@/utils/toast";
+import React from "react";
+import { View } from "react-native";
 
-import NoPlugin from '@/components/base/noPlugin';
-import { showDialog } from '@/components/dialogs/useDialog';
-import globalStyle from '@/constants/globalStyle';
-import PluginManager from '@/core/pluginManager';
-import { FlatList } from 'react-native-gesture-handler';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import PanelHeader from '../base/panelHeader';
-import { showPanel } from '../usePanel';
-import { useI18N } from '@/core/i18n';
+import NoPlugin from "@/components/base/noPlugin";
+import { showDialog } from "@/components/dialogs/useDialog";
+import globalStyle from "@/constants/globalStyle";
+import PluginManager from "@/core/pluginManager";
+import { FlatList } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import PanelHeader from "../base/panelHeader";
+import { showPanel } from "../usePanel";
+import { useI18N } from "@/core/i18n";
 
 export default function ImportMusicSheet() {
-    const validPlugins = PluginManager.getSortedPluginsWithAbility('importMusicSheet');
+    const validPlugins = PluginManager.getSortedPluginsWithAbility("importMusicSheet");
     const { t } = useI18N();
 
     const safeAreaInsets = useSafeAreaInsets();
@@ -26,7 +26,7 @@ export default function ImportMusicSheet() {
             height={vmax(60)}
             renderBody={() => (
                 <>
-                    <PanelHeader hideButtons title={t('panel.importMusicSheet.title')} />
+                    <PanelHeader hideButtons title={t("panel.importMusicSheet.title")} />
                     {validPlugins.length ? (
                         <View style={globalStyle.fwflex1}>
                             <FlatList
@@ -39,14 +39,15 @@ export default function ImportMusicSheet() {
                                     <ListItem
                                         withHorizontalPadding
                                         key={`${plugin.hash}`}
-                                        onPress={async () => {                                            showPanel('SimpleInput', {
-                                                title: t('panel.importMusicSheet.title'),
-                                                placeholder: t('panel.importMusicSheet.placeholder'),
+                                        onPress={async () => {
+                                            showPanel("SimpleInput", {
+                                                title: t("panel.importMusicSheet.title"),
+                                                placeholder: t("panel.importMusicSheet.placeholder"),
                                                 hints: plugin.instance.hints
                                                     ?.importMusicSheet,
                                                 maxLength: 1000,                                                async onOk(text, closePanel) {
                                                     Toast.success(
-                                                        t('panel.importMusicSheet.importing'),
+                                                        t("panel.importMusicSheet.importing"),
                                                     );
                                                     closePanel();
                                                     const result =
@@ -55,13 +56,13 @@ export default function ImportMusicSheet() {
                                                         );
                                                     if (result && result.length > 0) {
                                                         showDialog(
-                                                            'SimpleDialog',
+                                                            "SimpleDialog",
                                                             {
-                                                                title: t('panel.importMusicSheet.prepareImport'),
-                                                                content: t('panel.importMusicSheet.foundSongs', { count: result.length }),
+                                                                title: t("panel.importMusicSheet.prepareImport"),
+                                                                content: t("panel.importMusicSheet.foundSongs", { count: result.length }),
                                                                 onOk() {
                                                                     showPanel(
-                                                                        'AddToMusicSheet',
+                                                                        "AddToMusicSheet",
                                                                         {
                                                                             musicItem:
                                                                                 result,
@@ -69,9 +70,10 @@ export default function ImportMusicSheet() {
                                                                     );
                                                                 },
                                                             },
-                                                        );                                                    } else {
+                                                        );                                                    
+                                                    } else {
                                                         Toast.warn(
-                                                            t('panel.importMusicSheet.invalidLink'),
+                                                            t("panel.importMusicSheet.invalidLink"),
                                                         );
                                                     }
                                                 },
@@ -82,7 +84,7 @@ export default function ImportMusicSheet() {
                                 )}
                             />
                         </View>                    ) : (
-                        <NoPlugin notSupportType={t('panel.importMusicSheet.title')} />
+                        <NoPlugin notSupportType={t("panel.importMusicSheet.title")} />
                     )}
                 </>
             )}

@@ -1,17 +1,17 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import rpx, { vmax } from '@/utils/rpx';
-import ListItem from '@/components/base/listItem';
-import { ImgAsset } from '@/constants/assetsConst';
-import Toast from '@/utils/toast';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx, { vmax } from "@/utils/rpx";
+import ListItem from "@/components/base/listItem";
+import { ImgAsset } from "@/constants/assetsConst";
+import Toast from "@/utils/toast";
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import { FlatList } from 'react-native-gesture-handler';
-import { hidePanel, showPanel } from '../usePanel';
-import PanelHeader from '../base/panelHeader';
-import MusicSheet, { useSheetsBase } from '@/core/musicSheet';
-import { useI18N } from '@/core/i18n';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import { FlatList } from "react-native-gesture-handler";
+import { hidePanel, showPanel } from "../usePanel";
+import PanelHeader from "../base/panelHeader";
+import MusicSheet, { useSheetsBase } from "@/core/musicSheet";
+import { useI18N } from "@/core/i18n";
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -34,7 +34,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                         hideButtons
                         title={
                             t("panel.addToMusicSheet.title", {
-                                count: Array.isArray(musicItem) ? musicItem.length : 1
+                                count: Array.isArray(musicItem) ? musicItem.length : 1,
                             })
                         }
                     />
@@ -50,7 +50,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                     withHorizontalPadding
                                     key="new"
                                     onPress={() => {
-                                        showPanel('CreateMusicSheet', {
+                                        showPanel("CreateMusicSheet", {
                                             defaultName: newSheetDefaultName,
                                             async onSheetCreated(sheetId) {
                                                 try {
@@ -68,7 +68,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                                 }
                                             },
                                             onCancel() {
-                                                showPanel('AddToMusicSheet', {
+                                                showPanel("AddToMusicSheet", {
                                                     musicItem: musicItem,
                                                     newSheetDefaultName,
                                                 });
@@ -104,7 +104,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                     <ListItem.Content
                                         title={sheet.title}
                                         description={t("panel.addToMusicSheet.count", {
-                                            count: sheet.worksNum ?? '-'
+                                            count: sheet.worksNum ?? "-",
                                         })}
                                     />
                                 </ListItem>
@@ -120,7 +120,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         flex: 1,
     },
     header: {

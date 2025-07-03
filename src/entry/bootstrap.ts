@@ -44,13 +44,13 @@ async function bootstrapImpl() {
         .catch(console.warn); // it's good to explicitly catch and inspect any error
     const logger = perfLogger();
     // 1. 检查权限
-    if (Platform.OS === 'android' && Platform.Version >= 30) {
+    if (Platform.OS === "android" && Platform.Version >= 30) {
         const hasPermission = await NativeUtils.checkStoragePermission();
         if (
             !hasPermission &&
-            !PersistStatus.get('app.skipBootstrapStorageDialog')
+            !PersistStatus.get("app.skipBootstrapStorageDialog")
         ) {
-            showDialog('CheckStorage');
+            showDialog("CheckStorage");
         }
     } else {
         const [readStoragePermission, writeStoragePermission] =
@@ -60,21 +60,21 @@ async function bootstrapImpl() {
             ]);
         if (
             !(
-                readStoragePermission === 'granted' &&
-                writeStoragePermission === 'granted'
+                readStoragePermission === "granted" &&
+                writeStoragePermission === "granted"
             )
         ) {
             await request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
             await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
         }
     }
-    logger.mark('权限检查完成');
+    logger.mark("权限检查完成");
 
     // 2. 数据初始化
     /** 初始化路径 */
     await setupFolder();
-    trace('文件夹初始化完成');
-    logger.mark('文件夹初始化完成');
+    trace("文件夹初始化完成");
+    logger.mark("文件夹初始化完成");
 
 
 
@@ -83,35 +83,35 @@ async function bootstrapImpl() {
     // 加载配置
     await Promise.all([
         Config.setup().then(() => {
-            logger.mark('Config');
+            logger.mark("Config");
         }),
         MusicSheet.setup().then(() => {
-            logger.mark('MusicSheet');
+            logger.mark("MusicSheet");
         }),
         musicHistory.setup().then(() => {
-            logger.mark('musicHistory');
+            logger.mark("musicHistory");
         }),
     ]);
-    trace('配置初始化完成');
-    logger.mark('配置初始化完成');
+    trace("配置初始化完成");
+    logger.mark("配置初始化完成");
 
     // 加载插件
     try {
         await RNTrackPlayer.setupPlayer({
             maxCacheSize:
-                Config.getConfig('basic.maxCacheSize') ?? 1024 * 1024 * 512,
+                Config.getConfig("basic.maxCacheSize") ?? 1024 * 1024 * 512,
         });
     } catch (e: any) {
         if (
             e?.message !==
-            'The player has already been initialized via setupPlayer.'
+            "The player has already been initialized via setupPlayer."
         ) {
             throw e;
         }
     }
-    logger.mark('加载播放器');
+    logger.mark("加载播放器");
 
-    const capabilities = Config.getConfig('basic.showExitOnNotification')
+    const capabilities = Config.getConfig("basic.showExitOnNotification")
         ? [
             Capability.Play,
             Capability.Pause,
@@ -137,36 +137,36 @@ async function bootstrapImpl() {
         compactCapabilities: capabilities,
         notificationCapabilities: [...capabilities, Capability.SeekTo],
     });
-    logger.mark('播放器初始化完成');
-    trace('播放器初始化完成');
+    logger.mark("播放器初始化完成");
+    trace("播放器初始化完成");
 
     await PluginManager.setup();
-    logger.mark('插件初始化完成');
+    logger.mark("插件初始化完成");
 
-    trace('插件初始化完成');
+    trace("插件初始化完成");
     await TrackPlayer.setupTrackPlayer();
-    trace('播放列表初始化完成');
-    logger.mark('播放列表初始化完成');
+    trace("播放列表初始化完成");
+    logger.mark("播放列表初始化完成");
 
     await LocalMusicSheet.setup();
-    trace('本地音乐初始化完成');
-    logger.mark('本地音乐初始化完成');
+    trace("本地音乐初始化完成");
+    logger.mark("本地音乐初始化完成");
 
     Theme.setup();
-    trace('主题初始化完成');
-    logger.mark('主题初始化完成');
+    trace("主题初始化完成");
+    logger.mark("主题初始化完成");
 
     await lyricManager.setup();
 
-    logger.mark('歌词初始化完成');
+    logger.mark("歌词初始化完成");
 
     extraMakeup();
 
     i18n.setup();
-    logger.mark('语言模块初始化完成');
+    logger.mark("语言模块初始化完成");
     
     ErrorUtils.setGlobalHandler(error => {
-        errorLog('未捕获的错误', error);
+        errorLog("未捕获的错误", error);
     });
 }
 
@@ -191,10 +191,10 @@ export default async function () {
         await bootstrapImpl();
         bindEvents();
     } catch (e) {
-        errorLog('初始化出错', e);
+        errorLog("初始化出错", e);
     }
     // 隐藏开屏动画
-    console.log('HIDE');
+    console.log("HIDE");
     await SplashScreen.hideAsync();
 }
 
@@ -202,11 +202,11 @@ export default async function () {
 async function extraMakeup() {
     // 自动更新
     try {
-        if (Config.getConfig('basic.autoUpdatePlugin')) {
-            const lastUpdated = PersistStatus.get('app.pluginUpdateTime') || 0;
+        if (Config.getConfig("basic.autoUpdatePlugin")) {
+            const lastUpdated = PersistStatus.get("app.pluginUpdateTime") || 0;
             const now = Date.now();
             if (Math.abs(now - lastUpdated) > 86400000) {
-                PersistStatus.set('app.pluginUpdateTime', now);
+                PersistStatus.set("app.pluginUpdateTime", now);
                 const plugins = PluginManager.getEnabledPlugins();
                 for (let i = 0; i < plugins.length; ++i) {
                     const srcUrl = plugins[i].instance.srcUrl;
@@ -222,21 +222,21 @@ async function extraMakeup() {
     async function handleLinkingUrl(url: string) {
         // 插件
         try {
-            if (url.startsWith('musicfree://install/')) {
+            if (url.startsWith("musicfree://install/")) {
                 const plugins = url
                     .slice(20)
-                    .split(',')
+                    .split(",")
                     .map(decodeURIComponent);
                 await Promise.all(
                     plugins.map(it =>
                         PluginManager.installPluginFromUrl(it).catch(emptyFunction),
                     ),
                 );
-                Toast.success('安装成功~');
-            } else if (url.endsWith('.js')) {
+                Toast.success("安装成功~");
+            } else if (url.endsWith(".js")) {
                 PluginManager.installPluginFromLocalFile(url, {
                     notCheckVersion: Config.getConfig(
-                        'basic.notCheckPluginVersion',
+                        "basic.notCheckPluginVersion",
                     ),
                 })
                     .then(res => {
@@ -248,7 +248,7 @@ async function extraMakeup() {
                     })
                     .catch(e => {
                         console.log(e);
-                        Toast.warn(e?.message ?? '无法识别此插件');
+                        Toast.warn(e?.message ?? "无法识别此插件");
                     });
             } else if (supportLocalMediaType.some(it => url.endsWith(it))) {
                 // 本地播放
@@ -264,7 +264,7 @@ async function extraMakeup() {
     }
 
     // 开启监听
-    Linking.addEventListener('url', data => {
+    Linking.addEventListener("url", data => {
         if (data.url) {
             handleLinkingUrl(data.url);
         }
@@ -274,7 +274,7 @@ async function extraMakeup() {
         handleLinkingUrl(initUrl);
     }
 
-    if (Config.getConfig('basic.autoPlayWhenAppStart')) {
+    if (Config.getConfig("basic.autoPlayWhenAppStart")) {
         TrackPlayer.play();
     }
 }
@@ -289,13 +289,13 @@ function bindEvents() {
             if (getCurrentDialog()?.name !== "SimpleDialog") {
                 showDialog("SimpleDialog", {
                     title: "流量提醒",
-                    content: '当前非WIFI环境，为节省流量，请到侧边栏设置中打开【使用移动网络下载】功能后方可继续下载'
-                })
+                    content: "当前非WIFI环境，为节省流量，请到侧边栏设置中打开【使用移动网络下载】功能后方可继续下载",
+                });
             }
         }
     });
 
     downloader.on(DownloaderEvent.DownloadQueueCompleted, () => {
         Toast.success("下载任务已完成");
-    })
+    });
 }

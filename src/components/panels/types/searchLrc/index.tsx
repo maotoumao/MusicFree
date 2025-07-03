@@ -1,19 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import rpx, { vmax, vw } from '@/utils/rpx';
+import React, { useEffect, useMemo, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import rpx, { vmax, vw } from "@/utils/rpx";
 
-import { fontSizeConst, fontWeightConst } from '@/constants/uiConst';
-import Button from '@/components/base/textButton.tsx';
-import useColors from '@/hooks/useColors';
-import PanelBase from '../../base/panelBase';
-import { TextInput } from 'react-native-gesture-handler';
-import useSearchLrc from './useSearchLrc';
-import PluginManager from '@/core/pluginManager';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
-import LyricList from './LyricList';
-import globalStyle from '@/constants/globalStyle';
-import NoPlugin from '@/components/base/noPlugin';
-import { useI18N } from '@/core/i18n';
+import { fontSizeConst, fontWeightConst } from "@/constants/uiConst";
+import Button from "@/components/base/textButton.tsx";
+import useColors from "@/hooks/useColors";
+import PanelBase from "../../base/panelBase";
+import { TextInput } from "react-native-gesture-handler";
+import useSearchLrc from "./useSearchLrc";
+import PluginManager from "@/core/pluginManager";
+import { SceneMap, TabBar, TabView } from "react-native-tab-view";
+import LyricList from "./LyricList";
+import globalStyle from "@/constants/globalStyle";
+import NoPlugin from "@/components/base/noPlugin";
+import { useI18N } from "@/core/i18n";
 
 interface INewMusicSheetProps {
     musicItem?: IMusic.IMusicItem | null;
@@ -22,7 +22,7 @@ interface INewMusicSheetProps {
 export default function SearchLrc(props: INewMusicSheetProps) {
     const { musicItem } = props;
     const [input, setInput] = useState(
-        musicItem?.alias ?? musicItem?.title ?? '',
+        musicItem?.alias ?? musicItem?.title ?? "",
     );
     const colors = useColors();
     const { t } = useI18N();
@@ -84,8 +84,8 @@ const style = StyleSheet.create({
         flex: 1,
     },
     titleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         marginBottom: rpx(6),
         paddingHorizontal: rpx(24),
     },
@@ -93,10 +93,10 @@ const style = StyleSheet.create({
     opeartions: {
         width: rpx(750),
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
+        flexDirection: "row",
         height: rpx(100),
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     input: {
         borderRadius: rpx(12),
@@ -114,22 +114,22 @@ function LyricResultBodyWrapper() {
     const [index, setIndex] = useState(0);
     const { t } = useI18N();
 
-    const routes = PluginManager.getSortedSearchablePlugins('lyric')?.map?.(
+    const routes = useMemo(() => PluginManager.getSortedSearchablePlugins("lyric")?.map?.(
         _ => ({
             key: _.hash,
             title: _.name,
         }),
-    );
+    ) ?? [], []);
 
-    const sceneMap = useRef(
-        (() => {
-            const scene: Record<string, any> = {};
-            routes.forEach(r => {
-                scene[r.key] = LyricList;
-            });
-            return SceneMap(scene);
-        })(),
-    );
+    const sceneMap = useMemo(() => {
+        const scene: Record<string, any> = {};
+        routes.forEach(r => {
+            scene[r.key] = LyricList;
+        });
+        return SceneMap(scene);
+
+    }, [routes]);
+
 
     const colors = useColors();
     return routes?.length ? (
@@ -145,12 +145,12 @@ function LyricResultBodyWrapper() {
                     {..._}
                     scrollEnabled
                     style={{
-                        backgroundColor: 'transparent',
-                        shadowColor: 'transparent',
-                        borderColor: 'transparent',
+                        backgroundColor: "transparent",
+                        shadowColor: "transparent",
+                        borderColor: "transparent",
                     }}
                     tabStyle={{
-                        width: 'auto',
+                        width: "auto",
                     }}
                     pressColor="transparent"
                     inactiveColor={colors.text}
@@ -164,9 +164,9 @@ function LyricResultBodyWrapper() {
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
-                                textAlign: 'center',
+                                textAlign: "center",
                             }}>
-                            {route.title ?? t('panel.searchLrc.unnamed')}
+                            {route.title ?? t("panel.searchLrc.unnamed")}
                         </Text>
                     )}
                     indicatorStyle={{
@@ -175,11 +175,11 @@ function LyricResultBodyWrapper() {
                     }}
                 />
             )}
-            renderScene={sceneMap.current}
+            renderScene={sceneMap}
             onIndexChange={setIndex}
             initialLayout={{ width: vw(100) }}
         />
     ) : (
-        <NoPlugin notSupportType={t('panel.searchLrc.notSupported')} />
+        <NoPlugin notSupportType={t("panel.searchLrc.notSupported")} />
     );
 }

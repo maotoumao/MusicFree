@@ -57,11 +57,11 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
     const safeAreaInsets = useSafeAreaInsets();
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
-    const associatedLrc = getMediaExtraProperty(musicItem, 'associatedLrc');
+    const associatedLrc = getMediaExtraProperty(musicItem, "associatedLrc");
 
     const options: IOption[] = [
         {
-            icon: 'identification',
+            icon: "identification",
             title: `ID: ${getMediaUniqueKey(musicItem)}`,
             onPress: () => {
                 mediaCache.setMediaCache(musicItem);
@@ -72,60 +72,60 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                             id: musicItem.id,
                         },
                         null,
-                        '',
+                        "",
                     ),
                 );
-                Toast.success(t('toast.copiedToClipboard'));
+                Toast.success(t("toast.copiedToClipboard"));
             },
         },
         {
-            icon: 'user',
-            title: t('panel.musicItemOptions.author', { artist: musicItem.artist }),
+            icon: "user",
+            title: t("panel.musicItemOptions.author", { artist: musicItem.artist }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.artist.toString());
-                    Toast.success(t('toast.copiedToClipboard'));
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch {
-                    Toast.warn(t('toast.copiedToClipboardFailed'));
+                    Toast.warn(t("toast.copiedToClipboardFailed"));
                 }
             },
         },
         {
-            icon: 'album-outline',
+            icon: "album-outline",
             show: !!musicItem.album,
-            title: t('panel.musicItemOptions.album', { album: musicItem.album }),
+            title: t("panel.musicItemOptions.album", { album: musicItem.album }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.album.toString());
-                    Toast.success(t('toast.copiedToClipboard'));
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch {
-                    Toast.warn(t('toast.copiedToClipboardFailed'));
+                    Toast.warn(t("toast.copiedToClipboardFailed"));
                 }
             },
         },
         {
-            icon: 'motion-play',
-            title: t('musicListEditor.addToNextPlay'),
+            icon: "motion-play",
+            title: t("musicListEditor.addToNextPlay"),
             onPress: () => {
                 TrackPlayer.addNext(musicItem);
                 hidePanel();
             },
         },
         {
-            icon: 'folder-plus',
-            title: t('musicListEditor.addToSheet'),
+            icon: "folder-plus",
+            title: t("musicListEditor.addToSheet"),
             onPress: () => {
-                showPanel('AddToMusicSheet', { musicItem });
+                showPanel("AddToMusicSheet", { musicItem });
             },
         },
         {
-            icon: 'arrow-down-tray',
-            title: t('common.download'),
+            icon: "arrow-down-tray",
+            title: t("common.download"),
             show: !downloaded,
             onPress: async () => {
-                showPanel('MusicQuality', {
+                showPanel("MusicQuality", {
                     musicItem,
-                    type: 'download',
+                    type: "download",
                     async onQualityPress(quality) {
                         downloader.download(musicItem, quality);
                     },
@@ -133,13 +133,13 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'check-circle-outline',
-            title: t('panel.musicItemOptions.downloaded'),
+            icon: "check-circle-outline",
+            title: t("panel.musicItemOptions.downloaded"),
             show: !!downloaded,
         },
         {
-            icon: 'trash-outline',
-            title: t('common.delete'),
+            icon: "trash-outline",
+            title: t("common.delete"),
             show: !!musicSheet,
             onPress: async () => {
                 if (musicSheet?.id === localMusicSheetId) {
@@ -149,24 +149,24 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 } else {
                     await MusicSheet.removeMusic(musicSheet!.id, musicItem);
                 }
-                Toast.success(t('toast.deleteSuccess'));
+                Toast.success(t("toast.deleteSuccess"));
                 hidePanel();
             },
         },
         {
-            icon: 'trash-outline',
-            title: t('panel.musicItemOptions.deleteLocalDownload'),
+            icon: "trash-outline",
+            title: t("panel.musicItemOptions.deleteLocalDownload"),
             show: !!downloaded,
             onPress: () => {
-                showDialog('SimpleDialog', {
-                    title: t('panel.musicItemOptions.deleteLocalDownload'),
-                    content: t('panel.musicItemOptions.deleteLocalDownloadConfirm'),
+                showDialog("SimpleDialog", {
+                    title: t("panel.musicItemOptions.deleteLocalDownload"),
+                    content: t("panel.musicItemOptions.deleteLocalDownloadConfirm"),
                     async onOk() {
                         try {
                             await LocalMusicSheet.removeMusic(musicItem, true);
-                            Toast.success(t('toast.deleteSuccess'));
+                            Toast.success(t("toast.deleteSuccess"));
                         } catch (e: any) {
-                            Toast.warn(`${t('panel.musicItemOptions.deleteFailed')} ${e?.message ?? e}`);
+                            Toast.warn(`${t("panel.musicItemOptions.deleteFailed")} ${e?.message ?? e}`);
                         }
                     },
                 });
@@ -174,61 +174,61 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'chat-bubble-oval-left-ellipsis',
-            title: t('panel.musicItemOptions.readComment'),
+            icon: "chat-bubble-oval-left-ellipsis",
+            title: t("panel.musicItemOptions.readComment"),
             show: !!pluginManager.getByMedia(musicItem)?.instance.getMusicComments,
             onPress: () => {
                 if (!musicItem) {
                     return;
                 }
-                showPanel('MusicComment', {
-                    musicItem: musicItem
+                showPanel("MusicComment", {
+                    musicItem: musicItem,
                 });
             },
         },
         {
-            icon: 'link',
+            icon: "link",
             title: associatedLrc
-                ? t('panel.musicItemOptions.associatedLyric', { platform: associatedLrc.platform, id: associatedLrc.id })
-                : t('panel.musicItemOptions.associateLyric'),
+                ? t("panel.musicItemOptions.associatedLyric", { platform: associatedLrc.platform, id: associatedLrc.id })
+                : t("panel.musicItemOptions.associateLyric"),
             onPress: async () => {
                 if (
-                    Config.getConfig('basic.associateLyricType') === 'input'
+                    Config.getConfig("basic.associateLyricType") === "input"
                 ) {
-                    showPanel('AssociateLrc', {
+                    showPanel("AssociateLrc", {
                         musicItem,
                     });
                 } else {
-                    showPanel('SearchLrc', {
+                    showPanel("SearchLrc", {
                         musicItem,
                     });
                 }
             },
         },
         {
-            icon: 'link-slash',
-            title: t('panel.musicItemOptions.unassociateLyric'),
+            icon: "link-slash",
+            title: t("panel.musicItemOptions.unassociateLyric"),
             show: !!associatedLrc,
             onPress: async () => {
                 lyricManager.unassociateLyric(musicItem);
-                Toast.success(t('panel.musicItemOptions.unassociateLyricSuccess'));
+                Toast.success(t("panel.musicItemOptions.unassociateLyricSuccess"));
                 hidePanel();
             },
         },
         {
-            icon: 'alarm-outline',
-            title: t('panel.musicItemOptions.timingClose'),
+            icon: "alarm-outline",
+            title: t("panel.musicItemOptions.timingClose"),
             show: from === ROUTE_PATH.MUSIC_DETAIL,
             onPress: () => {
-                showPanel('TimingClose');
+                showPanel("TimingClose");
             },
         },
         {
-            icon: 'archive-box-x-mark',
-            title: t('panel.musicItemOptions.clearPluginCache'),
+            icon: "archive-box-x-mark",
+            title: t("panel.musicItemOptions.clearPluginCache"),
             onPress: () => {
                 mediaCache.removeMediaCache(musicItem);
-                Toast.success(t('panel.musicItemOptions.cacheCleared'));
+                Toast.success(t("panel.musicItemOptions.cacheCleared"));
             },
         },
     ];
@@ -251,8 +251,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                 fontColor="textSecondary"
                                 numberOfLines={2}
                                 fontSize="description">
-                                {musicItem?.artist}{' '}
-                                {musicItem?.album ? `- ${musicItem.album}` : ''}
+                                {musicItem?.artist}{" "}
+                                {musicItem?.album ? `- ${musicItem.album}` : ""}
                             </ThemeText>
                         </View>
                     </View>
@@ -304,7 +304,7 @@ const style = StyleSheet.create({
     header: {
         width: rpx(750),
         height: rpx(200),
-        flexDirection: 'row',
+        flexDirection: "row",
         padding: rpx(24),
     },
     listWrapper: {
@@ -319,7 +319,7 @@ const style = StyleSheet.create({
         marginLeft: rpx(36),
         width: rpx(526),
         height: rpx(140),
-        justifyContent: 'space-around',
+        justifyContent: "space-around",
     },
     title: {
         paddingRight: rpx(24),

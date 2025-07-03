@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useRef } from 'react';
+import React, { ReactNode, useEffect, useMemo, useRef } from "react";
 import {
     BackHandler,
     NativeEventSubscription,
@@ -8,20 +8,20 @@ import {
     TouchableWithoutFeedback,
     View,
     ViewStyle,
-} from 'react-native';
-import rpx, { vh, vw } from '@/utils/rpx';
+} from "react-native";
+import rpx, { vh, vw } from "@/utils/rpx";
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withTiming,
-} from 'react-native-reanimated';
-import { timingConfig } from '@/constants/commonConst';
-import useColors from '@/hooks/useColors';
-import ThemeText from '@/components/base/themeText';
-import Divider from '@/components/base/divider';
-import { fontSizeConst } from '@/constants/uiConst';
-import { ScrollView } from 'react-native-gesture-handler';
-import useOrientation from '@/hooks/useOrientation.ts';
+} from "react-native-reanimated";
+import { timingConfig } from "@/constants/commonConst";
+import useColors from "@/hooks/useColors";
+import ThemeText from "@/components/base/themeText";
+import Divider from "@/components/base/divider";
+import { fontSizeConst } from "@/constants/uiConst";
+import { ScrollView } from "react-native-gesture-handler";
+import useOrientation from "@/hooks/useOrientation.ts";
 
 interface IDialogProps {
     onDismiss?: () => void;
@@ -38,12 +38,12 @@ function Dialog(props: IDialogProps) {
 
     // 对话框宽度
     const dialogContainerStyle: ViewStyle =
-        orientation === 'vertical'
+        orientation === "vertical"
             ? {
                 width: vw(100) - rpx(72),
             }
             : {
-                width: '80%',
+                width: "80%",
             };
 
     useEffect(() => {
@@ -53,7 +53,7 @@ function Dialog(props: IDialogProps) {
             backHandlerRef.current = undefined;
         }
         backHandlerRef.current = BackHandler.addEventListener(
-            'hardwareBackPress',
+            "hardwareBackPress",
             () => {
                 onDismiss?.();
                 return true;
@@ -128,7 +128,7 @@ function Title(props: IDialogTitleProps) {
     return (
         <>
             <View style={[styles.titleContainer, containerStyle]}>
-                {typeof children === 'string' || stringContent ? (
+                {typeof children === "string" || stringContent ? (
                     <ThemeText
                         fontSize="title"
                         fontWeight="bold"
@@ -154,7 +154,7 @@ function Content(props: IDialogContentProps) {
     const { children, style, needScroll } = props;
 
     const content =
-        typeof children === 'string' ? (
+        typeof children === "string" ? (
             <ThemeText fontSize="content" style={styles.defaultFontStyle}>
                 {children}
             </ThemeText>
@@ -180,7 +180,7 @@ interface IDialogActionsProps {
     children?: ReactNode;
     actions?: Array<{
         title: string;
-        type?: 'normal' | 'primary';
+        type?: "normal" | "primary";
         show?: boolean;
         onPress?: () => void;
     }>;
@@ -215,7 +215,7 @@ function Actions(props: IDialogActionsProps) {
 
     return (
         <View style={[styles.actionsContainer, style]}>
-            {typeof children === 'string' ? (
+            {typeof children === "string" ? (
                 <ThemeText fontSize="content" numberOfLines={1}>
                     {children}
                 </ThemeText>
@@ -227,12 +227,12 @@ function Actions(props: IDialogActionsProps) {
 }
 
 function BottomButton(props: {
-    type?: 'normal' | 'primary';
+    type?: "normal" | "primary";
     text: string;
     style?: StyleProp<ViewStyle>;
     onPress?: () => void;
 }) {
-    const { type = 'normal', text, style, onPress } = props;
+    const { type = "normal", text, style, onPress } = props;
     const colors = useColors();
 
     return (
@@ -243,11 +243,11 @@ function BottomButton(props: {
                 styles.bottomBtn,
                 {
                     backgroundColor:
-                        type === 'normal' ? colors.placeholder : colors.primary,
+                        type === "normal" ? colors.placeholder : colors.primary,
                 },
                 style,
             ]}>
-            <ThemeText color={type === 'normal' ? undefined : 'white'}>
+            <ThemeText color={type === "normal" ? undefined : "white"}>
                 {text}
             </ThemeText>
         </TouchableOpacity>
@@ -259,35 +259,35 @@ const styles = StyleSheet.create({
         borderRadius: rpx(8),
         flex: 1,
         flexShrink: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
         height: rpx(72),
     },
     backContainer: {
-        position: 'absolute',
+        position: "absolute",
         zIndex: 16299,
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         left: 0,
         top: 0,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     container: {
         zIndex: 16300,
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
+        position: "absolute",
+        width: "100%",
+        height: "100%",
         left: 0,
         top: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
     dialogContainer: {
-        position: 'absolute',
-        width: '80%',
+        position: "absolute",
+        width: "80%",
         zIndex: 16310,
         borderRadius: rpx(16),
-        backgroundColor: 'red',
+        backgroundColor: "red",
         shadowOffset: {
             width: 0,
             height: 2,
@@ -305,28 +305,28 @@ const styles = StyleSheet.create({
     /**** title */
     titleContainer: {
         height: rpx(88),
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "row",
         paddingHorizontal: rpx(24),
     },
     /** content */
     contentContainer: {
-        width: '100%',
+        width: "100%",
         paddingHorizontal: rpx(24),
         paddingVertical: rpx(36),
     },
     /** actions */
     actionsContainer: {
-        width: '100%',
+        width: "100%",
         height: rpx(88),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",
         paddingHorizontal: rpx(24),
         marginBottom: rpx(12),
-        flexWrap: 'nowrap',
+        flexWrap: "nowrap",
     },
     actionButton: {
         marginLeft: rpx(24),

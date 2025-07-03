@@ -1,6 +1,6 @@
-import { RequestStateCode } from '@/constants/commonConst';
-import PluginManager from '@/core/pluginManager';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { RequestStateCode } from "@/constants/commonConst";
+import PluginManager from "@/core/pluginManager";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function useAlbumDetail(
     originalAlbumItem: IAlbum.IAlbumItem | null,
