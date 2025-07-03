@@ -1,9 +1,10 @@
 import { showDialog } from "@/components/dialogs/useDialog";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 import checkUpdate from "@/utils/checkUpdate";
 import Toast from "@/utils/toast";
 import { compare } from "compare-versions";
 import { useEffect } from "react";
+import i18n from "@/core/i18n";
 
 export const checkUpdateAndShowResult = (
     showToast = false,
@@ -11,17 +12,17 @@ export const checkUpdateAndShowResult = (
 ) => {
     checkUpdate().then(updateInfo => {
         if (updateInfo?.needUpdate) {
-            const {data} = updateInfo;
-            const skipVersion = PersistStatus.get('app.skipVersion');
+            const { data } = updateInfo;
+            const skipVersion = PersistStatus.get("app.skipVersion");
             console.log(skipVersion, data);
             if (
                 checkSkip &&
                 skipVersion &&
-                compare(skipVersion, data.version, '>=')
+                compare(skipVersion, data.version, ">=")
             ) {
                 return;
             }
-            showDialog('DownloadDialog', {
+            showDialog("DownloadDialog", {
                 version: data.version,
                 content: data.changeLog,
                 fromUrl: data.download[0],
@@ -29,7 +30,7 @@ export const checkUpdateAndShowResult = (
             });
         } else {
             if (showToast) {
-                Toast.success('当前是最新版本~');
+                Toast.success(i18n.t("checkUpdate.error.latestVersion"));
             }
         }
     });

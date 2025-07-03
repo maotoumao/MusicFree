@@ -1,4 +1,4 @@
-import path from 'path-browserify';
+import path from "path-browserify";
 
 export default function getUrlExt(url?: string) {
     if (!url) {
@@ -6,7 +6,7 @@ export default function getUrlExt(url?: string) {
     }
     const ext = path.extname(url);
 
-    const extraTag = ext.indexOf('?');
+    const extraTag = ext.indexOf("?");
 
     if (ext) {
         if (extraTag !== -1) {

@@ -1,16 +1,17 @@
-import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
-import {Text} from 'react-native';
-import rpx, {vw} from '@/utils/rpx';
-import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
-import DefaultResults from './results/defaultResults';
-import {renderMap} from './results';
-import ResultWrapper from './resultWrapper';
-import {fontWeightConst} from '@/constants/uiConst';
-import {useAtomValue} from 'jotai';
-import {searchResultsAtom} from '../../store/atoms';
-import PluginManager from '@/core/pluginManager';
-import useColors from '@/hooks/useColors';
-import Empty from '@/components/base/empty';
+import Empty from "@/components/base/empty";
+import { fontWeightConst } from "@/constants/uiConst";
+import { useI18N } from "@/core/i18n";
+import PluginManager from "@/core/pluginManager";
+import useColors from "@/hooks/useColors";
+import rpx, { vw } from "@/utils/rpx";
+import { useAtomValue } from "jotai";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import { Text } from "react-native";
+import { SceneMap, TabBar, TabView } from "react-native-tab-view";
+import { searchResultsAtom } from "../../store/atoms";
+import { renderMap } from "./results";
+import DefaultResults from "./results/defaultResults";
+import ResultWrapper from "./resultWrapper";
 
 interface IResultSubPanelProps {
     tab: ICommon.SupportMediaType;
@@ -24,34 +25,34 @@ function getResultComponent(
 ) {
     return tab in renderMap
         ? memo(
-              () => {
-                  const searchResults = useAtomValue(searchResultsAtom);
-                  const pluginSearchResult = searchResults[tab][pluginHash];
-                  const pluginSearchResultRef = useRef(pluginSearchResult);
+            () => {
+                const searchResults = useAtomValue(searchResultsAtom);
+                const pluginSearchResult = searchResults[tab][pluginHash];
+                const pluginSearchResultRef = useRef(pluginSearchResult);
 
-                  useEffect(() => {
-                      pluginSearchResultRef.current = pluginSearchResult;
-                  }, [pluginSearchResult]);
+                useEffect(() => {
+                    pluginSearchResultRef.current = pluginSearchResult;
+                }, [pluginSearchResult]);
 
-                  return (
-                      <ResultWrapper
-                          tab={tab}
-                          searchResult={pluginSearchResult}
-                          pluginHash={pluginHash}
-                          pluginName={pluginName}
-                          pluginSearchResultRef={pluginSearchResultRef}
-                      />
-                  );
-              },
-              () => true,
-          )
+                return (
+                    <ResultWrapper
+                        tab={tab}
+                        searchResult={pluginSearchResult}
+                        pluginHash={pluginHash}
+                        pluginName={pluginName}
+                        pluginSearchResultRef={pluginSearchResultRef}
+                    />
+                );
+            },
+            () => true,
+        )
         : () => <DefaultResults />;
 }
 
 /** 结果scene */
 function getSubRouterScene(
     tab: ICommon.SupportMediaType,
-    routes: Array<{key: string; title: string}>,
+    routes: Array<{ key: string; title: string }>,
 ) {
     const scene: Record<string, React.FC> = {};
     routes.forEach(r => {
@@ -64,6 +65,7 @@ function getSubRouterScene(
 function ResultSubPanel(props: IResultSubPanelProps) {
     const [index, setIndex] = useState(0);
     const colors = useColors();
+    const { t } = useI18N();
 
     const routes = PluginManager.getSortedSearchablePlugins(props.tab).map(
         _ => ({
@@ -92,18 +94,18 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                     {..._}
                     scrollEnabled
                     style={{
-                        backgroundColor: 'transparent',
-                        shadowColor: 'transparent',
-                        borderColor: 'transparent',
+                        backgroundColor: "transparent",
+                        shadowColor: "transparent",
+                        borderColor: "transparent",
                     }}
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
                     tabStyle={{
-                        width: 'auto',
+                        width: "auto",
                     }}
                     renderIndicator={() => null}
                     pressColor="transparent"
-                    renderLabel={({route, focused, color}) => (
+                    renderLabel={({ route, focused, color }) => (
                         <Text
                             numberOfLines={1}
                             style={{
@@ -112,16 +114,16 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
-                                textAlign: 'center',
+                                textAlign: "center",
                             }}>
-                            {route.title ?? '(未命名)'}
+                            {route.title ?? `(${t("common.unknownName")})`}
                         </Text>
                     )}
                 />
             )}
             renderScene={renderScene}
             onIndexChange={setIndex}
-            initialLayout={{width: vw(100)}}
+            initialLayout={{ width: vw(100) }}
         />
     );
 }

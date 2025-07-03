@@ -1,9 +1,10 @@
-import React, {useEffect} from 'react';
-import Loading from '@/components/base/loading';
-import rpx from '@/utils/rpx';
-import {StyleSheet} from 'react-native';
-import {hideDialog} from '../useDialog';
-import Dialog from './base';
+import React, { useEffect } from "react";
+import Loading from "@/components/base/loading";
+import rpx from "@/utils/rpx";
+import { StyleSheet } from "react-native";
+import { hideDialog } from "../useDialog";
+import Dialog from "./base";
+import { useI18N } from "@/core/i18n";
 
 interface ILoadingDialogProps<T extends any = any> {
     promise?: Promise<T>;
@@ -15,11 +16,12 @@ interface ILoadingDialogProps<T extends any = any> {
     onCancel?: (hideDialog: () => void) => void;
 }
 export default function LoadingDialog(props: ILoadingDialogProps) {
-    const {title, loadingText, onResolve, onReject, promise, task, onCancel} =
+    const { title, loadingText, onResolve, onReject, promise, task, onCancel } =
         props;
+    
+    const { t } = useI18N();
 
     useEffect(() => {
-        console.log('mount!');
         const _promise = promise || task?.();
         _promise
             ?.then(data => {
@@ -34,12 +36,12 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
         <Dialog onDismiss={hideDialog}>
             <Dialog.Title>{title}</Dialog.Title>
             <Dialog.Content style={style.content}>
-                <Loading text={loadingText || '扫描中...'} />
+                <Loading text={loadingText || t("common.loading")} />
             </Dialog.Content>
             <Dialog.Actions
                 actions={[
                     {
-                        title: '取消',
+                        title: t("common.cancel"),
                         onPress() {
                             onCancel?.(hideDialog);
                         },

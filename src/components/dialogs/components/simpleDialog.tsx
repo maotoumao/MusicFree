@@ -1,6 +1,7 @@
-import React from 'react';
-import {hideDialog} from '../useDialog';
-import Dialog from './base';
+import React from "react";
+import { hideDialog } from "../useDialog";
+import Dialog from "./base";
+import { useI18N } from "@/core/i18n";
 
 interface ISimpleDialogProps {
     title: string;
@@ -10,33 +11,35 @@ interface ISimpleDialogProps {
     onOk?: () => void;
 }
 export default function SimpleDialog(props: ISimpleDialogProps) {
-    const {title, content, onOk, okText, cancelText} = props;
+    const { title, content, onOk, okText, cancelText } = props;
+
+    const { t } = useI18N();
 
     const actions = onOk
         ? [
-              {
-                  title: cancelText ?? '取消',
-                  type: 'normal',
-                  onPress: hideDialog,
-              },
-              {
-                  title: okText ?? '确认',
-                  type: 'primary',
-                  onPress() {
-                      onOk?.();
-                      hideDialog();
-                  },
-              },
-          ]
+            {
+                title: cancelText ?? t("common.cancel"),
+                type: "normal",
+                onPress: hideDialog,
+            },
+            {
+                title: okText ?? t("common.confirm"),
+                type: "primary",
+                onPress() {
+                    onOk?.();
+                    hideDialog();
+                },
+            },
+        ]
         : ([
-              {
-                  title: okText ?? '我知道了',
-                  type: 'primary',
-                  onPress() {
-                      hideDialog();
-                  },
-              },
-          ] as any);
+            {
+                title: okText ?? t("dialog.errorLogKnow"),
+                type: "primary",
+                onPress() {
+                    hideDialog();
+                },
+            },
+        ] as any);
 
     return (
         <Dialog onDismiss={hideDialog}>

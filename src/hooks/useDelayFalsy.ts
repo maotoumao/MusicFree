@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import { useRef, useState } from "react";
 
 export default function useDelayFalsy<T extends any = any>(
     init?: T,

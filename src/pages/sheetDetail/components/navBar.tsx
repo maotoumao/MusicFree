@@ -1,35 +1,36 @@
-import React from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_PATH, useParams} from '@/core/router';
-import Toast from '@/utils/toast';
-import toast from '@/utils/toast';
-import {showDialog} from '@/components/dialogs/useDialog';
-import AppBar from '@/components/base/appBar';
-import MusicSheet from '@/core/musicSheet';
-import {SortType} from '@/constants/commonConst.ts';
-import {showPanel} from '@/components/panels/usePanel.ts';
+import AppBar from "@/components/base/appBar";
+import { showDialog } from "@/components/dialogs/useDialog";
+import { showPanel } from "@/components/panels/usePanel.ts";
+import { SortType } from "@/constants/commonConst.ts";
+import { useI18N } from "@/core/i18n";
+import MusicSheet, { useSheetItem } from "@/core/musicSheet";
+import { ROUTE_PATH, useParams } from "@/core/router";
+import { default as Toast, default as toast } from "@/utils/toast";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
 
 export default function () {
     const navigation = useNavigation<any>();
-    const {id = 'favorite'} = useParams<'local-sheet-detail'>();
-    const musicSheet = MusicSheet.useSheetItem(id);
+    const { id = "favorite" } = useParams<"local-sheet-detail">();
+    const musicSheet = useSheetItem(id);
+    const { t } = useI18N();
 
     return (
         <>
             <AppBar
                 menu={[
                     {
-                        icon: 'pencil-outline',
-                        title: '编辑歌单信息',
+                        icon: "pencil-outline",
+                        title: t("sheetDetail.editSheetInfo"),
                         onPress() {
-                            showPanel('EditMusicSheetInfo', {
+                            showPanel("EditMusicSheetInfo", {
                                 musicSheet: musicSheet,
                             });
                         },
                     },
                     {
-                        icon: 'pencil-square',
-                        title: '批量编辑歌曲',
+                        icon: "pencil-square",
+                        title: t("sheetDetail.batchEditMusic"),
                         onPress() {
                             navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                                 musicList: musicSheet.musicList,
@@ -38,57 +39,59 @@ export default function () {
                         },
                     },
                     {
-                        icon: 'sort-outline',
-                        title: '歌曲排序',
+                        icon: "sort-outline",
+                        title: t("sheetDetail.sortMusic"),
                         onPress() {
-                            showDialog('RadioDialog', {
+                            showDialog("RadioDialog", {
                                 content: [
                                     {
                                         value: SortType.Title,
-                                        label: '按歌曲名排序',
+                                        label: t("sheetDetail.sortMusicOption.byTitle"),
                                     },
                                     {
                                         value: SortType.Artist,
-                                        label: '按作者名排序',
+                                        label: t("sheetDetail.sortMusicOption.byArtist"),
                                     },
                                     {
                                         value: SortType.Album,
-                                        label: '按专辑名排序',
+                                        label: t("sheetDetail.sortMusicOption.byAlbum"),
                                     },
                                     {
                                         value: SortType.Newest,
-                                        label: '按收藏时间从新到旧排序',
+                                        label: t("sheetDetail.sortMusicOption.newest"),
                                     },
                                     {
                                         value: SortType.Oldest,
-                                        label: '按收藏时间从旧到新排序',
+                                        label: t("sheetDetail.sortMusicOption.oldest"),
                                     },
                                 ],
                                 defaultSelected:
-                                    MusicSheet.getSheetMeta(id, 'sort') ||
+                                    MusicSheet.getSheetMeta(id, "sort") ||
                                     SortType.None,
-                                title: '歌曲排序',
+                                title: t("sheetDetail.sortMusic"),
                                 async onOk(value) {
                                     await MusicSheet.setSortType(
                                         id,
                                         value as SortType,
                                     );
-                                    toast.success('排序已更新');
+                                    toast.success(t("toast.sortHasBeenUpdated"));
                                 },
                             });
                         },
                     },
                     {
-                        icon: 'trash-outline',
-                        title: '删除歌单',
-                        show: id !== 'favorite',
+                        icon: "trash-outline",
+                        title: t("sheetDetail.deleteSheet"),
+                        show: id !== "favorite",
                         onPress() {
-                            showDialog('SimpleDialog', {
-                                title: '删除歌单',
-                                content: `确定删除歌单「${musicSheet.title}」吗?`,
+                            showDialog("SimpleDialog", {
+                                title: t("sheetDetail.deleteSheet"),
+                                content: t("sheetDetail.deleteSheetContent", {
+                                    name: musicSheet.title,
+                                }),
                                 onOk: async () => {
                                     await MusicSheet.removeSheet(id);
-                                    Toast.success('已删除');
+                                    Toast.success(t("toast.deleteSuccess"));
                                     navigation.goBack();
                                 },
                             });
@@ -97,7 +100,7 @@ export default function () {
                 ]}
                 actions={[
                     {
-                        icon: 'magnifying-glass',
+                        icon: "magnifying-glass",
                         onPress() {
                             navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                                 musicList: musicSheet?.musicList,
@@ -106,7 +109,7 @@ export default function () {
                         },
                     },
                 ]}>
-                歌单
+                {t("common.sheet")}
             </AppBar>
         </>
     );

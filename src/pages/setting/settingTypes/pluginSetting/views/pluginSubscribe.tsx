@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import rpx from "@/utils/rpx";
-import Config from "@/core/config.ts";
+import Config, { useAppConfig } from "@/core/appConfig";
 import { FlatList } from "react-native-gesture-handler";
 import Empty from "@/components/base/empty";
 import ListItem from "@/components/base/listItem";
@@ -12,6 +12,7 @@ import globalStyle from "@/constants/globalStyle";
 import { showDialog } from "@/components/dialogs/useDialog";
 import AppBar from "@/components/base/appBar";
 import Fab from "@/components/base/fab";
+import { useI18N } from "@/core/i18n";
 
 interface ISubscribeItem {
     name: string;
@@ -21,8 +22,10 @@ interface ISubscribeItem {
 const ITEM_HEIGHT = rpx(108);
 
 export default function PluginSubscribe() {
-    const urls = Config.useConfigValue('plugin.subscribeUrl') ?? '';
+    const urls = useAppConfig("plugin.subscribeUrl") ?? "";
     const [subscribes, setSubscribes] = useState<Array<ISubscribeItem>>([]);
+
+    const { t } = useI18N();
 
     useEffect(() => {
         try {
@@ -36,7 +39,7 @@ export default function PluginSubscribe() {
             if (urls.length) {
                 setSubscribes([
                     {
-                        name: '默认',
+                        name: t("common.default"),
                         url: urls,
                     },
                 ]);
@@ -52,12 +55,12 @@ export default function PluginSubscribe() {
         editingIndex?: number,
     ) => {
         if (
-            subscribeItem.url.endsWith('.js') ||
-            subscribeItem.url.endsWith('.json')
+            subscribeItem.url.endsWith(".js") ||
+            subscribeItem.url.endsWith(".json")
         ) {
             if (editingIndex !== undefined) {
                 Config.setConfig(
-                    'plugin.subscribeUrl',
+                    "plugin.subscribeUrl",
                     JSON.stringify([
                         ...subscribes.slice(0, editingIndex),
                         subscribeItem,
@@ -66,36 +69,36 @@ export default function PluginSubscribe() {
                 );
             } else {
                 Config.setConfig(
-                    'plugin.subscribeUrl',
+                    "plugin.subscribeUrl",
                     JSON.stringify([...subscribes, subscribeItem]),
                 );
             }
             hideDialog();
         } else {
-            Toast.warn('订阅地址必须以.js或.json结尾');
+            Toast.warn(t("toast.subscriptionHaveToEndWithJs"));
         }
     };
 
     return (
         <>
-            <AppBar>订阅设置</AppBar>
+            <AppBar>{t("pluginSetting.menu.subscriptionSetting")}</AppBar>
             <HorizontalSafeAreaView style={globalStyle.flex1}>
                 <FlatList
                     style={style.listWrapper}
                     ListEmptyComponent={Empty}
                     data={subscribes}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                         return (
                             <ListItem
                                 withHorizontalPadding
                                 onPress={() => {
-                                    showDialog('SubscribePluginDialog', {
+                                    showDialog("SubscribePluginDialog", {
                                         subscribeItem: item,
                                         onSubmit,
                                         editingIndex: index,
                                         onDelete(editingIndex, hideDialog) {
                                             Config.setConfig(
-                                                'plugin.subscribeUrl',
+                                                "plugin.subscribeUrl",
                                                 JSON.stringify([
                                                     ...subscribes.slice(
                                                         0,
@@ -107,7 +110,7 @@ export default function PluginSubscribe() {
                                                 ]),
                                             );
                                             hideDialog();
-                                            Toast.success('删除成功');
+                                            Toast.success(t("toast.deleteSuccess"));
                                         },
                                     });
                                 }}>
@@ -120,7 +123,7 @@ export default function PluginSubscribe() {
                                     position="right"
                                     onPress={() => {
                                         Clipboard.setString(item.url);
-                                        Toast.success('已复制到剪切板');
+                                        Toast.success(t("toast.copiedToClipboard"));
                                     }}
                                 />
                             </ListItem>
@@ -136,7 +139,7 @@ export default function PluginSubscribe() {
             <Fab
                 icon="plus"
                 onPress={() => {
-                    showDialog('SubscribePluginDialog', {
+                    showDialog("SubscribePluginDialog", {
                         onSubmit,
                     });
                 }}
@@ -154,7 +157,7 @@ const style = StyleSheet.create({
         marginTop: rpx(24),
     },
     fab: {
-        position: 'absolute',
+        position: "absolute",
         right: rpx(36),
         bottom: rpx(36),
     },

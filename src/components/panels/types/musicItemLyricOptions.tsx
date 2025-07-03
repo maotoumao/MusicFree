@@ -1,32 +1,28 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import rpx from "@/utils/rpx";
+import FastImage from "@/components/base/fastImage";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
 import { ImgAsset } from "@/constants/assetsConst";
-import Clipboard from "@react-native-clipboard/clipboard";
-import { getMediaKey } from "@/utils/mediaItem";
-import FastImage from "@/components/base/fastImage";
+import { getMediaUniqueKey } from "@/utils/mediaUtils";
+import rpx from "@/utils/rpx";
 import Toast from "@/utils/toast";
-import toast from "@/utils/toast";
+import Clipboard from "@react-native-clipboard/clipboard";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import PanelBase from "../base/panelBase";
-import { FlatList } from "react-native-gesture-handler";
 import Divider from "@/components/base/divider";
-import { iconSizeConst } from "@/constants/uiConst";
-import Config from "@/core/config.ts";
-import mediaCache from "@/core/mediaCache";
-import LyricManager from "@/core/lyricManager";
 import { IIconName } from "@/components/base/icon.tsx";
-import LyricUtil from "@/native/lyricUtil";
 import { hidePanel } from "@/components/panels/usePanel.ts";
+import { iconSizeConst } from "@/constants/uiConst";
+import Config from "@/core/appConfig";
+import lyricManager from "@/core/lyricManager";
+import mediaCache from "@/core/mediaCache";
+import LyricUtil from "@/native/lyricUtil";
 import { getDocumentAsync } from "expo-document-picker";
 import { readAsStringAsync } from "expo-file-system";
-import { checkAndCreateDir } from "@/utils/fileUtils.ts";
-import pathConst from "@/constants/pathConst.ts";
-import CryptoJs from "crypto-js";
-import RNFS from "react-native-fs";
+import { FlatList } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import { useI18N } from "@/core/i18n";
 
 interface IMusicItemLyricOptionsProps {
     /** 歌曲信息 */
@@ -45,21 +41,15 @@ interface IOption {
 export default function MusicItemLyricOptions(
     props: IMusicItemLyricOptionsProps,
 ) {
-    const {musicItem} = props ?? {};
-
-    const platformHash = CryptoJs.MD5(musicItem.platform).toString(
-        CryptoJs.enc.Hex,
-    );
-    const idHash: string = CryptoJs.MD5(musicItem.id).toString(
-        CryptoJs.enc.Hex,
-    );
+    const { musicItem } = props ?? {};
 
     const safeAreaInsets = useSafeAreaInsets();
+    const { t } = useI18N();
 
     const options: IOption[] = [
         {
-            icon: 'identification',
-            title: `ID: ${getMediaKey(musicItem)}`,
+            icon: "identification",
+            title: `ID: ${getMediaUniqueKey(musicItem)}`,
             onPress: () => {
                 mediaCache.setMediaCache(musicItem);
                 Clipboard.setString(
@@ -69,44 +59,45 @@ export default function MusicItemLyricOptions(
                             id: musicItem.id,
                         },
                         null,
-                        '',
+                        "",
                     ),
                 );
-                Toast.success('已复制到剪切板');
+                Toast.success(t("toast.copiedToClipboard"));
             },
         },
         {
-            icon: 'user',
-            title: `作者: ${musicItem.artist}`,
+            icon: "user",
+            title: t("panel.musicItemLyricOptions.author", { artist: musicItem.artist }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.artist.toString());
-                    Toast.success('已复制到剪切板');
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch {
-                    Toast.warn('复制失败');
+                    Toast.success(t("toast.copiedToClipboardFailed"));
                 }
             },
         },
         {
-            icon: 'album-outline',
+            icon: "album-outline",
             show: !!musicItem.album,
-            title: `专辑: ${musicItem.album}`,
+            title: t("panel.musicItemLyricOptions.album", { album: musicItem.album }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.album.toString());
-                    Toast.success('已复制到剪切板');
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch {
-                    Toast.warn('复制失败');
+                    Toast.success(t("toast.copiedToClipboardFailed"));
                 }
             },
         },
         {
-            icon: 'lyric',
-            title: `${
-                Config.getConfig('lyric.showStatusBarLyric') ? '关闭' : '开启'
-            }桌面歌词`,
+            icon: "lyric", title: t("panel.musicItemLyricOptions.toggleDesktopLyric", {
+                status: Config.getConfig("lyric.showStatusBarLyric")
+                    ? t("panel.musicItemLyricOptions.disableDesktopLyric")
+                    : t("panel.musicItemLyricOptions.enableDesktopLyric"),
+            }),
             async onPress() {
-                const showStatusBarLyric = Config.getConfig('lyric.showStatusBarLyric');
+                const showStatusBarLyric = Config.getConfig("lyric.showStatusBarLyric");
                 if (!showStatusBarLyric) {
                     const hasPermission =
                         await LyricUtil.checkSystemAlertPermission();
@@ -119,28 +110,28 @@ export default function MusicItemLyricOptions(
                             color: Config.getConfig("lyric.color"),
                             backgroundColor: Config.getConfig("lyric.backgroundColor"),
                             widthPercent: Config.getConfig("lyric.widthPercent"),
-                            fontSize: Config.getConfig("lyric.fontSize")
+                            fontSize: Config.getConfig("lyric.fontSize"),
                         };
                         LyricUtil.showStatusBarLyric(
-                          "MusicFree",
-                          statusBarLyricConfig ?? {}
+                            "MusicFree",
+                            statusBarLyricConfig ?? {}
                         );
-                        Config.setConfig('lyric.showStatusBarLyric', true);
+                        Config.setConfig("lyric.showStatusBarLyric", true);
                     } else {
                         LyricUtil.requestSystemAlertPermission().finally(() => {
-                            Toast.warn('开启桌面歌词失败，无悬浮窗权限');
+                            Toast.warn(t("panel.musicItemLyricOptions.desktopLyricPermissionError"));
                         });
                     }
                 } else {
                     LyricUtil.hideStatusBarLyric();
-                    Config.setConfig('lyric.showStatusBarLyric', false);
+                    Config.setConfig("lyric.showStatusBarLyric", false);
                 }
                 hidePanel();
             },
         },
         {
-            icon: 'arrow-up-tray',
-            title: '上传本地歌词',
+            icon: "arrow-up-tray",
+            title: t("panel.musicItemLyricOptions.uploadLocalLyric"),
             async onPress() {
                 try {
                     const result = await getDocumentAsync({
@@ -151,35 +142,21 @@ export default function MusicItemLyricOptions(
                     }
                     const pickedDoc = result.assets[0].uri;
                     const lyricContent = await readAsStringAsync(pickedDoc, {
-                        encoding: 'utf8',
-                    });
-
-                    // 调用rnfs写到external storage
-                    await checkAndCreateDir(
-                        pathConst.localLrcPath + platformHash,
-                    );
-
-                    await RNFS.writeFile(
-                        pathConst.localLrcPath +
-                            platformHash +
-                            '/' +
-                            idHash +
-                            '.lrc',
-                        lyricContent,
-                        'utf8',
-                    );
-                    toast.success('设置成功');
-                    LyricManager.refreshLyric(false, true);
+                        encoding: "utf8",
+                    });                    await lyricManager.uploadLocalLyric(musicItem, lyricContent);
+                    Toast.success(t("toast.settingSuccess"));
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    toast.warn('设置失败' + e.message);
+                    Toast.warn(t("panel.musicItemLyricOptions.settingFail", {
+                        reason: e?.message,
+                    }));
                 }
             },
         },
         {
-            icon: 'arrow-up-tray',
-            title: '上传本地歌词翻译',
+            icon: "arrow-up-tray",
+            title: t("panel.musicItemLyricOptions.uploadLocalLyricTranslation"),
             async onPress() {
                 try {
                     const result = await getDocumentAsync({
@@ -190,49 +167,30 @@ export default function MusicItemLyricOptions(
                     }
                     const pickedDoc = result.assets[0].uri;
                     const lyricContent = await readAsStringAsync(pickedDoc, {
-                        encoding: 'utf8',
-                    });
-
-                    // 调用rnfs写到external storage
-                    await checkAndCreateDir(
-                        pathConst.localLrcPath + platformHash,
-                    );
-
-                    await RNFS.writeFile(
-                        pathConst.localLrcPath +
-                            platformHash +
-                            '/' +
-                            idHash +
-                            '.tran.lrc',
-                        lyricContent,
-                        'utf8',
-                    );
-                    toast.success('设置成功');
-                    LyricManager.refreshLyric(false, true);
+                        encoding: "utf8",
+                    });                    await lyricManager.uploadLocalLyric(musicItem, lyricContent, "translation");
+                    Toast.success(t("toast.settingSuccess"));
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    toast.warn('设置失败' + e.message);
+                    Toast.warn(t("panel.musicItemLyricOptions.settingFail", {
+                        reason: e?.message,
+                    }));
                 }
             },
         },
         {
-            icon: 'trash-outline',
-            title: '删除本地歌词',
+            icon: "trash-outline",
+            title: t("panel.musicItemLyricOptions.deleteLocalLyric"),
             async onPress() {
                 try {
-                    const basePath =
-                        pathConst.localLrcPath + platformHash + '/' + idHash;
-
-                    await RNFS.unlink(basePath + '.lrc').catch(() => {});
-                    await RNFS.unlink(basePath + '.tran.lrc').catch(() => {});
-
-                    toast.success('删除成功');
-                    LyricManager.refreshLyric(false, true);
+                    lyricManager.removeLocalLyric(musicItem);
                     hidePanel();
                 } catch (e: any) {
                     console.log(e);
-                    toast.warn('删除失败' + e.message);
+                    Toast.warn(t("panel.musicItemLyricOptions.deleteFail", {
+                        reason: e?.message,
+                    }));
                 }
             },
         },
@@ -245,8 +203,8 @@ export default function MusicItemLyricOptions(
                     <View style={style.header}>
                         <FastImage
                             style={style.artwork}
-                            uri={musicItem?.artwork}
-                            emptySrc={ImgAsset.albumDefault}
+                            source={musicItem?.artwork}
+                            placeholderSource={ImgAsset.albumDefault}
                         />
                         <View style={style.content}>
                             <ThemeText numberOfLines={2} style={style.title}>
@@ -256,8 +214,8 @@ export default function MusicItemLyricOptions(
                                 fontColor="textSecondary"
                                 fontSize="description"
                                 numberOfLines={2}>
-                                {musicItem?.artist}{' '}
-                                {musicItem?.album ? `- ${musicItem.album}` : ''}
+                                {musicItem?.artist}{" "}
+                                {musicItem?.album ? `- ${musicItem.album}` : ""}
                             </ThemeText>
                         </View>
                     </View>
@@ -278,7 +236,7 @@ export default function MusicItemLyricOptions(
                                 },
                             ]}
                             keyExtractor={_ => _.title}
-                            renderItem={({item}) =>
+                            renderItem={({ item }) =>
                                 item.show !== false ? (
                                     <ListItem
                                         withHorizontalPadding
@@ -309,7 +267,7 @@ const style = StyleSheet.create({
     header: {
         width: rpx(750),
         height: rpx(200),
-        flexDirection: 'row',
+        flexDirection: "row",
         padding: rpx(24),
     },
     listWrapper: {
@@ -324,7 +282,7 @@ const style = StyleSheet.create({
         marginLeft: rpx(36),
         width: rpx(526),
         height: rpx(140),
-        justifyContent: 'space-around',
+        justifyContent: "space-around",
     },
     title: {
         paddingRight: rpx(24),

@@ -1,24 +1,25 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import {useAtom, useSetAtom} from 'jotai';
+import AppBar from "@/components/base/appBar";
+import Icon from "@/components/base/icon.tsx";
+import IconButton from "@/components/base/iconButton";
+import Input from "@/components/base/input";
+import Button from "@/components/base/textButton.tsx";
+import { iconSizeConst } from "@/constants/uiConst";
+import { useI18N } from "@/core/i18n";
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
+import Color from "color";
+import { useAtom, useSetAtom } from "jotai";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { addHistory } from "../common/historySearch";
+import useSearch from "../hooks/useSearch";
 import {
-    initSearchResults,
     PageStatus,
+    initSearchResults,
     pageStatusAtom,
     queryAtom,
     searchResultsAtom,
-} from '../store/atoms';
-import useSearch from '../hooks/useSearch';
-import {addHistory} from '../common/historySearch';
-import useColors from '@/hooks/useColors';
-import AppBar from '@/components/base/appBar';
-import Input from '@/components/base/input';
-import Color from 'color';
-import Button from '@/components/base/textButton.tsx';
-import IconButton from '@/components/base/iconButton';
-import {iconSizeConst} from '@/constants/uiConst';
-import Icon from '@/components/base/icon.tsx';
+} from "../store/atoms";
 
 export default function NavBar() {
     const search = useSearch();
@@ -26,9 +27,10 @@ export default function NavBar() {
     const setPageStatus = useSetAtom(pageStatusAtom);
     const colors = useColors();
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const { t } = useI18N();
 
     const onSearchSubmit = async () => {
-        if (query === '') {
+        if (query === "") {
             return;
         }
         setSearchResultsState(initSearchResults);
@@ -60,16 +62,16 @@ export default function NavBar() {
                         },
                     ]}
                     accessible
-                    accessibilityLabel="搜索框"
-                    accessibilityHint={'输入要搜索的歌曲'}
+                    accessibilityLabel={t("searchPage.searchLabel.a11y")}
+                    accessibilityHint={t("searchPage.searchPlaceHolder")}
                     onFocus={() => {
                         setPageStatus(PageStatus.EDITING);
                     }}
                     placeholderTextColor={hintTextColor}
-                    placeholder="输入要搜索的歌曲"
+                    placeholder={t("searchPage.searchPlaceHolder")}
                     onSubmitEditing={onSearchSubmit}
                     onChangeText={_ => {
-                        if (_ === '') {
+                        if (_ === "") {
                             setPageStatus(PageStatus.EDITING);
                         }
                         setQuery(_);
@@ -81,7 +83,7 @@ export default function NavBar() {
                         style={style.close}
                         sizeType="light"
                         onPress={() => {
-                            setQuery('');
+                            setQuery("");
                             setPageStatus(PageStatus.EDITING);
                         }}
                         color={hintTextColor}
@@ -92,9 +94,9 @@ export default function NavBar() {
             <Button
                 style={[style.button]}
                 hitSlop={0}
-                fontColor={'appBarText'}
+                fontColor={"appBarText"}
                 onPress={onSearchSubmit}>
-                搜索
+                {t("common.search")}
             </Button>
         </AppBar>
     );
@@ -106,13 +108,15 @@ const style = StyleSheet.create({
     },
     button: {
         paddingHorizontal: rpx(24),
-        height: '100%',
-        justifyContent: 'center',
+        height: "100%",
+        justifyContent: "center",
+        flexDirection: "row",
+        alignItems: "center",
     },
     searchBarContainer: {
         flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     searchBar: {
         minWidth: rpx(375),
@@ -121,15 +125,15 @@ const style = StyleSheet.create({
         borderRadius: rpx(64),
         height: rpx(64),
         maxHeight: rpx(64),
-        alignItems: 'center',
+        alignItems: "center",
     },
     magnify: {
-        position: 'absolute',
+        position: "absolute",
         left: rpx(16),
         zIndex: 100,
     },
     close: {
-        position: 'absolute',
+        position: "absolute",
         right: rpx(16),
     },
 });

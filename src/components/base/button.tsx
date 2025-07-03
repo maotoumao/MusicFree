@@ -4,19 +4,19 @@ import {
     StyleSheet,
     TouchableOpacity,
     ViewStyle,
-} from 'react-native';
-import useColors from '@/hooks/useColors.ts';
-import ThemeText from '@/components/base/themeText.tsx';
-import React from 'react';
-import rpx from '@/utils/rpx.ts';
+} from "react-native";
+import useColors from "@/hooks/useColors.ts";
+import ThemeText from "@/components/base/themeText.tsx";
+import React from "react";
+import rpx from "@/utils/rpx.ts";
 
 export function Button(props: {
-    type?: 'normal' | 'primary';
+    type?: "normal" | "primary";
     text: string;
     style?: StyleProp<ViewStyle>;
     onPress?: (evt: GestureResponderEvent) => void;
 }) {
-    const {type = 'normal', text, style, onPress} = props;
+    const { type = "normal", text, style, onPress } = props;
     const colors = useColors();
 
     return (
@@ -27,11 +27,11 @@ export function Button(props: {
                 styles.bottomBtn,
                 {
                     backgroundColor:
-                        type === 'normal' ? colors.placeholder : colors.primary,
+                        type === "normal" ? colors.placeholder : colors.primary,
                 },
                 style,
             ]}>
-            <ThemeText color={type === 'normal' ? undefined : 'white'}>
+            <ThemeText color={type === "normal" ? undefined : "white"}>
                 {text}
             </ThemeText>
         </TouchableOpacity>
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
     bottomBtn: {
         borderRadius: rpx(8),
         flexShrink: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
         height: rpx(72),
     },
 });

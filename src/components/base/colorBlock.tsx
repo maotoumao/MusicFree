@@ -1,13 +1,13 @@
-import React from 'react';
-import {Image, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import {ImgAsset} from '@/constants/assetsConst';
+import React from "react";
+import { Image, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import { ImgAsset } from "@/constants/assetsConst";
 
 interface IColorBlockProps {
     color: string;
 }
 export default function ColorBlock(props: IColorBlockProps) {
-    const {color} = props;
+    const { color } = props;
 
     return (
         <View style={[styles.showBar]}>
@@ -33,21 +33,21 @@ const styles = StyleSheet.create({
         width: rpx(76),
         height: rpx(50),
         borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: '#ccc',
+        borderStyle: "solid",
+        borderColor: "#ccc",
     },
     showBarContent: {
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
+        width: "100%",
+        height: "100%",
+        position: "absolute",
         left: 0,
         top: 0,
     },
     transparentBg: {
-        position: 'absolute',
+        position: "absolute",
         zIndex: -1,
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         left: 0,
         top: 0,
     },

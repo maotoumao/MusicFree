@@ -1,7 +1,7 @@
-import React from 'react';
-import {StyleSheet, TextProps} from 'react-native';
-import ThemeText from './themeText';
-import {fontSizeConst} from '@/constants/uiConst';
+import React from "react";
+import { StyleSheet, TextProps } from "react-native";
+import ThemeText from "./themeText";
+import { fontSizeConst } from "@/constants/uiConst";
 
 interface IParagraphProps extends TextProps {}
 export default function Paragraph(props: IParagraphProps) {

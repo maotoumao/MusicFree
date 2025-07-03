@@ -1,11 +1,11 @@
 declare namespace ICommon {
     /** 支持搜索的媒体类型 */
     export type SupportMediaType =
-        | 'music'
-        | 'album'
-        | 'artist'
-        | 'sheet'
-        | 'lyric';
+        | "music"
+        | "album"
+        | "artist"
+        | "sheet"
+        | "lyric";
 
     /** 媒体定义 */
     export type SupportMediaItemBase = {

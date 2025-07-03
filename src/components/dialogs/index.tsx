@@ -1,7 +1,6 @@
-import React from 'react';
-import components from './components';
-import {dialogInfoStore} from './useDialog';
-import Portal from '../base/portal';
+import React from "react";
+import components from "./components";
+import { dialogInfoStore } from "./useDialog";
 
 export default function () {
     const dialogInfoState = dialogInfoStore.useValue();
@@ -11,10 +10,8 @@ export default function () {
         : null;
 
     return (
-        <Portal>
-            {Component ? (
-                <Component {...(dialogInfoState.payload ?? {})} />
-            ) : null}
-        </Portal>
+        Component ? (
+            <Component {...(dialogInfoState.payload ?? {})} />
+        ) : null
     );
 }

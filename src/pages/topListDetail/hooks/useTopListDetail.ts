@@ -1,6 +1,6 @@
-import {RequestStateCode} from '@/constants/commonConst';
-import PluginManager from '@/core/pluginManager';
-import {useEffect, useRef, useState} from 'react';
+import { RequestStateCode } from "@/constants/commonConst";
+import PluginManager from "@/core/pluginManager";
+import { useEffect, useRef, useState } from "react";
 
 export default function useTopListDetail(
     topListItem: IMusic.IMusicSheetItemBase | null,
@@ -12,6 +12,7 @@ export default function useTopListDetail(
         );
 
     const pageRef = useRef(1);
+
     const [requestState, setRequestState] = useState(RequestStateCode.IDLE);
 
     async function loadMore() {
@@ -20,7 +21,8 @@ export default function useTopListDetail(
         }
         try {
             if (
-                requestState & RequestStateCode.LOADING ||
+                requestState === RequestStateCode.PENDING_FIRST_PAGE ||
+                requestState === RequestStateCode.PENDING_REST_PAGE ||
                 requestState === RequestStateCode.FINISHED
             ) {
                 return;
@@ -46,20 +48,20 @@ export default function useTopListDetail(
                             currentPage === 1
                                 ? result.musicList ?? []
                                 : [
-                                      ...(prev?.musicList ?? []),
-                                      ...(result.musicList ?? []),
-                                  ],
+                                    ...(prev?.musicList ?? []),
+                                    ...(result.musicList ?? []),
+                                ],
                     } as IMusic.IMusicSheetItem),
             );
 
             if (result.isEnd === false) {
-                setRequestState(RequestStateCode.IDLE);
+                setRequestState(RequestStateCode.PARTLY_DONE);
             } else {
                 setRequestState(RequestStateCode.FINISHED);
             }
             pageRef.current++;
         } catch {
-            setRequestState(RequestStateCode.FINISHED);
+            setRequestState(RequestStateCode.ERROR);
         }
     }
 

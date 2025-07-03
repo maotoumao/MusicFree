@@ -1,5 +1,5 @@
-import {RequestStateCode} from '@/constants/commonConst';
-import {atom} from 'jotai';
+import { RequestStateCode } from "@/constants/commonConst";
+import { atom } from "jotai";
 
 /** 搜索状态 */
 
@@ -34,18 +34,18 @@ const searchResultsAtom = atom(initSearchResults);
 
 export enum PageStatus {
     /** 编辑中 */
-    EDITING = 'EDITING',
+    EDITING = "EDITING",
     /** 搜索中 */
-    SEARCHING = 'SEARCHING',
+    SEARCHING = "SEARCHING",
     /** 有结果 */
-    RESULT = 'RESULT',
+    RESULT = "RESULT",
     /** 没有安装插件 */
-    NO_PLUGIN = 'NO_PLUGIN',
+    NO_PLUGIN = "NO_PLUGIN",
 }
 
 /** 当前正在搜索的 */
 const pageStatusAtom = atom<PageStatus>(PageStatus.EDITING);
 
-const queryAtom = atom<string>('');
+const queryAtom = atom<string>("");
 
-export {pageStatusAtom, searchResultsAtom, queryAtom};
+export { pageStatusAtom, searchResultsAtom, queryAtom };

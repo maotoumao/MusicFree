@@ -1,37 +1,40 @@
-import React, {useState} from 'react';
-import useColors from '@/hooks/useColors';
-import rpx from '@/utils/rpx';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import ThemeText from '@/components/base/themeText';
-import {ImgAsset} from '@/constants/assetsConst';
-import {launchImageLibrary} from 'react-native-image-picker';
-import pathConst from '@/constants/pathConst';
-import Image from '@/components/base/image';
-import {addFileScheme, addRandomHash} from '@/utils/fileUtils';
-import Toast from '@/utils/toast';
-import {hideDialog} from '../useDialog';
-import Dialog from './base';
-import Input from '@/components/base/input';
-import {fontSizeConst} from '@/constants/uiConst';
-import {copyAsync, deleteAsync, getInfoAsync} from 'expo-file-system';
-import MusicSheet from '@/core/musicSheet';
+import React, { useState } from "react";
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import ThemeText from "@/components/base/themeText";
+import { ImgAsset } from "@/constants/assetsConst";
+import { launchImageLibrary } from "react-native-image-picker";
+import pathConst from "@/constants/pathConst";
+import Image from "@/components/base/image";
+import { addFileScheme, addRandomHash } from "@/utils/fileUtils";
+import Toast from "@/utils/toast";
+import { hideDialog } from "../useDialog";
+import Dialog from "./base";
+import Input from "@/components/base/input";
+import { fontSizeConst } from "@/constants/uiConst";
+import { copyAsync, deleteAsync, getInfoAsync } from "expo-file-system";
+import MusicSheet from "@/core/musicSheet";
+import { useI18N } from "@/core/i18n";
 
 interface IEditSheetDetailProps {
     musicSheet: IMusic.IMusicSheetItem;
 }
 export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
-    const {musicSheet} = props;
+    const { musicSheet } = props;
     const colors = useColors();
 
     const [coverImg, setCoverImg] = useState(musicSheet?.coverImg);
     const [title, setTitle] = useState(musicSheet?.title);
+
+    const { t } = useI18N();
 
     // onCover
 
     const onChangeCoverPress = async () => {
         try {
             const result = await launchImageLibrary({
-                mediaType: 'photo',
+                mediaType: "photo",
             });
             const uri = result.assets?.[0].uri;
             if (!uri) {
@@ -59,7 +62,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
         if (coverImg && coverImg !== musicSheet?.coverImg) {
             newCoverImg = addFileScheme(
                 `${pathConst.dataPath}sheet${musicSheet.id}${coverImg.substring(
-                    coverImg.lastIndexOf('.'),
+                    coverImg.lastIndexOf("."),
                 )}`,
             );
             try {
@@ -85,7 +88,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
             coverImg: newCoverImg ? addRandomHash(newCoverImg) : undefined,
             title: _title,
         }).then(() => {
-            Toast.success('更新歌单信息成功~');
+            Toast.success("更新歌单信息成功~");
         });
         hideDialog();
     }
@@ -94,7 +97,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
         <Dialog onDismiss={hideDialog}>
             <Dialog.Content>
                 <View style={style.row}>
-                    <ThemeText>封面</ThemeText>
+                    <ThemeText>{t("common.cover")}</ThemeText>
                     <TouchableOpacity
                         onPress={onChangeCoverPress}
                         onLongPress={() => {
@@ -108,7 +111,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
                     </TouchableOpacity>
                 </View>
                 <View style={style.row}>
-                    <ThemeText>歌单名</ThemeText>
+                    <ThemeText>{t("dialog.editSheetDetail.sheetName")}</ThemeText>
                     <Input
                         numberOfLines={1}
                         textAlign="right"
@@ -117,7 +120,7 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
                         onChangeText={onTitleChange}
                         style={{
                             height: fontSizeConst.content * 2.5,
-                            width: '50%',
+                            width: "50%",
                             borderBottomWidth: 1,
                             includeFontPadding: false,
                             borderBottomColor: colors.text,
@@ -128,13 +131,13 @@ export default function EditSheetDetailDialog(props: IEditSheetDetailProps) {
             <Dialog.Actions
                 actions={[
                     {
-                        title: '取消',
-                        type: 'normal',
+                        title: t("common.cancel"),
+                        type: "normal",
                         onPress: hideDialog,
                     },
                     {
-                        title: '确认',
-                        type: 'primary',
+                        title: t("common.confirm"),
+                        type: "primary",
                         onPress: onConfirm,
                     },
                 ]}
@@ -147,9 +150,9 @@ const style = StyleSheet.create({
     row: {
         marginTop: rpx(28),
         height: rpx(120),
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
         paddingBottom: rpx(12),
     },
     coverImg: {

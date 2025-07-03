@@ -1,22 +1,24 @@
-import React from 'react';
-import useTopListDetail from './hooks/useTopListDetail';
-import {useParams} from '@/core/router';
-import MusicSheetPage from '@/components/musicSheetPage';
-import {RequestStateCode} from '@/constants/commonConst';
+import MusicSheetPage from "@/components/musicSheetPage";
+import { useI18N } from "@/core/i18n";
+import { useParams } from "@/core/router";
+import React from "react";
+import useTopListDetail from "./hooks/useTopListDetail";
 
 export default function TopListDetail() {
-    const {pluginHash, topList} = useParams<'top-list-detail'>();
+    const { pluginHash, topList } = useParams<"top-list-detail">();
     const [topListDetail, state, loadMore] = useTopListDetail(
         topList,
         pluginHash,
     );
+    const { t } = useI18N();
 
     return (
         <MusicSheetPage
-            navTitle="榜单"
+            navTitle={t("topList.title")}
             sheetInfo={topListDetail}
-            onEndReached={loadMore}
-            loadMore={state & RequestStateCode.LOADING ? 'loading' : 'done'}
+            state={state}
+            onLoadMore={loadMore}
+            onRetry={loadMore}
         />
     );
 }

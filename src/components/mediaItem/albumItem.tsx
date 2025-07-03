@@ -1,15 +1,15 @@
-import React from 'react';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
-import ListItem from '@/components/base/listItem';
-import {ImgAsset} from '@/constants/assetsConst';
-import TitleAndTag from './titleAndTag';
+import React from "react";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import ListItem from "@/components/base/listItem";
+import { ImgAsset } from "@/constants/assetsConst";
+import TitleAndTag from "./titleAndTag";
 
 interface IAlbumResultsProps {
     albumItem: IAlbum.IAlbumItem;
 }
 
 export default function AlbumItem(props: IAlbumResultsProps) {
-    const {albumItem} = props;
+    const { albumItem } = props;
     const navigate = useNavigate();
 
     return (
@@ -32,8 +32,8 @@ export default function AlbumItem(props: IAlbumResultsProps) {
                         tag={albumItem.platform}
                     />
                 }
-                description={`${albumItem.artist ?? ''}    ${
-                    albumItem.date ?? ''
+                description={`${albumItem.artist ?? ""}    ${
+                    albumItem.date ?? ""
                 }`}
             />
         </ListItem>

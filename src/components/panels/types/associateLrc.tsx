@@ -1,29 +1,31 @@
-import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
-import rpx, {vmax} from '@/utils/rpx';
+import rpx, { vmax } from "@/utils/rpx";
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 
-import {fontSizeConst} from '@/constants/uiConst';
-import useColors from '@/hooks/useColors';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {errorLog} from '@/utils/log';
-import {associateLrc, parseMediaKey} from '@/utils/mediaItem';
-import Toast from '@/utils/toast';
-import PanelBase from '../base/panelBase';
-import {TextInput} from 'react-native-gesture-handler';
-import {hidePanel} from '../usePanel';
-import mediaCache from '@/core/mediaCache';
-import LyricManager from '@/core/lyricManager';
-import PanelHeader from '../base/panelHeader';
+import { fontSizeConst } from "@/constants/uiConst";
+import lyricManager from "@/core/lyricManager";
+import mediaCache from "@/core/mediaCache";
+import useColors from "@/hooks/useColors";
+import { errorLog } from "@/utils/log";
+import { parseMediaUniqueKey } from "@/utils/mediaUtils";
+import Toast from "@/utils/toast";
+import Clipboard from "@react-native-clipboard/clipboard";
+import { TextInput } from "react-native-gesture-handler";
+import PanelBase from "../base/panelBase";
+import PanelHeader from "../base/panelHeader";
+import { hidePanel } from "../usePanel";
+import { useI18N } from "@/core/i18n";
 
 interface INewMusicSheetProps {
     musicItem: IMusic.IMusicItem;
 }
 
 export default function AssociateLrc(props: INewMusicSheetProps) {
-    const {musicItem} = props;
+    const { musicItem } = props;
 
-    const [input, setInput] = useState('');
+    const [input, setInput] = useState("");
     const colors = useColors();
+    const { t } = useI18N();
 
     return (
         <PanelBase
@@ -32,14 +34,14 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title="关联歌词"
+                        title={t("panel.associateLrc.title")}
                         onCancel={hidePanel}
                         onOk={async () => {
                             const inputValue =
                                 input ?? (await Clipboard.getString());
                             if (inputValue) {
                                 try {
-                                    const targetMedia = parseMediaKey(
+                                    const targetMedia = parseMediaUniqueKey(
                                         inputValue.trim(),
                                     );
                                     // 目标也要写进去
@@ -47,28 +49,27 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                                         mediaCache.getMediaCache(targetMedia);
                                     if (!targetCache) {
                                         Toast.warn(
-                                            '地址失效了，重新复制一下吧~',
+                                            t("panel.associateLrc.targetExpired"),
                                         );
                                         // TODO: ERROR CODE
-                                        throw new Error('CLIPBOARD TIMEOUT');
+                                        throw new Error("CLIPBOARD TIMEOUT");
                                     }
-                                    await associateLrc(musicItem, {
+
+                                    lyricManager.associateLyric(musicItem, {
                                         ...targetMedia,
                                         ...targetCache,
                                     });
-                                    Toast.success('关联歌词成功');
-                                    LyricManager.refreshLyric(false, true);
+                                    Toast.success(t("panel.associateLrc.toast.success"));
                                     hidePanel();
                                 } catch (e: any) {
-                                    if (e.message !== 'CLIPBOARD TIMEOUT') {
-                                        Toast.warn('关联歌词失败');
+                                    if (e.message !== "CLIPBOARD TIMEOUT") {
+                                        Toast.warn(t("panel.associateLrc.toast.fail"));
                                     }
-                                    errorLog('关联歌词失败', e?.message);
+                                    errorLog("关联歌词失败", e?.message);
                                 }
                             } else {
-                                associateLrc(musicItem, musicItem);
-                                LyricManager.refreshLyric(false, true);
-                                Toast.success('取消关联歌词成功');
+                                lyricManager.unassociateLyric(musicItem);
+                                Toast.success(t("panel.associateLrc.toast.unlinkSuccess"));
                                 hidePanel();
                             }
                         }}
@@ -87,7 +88,7 @@ export default function AssociateLrc(props: INewMusicSheetProps) {
                             },
                         ]}
                         placeholderTextColor={colors.textSecondary}
-                        placeholder={'输入要关联歌词的歌曲ID'}
+                        placeholder={t("panel.associateLrc.inputPlaceholder")}
                         maxLength={80}
                     />
                 </>
@@ -100,10 +101,10 @@ const style = StyleSheet.create({
     opeartions: {
         width: rpx(750),
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
+        flexDirection: "row",
         height: rpx(100),
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     input: {
         margin: rpx(24),

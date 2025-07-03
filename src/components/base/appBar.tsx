@@ -1,4 +1,4 @@
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, { ReactNode, useEffect, useState } from "react";
 import {
     LayoutRectangle,
     StatusBar as OriginalStatusBar,
@@ -7,24 +7,24 @@ import {
     TouchableWithoutFeedback,
     View,
     ViewStyle,
-} from 'react-native';
-import rpx from '@/utils/rpx';
-import useColors from '@/hooks/useColors';
-import StatusBar from './statusBar';
-import color from 'color';
-import IconButton from './iconButton';
-import globalStyle from '@/constants/globalStyle';
-import ThemeText from './themeText';
-import {useNavigation} from '@react-navigation/native';
+} from "react-native";
+import rpx from "@/utils/rpx";
+import useColors from "@/hooks/useColors";
+import StatusBar from "./statusBar";
+import color from "color";
+import IconButton from "./iconButton";
+import globalStyle from "@/constants/globalStyle";
+import ThemeText from "./themeText";
+import { useNavigation } from "@react-navigation/native";
 import Animated, {
     Easing,
     useAnimatedStyle,
     useSharedValue,
     withTiming,
-} from 'react-native-reanimated';
-import Portal from './portal';
-import ListItem from './listItem';
-import {IIconName} from '@/components/base/icon.tsx';
+} from "react-native-reanimated";
+import Portal from "./portal";
+import ListItem from "./listItem";
+import { IIconName } from "@/components/base/icon.tsx";
 
 interface IAppBarProps {
     titleTextOpacity?: number;
@@ -103,7 +103,7 @@ export default function AppBar(props: IAppBarProps) {
                 style={[
                     styles.container,
                     containerStyle,
-                    {backgroundColor: bgColor},
+                    { backgroundColor: bgColor },
                 ]}>
                 <IconButton
                     name="arrow-left"
@@ -118,7 +118,7 @@ export default function AppBar(props: IAppBarProps) {
                     }
                 />
                 <View style={[globalStyle.grow, styles.content, contentStyle]}>
-                    {typeof children === 'string' ? (
+                    {typeof children === "string" ? (
                         <ThemeText
                             fontSize="title"
                             fontWeight="bold"
@@ -126,8 +126,8 @@ export default function AppBar(props: IAppBarProps) {
                             color={
                                 titleTextOpacity !== 1
                                     ? color(contentColor)
-                                          .alpha(titleTextOpacity)
-                                          .toString()
+                                        .alpha(titleTextOpacity)
+                                        .toString()
                                     : contentColor
                             }>
                             {children}
@@ -173,7 +173,7 @@ export default function AppBar(props: IAppBarProps) {
                 ) : null}
                 <>
                     <Animated.View
-                        pointerEvents={showMenu ? 'auto' : 'none'}
+                        pointerEvents={showMenu ? "auto" : "none"}
                         style={[
                             {
                                 borderBottomColor: colors.background,
@@ -193,7 +193,7 @@ export default function AppBar(props: IAppBarProps) {
                         ]}
                     />
                     <Animated.View
-                        pointerEvents={showMenu ? 'auto' : 'none'}
+                        pointerEvents={showMenu ? "auto" : "none"}
                         style={[
                             {
                                 backgroundColor: colors.background,
@@ -237,36 +237,36 @@ export default function AppBar(props: IAppBarProps) {
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
+        width: "100%",
         zIndex: 10000,
         height: rpx(88),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         paddingHorizontal: rpx(24),
     },
     content: {
-        flexDirection: 'row',
+        flexDirection: "row",
         flexBasis: 0,
-        alignItems: 'center',
+        alignItems: "center",
         paddingHorizontal: rpx(24),
     },
     rightButton: {
         marginLeft: rpx(28),
     },
     blocker: {
-        position: 'absolute',
+        position: "absolute",
         bottom: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         zIndex: 10010,
     },
     bubbleCorner: {
-        position: 'absolute',
-        borderColor: 'transparent',
+        position: "absolute",
+        borderColor: "transparent",
         borderWidth: rpx(10),
         zIndex: 10012,
-        transformOrigin: 'right top',
+        transformOrigin: "right top",
         opacity: 0,
     },
     menu: {
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
         maxHeight: rpx(600),
         borderRadius: rpx(8),
         zIndex: 10011,
-        position: 'absolute',
+        position: "absolute",
         opacity: 0,
         shadowOffset: {
             width: 0,

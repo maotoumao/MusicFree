@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import {
     BackHandler,
     DeviceEventEmitter,
@@ -6,7 +6,7 @@ import {
     Pressable,
     StyleSheet,
     ViewStyle,
-} from 'react-native';
+} from "react-native";
 
 import Animated, {
     Easing,
@@ -16,11 +16,11 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withTiming,
-} from 'react-native-reanimated';
-import useColors from '@/hooks/useColors';
-import {panelInfoStore} from '../usePanel';
-import {vh} from '@/utils/rpx.ts';
-import useOrientation from '@/hooks/useOrientation.ts';
+} from "react-native-reanimated";
+import useColors from "@/hooks/useColors";
+import { panelInfoStore } from "../usePanel";
+import { vh } from "@/utils/rpx.ts";
+import useOrientation from "@/hooks/useOrientation.ts";
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 250;
@@ -38,7 +38,7 @@ interface IPanelFullScreenProps {
     // 内容区样式
     containerStyle?: ViewStyle;
 
-    animationType?: 'SlideToTop' | 'Scale';
+    animationType?: "SlideToTop" | "Scale";
 }
 
 export default function (props: IPanelFullScreenProps) {
@@ -46,7 +46,7 @@ export default function (props: IPanelFullScreenProps) {
         hasMask,
         containerStyle,
         children,
-        animationType = 'SlideToTop',
+        animationType = "SlideToTop",
     } = props;
     const snapPoint = useSharedValue(0);
 
@@ -67,7 +67,7 @@ export default function (props: IPanelFullScreenProps) {
             backHandlerRef.current = undefined;
         }
         backHandlerRef.current = BackHandler.addEventListener(
-            'hardwareBackPress',
+            "hardwareBackPress",
             () => {
                 snapPoint.value = 0;
                 return true;
@@ -75,7 +75,7 @@ export default function (props: IPanelFullScreenProps) {
         );
 
         const listenerSubscription = DeviceEventEmitter.addListener(
-            'hidePanel',
+            "hidePanel",
             (callback?: () => void) => {
                 if (callback) {
                     hideCallbackRef.current.push(callback);
@@ -100,7 +100,7 @@ export default function (props: IPanelFullScreenProps) {
     });
 
     const panelAnimated = useAnimatedStyle(() => {
-        if (animationType === 'SlideToTop') {
+        if (animationType === "SlideToTop") {
             return {
                 transform: [
                     {
@@ -157,13 +157,13 @@ export default function (props: IPanelFullScreenProps) {
                 </Pressable>
             ) : null}
             <Animated.View
-                pointerEvents={hasMask ? 'box-none' : undefined}
+                pointerEvents={hasMask ? "box-none" : undefined}
                 style={[
                     style.wrapper,
                     !hasMask
                         ? {
-                              backgroundColor: colors.background,
-                          }
+                            backgroundColor: colors.background,
+                        }
                         : null,
                     panelAnimated,
                     containerStyle,
@@ -176,9 +176,9 @@ export default function (props: IPanelFullScreenProps) {
 
 const style = StyleSheet.create({
     maskWrapper: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
+        position: "absolute",
+        width: "100%",
+        height: "100%",
         top: 0,
         left: 0,
         right: 0,
@@ -186,17 +186,17 @@ const style = StyleSheet.create({
         zIndex: 15000,
     },
     mask: {
-        backgroundColor: '#000',
+        backgroundColor: "#000",
         opacity: 0.5,
     },
     wrapper: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
+        position: "absolute",
+        width: "100%",
+        height: "100%",
         bottom: 0,
         right: 0,
         zIndex: 15010,
-        flexDirection: 'column',
+        flexDirection: "column",
     },
     kbContainer: {
         zIndex: 15010,

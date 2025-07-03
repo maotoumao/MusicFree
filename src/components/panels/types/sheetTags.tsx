@@ -1,13 +1,14 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx, {vh} from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx, { vh } from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import {ScrollView} from 'react-native-gesture-handler';
-import TypeTag from '@/components/base/typeTag';
-import PanelHeader from '../base/panelHeader';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import { ScrollView } from "react-native-gesture-handler";
+import TypeTag from "@/components/base/typeTag";
+import PanelHeader from "../base/panelHeader";
+import { useI18N } from "@/core/i18n";
 
 interface ISheetTagsProps {
     tags: IMusic.IMusicSheetGroupItem[];
@@ -16,7 +17,8 @@ interface ISheetTagsProps {
 }
 
 export default function SheetTags(props: ISheetTagsProps) {
-    const {tags, onTagPressed} = props ?? {};
+    const { tags, onTagPressed } = props ?? {};
+    const i18n = useI18N();
 
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -25,21 +27,21 @@ export default function SheetTags(props: ISheetTagsProps) {
             height={vh(70)}
             renderBody={() => (
                 <>
-                    <PanelHeader title="歌单类别" hideButtons />
+                    <PanelHeader title={i18n.t("panel.sheetTags.title")} hideButtons />
                     <ScrollView
                         style={[
                             style.body,
-                            {marginBottom: safeAreaInsets.bottom},
+                            { marginBottom: safeAreaInsets.bottom },
                         ]}>
                         <View style={style.groupItem}>
                             <TypeTag
                                 // backgroundColor={backgroundColor}
-                                title="默认"
+                                title={i18n.t("common.default")}
                                 style={[style.tagItem]}
                                 onPress={() => {
                                     onTagPressed({
-                                        title: '默认',
-                                        id: '',
+                                        title: i18n.t("common.default"),
+                                        id: "",
                                     });
                                 }}
                             />
@@ -62,7 +64,7 @@ export default function SheetTags(props: ISheetTagsProps) {
                                         <TypeTag
                                             key={_.id}
                                             // backgroundColor={backgroundColor}
-                                            title={_.title || '未知'}
+                                            title={_.title || i18n.t("common.unknownName")}
                                             style={[style.tagItem]}
                                             onPress={() => {
                                                 onTagPressed(_);
@@ -81,8 +83,8 @@ export default function SheetTags(props: ISheetTagsProps) {
 
 const style = StyleSheet.create({
     header: {
-        width: '100%',
-        flexDirection: 'row',
+        width: "100%",
+        flexDirection: "row",
         padding: rpx(24),
         marginTop: rpx(12),
     },
@@ -92,12 +94,12 @@ const style = StyleSheet.create({
     },
     item: {
         height: rpx(96),
-        justifyContent: 'center',
+        justifyContent: "center",
     },
     groupItem: {
-        flexDirection: 'row',
+        flexDirection: "row",
         paddingVertical: rpx(12),
-        flexWrap: 'wrap',
+        flexWrap: "wrap",
     },
     tagItem: {
         marginLeft: 0,

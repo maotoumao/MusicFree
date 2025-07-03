@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 // import {ROUTE_PATH, useNavigate} from '@/entry/router';
-import ListItem from '@/components/base/listItem';
-import {ImgAsset} from '@/constants/assetsConst';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
+import ListItem from "@/components/base/listItem";
+import { ImgAsset } from "@/constants/assetsConst";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
 
 interface ITopListResultsProps {
     pluginHash: string;
@@ -10,7 +10,7 @@ interface ITopListResultsProps {
 }
 
 export default function TopListItem(props: ITopListResultsProps) {
-    const {pluginHash, topListItem} = props;
+    const { pluginHash, topListItem } = props;
     const navigate = useNavigate();
 
     return (
@@ -28,7 +28,7 @@ export default function TopListItem(props: ITopListResultsProps) {
             />
             <ListItem.Content
                 title={topListItem.title}
-                description={`${topListItem.description ?? ''}`}
+                description={`${topListItem.description ?? ""}`}
             />
         </ListItem>
     );

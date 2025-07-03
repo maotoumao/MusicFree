@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
-import rpx, {vmax} from '@/utils/rpx';
-import {fontSizeConst} from '@/constants/uiConst';
-import useColors from '@/hooks/useColors';
+import { fontSizeConst } from "@/constants/uiConst";
+import useColors from "@/hooks/useColors";
+import rpx, { vmax } from "@/utils/rpx";
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 
-import PanelBase from '../base/panelBase';
-import {TextInput} from 'react-native-gesture-handler';
-import {hidePanel} from '../usePanel';
-import PanelHeader from '../base/panelHeader';
-import MusicSheet from '@/core/musicSheet';
+import MusicSheet from "@/core/musicSheet";
+import { TextInput } from "react-native-gesture-handler";
+import PanelBase from "../base/panelBase";
+import PanelHeader from "../base/panelHeader";
+import { hidePanel } from "../usePanel";
+import { useI18N } from "@/core/i18n";
 
 interface ICreateMusicSheetProps {
     defaultName?: string;
@@ -17,9 +18,11 @@ interface ICreateMusicSheetProps {
 }
 
 export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
-    const {onSheetCreated, onCancel, defaultName = '新建歌单'} = props;
+    const { t } = useI18N();
 
-    const [input, setInput] = useState('');
+    const { onSheetCreated, onCancel, defaultName = t("panel.createMusicSheet.title") } = props;
+
+    const [input, setInput] = useState("");
     const colors = useColors();
 
     return (
@@ -29,7 +32,7 @@ export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
             renderBody={() => (
                 <>
                     <PanelHeader
-                        title="新建歌单"
+                        title={t("panel.createMusicSheet.title")}
                         onCancel={() => {
                             onCancel ? onCancel() : hidePanel();
                         }}
@@ -48,8 +51,8 @@ export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
                         }}
                         autoFocus
                         accessible
-                        accessibilityLabel="输入框"
-                        accessibilityHint={'新建歌单'}
+                        accessibilityLabel={t("panel.createMusicSheet.inputLabel")}
+                        accessibilityHint={t("panel.createMusicSheet.title")}
                         style={[
                             style.input,
                             {
@@ -74,10 +77,10 @@ const style = StyleSheet.create({
     operations: {
         width: rpx(750),
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
+        flexDirection: "row",
         height: rpx(100),
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     input: {
         margin: rpx(24),

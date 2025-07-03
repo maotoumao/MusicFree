@@ -1,5 +1,5 @@
-import React from 'react';
-import SheetItem from '@/components/mediaItem/sheetItem';
+import React from "react";
+import SheetItem from "@/components/mediaItem/sheetItem";
 
 interface IMusicSheetResultItemProps {
     item: IMusic.IMusicSheetItem;
@@ -8,7 +8,7 @@ interface IMusicSheetResultItemProps {
 export default function MusicSheetResultItem(
     props: IMusicSheetResultItemProps,
 ) {
-    const {item, pluginHash} = props;
+    const { item, pluginHash } = props;
 
     return <SheetItem sheetInfo={item} pluginHash={pluginHash} />;
 }

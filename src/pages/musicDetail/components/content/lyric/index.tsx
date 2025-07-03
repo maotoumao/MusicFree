@@ -7,17 +7,18 @@ import { fontSizeConst } from "@/constants/uiConst";
 import Loading from "@/components/base/loading";
 import globalStyle from "@/constants/globalStyle";
 import { showPanel } from "@/components/panels/usePanel";
-import LyricManager from "@/core/lyricManager";
-import TrackPlayer from "@/core/trackPlayer";
+import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
 import DraggingTime from "./draggingTime";
 import LyricItemComponent from "./lyricItem";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 import LyricOperations from "./lyricOperations";
-import MediaExtra from "@/core/mediaExtra";
 import { IParsedLrcItem } from "@/utils/lrcParser";
 import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
+import { getMediaExtraProperty } from "@/utils/mediaExtra";
+import lyricManager, { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
+import { useI18N } from "@/core/i18n";
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -38,16 +39,16 @@ const fontSizeMap = {
 } as Record<number, number>;
 
 export default function Lyric(props: IProps) {
-    const {onTurnPageClick} = props;
+    const { onTurnPageClick } = props;
 
-    const {loading, meta, lyrics, hasTranslation} =
-        LyricManager.useLyricState();
-    const currentLrcItem = LyricManager.useCurrentLyric();
+    const { loading, meta, lyrics, hasTranslation } =
+        useLyricState();
+    const currentLrcItem = useCurrentLyricItem();
     const showTranslation = PersistStatus.useValue(
-        'lyric.showTranslation',
+        "lyric.showTranslation",
         false,
     );
-    const fontSizeKey = PersistStatus.useValue('lyric.detailFontSize', 1);
+    const fontSizeKey = PersistStatus.useValue("lyric.detailFontSize", 1);
     const fontSizeStyle = useMemo(
         () => ({
             fontSize: fontSizeMap[fontSizeKey!],
@@ -57,16 +58,16 @@ export default function Lyric(props: IProps) {
 
     const [draggingIndex, setDraggingIndex, setDraggingIndexImmi] =
         useDelayFalsy<number | undefined>(undefined, 2000);
-    const musicState = TrackPlayer.useMusicState();
+    const musicState = useMusicState();
+    const { t } = useI18N();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
 
     const listRef = useRef<FlatList<IParsedLrcItem> | null>();
 
-    const currentMusicItem = TrackPlayer.useCurrentMusic();
-    const associateMusicItem = currentMusicItem
-        ? MediaExtra.get(currentMusicItem)?.associatedLrc
-        : null;
+    const currentMusicItem = useCurrentMusic();
+    const associateMusicItem = getMediaExtraProperty(currentMusicItem, "associatedLrc");
+
     // 是否展示拖拽
     const dragShownRef = useRef(false);
 
@@ -101,16 +102,16 @@ export default function Lyric(props: IProps) {
         if (!listRef.current) {
             return;
         }
-        const currentLrcItem = LyricManager.getCurrentLyric();
-        const lyrics = LyricManager.getLyricState().lyrics;
-        if (currentLrcItem?.index === -1 || !currentLrcItem) {
+        const currentLyricItem = lyricManager.currentLyricItem;
+        const currentLyrics = lyricManager.lyricState?.lyrics;
+        if (currentLyricItem?.index === -1 || !currentLyricItem) {
             listRef.current?.scrollToIndex({
                 index: 0,
                 viewPosition: 0.5,
             });
         } else {
             listRef.current?.scrollToIndex({
-                index: Math.min(currentLrcItem.index ?? 0, lyrics.length - 1),
+                index: Math.min(currentLyricItem.index ?? 0, currentLyrics.length - 1),
                 viewPosition: 0.5,
             });
         }
@@ -216,10 +217,7 @@ export default function Lyric(props: IProps) {
     const unlinkTapGesture = Gesture.Tap()
         .onStart(() => {
             if (currentMusicItem) {
-                MediaExtra.update(currentMusicItem, {
-                    associatedLrc: undefined,
-                });
-                LyricManager.refreshLyric(false, true);
+                lyricManager.unassociateLyric(currentMusicItem);
             }
         })
         .runOnJS(true);
@@ -241,7 +239,7 @@ export default function Lyric(props: IProps) {
                             viewabilityConfig={{
                                 itemVisiblePercentThreshold: 100,
                             }}
-                            onScrollToIndexFailed={({index}) => {
+                            onScrollToIndexFailed={({ index }) => {
                                 delay(120).then(() => {
                                     listRef.current?.scrollToIndex({
                                         index: Math.min(
@@ -266,14 +264,11 @@ export default function Lyric(props: IProps) {
                                                     ]}
                                                     ellipsizeMode="middle"
                                                     numberOfLines={1}>
-                                                    歌词关联自「
-                                                    {
-                                                        associateMusicItem.platform
-                                                    }{' '}
-                                                    -{' '}
-                                                    {associateMusicItem.title ||
-                                                        ''}
-                                                    」
+                                                    {t("lyric.lyricLinkedFrom", {
+                                                        platform: associateMusicItem.platform,
+                                                        title: associateMusicItem.title || "",
+                                                    })}
+
                                                 </Text>
 
                                                 <GestureDetector
@@ -283,7 +278,7 @@ export default function Lyric(props: IProps) {
                                                             styles.linkText,
                                                             fontSizeStyle,
                                                         ]}>
-                                                        解除关联
+                                                        {t("lyric.unlinkLyric")}
                                                     </Text>
                                                 </GestureDetector>
                                             </>
@@ -301,10 +296,10 @@ export default function Lyric(props: IProps) {
                             initialNumToRender={30}
                             overScrollMode="never"
                             extraData={currentLrcItem}
-                            renderItem={({item, index}) => {
+                            renderItem={({ item, index }) => {
                                 let text = item.lrc;
                                 if (showTranslation && hasTranslation) {
-                                    text += `\n${item?.translation ?? ''}`;
+                                    text += `\n${item?.translation ?? ""}`;
                                 }
 
                                 return (
@@ -324,18 +319,18 @@ export default function Lyric(props: IProps) {
                     ) : (
                         <View style={globalStyle.fullCenter}>
                             <Text style={[styles.white, fontSizeStyle]}>
-                                暂无歌词
+                                {t("lyric.noLyric")}
                             </Text>
                             <TapGestureHandler
                                 onActivated={() => {
-                                    showPanel('SearchLrc', {
+                                    showPanel("SearchLrc", {
                                         musicItem:
-                                            TrackPlayer.getCurrentMusic(),
+                                            TrackPlayer.currentMusic,
                                     });
                                 }}>
                                 <Text
                                     style={[styles.searchLyric, fontSizeStyle]}>
-                                    搜索歌词
+                                    {t("lyric.searchLyric")}
                                 </Text>
                             </TapGestureHandler>
                         </View>
@@ -346,9 +341,9 @@ export default function Lyric(props: IProps) {
                                 styles.draggingTime,
                                 layout?.height
                                     ? {
-                                          top:
-                                              (layout.height - ITEM_HEIGHT) / 2,
-                                      }
+                                        top:
+                                            (layout.height - ITEM_HEIGHT) / 2,
+                                    }
                                     : null,
                             ]}>
                             <DraggingTime
@@ -361,7 +356,7 @@ export default function Lyric(props: IProps) {
 
                             <IconButtonWithGesture
                                 style={styles.playIcon}
-                                sizeType="small"
+                                sizeType='normal'
                                 name="play"
                                 onPress={onLyricSeekPress}
                             />
@@ -378,70 +373,70 @@ export default function Lyric(props: IProps) {
 
 const styles = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         marginVertical: rpx(48),
         flex: 1,
     },
     empty: {
-        paddingTop: '70%',
+        paddingTop: "70%",
     },
     white: {
-        color: 'white',
+        color: "white",
     },
     lyricMeta: {
-        position: 'absolute',
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        position: "absolute",
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
         left: 0,
         paddingHorizontal: rpx(48),
         bottom: rpx(48),
     },
     lyricMetaText: {
-        color: 'white',
+        color: "white",
         opacity: 0.8,
-        maxWidth: '80%',
+        maxWidth: "80%",
     },
     linkText: {
-        color: '#66ccff',
-        textDecorationLine: 'underline',
+        color: "#66ccff",
+        textDecorationLine: "underline",
     },
     draggingTime: {
-        position: 'absolute',
-        width: '100%',
+        position: "absolute",
+        width: "100%",
         height: ITEM_HEIGHT,
-        top: '40%',
+        top: "40%",
         marginTop: rpx(48),
         paddingHorizontal: rpx(18),
         right: 0,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     draggingTimeText: {
-        color: '#dddddd',
+        color: "#dddddd",
         fontSize: fontSizeConst.description,
         width: rpx(90),
     },
     singleLine: {
-        width: '67%',
+        width: "67%",
         height: 1,
-        backgroundColor: '#cccccc',
+        backgroundColor: "#cccccc",
         opacity: 0.4,
     },
     playIcon: {
-        width: rpx(90),
-        textAlign: 'right',
-        color: 'white',
+        width: rpx(100),
+        textAlign: "right",
+        color: "white",
     },
     searchLyric: {
         width: rpx(180),
         marginTop: rpx(14),
         paddingVertical: rpx(10),
-        textAlign: 'center',
-        alignSelf: 'center',
-        color: '#66eeff',
-        textDecorationLine: 'underline',
+        textAlign: "center",
+        alignSelf: "center",
+        color: "#66eeff",
+        textDecorationLine: "underline",
     },
 });

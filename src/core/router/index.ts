@@ -3,49 +3,49 @@ import { useCallback } from "react";
 import { LogBox } from "react-native";
 
 LogBox.ignoreLogs([
-    'Non-serializable values were found in the navigation state',
+    "Non-serializable values were found in the navigation state",
 ]);
 
 /** 路由key */
 export const ROUTE_PATH = {
     /** 主页 */
-    HOME: 'home',
+    HOME: "home",
     /** 音乐播放页 */
-    MUSIC_DETAIL: 'music-detail',
+    MUSIC_DETAIL: "music-detail",
     /** 搜索页 */
-    SEARCH_PAGE: 'search-page',
+    SEARCH_PAGE: "search-page",
     /** 本地歌单页 */
-    LOCAL_SHEET_DETAIL: 'local-sheet-detail',
+    LOCAL_SHEET_DETAIL: "local-sheet-detail",
     /** 专辑页 */
-    ALBUM_DETAIL: 'album-detail',
+    ALBUM_DETAIL: "album-detail",
     /** 歌手页 */
-    ARTIST_DETAIL: 'artist-detail',
+    ARTIST_DETAIL: "artist-detail",
     /** 榜单页 */
-    TOP_LIST: 'top-list',
+    TOP_LIST: "top-list",
     /** 榜单详情页 */
-    TOP_LIST_DETAIL: 'top-list-detail',
+    TOP_LIST_DETAIL: "top-list-detail",
     /** 设置页 */
-    SETTING: 'setting',
+    SETTING: "setting",
     /** 本地音乐 */
-    LOCAL: 'local',
+    LOCAL: "local",
     /** 正在下载 */
-    DOWNLOADING: 'downloading',
+    DOWNLOADING: "downloading",
     /** 从歌曲列表中搜索 */
-    SEARCH_MUSIC_LIST: 'search-music-list',
+    SEARCH_MUSIC_LIST: "search-music-list",
     /** 批量编辑 */
-    MUSIC_LIST_EDITOR: 'music-list-editor',
+    MUSIC_LIST_EDITOR: "music-list-editor",
     /** 选择文件夹 */
-    FILE_SELECTOR: 'file-selector',
+    FILE_SELECTOR: "file-selector",
     /** 推荐歌单 */
-    RECOMMEND_SHEETS: 'recommend-sheets',
+    RECOMMEND_SHEETS: "recommend-sheets",
     /** 歌单详情 */
-    PLUGIN_SHEET_DETAIL: 'plugin-sheet-detail',
+    PLUGIN_SHEET_DETAIL: "plugin-sheet-detail",
     /** 历史记录 */
-    HISTORY: 'history',
+    HISTORY: "history",
     /** 自定义主题 */
-    SET_CUSTOM_THEME: 'set-custom-theme',
+    SET_CUSTOM_THEME: "set-custom-theme",
     /** 权限管理 */
-    PERMISSIONS: 'permissions',
+    PERMISSIONS: "permissions",
 } as const;
 
 type ValueOf<T> = T[keyof T];
@@ -55,15 +55,15 @@ type RouterParamsBase = Record<RoutePaths, any>;
 /** 路由参数 */
 interface RouterParams extends RouterParamsBase {
     home: undefined;
-    'music-detail': undefined;
-    'search-page': undefined;
-    'local-sheet-detail': {
+    "music-detail": undefined;
+    "search-page": undefined;
+    "local-sheet-detail": {
         id: string;
     };
-    'album-detail': {
+    "album-detail": {
         albumItem: IAlbum.IAlbumItem;
     };
-    'artist-detail': {
+    "artist-detail": {
         artistItem: IArtist.IArtistItem;
         pluginHash: string;
     };
@@ -73,32 +73,32 @@ interface RouterParams extends RouterParamsBase {
     };
     local: undefined;
     downloading: undefined;
-    'search-music-list': {
+    "search-music-list": {
         musicList: IMusic.IMusicItem[] | null;
         musicSheet?: IMusic.IMusicSheetItem;
     };
-    'music-list-editor': {
+    "music-list-editor": {
         musicSheet?: Partial<IMusic.IMusicSheetItem>;
         musicList: IMusic.IMusicItem[] | null;
     };
-    'file-selector': {
-        fileType?: 'folder' | 'file' | 'file-and-folder'; // 10: folder 11: file and folder,
+    "file-selector": {
+        fileType?: "folder" | "file" | "file-and-folder"; // 10: folder 11: file and folder,
         multi?: boolean; // 是否多选
         actionText?: string; // 底部行动点的文本
         actionIcon?: string; // 底部行动点的图标
         onAction?: (
             selectedFiles: {
                 path: string;
-                type: 'file' | 'folder';
+                type: "file" | "folder";
             }[],
         ) => Promise<boolean>; // true会自动关闭，false会停在当前页面
         matchExtension?: (path: string) => boolean;
     };
-    'top-list-detail': {
+    "top-list-detail": {
         pluginHash: string;
         topList: IMusic.IMusicSheetItemBase;
     };
-    'plugin-sheet-detail': {
+    "plugin-sheet-detail": {
         pluginHash?: string;
         sheetInfo: IMusic.IMusicSheetItemBase;
     };

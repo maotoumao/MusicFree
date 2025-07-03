@@ -1,13 +1,13 @@
-import PluginManager from '@/core/pluginManager';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import { RequestStateCode } from "@/constants/commonConst";
+import PluginManager from "@/core/pluginManager";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function usePluginSheetMusicList(
     originalSheetItem: IMusic.IMusicSheetItem | null,
 ) {
     const currentPageRef = useRef(1);
-    const [loadMore, setLoadMore] = useState<'idle' | 'loading' | 'done'>(
-        'idle',
-    );
+
+    const [requestState, setRequestState] = useState<RequestStateCode>(RequestStateCode.IDLE);
     const [sheetItem, setSheetItem] = useState<IMusic.IMusicSheetItem | null>(
         originalSheetItem,
     );
@@ -17,19 +17,26 @@ export default function usePluginSheetMusicList(
 
     const getSheetDetail = useCallback(
         async function () {
-            if (originalSheetItem === null || loadMore !== 'idle') {
+            // 加载中：直接退出
+            if (originalSheetItem === null ||
+                requestState === RequestStateCode.FINISHED ||
+                requestState === RequestStateCode.PENDING_FIRST_PAGE ||
+                requestState === RequestStateCode.PENDING_REST_PAGE) {
                 return;
             }
-
             try {
-                setLoadMore('loading');
+                if (currentPageRef.current === 1) {
+                    setRequestState(RequestStateCode.PENDING_FIRST_PAGE);
+                } else {
+                    setRequestState(RequestStateCode.PENDING_REST_PAGE);
+                }
                 const result = await PluginManager.getByMedia(
                     originalSheetItem as any,
                 )?.methods?.getMusicSheetInfo?.(
                     originalSheetItem,
                     currentPageRef.current,
                 );
-                if (result === null || result === undefined) {
+                if (!result) {
                     throw new Error();
                 }
                 if (result?.sheetItem) {
@@ -48,18 +55,22 @@ export default function usePluginSheetMusicList(
                         }
                     });
                 }
-                setLoadMore(result.isEnd ? 'done' : 'idle');
+                if (result.isEnd) {
+                    setRequestState(RequestStateCode.FINISHED);
+                } else {
+                    setRequestState(RequestStateCode.PARTLY_DONE);
+                }
                 currentPageRef.current += 1;
             } catch {
-                setLoadMore('idle');
+                setRequestState(RequestStateCode.ERROR);
             }
         },
-        [loadMore],
+        [requestState],
     );
 
     useEffect(() => {
         getSheetDetail();
     }, []);
 
-    return [loadMore, sheetItem, musicList, getSheetDetail] as const;
+    return [requestState, sheetItem, musicList, getSheetDetail] as const;
 }

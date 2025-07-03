@@ -50,7 +50,7 @@ export default class LyricParser {
             translation = undefined;
         }
 
-        const {lrcItems, meta} = this.parseLyricImpl(raw);
+        const { lrcItems, meta } = this.parseLyricImpl(raw);
         if (this.extra.offset) {
             meta.offset = (meta.offset ?? 0) + this.extra.offset;
         }
@@ -76,7 +76,7 @@ export default class LyricParser {
                 if (transLrcItems[p2].time === lrcItem.time) {
                     lrcItem.translation = transLrcItems[p2].lrc;
                 } else {
-                    lrcItem.translation = '';
+                    lrcItem.translation = "";
                 }
 
                 ++p1;
@@ -131,30 +131,30 @@ export default class LyricParser {
 
     toString(options?: {
         withTimestamp?: boolean;
-        type?: 'raw' | 'translation';
+        type?: "raw" | "translation";
     }) {
-        const {type = 'raw', withTimestamp = true} = options || {};
+        const { type = "raw", withTimestamp = true } = options || {};
 
         if (withTimestamp) {
             return this.lrcItems
                 .map(
                     item =>
                         `${this.timeToLrctime(item.time)} ${
-                            type === 'raw' ? item.lrc : item.translation
+                            type === "raw" ? item.lrc : item.translation
                         }`,
                 )
-                .join('\r\n');
+                .join("\r\n");
         } else {
             return this.lrcItems
-                .map(item => (type === 'raw' ? item.lrc : item.translation))
-                .join('\r\n');
+                .map(item => (type === "raw" ? item.lrc : item.translation))
+                .join("\r\n");
         }
     }
 
     /** [xx:xx.xx] => x s */
     private parseTime(timeStr: string): number {
         let result = 0;
-        const nums = timeStr.slice(1, timeStr.length - 1).split(':');
+        const nums = timeStr.slice(1, timeStr.length - 1).split(":");
         for (let i = 0; i < nums.length; ++i) {
             result = result * 60 + +nums[i];
         }
@@ -166,22 +166,22 @@ export default class LyricParser {
         sec = sec - min * 60;
         const secInt = Math.floor(sec);
         const secFloat = sec - secInt;
-        return `[${min.toFixed(0).padStart(2, '0')}:${secInt
+        return `[${min.toFixed(0).padStart(2, "0")}:${secInt
             .toString()
-            .padStart(2, '0')}.${secFloat.toFixed(2).slice(2)}]`;
+            .padStart(2, "0")}.${secFloat.toFixed(2).slice(2)}]`;
     }
 
     private parseMetaImpl(metaStr: string) {
-        if (metaStr === '') {
+        if (metaStr === "") {
             return {};
         }
         const metaArr = metaStr.match(metaReg) ?? [];
         const meta: any = {};
         let k, v;
         for (const m of metaArr) {
-            k = m.substring(1, m.indexOf(':'));
+            k = m.substring(1, m.indexOf(":"));
             v = m.substring(k.length + 2, m.length - 1);
-            if (k === 'offset') {
+            if (k === "offset") {
                 meta[k] = +v / 1000;
             } else {
                 meta[k] = v;
@@ -204,11 +204,11 @@ export default class LyricParser {
         let j, lrc;
         for (let i = 0; i < len; ++i) {
             counter = 0;
-            while (rawLrcs[0] === '') {
+            while (rawLrcs[0] === "") {
                 ++counter;
                 rawLrcs.shift();
             }
-            lrc = rawLrcs[0]?.trim?.() ?? '';
+            lrc = rawLrcs[0]?.trim?.() ?? "";
             for (j = i; j < i + counter; ++j) {
                 rawLrcItems.push({
                     time: this.parseTime(rawTimes[j]),
@@ -227,8 +227,11 @@ export default class LyricParser {
             rawLrcs.shift();
         }
         let lrcItems = rawLrcItems.sort((a, b) => a.time - b.time);
+        lrcItems.forEach((item, index) => {
+            item.index = index;
+        });
         if (lrcItems.length === 0 && raw.length) {
-            lrcItems = raw.split('\n').map((_, index) => ({
+            lrcItems = raw.split("\n").map((_, index) => ({
                 time: 0,
                 lrc: _,
                 index,

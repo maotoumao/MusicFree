@@ -1,9 +1,9 @@
-import React from 'react';
-import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import rpx from '@/utils/rpx';
-import Image from './image';
-import {ImgAsset} from '@/constants/assetsConst';
-import ThemeText from './themeText';
+import React from "react";
+import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
+import rpx from "@/utils/rpx";
+import Image from "./image";
+import { ImgAsset } from "@/constants/assetsConst";
+import ThemeText from "./themeText";
 
 interface IImageBtnProps {
     uri?: string;
@@ -12,7 +12,7 @@ interface IImageBtnProps {
     style?: StyleProp<ViewStyle>;
 }
 export default function ImageBtn(props: IImageBtnProps) {
-    const {onPress, uri, title, style: _style} = props ?? {};
+    const { onPress, uri, title, style: _style } = props ?? {};
     return (
         <TouchableOpacity
             activeOpacity={0.5}
@@ -27,7 +27,7 @@ export default function ImageBtn(props: IImageBtnProps) {
                 fontSize="subTitle"
                 numberOfLines={2}
                 ellipsizeMode="tail">
-                {title ?? ''}
+                {title ?? ""}
             </ThemeText>
         </TouchableOpacity>
     );

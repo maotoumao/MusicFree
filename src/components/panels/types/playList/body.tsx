@@ -1,17 +1,17 @@
-import React, {useMemo, useRef} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import Tag from '@/components/base/tag';
-import ThemeText from '@/components/base/themeText';
-import {fontSizeConst} from '@/constants/uiConst';
-import {isSameMediaItem} from '@/utils/mediaItem';
-import IconButton from '@/components/base/iconButton';
-import Loading from '@/components/base/loading';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import useColors from '@/hooks/useColors';
-import TrackPlayer from '@/core/trackPlayer';
-import {FlashList} from '@shopify/flash-list';
-import Icon from '@/components/base/icon.tsx';
+import React, { useMemo, useRef } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import rpx from "@/utils/rpx";
+import Tag from "@/components/base/tag";
+import ThemeText from "@/components/base/themeText";
+import { fontSizeConst } from "@/constants/uiConst";
+import { isSameMediaItem } from "@/utils/mediaUtils";
+import IconButton from "@/components/base/iconButton";
+import Loading from "@/components/base/loading";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useColors from "@/hooks/useColors";
+import TrackPlayer, { useCurrentMusic, usePlayList } from "@/core/trackPlayer";
+import { FlashList } from "@shopify/flash-list";
+import Icon from "@/components/base/icon.tsx";
 
 const ITEM_HEIGHT = rpx(108);
 const ITEM_WIDTH = rpx(750);
@@ -23,7 +23,7 @@ interface IPlayListProps {
 
 function _PlayListItem(props: IPlayListProps) {
     const colors = useColors();
-    const {item, isCurrentMusic} = props;
+    const { item, isCurrentMusic } = props;
 
     return (
         <Pressable
@@ -52,15 +52,15 @@ function _PlayListItem(props: IPlayListProps) {
                 numberOfLines={1}>
                 {item.title}
                 {item.artist && (
-                    <Text style={{fontSize: fontSizeConst.description}}>
-                        {' '}
+                    <Text style={{ fontSize: fontSizeConst.description }}>
+                        {" "}
                         - {item.artist}
                     </Text>
                 )}
             </ThemeText>
             <Tag tagName={item.platform} />
             <IconButton
-                style={{marginLeft: rpx(14)}}
+                style={{ marginLeft: rpx(14) }}
                 name="x-mark"
                 sizeType="small"
                 onPress={() => {
@@ -82,9 +82,9 @@ interface IBodyProps {
     loading?: boolean;
 }
 export default function Body(props: IBodyProps) {
-    const {loading} = props;
-    const playList = TrackPlayer.usePlayList();
-    const currentMusicItem = TrackPlayer.useCurrentMusic();
+    const { loading } = props;
+    const playList = usePlayList();
+    const currentMusicItem = useCurrentMusic();
     const listRef = useRef<FlashList<IMusic.IMusicItem> | null>();
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -99,7 +99,7 @@ export default function Body(props: IBodyProps) {
         return undefined;
     }, []);
 
-    const renderItem = ({item}: {item: IMusic.IMusicItem; index: number}) => {
+    const renderItem = ({ item }: { item: IMusic.IMusicItem; index: number }) => {
         return (
             <PlayListItem
                 item={item}
@@ -122,7 +122,7 @@ export default function Body(props: IBodyProps) {
                 ref={_ => {
                     listRef.current = _;
                 }}
-                extraData={{currentMusicItem}}
+                extraData={{ currentMusicItem }}
                 estimatedItemSize={ITEM_HEIGHT}
                 data={playList}
                 initialScrollIndex={initIndex}
@@ -144,8 +144,8 @@ const style = StyleSheet.create({
         width: ITEM_WIDTH,
         height: ITEM_HEIGHT,
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     musicItemTitle: {
         flex: 1,

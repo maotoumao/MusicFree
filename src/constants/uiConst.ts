@@ -1,5 +1,5 @@
-import {CustomizedColors} from '@/hooks/useColors';
-import rpx from '@/utils/rpx';
+import { CustomizedColors } from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
 
 const fontSizeConst = {
     /** 标签 */
@@ -17,11 +17,11 @@ const fontSizeConst = {
 };
 
 const fontWeightConst = {
-    regular: '400',
-    medium: '500',
-    semibold: '600',
-    bold: '700',
-    bolder: '800',
+    regular: "400",
+    medium: "500",
+    semibold: "600",
+    bold: "700",
+    bolder: "800",
 } as const;
 
 const iconSizeConst = {
@@ -32,13 +32,13 @@ const iconSizeConst = {
     large: rpx(72),
 };
 
-type ColorKey = 'normal' | 'secondary' | 'highlight' | 'primary';
+type ColorKey = "normal" | "secondary" | "highlight" | "primary";
 const colorMap: Record<ColorKey, keyof CustomizedColors> = {
-    normal: 'text',
-    secondary: 'textSecondary',
-    highlight: 'textHighlight',
-    primary: 'primary',
+    normal: "text",
+    secondary: "textSecondary",
+    highlight: "textHighlight",
+    primary: "primary",
 } as const;
 
-export {fontSizeConst, fontWeightConst, iconSizeConst, colorMap};
-export type {ColorKey};
+export { fontSizeConst, fontWeightConst, iconSizeConst, colorMap };
+export type { ColorKey };

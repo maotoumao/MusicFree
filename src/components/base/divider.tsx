@@ -1,13 +1,13 @@
-import React from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import useColors from '@/hooks/useColors';
+import React from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import useColors from "@/hooks/useColors";
 
 interface IDividerProps {
     vertical?: boolean;
     style?: StyleProp<ViewStyle>;
 }
 export default function Divider(props: IDividerProps) {
-    const {vertical, style} = props;
+    const { vertical, style } = props;
     const colors = useColors();
 
     return (
@@ -15,7 +15,7 @@ export default function Divider(props: IDividerProps) {
             style={[
                 vertical ? css.dividerVertical : css.divider,
                 {
-                    backgroundColor: colors.divider ?? '#999999',
+                    backgroundColor: colors.divider ?? "#999999",
                 },
                 style,
             ]}
@@ -25,11 +25,11 @@ export default function Divider(props: IDividerProps) {
 
 const css = StyleSheet.create({
     divider: {
-        width: '100%',
+        width: "100%",
         height: 1,
     },
     dividerVertical: {
-        height: '100%',
+        height: "100%",
         width: 1,
     },
 });

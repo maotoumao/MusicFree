@@ -1,9 +1,9 @@
-import React from 'react';
-import {StyleProp, StyleSheet, View, ViewProps} from 'react-native';
-import rpx from '@/utils/rpx';
-import useColors from '@/hooks/useColors';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import Icon from '@/components/base/icon.tsx';
+import React from "react";
+import { StyleProp, StyleSheet, View, ViewProps } from "react-native";
+import rpx from "@/utils/rpx";
+import useColors from "@/hooks/useColors";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Icon from "@/components/base/icon.tsx";
 
 interface ICheckboxProps {
     checked?: boolean;
@@ -14,7 +14,7 @@ interface ICheckboxProps {
 const slop = rpx(24);
 
 export default function Checkbox(props: ICheckboxProps) {
-    const {checked, onPress, style} = props;
+    const { checked, onPress, style } = props;
     const colors = useColors();
 
     const innerNode = (
@@ -23,12 +23,12 @@ export default function Checkbox(props: ICheckboxProps) {
                 styles.container,
                 checked
                     ? {
-                          backgroundColor: colors.primary,
-                          borderColor: colors.primary,
-                      }
+                        backgroundColor: colors.primary,
+                        borderColor: colors.primary,
+                    }
                     : {
-                          borderColor: colors.text,
-                      },
+                        borderColor: colors.text,
+                    },
                 style,
             ]}>
             {checked ? (
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         height: rpx(36),
         borderRadius: rpx(2),
         borderWidth: rpx(1),
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
 });

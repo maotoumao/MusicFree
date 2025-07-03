@@ -1,23 +1,23 @@
-import React from 'react';
-import {View} from 'react-native';
-import {vmax} from '@/utils/rpx';
-import ListItem from '@/components/base/listItem';
-import Toast from '@/utils/toast';
+import ListItem from "@/components/base/listItem";
+import { vmax } from "@/utils/rpx";
+import Toast from "@/utils/toast";
+import React from "react";
+import { View } from "react-native";
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import {FlatList} from 'react-native-gesture-handler';
-import {showPanel} from '../usePanel';
-import PanelHeader from '../base/panelHeader';
-import PluginManager from '@/core/pluginManager';
-import NoPlugin from '@/components/base/noPlugin';
-import globalStyle from '@/constants/globalStyle';
-import {showDialog} from '@/components/dialogs/useDialog';
+import NoPlugin from "@/components/base/noPlugin";
+import { showDialog } from "@/components/dialogs/useDialog";
+import globalStyle from "@/constants/globalStyle";
+import PluginManager from "@/core/pluginManager";
+import { FlatList } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import PanelHeader from "../base/panelHeader";
+import { showPanel } from "../usePanel";
+import { useI18N } from "@/core/i18n";
 
 export default function ImportMusicSheet() {
-    const plugins = PluginManager.useSortedPlugins() || [];
-
-    const validPlugins = plugins.filter(it => !!it.instance?.importMusicSheet);
+    const validPlugins = PluginManager.getSortedPluginsWithAbility("importMusicSheet");
+    const { t } = useI18N();
 
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -26,7 +26,7 @@ export default function ImportMusicSheet() {
             height={vmax(60)}
             renderBody={() => (
                 <>
-                    <PanelHeader hideButtons title={'导入歌单'} />
+                    <PanelHeader hideButtons title={t("panel.importMusicSheet.title")} />
                     {validPlugins.length ? (
                         <View style={globalStyle.fwflex1}>
                             <FlatList
@@ -35,35 +35,34 @@ export default function ImportMusicSheet() {
                                 style={{
                                     marginBottom: safeAreaInsets.bottom,
                                 }}
-                                renderItem={({item: plugin}) => (
+                                renderItem={({ item: plugin }) => (
                                     <ListItem
                                         withHorizontalPadding
                                         key={`${plugin.hash}`}
                                         onPress={async () => {
-                                            showPanel('SimpleInput', {
-                                                title: '导入歌单',
-                                                placeholder: '输入目标歌单',
+                                            showPanel("SimpleInput", {
+                                                title: t("panel.importMusicSheet.title"),
+                                                placeholder: t("panel.importMusicSheet.placeholder"),
                                                 hints: plugin.instance.hints
                                                     ?.importMusicSheet,
-                                                maxLength: 1000,
-                                                async onOk(text, closePanel) {
+                                                maxLength: 1000,                                                async onOk(text, closePanel) {
                                                     Toast.success(
-                                                        '正在导入中...',
+                                                        t("panel.importMusicSheet.importing"),
                                                     );
                                                     closePanel();
                                                     const result =
                                                         await plugin.methods.importMusicSheet(
                                                             text,
                                                         );
-                                                    if (result.length > 0) {
+                                                    if (result && result.length > 0) {
                                                         showDialog(
-                                                            'SimpleDialog',
+                                                            "SimpleDialog",
                                                             {
-                                                                title: '准备导入',
-                                                                content: `发现${result.length}首歌曲! 现在开始导入吗?`,
+                                                                title: t("panel.importMusicSheet.prepareImport"),
+                                                                content: t("panel.importMusicSheet.foundSongs", { count: result.length }),
                                                                 onOk() {
                                                                     showPanel(
-                                                                        'AddToMusicSheet',
+                                                                        "AddToMusicSheet",
                                                                         {
                                                                             musicItem:
                                                                                 result,
@@ -71,10 +70,10 @@ export default function ImportMusicSheet() {
                                                                     );
                                                                 },
                                                             },
-                                                        );
+                                                        );                                                    
                                                     } else {
                                                         Toast.warn(
-                                                            '链接有误或目标歌单为空',
+                                                            t("panel.importMusicSheet.invalidLink"),
                                                         );
                                                     }
                                                 },
@@ -84,9 +83,8 @@ export default function ImportMusicSheet() {
                                     </ListItem>
                                 )}
                             />
-                        </View>
-                    ) : (
-                        <NoPlugin notSupportType="导入歌单" />
+                        </View>                    ) : (
+                        <NoPlugin notSupportType={t("panel.importMusicSheet.title")} />
                     )}
                 </>
             )}

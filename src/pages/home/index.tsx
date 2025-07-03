@@ -1,29 +1,29 @@
-import React from 'react';
-import {StyleSheet} from 'react-native';
+import React from "react";
+import { StyleSheet } from "react-native";
 
-import NavBar from './components/navBar';
-import MusicBar from '@/components/musicBar';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import HomeDrawer from './components/drawer';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import StatusBar from '@/components/base/statusBar';
-import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
-import globalStyle from '@/constants/globalStyle';
-import Theme from '@/core/theme';
-import HomeBody from './components/homeBody';
-import HomeBodyHorizontal from './components/homeBodyHorizontal';
-import useOrientation from '@/hooks/useOrientation';
+import NavBar from "./components/navBar";
+import MusicBar from "@/components/musicBar";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import HomeDrawer from "./components/drawer";
+import { SafeAreaView } from "react-native-safe-area-context";
+import StatusBar from "@/components/base/statusBar";
+import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
+import globalStyle from "@/constants/globalStyle";
+import Theme from "@/core/theme";
+import HomeBody from "./components/homeBody";
+import HomeBodyHorizontal from "./components/homeBodyHorizontal";
+import useOrientation from "@/hooks/useOrientation";
 
 function Home() {
     const orientation = useOrientation();
 
     return (
-        <SafeAreaView edges={['top', 'bottom']} style={styles.appWrapper}>
+        <SafeAreaView edges={["top", "bottom"]} style={styles.appWrapper}>
             <HomeStatusBar />
             <HorizontalSafeAreaView style={globalStyle.flex1}>
                 <>
                     <NavBar />
-                    {orientation === 'vertical' ? (
+                    {orientation === "vertical" ? (
                         <HomeBody />
                     ) : (
                         <HomeBodyHorizontal />
@@ -41,7 +41,7 @@ function HomeStatusBar() {
     return (
         <StatusBar
             backgroundColor="transparent"
-            barStyle={theme.dark ? undefined : 'dark-content'}
+            barStyle={theme.dark ? undefined : "dark-content"}
         />
     );
 }
@@ -66,7 +66,7 @@ export default function App() {
             screenOptions={{
                 headerShown: false,
                 drawerStyle: {
-                    width: '80%',
+                    width: "80%",
                 },
             }}
             initialRouteName="HOME-MAIN"
@@ -78,10 +78,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
     appWrapper: {
-        flexDirection: 'column',
+        flexDirection: "column",
         flex: 1,
     },
     flexRow: {
-        flexDirection: 'row',
+        flexDirection: "row",
     },
 });

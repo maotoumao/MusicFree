@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 
-import Download from "@/core/download";
 import LocalMusicSheet from "@/core/localMusicSheet";
 import { ROUTE_PATH } from "@/core/router";
 import { ImgAsset } from "@/constants/assetsConst";
@@ -10,20 +9,21 @@ import Toast from "@/utils/toast";
 import toast from "@/utils/toast";
 import useOrientation from "@/hooks/useOrientation";
 import { showPanel } from "@/components/panels/usePanel";
-import TrackPlayer from "@/core/trackPlayer";
+import TrackPlayer, { useCurrentMusic, useMusicQuality } from "@/core/trackPlayer";
 import { iconSizeConst } from "@/constants/uiConst";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
 import HeartIcon from "../heartIcon";
 import Icon from "@/components/base/icon.tsx";
-import PluginManager from "@/core/pluginManager.ts";
+import PluginManager from "@/core/pluginManager";
+import downloader from "@/core/downloader";
+import i18n from "@/core/i18n";
 
 export default function Operations() {
-    //briefcase-download-outline  briefcase-check-outline checkbox-marked-circle-outline
-    const musicItem = TrackPlayer.useCurrentMusic();
-    const currentQuality = TrackPlayer.useCurrentQuality();
+    const musicItem = useCurrentMusic();
+    const currentQuality = useMusicQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
-    const rate = PersistStatus.useValue('music.rate', 100);
+    const rate = PersistStatus.useValue("music.rate", 100);
     const orientation = useOrientation();
 
     const supportComment = useMemo(() => {
@@ -36,7 +36,7 @@ export default function Operations() {
         <View
             style={[
                 styles.wrapper,
-                orientation === 'horizontal' ? styles.horizontalWrapper : null,
+                orientation === "horizontal" ? styles.horizontalWrapper : null,
             ]}>
             <HeartIcon />
             <Pressable
@@ -44,13 +44,13 @@ export default function Operations() {
                     if (!musicItem) {
                         return;
                     }
-                    showPanel('MusicQuality', {
+                    showPanel("MusicQuality", {
                         musicItem,
                         async onQualityPress(quality) {
                             const changeResult =
                                 await TrackPlayer.changeQuality(quality);
                             if (!changeResult) {
-                                Toast.warn('当前暂无此音质音乐');
+                                Toast.warn(i18n.t("toast.currentQualityNotAvailableForCurrentMusic"));
                             }
                         },
                     });
@@ -61,16 +61,16 @@ export default function Operations() {
                 />
             </Pressable>
             <Icon
-                name={isDownloaded ? 'check-circle-outline' : 'arrow-down-tray'}
+                name={isDownloaded ? "check-circle-outline" : "arrow-down-tray"}
                 size={iconSizeConst.normal}
                 color="white"
                 onPress={() => {
                     if (musicItem && !isDownloaded) {
-                        showPanel('MusicQuality', {
-                            type: 'download',
+                        showPanel("MusicQuality", {
+                            type: "download",
                             musicItem,
                             async onQualityPress(quality) {
-                                Download.downloadMusic(musicItem, quality);
+                                downloader.download(musicItem, quality);
                             },
                         });
                     }
@@ -81,13 +81,13 @@ export default function Operations() {
                     if (!musicItem) {
                         return;
                     }
-                    showPanel('PlayRate', {
+                    showPanel("PlayRate", {
                         async onRatePress(newRate) {
                             if (rate !== newRate) {
                                 try {
                                     await TrackPlayer.setRate(newRate / 100);
-                                    PersistStatus.set('music.rate', newRate);
-                                } catch {}
+                                    PersistStatus.set("music.rate", newRate);
+                                } catch { }
                             }
                         },
                     });
@@ -101,11 +101,11 @@ export default function Operations() {
                 opacity={supportComment ? 1 : 0.2}
                 onPress={() => {
                     if (!supportComment) {
-                        toast.warn('当前歌曲暂无评论');
+                        toast.warn(i18n.t("toast.commmentNotAvaliableForCurrentMusic"));
                         return;
                     }
                     if (musicItem) {
-                        showPanel('MusicComment', {
+                        showPanel("MusicComment", {
                             musicItem,
                         });
                     }
@@ -117,7 +117,7 @@ export default function Operations() {
                 color="white"
                 onPress={() => {
                     if (musicItem) {
-                        showPanel('MusicItemOptions', {
+                        showPanel("MusicItemOptions", {
                             musicItem: musicItem,
                             from: ROUTE_PATH.MUSIC_DETAIL,
                         });
@@ -130,12 +130,12 @@ export default function Operations() {
 
 const styles = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         height: rpx(80),
         marginBottom: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
     },
     horizontalWrapper: {
         marginBottom: 0,

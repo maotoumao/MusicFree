@@ -1,14 +1,14 @@
-import React from 'react';
-import ListItem from '@/components/base/listItem';
-import {ImgAsset} from '@/constants/assetsConst';
-import TitleAndTag from './titleAndTag';
+import React from "react";
+import ListItem from "@/components/base/listItem";
+import { ImgAsset } from "@/constants/assetsConst";
+import TitleAndTag from "./titleAndTag";
 
 interface IAlbumResultsProps {
     lyricItem: ILyric.ILyricItem;
     onPress?: (musicItem: ILyric.ILyricItem) => void;
 }
 export default function LyricItem(props: IAlbumResultsProps) {
-    const {lyricItem, onPress} = props;
+    const { lyricItem, onPress } = props;
 
     return (
         <ListItem
@@ -22,7 +22,7 @@ export default function LyricItem(props: IAlbumResultsProps) {
                 fallbackImg={ImgAsset.albumDefault}
             />
             <ListItem.Content
-                description={lyricItem.artist ?? ''}
+                description={lyricItem.artist ?? ""}
                 title={
                     <TitleAndTag
                         title={lyricItem.title}

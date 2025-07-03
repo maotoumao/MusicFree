@@ -29,80 +29,80 @@ type IRoutes = {
 
 
 export const routes: Array<IRoutes> = [
-  {
-    path: ROUTE_PATH.HOME,
-    component: Home,
-  },
-  {
-    path: ROUTE_PATH.MUSIC_DETAIL,
-    component: MusicDetail,
-  },
-  {
-    path: ROUTE_PATH.TOP_LIST,
-    component: TopList,
-  },
-  {
-    path: ROUTE_PATH.TOP_LIST_DETAIL,
-    component: TopListDetail,
-  },
-  {
-    path: ROUTE_PATH.SEARCH_PAGE,
-    component: SearchPage,
-  },
-  {
-    path: ROUTE_PATH.LOCAL_SHEET_DETAIL,
-    component: SheetDetail,
-  },
-  {
-    path: ROUTE_PATH.ALBUM_DETAIL,
-    component: AlbumDetail,
-  },
-  {
-    path: ROUTE_PATH.ARTIST_DETAIL,
-    component: ArtistDetail,
-  },
-  {
-    path: ROUTE_PATH.SETTING,
-    component: Setting,
-  },
-  {
-    path: ROUTE_PATH.LOCAL,
-    component: LocalMusic,
-  },
-  {
-    path: ROUTE_PATH.DOWNLOADING,
-    component: Downloading,
-  },
-  {
-    path: ROUTE_PATH.SEARCH_MUSIC_LIST,
-    component: SearchMusicList,
-  },
-  {
-    path: ROUTE_PATH.MUSIC_LIST_EDITOR,
-    component: MusicListEditor,
-  },
-  {
-    path: ROUTE_PATH.FILE_SELECTOR,
-    component: FileSelector,
-  },
-  {
-    path: ROUTE_PATH.RECOMMEND_SHEETS,
-    component: RecommendSheets,
-  },
-  {
-    path: ROUTE_PATH.PLUGIN_SHEET_DETAIL,
-    component: PluginSheetDetail,
-  },
-  {
-    path: ROUTE_PATH.HISTORY,
-    component: History,
-  },
-  {
-    path: ROUTE_PATH.SET_CUSTOM_THEME,
-    component: SetCustomTheme,
-  },
-  {
-    path: ROUTE_PATH.PERMISSIONS,
-    component: Permissions,
-  },
+    {
+        path: ROUTE_PATH.HOME,
+        component: Home,
+    },
+    {
+        path: ROUTE_PATH.MUSIC_DETAIL,
+        component: MusicDetail,
+    },
+    {
+        path: ROUTE_PATH.TOP_LIST,
+        component: TopList,
+    },
+    {
+        path: ROUTE_PATH.TOP_LIST_DETAIL,
+        component: TopListDetail,
+    },
+    {
+        path: ROUTE_PATH.SEARCH_PAGE,
+        component: SearchPage,
+    },
+    {
+        path: ROUTE_PATH.LOCAL_SHEET_DETAIL,
+        component: SheetDetail,
+    },
+    {
+        path: ROUTE_PATH.ALBUM_DETAIL,
+        component: AlbumDetail,
+    },
+    {
+        path: ROUTE_PATH.ARTIST_DETAIL,
+        component: ArtistDetail,
+    },
+    {
+        path: ROUTE_PATH.SETTING,
+        component: Setting,
+    },
+    {
+        path: ROUTE_PATH.LOCAL,
+        component: LocalMusic,
+    },
+    {
+        path: ROUTE_PATH.DOWNLOADING,
+        component: Downloading,
+    },
+    {
+        path: ROUTE_PATH.SEARCH_MUSIC_LIST,
+        component: SearchMusicList,
+    },
+    {
+        path: ROUTE_PATH.MUSIC_LIST_EDITOR,
+        component: MusicListEditor,
+    },
+    {
+        path: ROUTE_PATH.FILE_SELECTOR,
+        component: FileSelector,
+    },
+    {
+        path: ROUTE_PATH.RECOMMEND_SHEETS,
+        component: RecommendSheets,
+    },
+    {
+        path: ROUTE_PATH.PLUGIN_SHEET_DETAIL,
+        component: PluginSheetDetail,
+    },
+    {
+        path: ROUTE_PATH.HISTORY,
+        component: History,
+    },
+    {
+        path: ROUTE_PATH.SET_CUSTOM_THEME,
+        component: SetCustomTheme,
+    },
+    {
+        path: ROUTE_PATH.PERMISSIONS,
+        component: Permissions,
+    },
 ];

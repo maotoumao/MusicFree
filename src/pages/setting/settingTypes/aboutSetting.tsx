@@ -1,18 +1,18 @@
-import React from 'react';
+import React from "react";
 import {
     Image,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
     View,
-} from 'react-native';
-import rpx from '@/utils/rpx';
-import {ImgAsset} from '@/constants/assetsConst';
-import ThemeText from '@/components/base/themeText';
-import LinkText from '@/components/base/linkText';
-import useCheckUpdate from '@/hooks/useCheckUpdate.ts';
-import useOrientation from '@/hooks/useOrientation';
-import Divider from '@/components/base/divider';
+} from "react-native";
+import rpx from "@/utils/rpx";
+import { ImgAsset } from "@/constants/assetsConst";
+import ThemeText from "@/components/base/themeText";
+import LinkText from "@/components/base/linkText";
+import useCheckUpdate from "@/hooks/useCheckUpdate.ts";
+import useOrientation from "@/hooks/useOrientation";
+import Divider from "@/components/base/divider";
 
 export default function AboutSetting() {
     const checkAndShowResult = useCheckUpdate();
@@ -22,16 +22,16 @@ export default function AboutSetting() {
         <View
             style={[
                 style.wrapper,
-                orientation === 'horizontal'
+                orientation === "horizontal"
                     ? {
-                          flexDirection: 'row',
-                      }
+                        flexDirection: "row",
+                    }
                     : null,
             ]}>
             <View
                 style={[
                     style.header,
-                    orientation === 'horizontal' ? style.horizontalSize : null,
+                    orientation === "horizontal" ? style.horizontalSize : null,
                 ]}>
                 <TouchableOpacity
                     onPress={() => {
@@ -47,12 +47,20 @@ export default function AboutSetting() {
                 <ThemeText style={style.margin}>
                     公众号: 【一只猫头猫】
                 </ThemeText>
-                <ThemeText style={style.margin}>
-                    B站:{' '}
-                    <LinkText linkTo="https://space.bilibili.com/12866223">
-                        不想睡觉猫头猫
-                    </LinkText>
-                </ThemeText>
+                <View style={style.contactContainer}>
+                    <ThemeText style={style.margin}>
+                        B站:{" "}
+                        <LinkText linkTo="https://space.bilibili.com/12866223">
+                            不想睡觉猫头猫
+                        </LinkText>
+                    </ThemeText>
+                    <ThemeText style={style.margin}>
+                        小红书:{" "}
+                        <LinkText linkTo="https://www.xiaohongshu.com/user/profile/5ce6085200000000050213a6?xsec_token=YBqVNCKP4kpvphpU5sZI8WC93c5JINc3NhGtRBymgKvuo%3D&xsec_source=app_share&xhsshare=CopyLink&appuid=5ce6085200000000050213a6&apptime=1747275535&share_id=faef5820564a43be80e5b77da887e4b9&share_channel=copy_link">
+                            一只猫头猫
+                        </LinkText>
+                    </ThemeText>
+                </View>
             </View>
             <ScrollView
                 contentContainerStyle={style.scrollViewContainer}
@@ -78,8 +86,8 @@ export default function AboutSetting() {
                 <Divider style={style.content} />
 
                 <ThemeText style={style.content}>
-                    本软件完全免费，并基于{' '}
-                    <ThemeText fontWeight="bold">AGPL3.0 协议</ThemeText>{' '}
+                    本软件完全免费，并基于{" "}
+                    <ThemeText fontWeight="bold">AGPL3.0 协议</ThemeText>{" "}
                     开源，如果需要使用此代码进行二次开发，请遵守如下约定：
                 </ThemeText>
 
@@ -98,11 +106,11 @@ export default function AboutSetting() {
                     4. 如果开源协议变更，将在此 Github 仓库更新，不另行通知
                 </ThemeText>
                 <ThemeText style={style.content}>
-                    代码已开源到{' '}
+                    代码已开源到{" "}
                     <LinkText linkTo="https://github.com/maotoumao/MusicFree">
                         Github
                     </LinkText>
-                    ，如果打不开试试把链接中的 github 换成 gitee。
+                    ，如果打不开试试把链接中的 github 换成 gitcode。
                 </ThemeText>
 
                 <Divider style={style.content} />
@@ -116,17 +124,17 @@ export default function AboutSetting() {
 
                 <ThemeText style={style.content}>
                     <ThemeText fontWeight="bold">
-                        还请注意本软件只是个人的业余项目，距离正式版也有很长一段距离。
+                        还请注意本软件只是个人的业余项目，距离稳定版也有很长一段距离。
                     </ThemeText>
                     如果你在找成熟稳定的音乐软件，可以考虑其他优秀的软件。当然我会一直维护，让它变得尽可能的完善一些。业余时间用爱发电，进度慢还请见谅。
                 </ThemeText>
 
                 <ThemeText style={style.content}>
                     如果有问题或者建议，可以直接去 Github issue
-                    区留言，也可以去公众号【一只猫头猫】留言，也可以去{' '}
+                    区留言，也可以去公众号【一只猫头猫】留言，也可以去{" "}
                     <LinkText linkTo="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&appChannel=share&inviteCode=1XgzeY8LfIa&businessType=9&from=246610&biz=ka&mainSourceId=share&subSourceId=others&jumpsource=shorturl">
                         QQ 频道
-                    </LinkText>{' '}
+                    </LinkText>{" "}
                     发帖。
                 </ThemeText>
 
@@ -143,18 +151,24 @@ export default function AboutSetting() {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         flex: 1,
     },
     header: {
         width: rpx(750),
         height: rpx(400),
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    contactContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: rpx(24),
     },
     horizontalSize: {
         width: rpx(600),
-        height: '100%',
+        height: "100%",
     },
     image: {
         width: rpx(150),

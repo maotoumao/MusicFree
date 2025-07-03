@@ -1,25 +1,25 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from "react";
 import {
     StyleSheet,
     SwitchProps,
     TouchableWithoutFeedback,
     View,
-} from 'react-native';
-import useColors from '@/hooks/useColors';
-import rpx from '@/utils/rpx';
+} from "react-native";
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withTiming,
-} from 'react-native-reanimated';
-import {timingConfig} from '@/constants/commonConst';
+} from "react-native-reanimated";
+import { timingConfig } from "@/constants/commonConst";
 
 interface ISwitchProps extends SwitchProps {}
 
 const fixedWidth = rpx(40);
 
 export default function ThemeSwitch(props: ISwitchProps) {
-    const {value, onValueChange} = props;
+    const { value, onValueChange } = props;
     const colors = useColors();
 
     const sharedValue = useSharedValue(value ? 1 : 0);
@@ -67,13 +67,13 @@ const styles = StyleSheet.create({
         width: rpx(80),
         height: rpx(40),
         borderRadius: rpx(40),
-        justifyContent: 'center',
+        justifyContent: "center",
     },
     thumb: {
         width: rpx(34),
         height: rpx(34),
         borderRadius: rpx(17),
-        backgroundColor: 'white',
+        backgroundColor: "white",
         left: rpx(3),
     },
 });

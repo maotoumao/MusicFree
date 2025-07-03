@@ -1,51 +1,72 @@
-import React from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import Download from '@/core/download';
-import ListItem from '@/components/base/listItem';
-import {sizeFormatter} from '@/utils/fileUtils';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ListItem from "@/components/base/listItem";
+import { sizeFormatter } from "@/utils/fileUtils";
+import { DownloadFailReason, DownloadStatus, useDownloadQueue, useDownloadTask } from "@/core/downloader";
+import { FlashList } from "@shopify/flash-list";
+import { useI18N } from "@/core/i18n";
+
+
+interface DownloadingListItemProps {
+    musicItem: IMusic.IMusicItem;
+}
+function DownloadingListItem(props: DownloadingListItemProps) {
+    const { musicItem } = props;
+    const taskInfo = useDownloadTask(musicItem);
+    const { t } = useI18N();
+
+    const status = taskInfo?.status ?? DownloadStatus.Error;
+
+    let description = "";
+
+    if (status === DownloadStatus.Error) {
+        const reason = taskInfo?.errorReason;
+
+        if (reason === DownloadFailReason.NoWritePermission) {
+            description = t("downloading.downloadFailReason.noWritePermission");
+        } else if (reason === DownloadFailReason.FailToFetchSource) {
+            description = t("downloading.downloadFailReason.failToFetchSource");
+        } else {
+            description = t("downloading.downloadFailReason.unknown");
+        }
+    } else if (status === DownloadStatus.Completed) {
+        description = t("downloading.downloadStatus.completed");
+    } else if (status === DownloadStatus.Downloading) {
+        const progress = taskInfo?.downloadedSize ? sizeFormatter(taskInfo.downloadedSize) : "-";
+        const totalSize = taskInfo?.fileSize ? sizeFormatter(taskInfo.fileSize) : "-";
+
+        description = t("downloading.downloadStatus.downloadProgress", {
+            progress,
+            totalSize,
+        });
+    } else if (status === DownloadStatus.Pending) {
+        description = t("downloading.downloadStatus.pending");
+    } else if (status === DownloadStatus.Preparing) {
+        description = t("downloading.downloadStatus.preparing");
+    }
+
+    return <ListItem withHorizontalPadding>
+        <ListItem.Content
+            title={musicItem.title}
+            description={description}
+        />
+    </ListItem>;
+
+}
 
 export default function DownloadingList() {
-    const downloading = Download.useDownloadingMusic();
-    const pending = Download.usePendingMusic();
-    const progress = Download.useDownloadingProgress(); // progress没有更新同步
+    const downloadQueue = useDownloadQueue();
+
 
     return (
         <View style={style.wrapper}>
-            <FlatList
+            <FlashList
                 style={style.downloading}
-                data={downloading.concat(pending)}
-                keyExtractor={_ => `dl${_.filename}`}
-                extraData={progress}
-                renderItem={({item, index}) => {
-                    if (index < downloading.length) {
-                        const prog = progress[item.filename];
-                        return (
-                            <ListItem withHorizontalPadding>
-                                <ListItem.Content
-                                    title={item.musicItem.title}
-                                    description={`${
-                                        prog?.progress
-                                            ? sizeFormatter(prog.progress)
-                                            : '-'
-                                    } / ${
-                                        prog?.size
-                                            ? sizeFormatter(prog.size)
-                                            : '-'
-                                    }`}
-                                />
-                            </ListItem>
-                        );
-                    } else {
-                        return (
-                            <ListItem withHorizontalPadding>
-                                <ListItem.Content
-                                    title={item.musicItem.title}
-                                    description="等待下载"
-                                />
-                            </ListItem>
-                        );
-                    }
+                data={downloadQueue}
+                keyExtractor={_ => `dl${_.platform}.${_.id}`}
+                renderItem={({ item }) => {
+                    return <DownloadingListItem musicItem={item} />;
                 }}
             />
         </View>

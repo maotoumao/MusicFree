@@ -1,50 +1,66 @@
-import { isSameMediaItem } from "@/utils/mediaItem";
-import { GlobalState } from "@/utils/stateMapper";
-import { getStorage, setStorage } from "@/utils/storage";
-import Config from "./config.ts";
 import { musicHistorySheetId } from "@/constants/commonConst";
+import { isSameMediaItem } from "@/utils/mediaUtils";
+import { getStorage, setStorage } from "@/utils/storage";
+import { atom, getDefaultStore, useAtomValue } from "jotai";
 
-const musicHistory = new GlobalState<IMusic.IMusicItem[]>([]);
+import type { IAppConfig } from "@/types/core/config";
+import type { IMusicHistory } from "@/types/core/musicHistory.js";
+import type { IInjectable } from "@/types/infra";
 
-async function setupMusicHistory() {
-    const history = await getStorage(musicHistorySheetId);
-    musicHistory.setValue(history ?? []);
+
+const musicHistoryAtom = atom<IMusic.IMusicItem[]>([]);
+
+class MusicHistory implements IMusicHistory, IInjectable {
+    private configService!: IAppConfig;
+
+    injectDependencies(configService: IAppConfig): void {
+        this.configService = configService;
+    }
+
+    get history() {
+        return getDefaultStore().get(musicHistoryAtom);
+    }
+
+    async setup() {
+        const history = await getStorage(musicHistorySheetId);
+        getDefaultStore().set(musicHistoryAtom, history ?? []);
+    }
+
+    async addMusic(musicItem: IMusic.IMusicItem) {
+        const newMusicHistory = [
+            musicItem,
+            ...this.history
+                .filter(item => !isSameMediaItem(item, musicItem)),
+        ].slice(0, this.configService.getConfig("basic.maxHistoryLen") ?? 50);
+        await setStorage(musicHistorySheetId, newMusicHistory);
+
+        getDefaultStore().set(musicHistoryAtom, newMusicHistory);
+    }
+
+    async removeMusic(musicItem: IMusic.IMusicItem) {
+        const newMusicHistory = this.history
+            .filter(item => !isSameMediaItem(item, musicItem));
+        await setStorage(musicHistorySheetId, newMusicHistory);
+
+        getDefaultStore().set(musicHistoryAtom, newMusicHistory);
+    }
+
+    async clearMusic() {
+        await setStorage(musicHistorySheetId, []);
+        getDefaultStore().set(musicHistoryAtom, []);
+    }
+
+    async setHistory(newHistory: IMusic.IMusicItem[]) {
+        await setStorage(musicHistorySheetId, newHistory);
+        getDefaultStore().set(musicHistoryAtom, newHistory);
+    }
 }
 
-async function addMusic(musicItem: IMusic.IMusicItem) {
-    const newMusicHistory = [
-        musicItem,
-        ...musicHistory
-            .getValue()
-            .filter(item => !isSameMediaItem(item, musicItem)),
-    ].slice(0, Config.getConfig('basic.maxHistoryLen') ?? 50);
-    await setStorage(musicHistorySheetId, newMusicHistory);
-    musicHistory.setValue(newMusicHistory);
+
+export function useMusicHistory() {
+    return useAtomValue(musicHistoryAtom);
 }
 
-async function removeMusic(musicItem: IMusic.IMusicItem) {
-    const newMusicHistory = musicHistory
-        .getValue()
-        .filter(item => !isSameMediaItem(item, musicItem));
-    await setStorage(musicHistorySheetId, newMusicHistory);
-    musicHistory.setValue(newMusicHistory);
-}
+const musicHistory = new MusicHistory();
+export default musicHistory;
 
-async function clearMusic() {
-    await setStorage(musicHistorySheetId, []);
-    musicHistory.setValue([]);
-}
-
-async function setHistory(newHistory: IMusic.IMusicItem[]) {
-    await setStorage(musicHistorySheetId, newHistory);
-    musicHistory.setValue(newHistory);
-}
-
-export default {
-    setupMusicHistory,
-    addMusic,
-    removeMusic,
-    clearMusic,
-    setHistory,
-    useMusicHistory: musicHistory.useValue,
-};

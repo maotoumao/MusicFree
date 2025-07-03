@@ -1,6 +1,6 @@
-import React from 'react';
-import panels from './types';
-import {panelInfoStore} from './usePanel';
+import React from "react";
+import panels from "./types";
+import { panelInfoStore } from "./usePanel";
 
 function Panels() {
     const panelInfoState = panelInfoStore.useValue();

@@ -1,22 +1,25 @@
-import React from 'react';
-import LocalMusicSheet from '@/core/localMusicSheet';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
-import LocalMusicList from './localMusicList';
-import MusicBar from '@/components/musicBar';
-import {localMusicSheetId} from '@/constants/commonConst';
-import Toast from '@/utils/toast';
-import {showDialog} from '@/components/dialogs/useDialog';
-import AppBar from '@/components/base/appBar';
+import React from "react";
+import LocalMusicSheet from "@/core/localMusicSheet";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import LocalMusicList from "./localMusicList";
+import MusicBar from "@/components/musicBar";
+import { localMusicSheetId } from "@/constants/commonConst";
+import Toast from "@/utils/toast";
+import { showDialog } from "@/components/dialogs/useDialog";
+import AppBar from "@/components/base/appBar";
+import { useI18N } from "@/core/i18n";
 
 export default function MainPage() {
     const navigate = useNavigate();
+    const { t } = useI18N();
+
     return (
         <>
             <AppBar
                 withStatusBar
                 actions={[
                     {
-                        icon: 'magnifying-glass',
+                        icon: "magnifying-glass",
                         onPress() {
                             navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                                 musicList: LocalMusicSheet.getMusicList(),
@@ -26,17 +29,17 @@ export default function MainPage() {
                 ]}
                 menu={[
                     {
-                        icon: 'magnifying-glass',
-                        title: '扫描本地音乐',
+                        icon: "magnifying-glass",
+                        title: t("localMusic.scanLocalMusic"),
                         async onPress() {
                             navigate(ROUTE_PATH.FILE_SELECTOR, {
-                                fileType: 'folder',
+                                fileType: "folder",
                                 multi: true,
-                                actionText: '开始扫描',
+                                actionText: t("localMusic.beginScan"),
                                 async onAction(selectedFiles) {
                                     return new Promise(resolve => {
-                                        showDialog('LoadingDialog', {
-                                            title: '扫描本地音乐',
+                                        showDialog("LoadingDialog", {
+                                            title: t("localMusic.scanLocalMusic"),
                                             promise:
                                                 LocalMusicSheet.importLocal(
                                                     selectedFiles.map(
@@ -44,7 +47,7 @@ export default function MainPage() {
                                                     ),
                                                 ),
                                             onResolve(data, hideDialog) {
-                                                Toast.success('导入成功~');
+                                                Toast.success(t("toast.importSuccess"));
                                                 hideDialog();
                                                 resolve(true);
                                             },
@@ -60,8 +63,8 @@ export default function MainPage() {
                         },
                     },
                     {
-                        icon: 'pencil-square',
-                        title: '批量编辑',
+                        icon: "pencil-square",
+                        title: t("common.batchEdit"),
                         async onPress() {
                             navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                                 musicList: LocalMusicSheet.getMusicList(),
@@ -72,14 +75,14 @@ export default function MainPage() {
                         },
                     },
                     {
-                        icon: 'arrow-down-tray',
-                        title: '下载列表',
+                        icon: "arrow-down-tray",
+                        title: t("localMusic.downloadList"),
                         async onPress() {
                             navigate(ROUTE_PATH.DOWNLOADING);
                         },
                     },
                 ]}>
-                本地音乐
+                {t("home.localMusic")}
             </AppBar>
             <LocalMusicList />
             <MusicBar />

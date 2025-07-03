@@ -1,5 +1,5 @@
-import pathConst from '@/constants/pathConst';
-import {MMKV} from 'react-native-mmkv';
+import pathConst from "@/constants/pathConst";
+import { MMKV } from "react-native-mmkv";
 
 const _mmkvCache: Record<string, MMKV> = {};
 

@@ -5,7 +5,7 @@ declare namespace IMusic {
     }
 
     /** 音质 */
-    export type IQualityKey = 'low' | 'standard' | 'high' | 'super';
+    export type IQualityKey = "low" | "standard" | "high" | "super";
     export type IQuality = Record<
         IQualityKey,
         {

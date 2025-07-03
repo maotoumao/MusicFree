@@ -1,7 +1,7 @@
-import React from 'react';
-import MainPage from './mainPage';
-import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
-import globalStyle from '@/constants/globalStyle';
+import React from "react";
+import MainPage from "./mainPage";
+import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView";
+import globalStyle from "@/constants/globalStyle";
 
 export default function LocalMusic() {
     return (

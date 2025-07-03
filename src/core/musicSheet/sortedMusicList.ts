@@ -1,9 +1,9 @@
-import {SortType} from '@/constants/commonConst.ts';
-import {isSameMediaItem} from '@/utils/mediaItem.ts';
-import {createMediaIndexMap} from '@/utils/mediaIndexMap.ts';
+import { SortType } from "@/constants/commonConst.ts";
+import { isSameMediaItem } from "@/utils/mediaUtils";
+import { createMediaIndexMap } from "@/utils/mediaIndexMap.ts";
 
 // Bug: localeCompare is slow sometimes https://github.com/facebook/hermes/issues/867
-const collator = new Intl.Collator('zh');
+const collator = new Intl.Collator("zh");
 
 /// Compare Functions
 

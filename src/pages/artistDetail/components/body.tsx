@@ -1,13 +1,14 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text} from 'react-native';
-import rpx from '@/utils/rpx';
-import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
-import {fontWeightConst} from '@/constants/uiConst';
-import ResultList from './resultList';
-import {useAtomValue} from 'jotai';
-import {queryResultAtom} from '../store/atoms';
-import content from './content';
-import useColors from '@/hooks/useColors';
+import React, { useState } from "react";
+import { StyleSheet, Text } from "react-native";
+import rpx from "@/utils/rpx";
+import { SceneMap, TabBar, TabView } from "react-native-tab-view";
+import { fontWeightConst } from "@/constants/uiConst";
+import ResultList from "./resultList";
+import { useAtomValue } from "jotai";
+import { queryResultAtom } from "../store/atoms";
+import content from "./content";
+import useColors from "@/hooks/useColors";
+import { useI18N } from "@/core/i18n";
 
 const sceneMap: Record<string, React.FC> = {
     album: BodyContentWrapper,
@@ -16,18 +17,21 @@ const sceneMap: Record<string, React.FC> = {
 
 const routes = [
     {
-        key: 'music',
-        title: '单曲',
+        key: "music",
+        i18nKey: "common.singleMusic",
+        title: "单曲",
     },
     {
-        key: 'album',
-        title: '专辑',
+        key: "album",
+        i18nKey: "common.album",
+        title: "专辑",
     },
 ];
 
 export default function Body() {
     const [index, setIndex] = useState(0);
     const colors = useColors();
+    const { t } = useI18N();
 
     return (
         <TabView
@@ -42,13 +46,13 @@ export default function Body() {
                     {...props}
                     style={style.transparentColor}
                     tabStyle={{
-                        width: 'auto',
+                        width: "auto",
                     }}
                     renderIndicator={() => null}
                     pressColor="transparent"
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
-                    renderLabel={({route, focused, color}) => (
+                    renderLabel={({ route, focused, color }) => (
                         <Text
                             numberOfLines={1}
                             style={{
@@ -57,16 +61,16 @@ export default function Body() {
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
-                                textAlign: 'center',
+                                textAlign: "center",
                             }}>
-                            {route.title}
+                            {t(route.i18nKey as any) ?? route.title}
                         </Text>
                     )}
                 />
             )}
             renderScene={SceneMap(sceneMap)}
             onIndexChange={setIndex}
-            initialLayout={{width: rpx(750)}}
+            initialLayout={{ width: rpx(750) }}
         />
     );
 }
@@ -76,7 +80,7 @@ export function BodyContentWrapper(props: any) {
     const queryResult = useAtomValue(queryResultAtom);
 
     const Component = content[tab];
-    const renderItem = ({item, index}: any) => (
+    const renderItem = ({ item, index }: any) => (
         <Component item={item} index={index} />
     );
 
@@ -90,8 +94,8 @@ const style = StyleSheet.create({
         zIndex: 100,
     },
     transparentColor: {
-        backgroundColor: 'transparent',
-        shadowColor: 'transparent',
-        borderColor: 'transparent',
+        backgroundColor: "transparent",
+        shadowColor: "transparent",
+        borderColor: "transparent",
     },
 });

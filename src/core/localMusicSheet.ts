@@ -1,21 +1,20 @@
 import {
-    internalSerializeKey,
     StorageKeys,
+    internalSerializeKey,
     supportLocalMediaType,
-} from '@/constants/commonConst';
-import mp3Util, {IBasicMeta} from '@/native/mp3Util';
+} from "@/constants/commonConst";
+import mp3Util, { IBasicMeta } from "@/native/mp3Util";
+import { addFileScheme, getFileName } from "@/utils/fileUtils.ts";
 import {
-    getInternalData,
-    InternalDataType,
+    getLocalPath,
     isSameMediaItem,
-} from '@/utils/mediaItem';
-import StateMapper from '@/utils/stateMapper';
-import {getStorage, setStorage} from '@/utils/storage';
-import {nanoid} from 'nanoid';
-import {useEffect, useState} from 'react';
-import {exists, readDir, ReadDirItem, unlink} from 'react-native-fs';
-import {addFileScheme, getFileName} from '@/utils/fileUtils.ts';
-import CryptoJs from 'crypto-js';
+} from "@/utils/mediaUtils";
+import StateMapper from "@/utils/stateMapper";
+import { getStorage, setStorage } from "@/utils/storage";
+import CryptoJs from "crypto-js";
+import { nanoid } from "nanoid";
+import { useEffect, useState } from "react";
+import { ReadDirItem, exists, readDir, unlink } from "react-native-fs";
 
 let localSheet: IMusic.IMusicItem[] = [];
 const localSheetStateMapper = new StateMapper(() => localSheet);
@@ -25,10 +24,7 @@ export async function setup() {
     if (sheet) {
         let validSheet: IMusic.IMusicItem[] = [];
         for (let musicItem of sheet) {
-            const localPath = getInternalData<string>(
-                musicItem,
-                InternalDataType.LOCALPATH,
-            );
+            const localPath = getLocalPath(musicItem);
             if (localPath && (await exists(localPath))) {
                 validSheet.push(musicItem);
             }
@@ -94,7 +90,7 @@ export async function removeMusic(
             try {
                 await unlink(localPath);
             } catch (e: any) {
-                if (e.message !== 'File does not exist') {
+                if (e.message !== "File does not exist") {
                     throw e;
                 }
             }
@@ -106,7 +102,7 @@ export async function removeMusic(
 }
 
 function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
-    const data = fn.slice(0, fn.lastIndexOf('.')).split('@');
+    const data = fn.slice(0, fn.lastIndexOf(".")).split("@");
     const [platform, id, title, artist] = data;
     if (!platform || !id) {
         return null;
@@ -114,13 +110,13 @@ function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
     return {
         id,
         platform: platform,
-        title: title ?? '',
-        artist: artist ?? '',
+        title: title ?? "",
+        artist: artist ?? "",
     };
 }
 
 function localMediaFilter(filename: string) {
-    return supportLocalMediaType.some(ext => filename.endsWith(ext));
+    return supportLocalMediaType.some(ext => filename.toLowerCase().endsWith(ext));
 }
 
 let importToken: string | null = null;
@@ -133,7 +129,7 @@ async function getMusicStats(folderPaths: string[]) {
     let dirFiles: ReadDirItem[] = [];
     while (folderPaths.length !== 0) {
         if (importToken !== _importToken) {
-            throw new Error('Import Broken');
+            throw new Error("Import Broken");
         }
         peek = folderPaths.shift() as string;
         try {
@@ -151,7 +147,7 @@ async function getMusicStats(folderPaths: string[]) {
         });
     }
 
-    return {musicList, token: _importToken};
+    return { musicList, token: _importToken };
 }
 
 function cancelImportLocal() {
@@ -162,9 +158,9 @@ function cancelImportLocal() {
 const groupNum = 25;
 async function importLocal(_folderPaths: string[]) {
     const folderPaths = [..._folderPaths.map(it => addFileScheme(it))];
-    const {musicList, token} = await getMusicStats(folderPaths);
+    const { musicList, token } = await getMusicStats(folderPaths);
     if (token !== importToken) {
-        throw new Error('Import Broken');
+        throw new Error("Import Broken");
     }
     // 分组请求，不然序列化可能出问题
     let metas: IBasicMeta[] = [];
@@ -177,25 +173,25 @@ async function importLocal(_folderPaths: string[]) {
         );
     }
     if (token !== importToken) {
-        throw new Error('Import Broken');
+        throw new Error("Import Broken");
     }
     const musicItems: IMusic.IMusicItem[] = await Promise.all(
         musicList.map(async (musicPath, index) => {
-            let {platform, id, title, artist} =
+            let { platform, id, title, artist } =
                 parseFilename(getFileName(musicPath, true)) ?? {};
             const meta = metas[index];
             if (!platform || !id) {
-                platform = '本地';
+                platform = "本地";
                 id = CryptoJs.MD5(musicPath).toString(CryptoJs.enc.Hex);
             }
             return {
                 id,
                 platform,
                 title: title ?? meta?.title ?? getFileName(musicPath),
-                artist: artist ?? meta?.artist ?? '未知歌手',
-                duration: parseInt(meta?.duration ?? '0', 10) / 1000,
-                album: meta?.album ?? '未知专辑',
-                artwork: '',
+                artist: artist ?? meta?.artist ?? "未知歌手",
+                duration: parseInt(meta?.duration ?? "0", 10) / 1000,
+                album: meta?.album ?? "未知专辑",
+                artwork: "",
                 [internalSerializeKey]: {
                     localPath: musicPath,
                 },
@@ -203,7 +199,7 @@ async function importLocal(_folderPaths: string[]) {
         }),
     );
     if (token !== importToken) {
-        throw new Error('Import Broken');
+        throw new Error("Import Broken");
     }
     addMusic(musicItems);
 }

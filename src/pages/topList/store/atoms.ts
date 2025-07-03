@@ -1,5 +1,5 @@
-import {RequestStateCode} from '@/constants/commonConst';
-import {atom} from 'jotai';
+import { RequestStateCode } from "@/constants/commonConst";
+import { atom } from "jotai";
 
 export interface IPluginTopListResult {
     state: RequestStateCode;
@@ -8,4 +8,4 @@ export interface IPluginTopListResult {
 
 const pluginsTopListAtom = atom<Record<string, IPluginTopListResult>>({});
 
-export {pluginsTopListAtom};
+export { pluginsTopListAtom };

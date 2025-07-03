@@ -9,7 +9,8 @@ import { hideDialog } from "../useDialog";
 import Checkbox from "@/components/base/checkbox";
 import Button from "@/components/base/textButton.tsx";
 import Dialog from "./base";
-import PersistStatus from "@/core/persistStatus.ts";
+import PersistStatus from "@/utils/persistStatus";
+import { useI18N } from "@/core/i18n";
 
 interface IDownloadDialogProps {
     version: string;
@@ -18,18 +19,22 @@ interface IDownloadDialogProps {
     backUrl?: string;
 }
 export default function DownloadDialog(props: IDownloadDialogProps) {
-    const {content, fromUrl, backUrl, version} = props;
+    const { content, fromUrl, backUrl, version } = props;
     const [skipState, setSkipState] = useState(false);
+
+    const { t } = useI18N();
 
     return (
         <Dialog
             onDismiss={() => {
                 if (skipState) {
-                    PersistStatus.set('app.skipVersion', version);
+                    PersistStatus.set("app.skipVersion", version);
                 }
                 hideDialog();
             }}>
-            <Dialog.Title stringContent>发现新版本({version})</Dialog.Title>
+            <Dialog.Title stringContent>{t("dialog.downloadDialog.title", {
+                version: version,
+            })}</Dialog.Title>
             <ScrollView style={style.scrollView}>
                 {content?.map?.(_ => (
                     <ThemeText key={_} style={style.item}>
@@ -45,7 +50,7 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                     <View style={style.checkboxGroup}>
                         <Checkbox checked={skipState} />
                         <ThemeText style={style.checkboxHint}>
-                            跳过此版本
+                            {t("dialog.downloadDialog.skipThisVersion")}
                         </ThemeText>
                     </View>
                 </TouchableOpacity>
@@ -55,29 +60,29 @@ export default function DownloadDialog(props: IDownloadDialogProps) {
                         onPress={() => {
                             hideDialog();
                             if (skipState) {
-                                PersistStatus.set('app.skipVersion', version);
+                                PersistStatus.set("app.skipVersion", version);
                             }
                         }}>
-                        取消
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         style={style.button}
                         onPress={async () => {
-                            PersistStatus.set('app.skipVersion', undefined);
+                            PersistStatus.set("app.skipVersion", undefined);
                             openUrl(fromUrl);
                             Clipboard.setString(fromUrl);
                         }}>
-                        从浏览器下载
+                        {t("dialog.downloadDialog.downloadUsingBrowser")}
                     </Button>
                     {backUrl && (
                         <Button
                             style={style.button}
                             onPress={async () => {
-                                PersistStatus.set('app.skipVersion', undefined);
+                                PersistStatus.set("app.skipVersion", undefined);
                                 openUrl(backUrl);
                                 Clipboard.setString(backUrl);
                             }}>
-                            备用链接
+                            {t("dialog.downloadDialog.backupUrl")}
                         </Button>
                     )}
                 </View>
@@ -103,19 +108,19 @@ const style = StyleSheet.create({
         marginTop: rpx(24),
         height: rpx(120),
         marginBottom: rpx(12),
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
     },
     checkboxGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     buttonGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
-        justifyContent: 'flex-end',
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        justifyContent: "flex-end",
     },
     checkboxHint: {
         marginLeft: rpx(12),
@@ -124,6 +129,6 @@ const style = StyleSheet.create({
         paddingLeft: rpx(28),
         paddingVertical: rpx(14),
         marginLeft: rpx(16),
-        alignItems: 'flex-end',
+        alignItems: "flex-end",
     },
 });

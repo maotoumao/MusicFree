@@ -1,26 +1,27 @@
-import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import Loading from '@/components/base/loading';
-import Chip from '@/components/base/chip';
-import useSearch from '../hooks/useSearch';
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import Loading from "@/components/base/loading";
+import Chip from "@/components/base/chip";
+import useSearch from "../hooks/useSearch";
 import {
     addHistory,
     getHistory,
     removeAllHistory,
     removeHistory,
-} from '../common/historySearch';
-import {useSetAtom} from 'jotai';
+} from "../common/historySearch";
+import { useSetAtom } from "jotai";
 import {
-    initSearchResults,
     PageStatus,
+    initSearchResults,
     pageStatusAtom,
     queryAtom,
     searchResultsAtom,
-} from '../store/atoms';
-import ThemeText from '@/components/base/themeText';
-import Button from '@/components/base/textButton.tsx';
-import Empty from '@/components/base/empty';
+} from "../store/atoms";
+import ThemeText from "@/components/base/themeText";
+import Button from "@/components/base/textButton.tsx";
+import Empty from "@/components/base/empty";
+import { useI18N } from "@/core/i18n";
 
 export default function () {
     const [history, setHistory] = useState<string[] | null>(null);
@@ -29,6 +30,7 @@ export default function () {
     const setQuery = useSetAtom(queryAtom);
     const setPageStatus = useSetAtom(pageStatusAtom);
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const { t } = useI18N();
 
     useEffect(() => {
         getHistory().then(setHistory);
@@ -42,7 +44,7 @@ export default function () {
                 <>
                     <View style={style.header}>
                         <ThemeText fontSize="title" fontWeight="semibold">
-                            历史记录
+                            {t("searchPage.history")}
                         </ThemeText>
                         <Button
                             fontColor="textSecondary"
@@ -50,7 +52,7 @@ export default function () {
                                 await removeAllHistory();
                                 getHistory().then(setHistory);
                             }}>
-                            清空
+                            {t("common.clear")}
                         </Button>
                     </View>
                     <ScrollView
@@ -89,26 +91,26 @@ export default function () {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: '100%',
-        maxWidth: '100%',
-        flexDirection: 'column',
+        width: "100%",
+        maxWidth: "100%",
+        flexDirection: "column",
         padding: rpx(24),
         flex: 1,
     },
     header: {
-        width: '100%',
-        flexDirection: 'row',
+        width: "100%",
+        flexDirection: "row",
         paddingVertical: rpx(28),
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     historyContent: {
-        width: '100%',
+        width: "100%",
         flex: 1,
     },
     historyContentConainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        flexDirection: "row",
+        flexWrap: "wrap",
     },
     chip: {
         flexGrow: 0,
