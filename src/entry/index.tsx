@@ -16,6 +16,7 @@ import { ToastBaseComponent } from "@/components/base/toast";
 import { StatusBar } from "react-native";
 import { ReduceMotion, ReducedMotionConfig } from "react-native-reanimated";
 import { routes } from "@/core/router/routes.tsx";
+import ErrorBoundary from "@/components/errorBoundary";
 
 /**
  * 字体颜色
@@ -31,7 +32,7 @@ export default function Pages() {
     const theme = Theme.useTheme();
 
     return (
-        <>
+        <ErrorBoundary>
             <BootstrapComp />
             <ReducedMotionConfig mode={ReduceMotion.Never} />
             <GestureHandlerRootView style={globalStyle.flex1}>
@@ -61,6 +62,6 @@ export default function Pages() {
                     </NavigationContainer>
                 </SafeAreaProvider>
             </GestureHandlerRootView>
-        </>
+        </ErrorBoundary>
     );
 }
