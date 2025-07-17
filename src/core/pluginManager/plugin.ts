@@ -34,6 +34,17 @@ import { IPluginManager } from "@/types/core/pluginManager";
 
 
 axios.defaults.timeout = 2000;
+axios.interceptors.response.use((response) => {
+    // 统一setcookie格式，nodejs环境是数组，移动端环境都放在第一个元素
+    const setCookie = response.headers["set-cookie"];
+    if(setCookie && setCookie.length === 1) {
+        const splitedCookie = setCookie[0].split(",");
+        response.headers["set-cookie"] = splitedCookie;
+        response.headers["x-set-cookie"] = setCookie;
+    }
+
+    return response;
+});
 
 const sha256 = CryptoJs.SHA256;
 

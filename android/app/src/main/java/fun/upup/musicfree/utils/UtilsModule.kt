@@ -61,30 +61,66 @@ class UtilsModule(context: ReactApplicationContext) : ReactContextBaseJavaModule
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getWindowDimensions(): WritableMap {
         val windowManager = reactApplicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val windowMetrics = windowManager.currentWindowMetrics
-        val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-        val bounds = windowMetrics.bounds
-
-        val totalWidthPx = bounds.width()
-        val totalHeightPx = bounds.height()
-
-        val leftInsetPx = insets.left
-        val rightInsetPx = insets.right
-        val topInsetPx = insets.top
-        val bottomInsetPx = insets.bottom
-
-        val usableWidthPx = totalWidthPx - leftInsetPx - rightInsetPx
-        val usableHeightPx = totalHeightPx - topInsetPx - bottomInsetPx
-
         val displayMetrics: DisplayMetrics = reactApplicationContext.resources.displayMetrics
         val density = displayMetrics.density
 
-        val usableWidthDp = usableWidthPx / density
-        val usableHeightDp = usableHeightPx / density
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 11 (API 30) 及以上使用新 API
+            val windowMetrics = windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val bounds = windowMetrics.bounds
 
-        return Arguments.createMap().apply {
-            putDouble("width", usableWidthDp.toDouble())
-            putDouble("height", usableHeightDp.toDouble())
+            val totalWidthPx = bounds.width()
+            val totalHeightPx = bounds.height()
+
+            val leftInsetPx = insets.left
+            val rightInsetPx = insets.right
+            val topInsetPx = insets.top
+            val bottomInsetPx = insets.bottom
+
+            val usableWidthPx = totalWidthPx - leftInsetPx - rightInsetPx
+            val usableHeightPx = totalHeightPx - topInsetPx - bottomInsetPx
+
+            val usableWidthDp = usableWidthPx / density
+            val usableHeightDp = usableHeightPx / density
+
+            Arguments.createMap().apply {
+                putDouble("width", usableWidthDp.toDouble())
+                putDouble("height", usableHeightDp.toDouble())
+            }
+        } else {
+            // Android 10 及以下使用旧 API
+            val display = windowManager.defaultDisplay
+            val realSize = android.graphics.Point()
+            display.getRealSize(realSize)
+
+            // 获取状态栏和导航栏高度
+            val resources = reactApplicationContext.resources
+            var statusBarHeight = 0
+            var navigationBarHeight = 0
+
+            // 状态栏高度
+            val statusBarResourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+            if (statusBarResourceId > 0) {
+                statusBarHeight = resources.getDimensionPixelSize(statusBarResourceId)
+            }
+
+            // 导航栏高度
+            val navigationBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+            if (navigationBarResourceId > 0) {
+                navigationBarHeight = resources.getDimensionPixelSize(navigationBarResourceId)
+            }
+
+            val usableWidthPx = realSize.x
+            val usableHeightPx = realSize.y - statusBarHeight - navigationBarHeight
+
+            val usableWidthDp = usableWidthPx / density
+            val usableHeightDp = usableHeightPx / density
+
+            Arguments.createMap().apply {
+                putDouble("width", usableWidthDp.toDouble())
+                putDouble("height", usableHeightDp.toDouble())
+            }
         }
     }
 }
