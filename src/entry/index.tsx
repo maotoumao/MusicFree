@@ -1,7 +1,7 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import bootstrap from "./bootstrap";
+import bootstrap from "./bootstrap/bootstrap";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Dialogs from "@/components/dialogs";
 import Panels from "@/components/panels";
@@ -11,7 +11,7 @@ import Debug from "@/components/debug";
 import { PortalHost } from "@/components/base/portal";
 import globalStyle from "@/constants/globalStyle";
 import Theme from "@/core/theme";
-import { BootstrapComp } from "./useBootstrap";
+import { BootstrapComponent } from "./bootstrap/BootstrapComponent";
 import { ToastBaseComponent } from "@/components/base/toast";
 import { StatusBar } from "react-native";
 import { ReduceMotion, ReducedMotionConfig } from "react-native-reanimated";
@@ -33,7 +33,7 @@ export default function Pages() {
 
     return (
         <ErrorBoundary>
-            <BootstrapComp />
+            <BootstrapComponent />
             <ReducedMotionConfig mode={ReduceMotion.Never} />
             <GestureHandlerRootView style={globalStyle.flex1}>
                 <SafeAreaProvider>
