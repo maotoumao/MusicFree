@@ -3,24 +3,24 @@ import { View } from "react-native";
 import AlbumCover from "./albumCover";
 import Lyric from "./lyric";
 import useOrientation from "@/hooks/useOrientation";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import globalStyle from "@/constants/globalStyle";
 
 export default function Content() {
-    const [tab, selectTab] = useState<'album' | 'lyric'>(
-        Config.getConfig('basic.musicDetailDefault') || 'album',
+    const [tab, selectTab] = useState<"album" | "lyric">(
+        Config.getConfig("basic.musicDetailDefault") || "album",
     );
     const orientation = useOrientation();
-    const showAlbumCover = tab === 'album' || orientation === 'horizontal';
+    const showAlbumCover = tab === "album" || orientation === "horizontal";
 
     const onTurnPageClick = () => {
-        if (orientation === 'horizontal') {
+        if (orientation === "horizontal") {
             return;
         }
-        if (tab === 'album') {
-            selectTab('lyric');
+        if (tab === "album") {
+            selectTab("lyric");
         } else {
-            selectTab('album');
+            selectTab("album");
         }
     };
 

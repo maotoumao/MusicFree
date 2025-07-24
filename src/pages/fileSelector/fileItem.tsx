@@ -1,17 +1,17 @@
-import React, {memo} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import useTextColor from '@/hooks/useTextColor';
-import Checkbox from '@/components/base/checkbox';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import Icon from '@/components/base/icon.tsx';
-import {iconSizeConst} from '@/constants/uiConst.ts';
+import React, { memo } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
+import useTextColor from "@/hooks/useTextColor";
+import Checkbox from "@/components/base/checkbox";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Icon from "@/components/base/icon.tsx";
+import { iconSizeConst } from "@/constants/uiConst.ts";
 
 const ITEM_HEIGHT = rpx(96);
 
 interface IProps {
-    type: 'folder' | 'file';
+    type: "folder" | "file";
     path: string;
     parentPath: string;
     checked?: boolean;
@@ -41,9 +41,9 @@ function FileItem(props: IProps) {
                 style={styles.pathWrapper}>
                 <Icon
                     name={
-                        type === 'folder'
-                            ? 'folder-outline'
-                            : 'document-outline'
+                        type === "folder"
+                            ? "folder-outline"
+                            : "document-outline"
                     }
                     color={textColor}
                     style={styles.folderIcon}
@@ -54,7 +54,7 @@ function FileItem(props: IProps) {
                     numberOfLines={1}
                     ellipsizeMode="tail">
                     {path.substring(
-                        parentPath === '/' ? 1 : parentPath.length + 1,
+                        parentPath === "/" ? 1 : parentPath.length + 1,
                     )}
                 </ThemeText>
             </Pressable>
@@ -79,27 +79,27 @@ export default memo(
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
+        width: "100%",
         height: ITEM_HEIGHT,
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     folderIcon: {
         fontSize: rpx(32),
         marginRight: rpx(14),
     },
     pathWrapper: {
-        flexDirection: 'row',
+        flexDirection: "row",
         flex: 1,
-        alignItems: 'center',
-        height: '100%',
+        alignItems: "center",
+        height: "100%",
         marginRight: rpx(60),
     },
     path: {
-        height: '100%',
-        textAlignVertical: 'center',
+        height: "100%",
+        textAlignVertical: "center",
     },
     checkIcon: {
         padding: rpx(14),

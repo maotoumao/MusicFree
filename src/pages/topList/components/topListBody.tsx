@@ -1,15 +1,16 @@
-import React, {useCallback, useState} from 'react';
-import {StyleSheet, Text} from 'react-native';
-import rpx from '@/utils/rpx';
-import PluginManager from '@/core/pluginManager';
-import {TabBar, TabView} from 'react-native-tab-view';
-import {fontWeightConst} from '@/constants/uiConst';
-import BoardPanelWrapper from './boardPanelWrapper';
-import useColors from '@/hooks/useColors';
-import NoPlugin from '@/components/base/noPlugin';
+import React, { useCallback, useState } from "react";
+import { StyleSheet, Text } from "react-native";
+import rpx from "@/utils/rpx";
+import PluginManager from "@/core/pluginManager";
+import { TabBar, TabView } from "react-native-tab-view";
+import { fontWeightConst } from "@/constants/uiConst";
+import BoardPanelWrapper from "./boardPanelWrapper";
+import useColors from "@/hooks/useColors";
+import NoPlugin from "@/components/base/noPlugin";
+import i18n from "@/core/i18n";
 
 export default function TopListBody() {
-    const routes = PluginManager.getSortedTopListsablePlugins().map(_ => ({
+    const routes = PluginManager.getSortedPluginsWithAbility("getTopLists").map(_ => ({
         key: _.hash,
         title: _.name,
     }));
@@ -17,13 +18,13 @@ export default function TopListBody() {
     const colors = useColors();
 
     const renderScene = useCallback(
-        (props: {route: {key: string}}) => (
+        (props: { route: { key: string } }) => (
             <BoardPanelWrapper hash={props?.route?.key} />
         ),
         [],
     );
     if (!routes?.length) {
-        return <NoPlugin notSupportType="榜单" />;
+        return <NoPlugin notSupportType={i18n.t("topList.title")} />;
     }
 
     return (
@@ -41,7 +42,7 @@ export default function TopListBody() {
                     scrollEnabled
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
-                    renderLabel={({route, focused, color}) => (
+                    renderLabel={({ route, focused, color }) => (
                         <Text
                             numberOfLines={1}
                             style={{
@@ -50,7 +51,7 @@ export default function TopListBody() {
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
-                                textAlign: 'center',
+                                textAlign: "center",
                             }}>
                             {route.title}
                         </Text>
@@ -63,18 +64,18 @@ export default function TopListBody() {
             )}
             renderScene={renderScene}
             onIndexChange={setIndex}
-            initialLayout={{width: rpx(750)}}
+            initialLayout={{ width: rpx(750) }}
         />
     );
 }
 
 const styles = StyleSheet.create({
     tabBarStyle: {
-        backgroundColor: 'transparent',
-        shadowColor: 'transparent',
-        borderColor: 'transparent',
+        backgroundColor: "transparent",
+        shadowColor: "transparent",
+        borderColor: "transparent",
     },
     tabStyle: {
-        width: 'auto',
+        width: "auto",
     },
 });

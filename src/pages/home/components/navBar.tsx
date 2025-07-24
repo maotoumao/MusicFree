@@ -1,22 +1,25 @@
-import {ROUTE_PATH} from '@/core/router';
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import useColors from '@/hooks/useColors';
-import ThemeText from '@/components/base/themeText';
-import Color from 'color';
-import IconButton from '@/components/base/iconButton';
-import Icon from '@/components/base/icon.tsx';
+import { ROUTE_PATH } from "@/core/router";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import useColors from "@/hooks/useColors";
+import ThemeText from "@/components/base/themeText";
+import Color from "color";
+import IconButton from "@/components/base/iconButton";
+import Icon from "@/components/base/icon.tsx";
+import { useI18N } from "@/core/i18n";
 
 // todo icon: = musicFree(引入自定义字体 居中) search
 export default function NavBar() {
     const navigation = useNavigation<any>();
     const colors = useColors();
+    const { t } = useI18N();
+
     return (
         <View style={styles.appbar}>
             <IconButton
-                accessibilityLabel="打开侧边栏"
+                accessibilityLabel={t("home.openSidebar.a11y")}
                 name="bars-3"
                 style={styles.menu}
                 color={colors.text}
@@ -33,7 +36,7 @@ export default function NavBar() {
                     },
                 ]}
                 accessible
-                accessibilityLabel="点击这里开始搜索"
+                accessibilityLabel={t("home.clickToSearch")}
                 onPress={() => {
                     navigation.navigate(ROUTE_PATH.SEARCH_PAGE);
                 }}>
@@ -47,7 +50,7 @@ export default function NavBar() {
                     accessible={false}
                     fontSize="subTitle"
                     style={[styles.text]}>
-                    点击这里开始搜索
+                    {t("home.clickToSearch")}
                 </ThemeText>
             </Pressable>
         </View>
@@ -56,19 +59,19 @@ export default function NavBar() {
 
 const styles = StyleSheet.create({
     appbar: {
-        backgroundColor: 'transparent',
-        shadowColor: 'transparent',
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
+        backgroundColor: "transparent",
+        shadowColor: "transparent",
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
         height: rpx(88),
     },
     searchBar: {
         marginHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         flex: 1,
-        height: '72%',
+        height: "72%",
         maxHeight: rpx(64),
         borderRadius: rpx(36),
         paddingHorizontal: rpx(20),

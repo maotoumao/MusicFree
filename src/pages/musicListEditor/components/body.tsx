@@ -1,21 +1,24 @@
-import React, {useMemo} from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import Button from '@/components/base/textButton.tsx';
-import {useAtom} from 'jotai';
-import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
-import Toast from '@/utils/toast';
-import MusicList from './musicList';
-import {useParams} from '@/core/router';
-import {localMusicSheetId, musicHistorySheetId} from '@/constants/commonConst';
-import LocalMusicSheet from '@/core/localMusicSheet';
-import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
-import globalStyle from '@/constants/globalStyle';
-import musicHistory from '@/core/musicHistory';
-import MusicSheet from '@/core/musicSheet';
+import React, { useMemo } from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import Button from "@/components/base/textButton.tsx";
+import { useAtom } from "jotai";
+import { editingMusicListAtom, musicListChangedAtom } from "../store/atom";
+import Toast from "@/utils/toast";
+import MusicList from "./musicList";
+import { useParams } from "@/core/router";
+import { localMusicSheetId, musicHistorySheetId } from "@/constants/commonConst";
+import LocalMusicSheet from "@/core/localMusicSheet";
+import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
+import globalStyle from "@/constants/globalStyle";
+import musicHistory from "@/core/musicHistory";
+import MusicSheet from "@/core/musicSheet";
+import { useI18N } from "@/core/i18n";
 
 export default function Body() {
-    const {musicSheet} = useParams<'music-list-editor'>();
+    const { musicSheet } = useParams<"music-list-editor">();
+
+    const { t } = useI18N();
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
     const [musicListChanged, setMusicListChanged] =
@@ -48,18 +51,17 @@ export default function Body() {
                             );
                         }
                     }}>
-                    {`${
-                        selectedItems.length !== editingMusicList.length &&
+                    {`${selectedItems.length !== editingMusicList.length &&
                         editingMusicList.length
-                            ? '全选'
-                            : '全不选'
-                    } (已选${selectedItems.length}首)`}
+                        ? t("common.selectAll")
+                        : t("common.unselectAll")
+                    } (${t("musicListEditor.selectMusicCount", { count: selectedItems.length })})`}
                 </Button>
                 <Button
                     fontColor={
                         musicListChanged && musicSheet?.id
-                            ? 'primary'
-                            : 'textSecondary'
+                            ? "primary"
+                            : "textSecondary"
                     }
                     onPress={async () => {
                         if (musicListChanged && musicSheet?.id) {
@@ -78,11 +80,11 @@ export default function Body() {
                                 );
                             }
 
-                            Toast.success('保存成功');
+                            Toast.success(t("toast.saveSuccess"));
                             setMusicListChanged(false);
                         }
                     }}>
-                    保存
+                    {t("common.save")}
                 </Button>
             </View>
             <MusicList />
@@ -92,10 +94,10 @@ export default function Body() {
 
 const style = StyleSheet.create({
     header: {
-        flexDirection: 'row',
+        flexDirection: "row",
         height: rpx(88),
         paddingHorizontal: rpx(24),
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        alignItems: "center",
+        justifyContent: "space-between",
     },
 });

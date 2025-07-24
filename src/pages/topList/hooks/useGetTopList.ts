@@ -1,9 +1,9 @@
-import {RequestStateCode} from '@/constants/commonConst';
-import PluginManager from '@/core/pluginManager';
-import {produce} from 'immer';
-import {useAtom} from 'jotai';
-import {useCallback} from 'react';
-import {pluginsTopListAtom} from '../store/atoms';
+import { RequestStateCode } from "@/constants/commonConst";
+import PluginManager from "@/core/pluginManager";
+import { produce } from "immer";
+import { useAtom } from "jotai";
+import { useCallback } from "react";
+import { pluginsTopListAtom } from "../store/atoms";
 
 export default function useGetTopList() {
     const [pluginsTopList, setPluginsTopList] = useAtom(pluginsTopListAtom);
@@ -45,7 +45,7 @@ export default function useGetTopList() {
             } catch {
                 setPluginsTopList(
                     produce(draft => {
-                        draft[pluginHash].state = RequestStateCode.FINISHED;
+                        draft[pluginHash].state = RequestStateCode.ERROR;
                     }),
                 );
             }

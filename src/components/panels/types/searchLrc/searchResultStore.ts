@@ -1,5 +1,5 @@
-import {RequestStateCode} from '@/constants/commonConst';
-import {GlobalState} from '@/utils/stateMapper';
+import { RequestStateCode } from "@/constants/commonConst";
+import { GlobalState } from "@/utils/stateMapper";
 
 export interface ISearchLyricResult {
     data: ILyric.ILyricItem[];
@@ -13,4 +13,4 @@ interface ISearchLyricStoreData {
     data: Record<string, ISearchLyricResult>;
 }
 
-export default new GlobalState<ISearchLyricStoreData>({data: {}});
+export default new GlobalState<ISearchLyricStoreData>({ data: {} });

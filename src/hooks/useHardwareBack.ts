@@ -1,5 +1,5 @@
-import {useEffect, useRef} from 'react';
-import {BackHandler, NativeEventSubscription} from 'react-native';
+import { useEffect, useRef } from "react";
+import { BackHandler, NativeEventSubscription } from "react-native";
 
 export default function (
     onHardwareBackPress: () => boolean | null | undefined,
@@ -13,7 +13,7 @@ export default function (
         }
 
         backHandlerRef.current = BackHandler.addEventListener(
-            'hardwareBackPress',
+            "hardwareBackPress",
             onHardwareBackPress,
         );
 

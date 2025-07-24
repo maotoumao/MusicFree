@@ -1,15 +1,17 @@
-import React from 'react';
-import {InteractionManager, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import repeatModeConst from '@/constants/repeatModeConst';
-import IconTextButton from '@/components/base/iconTextButton';
-import TrackPlayer from '@/core/trackPlayer';
-import sleep from '@/utils/sleep.ts';
+import IconTextButton from "@/components/base/iconTextButton";
+import ThemeText from "@/components/base/themeText";
+import repeatModeConst from "@/constants/repeatModeConst";
+import { useI18N } from "@/core/i18n";
+import TrackPlayer, { usePlayList, useRepeatMode } from "@/core/trackPlayer";
+import delay from "@/utils/delay";
+import rpx from "@/utils/rpx";
+import React from "react";
+import { InteractionManager, StyleSheet, View } from "react-native";
 
 export default function Header() {
-    const repeatMode = TrackPlayer.useRepeatMode();
-    const playList = TrackPlayer.usePlayList();
+    const repeatMode = useRepeatMode();
+    const playList = usePlayList();
+    const { t } = useI18N();
 
     return (
         <View style={style.wrapper}>
@@ -17,28 +19,29 @@ export default function Header() {
                 style={style.headerText}
                 fontSize="title"
                 fontWeight="bold">
-                播放列表
+                {t("panel.playList.title")}
                 <ThemeText fontColor="textSecondary">
-                    {' '}
-                    ({playList.length}首)
+                    {t("panel.playList.count", {
+                        count: playList.length,
+                    })}
                 </ThemeText>
             </ThemeText>
             <IconTextButton
                 onPress={() => {
                     InteractionManager.runAfterInteractions(async () => {
-                        await sleep(20);
+                        await delay(20, false);
                         TrackPlayer.toggleRepeatMode();
                     });
                 }}
                 icon={repeatModeConst[repeatMode].icon}>
-                {repeatModeConst[repeatMode].text}
+                {t(("repeatMode." + repeatMode) as any)}
             </IconTextButton>
             <IconTextButton
                 icon="trash-outline"
                 onPress={() => {
-                    TrackPlayer.clear();
+                    TrackPlayer.clearPlayList();
                 }}>
-                清空
+                {t("common.clear")}
             </IconTextButton>
         </View>
     );
@@ -51,9 +54,9 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(24),
         marginTop: rpx(18),
         marginBottom: rpx(12),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     headerText: {
         flex: 1,

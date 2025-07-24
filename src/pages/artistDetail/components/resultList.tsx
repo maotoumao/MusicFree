@@ -1,14 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
-import rpx from '@/utils/rpx';
-import {FlatList} from 'react-native-gesture-handler';
-import {useAtom} from 'jotai';
-import {IQueryResult, scrollToTopAtom} from '../store/atoms';
-import {RequestStateCode} from '@/constants/commonConst';
-import useQueryArtist from '../hooks/useQuery';
-import Empty from '@/components/base/empty';
-import ListLoading from '@/components/base/listLoading';
-import ListReachEnd from '@/components/base/listReachEnd';
-import {useParams} from '@/core/router';
+import ListEmpty from "@/components/base/listEmpty";
+import ListFooter from "@/components/base/listFooter";
+import { RequestStateCode } from "@/constants/commonConst";
+import { useParams } from "@/core/router";
+import rpx from "@/utils/rpx";
+import { FlashList } from "@shopify/flash-list";
+import { useAtom } from "jotai";
+import React, { useEffect, useRef, useState } from "react";
+import useQueryArtist from "../hooks/useQuery";
+import { IQueryResult, scrollToTopAtom } from "../store/atoms";
 
 const ITEM_HEIGHT = rpx(120);
 
@@ -18,10 +17,10 @@ interface IResultListProps<T = IArtist.ArtistMediaType> {
     renderItem: (...args: any) => any;
 }
 export default function ResultList(props: IResultListProps) {
-    const {data, renderItem, tab} = props;
+    const { data, renderItem, tab } = props;
     const [scrollToTopState, setScrollToTopState] = useAtom(scrollToTopAtom);
     const lastScrollY = useRef<number>(0);
-    const {pluginHash, artistItem} = useParams<'artist-detail'>();
+    const { pluginHash, artistItem } = useParams<"artist-detail">();
     const [queryState, setQueryState] = useState<RequestStateCode>(
         data?.state ?? RequestStateCode.IDLE,
     );
@@ -37,7 +36,7 @@ export default function ResultList(props: IResultListProps) {
     }, [data]);
 
     return (
-        <FlatList
+        <FlashList
             onScroll={e => {
                 const currentY = e.nativeEvent.contentOffset.y;
                 if (
@@ -53,26 +52,21 @@ export default function ResultList(props: IResultListProps) {
                 }
                 lastScrollY.current = currentY;
             }}
-            ListEmptyComponent={<Empty />}
+            ListEmptyComponent={<ListEmpty state={queryState} onRetry={() => {
+                queryArtist(artistItem, 1, tab);
+            }}/>}
             ListFooterComponent={
-                queryState === RequestStateCode.PENDING_REST_PAGE ? (
-                    <ListLoading />
-                ) : queryState === RequestStateCode.FINISHED &&
-                  data.data?.length !== 0 ? (
-                    <ListReachEnd />
-                ) : null
+                data.data?.length ? <ListFooter state={queryState} onRetry={() => {
+                    queryArtist(artistItem, undefined, tab);
+                }}/> : null
             }
             onEndReached={() => {
                 (queryState === RequestStateCode.IDLE ||
                     queryState === RequestStateCode.PARTLY_DONE) &&
                     queryArtist(artistItem, undefined, tab);
             }}
-            getItemLayout={(_, index) => ({
-                length: ITEM_HEIGHT,
-                offset: ITEM_HEIGHT * index,
-                index,
-            })}
-            overScrollMode="always"
+            estimatedItemSize={ITEM_HEIGHT}
+            overScrollMode="always" 
             data={data.data ?? []}
             renderItem={renderItem}
         />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
     ColorValue,
     StyleProp,
@@ -6,10 +6,10 @@ import {
     TouchableOpacity,
     View,
     ViewStyle,
-} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import useColors from '@/hooks/useColors';
+} from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
+import useColors from "@/hooks/useColors";
 
 interface ITypeTagProps {
     title: string;
@@ -41,7 +41,7 @@ export default function TypeTag(props: ITypeTagProps) {
                 ]}>
                 <ThemeText
                     fontSize="subTitle"
-                    fontColor={selected ? 'primary' : 'text'}>
+                    fontColor={selected ? "primary" : "text"}>
                     {title}
                 </ThemeText>
             </View>
@@ -57,6 +57,6 @@ const style = StyleSheet.create({
         borderRadius: rpx(36),
         marginHorizontal: rpx(16),
         borderWidth: 1,
-        borderStyle: 'solid',
+        borderStyle: "solid",
     },
 });

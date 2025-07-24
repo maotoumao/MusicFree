@@ -1,9 +1,9 @@
-import React, {ReactNode} from 'react';
-import {Pressable, StyleProp, StyleSheet, ViewStyle} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from './themeText';
-import useColors from '@/hooks/useColors';
-import IconButton from './iconButton';
+import React, { ReactNode } from "react";
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "./themeText";
+import useColors from "@/hooks/useColors";
+import IconButton from "./iconButton";
 
 interface IChipProps {
     containerStyle?: StyleProp<ViewStyle>;
@@ -12,7 +12,7 @@ interface IChipProps {
     onClose?: () => void;
 }
 export default function Chip(props: IChipProps) {
-    const {containerStyle, children, onPress, onClose} = props;
+    const { containerStyle, children, onPress, onClose } = props;
     const colors = useColors();
 
     return (
@@ -25,7 +25,7 @@ export default function Chip(props: IChipProps) {
                 },
                 containerStyle,
             ]}>
-            {typeof children === 'string' ? (
+            {typeof children === "string" ? (
                 <ThemeText fontSize="subTitle" numberOfLines={1}>
                     {children}
                 </ThemeText>
@@ -47,9 +47,9 @@ const styles = StyleSheet.create({
         height: rpx(56),
         paddingHorizontal: rpx(18),
         borderRadius: rpx(28),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
     },
     icon: {
         marginLeft: rpx(8),

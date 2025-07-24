@@ -1,11 +1,11 @@
 import { addFileScheme } from "@/utils/fileUtils";
 import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
-import { getMediaKey } from "@/utils/mediaItem";
-import safeParse from "@/utils/safeParse";
+import { safeParse } from "@/utils/jsonUtil";
+import { getMediaUniqueKey } from "@/utils/mediaUtils";
 import { exists, unlink } from "react-native-fs";
 
 // Internal Method
-const mediaCacheStore = getOrCreateMMKV('cache.MediaCache', true);
+const mediaCacheStore = getOrCreateMMKV("cache.MediaCache", true);
 
 // 最多缓存800条数据
 const maxCacheCount = 800;
@@ -14,7 +14,7 @@ const maxCacheCount = 800;
 const getMediaCache = (mediaItem: ICommon.IMediaBase) => {
     if (mediaItem.platform && mediaItem.id) {
         const cacheMediaItem = mediaCacheStore.getString(
-            getMediaKey(mediaItem),
+            getMediaUniqueKey(mediaItem),
         );
         return cacheMediaItem
             ? safeParse<ICommon.IMediaBase>(cacheMediaItem)
@@ -41,7 +41,7 @@ const setMediaCache = (mediaItem: ICommon.IMediaBase) => {
             }
         }
 
-        mediaCacheStore.set(getMediaKey(mediaItem), JSON.stringify(mediaItem));
+        mediaCacheStore.set(getMediaUniqueKey(mediaItem), JSON.stringify(mediaItem));
         return true;
     }
 
@@ -68,7 +68,7 @@ async function checkPathAndRemove(filePath?: string) {
 /** 移除缓存信息 */
 const removeMediaCache = (mediaItem: ICommon.IMediaBase) => {
     if (mediaItem.platform && mediaItem.id) {
-        mediaCacheStore.delete(getMediaKey(mediaItem));
+        mediaCacheStore.delete(getMediaUniqueKey(mediaItem));
     }
 
     return false;

@@ -1,16 +1,17 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx, {vmax} from '@/utils/rpx';
-import ListItem from '@/components/base/listItem';
-import {ImgAsset} from '@/constants/assetsConst';
-import Toast from '@/utils/toast';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx, { vmax } from "@/utils/rpx";
+import ListItem from "@/components/base/listItem";
+import { ImgAsset } from "@/constants/assetsConst";
+import Toast from "@/utils/toast";
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import {FlatList} from 'react-native-gesture-handler';
-import {hidePanel, showPanel} from '../usePanel';
-import PanelHeader from '../base/panelHeader';
-import MusicSheet from '@/core/musicSheet';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import { FlatList } from "react-native-gesture-handler";
+import { hidePanel, showPanel } from "../usePanel";
+import PanelHeader from "../base/panelHeader";
+import MusicSheet, { useSheetsBase } from "@/core/musicSheet";
+import { useI18N } from "@/core/i18n";
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -19,10 +20,11 @@ interface IAddToMusicSheetProps {
 }
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
-    const sheets = MusicSheet.useSheetsBase();
+    const sheets = useSheetsBase();
 
-    const {musicItem = [], newSheetDefaultName} = props ?? {};
+    const { musicItem = [], newSheetDefaultName } = props ?? {};
     const safeAreaInsets = useSafeAreaInsets();
+    const { t } = useI18N();
 
     return (
         <PanelBase
@@ -30,9 +32,11 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                 <>
                     <PanelHeader
                         hideButtons
-                        title={`添加到歌单 (${
-                            Array.isArray(musicItem) ? musicItem.length : 1
-                        }首) `}
+                        title={
+                            t("panel.addToMusicSheet.title", {
+                                count: Array.isArray(musicItem) ? musicItem.length : 1,
+                            })
+                        }
                     />
                     <View style={style.wrapper}>
                         <FlatList
@@ -46,7 +50,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                     withHorizontalPadding
                                     key="new"
                                     onPress={() => {
-                                        showPanel('CreateMusicSheet', {
+                                        showPanel("CreateMusicSheet", {
                                             defaultName: newSheetDefaultName,
                                             async onSheetCreated(sheetId) {
                                                 try {
@@ -55,16 +59,16 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                                         musicItem,
                                                     );
                                                     Toast.success(
-                                                        '添加到歌单成功',
+                                                        t("panel.addToMusicSheet.toast.success"),
                                                     );
                                                 } catch {
                                                     Toast.warn(
-                                                        '添加到歌单失败',
+                                                        t("panel.addToMusicSheet.toast.fail"),
                                                     );
                                                 }
                                             },
                                             onCancel() {
-                                                showPanel('AddToMusicSheet', {
+                                                showPanel("AddToMusicSheet", {
                                                     musicItem: musicItem,
                                                     newSheetDefaultName,
                                                 });
@@ -74,10 +78,10 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                     <ListItem.ListItemImage
                                         fallbackImg={ImgAsset.add}
                                     />
-                                    <ListItem.Content title="新建歌单" />
+                                    <ListItem.Content title={t("panel.addToMusicSheet.newMusicSheet")} />
                                 </ListItem>
                             }
-                            renderItem={({item: sheet}) => (
+                            renderItem={({ item: sheet }) => (
                                 <ListItem
                                     withHorizontalPadding
                                     key={`${sheet.id}`}
@@ -88,9 +92,9 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                                 musicItem,
                                             );
                                             hidePanel();
-                                            Toast.success('添加到歌单成功');
+                                            Toast.success(t("panel.addToMusicSheet.toast.success"));
                                         } catch {
-                                            Toast.warn('添加到歌单失败');
+                                            Toast.warn(t("panel.addToMusicSheet.toast.fail"));
                                         }
                                     }}>
                                     <ListItem.ListItemImage
@@ -99,9 +103,9 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                     />
                                     <ListItem.Content
                                         title={sheet.title}
-                                        description={`${
-                                            sheet.worksNum ?? '-'
-                                        }首`}
+                                        description={t("panel.addToMusicSheet.count", {
+                                            count: sheet.worksNum ?? "-",
+                                        })}
                                     />
                                 </ListItem>
                             )}
@@ -116,7 +120,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         flex: 1,
     },
     header: {

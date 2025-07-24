@@ -1,5 +1,5 @@
-import React from 'react';
-import AlbumItem from '@/components/mediaItem/albumItem';
+import React from "react";
+import AlbumItem from "@/components/mediaItem/albumItem";
 
 interface IAlbumResultsProps {
     item: IAlbum.IAlbumItem;
@@ -7,7 +7,7 @@ interface IAlbumResultsProps {
 }
 
 export default function AlbumResultItem(props: IAlbumResultsProps) {
-    const {item: albumItem} = props;
+    const { item: albumItem } = props;
 
     return <AlbumItem albumItem={albumItem} />;
 }

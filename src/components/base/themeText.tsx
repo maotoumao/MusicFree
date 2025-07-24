@@ -1,7 +1,7 @@
-import React from 'react';
-import {Text, TextProps} from 'react-native';
-import {fontSizeConst, fontWeightConst} from '@/constants/uiConst';
-import useColors, {CustomizedColors} from '@/hooks/useColors';
+import React from "react";
+import { Text, TextProps } from "react-native";
+import { fontSizeConst, fontWeightConst } from "@/constants/uiConst";
+import useColors, { CustomizedColors } from "@/hooks/useColors";
 
 type IThemeTextProps = TextProps & {
     color?: string;
@@ -17,9 +17,9 @@ export default function ThemeText(props: IThemeTextProps) {
         style,
         color,
         children,
-        fontSize = 'content',
-        fontColor = 'text',
-        fontWeight = 'regular',
+        fontSize = "content",
+        fontColor = "text",
+        fontWeight = "regular",
         opacity,
     } = props;
 

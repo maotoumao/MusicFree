@@ -1,14 +1,14 @@
-import React from 'react';
-import {ColorKey, colorMap, iconSizeConst} from '@/constants/uiConst';
-import {TapGestureHandler} from 'react-native-gesture-handler';
-import {StyleSheet, View} from 'react-native';
-import useColors from '@/hooks/useColors';
-import {SvgProps} from 'react-native-svg';
-import Icon, {IIconName} from '@/components/base/icon.tsx';
+import React from "react";
+import { ColorKey, colorMap, iconSizeConst } from "@/constants/uiConst";
+import { TapGestureHandler } from "react-native-gesture-handler";
+import { StyleSheet, View } from "react-native";
+import useColors from "@/hooks/useColors";
+import { SvgProps } from "react-native-svg";
+import Icon, { IIconName } from "@/components/base/icon.tsx";
 
 interface IIconButtonProps extends SvgProps {
     name: IIconName;
-    style?: SvgProps['style'];
+    style?: SvgProps["style"];
     sizeType?: keyof typeof iconSizeConst;
     fontColor?: ColorKey;
     color?: string;
@@ -18,8 +18,8 @@ interface IIconButtonProps extends SvgProps {
 export function IconButtonWithGesture(props: IIconButtonProps) {
     const {
         name,
-        sizeType: size = 'normal',
-        fontColor = 'normal',
+        sizeType: size = "normal",
+        fontColor = "normal",
         onPress,
         style,
         accessibilityLabel,
@@ -35,7 +35,7 @@ export function IconButtonWithGesture(props: IIconButtonProps) {
                     accessibilityLabel={accessibilityLabel}
                     name={name}
                     color={color}
-                    style={[{minWidth: textSize}, styles.textCenter, style]}
+                    style={[{ minWidth: textSize }, styles.textCenter, style]}
                     size={textSize}
                 />
             </View>
@@ -44,7 +44,7 @@ export function IconButtonWithGesture(props: IIconButtonProps) {
 }
 
 export default function IconButton(props: IIconButtonProps) {
-    const {sizeType = 'normal', fontColor = 'normal', style, color} = props;
+    const { sizeType = "normal", fontColor = "normal", style, color } = props;
     const colors = useColors();
     const size = iconSizeConst[sizeType];
 
@@ -52,7 +52,7 @@ export default function IconButton(props: IIconButtonProps) {
         <Icon
             {...props}
             color={color ?? colors[colorMap[fontColor]]}
-            style={[{minWidth: size}, styles.textCenter, style]}
+            style={[{ minWidth: size }, styles.textCenter, style]}
             size={size}
         />
     );
@@ -60,7 +60,7 @@ export default function IconButton(props: IIconButtonProps) {
 
 const styles = StyleSheet.create({
     textCenter: {
-        height: '100%',
-        textAlignVertical: 'center',
+        height: "100%",
+        textAlignVertical: "center",
     },
 });

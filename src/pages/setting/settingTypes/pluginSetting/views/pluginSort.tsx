@@ -1,28 +1,27 @@
-import {StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
-import SortableFlatList from '@/components/base/SortableFlatList';
-import ThemeText from '@/components/base/themeText';
-import {PluginMeta} from '@/core/pluginMeta';
-import {produce} from 'immer';
-import objectPath from 'object-path';
-import rpx from '@/utils/rpx';
-import PluginManager, {Plugin} from '@/core/pluginManager';
-import Toast from '@/utils/toast';
-import HorizontalSafeAreaView from '@/components/base/horizontalSafeAreaView.tsx';
-import globalStyle from '@/constants/globalStyle';
-import AppBar from '@/components/base/appBar';
-import useColors from '@/hooks/useColors';
+import AppBar from "@/components/base/appBar";
+import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
+import SortableFlatList from "@/components/base/SortableFlatList";
+import ThemeText from "@/components/base/themeText";
+import globalStyle from "@/constants/globalStyle";
+import { useI18N } from "@/core/i18n";
+import PluginManager, { Plugin, useSortedPlugins } from "@/core/pluginManager";
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
+import Toast from "@/utils/toast";
+import React, { useState } from "react";
+import { StatusBar, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const ITEM_HEIGHT = rpx(96);
 const marginTop = rpx(188) + (StatusBar.currentHeight ?? 0);
 
 export default function PluginSort() {
-    const plugins = PluginManager.useSortedPlugins();
+    const plugins = useSortedPlugins();
     const [sortingPlugins, setSortingPlugins] = useState([...plugins]);
 
     const colors = useColors();
+    const { t } = useI18N();
 
-    function renderSortingItem({item}: {item: Plugin}) {
+    function renderSortingItem({ item }: { item: Plugin }) {
         return (
             <View style={style.sortItem}>
                 <ThemeText>{item.name}</ThemeText>
@@ -31,29 +30,16 @@ export default function PluginSort() {
     }
     return (
         <>
-            <AppBar>插件排序</AppBar>
+            <AppBar>{t("pluginSetting.menu.sort")}</AppBar>
             <HorizontalSafeAreaView style={style.sortWrapper}>
                 <>
-                    <ThemeText fontWeight="bold">插件排序</ThemeText>
+                    <ThemeText fontWeight="bold">{t("pluginSetting.menu.sort")}</ThemeText>
                     <TouchableOpacity
                         onPress={async () => {
-                            await PluginMeta.setPluginMetaAll(
-                                produce(
-                                    PluginMeta.getPluginMetaAll(),
-                                    draft => {
-                                        sortingPlugins.forEach((plg, idx) => {
-                                            objectPath.set(
-                                                draft,
-                                                `${plg.name}.order`,
-                                                idx,
-                                            );
-                                        });
-                                    },
-                                ),
-                            );
-                            Toast.success('已保存');
+                            PluginManager.setPluginOrder(sortingPlugins);
+                            Toast.success(t("toast.saveSuccess"));
                         }}>
-                        <ThemeText>完成</ThemeText>
+                        <ThemeText>{t("common.done")}</ThemeText>
                     </TouchableOpacity>
                 </>
             </HorizontalSafeAreaView>
@@ -64,7 +50,7 @@ export default function PluginSort() {
                     marginTop={marginTop}
                     renderItem={renderSortingItem}
                     itemHeight={ITEM_HEIGHT}
-                    itemJustifyContent={'space-between'}
+                    itemJustifyContent={"space-between"}
                     onSortEnd={data => {
                         setSortingPlugins(data);
                     }}
@@ -78,15 +64,15 @@ const style = StyleSheet.create({
     sortWrapper: {
         marginHorizontal: rpx(24),
         marginTop: rpx(36),
-        justifyContent: 'space-between',
+        justifyContent: "space-between",
         height: rpx(64),
-        alignItems: 'center',
-        flexDirection: 'row',
+        alignItems: "center",
+        flexDirection: "row",
     },
     sortItem: {
         height: ITEM_HEIGHT,
         width: rpx(500),
         paddingLeft: rpx(24),
-        justifyContent: 'center',
+        justifyContent: "center",
     },
 });

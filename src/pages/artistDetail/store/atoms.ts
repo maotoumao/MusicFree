@@ -1,5 +1,5 @@
-import {RequestStateCode} from '@/constants/commonConst';
-import {atom} from 'jotai';
+import { RequestStateCode } from "@/constants/commonConst";
+import { atom } from "jotai";
 
 export const scrollToTopAtom = atom(true);
 

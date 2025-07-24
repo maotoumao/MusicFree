@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from "react";
 
 export default class StateMapper<T> {
     private getFun: () => T;
@@ -47,7 +47,7 @@ export class GlobalState<T> {
 
     public setValue = (value: T | UpdateFunc<T>) => {
         let newValue: T;
-        if (typeof value === 'function') {
+        if (typeof value === "function") {
             newValue = (value as UpdateFunc<T>)(this.value);
         } else {
             newValue = value;

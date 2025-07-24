@@ -1,14 +1,15 @@
-import React, {Fragment} from 'react';
-import {Pressable, StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
+import React, { Fragment } from "react";
+import { Pressable, StyleSheet } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import {ScrollView} from 'react-native-gesture-handler';
-import {hidePanel} from '../usePanel';
-import Divider from '@/components/base/divider';
-import PanelHeader from '../base/panelHeader';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import { ScrollView } from "react-native-gesture-handler";
+import { hidePanel } from "../usePanel";
+import Divider from "@/components/base/divider";
+import PanelHeader from "../base/panelHeader";
+import { useI18N } from "@/core/i18n";
 
 interface IPlayRateProps {
     /** 点击回调 */
@@ -18,7 +19,8 @@ interface IPlayRateProps {
 const rates = [50, 75, 100, 125, 150, 175, 200];
 
 export default function PlayRate(props: IPlayRateProps) {
-    const {onRatePress} = props ?? {};
+    const { onRatePress } = props ?? {};
+    const i18n = useI18N();
 
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -27,11 +29,11 @@ export default function PlayRate(props: IPlayRateProps) {
             height={rpx(520)}
             renderBody={() => (
                 <>
-                    <PanelHeader title="播放速度" hideButtons />
+                    <PanelHeader title={i18n.t("panel.playRate.title")} hideButtons />
                     <ScrollView
                         style={[
                             style.body,
-                            {marginBottom: safeAreaInsets.bottom},
+                            { marginBottom: safeAreaInsets.bottom },
                         ]}>
                         {rates.map(key => {
                             return (
@@ -58,8 +60,8 @@ export default function PlayRate(props: IPlayRateProps) {
 
 const style = StyleSheet.create({
     header: {
-        width: '100%',
-        flexDirection: 'row',
+        width: "100%",
+        flexDirection: "row",
         padding: rpx(24),
     },
     body: {
@@ -68,6 +70,6 @@ const style = StyleSheet.create({
     },
     item: {
         height: rpx(96),
-        justifyContent: 'center',
+        justifyContent: "center",
     },
 });

@@ -3,12 +3,10 @@ import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
-import Download from "@/core/download";
 import { ImgAsset } from "@/constants/assetsConst";
 import Clipboard from "@react-native-clipboard/clipboard";
 
-import MediaMeta from "@/core/mediaExtra";
-import { getMediaKey } from "@/utils/mediaItem";
+import { getMediaUniqueKey } from "@/utils/mediaUtils";
 import FastImage from "@/components/base/fastImage";
 import Toast from "@/utils/toast";
 import LocalMusicSheet from "@/core/localMusicSheet";
@@ -23,12 +21,16 @@ import { showDialog } from "@/components/dialogs/useDialog";
 import { hidePanel, showPanel } from "../usePanel";
 import Divider from "@/components/base/divider";
 import { iconSizeConst } from "@/constants/uiConst";
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 import TrackPlayer from "@/core/trackPlayer";
 import mediaCache from "@/core/mediaCache";
-import LyricManager from "@/core/lyricManager";
 import { IIconName } from "@/components/base/icon.tsx";
 import MusicSheet from "@/core/musicSheet";
+import downloader from "@/core/downloader";
+import { getMediaExtraProperty } from "@/utils/mediaExtra";
+import lyricManager from "@/core/lyricManager";
+import { useI18N } from "@/core/i18n";
+import pluginManager from "@/core/pluginManager";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -49,17 +51,18 @@ interface IOption {
 }
 
 export default function MusicItemOptions(props: IMusicItemOptionsProps) {
-    const {musicItem, musicSheet, from} = props ?? {};
+    const { musicItem, musicSheet, from } = props ?? {};
+    const { t } = useI18N();
 
     const safeAreaInsets = useSafeAreaInsets();
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
-    const associatedLrc = MediaMeta.get(musicItem)?.associatedLrc;
+    const associatedLrc = getMediaExtraProperty(musicItem, "associatedLrc");
 
     const options: IOption[] = [
         {
-            icon: 'identification',
-            title: `ID: ${getMediaKey(musicItem)}`,
+            icon: "identification",
+            title: `ID: ${getMediaUniqueKey(musicItem)}`,
             onPress: () => {
                 mediaCache.setMediaCache(musicItem);
                 Clipboard.setString(
@@ -69,74 +72,74 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                             id: musicItem.id,
                         },
                         null,
-                        '',
+                        "",
                     ),
                 );
-                Toast.success('已复制到剪切板');
+                Toast.success(t("toast.copiedToClipboard"));
             },
         },
         {
-            icon: 'user',
-            title: `作者: ${musicItem.artist}`,
+            icon: "user",
+            title: t("panel.musicItemOptions.author", { artist: musicItem.artist }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.artist.toString());
-                    Toast.success('已复制到剪切板');
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch {
-                    Toast.warn('复制失败');
+                    Toast.warn(t("toast.copiedToClipboardFailed"));
                 }
             },
         },
         {
-            icon: 'album-outline',
+            icon: "album-outline",
             show: !!musicItem.album,
-            title: `专辑: ${musicItem.album}`,
+            title: t("panel.musicItemOptions.album", { album: musicItem.album }),
             onPress: () => {
                 try {
                     Clipboard.setString(musicItem.album.toString());
-                    Toast.success('已复制到剪切板');
+                    Toast.success(t("toast.copiedToClipboard"));
                 } catch {
-                    Toast.warn('复制失败');
+                    Toast.warn(t("toast.copiedToClipboardFailed"));
                 }
             },
         },
         {
-            icon: 'motion-play',
-            title: '下一首播放',
+            icon: "motion-play",
+            title: t("musicListEditor.addToNextPlay"),
             onPress: () => {
                 TrackPlayer.addNext(musicItem);
                 hidePanel();
             },
         },
         {
-            icon: 'folder-plus',
-            title: '添加到歌单',
+            icon: "folder-plus",
+            title: t("musicListEditor.addToSheet"),
             onPress: () => {
-                showPanel('AddToMusicSheet', {musicItem});
+                showPanel("AddToMusicSheet", { musicItem });
             },
         },
         {
-            icon: 'arrow-down-tray',
-            title: '下载',
+            icon: "arrow-down-tray",
+            title: t("common.download"),
             show: !downloaded,
             onPress: async () => {
-                showPanel('MusicQuality', {
+                showPanel("MusicQuality", {
                     musicItem,
-                    type: 'download',
+                    type: "download",
                     async onQualityPress(quality) {
-                        Download.downloadMusic(musicItem, quality);
+                        downloader.download(musicItem, quality);
                     },
                 });
             },
         },
         {
-            icon: 'check-circle-outline',
-            title: '已下载',
+            icon: "check-circle-outline",
+            title: t("panel.musicItemOptions.downloaded"),
             show: !!downloaded,
         },
         {
-            icon: 'trash-outline',
-            title: '删除',
+            icon: "trash-outline",
+            title: t("common.delete"),
             show: !!musicSheet,
             onPress: async () => {
                 if (musicSheet?.id === localMusicSheetId) {
@@ -146,24 +149,24 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 } else {
                     await MusicSheet.removeMusic(musicSheet!.id, musicItem);
                 }
-                Toast.success('已删除');
+                Toast.success(t("toast.deleteSuccess"));
                 hidePanel();
             },
         },
         {
-            icon: 'trash-outline',
-            title: '删除本地下载',
+            icon: "trash-outline",
+            title: t("panel.musicItemOptions.deleteLocalDownload"),
             show: !!downloaded,
             onPress: () => {
-                showDialog('SimpleDialog', {
-                    title: '删除本地下载',
-                    content: '将会删除已下载的本地文件，确定继续吗？',
+                showDialog("SimpleDialog", {
+                    title: t("panel.musicItemOptions.deleteLocalDownload"),
+                    content: t("panel.musicItemOptions.deleteLocalDownloadConfirm"),
                     async onOk() {
                         try {
                             await LocalMusicSheet.removeMusic(musicItem, true);
-                            Toast.success('已删除本地下载');
+                            Toast.success(t("toast.deleteSuccess"));
                         } catch (e: any) {
-                            Toast.warn(`删除失败 ${e?.message ?? e}`);
+                            Toast.warn(`${t("panel.musicItemOptions.deleteFailed")} ${e?.message ?? e}`);
                         }
                     },
                 });
@@ -171,51 +174,61 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
-            icon: 'link',
+            icon: "chat-bubble-oval-left-ellipsis",
+            title: t("panel.musicItemOptions.readComment"),
+            show: !!pluginManager.getByMedia(musicItem)?.instance.getMusicComments,
+            onPress: () => {
+                if (!musicItem) {
+                    return;
+                }
+                showPanel("MusicComment", {
+                    musicItem: musicItem,
+                });
+            },
+        },
+        {
+            icon: "link",
             title: associatedLrc
-                ? `已关联歌词 ${associatedLrc.platform}@${associatedLrc.id}`
-                : '关联歌词',
+                ? t("panel.musicItemOptions.associatedLyric", { platform: associatedLrc.platform, id: associatedLrc.id })
+                : t("panel.musicItemOptions.associateLyric"),
             onPress: async () => {
                 if (
-                    Config.getConfig('basic.associateLyricType') === 'input'
+                    Config.getConfig("basic.associateLyricType") === "input"
                 ) {
-                    showPanel('AssociateLrc', {
+                    showPanel("AssociateLrc", {
                         musicItem,
                     });
                 } else {
-                    showPanel('SearchLrc', {
+                    showPanel("SearchLrc", {
                         musicItem,
                     });
                 }
             },
         },
         {
-            icon: 'link-slash',
-            title: '解除关联歌词',
+            icon: "link-slash",
+            title: t("panel.musicItemOptions.unassociateLyric"),
             show: !!associatedLrc,
             onPress: async () => {
-                MediaMeta.update(musicItem, {
-                    associatedLrc: undefined,
-                });
-                LyricManager.refreshLyric(false, true);
-                Toast.success('已解除关联歌词');
+                lyricManager.unassociateLyric(musicItem);
+                Toast.success(t("panel.musicItemOptions.unassociateLyricSuccess"));
                 hidePanel();
             },
         },
         {
-            icon: 'alarm-outline',
-            title: '定时关闭',
+            icon: "alarm-outline",
+            title: t("panel.musicItemOptions.timingClose"),
             show: from === ROUTE_PATH.MUSIC_DETAIL,
             onPress: () => {
-                showPanel('TimingClose');
+                showPanel("TimingClose");
             },
         },
         {
-            icon: 'archive-box-x-mark',
-            title: '清除插件缓存(播放异常时使用)',
+            icon: "archive-box-x-mark",
+            title: t("panel.musicItemOptions.clearPluginCache"),
             onPress: () => {
                 mediaCache.removeMediaCache(musicItem);
-                Toast.success('缓存已清除');
+                Toast.success(t("panel.musicItemOptions.cacheCleared"));
             },
         },
     ];
@@ -227,8 +240,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                     <View style={style.header}>
                         <FastImage
                             style={style.artwork}
-                            uri={musicItem?.artwork}
-                            emptySrc={ImgAsset.albumDefault}
+                            source={musicItem?.artwork}
+                            placeholderSource={ImgAsset.albumDefault}
                         />
                         <View style={style.content}>
                             <ThemeText numberOfLines={2} style={style.title}>
@@ -238,8 +251,8 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                 fontColor="textSecondary"
                                 numberOfLines={2}
                                 fontSize="description">
-                                {musicItem?.artist}{' '}
-                                {musicItem?.album ? `- ${musicItem.album}` : ''}
+                                {musicItem?.artist}{" "}
+                                {musicItem?.album ? `- ${musicItem.album}` : ""}
                             </ThemeText>
                         </View>
                     </View>
@@ -260,7 +273,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                                 },
                             ]}
                             keyExtractor={_ => _.title}
-                            renderItem={({item}) =>
+                            renderItem={({ item }) =>
                                 item.show !== false ? (
                                     <ListItem
                                         withHorizontalPadding
@@ -291,7 +304,7 @@ const style = StyleSheet.create({
     header: {
         width: rpx(750),
         height: rpx(200),
-        flexDirection: 'row',
+        flexDirection: "row",
         padding: rpx(24),
     },
     listWrapper: {
@@ -306,7 +319,7 @@ const style = StyleSheet.create({
         marginLeft: rpx(36),
         width: rpx(526),
         height: rpx(140),
-        justifyContent: 'space-around',
+        justifyContent: "space-around",
     },
     title: {
         paddingRight: rpx(24),

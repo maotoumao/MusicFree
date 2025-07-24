@@ -1,28 +1,30 @@
-import React, {useMemo, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import useColors from '@/hooks/useColors';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-import {FlashList} from '@shopify/flash-list';
-import ListItem from '@/components/base/listItem';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
-import {ImgAsset} from '@/constants/assetsConst';
-import {showDialog} from '@/components/dialogs/useDialog';
-import Toast from '@/utils/toast';
-import Empty from '@/components/base/empty';
-import IconButton from '@/components/base/iconButton';
-import {showPanel} from '@/components/panels/usePanel';
-import {localPluginPlatform} from '@/constants/commonConst';
-import MusicSheet from '@/core/musicSheet';
+import Empty from "@/components/base/empty";
+import IconButton from "@/components/base/iconButton";
+import ListItem from "@/components/base/listItem";
+import ThemeText from "@/components/base/themeText";
+import { showDialog } from "@/components/dialogs/useDialog";
+import { showPanel } from "@/components/panels/usePanel";
+import { ImgAsset } from "@/constants/assetsConst";
+import { localPluginPlatform } from "@/constants/commonConst";
+import { useI18N } from "@/core/i18n";
+import MusicSheet, { useSheetsBase, useStarredSheets } from "@/core/musicSheet";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import useColors from "@/hooks/useColors";
+import rpx from "@/utils/rpx";
+import Toast from "@/utils/toast";
+import { FlashList } from "@shopify/flash-list";
+import React, { useMemo, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export default function Sheets() {
     const [index, setIndex] = useState(0);
     const colors = useColors();
     const navigate = useNavigate();
 
-    const allSheets = MusicSheet.useSheetsBase();
-    const staredSheets = MusicSheet.useStarredSheets();
+    const allSheets = useSheetsBase();
+    const staredSheets = useStarredSheets();
+    const { t } = useI18N();
 
     const selectedTabTextStyle = useMemo(() => {
         return [
@@ -33,13 +35,16 @@ export default function Sheets() {
         ];
     }, [colors]);
 
+
     return (
         <>
             <View style={styles.subTitleContainer}>
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
                     accessible
-                    accessibilityLabel={`我的歌单，共${allSheets.length}个`}
+                    accessibilityLabel={t("home.myPlaylistsCount.a11y", {
+                        count: allSheets.length,
+                    })}
                     onPress={() => {
                         setIndex(0);
                     }}>
@@ -50,21 +55,23 @@ export default function Sheets() {
                             styles.tabText,
                             index === 0 ? selectedTabTextStyle : null,
                         ]}>
-                        我的歌单
+                        {t("home.myPlaylists")}
                     </ThemeText>
                     <ThemeText
                         accessible={false}
                         fontColor="textSecondary"
                         fontSize="subTitle"
                         style={styles.tabText}>
-                        {' '}
+                        {" "}
                         ({allSheets.length})
                     </ThemeText>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
                     accessible
-                    accessibilityLabel={`收藏歌单，共${staredSheets.length}个`}
+                    accessibilityLabel={t("home.starredPlaylistsCount.a11y", {
+                        count: allSheets.length,
+                    })}
                     onPress={() => {
                         setIndex(1);
                     }}>
@@ -75,14 +82,14 @@ export default function Sheets() {
                             styles.tabText,
                             index === 1 ? selectedTabTextStyle : null,
                         ]}>
-                        收藏歌单
+                        {t("home.starredPlaylists")}
                     </ThemeText>
                     <ThemeText
                         fontColor="textSecondary"
                         fontSize="subTitle"
                         accessible={false}
                         style={styles.tabText}>
-                        {' '}
+                        {" "}
                         ({staredSheets.length})
                     </ThemeText>
                 </TouchableWithoutFeedback>
@@ -91,29 +98,31 @@ export default function Sheets() {
                         name="plus"
                         style={styles.newSheetButton}
                         sizeType="normal"
-                        accessibilityLabel="新建歌单"
+                        accessibilityLabel={t("home.newPlaylist.a11y")}
                         onPress={() => {
-                            showPanel('CreateMusicSheet');
+                            showPanel("CreateMusicSheet");
                         }}
                     />
                     <IconButton
                         name="inbox-arrow-down"
                         sizeType="normal"
-                        accessibilityLabel="导入歌单"
+                        accessibilityLabel={t("home.importPlaylist.a11y")}
                         onPress={() => {
-                            showPanel('ImportMusicSheet');
+                            showPanel("ImportMusicSheet");
                         }}
                     />
                 </View>
             </View>
             <FlashList
                 ListEmptyComponent={<Empty />}
+                extraData={{ t }}
                 data={(index === 0 ? allSheets : staredSheets) ?? []}
                 estimatedItemSize={ListItem.Size.big}
-                renderItem={({item: sheet}) => {
+                renderItem={({ item: sheet }) => {
                     const isLocalSheet = !(
                         sheet.platform && sheet.platform !== localPluginPlatform
                     );
+
 
                     return (
                         <ListItem
@@ -136,7 +145,7 @@ export default function Sheets() {
                                 fallbackImg={ImgAsset.albumDefault}
                                 maskIcon={
                                     sheet.id === MusicSheet.defaultSheet.id
-                                        ? 'heart'
+                                        ? "heart"
                                         : null
                                 }
                             />
@@ -144,8 +153,8 @@ export default function Sheets() {
                                 title={sheet.title}
                                 description={
                                     isLocalSheet
-                                        ? `${sheet.worksNum}首`
-                                        : `${sheet.artist}`
+                                        ? t("home.songCount", { count: sheet.worksNum })
+                                        : `${sheet.artist ?? ""}`
                                 }
                             />
                             {sheet.id !== MusicSheet.defaultSheet.id ? (
@@ -153,20 +162,22 @@ export default function Sheets() {
                                     position="right"
                                     icon="trash-outline"
                                     onPress={() => {
-                                        showDialog('SimpleDialog', {
-                                            title: '删除歌单',
-                                            content: `确定删除歌单「${sheet.title}」吗?`,
+                                        showDialog("SimpleDialog", {
+                                            title: t("dialog.deleteSheetTitle"),
+                                            content: t("dialog.deleteSheetContent", {
+                                                name: sheet.title,
+                                            }),
                                             onOk: async () => {
                                                 if (isLocalSheet) {
                                                     await MusicSheet.removeSheet(
                                                         sheet.id,
                                                     );
-                                                    Toast.success('已删除');
+                                                    Toast.success(t("toast.deleteSuccess"));
                                                 } else {
                                                     await MusicSheet.unstarMusicSheet(
                                                         sheet,
                                                     );
-                                                    Toast.success('已取消收藏');
+                                                    Toast.success(t("toast.hasUnstarred"));
                                                 }
                                             },
                                         });
@@ -185,15 +196,15 @@ export default function Sheets() {
 const styles = StyleSheet.create({
     subTitleContainer: {
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'flex-start',
+        flexDirection: "row",
+        alignItems: "flex-start",
         marginBottom: rpx(12),
     },
     subTitleLeft: {
-        flexDirection: 'row',
+        flexDirection: "row",
     },
     tabContainer: {
-        flexDirection: 'row',
+        flexDirection: "row",
         marginRight: rpx(32),
     },
 
@@ -202,14 +213,14 @@ const styles = StyleSheet.create({
     },
     selectTabText: {
         borderBottomWidth: rpx(6),
-        fontWeight: 'bold',
+        fontWeight: "bold",
     },
     more: {
         height: rpx(64),
         marginTop: rpx(3),
         flexGrow: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
+        flexDirection: "row",
+        justifyContent: "flex-end",
     },
     newSheetButton: {
         marginRight: rpx(24),

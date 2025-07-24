@@ -1,8 +1,8 @@
-import React from 'react';
-import globalStyle from '@/constants/globalStyle';
-import Operations from './operations';
-import {View} from 'react-native';
-import Sheets from '../homeBody/sheets';
+import React from "react";
+import globalStyle from "@/constants/globalStyle";
+import Operations from "./operations";
+import { View } from "react-native";
+import Sheets from "../homeBody/sheets";
 
 export default function HomeBodyHorizontal() {
     return (

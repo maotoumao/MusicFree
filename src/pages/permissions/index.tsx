@@ -1,17 +1,18 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {AppState, StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
-import AppBar from '@/components/base/appBar';
-import VerticalSafeAreaView from '@/components/base/verticalSafeAreaView';
-import globalStyle from '@/constants/globalStyle';
-import StatusBar from '@/components/base/statusBar';
-import ThemeText from '@/components/base/themeText';
-import ListItem from '@/components/base/listItem';
-import ThemeSwitch from '@/components/base/switch';
-import LyricUtil from '@/native/lyricUtil';
-import NativeUtils from '@/native/utils';
+import AppBar from "@/components/base/appBar";
+import ListItem from "@/components/base/listItem";
+import StatusBar from "@/components/base/statusBar";
+import ThemeSwitch from "@/components/base/switch";
+import ThemeText from "@/components/base/themeText";
+import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView";
+import globalStyle from "@/constants/globalStyle";
+import { useI18N } from "@/core/i18n";
+import LyricUtil from "@/native/lyricUtil";
+import NativeUtils from "@/native/utils";
+import rpx from "@/utils/rpx";
+import React, { useEffect, useRef, useState } from "react";
+import { AppState, StyleSheet } from "react-native";
 
-type IPermissionTypes = 'floatingWindow' | 'fileStorage';
+type IPermissionTypes = "floatingWindow" | "fileStorage";
 
 export default function Permissions() {
     const appState = useRef(AppState.currentState);
@@ -22,18 +23,19 @@ export default function Permissions() {
         fileStorage: false,
         // background: false,
     });
+    const { t } = useI18N();
 
     async function checkPermission(type?: IPermissionTypes) {
         let newPermission = {
             ...permissions,
         };
-        if (!type || type === 'floatingWindow') {
+        if (!type || type === "floatingWindow") {
             const hasPermission = await LyricUtil.checkSystemAlertPermission();
             newPermission.floatingWindow = hasPermission;
         }
-        if (!type || type === 'fileStorage') {
+        if (!type || type === "fileStorage") {
             const hasPermission = await NativeUtils.checkStoragePermission();
-            console.log('HAS', hasPermission);
+            console.log("HAS", hasPermission);
             newPermission.fileStorage = hasPermission;
         }
         // if (!type || type === 'background') {
@@ -46,11 +48,11 @@ export default function Permissions() {
     useEffect(() => {
         checkPermission();
         const subscription = AppState.addEventListener(
-            'change',
+            "change",
             nextAppState => {
                 if (
                     appState.current.match(/inactive|background/) &&
-                    nextAppState === 'active'
+                    nextAppState === "active"
                 ) {
                     checkPermission();
                 }
@@ -67,10 +69,9 @@ export default function Permissions() {
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
             <StatusBar />
-            <AppBar>权限管理</AppBar>
+            <AppBar>{t("permissionSetting.title")}</AppBar>
             <ThemeText style={styles.description}>
-                此处列出了本 APP
-                需要的所有权限，你可以从这里开启或关闭某些权限。
+                {t("permissionSetting.description")}
             </ThemeText>
             <ListItem
                 withHorizontalPadding
@@ -79,8 +80,8 @@ export default function Permissions() {
                     LyricUtil.requestSystemAlertPermission();
                 }}>
                 <ListItem.Content
-                    title="悬浮窗权限"
-                    description="用以展示桌面歌词"
+                    title={t("permissionSetting.floatWindowPermission")}
+                    description={t("permissionSetting.floatWindowPermissionDescription")}
                 />
                 <ThemeSwitch value={permissions.floatingWindow} />
             </ListItem>
@@ -91,8 +92,8 @@ export default function Permissions() {
                     NativeUtils.requestStoragePermission();
                 }}>
                 <ListItem.Content
-                    title="文件读写权限"
-                    description="用以下载歌曲、缓存数据"
+                    title={t("permissionSetting.fileReadWritePermission")}
+                    description={t("permissionSetting.fileReadWritePermissionDescription")}
                 />
                 <ThemeSwitch value={permissions.fileStorage} />
             </ListItem>
@@ -108,7 +109,7 @@ export default function Permissions() {
 
 const styles = StyleSheet.create({
     description: {
-        width: '100%',
+        width: "100%",
         paddingHorizontal: rpx(24),
         marginVertical: rpx(36),
     },

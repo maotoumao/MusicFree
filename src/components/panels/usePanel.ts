@@ -1,6 +1,6 @@
-import {GlobalState} from '@/utils/stateMapper';
-import {DeviceEventEmitter} from 'react-native';
-import panels from './types';
+import { GlobalState } from "@/utils/stateMapper";
+import { DeviceEventEmitter } from "react-native";
+import panels from "./types";
 
 type IPanel = typeof panels;
 type IPanelkeys = keyof IPanel;
@@ -21,7 +21,7 @@ export function showPanel<T extends IPanelkeys>(
     payload?: Parameters<IPanel[T]>[0],
 ) {
     if (panelInfoStore.getValue().name) {
-        DeviceEventEmitter.emit('hidePanel', () => {
+        DeviceEventEmitter.emit("hidePanel", () => {
             panelInfoStore.setValue({
                 name,
                 payload,
@@ -36,5 +36,5 @@ export function showPanel<T extends IPanelkeys>(
 }
 
 export function hidePanel() {
-    DeviceEventEmitter.emit('hidePanel');
+    DeviceEventEmitter.emit("hidePanel");
 }

@@ -1,4 +1,4 @@
-import {State} from 'react-native-track-player';
+import { State } from "react-native-track-player";
 
 /**
  * 音乐是否处于停止状态

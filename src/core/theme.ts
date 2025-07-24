@@ -1,4 +1,4 @@
-import Config from "@/core/config.ts";
+import Config from "@/core/appConfig";
 
 import { DarkTheme as _DarkTheme, DefaultTheme as _DefaultTheme } from "@react-navigation/native";
 import { GlobalState } from "@/utils/stateMapper";
@@ -6,58 +6,60 @@ import { CustomizedColors } from "@/hooks/useColors";
 import Color from "color";
 
 export const lightTheme = {
-    id: 'p-light',
+    id: "p-light",
     ..._DefaultTheme,
     colors: {
         ..._DefaultTheme.colors,
-        background: 'transparent',
-        text: '#333333',
-        textSecondary: Color('#333333').alpha(0.7).toString(),
-        primary: '#f17d34',
-        pageBackground: '#fafafa',
-        shadow: '#000',
-        appBar: '#f17d34',
-        appBarText: '#fefefe',
-        musicBar: '#f2f2f2',
-        musicBarText: '#333333',
-        divider: 'rgba(0,0,0,0.1)',
-        listActive: 'rgba(0,0,0,0.1)', // 在手机上表现是ripple
-        mask: 'rgba(51,51,51,0.2)',
-        backdrop: '#f0f0f0',
-        tabBar: '#f0f0f0',
-        placeholder: '#eaeaea',
-        success: '#08A34C',
-        danger: '#FC5F5F',
-        info: '#0A95C8',
-        card: '#e2e2e288',
+        background: "transparent",
+        text: "#333333",
+        textSecondary: Color("#333333").alpha(0.7).toString(),
+        primary: "#f17d34",
+        pageBackground: "#fafafa",
+        shadow: "#000",
+        appBar: "#f17d34",
+        appBarText: "#fefefe",
+        musicBar: "#f2f2f2",
+        musicBarText: "#333333",
+        divider: "rgba(0,0,0,0.1)",
+        listActive: "rgba(0,0,0,0.1)", // 在手机上表现是ripple
+        mask: "rgba(51,51,51,0.2)",
+        backdrop: "#f0f0f0",
+        tabBar: "#f0f0f0",
+        placeholder: "#eaeaea",
+        success: "#08A34C",
+        danger: "#FC5F5F",
+        info: "#0A95C8",
+        card: "#e2e2e288",
+        notification: "#f0f0f0",
     },
 };
 
 export const darkTheme = {
-    id: 'p-dark',
+    id: "p-dark",
     ..._DarkTheme,
     colors: {
         ..._DarkTheme.colors,
-        background: 'transparent',
-        text: '#fcfcfc',
-        textSecondary: Color('#fcfcfc').alpha(0.7).toString(),
-        primary: '#3FA3B5',
-        pageBackground: '#202020',
-        shadow: '#999',
-        appBar: '#262626',
-        appBarText: '#fcfcfc',
-        musicBar: '#262626',
-        musicBarText: '#fcfcfc',
-        divider: 'rgba(255,255,255,0.1)',
-        listActive: 'rgba(255,255,255,0.1)', // 在手机上表现是ripple
-        mask: 'rgba(33,33,33,0.8)',
-        backdrop: '#303030',
-        tabBar: '#303030',
-        placeholder: '#424242',
-        success: '#08A34C',
-        danger: '#FC5F5F',
-        info: '#0A95C8',
-        card: '#33333388',
+        background: "transparent",
+        text: "#fcfcfc",
+        textSecondary: Color("#fcfcfc").alpha(0.7).toString(),
+        primary: "#3FA3B5",
+        pageBackground: "#202020",
+        shadow: "#999",
+        appBar: "#262626",
+        appBarText: "#fcfcfc",
+        musicBar: "#262626",
+        musicBarText: "#fcfcfc",
+        divider: "rgba(255,255,255,0.1)",
+        listActive: "rgba(255,255,255,0.1)", // 在手机上表现是ripple
+        mask: "rgba(33,33,33,0.8)",
+        backdrop: "#303030",
+        tabBar: "#303030",
+        placeholder: "#424242",
+        success: "#08A34C",
+        danger: "#FC5F5F",
+        info: "#0A95C8",
+        card: "#33333388",
+        notification: "#303030",
     },
 };
 
@@ -71,11 +73,11 @@ const themeStore = new GlobalState(darkTheme);
 const backgroundStore = new GlobalState<IBackgroundInfo | null>(null);
 
 function setup() {
-    const currentTheme = Config.getConfig('theme.selectedTheme') ?? 'p-dark';
+    const currentTheme = Config.getConfig("theme.selectedTheme") ?? "p-dark";
 
-    if (currentTheme === 'p-dark') {
+    if (currentTheme === "p-dark") {
         themeStore.setValue(darkTheme);
-    } else if (currentTheme === 'p-light') {
+    } else if (currentTheme === "p-light") {
         themeStore.setValue(lightTheme);
     } else {
         themeStore.setValue({
@@ -83,14 +85,14 @@ function setup() {
             dark: true,
             // @ts-ignore
             colors:
-                (Config.getConfig('theme.colors') as CustomizedColors) ??
+                (Config.getConfig("theme.colors") as CustomizedColors) ??
                 darkTheme.colors,
         });
     }
 
-    const bgUrl = Config.getConfig('theme.background');
-    const bgBlur = Config.getConfig('theme.backgroundBlur');
-    const bgOpacity = Config.getConfig('theme.backgroundOpacity');
+    const bgUrl = Config.getConfig("theme.background");
+    const bgBlur = Config.getConfig("theme.backgroundBlur");
+    const bgOpacity = Config.getConfig("theme.backgroundOpacity");
 
     backgroundStore.setValue({
         url: bgUrl,
@@ -106,9 +108,9 @@ function setTheme(
         background?: IBackgroundInfo;
     },
 ) {
-    if (themeName === 'p-light') {
+    if (themeName === "p-light") {
         themeStore.setValue(lightTheme);
-    } else if (themeName === 'p-dark') {
+    } else if (themeName === "p-dark") {
         themeStore.setValue(darkTheme);
     } else {
         themeStore.setValue({
@@ -121,8 +123,8 @@ function setTheme(
         });
     }
 
-    Config.setConfig('theme.selectedTheme', themeName);
-    Config.setConfig('theme.colors', themeStore.getValue().colors);
+    Config.setConfig("theme.selectedTheme", themeName);
+    Config.setConfig("theme.colors", themeStore.getValue().colors);
 
     if (extra?.background) {
         const currentBg = backgroundStore.getValue();
@@ -132,19 +134,19 @@ function setTheme(
             ...(currentBg ?? {}),
             url: undefined,
         };
-        if (typeof extra.background.blur === 'number') {
+        if (typeof extra.background.blur === "number") {
             newBg.blur = extra.background.blur;
         }
-        if (typeof extra.background.opacity === 'number') {
+        if (typeof extra.background.opacity === "number") {
             newBg.opacity = extra.background.opacity;
         }
         if (extra.background.url) {
             newBg.url = extra.background.url;
         }
 
-        Config.setConfig('theme.background', newBg.url);
-        Config.setConfig('theme.backgroundBlur', newBg.blur);
-        Config.setConfig('theme.backgroundOpacity', newBg.opacity);
+        Config.setConfig("theme.background", newBg.url);
+        Config.setConfig("theme.backgroundBlur", newBg.blur);
+        Config.setConfig("theme.backgroundOpacity", newBg.opacity);
 
         backgroundStore.setValue(newBg);
     }
@@ -152,7 +154,7 @@ function setTheme(
 
 function setColors(colors: Partial<CustomizedColors>) {
     const currentTheme = themeStore.getValue();
-    if (currentTheme.id !== 'p-light' && currentTheme.id !== 'p-dark') {
+    if (currentTheme.id !== "p-light" && currentTheme.id !== "p-dark") {
         const newTheme = {
             ...currentTheme,
             colors: {
@@ -160,8 +162,8 @@ function setColors(colors: Partial<CustomizedColors>) {
                 ...colors,
             },
         };
-        Config.setConfig('theme.customColors', newTheme.colors);
-        Config.setConfig('theme.colors', newTheme.colors);
+        Config.setConfig("theme.customColors", newTheme.colors);
+        Config.setConfig("theme.colors", newTheme.colors);
         themeStore.setValue(newTheme);
     }
 }
@@ -174,46 +176,36 @@ function setBackground(backgroundInfo: Partial<IBackgroundInfo>) {
             blur: 20,
         }),
     };
-    if (typeof backgroundInfo.blur === 'number') {
-        Config.setConfig('theme.backgroundBlur', backgroundInfo.blur);
+    if (typeof backgroundInfo.blur === "number") {
+        Config.setConfig("theme.backgroundBlur", backgroundInfo.blur);
         newBgInfo.blur = backgroundInfo.blur;
     }
-    if (typeof backgroundInfo.opacity === 'number') {
-        Config.setConfig('theme.backgroundOpacity', backgroundInfo.opacity);
+    if (typeof backgroundInfo.opacity === "number") {
+        Config.setConfig("theme.backgroundOpacity", backgroundInfo.opacity);
         newBgInfo.opacity = backgroundInfo.opacity;
     }
     if (backgroundInfo.url !== undefined) {
-        Config.setConfig('theme.background', backgroundInfo.url);
+        Config.setConfig("theme.background", backgroundInfo.url);
         newBgInfo.url = backgroundInfo.url;
     }
     backgroundStore.setValue(newBgInfo);
 }
 
 const configableColorKey: Array<keyof CustomizedColors> = [
-    'primary',
-    'text',
-    'appBar',
-    'appBarText',
-    'musicBar',
-    'musicBarText',
-    'pageBackground',
-    'backdrop',
-    'card',
-    'placeholder',
+    "primary",
+    "text",
+    "appBar",
+    "appBarText",
+    "musicBar",
+    "musicBarText",
+    "pageBackground",
+    "backdrop",
+    "card",
+    "placeholder",
+    "tabBar",
+    "notification",
 ];
 
-const colorDesc: Record<string, string> = {
-    text: '文字颜色',
-    primary: '主题色',
-    appBar: '标题栏背景色',
-    appBarText: '标题栏文字颜色',
-    musicBar: '音乐栏背景色',
-    musicBarText: '音乐栏文字颜色',
-    pageBackground: '页面背景色',
-    backdrop: '弹窗、浮层背景色',
-    card: '卡片背景色',
-    placeholder: '输入框背景色',
-};
 
 const Theme = {
     setup,
@@ -224,7 +216,6 @@ const Theme = {
     getTheme: themeStore.getValue,
     useBackground: backgroundStore.useValue,
     configableColorKey,
-    colorDesc,
 };
 
 export default Theme;

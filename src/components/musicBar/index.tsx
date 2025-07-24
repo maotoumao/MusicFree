@@ -1,20 +1,20 @@
-import React, {memo, useEffect, useState} from 'react';
-import {Keyboard, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import {CircularProgressBase} from 'react-native-circular-progress-indicator';
+import React, { memo, useEffect, useState } from "react";
+import { Keyboard, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import { CircularProgressBase } from "react-native-circular-progress-indicator";
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {showPanel} from '../panels/usePanel';
-import useColors from '@/hooks/useColors';
-import IconButton from '../base/iconButton';
-import TrackPlayer from '@/core/trackPlayer';
-import {musicIsPaused} from '@/utils/trackUtils';
-import MusicInfo from './musicInfo';
-import Icon from '@/components/base/icon.tsx';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { showPanel } from "../panels/usePanel";
+import useColors from "@/hooks/useColors";
+import IconButton from "../base/iconButton";
+import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from "@/core/trackPlayer";
+import { musicIsPaused } from "@/utils/trackUtils";
+import MusicInfo from "./musicInfo";
+import Icon from "@/components/base/icon.tsx";
 
 function CircularPlayBtn() {
-    const progress = TrackPlayer.useProgress();
-    const musicState = TrackPlayer.useMusicState();
+    const progress = useProgress();
+    const musicState = useMusicState();
     const colors = useColors();
 
     const isPaused = musicIsPaused(musicState);
@@ -34,9 +34,9 @@ function CircularPlayBtn() {
             activeStrokeColor={colors.musicBarText}
             inActiveStrokeColor={colors.textSecondary}>
             <IconButton
-                accessibilityLabel={'播放或暂停歌曲'}
-                name={isPaused ? 'play' : 'pause'}
-                sizeType={'normal'}
+                accessibilityLabel={"播放或暂停歌曲"}
+                name={isPaused ? "play" : "pause"}
+                sizeType={"normal"}
                 hitSlop={{
                     top: 10,
                     left: 10,
@@ -56,7 +56,7 @@ function CircularPlayBtn() {
     );
 }
 function MusicBar() {
-    const musicItem = TrackPlayer.useCurrentMusic();
+    const musicItem = useCurrentMusic();
 
     const [showKeyboard, setKeyboardStatus] = useState(false);
 
@@ -64,10 +64,10 @@ function MusicBar() {
     const safeAreaInsets = useSafeAreaInsets();
 
     useEffect(() => {
-        const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
             setKeyboardStatus(true);
         });
-        const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
             setKeyboardStatus(false);
         });
 
@@ -103,7 +103,7 @@ function MusicBar() {
                             name="playlist"
                             size={rpx(56)}
                             onPress={() => {
-                                showPanel('PlayList');
+                                showPanel("PlayList");
                             }}
                             color={colors.musicBarText}
                             style={[style.actionIcon]}
@@ -119,17 +119,17 @@ export default memo(MusicBar, () => true);
 
 const style = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         height: rpx(132),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         paddingRight: rpx(24),
     },
     actionGroup: {
         width: rpx(200),
-        justifyContent: 'flex-end',
-        flexDirection: 'row',
-        alignItems: 'center',
+        justifyContent: "flex-end",
+        flexDirection: "row",
+        alignItems: "center",
     },
     actionIcon: {
         marginLeft: rpx(36),

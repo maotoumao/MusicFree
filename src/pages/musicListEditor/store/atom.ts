@@ -1,4 +1,4 @@
-import {atom} from 'jotai';
+import { atom } from "jotai";
 
 export interface IEditorMusicItem {
     musicItem: IMusic.IMusicItem;
@@ -11,4 +11,4 @@ const editingMusicListAtom = atom<IEditorMusicItem[]>([]);
 /** 是否变动过 */
 const musicListChangedAtom = atom(false);
 
-export {editingMusicListAtom, musicListChangedAtom};
+export { editingMusicListAtom, musicListChangedAtom };

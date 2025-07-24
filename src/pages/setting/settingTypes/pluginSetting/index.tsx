@@ -9,15 +9,15 @@ const Stack = createNativeStackNavigator<any>();
 
 const routes = [
     {
-        path: '/pluginsetting/list',
+        path: "/pluginsetting/list",
         component: PluginList,
     },
     {
-        path: '/pluginsetting/sort',
+        path: "/pluginsetting/sort",
         component: PluginSort,
     },
     {
-        path: '/pluginsetting/subscribe',
+        path: "/pluginsetting/subscribe",
         component: PluginSubscribe,
     },
 ];
@@ -28,7 +28,7 @@ export default function PluginSetting() {
             initialRouteName={routes[0].path}
             screenOptions={{
                 headerShown: false,
-                animation: 'slide_from_right',
+                animation: "slide_from_right",
                 animationDuration: 100,
             }}>
             {routes.map(route => (

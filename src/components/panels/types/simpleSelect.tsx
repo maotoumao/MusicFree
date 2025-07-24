@@ -1,11 +1,11 @@
-import React, {Fragment} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
-import rpx from '@/utils/rpx';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import PanelBase from '../base/panelBase';
-import {hidePanel} from '../usePanel';
-import ListItem from '@/components/base/listItem';
-import PanelHeader from '../base/panelHeader';
+import React, { Fragment } from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import rpx from "@/utils/rpx";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PanelBase from "../base/panelBase";
+import { hidePanel } from "../usePanel";
+import ListItem from "@/components/base/listItem";
+import PanelHeader from "../base/panelHeader";
 
 interface ICandidateItem {
     title?: string;
@@ -22,7 +22,7 @@ interface ISimpleSelectProps {
 export default function SimpleSelect(props: ISimpleSelectProps) {
     const {
         height = rpx(520),
-        header = '',
+        header = "",
         candidates = [],
         onPress,
     } = props ?? {};
@@ -39,7 +39,7 @@ export default function SimpleSelect(props: ISimpleSelectProps) {
                     <ScrollView
                         style={[
                             styles.body,
-                            {marginBottom: safeAreaInsets.bottom},
+                            { marginBottom: safeAreaInsets.bottom },
                         ]}>
                         {candidates.map((it, index) => {
                             return (
@@ -67,8 +67,8 @@ export default function SimpleSelect(props: ISimpleSelectProps) {
 
 const styles = StyleSheet.create({
     header: {
-        width: '100%',
-        flexDirection: 'row',
+        width: "100%",
+        flexDirection: "row",
         padding: rpx(24),
     },
     body: {
@@ -76,6 +76,6 @@ const styles = StyleSheet.create({
     },
     item: {
         height: rpx(96),
-        justifyContent: 'center',
+        justifyContent: "center",
     },
 });

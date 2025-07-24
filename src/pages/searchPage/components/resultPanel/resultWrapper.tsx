@@ -1,17 +1,15 @@
-import React, {memo, useCallback, useEffect, useState} from 'react';
-import {useAtomValue} from 'jotai';
-import {ISearchResult, queryAtom} from '../../store/atoms';
-import {renderMap} from './results';
-import useSearch from '../../hooks/useSearch';
-import Loading from '@/components/base/loading';
-import {RequestStateCode} from '@/constants/commonConst';
-import ListLoading from '@/components/base/listLoading';
-import Empty from '@/components/base/empty';
-import ListReachEnd from '@/components/base/listReachEnd';
-import useOrientation from '@/hooks/useOrientation';
-import {FlashList} from '@shopify/flash-list';
-import rpx from '@/utils/rpx';
-import {StyleSheet, View} from 'react-native';
+import ListEmpty from "@/components/base/listEmpty";
+import ListFooter from "@/components/base/listFooter";
+import Loading from "@/components/base/loading";
+import { RequestStateCode } from "@/constants/commonConst";
+import useOrientation from "@/hooks/useOrientation";
+import rpx from "@/utils/rpx";
+import { FlashList } from "@shopify/flash-list";
+import { useAtomValue } from "jotai";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import useSearch from "../../hooks/useSearch";
+import { ISearchResult, queryAtom } from "../../store/atoms";
+import { renderMap } from "./results";
 
 interface IResultWrapperProps<
     T extends ICommon.SupportMediaType = ICommon.SupportMediaType,
@@ -23,7 +21,7 @@ interface IResultWrapperProps<
     pluginSearchResultRef: React.MutableRefObject<ISearchResult<T>>;
 }
 function ResultWrapper(props: IResultWrapperProps) {
-    const {tab, pluginHash, searchResult, pluginSearchResultRef} = props;
+    const { tab, pluginHash, searchResult, pluginSearchResultRef } = props;
     const search = useSearch();
     const [searchState, setSearchState] = useState<RequestStateCode>(
         searchResult?.state ?? RequestStateCode.IDLE,
@@ -49,7 +47,7 @@ function ResultWrapper(props: IResultWrapperProps) {
         setSearchState(searchResult?.state ?? RequestStateCode.IDLE);
     }, [searchResult]);
 
-    const renderItem = ({item, index}: any) => (
+    const renderItem = ({ item, index }: any) => (
         <ResultComponent
             item={item}
             index={index}
@@ -63,20 +61,12 @@ function ResultWrapper(props: IResultWrapperProps) {
     ) : (
         <FlashList
             extraData={searchState}
-            ListEmptyComponent={() =>
-                searchState & RequestStateCode.LOADING ? null : <Empty />
-            }
-            ListFooterComponent={() => (
-                <View style={style.wrapper}>
-                    {searchState === RequestStateCode.PENDING_REST_PAGE ? (
-                        <ListLoading />
-                    ) : searchState === RequestStateCode.FINISHED ? (
-                        <ListReachEnd />
-                    ) : (
-                        <></>
-                    )}
-                </View>
-            )}
+            ListEmptyComponent={<ListEmpty state={searchState} onRetry={() => {
+                search(query, 1, tab, pluginHash);
+            }} />}
+            ListFooterComponent={data?.length ? <ListFooter state={searchState} onRetry={() => {
+                search(query, undefined, tab, pluginHash);
+            }} /> : null}
             data={data}
             refreshing={false}
             onRefresh={() => {
@@ -87,9 +77,9 @@ function ResultWrapper(props: IResultWrapperProps) {
                     searchState === RequestStateCode.IDLE) &&
                     search(undefined, undefined, tab, pluginHash);
             }}
-            estimatedItemSize={tab === 'sheet' ? rpx(306) : rpx(120)}
+            estimatedItemSize={tab === "sheet" ? rpx(306) : rpx(120)}
             numColumns={
-                tab === 'sheet' ? (orientation === 'vertical' ? 3 : 4) : 1
+                tab === "sheet" ? (orientation === "vertical" ? 3 : 4) : 1
             }
             renderItem={renderItem}
             keyExtractor={keyExtractor}
@@ -98,11 +88,3 @@ function ResultWrapper(props: IResultWrapperProps) {
 }
 
 export default memo(ResultWrapper);
-const style = StyleSheet.create({
-    wrapper: {
-        width: '100%',
-        height: rpx(140),
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-});

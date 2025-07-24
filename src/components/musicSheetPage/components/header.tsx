@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import ThemeText from '@/components/base/themeText';
-import {ImgAsset} from '@/constants/assetsConst';
-import FastImage from '@/components/base/fastImage';
-import PlayAllBar from '@/components/base/playAllBar';
-import useColors from '@/hooks/useColors';
+import React, { useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import ThemeText from "@/components/base/themeText";
+import { ImgAsset } from "@/constants/assetsConst";
+import FastImage from "@/components/base/fastImage";
+import PlayAllBar from "@/components/base/playAllBar";
+import useColors from "@/hooks/useColors";
 
 interface IHeaderProps {
     musicSheet: IMusic.IMusicSheetItem | null;
@@ -13,7 +13,7 @@ interface IHeaderProps {
     canStar?: boolean;
 }
 export default function Header(props: IHeaderProps) {
-    const {musicSheet, musicList, canStar} = props;
+    const { musicSheet, musicList, canStar } = props;
     const colors = useColors();
 
     const [maxLines, setMaxLines] = useState<number | undefined>(6);
@@ -27,13 +27,13 @@ export default function Header(props: IHeaderProps) {
     };
 
     return (
-        <View style={{backgroundColor: colors.card}}>
+        <View style={{ backgroundColor: colors.card }}>
             <View style={style.wrapper}>
                 <View style={style.content}>
                     <FastImage
                         style={style.coverImg}
-                        uri={musicSheet?.artwork ?? musicSheet?.coverImg}
-                        emptySrc={ImgAsset.albumDefault}
+                        source={musicSheet?.artwork ?? musicSheet?.coverImg}
+                        placeholderSource={ImgAsset.albumDefault}
                     />
                     <View style={style.details}>
                         <ThemeText numberOfLines={3}>
@@ -44,8 +44,8 @@ export default function Header(props: IHeaderProps) {
                             fontSize="description">
                             共
                             {musicSheet?.worksNum ??
-                                (musicList ? musicList.length ?? 0 : '-')}
-                            首{' '}
+                                (musicList ? musicList.length ?? 0 : "-")}
+                            首{" "}
                         </ThemeText>
                     </View>
                 </View>
@@ -78,16 +78,16 @@ export default function Header(props: IHeaderProps) {
 
 const style = StyleSheet.create({
     wrapper: {
-        width: '100%',
+        width: "100%",
         padding: rpx(24),
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        justifyContent: "center",
+        alignItems: "flex-start",
     },
     content: {
         flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
     },
     coverImg: {
         width: rpx(210),
@@ -98,14 +98,14 @@ const style = StyleSheet.create({
         flex: 1,
         height: rpx(140),
         paddingHorizontal: rpx(36),
-        justifyContent: 'space-between',
+        justifyContent: "space-between",
     },
     divider: {
         marginVertical: rpx(18),
     },
 
     albumDesc: {
-        width: '100%',
+        width: "100%",
         marginTop: rpx(28),
     },
 });

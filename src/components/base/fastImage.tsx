@@ -1,30 +1,43 @@
-import React, {useEffect, useState} from 'react';
-import FastImage, {FastImageProps} from 'react-native-fast-image';
+import React, { useEffect, useState } from "react";
+import { ImageRequireSource } from "react-native";
+import FastImage, { FastImageProps } from "react-native-fast-image";
 
 interface IFastImageProps {
-    style: FastImageProps['style'];
-    defaultSource?: FastImageProps['defaultSource'];
-    emptySrc?: number;
-    uri?: string;
+    style: FastImageProps["style"];
+    defaultSource?: FastImageProps["defaultSource"];
+    placeholderSource?: ImageRequireSource;
+    source?: FastImageProps["source"] | string;
 }
 export default function (props: IFastImageProps) {
-    const {style, emptySrc, uri, defaultSource} = props ?? {};
+    const { style, placeholderSource, defaultSource, source } = props ?? {};
     const [isError, setIsError] = useState(false);
-    const source = uri
-        ? {
-              uri,
-          }
-        : emptySrc;
+
+
+    let realSource: FastImageProps["source"];
+    if (typeof source === "string") {
+        realSource = { uri: source };
+        if (source.length === 0) {
+            realSource = placeholderSource;
+        }
+    } else if (source){
+        realSource = source;
+    } else {
+        realSource = placeholderSource;
+    }
+
 
     useEffect(() => {
         setIsError(false);
-    }, [uri]);
+    }, [source]);
+
+
     return (
         <FastImage
             style={style}
-            source={isError ? emptySrc : source}
+            source={isError ? placeholderSource : realSource}
             onError={() => {
                 setIsError(true);
+                console.error("Image load error:", realSource);
             }}
             defaultSource={defaultSource}
         />

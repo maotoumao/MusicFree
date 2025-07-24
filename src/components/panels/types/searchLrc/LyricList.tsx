@@ -1,17 +1,17 @@
-import React, {memo} from 'react';
-import rpx from '@/utils/rpx';
-import searchResultStore, {ISearchLyricResult} from './searchResultStore';
-import Empty from '@/components/base/empty';
-import {RequestStateCode} from '@/constants/commonConst';
-import Loading from '@/components/base/loading';
-import LyricItem from '@/components/mediaItem/LyricItem';
-import ListReachEnd from '@/components/base/listReachEnd';
-import {FlatList} from 'react-native-gesture-handler';
-import Toast from '@/utils/toast';
-import {associateLrc} from '@/utils/mediaItem';
-import {hidePanel} from '../../usePanel';
-import TrackPlayer from '@/core/trackPlayer';
-import LyricManager from '@/core/lyricManager';
+import Loading from "@/components/base/loading";
+import LyricItem from "@/components/mediaItem/LyricItem";
+import { RequestStateCode } from "@/constants/commonConst";
+import lyricManager from "@/core/lyricManager";
+import TrackPlayer from "@/core/trackPlayer";
+import rpx from "@/utils/rpx";
+import Toast from "@/utils/toast";
+import React, { memo } from "react";
+import { hidePanel } from "../../usePanel";
+import searchResultStore, { ISearchLyricResult } from "./searchResultStore";
+import ListEmpty from "@/components/base/listEmpty";
+import ListFooter from "@/components/base/listFooter";
+import { FlashList } from "@shopify/flash-list";
+import { useI18N } from "@/core/i18n";
 
 interface ILyricListWrapperProps {
     route: {
@@ -34,46 +34,35 @@ function LyricListImpl(props: ILyricListProps) {
     const data = props.data;
     const searchState = data?.state ?? RequestStateCode.IDLE;
 
+    const { t } = useI18N();
+
     return searchState === RequestStateCode.PENDING_FIRST_PAGE ? (
         <Loading />
     ) : (
-        <FlatList
-            getItemLayout={(_, index) => ({
-                length: ITEM_HEIGHT,
-                offset: ITEM_HEIGHT * index,
-                index,
-            })}
-            renderItem={({item}) => (
+        <FlashList
+            estimatedItemSize={ITEM_HEIGHT}
+            renderItem={({ item }) => (
                 <LyricItem
                     lyricItem={item}
                     onPress={async () => {
                         try {
-                            const currentMusic = TrackPlayer.getCurrentMusic();
+                            const currentMusic = TrackPlayer.currentMusic;
                             if (!currentMusic) {
                                 return;
                             }
-                            await associateLrc(currentMusic, item);
-                            LyricManager.refreshLyric(false, true);
-                            Toast.success('设置成功~');
+
+                            lyricManager.associateLyric(currentMusic, item);
+                            Toast.success(t("panel.searchLrc.toast.settingSuccess"));
                             hidePanel();
                             // 触发刷新歌词
                         } catch {
-                            Toast.warn('设置失败!');
+                            Toast.warn(t("panel.searchLrc.toast.failToSearch"));
                         }
                     }}
                 />
             )}
-            ListEmptyComponent={<Empty />}
-            ListFooterComponent={() => (
-                // searchState === RequestStateCode.PENDING ? (
-                //     <ListLoading />
-                // ) : searchState === RequestStateCode.FINISHED ? (
-                //     <ListReachEnd />
-                // ) : (
-                //     <></>
-                // )
-                <ListReachEnd />
-            )}
+            ListEmptyComponent={<ListEmpty state={searchState} />}
+            ListFooterComponent={data?.data?.length ? <ListFooter state={searchState} /> : null}
             data={data?.data}
         />
     );

@@ -1,4 +1,4 @@
-import useColors from './useColors';
+import useColors from "./useColors";
 
 export default function useTextColor() {
     const colors = useColors();

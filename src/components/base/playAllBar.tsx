@@ -1,16 +1,18 @@
-import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import rpx from '@/utils/rpx';
-import {iconSizeConst} from '@/constants/uiConst';
-import {ROUTE_PATH, useNavigate} from '@/core/router';
-import ThemeText from './themeText';
-import useColors from '@/hooks/useColors';
-import {showPanel} from '../panels/usePanel';
-import IconButton from './iconButton';
-import TrackPlayer, {MusicRepeatMode} from '@/core/trackPlayer';
-import Toast from '@/utils/toast';
-import Icon from '@/components/base/icon.tsx';
-import MusicSheet from '@/core/musicSheet';
+import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import { iconSizeConst } from "@/constants/uiConst";
+import { ROUTE_PATH, useNavigate } from "@/core/router";
+import ThemeText from "./themeText";
+import useColors from "@/hooks/useColors";
+import { showPanel } from "../panels/usePanel";
+import IconButton from "./iconButton";
+import TrackPlayer from "@/core/trackPlayer";
+import Toast from "@/utils/toast";
+import Icon from "@/components/base/icon.tsx";
+import MusicSheet, { useSheetIsStarred } from "@/core/musicSheet";
+import { MusicRepeatMode } from "@/constants/repeatModeConst";
+import { useI18N } from "@/core/i18n";
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
@@ -18,15 +20,16 @@ interface IProps {
     musicSheet?: IMusic.IMusicSheetItem | null;
 }
 export default function (props: IProps) {
-    const {musicList, canStar, musicSheet} = props;
+    const { musicList, canStar, musicSheet } = props;
 
     const sheetName = musicSheet?.title;
     const sheetId = musicSheet?.id;
 
     const colors = useColors();
     const navigate = useNavigate();
+    const { t } = useI18N();
 
-    const starred = MusicSheet.useSheetIsStarred(musicSheet);
+    const starred = useSheetIsStarred(musicSheet);
 
     return (
         <View style={style.topWrapper}>
@@ -36,7 +39,7 @@ export default function (props: IProps) {
                     if (musicList) {
                         let defaultPlayMusic = musicList[0];
                         if (
-                            TrackPlayer.getRepeatMode() ===
+                            TrackPlayer.repeatMode ===
                             MusicRepeatMode.SHUFFLE
                         ) {
                             defaultPlayMusic =
@@ -56,31 +59,31 @@ export default function (props: IProps) {
                     size={iconSizeConst.normal}
                     color={colors.text}
                 />
-                <ThemeText fontWeight="bold">播放全部</ThemeText>
+                <ThemeText fontWeight="bold">{t("playAllBar.title")}</ThemeText>
             </Pressable>
             {canStar && musicSheet ? (
                 <IconButton
-                    name={starred ? 'heart' : 'heart-outline'}
-                    sizeType={'normal'}
-                    color={starred ? '#e31639' : undefined}
+                    name={starred ? "heart" : "heart-outline"}
+                    sizeType={"normal"}
+                    color={starred ? "#e31639" : undefined}
                     style={style.optionButton}
                     onPress={async () => {
                         if (!starred) {
                             MusicSheet.starMusicSheet(musicSheet);
-                            Toast.success('收藏歌单成功');
+                            Toast.success(t("toast.hasStarred"));
                         } else {
                             MusicSheet.unstarMusicSheet(musicSheet);
-                            Toast.success('已取消收藏歌单');
+                            Toast.success(t("toast.hasUnstarred"));
                         }
                     }}
                 />
             ) : null}
             <IconButton
                 name="folder-plus"
-                sizeType={'normal'}
+                sizeType={"normal"}
                 style={style.optionButton}
                 onPress={async () => {
-                    showPanel('AddToMusicSheet', {
+                    showPanel("AddToMusicSheet", {
                         musicItem: musicList ?? [],
                         newSheetDefaultName: sheetName,
                     });
@@ -88,7 +91,7 @@ export default function (props: IProps) {
             />
             <IconButton
                 name="pencil-square"
-                sizeType={'normal'}
+                sizeType={"normal"}
                 style={style.optionButton}
                 onPress={async () => {
                     navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
@@ -109,13 +112,13 @@ const style = StyleSheet.create({
     topWrapper: {
         height: rpx(84),
         paddingHorizontal: rpx(24),
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     playAll: {
         flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     playAllIcon: {
         marginRight: rpx(12),

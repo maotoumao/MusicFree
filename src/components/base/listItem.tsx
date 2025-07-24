@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from "react";
 import {
     StyleProp,
     StyleSheet,
@@ -8,18 +8,18 @@ import {
     TouchableOpacity,
     View,
     ViewStyle,
-} from 'react-native';
-import rpx from '@/utils/rpx';
-import useColors from '@/hooks/useColors';
-import ThemeText from './themeText';
+} from "react-native";
+import rpx from "@/utils/rpx";
+import useColors, { CustomizedColors } from "@/hooks/useColors";
+import ThemeText from "./themeText";
 import {
     fontSizeConst,
     fontWeightConst,
     iconSizeConst,
-} from '@/constants/uiConst';
-import FastImage from './fastImage';
-import {ImageStyle} from 'react-native-fast-image';
-import Icon, {IIconName} from '@/components/base/icon.tsx';
+} from "@/constants/uiConst";
+import FastImage from "./fastImage";
+import { ImageStyle } from "react-native-fast-image";
+import Icon, { IIconName } from "@/components/base/icon.tsx";
 
 interface IListItemProps {
     // 是否有左右边距
@@ -31,7 +31,7 @@ interface IListItemProps {
     // height:
     style?: StyleProp<ViewStyle>;
     // 高度类型
-    heightType?: 'big' | 'small' | 'smallest' | 'normal' | 'none';
+    heightType?: "big" | "small" | "smallest" | "normal" | "none";
     children?: ReactNode;
     onPress?: () => void;
     onLongPress?: () => void;
@@ -54,7 +54,7 @@ function ListItem(props: IListItemProps) {
         leftPadding = defaultPadding,
         rightPadding = defaultPadding,
         style,
-        heightType = 'normal',
+        heightType = "normal",
         children,
         onPress,
         onLongPress,
@@ -84,9 +84,10 @@ function ListItem(props: IListItemProps) {
 interface IListItemTextProps {
     children?: number | string;
     fontSize?: keyof typeof fontSizeConst;
+    fontColor?: keyof CustomizedColors;
     fontWeight?: keyof typeof fontWeightConst;
     width?: number;
-    position?: 'left' | 'right' | 'none';
+    position?: "left" | "right" | "none";
     fixedWidth?: boolean;
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<TextStyle>;
@@ -98,7 +99,8 @@ function ListItemText(props: IListItemTextProps) {
         children,
         fontSize,
         fontWeight,
-        position = 'left',
+        fontColor,
+        position = "left",
         fixedWidth,
         width,
         containerStyle,
@@ -107,8 +109,8 @@ function ListItemText(props: IListItemTextProps) {
     } = props;
 
     const defaultStyle: StyleProp<ViewStyle> = {
-        marginRight: position === 'left' ? defaultPadding : 0,
-        marginLeft: position === 'right' ? defaultPadding : 0,
+        marginRight: position === "left" ? defaultPadding : 0,
+        marginLeft: position === "right" ? defaultPadding : 0,
         width: fixedWidth ? width ?? defaultActionWidth : undefined,
         flexBasis: fixedWidth ? width ?? defaultActionWidth : undefined,
     };
@@ -119,6 +121,7 @@ function ListItemText(props: IListItemTextProps) {
                 fontSize={fontSize}
                 style={contentStyle}
                 fontWeight={fontWeight}
+                fontColor={fontColor}
                 {...contentProps}>
                 {children}
             </ThemeText>
@@ -130,7 +133,7 @@ interface IListItemIconProps {
     icon: IIconName;
     iconSize?: number;
     width?: number;
-    position?: 'left' | 'right' | 'none';
+    position?: "left" | "right" | "none";
     fixedWidth?: boolean;
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<TextStyle>;
@@ -142,7 +145,7 @@ function ListItemIcon(props: IListItemIconProps) {
     const {
         icon,
         iconSize = iconSizeConst.normal,
-        position = 'left',
+        position = "left",
         fixedWidth,
         width,
         containerStyle,
@@ -154,8 +157,8 @@ function ListItemIcon(props: IListItemIconProps) {
     const colors = useColors();
 
     const defaultStyle: StyleProp<ViewStyle> = {
-        marginRight: position === 'left' ? defaultPadding : 0,
-        marginLeft: position === 'right' ? defaultPadding : 0,
+        marginRight: position === "left" ? defaultPadding : 0,
+        marginLeft: position === "right" ? defaultPadding : 0,
         width: fixedWidth ? width ?? defaultActionWidth : undefined,
         flexBasis: fixedWidth ? width ?? defaultActionWidth : undefined,
     };
@@ -183,7 +186,7 @@ interface IListItemImageProps {
     fallbackImg?: number;
     imageSize?: number;
     width?: number;
-    position?: 'left' | 'right';
+    position?: "left" | "right";
     fixedWidth?: boolean;
     containerStyle?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ImageStyle>;
@@ -194,7 +197,7 @@ function ListItemImage(props: IListItemImageProps) {
     const {
         uri,
         fallbackImg,
-        position = 'left',
+        position = "left",
         fixedWidth,
         width,
         containerStyle,
@@ -203,8 +206,8 @@ function ListItemImage(props: IListItemImageProps) {
     } = props;
 
     const defaultStyle: StyleProp<ViewStyle> = {
-        marginRight: position === 'left' ? defaultPadding : 0,
-        marginLeft: position === 'right' ? defaultPadding : 0,
+        marginRight: position === "left" ? defaultPadding : 0,
+        marginLeft: position === "right" ? defaultPadding : 0,
         width: fixedWidth ? width ?? defaultActionWidth : undefined,
         flexBasis: fixedWidth ? width ?? defaultActionWidth : undefined,
     };
@@ -213,8 +216,8 @@ function ListItemImage(props: IListItemImageProps) {
         <View style={[styles.actionBase, defaultStyle, containerStyle]}>
             <FastImage
                 style={[styles.leftImage, contentStyle]}
-                uri={uri}
-                emptySrc={fallbackImg}
+                source={uri}
+                placeholderSource={fallbackImg}
             />
             {maskIcon ? (
                 <View style={[styles.leftImage, styles.imageMask]}>
@@ -247,13 +250,13 @@ function Content(props: IContentProps) {
     let realTitle;
     let realDescription;
 
-    if (typeof title === 'string' || typeof title === 'number') {
+    if (typeof title === "string" || typeof title === "number") {
         realTitle = <ThemeText numberOfLines={1}>{title}</ThemeText>;
     } else {
         realTitle = title;
     }
 
-    if (typeof description === 'string' || typeof description === 'number') {
+    if (typeof description === "string" || typeof description === "number") {
         realDescription = (
             <ThemeText
                 numberOfLines={1}
@@ -275,14 +278,14 @@ function Content(props: IContentProps) {
     );
 }
 
-export function ListItemHeader(props: {children?: ReactNode}) {
-    const {children} = props;
+export function ListItemHeader(props: { children?: ReactNode }) {
+    const { children } = props;
     return (
         <ListItem
             withHorizontalPadding
             heightType="smallest"
             style={styles.listItemHeader}>
-            {typeof children === 'string' ? (
+            {typeof children === "string" ? (
                 <ThemeText
                     fontSize="subTitle"
                     fontColor="textSecondary"
@@ -299,19 +302,19 @@ export function ListItemHeader(props: {children?: ReactNode}) {
 const styles = StyleSheet.create({
     /** listitem */
     container: {
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
+        width: "100%",
+        flexDirection: "row",
+        alignItems: "center",
     },
     /** left */
     actionBase: {
-        height: '100%',
+        height: "100%",
         flexShrink: 0,
         flexGrow: 0,
         flexBasis: 0,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
     },
 
     leftImage: {
@@ -320,15 +323,15 @@ const styles = StyleSheet.create({
         borderRadius: rpx(16),
     },
     imageMask: {
-        position: 'absolute',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#00000022',
+        position: "absolute",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#00000022",
     },
     itemContentContainer: {
         flex: 1,
-        height: '100%',
-        justifyContent: 'center',
+        height: "100%",
+        justifyContent: "center",
     },
     contentDesc: {
         marginTop: rpx(16),

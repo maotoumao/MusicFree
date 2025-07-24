@@ -1,9 +1,9 @@
 /** 备份与恢复 */
 /** 歌单、插件 */
-import {compare} from 'compare-versions';
-import PluginManager from './pluginManager';
-import MusicSheet from '@/core/musicSheet';
-import {ResumeMode} from '@/constants/commonConst.ts';
+import { compare } from "compare-versions";
+import PluginManager from "./pluginManager";
+import MusicSheet from "@/core/musicSheet";
+import { ResumeMode } from "@/constants/commonConst.ts";
 
 /**
  * 结果：一份大的json文件
@@ -15,12 +15,12 @@ import {ResumeMode} from '@/constants/commonConst.ts';
 
 interface IBackJson {
     musicSheets: IMusic.IMusicSheetItem[];
-    plugins: Array<{srcUrl: string; version: string}>;
+    plugins: Array<{ srcUrl: string; version: string }>;
 }
 
 function backup() {
     const musicSheets = MusicSheet.backupSheets();
-    const plugins = PluginManager.getValidPlugins();
+    const plugins = PluginManager.getEnabledPlugins();
     const normalizedPlugins = plugins.map(_ => ({
         srcUrl: _.instance.srcUrl,
         version: _.instance.version,
@@ -37,15 +37,15 @@ async function resume(
     resumeMode: ResumeMode = ResumeMode.Append,
 ) {
     let obj: IBackJson;
-    if (typeof raw === 'string') {
+    if (typeof raw === "string") {
         obj = JSON.parse(raw);
     } else {
         obj = raw as IBackJson;
     }
 
-    const {plugins, musicSheets} = obj ?? {};
+    const { plugins, musicSheets } = obj ?? {};
     /** 恢复插件 */
-    const validPlugins = PluginManager.getValidPlugins();
+    const validPlugins = PluginManager.getEnabledPlugins();
     const resumePlugins = plugins?.map(_ => {
         // 校验是否安装过: 同源且本地版本更高就忽略掉
         if (
@@ -53,9 +53,9 @@ async function resume(
                 plugin =>
                     plugin.instance.srcUrl === _.srcUrl &&
                     compare(
-                        plugin.instance.version ?? '0.0.0',
-                        _.version ?? '0.0.1',
-                        '>=',
+                        plugin.instance.version ?? "0.0.0",
+                        _.version ?? "0.0.1",
+                        ">=",
                     ),
             )
         ) {
