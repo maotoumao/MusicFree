@@ -296,6 +296,7 @@
     "basicSettings.developer.devLog": "調試面板",
     "basicSettings.developer.viewErrorLog": "查看錯誤日誌",
     "basicSettings.developer.clearLog": "清空日誌",
+    "dialog.loading.reinitializeTrackPlayer": "初始化播放器中...",
     "dialog.setCacheTitle": "設定快取",
     "dialog.setCachePlaceholder": "輸入快取佔用上限，100M-8192M，單位M",
     "dialog.clearMusicCacheTitle": "清除音樂快取",

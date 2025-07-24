@@ -296,6 +296,7 @@
     "basicSettings.developer.devLog": "Debug Panel",
     "basicSettings.developer.viewErrorLog": "View Error Logs",
     "basicSettings.developer.clearLog": "Clear Logs",
+    "dialog.loading.reinitializeTrackPlayer": "Initializing track player...",
     "dialog.setCacheTitle": "Set Cache",
     "dialog.setCachePlaceholder": "Enter cache limit, 100M-8192M, unit: M",
     "dialog.clearMusicCacheTitle": "Clear Music Cache",

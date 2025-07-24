@@ -77,6 +77,8 @@ export interface ILanguageData {
     "dialog.deleteSheetTitle": string; // 删除歌单
     "dialog.deleteSheetContent": string; // 确定删除该歌单吗？
 
+    "dialog.loading.reinitializeTrackPlayer": string;
+
     // 提示消息相关
     "toast.deleteSuccess": string; // 删除成功
     "toast.hasStarred": string; // 已收藏歌单

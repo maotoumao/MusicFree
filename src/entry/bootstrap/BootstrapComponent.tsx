@@ -8,6 +8,7 @@ import { AppState, NativeEventSubscription, useColorScheme } from "react-native"
 import bootstrapAtom from "./bootstrap.atom";
 import { initTrackPlayer } from "./bootstrap";
 import { showDialog } from "@/components/dialogs/useDialog";
+import i18n from "@/core/i18n";
 
 export function BootstrapComponent() {
     const bootstrapState = useAtomValue(bootstrapAtom);
@@ -34,7 +35,7 @@ export function BootstrapComponent() {
 
         const reinitializeTrackPlayerWithDialog = () => {
             showDialog("LoadingDialog", {
-                title: "初始化播放器中...", //TODO i18n
+                title: i18n.t("dialog.loading.reinitializeTrackPlayer"), 
                 promise: initTrackPlayer(),
                 onResolve(data, hideDialog) {
                     hideDialog();
