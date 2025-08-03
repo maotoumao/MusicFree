@@ -333,13 +333,12 @@ class MusicSheetClazz implements IInjectable {
         if (
             !musicSheets
                 .find(_ => _.id === sheetId)
-                ?.coverImg?.startsWith("file://")
+                ?.coverImg?.startsWith?.("file://")
         ) {
             await this.updateMusicSheetBase(sheetId, {
                 coverImg: musicList.at(0)?.artwork,
             });
         }
-
         // 更新音乐数量
         getDefaultStore().set(
             musicSheetsBaseAtom,
@@ -350,7 +349,6 @@ class MusicSheetClazz implements IInjectable {
                 }
             }),
         );
-
         await storage.setMusicList(sheetId, musicList.musicList);
         ee.emit("UpdateMusicList", {
             sheetId,
@@ -415,7 +413,7 @@ class MusicSheetClazz implements IInjectable {
         if (
             !musicSheets
                 .find(_ => _.id === sheetId)
-                ?.coverImg?.startsWith("file://")
+                ?.coverImg?.startsWith?.("file://")
         ) {
             patchData.coverImg = musicList.at(0)?.artwork;
         }

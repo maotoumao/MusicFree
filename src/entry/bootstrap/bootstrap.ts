@@ -95,6 +95,10 @@ async function bootstrapImpl() {
     trace("配置初始化完成");
     logger.mark("配置初始化完成");
 
+    // 加载插件
+    await PluginManager.setup();
+    logger.mark("插件初始化完成");
+    trace("插件初始化完成");
 
     await initTrackPlayer(logger).catch(err => {
         // 初始化播放器出错，延迟初始化
@@ -107,12 +111,6 @@ async function bootstrapImpl() {
             });
         }
     });
-
-    // 加载插件
-    await PluginManager.setup();
-    logger.mark("插件初始化完成");
-    trace("插件初始化完成");
-
 
     await LocalMusicSheet.setup();
     trace("本地音乐初始化完成");
