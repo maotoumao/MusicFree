@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/btn_prev"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_prev"/>
+
+    <ImageView
+        android:id="@+id/btn_play"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_toRightOf="@id/btn_prev"
+        android:src="@drawable/ic_play"/>
+
+    <ImageView
+        android:id="@+id/btn_next"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_toRightOf="@id/btn_play"
+        android:src="@drawable/ic_next"/>
+
+    <TextView
+        android:id="@+id/txt_song"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_play"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"/>
+
+</RelativeLayout>
