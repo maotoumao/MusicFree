@@ -26,8 +26,17 @@ class AppMeta {
         this.setAppMeta("MusicSheetVersion", "" + version);
     }
 
+    get historySheetVersion(): number {
+        const version = this.getAppMeta("HistorySheetVersion");
+        if (version?.length) {
+            return +version;
+        }
+        return 0;
+    }
 
-
+    setHistorySheetVersion(version: number) {
+        this.setAppMeta("HistorySheetVersion", "" + version);
+    }
 }
 
 const appMeta = new AppMeta();
