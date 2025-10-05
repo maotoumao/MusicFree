@@ -58,10 +58,6 @@ class PluginManager implements IPluginManager {
             const pluginsFileItems = await readDir(pathConst.pluginPath);
             const allPlugins: Array<Plugin> = [];
 
-            let timeStatistics =  {
-                load: [] as number[],
-                parse: [] as number[],
-            };
             for (let i = 0; i < pluginsFileItems.length; ++i) {
                 const pluginFileItem = pluginsFileItems[i];
                 trace("初始化插件", pluginFileItem);
@@ -70,12 +66,8 @@ class PluginManager implements IPluginManager {
                     (pluginFileItem.name?.endsWith?.(".js") ||
                         pluginFileItem.path?.endsWith?.(".js"))
                 ) {
-                    let s = Date.now();
                     const funcCode = await readFile(pluginFileItem.path, "utf8");
-                    timeStatistics.load.push(Date.now() - s);
-                    s = Date.now();
                     const plugin = new Plugin(funcCode, pluginFileItem.path);
-                    timeStatistics.parse.push(Date.now() - s);
 
                     const _pluginIndex = allPlugins.findIndex(
                         p => p.hash === plugin.hash,
@@ -91,7 +83,6 @@ class PluginManager implements IPluginManager {
             }
 
             this.setPlugins(allPlugins);
-            console.log(timeStatistics, "加载时长统计");
         } catch (e: any) {
             ToastAndroid.show(
                 `插件初始化失败:${e?.message ?? e}`,
