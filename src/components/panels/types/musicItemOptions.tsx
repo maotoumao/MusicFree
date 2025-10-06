@@ -176,7 +176,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
         {
             icon: "chat-bubble-oval-left-ellipsis",
             title: t("panel.musicItemOptions.readComment"),
-            show: !!pluginManager.getByMedia(musicItem)?.instance.getMusicComments,
+            show: !!pluginManager.getByMedia(musicItem)?.supportedMethods.has("getMusicComments"),
             onPress: () => {
                 if (!musicItem) {
                     return;

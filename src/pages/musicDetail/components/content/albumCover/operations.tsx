@@ -29,7 +29,7 @@ export default function Operations() {
     const supportComment = useMemo(() => {
         return !musicItem
             ? false
-            : !!PluginManager.getByMedia(musicItem)?.instance?.getMusicComments;
+            : !!PluginManager.getByMedia(musicItem)?.supportedMethods.has("getMusicComments");
     }, [musicItem]);
 
     return (

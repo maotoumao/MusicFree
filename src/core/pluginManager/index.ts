@@ -4,7 +4,11 @@ import {
     localPluginPlatform,
 } from "@/constants/commonConst";
 import pathConst from "@/constants/pathConst";
-import { IInstallPluginConfig, IInstallPluginResult, IPluginManager } from "@/types/core/pluginManager";
+import {
+    IInstallPluginConfig,
+    IInstallPluginResult,
+    IPluginManager,
+} from "@/types/core/pluginManager";
 import { removeAllMediaExtra } from "@/utils/mediaExtra";
 import axios from "axios";
 import { compare } from "compare-versions";
@@ -17,11 +21,13 @@ import { ToastAndroid } from "react-native";
 import { copyFile, readDir, readFile, unlink, writeFile } from "react-native-fs";
 import { devLog, errorLog, trace } from "../../utils/log";
 import pluginMeta from "./meta";
-import { localFilePlugin, Plugin, PluginState } from "./plugin";
+import { ILazyProps, localFilePlugin, Plugin, PluginState } from "./plugin";
 import i18n from "../i18n";
+import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
+import { safeParse } from "@/utils/jsonUtil";
 
 const pluginsAtom = atom<Plugin[]>([]);
-
+const pluginStore = getOrCreateMMKV("plugin.cache");
 
 const ee = new EventEmitter<{
     "order-updated": () => void;
@@ -29,7 +35,6 @@ const ee = new EventEmitter<{
 }>();
 
 class PluginManager implements IPluginManager {
-
     /**
      * 获取当前存储的插件列表
      * @returns 插件实例数组
@@ -44,6 +49,23 @@ class PluginManager implements IPluginManager {
      */
     private setPlugins(plugins: Plugin[]) {
         getDefaultStore().set(pluginsAtom, plugins);
+
+        const cache: Record<string, ILazyProps> = {};
+        plugins.forEach(it => {
+            if (it.path) {
+                cache[it.path] = {
+                    name: it.name,
+                    hash: it.hash,
+                    path: it.path,
+                    instance: it.instance,
+                };
+            }
+        });
+
+        pluginStore.set(
+            "plugins",
+            JSON.stringify(cache),
+        );
     }
 
     /**
@@ -58,6 +80,9 @@ class PluginManager implements IPluginManager {
             const pluginsFileItems = await readDir(pathConst.pluginPath);
             const allPlugins: Array<Plugin> = [];
 
+            const cachePlugins = (safeParse(pluginStore.getString("plugins")) ??
+                {}) as Record<string, ILazyProps>;
+
             for (let i = 0; i < pluginsFileItems.length; ++i) {
                 const pluginFileItem = pluginsFileItems[i];
                 trace("初始化插件", pluginFileItem);
@@ -66,8 +91,20 @@ class PluginManager implements IPluginManager {
                     (pluginFileItem.name?.endsWith?.(".js") ||
                         pluginFileItem.path?.endsWith?.(".js"))
                 ) {
-                    const funcCode = await readFile(pluginFileItem.path, "utf8");
-                    const plugin = new Plugin(funcCode, pluginFileItem.path);
+                    // 如果存在缓存信息
+                    let plugin: Plugin;
+                    if (cachePlugins[pluginFileItem.path]) {
+                        const lazyProps = cachePlugins[pluginFileItem.path];
+                        lazyProps.loadFuncCode = async () =>
+                            await readFile(pluginFileItem.path, "utf8");
+                        plugin = new Plugin(null, pluginFileItem.path, lazyProps);
+                    } else {
+                        const funcCode = await readFile(
+                            pluginFileItem.path,
+                            "utf8",
+                        );
+                        plugin = new Plugin(funcCode, pluginFileItem.path);
+                    }
 
                     const _pluginIndex = allPlugins.findIndex(
                         p => p.hash === plugin.hash,
@@ -106,7 +143,7 @@ class PluginManager implements IPluginManager {
     async installPluginFromLocalFile(
         pluginPath: string,
         config?: IInstallPluginConfig & {
-            useExpoFs?: boolean
+            useExpoFs?: boolean;
         },
     ): Promise<IInstallPluginResult> {
         let funcCode: string;
@@ -120,7 +157,9 @@ class PluginManager implements IPluginManager {
             const plugin = new Plugin(funcCode, pluginPath);
             let allPlugins = [...this.getPlugins()];
 
-            const _pluginIndex = allPlugins.findIndex(p => p.hash === plugin.hash);
+            const _pluginIndex = allPlugins.findIndex(
+                p => p.hash === plugin.hash,
+            );
             if (_pluginIndex !== -1) {
                 // 静默忽略
                 return {
@@ -130,7 +169,9 @@ class PluginManager implements IPluginManager {
                     pluginHash: plugin.hash,
                 };
             }
-            const oldVersionPlugin = allPlugins.find(p => p.name === plugin.name);
+            const oldVersionPlugin = allPlugins.find(
+                p => p.name === plugin.name,
+            );
             if (oldVersionPlugin && !config?.notCheckVersion) {
                 if (
                     compare(
@@ -151,10 +192,12 @@ class PluginManager implements IPluginManager {
             if (plugin.state === PluginState.Mounted) {
                 const fn = nanoid();
                 if (oldVersionPlugin) {
-                    allPlugins = allPlugins.filter(_ => _.hash !== oldVersionPlugin.hash);
+                    allPlugins = allPlugins.filter(
+                        _ => _.hash !== oldVersionPlugin.hash,
+                    );
                     try {
                         await unlink(oldVersionPlugin.path);
-                    } catch { }
+                    } catch {}
                 }
                 const _pluginPath = `${pathConst.pluginPath}${fn}.js`;
                 await copyFile(pluginPath, _pluginPath);
@@ -203,7 +246,9 @@ class PluginManager implements IPluginManager {
             if (funcCode) {
                 const plugin = new Plugin(funcCode, "");
                 let allPlugins = [...this.getPlugins()];
-                const pluginIndex = allPlugins.findIndex(p => p.hash === plugin.hash);
+                const pluginIndex = allPlugins.findIndex(
+                    p => p.hash === plugin.hash,
+                );
                 if (pluginIndex !== -1) {
                     // 静默忽略
                     return {
@@ -214,7 +259,9 @@ class PluginManager implements IPluginManager {
                         pluginUrl: url,
                     };
                 }
-                const oldVersionPlugin = allPlugins.find(p => p.name === plugin.name);
+                const oldVersionPlugin = allPlugins.find(
+                    p => p.name === plugin.name,
+                );
                 if (oldVersionPlugin && !config?.notCheckVersion) {
                     if (
                         compare(
@@ -245,7 +292,7 @@ class PluginManager implements IPluginManager {
                         );
                         try {
                             await unlink(oldVersionPlugin.path);
-                        } catch { }
+                        } catch {}
                     }
                     this.setPlugins(allPlugins);
                     return {
@@ -305,7 +352,7 @@ class PluginManager implements IPluginManager {
                 if (plugins.every(_ => _.name !== pluginName)) {
                     removeAllMediaExtra(pluginName);
                 }
-            } catch { }
+            } catch {}
         }
     }
 
@@ -320,7 +367,7 @@ class PluginManager implements IPluginManager {
                     const pluginName = plugin.name;
                     await unlink(plugin.path);
                     removeAllMediaExtra(pluginName);
-                } catch (e) { }
+                } catch (e) {}
             }),
         );
         this.setPlugins([]);
@@ -392,7 +439,9 @@ class PluginManager implements IPluginManager {
      * @returns 已启用的插件实例数组
      */
     getEnabledPlugins() {
-        return this.getPlugins().filter(it => pluginMeta.isPluginEnabled(it.name));
+        return this.getPlugins().filter(it =>
+            pluginMeta.isPluginEnabled(it.name),
+        );
     }
 
     /**
@@ -402,13 +451,8 @@ class PluginManager implements IPluginManager {
     getSortedPlugins() {
         const order = pluginMeta.getPluginOrder();
         return [...this.getPlugins()].sort((a, b) =>
-            (order[a.name] ?? Infinity) -
-                (order[b.name] ?? Infinity) <
-
-                0
+            (order[a.name] ?? Infinity) - (order[b.name] ?? Infinity) < 0
                 ? -1
-
-
                 : 1,
         );
     }
@@ -422,9 +466,11 @@ class PluginManager implements IPluginManager {
         return this.getPlugins().filter(
             it =>
                 pluginMeta.isPluginEnabled(it.name) &&
-                it.instance.search &&
+                it.supportedMethods.has("search") &&
                 (supportedSearchType && it.instance.supportedSearchType
-                    ? it.instance.supportedSearchType.includes(supportedSearchType)
+                    ? it.instance.supportedSearchType.includes(
+                        supportedSearchType,
+                    )
                     : true),
         );
     }
@@ -434,14 +480,13 @@ class PluginManager implements IPluginManager {
      * @param supportedSearchType - 可选的搜索媒体类型过滤器
      * @returns 按顺序排序的可搜索插件实例数组
      */
-    getSortedSearchablePlugins(
-        supportedSearchType?: ICommon.SupportMediaType,
-    ) {
+    getSortedSearchablePlugins(supportedSearchType?: ICommon.SupportMediaType) {
         const order = pluginMeta.getPluginOrder();
-        return [...this.getSearchablePlugins(supportedSearchType)].sort((a, b) =>
-            (order[a.name] ?? Infinity) - (order[b.name] ?? Infinity) < 0
-                ? -1
-                : 1,
+        return [...this.getSearchablePlugins(supportedSearchType)].sort(
+            (a, b) =>
+                (order[a.name] ?? Infinity) - (order[b.name] ?? Infinity) < 0
+                    ? -1
+                    : 1,
         );
     }
 
@@ -451,7 +496,9 @@ class PluginManager implements IPluginManager {
      * @returns 具有指定功能的插件实例数组
      */
     getPluginsWithAbility(ability: keyof IPlugin.IPluginInstanceMethods) {
-        return this.getPlugins().filter(it => pluginMeta.isPluginEnabled(it.name) && it.instance[ability]);
+        return this.getPlugins().filter(
+            it => pluginMeta.isPluginEnabled(it.name) && it.supportedMethods.has(ability),
+        );
     }
 
     /**
@@ -523,7 +570,6 @@ class PluginManager implements IPluginManager {
         }
         return null;
     }
-
 }
 
 const pluginManager = new PluginManager();
@@ -532,17 +578,20 @@ export const usePlugins = () => useAtomValue(pluginsAtom);
 
 export function useSortedPlugins() {
     const plugins = useAtomValue(pluginsAtom);
-    const [sortedPlugins, setSortedPlugins] = useState<Plugin[]>(pluginManager.getSortedPlugins());
+    const [sortedPlugins, setSortedPlugins] = useState<Plugin[]>(
+        pluginManager.getSortedPlugins(),
+    );
 
     useEffect(() => {
         const callback = () => {
             const order = pluginMeta.getPluginOrder();
             setSortedPlugins(
                 [...plugins].sort((a, b) =>
-                    (order[a.name] ?? Infinity) - (order[b.name] ?? Infinity) < 0
+                    (order[a.name] ?? Infinity) - (order[b.name] ?? Infinity) <
+                    0
                         ? -1
                         : 1,
-                )
+                ),
             );
         };
 
@@ -557,7 +606,9 @@ export function useSortedPlugins() {
 }
 
 export function usePluginEnabled(plugin: Plugin) {
-    const [enabled, setEnabled] = useState(pluginManager.isPluginEnabled(plugin));
+    const [enabled, setEnabled] = useState(
+        pluginManager.isPluginEnabled(plugin),
+    );
 
     useEffect(() => {
         const callback = (pluginName: string, _enabled: boolean) => {
