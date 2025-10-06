@@ -307,6 +307,7 @@ export interface ILanguageData {
     "basicSettings.plugin": string; // 插件
     "basicSettings.autoUpdatePlugin": string; // 软件启动时自动更新插件
     "basicSettings.notCheckPluginVersion": string; // 安装插件时不校验版本
+    "basicSettings.lazyLoadPlugin": string; // 启用插件懒加载（实验性功能）
     
     "basicSettings.playback": string; // 播放
     "basicSettings.notInterrupt": string; // 允许与其他应用同时播放

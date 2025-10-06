@@ -25,6 +25,8 @@ import { ILazyProps, localFilePlugin, Plugin, PluginState } from "./plugin";
 import i18n from "../i18n";
 import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
 import { safeParse } from "@/utils/jsonUtil";
+import { IInjectable } from "@/types/infra";
+import { IAppConfig } from "@/types/core/config";
 
 const pluginsAtom = atom<Plugin[]>([]);
 const pluginStore = getOrCreateMMKV("plugin.cache");
@@ -34,7 +36,14 @@ const ee = new EventEmitter<{
     "enabled-updated": (pluginName: string, enabled: boolean) => void;
 }>();
 
-class PluginManager implements IPluginManager {
+class PluginManager implements IPluginManager, IInjectable {
+
+    private appConfigService!: IAppConfig;
+
+    injectDependencies(config: IAppConfig): void {
+        this.appConfigService = config;
+    }
+
     /**
      * 获取当前存储的插件列表
      * @returns 插件实例数组
@@ -58,6 +67,7 @@ class PluginManager implements IPluginManager {
                     hash: it.hash,
                     path: it.path,
                     instance: it.instance,
+                    supportedMethods: [...it.supportedMethods],
                 };
             }
         });
@@ -93,8 +103,10 @@ class PluginManager implements IPluginManager {
                 ) {
                     // 如果存在缓存信息
                     let plugin: Plugin;
-                    if (cachePlugins[pluginFileItem.path]) {
+                    let isLazyLoad = false;
+                    if (this.appConfigService.getConfig("basic.lazyLoadPlugin") && cachePlugins[pluginFileItem.path]) {
                         const lazyProps = cachePlugins[pluginFileItem.path];
+                        isLazyLoad = true;
                         lazyProps.loadFuncCode = async () =>
                             await readFile(pluginFileItem.path, "utf8");
                         plugin = new Plugin(null, pluginFileItem.path, lazyProps);
@@ -113,12 +125,11 @@ class PluginManager implements IPluginManager {
                         // 重复插件，直接忽略
                         continue;
                     }
-                    if (plugin.state === PluginState.Mounted) {
+                    if ((plugin.state === PluginState.Mounted) || isLazyLoad) {
                         allPlugins.push(plugin);
                     }
                 }
             }
-
             this.setPlugins(allPlugins);
         } catch (e: any) {
             ToastAndroid.show(

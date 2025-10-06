@@ -248,6 +248,7 @@
     "basicSettings.plugin": "插件",
     "basicSettings.autoUpdatePlugin": "软件启动时自动更新插件",
     "basicSettings.notCheckPluginVersion": "安装插件时不校验版本",
+    "basicSettings.lazyLoadPlugin": "启用插件懒加载",
     "basicSettings.playback": "播放",
     "basicSettings.notInterrupt": "允许与其他应用同时播放",
     "basicSettings.autoPlayWhenAppStart": "软件启动时自动播放歌曲",
