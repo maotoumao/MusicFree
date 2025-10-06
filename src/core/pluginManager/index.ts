@@ -21,15 +21,16 @@ import { ToastAndroid } from "react-native";
 import { copyFile, readDir, readFile, unlink, writeFile } from "react-native-fs";
 import { devLog, errorLog, trace } from "../../utils/log";
 import pluginMeta from "./meta";
-import { ILazyProps, localFilePlugin, Plugin, PluginState } from "./plugin";
+import { localFilePlugin, Plugin, PluginState } from "./plugin";
 import i18n from "../i18n";
 import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
 import { safeParse } from "@/utils/jsonUtil";
 import { IInjectable } from "@/types/infra";
 import { IAppConfig } from "@/types/core/config";
+import delay from "@/utils/delay";
 
 const pluginsAtom = atom<Plugin[]>([]);
-const pluginStore = getOrCreateMMKV("plugin.cache");
+const pluginCacheStore = getOrCreateMMKV("plugin.cache");
 
 const ee = new EventEmitter<{
     "order-updated": () => void;
@@ -37,7 +38,6 @@ const ee = new EventEmitter<{
 }>();
 
 class PluginManager implements IPluginManager, IInjectable {
-
     private appConfigService!: IAppConfig;
 
     injectDependencies(config: IAppConfig): void {
@@ -59,23 +59,32 @@ class PluginManager implements IPluginManager, IInjectable {
     private setPlugins(plugins: Plugin[]) {
         getDefaultStore().set(pluginsAtom, plugins);
 
-        const cache: Record<string, ILazyProps> = {};
-        plugins.forEach(it => {
-            if (it.path) {
-                cache[it.path] = {
-                    name: it.name,
-                    hash: it.hash,
-                    path: it.path,
-                    instance: it.instance,
-                    supportedMethods: [...it.supportedMethods],
-                };
+        // 清理缓存中已卸载的插件
+        const cachedKeys = pluginCacheStore.getAllKeys();
+        cachedKeys.forEach(key => {
+            if (!plugins.find(it => it.path === key)) {
+                pluginCacheStore.delete(key);
             }
         });
 
-        pluginStore.set(
-            "plugins",
-            JSON.stringify(cache),
-        );
+        plugins.forEach(it => {
+            this.updatePluginCache(it);
+        });
+    }
+
+    private updatePluginCache(plugin: Plugin) {
+        if (plugin.path && plugin.state === PluginState.Mounted) {
+            pluginCacheStore.set(
+                plugin.path,
+                JSON.stringify({
+                    name: plugin.name,
+                    hash: plugin.hash,
+                    path: plugin.path,
+                    instance: plugin.instance,
+                    supportedMethods: [...plugin.supportedMethods],
+                }),
+            );
+        }
     }
 
     /**
@@ -90,8 +99,6 @@ class PluginManager implements IPluginManager, IInjectable {
             const pluginsFileItems = await readDir(pathConst.pluginPath);
             const allPlugins: Array<Plugin> = [];
 
-            const cachePlugins = (safeParse(pluginStore.getString("plugins")) ??
-                {}) as Record<string, ILazyProps>;
 
             for (let i = 0; i < pluginsFileItems.length; ++i) {
                 const pluginFileItem = pluginsFileItems[i];
@@ -104,12 +111,21 @@ class PluginManager implements IPluginManager, IInjectable {
                     // 如果存在缓存信息
                     let plugin: Plugin;
                     let isLazyLoad = false;
-                    if (this.appConfigService.getConfig("basic.lazyLoadPlugin") && cachePlugins[pluginFileItem.path]) {
-                        const lazyProps = cachePlugins[pluginFileItem.path];
+                    if (
+                        this.appConfigService.getConfig(
+                            "basic.lazyLoadPlugin",
+                        ) &&
+                        pluginCacheStore.contains(pluginFileItem.path)
+                    ) {
                         isLazyLoad = true;
+                        const lazyProps = safeParse(pluginCacheStore.getString(pluginFileItem.path));
                         lazyProps.loadFuncCode = async () =>
                             await readFile(pluginFileItem.path, "utf8");
-                        plugin = new Plugin(null, pluginFileItem.path, lazyProps);
+                        plugin = new Plugin(
+                            null,
+                            pluginFileItem.path,
+                            lazyProps,
+                        );
                     } else {
                         const funcCode = await readFile(
                             pluginFileItem.path,
@@ -125,12 +141,25 @@ class PluginManager implements IPluginManager, IInjectable {
                         // 重复插件，直接忽略
                         continue;
                     }
-                    if ((plugin.state === PluginState.Mounted) || isLazyLoad) {
+                    if (plugin.state === PluginState.Mounted || isLazyLoad) {
                         allPlugins.push(plugin);
                     }
                 }
             }
+
             this.setPlugins(allPlugins);
+            // 异步初始化插件
+
+            delay(10_000, true).then(async () => {
+                for (let i = 0; i < allPlugins.length; ++i) {
+                    const plugin = allPlugins[i];
+
+                    if (plugin.state === PluginState.Initializing) {
+                        await plugin.ensureMounted();
+                        this.updatePluginCache(plugin);
+                    }
+                }
+            });
         } catch (e: any) {
             ToastAndroid.show(
                 `插件初始化失败:${e?.message ?? e}`,
@@ -352,7 +381,6 @@ class PluginManager implements IPluginManager, IInjectable {
     async uninstallPlugin(hash: string) {
         let plugins = [...this.getPlugins()];
         const targetIndex = plugins.findIndex(_ => _.hash === hash);
-        console.log("卸载", targetIndex);
         if (targetIndex !== -1) {
             try {
                 const pluginName = plugins[targetIndex].name;
@@ -508,7 +536,9 @@ class PluginManager implements IPluginManager, IInjectable {
      */
     getPluginsWithAbility(ability: keyof IPlugin.IPluginInstanceMethods) {
         return this.getPlugins().filter(
-            it => pluginMeta.isPluginEnabled(it.name) && it.supportedMethods.has(ability),
+            it =>
+                pluginMeta.isPluginEnabled(it.name) &&
+                it.supportedMethods.has(ability),
         );
     }
 

@@ -889,6 +889,7 @@ export class Plugin {
 
     async ensureMounted() {
         if ((this.state === PluginState.Initializing) && this.lazyProps) {
+            this.state = PluginState.Loading;
             // 懒加载
             const loadFuncCode = this.lazyProps.loadFuncCode ?? (() => "");
             try {
