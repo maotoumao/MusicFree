@@ -248,6 +248,7 @@
     "basicSettings.plugin": "外掛",
     "basicSettings.autoUpdatePlugin": "軟體啟動時自動更新外掛",
     "basicSettings.notCheckPluginVersion": "安裝外掛時不校驗版本",
+    "basicSettings.lazyLoadPlugin": "啟用插件懶加載",
     "basicSettings.playback": "播放",
     "basicSettings.notInterrupt": "允許與其他應用同時播放",
     "basicSettings.autoPlayWhenAppStart": "軟體啟動時自動播放歌曲",

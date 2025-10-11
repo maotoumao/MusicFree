@@ -142,7 +142,7 @@ function _PluginItem(props: IPluginItemProps) {
                     },
                 });
             },
-            show: !!plugin.instance.importMusicItem,
+            show: !!plugin.supportedMethods.has("importMusicItem"),
         },
         {
             title: t("pluginSetting.pluginItem.options.importSheet"),
@@ -177,7 +177,7 @@ function _PluginItem(props: IPluginItemProps) {
                     },
                 });
             },
-            show: !!plugin.instance.importMusicSheet,
+            show: !!plugin.supportedMethods.has("importMusicSheet"),
         },
         {
             title: t("pluginSetting.pluginItem.options.userVariables"),

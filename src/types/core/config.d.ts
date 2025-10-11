@@ -26,6 +26,7 @@ export interface IAppConfigProperties {
     "basic.maxHistoryLen": number;
     "basic.autoUpdatePlugin": boolean;
     "basic.notCheckPluginVersion": boolean;
+    "basic.lazyLoadPlugin": boolean;
     "basic.associateLyricType": "input" | "search";
     "basic.showExitOnNotification": boolean;
     "basic.musicOrderInLocalSheet": SortType;

@@ -125,6 +125,7 @@ export default function BasicSetting() {
     const maxHistoryLen = useAppConfig("basic.maxHistoryLen");
     const autoUpdatePlugin = useAppConfig("basic.autoUpdatePlugin");
     const notCheckPluginVersion = useAppConfig("basic.notCheckPluginVersion");
+    const lazyLoadPlugin = useAppConfig("basic.lazyLoadPlugin");
     const associateLyricType = useAppConfig("basic.associateLyricType");
     const showExitOnNotification = useAppConfig("basic.showExitOnNotification");
     const musicOrderInLocalSheet = useAppConfig("basic.musicOrderInLocalSheet");
@@ -255,6 +256,11 @@ export default function BasicSetting() {
                     t("basicSettings.notCheckPluginVersion"),
                     "basic.notCheckPluginVersion",
                     notCheckPluginVersion ?? false,
+                ),
+                createSwitch(
+                    t("basicSettings.lazyLoadPlugin"),
+                    "basic.lazyLoadPlugin",
+                    lazyLoadPlugin ?? false,
                 ),
             ],
         },
