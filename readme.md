@@ -11,6 +11,8 @@
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/maotoumao/MusicFree)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/maotoumao/MusicFree)
 
+<a href="https://trendshift.io/repositories/1028" target="_blank"><img src="https://trendshift.io/api/badge/repositories/1028" alt="maotoumao%2FMusicFree | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+
 ## 简介
 
 一个插件化、定制化、无广告的免费音乐播放器，目前只支持 Android 和 Harmony OS。
