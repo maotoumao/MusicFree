@@ -77,7 +77,7 @@
     "react-native-share": "^10.2.1",
     "react-native-svg": "^15.11.2",
     "react-native-tab-view": "^3.5.2",
-    "react-native-track-player": "^4.1.1",
+    "react-native-track-player": "file:./modules/react-native-track-player",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-webview": "^13.13.5",
     "recyclerlistview": "^4.2.1",

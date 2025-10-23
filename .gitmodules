@@ -1,0 +1,3 @@
+[submodule "modules/react-native-track-player"]
+	path = modules/react-native-track-player
+	url = https://github.com/maotoumao/react-native-track-player.git
