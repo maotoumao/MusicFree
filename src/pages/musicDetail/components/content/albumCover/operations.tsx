@@ -5,11 +5,10 @@ import rpx from "@/utils/rpx";
 import LocalMusicSheet from "@/core/localMusicSheet";
 import { ROUTE_PATH } from "@/core/router";
 import { ImgAsset } from "@/constants/assetsConst";
-import Toast from "@/utils/toast";
 import toast from "@/utils/toast";
 import useOrientation from "@/hooks/useOrientation";
 import { showPanel } from "@/components/panels/usePanel";
-import TrackPlayer, { useCurrentMusic, useMusicQuality } from "@/core/trackPlayer";
+import TrackPlayer, { useCurrentMusic } from "@/core/trackPlayer";
 import { iconSizeConst } from "@/constants/uiConst";
 import PersistStatus from "@/utils/persistStatus";
 import HeartIcon from "../heartIcon";
@@ -20,7 +19,6 @@ import i18n from "@/core/i18n";
 
 export default function Operations() {
     const musicItem = useCurrentMusic();
-    const currentQuality = useMusicQuality();
     const isDownloaded = LocalMusicSheet.useIsLocal(musicItem);
 
     const rate = PersistStatus.useValue("music.rate", 100);
@@ -39,27 +37,6 @@ export default function Operations() {
                 orientation === "horizontal" ? styles.horizontalWrapper : null,
             ]}>
             <HeartIcon />
-            <Pressable
-                onPress={() => {
-                    if (!musicItem) {
-                        return;
-                    }
-                    showPanel("MusicQuality", {
-                        musicItem,
-                        async onQualityPress(quality) {
-                            const changeResult =
-                                await TrackPlayer.changeQuality(quality);
-                            if (!changeResult) {
-                                Toast.warn(i18n.t("toast.currentQualityNotAvailableForCurrentMusic"));
-                            }
-                        },
-                    });
-                }}>
-                <Image
-                    source={ImgAsset.quality[currentQuality]}
-                    style={styles.quality}
-                />
-            </Pressable>
             <Icon
                 name={isDownloaded ? "check-circle-outline" : "arrow-down-tray"}
                 size={iconSizeConst.normal}

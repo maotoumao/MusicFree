@@ -1,36 +1,47 @@
-import React, { useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { View } from "react-native";
+import PagerView from "react-native-pager-view";
 import AlbumCover from "./albumCover";
 import Lyric from "./lyric";
 import useOrientation from "@/hooks/useOrientation";
-import Config from "@/core/appConfig";
 import globalStyle from "@/constants/globalStyle";
 
-export default function Content() {
-    const [tab, selectTab] = useState<"album" | "lyric">(
-        Config.getConfig("basic.musicDetailDefault") || "album",
-    );
-    const orientation = useOrientation();
-    const showAlbumCover = tab === "album" || orientation === "horizontal";
+interface IProps {
+    pageIndex: number;
+    onPageSelected: (index: number) => void;
+}
 
-    const onTurnPageClick = () => {
-        if (orientation === "horizontal") {
-            return;
+export default function Content({ pageIndex, onPageSelected }: IProps) {
+    const orientation = useOrientation();
+    const pagerRef = useRef<PagerView>(null);
+
+    useEffect(() => {
+        if (orientation !== "horizontal") {
+            pagerRef.current?.setPage(pageIndex);
         }
-        if (tab === "album") {
-            selectTab("lyric");
-        } else {
-            selectTab("album");
-        }
-    };
+    }, [pageIndex, orientation]);
+
+    if (orientation === "horizontal") {
+        return (
+            <View style={globalStyle.fwflex1}>
+                <AlbumCover />
+            </View>
+        );
+    }
 
     return (
-        <View style={globalStyle.fwflex1}>
-            {showAlbumCover ? (
-                <AlbumCover onTurnPageClick={onTurnPageClick} />
-            ) : (
-                <Lyric onTurnPageClick={onTurnPageClick} />
-            )}
-        </View>
+        <PagerView
+            style={globalStyle.fwflex1}
+            initialPage={pageIndex}
+            onPageSelected={(e) => onPageSelected(e.nativeEvent.position)}
+            ref={pagerRef}
+        >
+            <View key="album" style={globalStyle.fwflex1}>
+                <AlbumCover />
+            </View>
+            <View key="lyric" style={globalStyle.fwflex1}>
+                <Lyric />
+            </View>
+        </PagerView>
     );
 }

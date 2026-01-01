@@ -27,10 +27,6 @@ interface IItemHeights {
     [k: number]: number;
 }
 
-interface IProps {
-    onTurnPageClick?: () => void;
-}
-
 const fontSizeMap = {
     0: rpx(24),
     1: rpx(30),
@@ -38,9 +34,7 @@ const fontSizeMap = {
     3: rpx(42),
 } as Record<number, number>;
 
-export default function Lyric(props: IProps) {
-    const { onTurnPageClick } = props;
-
+export default function Lyric() {
     const { loading, meta, lyrics, hasTranslation } =
         useLyricState();
     const currentLrcItem = useCurrentLyricItem();
@@ -208,12 +202,6 @@ export default function Lyric(props: IProps) {
         }
     };
 
-    const tapGesture = Gesture.Tap()
-        .onStart(() => {
-            onTurnPageClick?.();
-        })
-        .runOnJS(true);
-
     const unlinkTapGesture = Gesture.Tap()
         .onStart(() => {
             if (currentMusicItem) {
@@ -224,146 +212,144 @@ export default function Lyric(props: IProps) {
 
     return (
         <>
-            <GestureDetector gesture={tapGesture}>
-                <View style={globalStyle.fwflex1}>
-                    {loading ? (
-                        <Loading color="white" />
-                    ) : lyrics?.length ? (
-                        <FlatList
-                            ref={_ => {
-                                listRef.current = _;
-                            }}
-                            onLayout={e => {
-                                setLayout(e.nativeEvent.layout);
-                            }}
-                            viewabilityConfig={{
-                                itemVisiblePercentThreshold: 100,
-                            }}
-                            onScrollToIndexFailed={({ index }) => {
-                                delay(120).then(() => {
-                                    listRef.current?.scrollToIndex({
-                                        index: Math.min(
-                                            index ?? 0,
-                                            lyrics.length - 1,
-                                        ),
-                                        viewPosition: 0.5,
-                                    });
+            <View style={globalStyle.fwflex1}>
+                {loading ? (
+                    <Loading color="white" />
+                ) : lyrics?.length ? (
+                    <FlatList
+                        ref={_ => {
+                            listRef.current = _;
+                        }}
+                        onLayout={e => {
+                            setLayout(e.nativeEvent.layout);
+                        }}
+                        viewabilityConfig={{
+                            itemVisiblePercentThreshold: 100,
+                        }}
+                        onScrollToIndexFailed={({ index }) => {
+                            delay(120).then(() => {
+                                listRef.current?.scrollToIndex({
+                                    index: Math.min(
+                                        index ?? 0,
+                                        lyrics.length - 1,
+                                    ),
+                                    viewPosition: 0.5,
                                 });
-                            }}
-                            fadingEdgeLength={120}
-                            ListHeaderComponent={
-                                <>
-                                    {blankComponent}
-                                    <View style={styles.lyricMeta}>
-                                        {associateMusicItem ? (
-                                            <>
+                            });
+                        }}
+                        fadingEdgeLength={120}
+                        ListHeaderComponent={
+                            <>
+                                {blankComponent}
+                                <View style={styles.lyricMeta}>
+                                    {associateMusicItem ? (
+                                        <>
+                                            <Text
+                                                style={[
+                                                    styles.lyricMetaText,
+                                                    fontSizeStyle,
+                                                ]}
+                                                ellipsizeMode="middle"
+                                                numberOfLines={1}>
+                                                {t("lyric.lyricLinkedFrom", {
+                                                    platform: associateMusicItem.platform,
+                                                    title: associateMusicItem.title || "",
+                                                })}
+
+                                            </Text>
+
+                                            <GestureDetector
+                                                gesture={unlinkTapGesture}>
                                                 <Text
                                                     style={[
-                                                        styles.lyricMetaText,
+                                                        styles.linkText,
                                                         fontSizeStyle,
-                                                    ]}
-                                                    ellipsizeMode="middle"
-                                                    numberOfLines={1}>
-                                                    {t("lyric.lyricLinkedFrom", {
-                                                        platform: associateMusicItem.platform,
-                                                        title: associateMusicItem.title || "",
-                                                    })}
-
+                                                    ]}>
+                                                    {t("lyric.unlinkLyric")}
                                                 </Text>
-
-                                                <GestureDetector
-                                                    gesture={unlinkTapGesture}>
-                                                    <Text
-                                                        style={[
-                                                            styles.linkText,
-                                                            fontSizeStyle,
-                                                        ]}>
-                                                        {t("lyric.unlinkLyric")}
-                                                    </Text>
-                                                </GestureDetector>
-                                            </>
-                                        ) : null}
-                                    </View>
-                                </>
+                                            </GestureDetector>
+                                        </>
+                                    ) : null}
+                                </View>
+                            </>
+                        }
+                        ListFooterComponent={blankComponent}
+                        onScrollBeginDrag={onScrollBeginDrag}
+                        onMomentumScrollEnd={onScrollEndDrag}
+                        onScroll={onScroll}
+                        scrollEventThrottle={32}
+                        style={styles.wrapper}
+                        data={lyrics}
+                        initialNumToRender={30}
+                        overScrollMode="never"
+                        extraData={currentLrcItem}
+                        renderItem={({ item, index }) => {
+                            let text = item.lrc;
+                            if (showTranslation && hasTranslation) {
+                                text += `\n${item?.translation ?? ""}`;
                             }
-                            ListFooterComponent={blankComponent}
-                            onScrollBeginDrag={onScrollBeginDrag}
-                            onMomentumScrollEnd={onScrollEndDrag}
-                            onScroll={onScroll}
-                            scrollEventThrottle={32}
-                            style={styles.wrapper}
-                            data={lyrics}
-                            initialNumToRender={30}
-                            overScrollMode="never"
-                            extraData={currentLrcItem}
-                            renderItem={({ item, index }) => {
-                                let text = item.lrc;
-                                if (showTranslation && hasTranslation) {
-                                    text += `\n${item?.translation ?? ""}`;
-                                }
 
-                                return (
-                                    <LyricItemComponent
-                                        index={index}
-                                        text={text}
-                                        fontSize={fontSizeStyle.fontSize}
-                                        onLayout={handleLyricItemLayout}
-                                        light={draggingIndex === index}
-                                        highlight={
-                                            currentLrcItem?.index === index
-                                        }
-                                    />
-                                );
-                            }}
-                        />
-                    ) : (
-                        <View style={globalStyle.fullCenter}>
-                            <Text style={[styles.white, fontSizeStyle]}>
-                                {t("lyric.noLyric")}
-                            </Text>
-                            <TapGestureHandler
-                                onActivated={() => {
-                                    showPanel("SearchLrc", {
-                                        musicItem:
-                                            TrackPlayer.currentMusic,
-                                    });
-                                }}>
-                                <Text
-                                    style={[styles.searchLyric, fontSizeStyle]}>
-                                    {t("lyric.searchLyric")}
-                                </Text>
-                            </TapGestureHandler>
-                        </View>
-                    )}
-                    {draggingIndex !== undefined && (
-                        <View
-                            style={[
-                                styles.draggingTime,
-                                layout?.height
-                                    ? {
-                                        top:
-                                            (layout.height - ITEM_HEIGHT) / 2,
+                            return (
+                                <LyricItemComponent
+                                    index={index}
+                                    text={text}
+                                    fontSize={fontSizeStyle.fontSize}
+                                    onLayout={handleLyricItemLayout}
+                                    light={draggingIndex === index}
+                                    highlight={
+                                        currentLrcItem?.index === index
                                     }
-                                    : null,
-                            ]}>
-                            <DraggingTime
-                                time={
-                                    (lyrics[draggingIndex]?.time ?? 0) +
-                                    +(meta?.offset ?? 0)
+                                />
+                            );
+                        }}
+                    />
+                ) : (
+                    <View style={globalStyle.fullCenter}>
+                        <Text style={[styles.white, fontSizeStyle]}>
+                            {t("lyric.noLyric")}
+                        </Text>
+                        <TapGestureHandler
+                            onActivated={() => {
+                                showPanel("SearchLrc", {
+                                    musicItem:
+                                        TrackPlayer.currentMusic,
+                                });
+                            }}>
+                            <Text
+                                style={[styles.searchLyric, fontSizeStyle]}>
+                                {t("lyric.searchLyric")}
+                            </Text>
+                        </TapGestureHandler>
+                    </View>
+                )}
+                {draggingIndex !== undefined && (
+                    <View
+                        style={[
+                            styles.draggingTime,
+                            layout?.height
+                                ? {
+                                    top:
+                                        (layout.height - ITEM_HEIGHT) / 2,
                                 }
-                            />
-                            <View style={styles.singleLine} />
+                                : null,
+                        ]}>
+                        <DraggingTime
+                            time={
+                                (lyrics[draggingIndex]?.time ?? 0) +
+                                +(meta?.offset ?? 0)
+                            }
+                        />
+                        <View style={styles.singleLine} />
 
-                            <IconButtonWithGesture
-                                style={styles.playIcon}
-                                sizeType='normal'
-                                name="play"
-                                onPress={onLyricSeekPress}
-                            />
-                        </View>
-                    )}
-                </View>
-            </GestureDetector>
+                        <IconButtonWithGesture
+                            style={styles.playIcon}
+                            sizeType='normal'
+                            name="play"
+                            onPress={onLyricSeekPress}
+                        />
+                    </View>
+                )}
+            </View>
             <LyricOperations
                 scrollToCurrentLrcItem={delayedScrollToCurrentLrcItem}
             />

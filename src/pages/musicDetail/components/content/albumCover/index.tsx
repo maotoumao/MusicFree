@@ -9,27 +9,24 @@ import globalStyle from "@/constants/globalStyle";
 import { View } from "react-native";
 import Operations from "./operations";
 import { showPanel } from "@/components/panels/usePanel.ts";
+import MusicInfo from "./musicInfo";
 
-interface IProps {
-    onTurnPageClick?: () => void;
-}
-
-export default function AlbumCover(props: IProps) {
-    const { onTurnPageClick } = props;
-
+export default function AlbumCover() {
     const musicItem = useCurrentMusic();
     const orientation = useOrientation();
 
     const artworkStyle = useMemo(() => {
         if (orientation === "vertical") {
             return {
-                width: rpx(500),
-                height: rpx(500),
+                width: rpx(600),
+                height: rpx(600),
+                borderRadius: rpx(28),
             };
         } else {
             return {
                 width: rpx(260),
                 height: rpx(260),
+                borderRadius: rpx(12),
             };
         }
     }, [orientation]);
@@ -44,17 +41,9 @@ export default function AlbumCover(props: IProps) {
         })
         .runOnJS(true);
 
-    const tap = Gesture.Tap()
-        .onStart(() => {
-            onTurnPageClick?.();
-        })
-        .runOnJS(true);
-
-    const combineGesture = Gesture.Race(tap, longPress);
-
     return (
-        <>
-            <GestureDetector gesture={combineGesture}>
+        <View style={globalStyle.fwflex1}>
+            <GestureDetector gesture={longPress}>
                 <View style={globalStyle.fullCenter}>
                     <FastImage
                         style={artworkStyle}
@@ -63,7 +52,8 @@ export default function AlbumCover(props: IProps) {
                     />
                 </View>
             </GestureDetector>
+            <MusicInfo />
             <Operations />
-        </>
+        </View>
     );
 }

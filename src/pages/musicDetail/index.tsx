@@ -1,7 +1,7 @@
 import StatusBar from "@/components/base/statusBar";
 import globalStyle from "@/constants/globalStyle";
 import useOrientation from "@/hooks/useOrientation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Background from "./components/background";
@@ -14,6 +14,8 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 
 export default function MusicDetail() {
     const orientation = useOrientation();
+    const defaultTab = Config.getConfig("basic.musicDetailDefault") || "album";
+    const [pageIndex, setPageIndex] = useState(defaultTab === "lyric" ? 1 : 0);
 
     useEffect(() => {
         const needAwake = Config.getConfig("basic.musicDetailAwake");
@@ -34,8 +36,8 @@ export default function MusicDetail() {
                 <StatusBar backgroundColor={"transparent"} />
                 <View style={style.bodyWrapper}>
                     <View style={globalStyle.flex1}>
-                        <NavBar />
-                        <Content />
+                        <NavBar pageIndex={pageIndex} onTabChange={setPageIndex} />
+                        <Content pageIndex={pageIndex} onPageSelected={setPageIndex} />
                         <Bottom />
                     </View>
                     {orientation === "horizontal" ? (

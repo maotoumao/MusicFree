@@ -1,18 +1,33 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import rpx from "@/utils/rpx";
 import { useNavigation } from "@react-navigation/native";
-import Tag from "@/components/base/tag";
 import { fontSizeConst, fontWeightConst } from "@/constants/uiConst";
 import Share from "react-native-share";
 import { B64Asset } from "@/constants/assetsConst";
 import IconButton from "@/components/base/iconButton";
-import { useCurrentMusic } from "@/core/trackPlayer";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import useOrientation from "@/hooks/useOrientation";
 
-export default function NavBar() {
+interface IProps {
+    pageIndex: number;
+    onTabChange: (index: number) => void;
+}
+
+export default function NavBar({ pageIndex, onTabChange }: IProps) {
     const navigation = useNavigation();
-    const musicItem = useCurrentMusic();
-    // const {showShare} = useShare();
+    const offset = useSharedValue(0);
+    const orientation = useOrientation();
+
+    useEffect(() => {
+        offset.value = withTiming(pageIndex * rpx(140)); 
+    }, [pageIndex, offset]);
+
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: offset.value }],
+        };
+    });
 
     return (
         <View style={styles.container}>
@@ -25,23 +40,30 @@ export default function NavBar() {
                     navigation.goBack();
                 }}
             />
-            <View style={styles.headerContent}>
-                <Text numberOfLines={1} style={styles.headerTitleText}>
-                    {musicItem?.title ?? "--"}
-                </Text>
-                <View style={styles.headerDesc}>
-                    <Text style={styles.headerArtistText} numberOfLines={1}>
-                        {musicItem?.artist}
-                    </Text>
-                    {musicItem?.platform ? (
-                        <Tag
-                            tagName={musicItem.platform}
-                            containerStyle={styles.tagBg}
-                            style={styles.tagText}
-                        />
-                    ) : null}
+            {orientation === "vertical" && (
+                <View style={styles.centerContainer}>
+                    <View style={styles.tabContainer}>
+                        <TouchableOpacity 
+                            activeOpacity={0.8}
+                            onPress={() => onTabChange(0)} 
+                            style={styles.tabItem}>
+                            <Text style={[styles.tabText, pageIndex === 0 && styles.activeTabText]}>歌曲</Text>
+                        </TouchableOpacity>
+                        <View style={styles.divider}>
+                            <Text style={styles.dividerText}>|</Text>
+                        </View>
+                        <TouchableOpacity 
+                            activeOpacity={0.8}
+                            onPress={() => onTabChange(1)} 
+                            style={styles.tabItem}>
+                            <Text style={[styles.tabText, pageIndex === 1 && styles.activeTabText]}>歌词</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.underlineContainer}>
+                        <Animated.View style={[styles.underline, animatedStyle]} />
+                    </View>
                 </View>
-            </View>
+            )}
             <IconButton
                 name="share"
                 color="white"
@@ -66,7 +88,7 @@ export default function NavBar() {
 const styles = StyleSheet.create({
     container: {
         width: "100%",
-        height: rpx(150),
+        height: rpx(120),
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
@@ -74,34 +96,53 @@ const styles = StyleSheet.create({
     button: {
         marginHorizontal: rpx(24),
     },
-    headerContent: {
-        flex: 1,
-        height: rpx(150),
+    centerContainer: {
+        height: "100%",
         justifyContent: "center",
         alignItems: "center",
     },
-    headerTitleText: {
-        color: "white",
-        fontWeight: fontWeightConst.semibold,
-        fontSize: fontSizeConst.title,
-        marginBottom: rpx(12),
-        includeFontPadding: false,
-    },
-    headerDesc: {
-        height: rpx(32),
+    tabContainer: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: rpx(40),
+        justifyContent: "center",
     },
-    headerArtistText: {
+    tabItem: {
+        width: rpx(120),
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    tabText: {
+        color: "rgba(255,255,255,0.6)",
+        fontSize: fontSizeConst.content,
+        fontWeight: fontWeightConst.medium,
+    },
+    activeTabText: {
         color: "white",
+        fontWeight: fontWeightConst.semibold,
+    },
+    divider: {
+        width: rpx(20),
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    dividerText: {
+        color: "rgba(255,255,255,0.3)",
         fontSize: fontSizeConst.subTitle,
-        includeFontPadding: false,
     },
-    tagBg: {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
+    underlineContainer: {
+        position: "absolute",
+        bottom: rpx(26),
+        left: 0,
+        width: rpx(260), // 120 + 20 + 120
+        alignItems: "flex-start", 
     },
-    tagText: {
-        color: "white",
+    underline: {
+        width: rpx(50),
+        height: rpx(6),
+        backgroundColor: "white", // Or theme color
+        borderRadius: rpx(3),
+        // Center the underline relative to the tab item
+        marginLeft: rpx(35), 
+        marginTop: rpx(10),
     },
 });
