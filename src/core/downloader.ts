@@ -13,7 +13,7 @@ import { atom, getDefaultStore, useAtomValue } from "jotai";
 import { nanoid } from "nanoid";
 import path from "path-browserify";
 import { useEffect, useState } from "react";
-import { copyFile, downloadFile, exists, unlink } from "react-native-fs";
+import { downloadFile, exists, moveFile, unlink } from "react-native-fs";
 import LocalMusicSheet from "./localMusicSheet";
 import { IPluginManager } from "@/types/core/pluginManager";
 
@@ -357,22 +357,39 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
 
         try {
             await promise;
-            // 下载完成，移动文件
-            await copyFile(cacheDownloadPath, targetDownloadPath);
 
-            LocalMusicSheet.addMusic({
-                ...musicItem,
-                [internalSerializeKey]: {
-                    localPath: targetDownloadPath,
-                },
-            });
-
-            patchMediaExtra(musicItem, {
-                downloaded: true,
-                localPath: targetDownloadPath,
-            });
-
+            // 下载完成，立即标记完成并开始下一项下载
             this.markTaskAsCompleted(musicItem);
+            this.downloadNextPendingTask();
+
+            const completedKey = getMediaUniqueKey(musicItem);
+            if (downloadTasks.get(completedKey)?.status === DownloadStatus.Completed) {
+                downloadTasks.delete(completedKey);
+                const dq = getDefaultStore().get(downloadQueueAtom);
+                getDefaultStore().set(downloadQueueAtom, dq.filter(item => !isSameMediaItem(item, musicItem)));
+            }
+
+            // 后处理：移动文件、更新歌单等（不阻塞下载队列）
+            try {
+                await moveFile(cacheDownloadPath, targetDownloadPath);
+
+                LocalMusicSheet.addMusic({
+                    ...musicItem,
+                    [internalSerializeKey]: {
+                        localPath: targetDownloadPath,
+                    },
+                });
+
+                patchMediaExtra(musicItem, {
+                    downloaded: true,
+                    localPath: targetDownloadPath,
+                });
+            } catch (e: any) {
+                errorLog("下载后处理失败", {
+                    item: { id: musicItem.id, title: musicItem.title },
+                    error: e?.message ?? e,
+                });
+            }
         } catch (e: any) {
             const currentRetryCount = nextTask.retryCount ?? 0;
             if (currentRetryCount < MAX_RETRY_COUNT) {
@@ -386,19 +403,8 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
                 return;
             }
             this.markTaskAsError(musicItem, DownloadFailReason.Unknown, e);
-        }
-
-        // 清理工作
-        await unlink(cacheDownloadPath).catch(() => {});
-        this.downloadNextPendingTask();
-
-        // 如果任务状态是完成，则从队列中移除
-        const key = getMediaUniqueKey(musicItem);
-        if (downloadTasks.get(key)?.status === DownloadStatus.Completed) {
-            downloadTasks.delete(key);
-            const downloadQueue = getDefaultStore().get(downloadQueueAtom);
-            const newDownloadQueue = downloadQueue.filter(item => !isSameMediaItem(item, musicItem));
-            getDefaultStore().set(downloadQueueAtom, newDownloadQueue);
+            await unlink(cacheDownloadPath).catch(() => {});
+            this.downloadNextPendingTask();
         }
     }
 
