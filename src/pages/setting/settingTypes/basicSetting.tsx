@@ -370,12 +370,30 @@ export default function BasicSetting() {
                         });
                     },
                 },
-                createRadio(
-                    t("basicSettings.maxDownload"),
-                    "basic.maxDownload",
-                    [1, 3, 5, 7],
-                    maxDownload ?? 3,
-                ),
+                {
+                    title: t("basicSettings.maxDownload"),
+                    right: (
+                        <ThemeText style={styles.centerText}>
+                            {maxDownload ?? 3}
+                        </ThemeText>
+                    ),
+                    onPress() {
+                        showPanel("SimpleInput", {
+                            title: t("basicSettings.maxDownload"),
+                            placeholder: "1-10",
+                            onOk(text, closePanel) {
+                                let val = parseInt(text, 10);
+                                if (isNaN(val) || val < 1) {
+                                    val = 1;
+                                } else if (val > 16) {
+                                    val = 16;
+                                }
+                                Config.setConfig("basic.maxDownload", val);
+                                closePanel();
+                            },
+                        });
+                    },
+                },
                 createRadio(
                     t("basicSettings.defaultDownloadQuality"),
                     "basic.defaultDownloadQuality",

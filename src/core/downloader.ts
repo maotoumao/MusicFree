@@ -187,7 +187,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
 
 
     private async downloadNextPendingTask() {
-        const maxDownloadCount = Math.max(1, Math.min(+(this.configService.getConfig("basic.maxDownload") || 3), 10));
+        const maxDownloadCount = Math.max(1, Math.min(+(this.configService.getConfig("basic.maxDownload") || 3), 16));
         const downloadQueue = getDefaultStore().get(downloadQueueAtom);
 
         // 如果超过最大下载数量，或者没有下载任务，则不执行
