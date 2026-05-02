@@ -17,6 +17,9 @@ import { copyFile, downloadFile, exists, unlink } from "react-native-fs";
 import LocalMusicSheet from "./localMusicSheet";
 import { IPluginManager } from "@/types/core/pluginManager";
 
+const MAX_RETRY_COUNT = 3;
+const RETRY_DELAYS = [1000, 3000, 5000];
+const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
 export enum DownloadStatus {
     // 等待下载
@@ -28,7 +31,9 @@ export enum DownloadStatus {
     // 下载完成
     Completed,
     // 下载失败
-    Error
+    Error,
+    // 重试中
+    Retrying,
 }
 
 
@@ -75,6 +80,8 @@ interface IDownloadTaskInfo {
     musicItem: IMusic.IMusicItem;
     // 如果下载失败，下载失败的原因
     errorReason?: DownloadFailReason;
+    // 重试次数 (最多3次)
+    retryCount?: number;
 }
 
 
@@ -218,6 +225,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
         const plugin = this.pluginManagerService.getByName(musicItem.platform);
 
         try {
+            let data: IPlugin.IMediaSourceResult | null = null;
             if (plugin) {
                 const qualityOrder = getQualityOrder(
                     nextTask.quality ??
@@ -225,7 +233,6 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
                     "standard",
                     this.configService.getConfig("basic.downloadQualityOrder") ?? "asc",
                 );
-                let data: IPlugin.IMediaSourceResult | null = null;
                 for (let quality of qualityOrder) {
                     try {
                         data = await plugin.methods.getMediaSource(
@@ -243,6 +250,17 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
                 url = data?.url ?? url;
                 headers = data?.headers;
             }
+            if (plugin && data === null) {
+                errorLog("下载失败-无法获取下载链接", {
+                    item: {
+                        id: musicItem.id,
+                        title: musicItem.title,
+                        platform: musicItem.platform,
+                        quality: nextTask.quality,
+                    },
+                    reason: "All qualities failed to provide a valid source",
+                });
+            }
             if (!url) {
                 throw new Error(DownloadFailReason.FailToFetchSource);
             }
@@ -258,11 +276,25 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
                 reason: e?.message ?? e,
             });
 
+            // 检查是否需要重试
+            const currentRetryCount = nextTask.retryCount ?? 0;
+            if (currentRetryCount < MAX_RETRY_COUNT) {
+                nextTask.retryCount = (nextTask.retryCount ?? 0) + 1;
+                this.downloadingCount--;
+                this.updateDownloadTask(musicItem, { status: DownloadStatus.Retrying });
+                await wait(RETRY_DELAYS[nextTask.retryCount - 1]);
+                // Reset to Pending so downloadNextPendingTask can pick it up
+                this.updateDownloadTask(musicItem, { status: DownloadStatus.Pending });
+                this.downloadNextPendingTask();
+                return;
+            }
+
             if (e.message === DownloadFailReason.FailToFetchSource) {
                 this.markTaskAsError(musicItem, DownloadFailReason.FailToFetchSource, e);
             } else {
                 this.markTaskAsError(musicItem, DownloadFailReason.Unknown, e);
             }
+            this.downloadNextPendingTask();
             return;
         }
 
@@ -295,6 +327,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
             }
         } catch (e: any) {
             this.emit(DownloaderEvent.DownloadTaskError, DownloadFailReason.NoWritePermission, musicItem, e);
+            this.markTaskAsError(musicItem, DownloadFailReason.NoWritePermission, e);
             return;
         }
 
@@ -341,11 +374,22 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
 
             this.markTaskAsCompleted(musicItem);
         } catch (e: any) {
+            const currentRetryCount = nextTask.retryCount ?? 0;
+            if (currentRetryCount < MAX_RETRY_COUNT) {
+                nextTask.retryCount = (nextTask.retryCount ?? 0) + 1;
+                this.downloadingCount--;
+                this.updateDownloadTask(musicItem, { status: DownloadStatus.Retrying });
+                await wait(RETRY_DELAYS[nextTask.retryCount - 1]);
+                // Reset to Pending so downloadNextPendingTask can pick it up
+                this.updateDownloadTask(musicItem, { status: DownloadStatus.Pending });
+                this.downloadNextPendingTask();
+                return;
+            }
             this.markTaskAsError(musicItem, DownloadFailReason.Unknown, e);
         }
 
         // 清理工作
-        await unlink(cacheDownloadPath);
+        await unlink(cacheDownloadPath).catch(() => {});
         this.downloadNextPendingTask();
 
         // 如果任务状态是完成，则从队列中移除
