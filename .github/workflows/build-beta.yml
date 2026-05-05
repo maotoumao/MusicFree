@@ -1,4 +1,4 @@
-name: 自动构建APK
+name: 万能自动构建APK
 on:
   workflow_dispatch:
 
@@ -8,29 +8,53 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 安装 Java JDK
+      # 1. 自动安装 NodeJS (所有项目通用)
+      - name: 安装 NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      # 2. 自动安装 Java (安卓打包必备)
+      - name: 安装 JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 安装 Flutter 环境
+      # 3. 自动安装 Flutter (可选，不影响其他项目)
+      - name: 安装 Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
+          flutter-version: 3.16.0
           channel: stable
 
-      - name: 检查环境
-        run: flutter doctor -v
-
+      # 4. 通用依赖安装
       - name: 安装项目依赖
-        run: flutter pub get
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter pub get
+          elif [ -f "yarn.lock" ]; then
+            yarn install
+          elif [ -f "package.json" ]; then
+            npm install
+          fi
 
-      - name: 构建正式版APK
-        run: flutter build apk --release
+      # 5. 通用打包命令 (自动识别项目类型)
+      - name: 开始打包APK
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter build apk --release
+          elif [ -f "package.json" ]; then
+            yarn run build-app || npm run build-app || yarn run build:android || npm run build:android
+          fi
 
-      - name: 上传APK文件
+      # 6. 自动上传APK (所有路径通用)
+      - name: 上传打包好的APK
         uses: actions/upload-artifact@v4
         with:
           name: my-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            release/*.apk
+            *.apk
