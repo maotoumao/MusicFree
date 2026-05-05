@@ -5,17 +5,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # 只加这一行，彻底消除Node.js弃用警告
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
       - name: 安装 Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 24  # 这里改成 24，彻底解决弃用警告
+          node-version: 24
           cache: 'yarn'
 
       - name: 安装项目依赖
-        run: yarn install
+        run: |
+          yarn install --frozen-lockfile || yarn install
+          yarn add -D electron-builder
 
       - name: 构建APK
         run: yarn run build-app
