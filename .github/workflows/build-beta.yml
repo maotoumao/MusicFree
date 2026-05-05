@@ -1,4 +1,4 @@
-name: 万能自动构建APK
+name: 构建 XlingMusic APK
 on:
   workflow_dispatch:
 
@@ -6,58 +6,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # 强制使用 Node.js 24，解决弃用警告
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 安装 Node.js 20（兼容你的项目）
+      # 只装 Node，不装 Flutter（你的项目用不上）
       - name: 安装 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'
 
-      # 2. 安装 JDK 17（安卓打包必备）
-      - name: 安装 JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      # 3. 安装 Flutter（不影响 Node 项目）
-      - name: 安装 Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 3.16.0
-          channel: stable
-
-      # 4. 自动识别项目类型并安装依赖
+      # 安装依赖
       - name: 安装项目依赖
-        run: |
-          if [ -f "pubspec.yaml" ]; then
-            flutter pub get
-          elif [ -f "yarn.lock" ]; then
-            yarn install --frozen-lockfile
-          elif [ -f "package.json" ]; then
-            npm install
-          fi
+        run: yarn install --frozen-lockfile
 
-      # 5. 自动识别打包命令
-      - name: 构建APK
-        run: |
-          if [ -f "pubspec.yaml" ]; then
-            flutter build apk --release
-          elif [ -f "package.json" ]; then
-            yarn run build-app || npm run build-app || yarn run build:android || npm run build:android || echo "未找到Node项目打包命令"
-          fi
+      # 构建 APK（用项目自带的命令）
+      - name: 构建 APK
+        run: yarn run build-app
 
-      # 6. 自动上传所有路径的APK
-      - name: 上传APK
+      # 正确上传 APK（只写项目实际会生成的路径）
+      - name: 上传 APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-apk
-          path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            release/*.apk
-            *.apk
+          name: XlingMusic-APK
+          path: release/
