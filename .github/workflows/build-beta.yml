@@ -1,32 +1,26 @@
-name: 构建 XlingMusic APK
+name: 构建APK
 on:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
-      # 只装 Node，不装 Flutter（你的项目用不上）
-      - name: 安装 Node.js
+      - name: 安装 Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24  # 这里改成 24，彻底解决弃用警告
           cache: 'yarn'
 
-      # 安装依赖
       - name: 安装项目依赖
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
-      # 构建 APK（用项目自带的命令）
-      - name: 构建 APK
+      - name: 构建APK
         run: yarn run build-app
 
-      # 正确上传 APK（只写项目实际会生成的路径）
-      - name: 上传 APK
+      - name: 上传APK
         uses: actions/upload-artifact@v4
         with:
           name: XlingMusic-APK
