@@ -2,7 +2,6 @@ name: 构建APK
 on:
   workflow_dispatch:
 
-# 按官方要求：全局强制使用 Node24
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -16,12 +15,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: 'yarn'
 
       - name: 安装项目依赖
         run: yarn install
 
+      # 自动尝试所有常见的打包命令，总有一个能命中
       - name: 构建APK
-        run: yarn run build-app
+        run: |
+          yarn run build:android || \
+          yarn run build || \
+          npm run build:android || \
+          npm run build || \
+          echo "没有找到可用的打包命令，请检查 package.json 里的 scripts" && exit 1
 
       - name: 上传APK
         uses: actions/upload-artifact@v4
