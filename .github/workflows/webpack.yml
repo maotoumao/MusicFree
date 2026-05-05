@@ -1,0 +1,28 @@
+name: NodeJS with Webpack名称: NodeJS与Webpack
+
+on:触发:
+  push:推送:
+    branches: [ "master" ]分支: [ "master" ]分支: [ "master" ]分支: [ "master" ]
+  pull_request:拉取请求拉取请求:
+    branches: [ "master" ]分支: [ "master" ]分支: [ "master" ]分支: [ "master" ]分支: [ "master" ]分支: [ "master" ]分支: [ "master" ]分支: [ "master" ]
+
+jobs:作业:
+  build:构建:
+    runs-on: ubuntu-latest运行于: ubuntu-latest
+
+    strategy:策略:
+      matrix:矩阵:
+        node-version: [18.x, 20.x, 22.x]节点版本: [18.x,20.x,22.x]
+
+    steps:步骤:步骤:步骤:步骤:步骤:步骤:步骤步骤：步骤：步骤：步骤：步骤：步骤：步骤：步骤:
+    - uses使用: actions/checkout@v4    - 使用: actions/checkout@v4    - 使用: actions/checkout@v4 - 使用: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}    - name: 使用 Node.js ${{matrix.node-version}}    - name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}    - name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}    - name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}    - name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}- name: 使用 Node.js ${{matrix.node-version}}
+      uses: actions/setup-node@v4用途: actions/setup-node@v4
+      with:与:与:与:与:与:与:与:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Build    - 名称: 构建    - name: 构建 - 名称: 构建    - name: 构建 - 名称: 构建 - 名称: 构建 - name: 构建 - 名称:     - name: 构建 - 名称: 构建 - name: 构建 - 名称: 构建 - 名称: 构建 - name: 构建 - 名称: 构建 - 名称: 构建 - 名称: 构建 - 名称: 构建 - name: 构建 - 名称: 构建 - 名称: 构建 - 名称: 构建 - 名称: 构建 - 名称: 构建
+      run: |运行: |运行: |运行: |运行: |运行: |运行: |运行: |运行: |运行: |运行: |运行: |运行: |
+        npm installnpm 安装npm 安装npm 安装
+        npx webpack
