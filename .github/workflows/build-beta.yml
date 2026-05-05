@@ -2,35 +2,42 @@ name: 构建APK
 on:
   workflow_dispatch:
 
+# 官方强制全程 Node24，消除弃用警告
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: 安装 Node.js
+      # 1. 装 JDK 安卓打包必须
+      - name: 安装 JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 2. 装 Node24 匹配你项目 engines >=18
+      - name: 安装 Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'yarn'
 
+      # 3. 安装依赖
       - name: 安装项目依赖
         run: yarn install
 
-      # 自动尝试所有常见的打包命令，总有一个能命中
-      - name: 构建APK
-        run: |
-          yarn run build:android || \
-          yarn run build || \
-          npm run build:android || \
-          npm run build || \
-          echo "没有找到可用的打包命令，请检查 package.json 里的 scripts" && exit 1
+      # 4. 用你 package.json 里真实存在的命令 build-android
+      - name: 构建安卓正式包
+        run: npm run build-android
 
+      # 5. RN 安卓打包后 APK 固定路径
       - name: 上传APK
         uses: actions/upload-artifact@v4
         with:
-          name: XlingMusic-APK
-          path: release/
+          name: MusicFree-APK
+          path: android/app/build/outputs/apk/release/app-release.apk
