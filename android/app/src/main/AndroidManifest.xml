@@ -1,4 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="fun.upup.musicfree">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="fun.upup.musicfree">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -22,6 +24,19 @@
       android:usesCleartextTraffic="true"
       android:extractNativeLibs="true"
     >
+      <meta-data
+        android:name="com.google.android.gms.car.application"
+        android:resource="@xml/automotive_app_desc" />
+
+      <service
+        android:name=".AutoMediaBrowserService"
+        android:enabled="true"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent-filter>
+      </service>
+
       <activity
         android:name=".MainActivity"
         android:theme="@style/Theme.App.SplashScreen"
@@ -40,7 +55,8 @@
               <category android:name="android.intent.category.BROWSABLE" />
               <data android:scheme="musicfree" android:host="app"/>
               <data android:scheme="musicfree" android:host="install"/>
-          </intent-filter>          
+              <data android:scheme="musicfree" android:host="auto"/>
+          </intent-filter>
           <!-- 处理音频文件 -->
           <intent-filter>
               <action android:name="android.intent.action.VIEW" />

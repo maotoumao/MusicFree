@@ -39,6 +39,7 @@ import minDistance from "@/utils/minDistance";
 import { IPluginManager } from "@/types/core/pluginManager";
 import { ImgAsset } from "@/constants/assetsConst";
 import { resolveImportedAssetOrPath } from "@/utils/fileUtils";
+import { exportAndroidAutoCatalog } from "@/utils/androidAutoCatalog";
 
 
 
@@ -598,6 +599,7 @@ class TrackPlayer extends EventEmitter<{
                     0,
                     mergedTrack as TrackMetadataBase,
                 );
+                exportAndroidAutoCatalog(this.playList, mergedTrack as IMusic.IMusicItem);
             }
         } catch (e: any) {
             const message = e?.message;
@@ -750,6 +752,7 @@ class TrackPlayer extends EventEmitter<{
             getDefaultStore().set(currentMusicAtom, null);
             PersistStatus.set("music.musicItem", undefined);
             PersistStatus.set("music.progress", 0);
+            exportAndroidAutoCatalog(this.playList, null);
 
             this.emit(TrackPlayerEvents.CurrentMusicChanged, null);
             return;
@@ -759,6 +762,7 @@ class TrackPlayer extends EventEmitter<{
         }
         this.currentIndex = this.getMusicIndexInPlayList(musicItem);
         getDefaultStore().set(currentMusicAtom, musicItem);
+        exportAndroidAutoCatalog(this.playList, musicItem);
 
         this.emit(TrackPlayerEvents.CurrentMusicChanged, musicItem);
     }
@@ -825,6 +829,7 @@ class TrackPlayer extends EventEmitter<{
         }
 
         this.currentIndex = this.getMusicIndexInPlayList(this.currentMusic);
+        exportAndroidAutoCatalog(newPlayList, this.currentMusic);
     }
 
 
