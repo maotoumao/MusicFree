@@ -8,6 +8,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useAtomValue } from "jotai";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import useSearch from "../../hooks/useSearch";
+import PlayAllBar from "@/components/base/playAllBar";
 import { ISearchResult, queryAtom } from "../../store/atoms";
 import { renderMap } from "./results";
 
@@ -31,6 +32,7 @@ function ResultWrapper(props: IResultWrapperProps) {
 
     const ResultComponent = renderMap[tab]!;
     const data: any = searchResult?.data ?? [];
+    const pluginResultRef = pluginSearchResultRef;
 
     const keyExtractor = useCallback(
         (item: any, i: number) => `${i}-${item.platform}-${item.id}`,
@@ -56,10 +58,23 @@ function ResultWrapper(props: IResultWrapperProps) {
         />
     );
 
+    // 仅对 music 显示 PlayAllBar
+    const headerComp =
+        tab === "music" && pluginResultRef.current?.data?.length ? (
+            <PlayAllBar
+                musicList={pluginResultRef.current.data}
+                onPlayAll={async () => {
+                    const pluginRes = pluginResultRef.current;
+                    return pluginRes?.data ?? [];
+                }}
+            />
+        ) : null;
+
     return searchState === RequestStateCode.PENDING_FIRST_PAGE ? (
         <Loading />
     ) : (
         <FlashList
+            ListHeaderComponent={headerComp}
             extraData={searchState}
             ListEmptyComponent={<ListEmpty state={searchState} onRetry={() => {
                 search(query, 1, tab, pluginHash);

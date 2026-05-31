@@ -1,7 +1,6 @@
 package `fun`.upup.musicfree.lyricUtil
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.drawable.ColorDrawable

@@ -122,10 +122,10 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "fun.upup.musicfree"
+    namespace "fun.shibo.musicfree"
 
     defaultConfig {
-        applicationId "fun.upup.musicfree"
+        applicationId "fun.shibo.musicfree"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode appVersionCode
@@ -139,12 +139,13 @@ android {
             keyPassword 'android'
         }
         // !! Add lines
-         release {
-            storeFile file(keystoreProperties['RELEASE_STORE_FILE'])
-            storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
-            keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
-            keyPassword keystoreProperties['RELEASE_KEY_PASSWORD']
-        }
+        // 注释
+//         release {
+//            storeFile file(keystoreProperties['RELEASE_STORE_FILE'])
+//            storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
+//            keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
+//            keyPassword keystoreProperties['RELEASE_KEY_PASSWORD']
+//        }
     }
     splits {
             abi {
@@ -161,13 +162,14 @@ android {
         debug {
             signingConfig signingConfigs.debug
         }
-        release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.release
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
+        // 注释
+//        release {
+//            // Caution! In production, you need to generate your own keystore file.
+//            // see https://reactnative.dev/docs/signed-apk-android.
+//            signingConfig signingConfigs.release
+//            minifyEnabled enableProguardInReleaseBuilds
+//            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+//        }
     }
 }
 
@@ -188,4 +190,3 @@ dependencies {
     implementation 'net.jthink:jaudiotagger:2.2.5'
     implementation 'androidx.core:core-splashscreen:1.0.0'
 }
-
