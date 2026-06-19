@@ -51,7 +51,9 @@ export async function clearLog() {
             if (file.isFile()) {
                 try {
                     await RNFS.unlink(file.path);
-                } catch {}
+                } catch {
+                    // 文件可能已被删除，忽略
+                }
             }
         }),
     );
