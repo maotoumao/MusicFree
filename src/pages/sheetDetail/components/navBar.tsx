@@ -1,16 +1,16 @@
 import AppBar from "@/components/base/appBar";
 import { showDialog } from "@/components/dialogs/useDialog";
-import { showPanel } from "@/components/panels/usePanel.ts";
 import { SortType } from "@/constants/commonConst.ts";
 import { useI18N } from "@/core/i18n";
 import MusicSheet, { useSheetItem } from "@/core/musicSheet";
-import { ROUTE_PATH, useParams } from "@/core/router";
+import { ROUTE_PATH, useNavigate, useParams } from "@/core/router";
 import { default as Toast, default as toast } from "@/utils/toast";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 
 export default function () {
     const navigation = useNavigation<any>();
+    const navigate = useNavigate();
     const { id = "favorite" } = useParams<"local-sheet-detail">();
     const musicSheet = useSheetItem(id);
     const { t } = useI18N();
@@ -23,7 +23,7 @@ export default function () {
                         icon: "pencil-outline",
                         title: t("sheetDetail.editSheetInfo"),
                         onPress() {
-                            showPanel("EditMusicSheetInfo", {
+                            navigate(ROUTE_PATH.EDIT_MUSIC_SHEET_INFO, {
                                 musicSheet: musicSheet,
                             });
                         },

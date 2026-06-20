@@ -9,12 +9,6 @@ export const qualityKeys: IMusic.IQualityKey[] = [
     "super",
 ];
 
-export const qualityText = {
-    low: "低音质",
-    standard: "标准音质",
-    high: "高音质",
-    super: "超高音质",
-};
 
 /** 获取音质顺序 */
 export function getQualityOrder(

@@ -174,11 +174,46 @@ class MusicSheetClazz implements IInjectable {
         });
     }
 
+    getSheets() {
+        return getDefaultStore().get(musicSheetsBaseAtom);
+    }
+
+    // 只有排序器会用到，不应该在其他地方调用
+    async setSortedSheets(sheets: IMusic.IMusicSheetItemBase[]) {
+        let newSheets = [...sheets];
+        // 检查是否有默认歌单
+        const defaultSheetIndex = sheets.findIndex(it => it.id === _defaultSheet.id);
+        if (defaultSheetIndex === -1) {
+            const defaultSheet = this.getSheets().find(it => it.id === _defaultSheet.id);
+            newSheets.unshift({
+                ...(defaultSheet || _defaultSheet),
+            });
+        } else {
+            // 确保默认歌单在第一位
+            const defaultSheet = newSheets.splice(defaultSheetIndex, 1)[0];
+            newSheets.unshift(defaultSheet);
+        }
+
+        // 如果歌单数量变化，清理 musicListMap 中不存在的歌单数据
+        if (newSheets.length < getDefaultStore().get(musicSheetsBaseAtom).length) {
+            const existingSheetIds = new Set(newSheets.map(it => it.id));
+            for (let sheetId of musicListMap.keys()) {
+                if (!existingSheetIds.has(sheetId)) {
+                    musicListMap.delete(sheetId);
+                    storage.removeMusicList(sheetId);
+                }
+            }
+        }
+
+        getDefaultStore().set(musicSheetsBaseAtom, newSheets);
+        await storage.setSheets(newSheets);
+    }
+
 
     /**
- * 新建歌单
- * @param title 歌单名称
- */
+     * 新建歌单
+     * @param title 歌单名称
+     */
     async addSheet(title: string) {
         const newId = nanoid();
         const musicSheets = getDefaultStore().get(musicSheetsBaseAtom);
@@ -492,6 +527,15 @@ class MusicSheetClazz implements IInjectable {
         );
         store.set(starredMusicSheetsAtom, newVal);
         await storage.setStarredSheets(newVal);
+    }
+
+    getStarredSheets() {
+        return getDefaultStore().get(starredMusicSheetsAtom);
+    }
+
+    async setStarredMusicSheets(sheets: IMusic.IMusicSheetItem[]) {
+        getDefaultStore().set(starredMusicSheetsAtom, sheets);
+        await storage.setStarredSheets(sheets);
     }
 }
 

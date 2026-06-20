@@ -9,9 +9,11 @@ interface ISimpleDialogProps {
     okText?: string;
     cancelText?: string;
     onOk?: () => void;
+    onCancel?: () => void;
+    onDismiss?: () => void;
 }
 export default function SimpleDialog(props: ISimpleDialogProps) {
-    const { title, content, onOk, okText, cancelText } = props;
+    const { title, content, onOk, onCancel, onDismiss, okText, cancelText } = props;
 
     const { t } = useI18N();
 
@@ -20,7 +22,10 @@ export default function SimpleDialog(props: ISimpleDialogProps) {
             {
                 title: cancelText ?? t("common.cancel"),
                 type: "normal",
-                onPress: hideDialog,
+                onPress() {
+                    onCancel?.();
+                    hideDialog();
+                },
             },
             {
                 title: okText ?? t("common.confirm"),
@@ -42,7 +47,10 @@ export default function SimpleDialog(props: ISimpleDialogProps) {
         ] as any);
 
     return (
-        <Dialog onDismiss={hideDialog}>
+        <Dialog onDismiss={() => {
+            onDismiss?.();
+            hideDialog();
+        }}>
             <Dialog.Title withDivider>{title}</Dialog.Title>
             <Dialog.Content needScroll>{content}</Dialog.Content>
             <Dialog.Actions actions={actions} />

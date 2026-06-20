@@ -6,6 +6,7 @@ import rpx from "@/utils/rpx";
 import LinkText from "@/components/base/linkText";
 import { ImgAsset } from "@/constants/assetsConst";
 import ThemeText from "@/components/base/themeText";
+import telemetry from "@/core/telemetry";
 
 interface DeviceInfoProps {
     colors: any;
@@ -52,7 +53,9 @@ function DeviceInfoSection({ colors }: DeviceInfoProps) {
         };
 
         getDeviceInfo();
-    }, []);    const systemDisplayName = Platform.OS === "ios" ? "iOS" : "Android";
+    }, []);    
+    
+    const systemDisplayName = Platform.OS === "ios" ? "iOS" : "Android";
 
     return (
         <View style={[styles.deviceInfoBox, { backgroundColor: colors.card, borderColor: colors.divider }]}>
@@ -75,6 +78,10 @@ function DeviceInfoSection({ colors }: DeviceInfoProps) {
                 <View style={styles.deviceInfoRow}>
                     <Text style={[styles.deviceInfoLabel, { color: colors.textSecondary }]}>设备型号:</Text>
                     <Text style={[styles.deviceInfoValue, { color: colors.text }]}>{deviceInfo.deviceBrand} {deviceInfo.deviceModel}</Text>
+                </View>
+                <View style={styles.deviceInfoRow}>
+                    <Text style={[styles.deviceInfoLabel, { color: colors.textSecondary }]}>DebugID:</Text>
+                    <Text style={[styles.deviceInfoValue, { color: colors.text }]}>{telemetry.debugId}</Text>
                 </View>
             </View>
         </View>
@@ -116,6 +123,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         
         // 这里可以添加错误日志上报
         console.error("ErrorBoundary caught an error:", error, errorInfo);
+        telemetry.logException(error, {
+            i: errorInfo,
+        });
     }
 
     render() {

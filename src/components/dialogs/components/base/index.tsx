@@ -325,7 +325,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-end",
         paddingHorizontal: rpx(24),
-        marginBottom: rpx(12),
+        marginTop: rpx(8),
+        marginBottom: rpx(16),
         flexWrap: "nowrap",
     },
     actionButton: {

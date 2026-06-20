@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from "react";
-import { Keyboard, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Keyboard, StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import { CircularProgressBase } from "react-native-circular-progress-indicator";
 
@@ -8,7 +8,7 @@ import { showPanel } from "../panels/usePanel";
 import useColors from "@/hooks/useColors";
 import IconButton from "../base/iconButton";
 import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from "@/core/trackPlayer";
-import { musicIsPaused } from "@/utils/trackUtils";
+import { musicIsBuffering, musicIsPaused } from "@/utils/trackUtils";
 import MusicInfo from "./musicInfo";
 import Icon from "@/components/base/icon.tsx";
 
@@ -18,6 +18,13 @@ function CircularPlayBtn() {
     const colors = useColors();
 
     const isPaused = musicIsPaused(musicState);
+    const isBuffering = musicIsBuffering(musicState);
+
+    if (isBuffering) {
+        return <View style={styles.bufferingContainer}>
+            <ActivityIndicator size={rpx(52)} color={colors.musicBarText} />
+        </View>;
+    }
 
     return (
         <CircularProgressBase
@@ -82,7 +89,7 @@ function MusicBar() {
             {musicItem && !showKeyboard && (
                 <View
                     style={[
-                        style.wrapper,
+                        styles.wrapper,
                         {
                             backgroundColor: colors.musicBar,
                             paddingRight: safeAreaInsets.right + rpx(24),
@@ -95,7 +102,7 @@ function MusicBar() {
                     // }}
                 >
                     <MusicInfo musicItem={musicItem} />
-                    <View style={style.actionGroup}>
+                    <View style={styles.actionGroup}>
                         <CircularPlayBtn />
                         <Icon
                             accessible
@@ -106,7 +113,7 @@ function MusicBar() {
                                 showPanel("PlayList");
                             }}
                             color={colors.musicBarText}
-                            style={[style.actionIcon]}
+                            style={[styles.actionIcon]}
                         />
                     </View>
                 </View>
@@ -117,13 +124,19 @@ function MusicBar() {
 
 export default memo(MusicBar, () => true);
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     wrapper: {
         width: "100%",
         height: rpx(132),
         flexDirection: "row",
         alignItems: "center",
         paddingRight: rpx(24),
+    },
+    bufferingContainer: {
+        width: rpx(72),
+        height: rpx(72),
+        justifyContent: "center",
+        alignItems: "center",
     },
     actionGroup: {
         width: rpx(200),

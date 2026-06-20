@@ -1,3 +1,12 @@
+export enum TrackPlayerEvents {
+    // 一首歌曲播放结束
+    PlayEnd = "play-end",
+    // 更换正在播放的歌曲
+    CurrentMusicChanged = "current-music-changed",
+    // 进度更新
+    ProgressChanged = "progress-changed",
+}
+
 export enum MusicRepeatMode {
     /** 随机播放 */
     SHUFFLE = "SHUFFLE",
@@ -8,7 +17,7 @@ export enum MusicRepeatMode {
 }
 
 
-export default {
+export const MusicRepeatModeInfo = {
     [MusicRepeatMode.QUEUE]: {
         icon: "repeat-song-1",
         text: "列表循环",

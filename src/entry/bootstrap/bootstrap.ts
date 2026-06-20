@@ -16,7 +16,6 @@ import TrackPlayer from "@/core/trackPlayer";
 import NativeUtils from "@/native/utils";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import { errorLog, trace } from "@/utils/log";
-import { IPerfLogger, perfLogger } from "@/utils/perfLogger";
 import PersistStatus from "@/utils/persistStatus";
 import Toast from "@/utils/toast";
 import * as SplashScreen from "expo-splash-screen";
@@ -26,6 +25,7 @@ import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-nati
 import i18n from "@/core/i18n";
 import bootstrapAtom from "./bootstrap.atom";
 import { getDefaultStore } from "jotai";
+import telemetry from "@/core/telemetry";
 
 
 // 依赖管理
@@ -35,6 +35,7 @@ TrackPlayer.injectDependencies(Config, musicHistory, PluginManager);
 downloader.injectDependencies(Config, PluginManager);
 lyricManager.injectDependencies(TrackPlayer, Config, PluginManager);
 MusicSheet.injectDependencies(Config);
+telemetry.injectDependencies(Config);
 
 
 async function bootstrapImpl() {
@@ -44,8 +45,13 @@ async function bootstrapImpl() {
                 `SplashScreen.preventAutoHideAsync() succeeded: ${result}`,
             ),
         )
-        .catch(console.warn); // it's good to explicitly catch and inspect any error
-    const logger = perfLogger();
+        .catch(console.warn);
+
+    const bootstrapTimestamp: Record<string, number> = {};
+    const bootstrapMetrics: Record<string, number> = {};
+
+    bootstrapTimestamp.Start = Date.now();
+    
     // 1. 检查权限
     if (Platform.OS === "android" && Platform.Version >= 30) {
         const hasPermission = await NativeUtils.checkStoragePermission();
@@ -71,37 +77,44 @@ async function bootstrapImpl() {
             await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
         }
     }
-    logger.mark("权限检查完成");
+    
+    bootstrapTimestamp.PermissionChecked = Date.now();
+    bootstrapMetrics.PermissionChecked = bootstrapTimestamp.PermissionChecked - bootstrapTimestamp.Start;
 
     // 2. 数据初始化
     /** 初始化路径 */
     await setupFolder();
     trace("文件夹初始化完成");
-    logger.mark("文件夹初始化完成");
-
-
+    bootstrapTimestamp.FolderSetup = Date.now();
+    bootstrapMetrics.FolderSetup = bootstrapTimestamp.FolderSetup - bootstrapTimestamp.PermissionChecked;
 
     // 加载配置
     await Promise.all([
         Config.setup().then(() => {
-            logger.mark("Config");
+            bootstrapTimestamp.ConfigSetup = Date.now();
+            bootstrapMetrics.ConfigSetup = bootstrapTimestamp.ConfigSetup - bootstrapTimestamp.FolderSetup;
         }),
         MusicSheet.setup().then(() => {
-            logger.mark("MusicSheet");
+            bootstrapTimestamp.MusicSheetSetup = Date.now();
+            bootstrapMetrics.MusicSheetSetup = bootstrapTimestamp.MusicSheetSetup - bootstrapTimestamp.FolderSetup;
         }),
         musicHistory.setup().then(() => {
-            logger.mark("musicHistory");
+            bootstrapTimestamp.MusicHistorySetup = Date.now();
+            bootstrapMetrics.MusicHistorySetup = bootstrapTimestamp.MusicHistorySetup - bootstrapTimestamp.FolderSetup;
         }),
     ]);
+    bootstrapTimestamp.BatchConfigSetup = Date.now();
+    bootstrapMetrics.BatchConfigSetup = bootstrapTimestamp.BatchConfigSetup - bootstrapTimestamp.FolderSetup;
     trace("配置初始化完成");
-    logger.mark("配置初始化完成");
+
 
     // 加载插件
     await PluginManager.setup();
-    logger.mark("插件初始化完成");
+    bootstrapTimestamp.PluginSetup = Date.now();
+    bootstrapMetrics.PluginSetup = bootstrapTimestamp.PluginSetup - bootstrapTimestamp.BatchConfigSetup;
     trace("插件初始化完成");
 
-    await initTrackPlayer(logger).catch(err => {
+    await initTrackPlayer().catch(err => {
         // 初始化播放器出错，延迟初始化
         const bootstrapState = getDefaultStore().get(bootstrapAtom);
 
@@ -115,20 +128,29 @@ async function bootstrapImpl() {
 
     await LocalMusicSheet.setup();
     trace("本地音乐初始化完成");
-    logger.mark("本地音乐初始化完成");
+    bootstrapTimestamp.LocalMusicSheetSetup = Date.now();
+    bootstrapMetrics.LocalMusicSheetSetup = bootstrapTimestamp.LocalMusicSheetSetup - bootstrapTimestamp.PluginSetup;
 
     Theme.setup();
     trace("主题初始化完成");
-    logger.mark("主题初始化完成");
+    bootstrapTimestamp.ThemeSetup = Date.now();
+    bootstrapMetrics.ThemeSetup = bootstrapTimestamp.ThemeSetup - bootstrapTimestamp.LocalMusicSheetSetup;
 
     extraMakeup();
 
     i18n.setup();
-    logger.mark("语言模块初始化完成");
+    trace("多语言初始化完成");
+    bootstrapTimestamp.I18nSetup = Date.now();
+    bootstrapMetrics.I18nSetup = bootstrapTimestamp.I18nSetup - bootstrapTimestamp.ThemeSetup;
     
     ErrorUtils.setGlobalHandler(error => {
+        telemetry.logException(error);
         errorLog("未捕获的错误", error);
     });
+
+
+    // metrics属性
+    telemetry.logMetric("Bootstrap.MainTrace", Date.now() - bootstrapTimestamp.Start, bootstrapMetrics);
 }
 
 /** 初始化 */
@@ -147,7 +169,11 @@ async function setupFolder() {
     ]);
 }
 
-export async function initTrackPlayer(logger?: IPerfLogger) {
+export async function initTrackPlayer() {
+    const playerTimestamp: Record<string, number> = {};
+    const playerMetrics: Record<string, number> = {}; 
+    playerTimestamp.Start = Date.now();
+
     try {
         await RNTrackPlayer.setupPlayer({
             maxCacheSize:
@@ -161,7 +187,8 @@ export async function initTrackPlayer(logger?: IPerfLogger) {
             throw e;
         }
     }
-    logger?.mark("加载播放器");
+    playerTimestamp.RNTPSetup = Date.now();
+    playerMetrics.RNTPSetup = playerTimestamp.RNTPSetup - playerTimestamp.Start;
 
     const capabilities = Config.getConfig("basic.showExitOnNotification")
         ? [
@@ -179,7 +206,7 @@ export async function initTrackPlayer(logger?: IPerfLogger) {
         ];
     await RNTrackPlayer.updateOptions({
         icon: ImgAsset.logoTransparent,
-        progressUpdateEventInterval: 1,
+        progressUpdateEventInterval: 0.5,
         android: {
             alwaysPauseOnInterruption: true,
             appKilledPlaybackBehavior:
@@ -189,16 +216,21 @@ export async function initTrackPlayer(logger?: IPerfLogger) {
         compactCapabilities: capabilities,
         notificationCapabilities: [...capabilities, Capability.SeekTo],
     });
-    logger?.mark("播放器初始化完成");
     trace("播放器初始化完成");
+    playerTimestamp.OptionsSetup = Date.now();
+    playerMetrics.OptionsSetup = playerTimestamp.OptionsSetup - playerTimestamp.RNTPSetup;
 
     await TrackPlayer.setupTrackPlayer();
     trace("播放列表初始化完成");
-    logger?.mark("播放列表初始化完成");
+    playerTimestamp.PlayerSetup = Date.now();
+    playerMetrics.PlayerSetup = playerTimestamp.PlayerSetup - playerTimestamp.OptionsSetup;
 
     await lyricManager.setup();
+    trace("歌词模块初始化完成");
+    playerTimestamp.LyricManagerSetup = Date.now();
+    playerMetrics.LyricManagerSetup = playerTimestamp.LyricManagerSetup - playerTimestamp.PlayerSetup;
 
-    logger?.mark("歌词初始化完成");
+    telemetry.logMetric("Bootstrap.TrackPlayerTrace", Date.now() - playerTimestamp.Start, playerMetrics);
 }
 
 
@@ -263,11 +295,21 @@ async function extraMakeup() {
                 if (musicItem) {
                     TrackPlayer.play(musicItem);
                 }
+            } else if (url.startsWith("content://")) {
+                // 本地播放 (Android)
+                const musicItem = await PluginManager.getByHash(
+                    localPluginHash,
+                )?.instance?.importMusicItem?.(url);
+                console.log(musicItem);
+                if (musicItem) {
+                    TrackPlayer.play(musicItem);
+                }
             }
         } catch { }
     }
 
     // 开启监听
+    Linking.removeAllListeners("url");
     Linking.addEventListener("url", data => {
         if (data.url) {
             handleLinkingUrl(data.url);
@@ -306,6 +348,9 @@ function bindEvents() {
 
 export default async function () {
     try {
+        await telemetry.setup().catch(console.warn);
+        const startTime = Date.now();
+        telemetry.logEvent("App.Bootstrap.Start");
         getDefaultStore().set(bootstrapAtom, {
             "state": "Loading",
         });
@@ -314,8 +359,13 @@ export default async function () {
         getDefaultStore().set(bootstrapAtom, {
             "state": "Done",
         });
+        telemetry.logEvent("App.Bootstrap.Completed", {
+            d: Date.now() - startTime,
+            pluginCount: PluginManager.getPluginsCount(),
+        });
     } catch (e: any) {
         errorLog("初始化出错", e);
+        telemetry.logException(e);
         if (getDefaultStore().get(bootstrapAtom).state === "Loading") {
             getDefaultStore().set(bootstrapAtom, {
                 state: "Fatal",
@@ -324,6 +374,5 @@ export default async function () {
         }
     }
     // 隐藏开屏动画
-    console.log("HIDE");
     await SplashScreen.hideAsync();
 }

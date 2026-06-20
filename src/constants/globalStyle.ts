@@ -23,7 +23,10 @@ const globalStyle = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    notShrink: {
+    noShrink: {
+        flexShrink: 0,
+    },
+    noShrinkNoGrow: {
         flexShrink: 0,
         flexGrow: 0,
     },

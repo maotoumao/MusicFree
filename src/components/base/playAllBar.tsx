@@ -11,8 +11,8 @@ import TrackPlayer from "@/core/trackPlayer";
 import Toast from "@/utils/toast";
 import Icon from "@/components/base/icon.tsx";
 import MusicSheet, { useSheetIsStarred } from "@/core/musicSheet";
-import { MusicRepeatMode } from "@/constants/repeatModeConst";
 import { useI18N } from "@/core/i18n";
+import { MusicRepeatMode } from "@/constants/trackPlayerConst";
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;

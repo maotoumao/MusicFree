@@ -12,6 +12,8 @@ import { hidePanel, showPanel } from "../usePanel";
 import PanelHeader from "../base/panelHeader";
 import MusicSheet, { useSheetsBase } from "@/core/musicSheet";
 import { useI18N } from "@/core/i18n";
+import useColors from "@/hooks/useColors";
+import Color from "color";
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -25,6 +27,7 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
     const { musicItem = [], newSheetDefaultName } = props ?? {};
     const safeAreaInsets = useSafeAreaInsets();
     const { t } = useI18N();
+    const colors = useColors();
 
     return (
         <PanelBase
@@ -75,9 +78,9 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                             },
                                         });
                                     }}>
-                                    <ListItem.ListItemImage
-                                        fallbackImg={ImgAsset.add}
-                                    />
+                                    <ListItem.ListItemIcon icon='plus' containerStyle={[style.addIconContainer, {
+                                        backgroundColor: Color(colors.text).alpha(0.1).string(),
+                                    }]}/>
                                     <ListItem.Content title={t("panel.addToMusicSheet.newMusicSheet")} />
                                 </ListItem>
                             }
@@ -127,5 +130,10 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(24),
         marginTop: rpx(36),
         marginBottom: rpx(36),
+    },
+    addIconContainer: {
+        width: rpx(80),
+        height: rpx(80),
+        borderRadius: rpx(16),
     },
 });

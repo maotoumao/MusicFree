@@ -6,9 +6,11 @@ import PanelBase from "../base/panelBase";
 import { hidePanel } from "../usePanel";
 import ListItem from "@/components/base/listItem";
 import PanelHeader from "../base/panelHeader";
+import { IIconName } from "@/components/base/icon";
 
 interface ICandidateItem {
     title?: string;
+    icon?: IIconName;
     value: any;
 }
 
@@ -51,6 +53,9 @@ export default function SimpleSelect(props: ISimpleSelectProps) {
                                             onPress?.(it);
                                             hidePanel();
                                         }}>
+                                        {
+                                            it.icon ? <ListItem.ListItemIcon icon={it.icon} /> : null
+                                        }
                                         <ListItem.Content
                                             title={it.title ?? it.value}
                                         />

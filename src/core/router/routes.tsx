@@ -17,7 +17,10 @@ import PluginSheetDetail from "@/pages/pluginSheetDetail";
 import History from "@/pages/history";
 import SetCustomTheme from "@/pages/setCustomTheme";
 import Permissions from "@/pages/permissions";
+import SheetEditor from "@/pages/sheetEditor";
+
 import { ROUTE_PATH } from "@/core/router/index.ts";
+import EditMusicSheetInfo from "@/pages/editMusicSheetInfo";
 
 type ValueOf<T> = T[keyof T];
 export type RoutePaths = ValueOf<typeof ROUTE_PATH>;
@@ -104,5 +107,13 @@ export const routes: Array<IRoutes> = [
     {
         path: ROUTE_PATH.PERMISSIONS,
         component: Permissions,
+    },
+    {
+        path: ROUTE_PATH.SHEET_EDITOR,
+        component: SheetEditor,
+    },
+    {
+        path: ROUTE_PATH.EDIT_MUSIC_SHEET_INFO,
+        component: EditMusicSheetInfo,
     },
 ];

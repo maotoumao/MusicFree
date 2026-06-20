@@ -1,4 +1,4 @@
-import { TrackPlayerEvents } from "@/core.defination/trackPlayer";
+import { TrackPlayerEvents } from "@/constants/trackPlayerConst";
 import TrackPlayer from "@/core/trackPlayer";
 import NativeUtils from "@/native/utils";
 import { atom, getDefaultStore, useAtomValue } from "jotai";

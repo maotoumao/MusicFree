@@ -109,7 +109,7 @@ export default function AppBar(props: IAppBarProps) {
                     name="arrow-left"
                     sizeType="normal"
                     color={contentColor}
-                    style={globalStyle.notShrink}
+                    style={globalStyle.noShrinkNoGrow}
                     onPress={
                         onBackPress ||
                         (() => {
@@ -142,7 +142,7 @@ export default function AppBar(props: IAppBarProps) {
                         name={action.icon}
                         sizeType="normal"
                         color={contentColor}
-                        style={[globalStyle.notShrink, styles.rightButton]}
+                        style={[globalStyle.noShrinkNoGrow, styles.rightButton]}
                         onPress={action.onPress}
                     />
                 ))}
@@ -155,7 +155,7 @@ export default function AppBar(props: IAppBarProps) {
                             setMenuIconLayout(evt.nativeEvent.layout);
                         }}
                         color={contentColor}
-                        style={[globalStyle.notShrink, styles.rightButton]}
+                        style={[globalStyle.noShrinkNoGrow, styles.rightButton]}
                         onPress={() => {
                             setShowMenu(true);
                         }}

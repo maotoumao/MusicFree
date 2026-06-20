@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { StatusBar, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import MusicItem from "@/components/mediaItem/musicItem";
 import { produce } from "immer";
@@ -9,11 +9,11 @@ import {
     editingMusicListAtom,
     musicListChangedAtom,
 } from "../store/atom";
-import SortableFlatList from "@/components/base/SortableFlatList";
 
 import CheckBox from "@/components/base/checkbox";
 import useColors from "@/hooks/useColors";
 import Empty from "@/components/base/empty";
+import SortableFlashList from "@/components/base/sortableFlashList";
 
 const ITEM_HEIGHT = rpx(120);
 
@@ -56,7 +56,6 @@ const MusicEditorItem = memo(
 );
 
 /** 音乐列表 */
-const marginTop = rpx(88) * 2 + (StatusBar.currentHeight ?? 0);
 export default function MusicList() {
     const [editingMusicList, setEditingMusicList] =
         useAtom(editingMusicListAtom);
@@ -71,12 +70,11 @@ export default function MusicList() {
     const colors = useColors();
 
     return editingMusicList?.length ? (
-        <SortableFlatList
+        <SortableFlashList 
             activeBackgroundColor={colors.placeholder}
-            marginTop={marginTop}
-            data={editingMusicList}
-            renderItem={renderItem}
-            itemHeight={ITEM_HEIGHT}
+            data={editingMusicList} 
+            renderItem={renderItem} 
+            estimatedItemSize={ITEM_HEIGHT}  
             onSortEnd={newData => {
                 setEditingMusicList(newData);
                 setMusicListChanged(true);

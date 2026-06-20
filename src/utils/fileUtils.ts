@@ -1,5 +1,4 @@
 import pathConst from "@/constants/pathConst";
-import FastImage from "react-native-fast-image";
 import RNFS, {
     PicturesDirectoryPath,
     copyFile,
@@ -13,6 +12,7 @@ import RNFS, {
 import { errorLog } from "./log";
 import path from "path-browserify";
 import resolveAssetSource from "react-native/Libraries/Image/resolveAssetSource";
+import { Image } from "expo-image";
 
 const galleryBasePath = `${PicturesDirectoryPath}/MusicFree/`;
 
@@ -115,7 +115,7 @@ export async function clearCache(type: "music" | "lyric" | "image") {
             return Promise.all((await lrcs).map(_ => unlink(_.path)));
         } catch {}
     } else if (type === "image") {
-        return FastImage.clearDiskCache();
+        return Image.clearDiskCache();
     }
 }
 

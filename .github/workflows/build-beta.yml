@@ -1,9 +1,9 @@
 name: Beta 构建
 
 on:
-  push:
-    branches: [dev]
-    paths: ['package.json']
+  # push:
+  #   branches: [dev]
+  #   paths: ['package.json']
   workflow_dispatch:
     inputs:
       force_build:

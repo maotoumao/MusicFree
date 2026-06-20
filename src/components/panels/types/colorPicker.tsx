@@ -3,7 +3,7 @@ import { Image, StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import PanelBase from "../base/panelBase";
 import LinearGradient from "react-native-linear-gradient";
-import Color from "color";
+import Color, { ColorInstance } from "color";
 import { Gesture, GestureDetector, TextInput } from "react-native-gesture-handler";
 import { hidePanel } from "../usePanel";
 import { ImgAsset } from "@/constants/assetsConst";
@@ -12,7 +12,7 @@ import { useI18N } from "@/core/i18n";
 
 interface IColorPickerProps {
     defaultColor?: string;
-    onSelected?: (color: Color) => void;
+    onSelected?: (color: ColorInstance) => void;
     closePanelWhenSelected?: boolean;
 }
 

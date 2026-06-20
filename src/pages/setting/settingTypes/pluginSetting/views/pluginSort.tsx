@@ -1,6 +1,6 @@
 import AppBar from "@/components/base/appBar";
 import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
-import SortableFlatList from "@/components/base/SortableFlatList";
+import SortableFlashList from "@/components/base/sortableFlashList";
 import ThemeText from "@/components/base/themeText";
 import globalStyle from "@/constants/globalStyle";
 import { useI18N } from "@/core/i18n";
@@ -9,10 +9,9 @@ import useColors from "@/hooks/useColors";
 import rpx from "@/utils/rpx";
 import Toast from "@/utils/toast";
 import React, { useState } from "react";
-import { StatusBar, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 const ITEM_HEIGHT = rpx(96);
-const marginTop = rpx(188) + (StatusBar.currentHeight ?? 0);
 
 export default function PluginSort() {
     const plugins = useSortedPlugins();
@@ -44,7 +43,16 @@ export default function PluginSort() {
                 </>
             </HorizontalSafeAreaView>
             <HorizontalSafeAreaView style={globalStyle.flex1}>
-                <SortableFlatList
+                <SortableFlashList
+                    data={sortingPlugins}
+                    activeBackgroundColor={colors.placeholder}
+                    renderItem={renderSortingItem}
+                    onSortEnd={data => {
+                        setSortingPlugins(data);
+                    }}
+                
+                />
+                {/* <SortableFlatList
                     data={sortingPlugins}
                     activeBackgroundColor={colors.placeholder}
                     marginTop={marginTop}
@@ -54,7 +62,7 @@ export default function PluginSort() {
                     onSortEnd={data => {
                         setSortingPlugins(data);
                     }}
-                />
+                /> */}
             </HorizontalSafeAreaView>
         </>
     );

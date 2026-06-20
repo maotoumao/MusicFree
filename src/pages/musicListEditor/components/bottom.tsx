@@ -34,8 +34,8 @@ export default function Bottom() {
 
     function resetSelectedIndices() {
         setEditingMusicList(
-            editingMusicList.map(_ => ({
-                musicItem: _.musicItem,
+            editingMusicList.map(it => ({
+                musicItem: it.musicItem,
                 checked: false,
             })),
         );
@@ -46,15 +46,27 @@ export default function Bottom() {
             <BottomIcon
                 icon="motion-play"
                 title={t("musicListEditor.addToNextPlay")}
+                color={
+                    selectedItems.length && musicSheet?.id
+                        ? "text"
+                        : "textSecondary"
+                }
                 onPress={async () => {
-                    TrackPlayer.addNext(selectedItems);
-                    resetSelectedIndices();
-                    Toast.success(t("toast.addToNextPlay"));
+                    if (selectedItems.length) {
+                        TrackPlayer.addNext(selectedItems);
+                        resetSelectedIndices();
+                        Toast.success(t("toast.addToNextPlay"));
+                    }
                 }}
             />
             <BottomIcon
                 icon="folder-plus"
                 title={t("musicListEditor.addToSheet")}
+                color={
+                    selectedItems.length && musicSheet?.id
+                        ? "text"
+                        : "textSecondary"
+                }
                 onPress={() => {
                     if (selectedItems.length) {
                         showPanel("AddToMusicSheet", {
@@ -67,6 +79,11 @@ export default function Bottom() {
             <BottomIcon
                 icon="arrow-down-tray"
                 title={t("common.download")}
+                color={
+                    selectedItems.length && musicSheet?.id
+                        ? "text"
+                        : "textSecondary"
+                }
                 onPress={() => {
                     if (selectedItems.length) {
                         downloader.download(selectedItems);
@@ -91,7 +108,6 @@ export default function Bottom() {
                             produce(prev => prev.filter(_ => !_.checked)),
                         );
                         setMusicListChanged(true);
-                        Toast.warn(t("toast.rememberToSave"));
                     }
                 }}
             />

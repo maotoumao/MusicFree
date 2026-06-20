@@ -37,7 +37,9 @@ export default function Pages() {
             <ReducedMotionConfig mode={ReduceMotion.Never} />
             <GestureHandlerRootView style={globalStyle.flex1}>
                 <SafeAreaProvider>
-                    <NavigationContainer theme={theme}>
+                    <NavigationContainer 
+                        theme={theme}
+                    >
                         <PageBackground />
                         <Stack.Navigator
                             initialRouteName={routes[0].path}

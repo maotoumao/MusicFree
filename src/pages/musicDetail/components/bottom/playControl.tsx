@@ -1,14 +1,14 @@
-import repeatModeConst from "@/constants/repeatModeConst";
 import rpx from "@/utils/rpx";
 import React from "react";
-import { InteractionManager, StyleSheet, View } from "react-native";
+import { ActivityIndicator, InteractionManager, StyleSheet, View } from "react-native";
 
 import Icon from "@/components/base/icon.tsx";
 import { showPanel } from "@/components/panels/usePanel";
 import TrackPlayer, { useMusicState, useRepeatMode } from "@/core/trackPlayer";
 import useOrientation from "@/hooks/useOrientation";
 import delay from "@/utils/delay";
-import { musicIsPaused } from "@/utils/trackUtils";
+import { musicIsBuffering, musicIsPaused } from "@/utils/trackUtils";
+import { MusicRepeatModeInfo } from "@/constants/trackPlayerConst";
 
 export default function () {
     const repeatMode = useRepeatMode();
@@ -16,22 +16,18 @@ export default function () {
 
     const orientation = useOrientation();
 
-    console.log(repeatMode, repeatModeConst[repeatMode]);
-
     return (
         <>
             <View
                 style={[
-                    style.wrapper,
+                    styles.wrapper,
                     orientation === "horizontal"
-                        ? {
-                            marginTop: 0,
-                        }
+                        ? styles.marginTop0
                         : null,
                 ]}>
                 <Icon
                     color={"white"}
-                    name={repeatModeConst[repeatMode].icon}
+                    name={MusicRepeatModeInfo[repeatMode].icon}
                     size={rpx(56)}
                     onPress={async () => {
                         InteractionManager.runAfterInteractions(async () => {
@@ -48,18 +44,22 @@ export default function () {
                         TrackPlayer.skipToPrevious();
                     }}
                 />
-                <Icon
-                    color={"white"}
-                    name={musicIsPaused(musicState) ? "play" : "pause"}
-                    size={rpx(96)}
-                    onPress={() => {
-                        if (musicIsPaused(musicState)) {
-                            TrackPlayer.play();
-                        } else {
-                            TrackPlayer.pause();
-                        }
-                    }}
-                />
+                {
+                    musicIsBuffering(musicState) ? (<View style={styles.indicatorContainer}>
+                        <ActivityIndicator size={rpx(72)} color={"white"}/>
+                    </View>) : (<Icon
+                        color={"white"}
+                        name={musicIsPaused(musicState) ? "play" : "pause"}
+                        size={rpx(96)}
+                        onPress={() => {
+                            if (musicIsPaused(musicState)) {
+                                TrackPlayer.play();
+                            } else {
+                                TrackPlayer.pause();
+                            }
+                        }}
+                    />)
+                }
                 <Icon
                     color={"white"}
                     name={"skip-right"}
@@ -81,7 +81,7 @@ export default function () {
     );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     wrapper: {
         width: "100%",
         marginTop: rpx(36),
@@ -89,5 +89,14 @@ const style = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
+    },
+    indicatorContainer: {
+        width: rpx(96),
+        height: rpx(96),
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    marginTop0: {
+        marginTop: 0,
     },
 });

@@ -1,6 +1,6 @@
 import IconTextButton from "@/components/base/iconTextButton";
 import ThemeText from "@/components/base/themeText";
-import repeatModeConst from "@/constants/repeatModeConst";
+import { MusicRepeatModeInfo } from "@/constants/trackPlayerConst";
 import { useI18N } from "@/core/i18n";
 import TrackPlayer, { usePlayList, useRepeatMode } from "@/core/trackPlayer";
 import delay from "@/utils/delay";
@@ -33,7 +33,7 @@ export default function Header() {
                         TrackPlayer.toggleRepeatMode();
                     });
                 }}
-                icon={repeatModeConst[repeatMode].icon}>
+                icon={MusicRepeatModeInfo[repeatMode].icon}>
                 {t(("repeatMode." + repeatMode) as any)}
             </IconTextButton>
             <IconTextButton

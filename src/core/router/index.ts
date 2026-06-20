@@ -46,6 +46,10 @@ export const ROUTE_PATH = {
     SET_CUSTOM_THEME: "set-custom-theme",
     /** 权限管理 */
     PERMISSIONS: "permissions",
+    /** 歌单编辑 */
+    SHEET_EDITOR: "sheet-editor",
+    /** 编辑歌单详情 */
+    EDIT_MUSIC_SHEET_INFO: "edit-music-sheet-info",
 } as const;
 
 type ValueOf<T> = T[keyof T];
@@ -102,6 +106,12 @@ interface RouterParams extends RouterParamsBase {
         pluginHash?: string;
         sheetInfo: IMusic.IMusicSheetItemBase;
     };
+    "sheet-editor": {
+        sheetType: "local" | "starred";
+    };
+    "edit-music-sheet-info": {
+        musicSheet: IMusic.IMusicSheetItem;
+    }
 }
 
 /** 路由参数Hook */

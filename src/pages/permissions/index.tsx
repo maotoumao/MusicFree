@@ -9,10 +9,10 @@ import { useI18N } from "@/core/i18n";
 import LyricUtil from "@/native/lyricUtil";
 import NativeUtils from "@/native/utils";
 import rpx from "@/utils/rpx";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, StyleSheet } from "react-native";
 
-type IPermissionTypes = "floatingWindow" | "fileStorage";
+type IPermissionTypes = "floatingWindow" | "fileStorage" | "batteryOptimization";
 
 export default function Permissions() {
     const appState = useRef(AppState.currentState);
@@ -21,29 +21,33 @@ export default function Permissions() {
     >({
         floatingWindow: false,
         fileStorage: false,
-        // background: false,
+        batteryOptimization: false,
     });
     const { t } = useI18N();
 
-    async function checkPermission(type?: IPermissionTypes) {
-        let newPermission = {
-            ...permissions,
-        };
+    const checkPermission = useCallback(async (type?: IPermissionTypes) => {
+        const updates: Partial<Record<IPermissionTypes, boolean>> = {};
+
         if (!type || type === "floatingWindow") {
-            const hasPermission = await LyricUtil.checkSystemAlertPermission();
-            newPermission.floatingWindow = hasPermission;
+            updates.floatingWindow = await LyricUtil.checkSystemAlertPermission();
         }
         if (!type || type === "fileStorage") {
-            const hasPermission = await NativeUtils.checkStoragePermission();
-            console.log("HAS", hasPermission);
-            newPermission.fileStorage = hasPermission;
+            updates.fileStorage = await NativeUtils.checkStoragePermission();
         }
-        // if (!type || type === 'background') {
+        if (!type || type === "batteryOptimization") {
+            updates.batteryOptimization = await NativeUtils.isIgnoringBatteryOptimizations();
+        }
 
-        // }
+        setPermissions(prev => ({ ...prev, ...updates }));
+    }, []);
 
-        setPermissions(newPermission);
-    }
+    const toggleBatteryOptimization = useCallback(() => {
+        if (permissions.batteryOptimization) {
+            NativeUtils.openBatteryOptimizationSettings();
+        } else {
+            NativeUtils.requestIgnoreBatteryOptimizations();
+        }
+    }, [permissions.batteryOptimization]);
 
     useEffect(() => {
         checkPermission();
@@ -64,7 +68,7 @@ export default function Permissions() {
         return () => {
             subscription.remove();
         };
-    }, []);
+    }, [checkPermission]);
 
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
@@ -83,7 +87,12 @@ export default function Permissions() {
                     title={t("permissionSetting.floatWindowPermission")}
                     description={t("permissionSetting.floatWindowPermissionDescription")}
                 />
-                <ThemeSwitch value={permissions.floatingWindow} />
+                <ThemeSwitch
+                    value={permissions.floatingWindow}
+                    onValueChange={() => {
+                        LyricUtil.requestSystemAlertPermission();
+                    }}
+                />
             </ListItem>
             <ListItem
                 withHorizontalPadding
@@ -95,14 +104,26 @@ export default function Permissions() {
                     title={t("permissionSetting.fileReadWritePermission")}
                     description={t("permissionSetting.fileReadWritePermissionDescription")}
                 />
-                <ThemeSwitch value={permissions.fileStorage} />
+                <ThemeSwitch
+                    value={permissions.fileStorage}
+                    onValueChange={() => {
+                        NativeUtils.requestStoragePermission();
+                    }}
+                />
             </ListItem>
-            {/* <ListItem withHorizontalPadding heightType="big">
+            <ListItem
+                withHorizontalPadding
+                heightType="big"
+                onPress={toggleBatteryOptimization}>
                 <ListItem.Content
-                    title="后台运行"
-                    description="用以在后台播放音乐"></ListItem.Content>
-                <ThemeSwitch value={permissions.background}></ThemeSwitch>
-            </ListItem> */}
+                    title={t("permissionSetting.ignoreBatteryOptimization")}
+                    description={t("permissionSetting.ignoreBatteryOptimizationDescription")}
+                />
+                <ThemeSwitch
+                    value={permissions.batteryOptimization}
+                    onValueChange={toggleBatteryOptimization}
+                />
+            </ListItem>
         </VerticalSafeAreaView>
     );
 }

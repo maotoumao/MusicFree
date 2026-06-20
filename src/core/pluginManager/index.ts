@@ -112,9 +112,6 @@ class PluginManager implements IPluginManager, IInjectable {
                     let plugin: Plugin;
                     let isLazyLoad = false;
                     if (
-                        this.appConfigService.getConfig(
-                            "basic.lazyLoadPlugin",
-                        ) &&
                         pluginCacheStore.contains(pluginFileItem.path)
                     ) {
                         isLazyLoad = true;
@@ -610,6 +607,10 @@ class PluginManager implements IPluginManager, IInjectable {
             return this.getByName(alternativePluginName);
         }
         return null;
+    }
+
+    getPluginsCount() {
+        return this.getPlugins().length;
     }
 }
 

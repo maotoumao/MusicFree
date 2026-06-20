@@ -54,7 +54,7 @@ export default function MusicItem(props: IMusicItemProps) {
             {Left ? <Left /> : null}
             {index !== undefined ? (
                 <ListItem.ListItemText
-                    width={rpx(82)}
+                    width={rpx(86)}
                     position="none"
                     fixedWidth
                     fontColor={highlight ? "primary" : "text"}
@@ -93,6 +93,10 @@ export default function MusicItem(props: IMusicItemProps) {
             {showMoreIcon ? (
                 <ListItem.ListItemIcon
                     width={rpx(48)}
+                    hitSlop={{
+                        left: rpx(24),
+                        right: rpx(24),
+                    }}
                     position="none"
                     icon="ellipsis-vertical"
                     onPress={() => {

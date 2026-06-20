@@ -6,7 +6,7 @@ import { atom, getDefaultStore, useAtomValue } from "jotai";
 import type { IAppConfig } from "@/types/core/config";
 import type { IMusicHistory } from "@/types/core/musicHistory.js";
 import type { IInjectable } from "@/types/infra";
-import appMeta from "./appMeta";
+import appMeta from "@/utils/appMeta";
 import getOrCreateMMKV from "@/utils/getOrCreateMMKV";
 import { safeParse, safeStringify } from "@/utils/jsonUtil";
 

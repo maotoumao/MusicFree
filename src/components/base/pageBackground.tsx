@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { StyleSheet, View } from "react-native";
+import { StatusBar, StyleSheet, useWindowDimensions, View } from "react-native";
 import Image from "./image";
 import useColors from "@/hooks/useColors";
 import Theme from "@/core/theme";
@@ -7,14 +7,19 @@ import Theme from "@/core/theme";
 function PageBackground() {
     const theme = Theme.useTheme();
     const background = Theme.useBackground();
+    const { height: windowHeight } = useWindowDimensions();
     const colors = useColors();
+
+    // https://github.com/facebook/react-native/issues/41918
+    const height = windowHeight + (StatusBar.currentHeight ?? 0);
 
     return (
         <>
             <View
                 style={[
                     style.wrapper,
-                    {
+                    {   
+                        height,
                         backgroundColor:
                             colors?.pageBackground ?? colors.background,
                     },
@@ -26,6 +31,7 @@ function PageBackground() {
                     style={[
                         style.wrapper,
                         {
+                            height,
                             opacity: background?.opacity ?? 0.6,
                         },
                     ]}
@@ -42,9 +48,6 @@ const style = StyleSheet.create({
         position: "absolute",
         top: 0,
         left: 0,
-        right: 0,
-        bottom: 0,
         width: "100%",
-        height: "100%",
     },
 });

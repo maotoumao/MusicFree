@@ -80,6 +80,8 @@ keystore.properties
 .vscode/
 tmp/
 scripts/
+.env.production.local
+.env.local
 
 *.log
 # Expo

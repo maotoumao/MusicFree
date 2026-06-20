@@ -1,10 +1,10 @@
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import rpx from "@/utils/rpx";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import ThemeText from "@/components/base/themeText";
 import Divider from "@/components/base/divider";
 import i18n from "@/core/i18n";
+import { Pressable } from "react-native-gesture-handler";
 
 interface IPanelHeaderProps {
     title: string;
@@ -32,11 +32,11 @@ export default function PanelHeader(props: IPanelHeaderProps) {
         <>
             <View style={[styles.header, style]}>
                 {hideButtons ? null : (
-                    <TouchableOpacity style={styles.button} onPress={onCancel}>
+                    <Pressable style={styles.button} onPress={onCancel}>
                         <ThemeText fontWeight="medium">
                             {cancelText || i18n.t("common.cancel")}
                         </ThemeText>
-                    </TouchableOpacity>
+                    </Pressable>
                 )}
                 <ThemeText
                     style={styles.title}
@@ -46,13 +46,13 @@ export default function PanelHeader(props: IPanelHeaderProps) {
                     {title}
                 </ThemeText>
                 {hideButtons ? null : (
-                    <TouchableOpacity
+                    <Pressable
                         style={[styles.button, styles.rightButton]}
                         onPress={onOk}>
                         <ThemeText fontWeight="medium" fontColor="primary">
                             {okText || i18n.t("common.confirm")}
                         </ThemeText>
-                    </TouchableOpacity>
+                    </Pressable>
                 )}
             </View>
             {hideDivider ? null : <Divider />}

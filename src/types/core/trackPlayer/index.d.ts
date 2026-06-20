@@ -1,8 +1,8 @@
 import type { Progress } from "react-native-track-player";
-import type { MusicRepeatMode } from "@/constants/repeatModeConst";
+import type { MusicRepeatMode } from "@/constants/trackPlayerConst";
 import { IInjectable } from "@/types/infra";
 import type EventEmitter from "eventemitter3";
-import type { TrackPlayerEvents } from "@/core.defination/trackPlayer";
+import type { TrackPlayerEvents } from "@/constants/trackPlayerConst";
 
 export interface ITrackPlayer extends IInjectable, EventEmitter<{
     [TrackPlayerEvents.PlayEnd]: () => void;

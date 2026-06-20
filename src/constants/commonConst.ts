@@ -41,6 +41,7 @@ export const StorageKeys = {
     LocalMusicSheet: "local-music-sheet",
 };
 
+/** @deprecated */
 export const CacheControl = {
     Cache: "cache",
     NoCache: "no-cache",

@@ -1,7 +1,7 @@
 import { getStorage as oldGetStorage } from "@/utils/storage";
 import storage from "@/core/musicSheet/storage.ts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import appMeta from "../appMeta";
+import appMeta from "../../utils/appMeta";
 
 export default async function migrate() {
     const dbUpdated = appMeta.musicSheetVersion > 1;

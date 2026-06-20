@@ -3,7 +3,7 @@ import { Pressable, StyleSheet } from "react-native";
 import rpx from "@/utils/rpx";
 import ThemeText from "@/components/base/themeText";
 
-import { qualityKeys, qualityText } from "@/utils/qualities";
+import { qualityKeys } from "@/utils/qualities";
 import { sizeFormatter } from "@/utils/fileUtils";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PanelBase from "../base/panelBase";
@@ -64,7 +64,7 @@ export default function MusicQuality(props: IMusicQualityProps) {
                                             hidePanel();
                                         }}>
                                         <ThemeText>
-                                            {qualityText[key]}{" "}
+                                            {i18n.t(`musicQuality.${key}`)}{" "}
                                             {musicItem.qualities?.[key]?.size
                                                 ? `(${sizeFormatter(
                                                       musicItem.qualities[key]

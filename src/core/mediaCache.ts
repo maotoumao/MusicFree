@@ -7,8 +7,8 @@ import { exists, unlink } from "react-native-fs";
 // Internal Method
 const mediaCacheStore = getOrCreateMMKV("cache.MediaCache", true);
 
-// 最多缓存800条数据
-const maxCacheCount = 800;
+// 最多缓存1500条数据
+const maxCacheCount = 1500;
 
 /** 获取meta信息 */
 const getMediaCache = (mediaItem: ICommon.IMediaBase) => {

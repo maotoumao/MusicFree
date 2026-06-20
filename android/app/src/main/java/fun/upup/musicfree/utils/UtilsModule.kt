@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.PowerManager
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.WindowInsets
@@ -56,6 +57,65 @@ class UtilsModule(context: ReactApplicationContext) : ReactContextBaseJavaModule
             }
         }
         reactContext.currentActivity?.startActivity(intent)
+    }
+
+    @ReactMethod
+    fun isIgnoringBatteryOptimizations(promise: Promise) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val packageName = reactContext.packageName
+            val pm = reactContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+            promise.resolve(pm.isIgnoringBatteryOptimizations(packageName))
+        } else {
+            promise.resolve(true)
+        }
+    }
+
+    @ReactMethod
+    fun requestIgnoreBatteryOptimizations(promise: Promise) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                val packageName = reactContext.packageName
+                val pm = reactContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                    val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                    intent.data = Uri.parse("package:$packageName")
+
+                    if (reactContext.currentActivity != null) {
+                        reactContext.currentActivity?.startActivity(intent)
+                    } else {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        reactContext.startActivity(intent)
+                    }
+                    promise.resolve(true)
+                } else {
+                    promise.resolve(true)
+                }
+            } catch (e: Exception) {
+                promise.reject(e)
+            }
+        } else {
+            promise.resolve(true)
+        }
+    }
+
+    @ReactMethod
+    fun openBatteryOptimizationSettings(promise: Promise) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                if (reactContext.currentActivity != null) {
+                    reactContext.currentActivity?.startActivity(intent)
+                } else {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    reactContext.startActivity(intent)
+                }
+                promise.resolve(true)
+            } catch (e: Exception) {
+                promise.reject(e)
+            }
+        } else {
+            promise.resolve(true)
+        }
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)

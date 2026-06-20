@@ -59,7 +59,7 @@ export default function CheckStorage() {
                         onPress: onCancel,
                     },
                     {
-                        title: t("dialog.checkStorage.button.doNotShowAgain"),
+                        title: t("dialog.checkStorage.button.grantPermission"),
                         type: "primary",
                         onPress: () => {
                             NativeUtils.requestStoragePermission();

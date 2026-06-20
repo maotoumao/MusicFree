@@ -13,6 +13,7 @@ import { ROUTE_PATH, useNavigate } from "@/core/router";
 import useColors from "@/hooks/useColors";
 import LyricUtil, { NativeTextAlignment } from "@/native/lyricUtil";
 import { AppConfigPropertyKey } from "@/types/core/config";
+import appMeta from "@/utils/appMeta";
 import { clearCache, getCacheSize, sizeFormatter } from "@/utils/fileUtils";
 import { clearLog, getErrorLogContent } from "@/utils/log";
 import { qualityKeys } from "@/utils/qualities";
@@ -125,7 +126,6 @@ export default function BasicSetting() {
     const maxHistoryLen = useAppConfig("basic.maxHistoryLen");
     const autoUpdatePlugin = useAppConfig("basic.autoUpdatePlugin");
     const notCheckPluginVersion = useAppConfig("basic.notCheckPluginVersion");
-    const lazyLoadPlugin = useAppConfig("basic.lazyLoadPlugin");
     const associateLyricType = useAppConfig("basic.associateLyricType");
     const showExitOnNotification = useAppConfig("basic.showExitOnNotification");
     const musicOrderInLocalSheet = useAppConfig("basic.musicOrderInLocalSheet");
@@ -136,6 +136,8 @@ export default function BasicSetting() {
     const debugEnableErrorLog = useAppConfig("debug.errorLog");
     const debugEnableTraceLog = useAppConfig("debug.traceLog");
     const debugEnableDevLog = useAppConfig("debug.devLog");
+    const disableTelemetry = useAppConfig("debug.disableTelemetry");
+    const telemetryAvailable = appMeta.telemetryAvailable;
 
     const navigate = useNavigate();
 
@@ -256,11 +258,6 @@ export default function BasicSetting() {
                     t("basicSettings.notCheckPluginVersion"),
                     "basic.notCheckPluginVersion",
                     notCheckPluginVersion ?? false,
-                ),
-                createSwitch(
-                    t("basicSettings.lazyLoadPlugin"),
-                    "basic.lazyLoadPlugin",
-                    lazyLoadPlugin ?? false,
                 ),
             ],
         },
@@ -518,6 +515,18 @@ export default function BasicSetting() {
         {
             title: t("basicSettings.developer"),
             data: [
+                createSwitch(
+                    t("basicSettings.developer.disableTelemetry"),
+                    "debug.disableTelemetry",
+                    telemetryAvailable ? (disableTelemetry ?? false) : false,
+                    (newVal) => {
+                        if (!telemetryAvailable) {
+                            Toast.warn(t("toast.telemetryNotAvailable"));
+                            return;
+                        }
+                        Config.setConfig("debug.disableTelemetry", newVal);
+                    }
+                ),
                 createSwitch(
                     t("basicSettings.developer.errorLog"),
                     "debug.errorLog",

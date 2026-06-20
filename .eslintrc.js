@@ -16,6 +16,7 @@ module.exports = {
                 "semi": ["error", "always"],
                 "comma-dangle": ["error", "always-multiline"], 
                 "brace-style": ["error", "1tbs"], 
+                "react/react-in-jsx-scope": "off"
             },
         },
     ],
