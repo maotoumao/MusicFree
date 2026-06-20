@@ -17,8 +17,8 @@ import { readAsStringAsync } from "expo-file-system";
 import { atom, getDefaultStore, useAtomValue } from "jotai";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
-import { ToastAndroid } from "react-native";
 import { copyFile, readDir, readFile, unlink, writeFile } from "react-native-fs";
+import { showToast } from "@/components/base/toast";
 import { devLog, errorLog, trace } from "../../utils/log";
 import pluginMeta from "./meta";
 import { localFilePlugin, Plugin, PluginState } from "./plugin";
@@ -161,10 +161,10 @@ class PluginManager implements IPluginManager, IInjectable {
                 }
             });
         } catch (e: any) {
-            ToastAndroid.show(
-                `插件初始化失败:${e?.message ?? e}`,
-                ToastAndroid.LONG,
-            );
+            showToast({
+                type: "warn",
+                message: `插件初始化失败:${e?.message ?? e}`,
+            });
             errorLog("插件初始化失败", e?.message);
             throw e;
         }

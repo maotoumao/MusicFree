@@ -38,7 +38,11 @@ async function resume(
 ) {
     let obj: IBackJson;
     if (typeof raw === "string") {
-        obj = JSON.parse(raw);
+        try {
+            obj = JSON.parse(raw);
+        } catch {
+            throw new Error("备份文件格式无效");
+        }
     } else {
         obj = raw as IBackJson;
     }
