@@ -5,6 +5,7 @@ import PersistStatus from "@/utils/persistStatus";
 import zhCN from "./languages/zh-cn.json";
 import enUS from "./languages/en-us.json";
 import zhTW from "./languages/zh-tw.json";
+import koKR from "./languages/ko-kr.json";
 
 
 const allLanguages: ILanguage[] = [{
@@ -19,6 +20,10 @@ const allLanguages: ILanguage[] = [{
     locale: "en-US",
     name: "English",
     languageData: enUS,
+}, {
+    locale: "ko-KR",
+    name: "한국어",
+    languageData: koKR,
 }];
 
 const defaultLocale = PersistStatus.get("app.language") || "zh-CN";
