@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' musicfree-local: http: https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src * musicfree-local: http: https: blob: data:; media-src * musicfree-local: http: https: blob:; connect-src * musicfree-local: http: https: blob: data:" />
+    <title>MusicFree</title>
+    <style>
+        html, body, #root {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        /* RNW 重置样式 */
+        [data-focusable] {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <!-- bundle 由 HtmlWebpackPlugin 自动注入,不要手写 script 标签 -->
+</body>
+</html>

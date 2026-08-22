@@ -86,3 +86,6 @@ scripts/
 .expo
 dist/
 web-build/
+# Desktop build artifacts
+desktop/release/
+.trae-html-share-packages/

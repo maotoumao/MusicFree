@@ -86,6 +86,35 @@
 
 请转到发布页查看：[指路](https://github.com/maotoumao/MusicFree/releases) (如果打不开可以把 github 换成 gitcode)，公众号回复 Musicfree 也可以。
 
+## 桌面版（Linux / Wayland）
+
+本仓库内置了 Linux 桌面端移植（`desktop/` 目录），基于 **Electron + react-native-web**，与移动端共享 `src/` 全部业务代码（移动端零改动），原生 Wayland 支持（同时兼容 X11）。
+
+### 特性
+
+- 原生窗口：Wayland/X11 自动适配（Chromium Ozone 平台层），Wayland 下使用 CSD 窗口装饰
+- 系统托盘：最小化到托盘、托盘菜单控制播放
+- MPRIS 媒体键：GNOME/KDE 等桌面环境的媒体控制集成（D-Bus）
+- 桌面歌词：独立悬浮窗，替代移动端状态栏歌词
+- 系统通知、`musicfree://` 深链安装插件、播放时阻止休眠
+- 插件系统完整保留：与移动端同一套插件运行时（`musicfree-http://` 媒体代理解决跨域，本地文件走 `musicfree-local://`）
+
+### 从源码构建
+
+```bash
+cd desktop
+npm install            # 国内网络可加: ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
+npm run build          # 编译主进程 + 渲染进程
+npm start              # 运行
+npm run dist           # 打包 AppImage + deb
+```
+
+### Wayland 说明
+
+- 默认自动探测显示协议（`ELECTRON_OZONE_PLATFORM_HINT=auto`），Wayland 会话下直接以 Wayland 模式运行
+- 强制指定：`musicfree --ozone-platform=wayland`（或 `x11`）
+- 中文输入法（fcitx5）：启动参数加 `--enable-wayland-ime --wayland-text-input-version=3`
+
 ## Q&A
 
 使用时遇到的常见问题可以看这里：[MusicFree 使用 Q&A](https://musicfree.catcat.work/qa/common.html)

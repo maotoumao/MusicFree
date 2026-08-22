@@ -1,0 +1,26 @@
+appId: fun.upup.musicfree.desktop
+productName: MusicFree
+copyright: AGPL-3.0
+directories:
+  output: release
+  buildResources: assets
+files:
+  - dist/**
+  - package.json
+  - "!**/*.map"
+  - "!dist/main/verify.js"
+linux:
+  target:
+    - AppImage
+    - deb
+  category: AudioVideo
+  icon: assets/icon.png
+  desktop:
+    Name: MusicFree
+    GenericName: Music Player
+    Comment: 插件化的免费音乐播放器
+    StartupWMClass: MusicFree
+    X-GNOME-UsesNotifications: "true"
+electronLanguages:
+  - zh-CN
+  - en-US
