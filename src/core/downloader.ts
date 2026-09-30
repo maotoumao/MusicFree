@@ -263,6 +263,8 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
             } else {
                 this.markTaskAsError(musicItem, DownloadFailReason.Unknown, e);
             }
+            // 继续处理下一个任务，否则队列会卡住
+            this.downloadNextPendingTask();
             return;
         }
 
