@@ -1,0 +1,339 @@
+name: 编译 MusicFree APK
+
+# 触发方式：手动点按钮开始（在 GitHub 仓库的 Actions 页面）
+on:
+  workflow_dispatch:
+    inputs:
+      new_package:
+        description: '新包名（留空 = 不改，会和手机上已装的官方版互相覆盖）'
+        required: false
+        default: ''
+      new_name:
+        description: '桌面上显示的 App 名字（留空 = MusicFree）'
+        required: false
+        default: ''
+      build_type:
+        description: '构建类型：release（推荐，和官方版一致）/ debug'
+        required: false
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - debug
+      without_patch:
+        description: '排错用：true = 编不打补丁的纯净原版（用来对比是不是补丁导致打不开）'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+      apk_output:
+        description: 'APK 输出：all = 通用包+各架构分包（5个）/ universal = 只留通用包'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - universal
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      # 排错用：把补丁文件全部还原成官方原版，编一个纯净版出来做 A/B 对比
+      - name: 还原成纯净原版（可选）
+        if: ${{ inputs.without_patch == 'true' }}
+        run: |
+          set -e
+          git fetch --tags --force
+          rm -f src/core/bluetoothLyric.ts
+          git checkout v1.0.0-beta.3 -- \
+            src/core/lyricManager.ts \
+            src/pages/setting/settingTypes/basicSetting.tsx \
+            src/types/core/config.d.ts \
+            src/types/core/i18n/index.d.ts \
+            src/core/i18n/languages/zh-cn.json \
+            src/core/i18n/languages/zh-tw.json \
+            src/core/i18n/languages/en-us.json
+          echo "=== 已还原为纯净原版，确认补丁不存在 ==="
+          ls src/core/bluetoothLyric.ts 2>/dev/null || echo "bluetoothLyric.ts 已移除 ✓"
+
+      # 缓存 Gradle 依赖。网络抖动导致依赖下载失败时，缓存能大幅提高下一次成功率，
+      # 也能省掉每次都重新下载几百 MB 的时间。
+      - name: 缓存 Gradle 依赖
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 安装 Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: 安装 JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      # ---- 可选：改包名，让新 App 和官方版共存 ----
+      # 运行时填了 new_package 才会执行。
+      # 注意：原项目的 Kotlin 文件里包名首段 fun 是 Kotlin 关键字，
+      # 源码里写的是 package `fun`.upup.musicfree（带反引号），
+      # 所以这里必须同时替换「带反引号」和「纯点分」两种写法。
+      - name: 改包名（可选）
+        if: ${{ inputs.new_package != '' }}
+        run: |
+          python3 - <<'PYEOF'
+          import os, re, shutil, sys
+
+          OLD = "fun.upup.musicfree"
+          NEW = "${{ inputs.new_package }}".strip()
+          NEW_NAME = "${{ inputs.new_name }}".strip()
+
+          if not NEW:
+              print("未填写新包名，跳过")
+              sys.exit(0)
+
+          parts = NEW.split(".")
+          if len(parts) < 2 or not all(re.fullmatch(r"[a-z][a-z0-9_]*", p) for p in parts):
+              print("::error::包名不合法：%s（要求小写字母开头，只能含小写字母/数字/下划线，至少两段）" % NEW)
+              sys.exit(1)
+
+          # Kotlin 硬关键字，作为包名首段必须加反引号
+          KW = {"fun","in","is","as","object","package","return","this","val","var","when",
+                "if","else","for","while","do","break","continue","class","interface",
+                "super","throw","try","typealias","typeof","null","true","false"}
+          kot = lambda p: ".".join("`%s`" % x if x in KW else x for x in p.split("."))
+          OK, NK = kot(OLD), kot(NEW)
+
+          # 1) build.gradle: namespace + applicationId
+          p = "android/app/build.gradle"
+          s = open(p, encoding="utf-8").read()
+          open(p, "w", encoding="utf-8").write(s.replace('"%s"' % OLD, '"%s"' % NEW))
+
+          # 2) AndroidManifest.xml: package 属性
+          p = "android/app/src/main/AndroidManifest.xml"
+          s = open(p, encoding="utf-8").read()
+          open(p, "w", encoding="utf-8").write(s.replace('"%s"' % OLD, '"%s"' % NEW))
+
+          # 3) 所有 .kt 文件：package 声明 + import
+          root = "android/app/src/main/java"
+          n = 0
+          for dp, _, fns in os.walk(root):
+              for fn in fns:
+                  if not fn.endswith(".kt"):
+                      continue
+                  fp = os.path.join(dp, fn)
+                  s = open(fp, encoding="utf-8").read()
+                  s2 = s.replace(OK, NK).replace(OLD, NEW)   # 两种写法都要换
+                  if s2 != s:
+                      open(fp, "w", encoding="utf-8").write(s2)
+                      n += 1
+          print("已改名的 Kotlin 文件: %d" % n)
+
+          # 4) 搬源码目录
+          od = os.path.join(root, *OLD.split("."))
+          nd = os.path.join(root, *NEW.split("."))
+          os.makedirs(os.path.dirname(nd), exist_ok=True)
+          if os.path.isdir(nd):
+              shutil.rmtree(nd)
+          shutil.move(od, nd)
+          shutil.rmtree(os.path.join(root, OLD.split(".")[0]), ignore_errors=True)
+          print("目录已迁移到: %s" % nd)
+
+          # 5) 可选：桌面显示名
+          if NEW_NAME:
+              p = "android/app/src/main/res/values/strings.xml"
+              if os.path.exists(p):
+                  s = open(p, encoding="utf-8").read()
+                  s2 = re.sub(r'(name="app_name")>[^<]*<', r'\1>%s<' % NEW_NAME, s)
+                  if s2 != s:
+                      open(p, "w", encoding="utf-8").write(s2)
+                      print("App 名称改为: %s" % NEW_NAME)
+
+          print("=== 改包名完成: %s -> %s ===" % (OLD, NEW))
+          PYEOF
+
+          echo "=== 改名结果抽查 ==="
+          grep -n "namespace\|applicationId" android/app/build.gradle
+          head -1 android/app/src/main/AndroidManifest.xml
+          find android/app/src/main/java -name "*.kt" | head -3
+
+      # ★ 补上仓库里没有的 keystore.properties
+      # android/app/build.gradle 第 143 行有 storeFile file(keystoreProperties['RELEASE_STORE_FILE'])
+      # 而 keystore.properties 被 .gitignore 忽略了，仓库里没有 —— 取出来是 null，
+      # 配置阶段就会抛 "path may not be null or empty string. path='null'"
+      # signingConfigs 是配置阶段求值的，所以即使只编 Debug 也会踩到。
+      # 这里复用仓库自带的 android/app/debug.keystore（标准口令），只为让它非空。
+      - name: 补 keystore.properties
+        run: |
+          set -e
+          cat > android/keystore.properties << 'EOF'
+          RELEASE_STORE_FILE=debug.keystore
+          RELEASE_STORE_PASSWORD=android
+          RELEASE_KEY_ALIAS=androiddebugkey
+          RELEASE_KEY_PASSWORD=android
+          EOF
+          echo "--- 写入内容 ---"
+          cat android/keystore.properties
+          ls -l android/app/debug.keystore
+
+      # GitHub 的 ubuntu 镜像自带 Android SDK，这里只是把 sdkmanager 找出来并算出 SDK 根目录
+      - name: 定位 sdkmanager
+        id: sdk
+        run: |
+          set -e
+          SDKMAN=""
+          for p in \
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
+            "/usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager" \
+            "$ANDROID_HOME/tools/bin/sdkmanager"
+          do
+            if [ -n "$p" ] && [ -x "$p" ]; then SDKMAN="$p"; break; fi
+          done
+          if [ -z "$SDKMAN" ]; then
+            SDKMAN=$(find /usr/local/lib/android "$ANDROID_HOME" -name sdkmanager -type f 2>/dev/null | head -1)
+          fi
+          if [ -z "$SDKMAN" ]; then
+            echo "::error::找不到 sdkmanager"
+            ls -R /usr/local/lib/android 2>/dev/null | head -40
+            exit 1
+          fi
+          # .../cmdline-tools/latest/bin/sdkmanager -> 往上 4 层就是 SDK 根目录
+          SDKROOT="$(dirname "$(dirname "$(dirname "$(dirname "$SDKMAN")")")")"
+          echo "sdkmanager: $SDKMAN"
+          echo "SDK 根目录: $SDKROOT"
+          echo "path=$SDKMAN" >> $GITHUB_OUTPUT
+          echo "root=$SDKROOT" >> $GITHUB_OUTPUT
+          echo "$(dirname "$SDKMAN")" >> $GITHUB_PATH
+
+      - name: 安装 SDK 组件（platform 35 / build-tools 35 / NDK 26）
+        run: |
+          set -e
+          SDKMAN="${{ steps.sdk.outputs.path }}"
+          yes | "$SDKMAN" --licenses > /dev/null 2>&1 || true
+          "$SDKMAN" --install "platform-tools"
+          "$SDKMAN" --install "platforms;android-35"
+          "$SDKMAN" --install "build-tools;35.0.0"
+          "$SDKMAN" --install "ndk;26.1.10909125"
+          "$SDKMAN" --list_installed
+
+      - name: 写入 local.properties（显式告诉 Gradle SDK 在哪）
+        run: |
+          set -e
+          echo "sdk.dir=${{ steps.sdk.outputs.root }}" > android/local.properties
+          cat android/local.properties
+
+      - name: 安装 JS 依赖
+        run: |
+          set -e
+          npm ci --prefer-offline --no-audit --legacy-peer-deps \
+            || npm install --legacy-peer-deps
+          ls -d node_modules/@expo/cli node_modules/react-native node_modules/@react-native/gradle-plugin
+
+      - name: 编译 APK
+        env:
+          ANDROID_HOME: ${{ steps.sdk.outputs.root }}
+          ANDROID_SDK_ROOT: ${{ steps.sdk.outputs.root }}
+          BUILD_TYPE: ${{ inputs.build_type }}
+        run: |
+          set -o pipefail
+          cd android
+          chmod +x gradlew
+          # release 更接近官方版（关闭 dev support、不依赖 Metro），优先用它排查打不开的问题
+          if [ "$BUILD_TYPE" = "debug" ]; then TASK=assembleDebug; else TASK=assembleRelease; fi
+          echo "构建任务: $TASK"
+          # 依赖下载偶尔会因为网络抖动失败（表现为 Could not parse POM / Could not find xxx），
+          # 跟代码无关。这里最多重试 3 次，失败的那一轮自动重来。
+          MAX=3
+          i=1
+          while [ $i -le $MAX ]; do
+            echo "===== 第 $i 次尝试 ====="
+            if ./gradlew $TASK \
+                 --no-daemon \
+                 --stacktrace \
+                 -Dorg.gradle.jvmargs="-Xmx4096m -XX:MaxMetaspaceSize=1024m" \
+                 2>&1 | tee gradle-build.log; then
+              echo "构建成功"
+              exit 0
+            fi
+            # 只有「依赖解析类」错误才重试；真正的代码编译错误不重试，直接失败
+            if grep -qE "Could not (resolve|find|parse|download)|Could not GET|Connection reset|Read timed out" gradle-build.log; then
+              echo ">>> 检测到依赖下载失败，10 秒后重试"
+              i=$((i + 1))
+              sleep 10
+            else
+              echo ">>> 非网络问题，停止重试"
+              exit 1
+            fi
+          done
+          echo "已重试 $MAX 次仍然失败"
+          exit 1
+
+      - name: 抓取 Gradle 报错摘要
+        if: failure()
+        run: |
+          LOG=android/gradle-build.log
+          echo '## ❌ Gradle 报错摘要' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          if [ -f "$LOG" ]; then
+            awk '/What went wrong:/,0' "$LOG" | head -60 >> $GITHUB_STEP_SUMMARY
+            echo '--- 上下文 ---' >> $GITHUB_STEP_SUMMARY
+            grep -iE "error:|FAILED|Caused by|Exception" "$LOG" | head -40 >> $GITHUB_STEP_SUMMARY
+          else
+            echo "没有找到日志文件" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      # 项目开了 abi 分包（app/build.gradle 第 149-156 行）：
+      #   include "armeabi-v7a", "arm64-v8a", "x86", "x86_64" + universalApk true
+      # 所以会产出 5 个包：universal + 4 个单架构包（单架构包体积小得多）。
+      # apk_output=all       -> 全部保留
+      # apk_output=universal -> 只保留通用包（新手推荐，不用判断自己手机是什么架构）
+      - name: 整理 APK 产物
+        run: |
+          set -e
+          BT="${{ inputs.build_type }}"
+          if [ "$BT" = "debug" ]; then DIR=debug; SUF=debug; else DIR=release; SUF=release; fi
+          cd android/app/build/outputs/apk/$DIR
+          echo "=== 全部产物 ==="
+          ls -lh *.apk
+          if [ "${{ inputs.apk_output }}" = "universal" ]; then
+            mkdir -p /tmp/onlyuniversal
+            cp app-universal-$SUF.apk /tmp/onlyuniversal/
+            rm -f *.apk
+            cp /tmp/onlyuniversal/app-universal-$SUF.apk .
+          fi
+          echo "=== 最终保留 ==="
+          ls -lh *.apk
+
+      - name: 上传 APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MusicFree-蓝牙歌词版-${{ inputs.build_type }}-${{ inputs.apk_output }}
+          path: android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: warn
+
+      - name: 上传 Gradle 完整日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-build-log
+          path: android/gradle-build.log
+          if-no-files-found: ignore

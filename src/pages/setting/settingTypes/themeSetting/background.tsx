@@ -113,6 +113,18 @@ export default function Background() {
                 />
 
                 <ThemeCard
+                    preview="#1a1a1e"
+                    title={t("themeSettings.bakaMode")}
+                    selected={themeSelectedTheme === "p-baka"}
+                    onPress={() => {
+                        if (themeSelectedTheme !== "p-baka") {
+                            Theme.setTheme("p-baka");
+                            Config.setConfig("theme.followSystem", false);
+                        }
+                    }}
+                />
+
+                <ThemeCard
                     title={t("themeSettings.customMode")}
                     selected={themeSelectedTheme === "custom"}
                     preview={themeBackground}

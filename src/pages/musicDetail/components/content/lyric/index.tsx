@@ -19,6 +19,7 @@ import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
 import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager, { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
 import { useI18N } from "@/core/i18n";
+import { useAppConfig } from "@/core/appConfig";
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -49,6 +50,7 @@ export default function Lyric(props: IProps) {
         false,
     );
     const fontSizeKey = PersistStatus.useValue("lyric.detailFontSize", 1);
+    const amllStyle = useAppConfig("lyric.amllStyle");
     const fontSizeStyle = useMemo(
         () => ({
             fontSize: fontSizeMap[fontSizeKey!],
@@ -312,6 +314,7 @@ export default function Lyric(props: IProps) {
                                         highlight={
                                             currentLrcItem?.index === index
                                         }
+                                        amll={amllStyle ?? false}
                                     />
                                 );
                             }}

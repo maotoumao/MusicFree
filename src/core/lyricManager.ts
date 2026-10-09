@@ -9,6 +9,7 @@ import { atom, getDefaultStore, useAtomValue } from "jotai";
 import { Plugin } from "./pluginManager";
 
 import pathConst from "@/constants/pathConst";
+import bluetoothLyric from "@/core/bluetoothLyric";
 import LyricUtil from "@/native/lyricUtil";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import PersistStatus from "@/utils/persistStatus";
@@ -59,19 +60,36 @@ class LyricManager implements IInjectable {
         this.pluginManager = pluginManager;
     }
 
+    /**
+     * 把当前歌词同步到外部展示渠道（状态栏歌词 + 蓝牙车机歌词）
+     * @param text 已经拼好翻译的歌词文本，没有歌词时传「歌名 - 歌手」
+     * @param musicItem 当前歌曲，用于蓝牙歌词兜底与还原
+     */
+    private pushLyric(
+        text: string,
+        musicItem?: IMusic.IMusicItem | null,
+        lrc?: string | null,
+        translation?: string | null,
+    ) {
+        if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
+            LyricUtil.setStatusBarLyricText(text);
+        }
+        bluetoothLyric.update(
+            musicItem ?? this.trackPlayer.currentMusic,
+            lrc,
+            translation,
+        );
+    }
+
     setup() {
         // 更新歌词
         this.trackPlayer.on(TrackPlayerEvents.CurrentMusicChanged, (musicItem) => {
             this.refreshLyric(true, true);
 
-            if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
-                if (musicItem) {
-                    LyricUtil.setStatusBarLyricText(
-                        `${musicItem.title} - ${musicItem.artist}`,);
-                } else {
-                    LyricUtil.setStatusBarLyricText("MusicFree");
-                }
-            }
+            this.pushLyric(
+                musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree",
+                musicItem,
+            );
         });
 
         RNTrackPlayer.addEventListener(Event.PlaybackProgressUpdated, evt => {
@@ -88,17 +106,18 @@ class LyricManager implements IInjectable {
                 // 更新当前歌词状态
                 getDefaultStore().set(currentLyricItemAtom, newLyricItem ?? null);
 
-                // 更新状态栏歌词
+                // 更新状态栏歌词 / 蓝牙歌词
                 const showTranslation = PersistStatus.get("lyric.showTranslation");
 
-                if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
-                    LyricUtil.setStatusBarLyricText(
-                        (newLyricItem?.lrc ?? "") +
-                        (showTranslation
-                            ? `\n${newLyricItem?.translation ?? ""}`
-                            : ""),
-                    );
-                }
+                this.pushLyric(
+                    (newLyricItem?.lrc ?? "") +
+                    (showTranslation
+                        ? `\n${newLyricItem?.translation ?? ""}`
+                        : ""),
+                    parser.musicItem,
+                    newLyricItem?.lrc,
+                    newLyricItem?.translation,
+                );
             }
         });
 
@@ -240,10 +259,11 @@ class LyricManager implements IInjectable {
             hasTranslation: false,
         });
         getDefaultStore().set(currentLyricItemAtom, null);
-        if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
-            const musicItem = this.trackPlayer.currentMusic;
-            LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree");
-        }
+        const musicItem = this.trackPlayer.currentMusic;
+        this.pushLyric(
+            musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree",
+            musicItem,
+        );
     }
 
     private async refreshLyric(skipFetchLyricSourceIfSame: boolean = true, ignoreProgress: boolean = false) {
@@ -311,18 +331,21 @@ class LyricManager implements IInjectable {
             const currentLyric = ignoreProgress ? (this.lyricParser.getLyricItems()?.[0] ?? null) : this.lyricParser.getPosition((await this.trackPlayer.getProgress()).position);
             getDefaultStore().set(currentLyricItemAtom, currentLyric || null);
 
-            if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
-                if (currentLyric) {
-                    LyricUtil.setStatusBarLyricText(
-                        (currentLyric?.lrc ?? "") +
-                        (this.lyricParser.hasTranslation
-                            ? `\n${currentLyric?.translation ?? ""}`
-                            : ""),
-                    );
-                } else {
-                    const musicItem = this.trackPlayer.currentMusic;
-                    LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree");
-                }
+            if (currentLyric) {
+                this.pushLyric(
+                    (currentLyric?.lrc ?? "") +
+                    (this.lyricParser.hasTranslation
+                        ? `\n${currentLyric?.translation ?? ""}`
+                        : ""),
+                    currentMusicItem,
+                    currentLyric?.lrc,
+                    currentLyric?.translation,
+                );
+            } else {
+                this.pushLyric(
+                    `${currentMusicItem.title} - ${currentMusicItem.artist}`,
+                    currentMusicItem,
+                );
             }
         } catch (err) {
             if (this.trackPlayer.isCurrentMusic(currentMusicItem)) {

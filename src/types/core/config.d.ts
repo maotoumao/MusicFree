@@ -43,6 +43,15 @@ export interface IAppConfigProperties {
     "lyric.fontSize": number;
     "lyric.detailFontSize": number;
     "lyric.autoSearchLyric": boolean;
+    /** 播放页歌词用 AMLL 风格：左对齐 + 当前行放大加粗 + 其余行压暗 */
+    "lyric.amllStyle": boolean;
+    // 蓝牙歌词（车机歌词）：把歌词写进元信息字段，通过蓝牙 AVRCP 推给车机
+    /** 是否开启蓝牙歌词 */
+    "lyric.bluetoothLyric": boolean;
+    /** 歌词写进哪个元信息字段，各家车机显示的位置不一样 */
+    "lyric.bluetoothLyricField": "split" | "title" | "titleAppend" | "artist";
+    /** 蓝牙歌词是否附带翻译 */
+    "lyric.bluetoothLyricTranslation": boolean;
 
     // Theme
     "theme.background": string;

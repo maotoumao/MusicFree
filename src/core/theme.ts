@@ -63,6 +63,47 @@ export const darkTheme = {
     },
 };
 
+/**
+ * 暗夜暖金（Baka 风格）
+ *
+ * 配色思路来自 BakaMusic 的主题体系：界面底色不是纯中性灰，
+ * 而是把主题色按不同比例混进深色基底里（官方写法是
+ * color-mix(in srgb, var(--theme-primary) 10%, rgba(17,19,25,0.9))），
+ * 越上层的浮层混入越多主题色，于是卡片、弹窗会透出一点暖调，
+ * 也就是常说的"染色玻璃"质感。这正是纯灰配色显得寡淡的原因。
+ *
+ * 下面每个色值都是按「主题色 N% + 深色基底」实际算出来的，
+ * 亮度依然保持 页面 < 顶栏/播放栏 < 浮层/卡片 的层次关系。
+ */
+export const bakaTheme = {
+    id: "p-baka",
+    ..._DarkTheme,
+    colors: {
+        ..._DarkTheme.colors,
+        background: "transparent",
+        text: "#f5f0e8",
+        textSecondary: Color("#f5f0e8").alpha(0.76).toString(),
+        primary: "#c4a574", // 暖金
+        pageBackground: "#1a1a1e", // 主题色 5%
+        shadow: "#000",
+        appBar: "#1f1f20", // 主题色 8%
+        appBarText: "#f5f0e8",
+        musicBar: "#1f1f20",
+        musicBarText: "#f5f0e8",
+        divider: "rgba(245,240,232,0.12)",
+        listActive: "rgba(196,165,116,0.16)", // 点按水波纹也带主题色
+        mask: "rgba(14,16,22,0.82)",
+        backdrop: "#262524", // 主题色 12%
+        tabBar: "#262524",
+        placeholder: "#35302b", // 主题色 20%
+        success: "#4CAF7D",
+        danger: "#FF6B5B",
+        info: "#5AB8D6",
+        card: "#2c292788", // 主题色 15%
+        notification: "#262524",
+    },
+};
+
 interface IBackgroundInfo {
     url?: string;
     blur?: number;
@@ -79,6 +120,8 @@ function setup() {
         themeStore.setValue(darkTheme);
     } else if (currentTheme === "p-light") {
         themeStore.setValue(lightTheme);
+    } else if (currentTheme === "p-baka") {
+        themeStore.setValue(bakaTheme);
     } else {
         themeStore.setValue({
             id: currentTheme,
@@ -112,6 +155,8 @@ function setTheme(
         themeStore.setValue(lightTheme);
     } else if (themeName === "p-dark") {
         themeStore.setValue(darkTheme);
+    } else if (themeName === "p-baka") {
+        themeStore.setValue(bakaTheme);
     } else {
         themeStore.setValue({
             id: themeName,
@@ -154,7 +199,12 @@ function setTheme(
 
 function setColors(colors: Partial<CustomizedColors>) {
     const currentTheme = themeStore.getValue();
-    if (currentTheme.id !== "p-light" && currentTheme.id !== "p-dark") {
+    // 内置主题（含 baka）不接受自定义颜色覆盖，只有 "custom" 主题才可以改
+    if (
+        currentTheme.id !== "p-light" &&
+        currentTheme.id !== "p-dark" &&
+        currentTheme.id !== "p-baka"
+    ) {
         const newTheme = {
             ...currentTheme,
             colors: {

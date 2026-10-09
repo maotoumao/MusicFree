@@ -1,22 +1,25 @@
 import repeatModeConst from "@/constants/repeatModeConst";
 import rpx from "@/utils/rpx";
 import React from "react";
-import { InteractionManager, StyleSheet, View } from "react-native";
+import {
+    ActivityIndicator,
+    InteractionManager,
+    StyleSheet,
+    View,
+} from "react-native";
 
 import Icon from "@/components/base/icon.tsx";
 import { showPanel } from "@/components/panels/usePanel";
 import TrackPlayer, { useMusicState, useRepeatMode } from "@/core/trackPlayer";
 import useOrientation from "@/hooks/useOrientation";
 import delay from "@/utils/delay";
-import { musicIsPaused } from "@/utils/trackUtils";
+import { musicIsBuffering, musicIsPaused } from "@/utils/trackUtils";
 
 export default function () {
     const repeatMode = useRepeatMode();
     const musicState = useMusicState();
 
     const orientation = useOrientation();
-
-    console.log(repeatMode, repeatModeConst[repeatMode]);
 
     return (
         <>
@@ -48,18 +51,25 @@ export default function () {
                         TrackPlayer.skipToPrevious();
                     }}
                 />
-                <Icon
-                    color={"white"}
-                    name={musicIsPaused(musicState) ? "play" : "pause"}
-                    size={rpx(96)}
-                    onPress={() => {
-                        if (musicIsPaused(musicState)) {
-                            TrackPlayer.play();
-                        } else {
-                            TrackPlayer.pause();
-                        }
-                    }}
-                />
+                {musicIsBuffering(musicState) ? (
+                    // 缓冲中显示加载圈，避免网速慢时误以为点了没反应
+                    <View style={style.indicatorContainer}>
+                        <ActivityIndicator size={rpx(72)} color={"white"} />
+                    </View>
+                ) : (
+                    <Icon
+                        color={"white"}
+                        name={musicIsPaused(musicState) ? "play" : "pause"}
+                        size={rpx(96)}
+                        onPress={() => {
+                            if (musicIsPaused(musicState)) {
+                                TrackPlayer.play();
+                            } else {
+                                TrackPlayer.pause();
+                            }
+                        }}
+                    />
+                )}
                 <Icon
                     color={"white"}
                     name={"skip-right"}
@@ -88,6 +98,13 @@ const style = StyleSheet.create({
         height: rpx(100),
         flexDirection: "row",
         justifyContent: "space-around",
+        alignItems: "center",
+    },
+    // 和播放按钮同尺寸，切换时布局不会跳动
+    indicatorContainer: {
+        width: rpx(96),
+        height: rpx(96),
+        justifyContent: "center",
         alignItems: "center",
     },
 });

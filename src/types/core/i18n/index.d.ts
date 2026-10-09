@@ -232,6 +232,7 @@ export interface ILanguageData {
     "themeSettings.setTheme": string; // 设置主题
     "themeSettings.lightMode": string; // 明亮模式
     "themeSettings.darkMode": string; // 黑暗模式
+    "themeSettings.bakaMode": string; // 暗夜暖金（Baka 风格）
     "themeSettings.customMode": string; // 自定义模式
 
 
@@ -337,6 +338,8 @@ export interface ILanguageData {
     "basicSettings.useCelluarNetworkDownload": string; // 使用移动网络下载
     
     "basicSettings.lyric": string; // 歌词
+    "basicSettings.lyric.amllStyle": string; // 歌词页 AMLL 风格
+    "basicSettings.lyric.amllStyleDesc": string; // AMLL 风格说明
     "basicSettings.lyric.autoSearchLyric": string; // 歌词缺失时自动搜索歌词
     "basicSettings.lyric.showStatusBarLyric": string; // 开启桌面歌词
     "basicSettings.lyric.align": string; // 对齐方式
@@ -349,6 +352,14 @@ export interface ILanguageData {
     "basicSettings.lyric.fontSize": string; // 字体大小
     "basicSettings.lyric.textColor": string; // 文本颜色
     "basicSettings.lyric.backgroundColor": string; // 文本背景色
+    "basicSettings.lyric.bluetoothLyric": string; // 开启蓝牙歌词（车机显示）
+    "basicSettings.lyric.bluetoothLyricDesc": string; // 蓝牙歌词的说明
+    "basicSettings.lyric.bluetoothLyricField": string; // 车机显示位置
+    "basicSettings.lyric.bluetoothLyricField.split": string; // 歌词+歌名分开显示
+    "basicSettings.lyric.bluetoothLyricField.title": string; // 歌曲名位置
+    "basicSettings.lyric.bluetoothLyricField.titleAppend": string; // 接在歌曲名后面
+    "basicSettings.lyric.bluetoothLyricField.artist": string; // 歌手位置
+    "basicSettings.lyric.bluetoothLyricTranslation": string; // 蓝牙歌词附带翻译
     
     "basicSettings.cache": string; // 缓存
     "basicSettings.cache.musicCacheLimit": string; // 音乐缓存上限

@@ -8,8 +8,11 @@ import { showPanel } from "@/components/panels/usePanel";
 import { SortType } from "@/constants/commonConst.ts";
 import pathConst from "@/constants/pathConst";
 import Config, { useAppConfig } from "@/core/appConfig";
+import bluetoothLyric, { bluetoothLyricFields } from "@/core/bluetoothLyric";
 import { useI18N } from "@/core/i18n";
+import lyricManager from "@/core/lyricManager";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
+import TrackPlayer from "@/core/trackPlayer";
 import useColors from "@/hooks/useColors";
 import LyricUtil, { NativeTextAlignment } from "@/native/lyricUtil";
 import { AppConfigPropertyKey } from "@/types/core/config";
@@ -683,6 +686,12 @@ function LyricSetting() {
     const widthPercent = useAppConfig("lyric.widthPercent");
     const fontSize = useAppConfig("lyric.fontSize");
     const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");
+    const enableAmllStyle = useAppConfig("lyric.amllStyle");
+    const enableBluetoothLyric = useAppConfig("lyric.bluetoothLyric");
+    const bluetoothLyricField = useAppConfig("lyric.bluetoothLyricField");
+    const enableBluetoothLyricTranslation = useAppConfig(
+        "lyric.bluetoothLyricTranslation",
+    );
 
 
 
@@ -694,6 +703,16 @@ function LyricSetting() {
         t("basicSettings.lyric.autoSearchLyric"),
         "lyric.autoSearchLyric",
         enableAutoSearchLyric ?? false,
+    );
+
+    /** AMLL 风格歌词：左对齐 + 当前行放大加粗 */
+    const amllStyle = createSwitch(
+        t("basicSettings.lyric.amllStyle"),
+        "lyric.amllStyle",
+        enableAmllStyle ?? false,
+        newValue => {
+            Config.setConfig("lyric.amllStyle", newValue);
+        },
     );
 
     const openStatusBarLyric = createSwitch(
@@ -734,6 +753,61 @@ function LyricSetting() {
         },
     );
 
+    /** 蓝牙（车机）歌词：把歌词写进歌曲元信息字段推给车机 */
+    const pushBluetoothLyricNow = () => {
+        const musicItem = TrackPlayer.currentMusic;
+        const currentLyric = lyricManager.currentLyricItem;
+        bluetoothLyric.refresh(
+            musicItem,
+            currentLyric?.lrc,
+            currentLyric?.translation,
+        );
+    };
+
+    const openBluetoothLyric = createSwitch(
+        t("basicSettings.lyric.bluetoothLyric"),
+        "lyric.bluetoothLyric",
+        enableBluetoothLyric ?? false,
+        async newValue => {
+            Config.setConfig("lyric.bluetoothLyric", newValue);
+            if (newValue) {
+                pushBluetoothLyricNow();
+            } else {
+                // 关掉之后把被歌词占用的字段还原成歌曲本身的信息
+                await bluetoothLyric.reset(TrackPlayer.currentMusic);
+            }
+        },
+    );
+
+    const bluetoothLyricFieldRadio = createRadio(
+        t("basicSettings.lyric.bluetoothLyricField"),
+        "lyric.bluetoothLyricField",
+        bluetoothLyricFields,
+        bluetoothLyricField ?? "split",
+        {
+            split: t("basicSettings.lyric.bluetoothLyricField.split"),
+            title: t("basicSettings.lyric.bluetoothLyricField.title"),
+            titleAppend: t(
+                "basicSettings.lyric.bluetoothLyricField.titleAppend",
+            ),
+            artist: t("basicSettings.lyric.bluetoothLyricField.artist"),
+        },
+        () => {
+            // 换个字段试试，看自己车机上到底哪个位置能显示出歌词
+            pushBluetoothLyricNow();
+        },
+    );
+
+    const bluetoothLyricTranslation = createSwitch(
+        t("basicSettings.lyric.bluetoothLyricTranslation"),
+        "lyric.bluetoothLyricTranslation",
+        enableBluetoothLyricTranslation ?? false,
+        newValue => {
+            Config.setConfig("lyric.bluetoothLyricTranslation", newValue);
+            pushBluetoothLyricNow();
+        },
+    );
+
     const alignStatusBarLyric = createRadio(
         t("basicSettings.lyric.align"),
         "lyric.align",
@@ -767,10 +841,52 @@ function LyricSetting() {
             <ListItem
                 withHorizontalPadding
                 heightType="small"
+                onPress={amllStyle.onPress}>
+                <ListItem.Content
+                    title={amllStyle.title}
+                    description={t("basicSettings.lyric.amllStyleDesc")}
+                />
+                {amllStyle.right}
+            </ListItem>
+            <ListItem
+                withHorizontalPadding
+                heightType="small"
                 onPress={openStatusBarLyric.onPress}>
                 <ListItem.Content title={openStatusBarLyric.title} />
                 {openStatusBarLyric.right}
             </ListItem>
+            <ListItem
+                withHorizontalPadding
+                heightType="small"
+                onPress={openBluetoothLyric.onPress}>
+                <ListItem.Content
+                    title={openBluetoothLyric.title}
+                    description={t("basicSettings.lyric.bluetoothLyricDesc")}
+                />
+                {openBluetoothLyric.right}
+            </ListItem>
+            {enableBluetoothLyric ? (
+                <>
+                    <ListItem
+                        withHorizontalPadding
+                        heightType="small"
+                        onPress={bluetoothLyricFieldRadio.onPress}>
+                        <ListItem.Content
+                            title={bluetoothLyricFieldRadio.title}
+                        />
+                        {bluetoothLyricFieldRadio.right}
+                    </ListItem>
+                    <ListItem
+                        withHorizontalPadding
+                        heightType="small"
+                        onPress={bluetoothLyricTranslation.onPress}>
+                        <ListItem.Content
+                            title={bluetoothLyricTranslation.title}
+                        />
+                        {bluetoothLyricTranslation.right}
+                    </ListItem>
+                </>
+            ) : null}
             <View style={lyricStyles.sliderContainer}>
                 <ThemeText>{t("basicSettings.lyric.leftRightDistance")}</ThemeText>
                 <Slider

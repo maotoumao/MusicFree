@@ -5,6 +5,7 @@ import Slider from "@react-native-community/slider";
 import timeformat from "@/utils/timeformat";
 import { fontSizeConst } from "@/constants/uiConst";
 import TrackPlayer, { useProgress } from "@/core/trackPlayer";
+import useColors from "@/hooks/useColors";
 
 interface ITimeLabelProps {
     time: number;
@@ -20,15 +21,17 @@ export default function SeekBar() {
     const progress = useProgress(1000);
     const [tmpProgress, setTmpProgress] = useState<number | null>(null);
     const slidingRef = useRef(false);
+    // 进度条跟随主题色，换主题（比如暗夜暖金）后进度条会一起变
+    const colors = useColors();
 
     return (
         <View style={style.wrapper}>
             <TimeLabel time={tmpProgress ?? progress.position} />
             <Slider
                 style={style.slider}
-                minimumTrackTintColor={"#cccccc"}
+                minimumTrackTintColor={colors.primary}
                 maximumTrackTintColor={"#999999"}
-                thumbTintColor={"#dddddd"}
+                thumbTintColor={colors.primary}
                 minimumValue={0}
                 maximumValue={progress.duration}
                 onSlidingStart={() => {
