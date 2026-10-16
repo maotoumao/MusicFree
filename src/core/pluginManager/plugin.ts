@@ -29,6 +29,7 @@ import * as webdav from "webdav";
 import { devLog, errorLog, trace } from "../../utils/log";
 import Network from "../../utils/network";
 import MediaCache from "../mediaCache";
+import { recordSourceOperation } from "../sourceHealth";
 import _internalPluginMeta from "./meta";
 import { IPluginManager } from "@/types/core/pluginManager";
 
@@ -172,8 +173,26 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             };
         }
 
-        const result =
-            (await this.plugin.instance.search(query, page, type)) ?? {};
+        const startedAt = Date.now();
+        let result: Partial<IPlugin.ISearchResult<T>>;
+        try {
+            result =
+                (await this.plugin.instance.search(query, page, type)) ?? {};
+            recordSourceOperation(
+                this.plugin.name,
+                "search",
+                true,
+                Date.now() - startedAt,
+            );
+        } catch (e) {
+            recordSourceOperation(
+                this.plugin.name,
+                "search",
+                false,
+                Date.now() - startedAt,
+            );
+            throw e;
+        }
         if (Array.isArray(result.data)) {
             result.data.forEach(_ => {
                 resetMediaItem(_, this.plugin.name);
@@ -195,6 +214,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
         quality: IMusic.IQualityKey = "standard",
         retryCount = 1,
         notUpdateCache = false,
+        ownSourceOnly = false,
     ): Promise<IPlugin.IMediaSourceResult | null> {
         await this.ensurePluginIsMounted();
         // 1. 本地搜索 其实直接读mediameta就好了
@@ -228,7 +248,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
         const pluginCacheControl =
             this.plugin.instance.cacheControl ?? "no-cache";
         if (
-            mediaCache &&
+            !ownSourceOnly && mediaCache &&
             mediaCache?.source?.[quality]?.url &&
             (pluginCacheControl === CacheControl.Cache ||
                 (pluginCacheControl === CacheControl.NoCache &&
@@ -244,7 +264,7 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             };
         }
         // 3. 替代插件
-        const alternativePlugin = Plugin.pluginManager?.getAlternativePlugin(this.plugin) as Plugin | null;
+        const alternativePlugin = ownSourceOnly ? null : Plugin.pluginManager?.getAlternativePlugin(this.plugin) as Plugin | null;
         const parserPlugin = alternativePlugin?.instance?.getMediaSource ? alternativePlugin : this.plugin;
 
         if (alternativePlugin) {
@@ -265,14 +285,23 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
                     : undefined,
             };
         }
+        const startedAt = Date.now();
+        let sourceHealthRecorded = false;
         try {
             const { url, headers } = (await parserPlugin.instance.getMediaSource(
                 musicItem,
                 quality,
             )) ?? { url: musicItem?.qualities?.[quality]?.url };
-            if (!url) {
+            if (typeof url !== "string" || !url.trim()) {
                 throw new Error("NOT RETRY");
             }
+            recordSourceOperation(
+                parserPlugin.name,
+                "media",
+                true,
+                Date.now() - startedAt,
+            );
+            sourceHealthRecorded = true;
             trace("播放", "插件播放");
             const result = {
                 url,
@@ -311,9 +340,17 @@ class PluginMethodsWrapper implements IPlugin.IPluginInstanceMethods {
             }
             return result;
         } catch (e: any) {
+            if (!sourceHealthRecorded) {
+                recordSourceOperation(
+                    parserPlugin.name,
+                    "media",
+                    false,
+                    Date.now() - startedAt,
+                );
+            }
             if (retryCount > 0 && e?.message !== "NOT RETRY") {
                 await delay(150);
-                return this.getMediaSource(musicItem, quality, --retryCount);
+                return this.getMediaSource(musicItem, quality, --retryCount, notUpdateCache, ownSourceOnly);
             }
             errorLog("获取真实源失败", e?.message);
             devLog("error", "获取真实源失败", e, e?.message);
@@ -851,6 +888,11 @@ export class Plugin {
     /** 插件方法，内部进行标准化和校验 */
     public methods!: IPlugin.IPluginInstanceMethods;
 
+    /** Automatic selection must not silently escape the selected source policy. */
+    resolveAutomaticMediaSource(track: IMusic.IMusicItem, quality: IMusic.IQualityKey = "standard") {
+        return (this.methods as PluginMethodsWrapper).getMediaSource(track, quality, 0, false, true);
+    }
+
     public supportedMethods: Set<keyof IPlugin.IPluginInstanceMethods> = new Set();
 
     private lazyProps: ILazyProps | null = null;
@@ -1117,4 +1159,3 @@ const localFilePluginDefine: IPlugin.IPluginDefine = {
 export const localFilePlugin = new Plugin(function () {
     return localFilePluginDefine;
 }, "internal-plugin://local-file-plugin");
-

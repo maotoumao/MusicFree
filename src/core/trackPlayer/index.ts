@@ -211,6 +211,10 @@ class TrackPlayer extends EventEmitter<{
             ReactNativeTrackPlayer.addEventListener(
                 Event.PlaybackError,
                 async e => {
+                    if (this.managedFailure) {
+                        this.managedFailure();
+                        return;
+                    }
                     errorLog("播放出错", e.message);
                     // WARNING: 不稳定，报错的时候有可能track已经变到下一首歌去了
                     const currentTrack =
@@ -394,10 +398,50 @@ class TrackPlayer extends EventEmitter<{
         return isSameMediaItem(musicItem, this.currentMusic);
     }
 
+    private managedRevision = 0;
+    private managedFailure?: () => void;
+    private managedCandidate?: IMusic.IMusicItem;
+    private automaticResolver?: (target: { artist: string; title: string }, candidates: IMusic.IMusicItem[]) => Promise<unknown>;
+
+    setAutomaticResolver(resolver: NonNullable<TrackPlayer["automaticResolver"]>) {
+        this.automaticResolver = resolver;
+    }
+
+    beginManagedPlayback() {
+        this.managedRevision++;
+        this.managedFailure = undefined;
+        this.managedCandidate = undefined;
+        return this.managedRevision;
+    }
+
+    isManagedPlaybackCurrent(revision: number) {
+        return this.managedRevision === revision;
+    }
+    onManagedPlaybackFailure(revision: number, handler?: () => void) {
+        if (this.isManagedPlaybackCurrent(revision)) this.managedFailure = handler;
+    }
+    async playResolvedCandidate(music: IMusic.IMusicItem, source: IPlugin.IMediaSourceResult, revision: number) {
+        if (!this.isManagedPlaybackCurrent(revision)) return;
+        if (this.managedCandidate && !isSameMediaItem(this.managedCandidate, music)) {
+            this.setPlayList(this.playList.filter(item => !isSameMediaItem(item, music))
+                .map(item => isSameMediaItem(item, this.managedCandidate) ? music : item));
+        }
+        this.managedCandidate = music;
+        await this.play(music, true, { source, revision });
+    }
+    confirmManagedCandidate(music: IMusic.IMusicItem, revision: number) {
+        if (this.isManagedPlaybackCurrent(revision)) this.musicHistoryService.addMusic(music);
+    }
+    replaceManagedPlayList(current: IMusic.IMusicItem, tracks: IMusic.IMusicItem[]) {
+        if (this.isCurrentMusic(current)) this.setPlayList(this.shrinkPlayListToSize(tracks, tracks.indexOf(current)));
+    }
+
     async play(
         musicItem?: IMusic.IMusicItem | null,
         forcePlay?: boolean,
+        managed?: { source: IPlugin.IMediaSourceResult; revision: number },
     ): Promise<void> {
+        if (!managed) this.beginManagedPlayback();
         try {
             // 如果不传参，默认是播放当前音乐
             if (!musicItem) {
@@ -405,6 +449,10 @@ class TrackPlayer extends EventEmitter<{
             }
             if (!musicItem) {
                 throw new Error(PlayFailReason.PLAY_LIST_IS_EMPTY);
+            }
+            if (!managed && musicItem.$autoResolveTarget && this.automaticResolver) {
+                await this.automaticResolver(musicItem.$autoResolveTarget, [musicItem]);
+                return;
             }
             // 1. 移动网络禁止播放
             const localPath = getLocalPath(musicItem);
@@ -419,7 +467,7 @@ class TrackPlayer extends EventEmitter<{
             }
 
             // 2. 如果是当前正在播放的音频
-            if (this.isCurrentMusic(musicItem)) {
+            if (!managed && this.isCurrentMusic(musicItem)) {
                 // 获取底层播放器中的track
                 const currentTrack = await ReactNativeTrackPlayer.getTrack(0);
                 // 2.1 如果当前有源
@@ -456,6 +504,7 @@ class TrackPlayer extends EventEmitter<{
             }
 
             // 3. 如果没有在播放列表中，添加到队尾；同时更新列表状态
+            if (managed && !this.isManagedPlaybackCurrent(managed.revision)) return;
             const inPlayList = this.isInPlayList(musicItem);
             if (!inPlayList) {
                 this.add(musicItem);
@@ -463,13 +512,16 @@ class TrackPlayer extends EventEmitter<{
 
             // 4. 更新列表状态和当前音乐
             this.setCurrentMusic(musicItem);
-            await ReactNativeTrackPlayer.setQueue([{
+            // Prepared playback already has a URL: avoid first loading a silent
+            // placeholder and immediately resetting the native player again.
+            if (!managed) await ReactNativeTrackPlayer.setQueue([{
                 ...musicItem,
                 url: TrackPlayer.proposedAudioUrl,
                 artwork: resolveImportedAssetOrPath(musicItem.artwork?.trim?.()?.length ? musicItem.artwork : ImgAsset.albumDefault) as unknown as any,
             }, this.getFakeNextTrack()]);
 
             // 5. 获取音源
+            if (managed && !this.isManagedPlaybackCurrent(managed.revision)) return;
             let track: IMusic.IMusicItem;
 
             // 5.1 通过插件获取音源
@@ -480,8 +532,8 @@ class TrackPlayer extends EventEmitter<{
                 this.configService.getConfig("basic.playQualityOrder") ?? "asc",
             );
             // 5.3 插件返回音源
-            let source: IPlugin.IMediaSourceResult | null = null;
-            for (let quality of qualityOrder) {
+            let source: IPlugin.IMediaSourceResult | null = managed?.source ?? null;
+            for (let quality of managed ? [] : qualityOrder) {
                 if (this.isCurrentMusic(musicItem)) {
                     source =
                         (await plugin?.methods?.getMediaSource(
@@ -571,11 +623,13 @@ class TrackPlayer extends EventEmitter<{
             track = this.mergeTrackSource(musicItem, source) as IMusic.IMusicItem;
 
             // 8. 新增历史记录
-            this.musicHistoryService.addMusic(musicItem);
+            if (!managed) this.musicHistoryService.addMusic(musicItem);
 
             trace("获取音源成功", track);
             // 9. 设置音源
+            if (managed && !this.isManagedPlaybackCurrent(managed.revision)) return;
             await this.setTrackSource(track as Track);
+            if (managed) return;
 
             // 10. 获取补充信息
             let info: Partial<IMusic.IMusicItem> | null = null;
@@ -600,6 +654,7 @@ class TrackPlayer extends EventEmitter<{
                 );
             }
         } catch (e: any) {
+            if (managed) throw e;
             const message = e?.message;
             if (
                 message ===
@@ -625,6 +680,7 @@ class TrackPlayer extends EventEmitter<{
     }
 
     async pause(): Promise<void> {
+        this.beginManagedPlayback();
         await ReactNativeTrackPlayer.pause();
     }
 
@@ -634,6 +690,7 @@ class TrackPlayer extends EventEmitter<{
 
     // 清空播放队列
     async clearPlayList(): Promise<void> {
+        this.beginManagedPlayback();
         this.setPlayList([]);
         this.setCurrentMusic(null);
 

@@ -15,6 +15,7 @@ import { addHistory } from "../common/historySearch";
 import useSearch from "../hooks/useSearch";
 import {
     PageStatus,
+    aggregateSearchResultsAtom,
     initSearchResults,
     pageStatusAtom,
     queryAtom,
@@ -27,6 +28,7 @@ export default function NavBar() {
     const setPageStatus = useSetAtom(pageStatusAtom);
     const colors = useColors();
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const setAggregateResults = useSetAtom(aggregateSearchResultsAtom);
     const { t } = useI18N();
 
     const onSearchSubmit = async () => {
@@ -34,6 +36,7 @@ export default function NavBar() {
             return;
         }
         setSearchResultsState(initSearchResults);
+        setAggregateResults({});
         setPageStatus(prev =>
             prev === PageStatus.EDITING ? PageStatus.SEARCHING : prev,
         );

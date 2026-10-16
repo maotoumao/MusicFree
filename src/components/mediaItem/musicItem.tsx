@@ -21,6 +21,8 @@ interface IMusicItemProps {
     left?: () => JSX.Element;
     containerStyle?: StyleProp<ViewStyle>;
     highlight?: boolean
+    sourceCountLabel?: string;
+    onMorePress?: () => void;
 }
 export default function MusicItem(props: IMusicItemProps) {
     const {
@@ -34,6 +36,8 @@ export default function MusicItem(props: IMusicItemProps) {
         left: Left,
         containerStyle,
         highlight = false,
+        sourceCountLabel,
+        onMorePress,
     } = props;
 
     return (
@@ -84,6 +88,7 @@ export default function MusicItem(props: IMusicItemProps) {
                             numberOfLines={1}
                             fontSize="description"
                             fontColor={highlight ? "primary" : "textSecondary"}>
+                            {sourceCountLabel ? `${sourceCountLabel} · ` : ""}
                             {musicItem.artist}
                             {musicItem.album ? ` - ${musicItem.album}` : ""}
                         </ThemeText>
@@ -96,6 +101,9 @@ export default function MusicItem(props: IMusicItemProps) {
                     position="none"
                     icon="ellipsis-vertical"
                     onPress={() => {
+                        if (onMorePress) {
+                            onMorePress(); return;
+                        }
                         showPanel("MusicItemOptions", {
                             musicItem,
                             musicSheet,

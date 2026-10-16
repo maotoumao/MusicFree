@@ -16,6 +16,9 @@ import { IIconName } from "@/components/base/icon.tsx";
 import { useI18N } from "@/core/i18n";
 import IconButton from "@/components/base/iconButton";
 import useRerender from "@/hooks/useRerender";
+import { useSourceHealthSummary } from "@/core/sourceHealth";
+import { profileFor, setSourceTier } from "@/core/sourcePolicy/runtime";
+import { SourceTier } from "@/core/sourcePolicy/selection";
 
 interface IPluginItemProps {
     plugin: Plugin;
@@ -34,10 +37,26 @@ function _PluginItem(props: IPluginItemProps) {
     const enabled = usePluginEnabled(plugin);
     const { t } = useI18N();
     const rerender = useRerender();
+    const sourceHealth = useSourceHealthSummary(plugin.name);
 
     const alternativePluginName = pluginManager.getAlternativePluginName(plugin);
 
     const options: IOption[] = [
+        {
+            title: t("sourcePolicy.title"), icon: "strategy", show: true,
+            async onPress() {
+                const profile = await profileFor(plugin);
+                const labels = { preferred: t("sourcePolicy.preferred"), backup: t("sourcePolicy.backup"), disabled: t("sourcePolicy.disabled") };
+                showDialog("RadioDialog", {
+                    title: t("sourcePolicy.title"), content: Object.values(labels), defaultSelected: labels[profile.tier],
+                    tip: t("sourcePolicy.hint"),
+                    async onOk(value) {
+                        const tier = (Object.keys(labels) as SourceTier[]).find(k => labels[k] === value);
+                        if (tier) await setSourceTier(plugin, tier);
+                    },
+                });
+            },
+        },
         {
             title: t("pluginSetting.pluginItem.options.updatePlugin"),
             icon: "arrow-path",
@@ -248,6 +267,12 @@ function _PluginItem(props: IPluginItemProps) {
                         })}
                     </ThemeText>
                 ) : null}
+                <ThemeText
+                    fontSize="subTitle"
+                    fontColor="textSecondary"
+                    style={styles.health}>
+                    {t("sourcePolicy.health", { score: sourceHealth.score ?? "--" })}
+                </ThemeText>
             </View>
             {alternativePluginName ? <View style={styles.alternativePluginDescription}>
                 <ThemeText fontSize="subTitle" fontColor="textSecondary">
@@ -340,6 +365,9 @@ const styles = StyleSheet.create({
         marginLeft: rpx(24),
         flexShrink: 1,
         flexGrow: 1,
+    },
+    health: {
+        marginLeft: "auto",
     },
     description: {
         marginHorizontal: rpx(16),

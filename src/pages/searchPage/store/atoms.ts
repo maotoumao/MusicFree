@@ -1,4 +1,5 @@
 import { RequestStateCode } from "@/constants/commonConst";
+import type { AggregateTrack } from "@/core/aggregateSearch/model";
 import { atom } from "jotai";
 
 /** 搜索状态 */
@@ -31,6 +32,21 @@ export const initSearchResults: ISearchResults = {
 
 /** key: pluginhash value: searchResult */
 const searchResultsAtom = atom(initSearchResults);
+
+export const ALL_SOURCES_HASH = "__all_sources__";
+
+export type IAggregateMusicSearchResult =
+    Omit<ISearchResult<"music">, "data"> & {
+        data: AggregateTrack[];
+        endedPlugins: string[];
+        requestId: number;
+        expanded?: boolean;
+        sourcePages?: Record<string, number>;
+    };
+
+export const aggregateSearchResultsAtom = atom<{
+    music?: IAggregateMusicSearchResult;
+}>({});
 
 export enum PageStatus {
     /** 编辑中 */
