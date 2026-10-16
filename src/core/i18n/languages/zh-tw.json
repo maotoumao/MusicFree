@@ -439,5 +439,20 @@
     "sourcePolicy.backup": "備用音源",
     "sourcePolicy.disabled": "不參與自動搜尋",
     "sourcePolicy.hint": "僅影響聚合搜尋，仍可單獨搜尋此音源。",
-    "sourcePolicy.health": "健康度：{score}"
+    "sourcePolicy.health": "健康度：{score}",
+    "recommendations.title": "猜你喜歡",
+    "recommendations.configure": "啟用 Last.fm 推薦",
+    "recommendations.disclosure": "啟用後，會將用於推薦的歌曲名與歌手名傳送給 Last.fm，最多選擇 40 首收藏或最近播放歌曲作為種子。不會傳送音訊或音樂帳戶資訊。推薦準備與播放會查詢你已啟用的音樂外掛。",
+    "recommendations.keyHint": "填寫你自己的 Last.fm API key；僅儲存在此裝置。關閉功能會刪除 key 與推薦服務快取。",
+    "recommendations.invalidKey": "請填寫有效的 32 位 API key",
+    "recommendations.refresh": "重新整理推薦",
+    "recommendations.disable": "關閉並清除推薦設定",
+    "recommendations.basis": "根據你的收藏與最近播放",
+    "recommendations.next": "換一批",
+    "recommendations.generating": "正在根據你的音樂偏好產生推薦…",
+    "recommendations.partial": "部分推薦暫未更新，先聽聽這些歌曲吧",
+    "recommendations.stale": "暫時無法更新，已保留上次推薦",
+    "recommendations.unavailable": "推薦服務暫時無法使用，請檢查網路與 API key",
+    "recommendations.preparing": "正在準備播放…",
+    "recommendations.empty": "收藏或播放喜歡的歌曲後，點擊重新整理推薦"
 }

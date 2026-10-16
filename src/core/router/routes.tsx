@@ -1,4 +1,5 @@
 import Home from "@/pages/home";
+import Personalized from "@/pages/personalized";
 import MusicDetail from "@/pages/musicDetail";
 import TopList from "@/pages/topList";
 import TopListDetail from "@/pages/topListDetail";
@@ -33,6 +34,7 @@ export const routes: Array<IRoutes> = [
         path: ROUTE_PATH.HOME,
         component: Home,
     },
+    { path: ROUTE_PATH.PERSONALIZED, component: Personalized },
     {
         path: ROUTE_PATH.MUSIC_DETAIL,
         component: MusicDetail,

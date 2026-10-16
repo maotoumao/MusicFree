@@ -10,6 +10,9 @@ export default function Operations() {
     const { t } = useI18N();
 
     const actionButtons = [
+        { iconName: "heart", title: t("recommendations.title"), action() {
+            navigate(ROUTE_PATH.PERSONALIZED);
+        } },
         {
             iconName: "fire",
             title: t("home.recommendSheet"),
@@ -46,7 +49,7 @@ export default function Operations() {
                 <ActionButton
                     style={[
                         styles.actionButtonStyle,
-                        index % 4 ? styles.actionMarginLeft : null,
+                        index % 5 ? styles.actionMarginLeft : null,
                     ]}
                     key={action.title}
                     {...action}
@@ -65,11 +68,11 @@ const styles = StyleSheet.create({
         flexWrap: "nowrap",
     },
     actionButtonStyle: {
-        width: rpx(157.5),
+        width: rpx(125),
         height: rpx(160),
         borderRadius: rpx(18),
     },
     actionMarginLeft: {
-        marginLeft: rpx(24),
+        marginLeft: rpx(19),
     },
 });

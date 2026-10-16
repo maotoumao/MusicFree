@@ -55,7 +55,7 @@ In addition, please ensure you understand the following additional notes when us
 - **Plugin-supported features**: Search (music, albums, artists), playback, view albums, view artist details, import singles, import playlists, get lyrics, etc.
 
 - **Customizable and ad-free**: This software provides light and dark modes; supports custom backgrounds; this software is open sourced under the AGPL license and ~~one star for a deal~~ will remain free.
-- **Privacy**: All data is stored locally, this software will not collect any of your personal information.
+- **Privacy**: Favorites, history and settings are stored locally. Optional Last.fm recommendations are off by default; enabling explains which song and artist names are sent and requires your own API key. See [recommendation documentation](docs/personalized-recommendations.md).
 - **Lyrics association**: You can associate the lyrics of two songs, for example, associate song A's lyrics to song B. After association, both songs A and B will display song B's lyrics. You can also associate multiple songs' lyrics, like A->B->C, so that songs A, B, and C will all display C's lyrics.
 
 ## Plugins

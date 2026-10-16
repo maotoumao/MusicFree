@@ -12,6 +12,9 @@ export default function Operations() {
 
 
     const actionButtons = [
+        { iconName: "heart", title: t("recommendations.title"), action() {
+            navigate(ROUTE_PATH.PERSONALIZED);
+        } },
         {
             iconName: "fire",
             title: t("home.recommendSheet"),

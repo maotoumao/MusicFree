@@ -10,6 +10,7 @@ LogBox.ignoreLogs([
 export const ROUTE_PATH = {
     /** 主页 */
     HOME: "home",
+    PERSONALIZED: "personalized",
     /** 音乐播放页 */
     MUSIC_DETAIL: "music-detail",
     /** 搜索页 */

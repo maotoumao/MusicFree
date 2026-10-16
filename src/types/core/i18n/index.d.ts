@@ -540,6 +540,21 @@ export interface ILanguageData {
     "sourcePolicy.disabled": string;
     "sourcePolicy.hint": string;
     "sourcePolicy.health": string;
+    "recommendations.title": string;
+    "recommendations.configure": string;
+    "recommendations.disclosure": string;
+    "recommendations.keyHint": string;
+    "recommendations.invalidKey": string;
+    "recommendations.refresh": string;
+    "recommendations.disable": string;
+    "recommendations.basis": string;
+    "recommendations.next": string;
+    "recommendations.generating": string;
+    "recommendations.partial": string;
+    "recommendations.stale": string;
+    "recommendations.unavailable": string;
+    "recommendations.preparing": string;
+    "recommendations.empty": string;
 }
 
 // 语言接口定义
