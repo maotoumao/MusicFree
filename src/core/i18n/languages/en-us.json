@@ -93,6 +93,8 @@
     "searchPage.searchPlaceHolder": "Enter song to search",
     "searchPage.searchLabel.a11y": "Search Box",
     "searchPage.history": "History",
+    "searchPage.allSources": "All Sources",
+    "searchPage.sourceCount": "{count} sources",
     "searchPage.artistResultWorksNum": "{count} works",
     "searchPage.comingSoon": "Coming Soon",
     "topList.title": "Charts",
@@ -429,5 +431,13 @@
     "panel.sheetTags.title": "Playlist Categories",
     "repeatMode.SHUFFLE": "Shuffle",
     "repeatMode.QUEUE": "Repeat Queue",
-    "repeatMode.SINGLE": "Repeat Single"
+    "repeatMode.SINGLE": "Repeat Single",
+    "searchPage.expandSources": "Search backup sources",
+    "searchPage.backupIncluded": "Backup sources included",
+    "sourcePolicy.title": "Use in aggregate search",
+    "sourcePolicy.preferred": "Primary source",
+    "sourcePolicy.backup": "Backup source",
+    "sourcePolicy.disabled": "Exclude from automatic search",
+    "sourcePolicy.hint": "Only affects aggregate search. This source can still be searched separately.",
+    "sourcePolicy.health": "Health: {score}"
 }

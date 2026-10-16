@@ -4,6 +4,7 @@ import NavBar from "./components/navBar";
 import { useAtom, useSetAtom } from "jotai";
 import {
     PageStatus,
+    aggregateSearchResultsAtom,
     initSearchResults,
     pageStatusAtom,
     queryAtom,
@@ -22,15 +23,19 @@ export default function () {
     const [pageStatus, setPageStatus] = useAtom(pageStatusAtom);
     const setQuery = useSetAtom(queryAtom);
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const setAggregateResults = useSetAtom(aggregateSearchResultsAtom);
     const { t } = useI18N();
 
     useEffect(() => {
         setSearchResultsState(initSearchResults);
+        setAggregateResults({});
         return () => {
+            setAggregateResults({});
+            setSearchResultsState(initSearchResults);
             setPageStatus(PageStatus.EDITING);
             setQuery("");
         };
-    }, []);
+    }, [setAggregateResults, setPageStatus, setQuery, setSearchResultsState]);
 
     return (
         <SafeAreaView edges={["bottom", "top"]} style={style.wrapper}>
