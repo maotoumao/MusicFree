@@ -13,6 +13,7 @@ import {
 import { useSetAtom } from "jotai";
 import {
     PageStatus,
+    aggregateSearchResultsAtom,
     initSearchResults,
     pageStatusAtom,
     queryAtom,
@@ -30,6 +31,7 @@ export default function () {
     const setQuery = useSetAtom(queryAtom);
     const setPageStatus = useSetAtom(pageStatusAtom);
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const setAggregateResults = useSetAtom(aggregateSearchResultsAtom);
     const { t } = useI18N();
 
     useEffect(() => {
@@ -71,6 +73,7 @@ export default function () {
                                         setSearchResultsState(
                                             initSearchResults,
                                         );
+                                        setAggregateResults({});
                                         setPageStatus(PageStatus.SEARCHING);
                                         search(_, 1);
                                         addHistory(_);

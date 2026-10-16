@@ -93,6 +93,8 @@
     "searchPage.searchPlaceHolder": "輸入要搜尋的歌曲",
     "searchPage.searchLabel.a11y": "搜尋框",
     "searchPage.history": "歷史紀錄",
+    "searchPage.allSources": "全部音源",
+    "searchPage.sourceCount": "{count} 個音源",
     "searchPage.artistResultWorksNum": "{count} 個作品",
     "searchPage.comingSoon": "敬請期待",
     "topList.title": "榜單",
@@ -429,5 +431,13 @@
     "panel.sheetTags.title": "歌單類別",
     "repeatMode.SHUFFLE": "隨機播放",
     "repeatMode.QUEUE": "清單循環",
-    "repeatMode.SINGLE": "單曲循環"
+    "repeatMode.SINGLE": "單曲循環",
+    "searchPage.expandSources": "擴大搜尋",
+    "searchPage.backupIncluded": "已包含備用音源",
+    "sourcePolicy.title": "聚合搜尋用途",
+    "sourcePolicy.preferred": "主要音源",
+    "sourcePolicy.backup": "備用音源",
+    "sourcePolicy.disabled": "不參與自動搜尋",
+    "sourcePolicy.hint": "僅影響聚合搜尋，仍可單獨搜尋此音源。",
+    "sourcePolicy.health": "健康度：{score}"
 }

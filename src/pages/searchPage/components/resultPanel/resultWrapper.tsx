@@ -6,10 +6,11 @@ import useOrientation from "@/hooks/useOrientation";
 import rpx from "@/utils/rpx";
 import { FlashList } from "@shopify/flash-list";
 import { useAtomValue } from "jotai";
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import useSearch from "../../hooks/useSearch";
-import { ISearchResult, queryAtom } from "../../store/atoms";
+import { IAggregateMusicSearchResult, ISearchResult, queryAtom } from "../../store/atoms";
 import { renderMap } from "./results";
+import AggregateMusicResultItem from "./results/aggregateMusicResultItem";
 
 interface IResultWrapperProps<
     T extends ICommon.SupportMediaType = ICommon.SupportMediaType,
@@ -17,35 +18,34 @@ interface IResultWrapperProps<
     tab: T;
     pluginHash: string;
     pluginName: string;
-    searchResult: ISearchResult<T>;
-    pluginSearchResultRef: React.MutableRefObject<ISearchResult<T>>;
+    searchResult?: ISearchResult<T> | IAggregateMusicSearchResult;
+    pluginSearchResultRef: React.MutableRefObject<
+        ISearchResult<T> | IAggregateMusicSearchResult | undefined
+    >;
+    aggregate?: boolean;
 }
 function ResultWrapper(props: IResultWrapperProps) {
-    const { tab, pluginHash, searchResult, pluginSearchResultRef } = props;
+    const { tab, pluginHash, searchResult, pluginSearchResultRef, aggregate } = props;
     const search = useSearch();
-    const [searchState, setSearchState] = useState<RequestStateCode>(
-        searchResult?.state ?? RequestStateCode.IDLE,
-    );
+    const searchState = searchResult?.state ?? RequestStateCode.IDLE;
     const orientation = useOrientation();
     const query = useAtomValue(queryAtom);
 
-    const ResultComponent = renderMap[tab]!;
+    const ResultComponent: React.FC<any> = aggregate && tab === "music"
+        ? AggregateMusicResultItem
+        : renderMap[tab]!;
     const data: any = searchResult?.data ?? [];
 
     const keyExtractor = useCallback(
-        (item: any, i: number) => `${i}-${item.platform}-${item.id}`,
-        [],
+        (item: any, i: number) => aggregate ? item.key : `${i}-${item.platform}-${item.id}`,
+        [aggregate],
     );
 
     useEffect(() => {
         if (searchState === RequestStateCode.IDLE) {
             search(query, 1, tab, pluginHash);
         }
-    }, []);
-
-    useEffect(() => {
-        setSearchState(searchResult?.state ?? RequestStateCode.IDLE);
-    }, [searchResult]);
+    }, [searchState, search, query, tab, pluginHash]);
 
     const renderItem = ({ item, index }: any) => (
         <ResultComponent
@@ -65,7 +65,7 @@ function ResultWrapper(props: IResultWrapperProps) {
                 search(query, 1, tab, pluginHash);
             }} />}
             ListFooterComponent={data?.length ? <ListFooter state={searchState} onRetry={() => {
-                search(query, undefined, tab, pluginHash);
+                search(undefined, undefined, tab, pluginHash);
             }} /> : null}
             data={data}
             refreshing={false}

@@ -6,12 +6,44 @@ import useColors from "@/hooks/useColors";
 import rpx, { vw } from "@/utils/rpx";
 import { useAtomValue } from "jotai";
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import { Text } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import ThemeText from "@/components/base/themeText";
+import { expandAggregateMusic } from "../../store/aggregateMusic";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
-import { searchResultsAtom } from "../../store/atoms";
+import {
+    ALL_SOURCES_HASH,
+    aggregateSearchResultsAtom,
+    searchResultsAtom,
+} from "../../store/atoms";
 import { renderMap } from "./results";
 import DefaultResults from "./results/defaultResults";
 import ResultWrapper from "./resultWrapper";
+
+function AggregateResultScene() {
+    const { t } = useI18N();
+    const results = useAtomValue(aggregateSearchResultsAtom);
+    const result = results.music;
+    const resultRef = useRef(result);
+    useEffect(() => {
+        resultRef.current = result;
+    }, [result]);
+
+    return (
+        <View style={styles.aggregateScene}>
+            <Pressable accessibilityRole="button" onPress={expandAggregateMusic} disabled={result?.expanded} style={styles.expandButton}>
+                <ThemeText>{result?.expanded ? t("searchPage.backupIncluded") : t("searchPage.expandSources")}</ThemeText>
+            </Pressable>
+            <ResultWrapper
+                tab="music"
+                searchResult={result}
+                pluginHash={ALL_SOURCES_HASH}
+                pluginName="All Sources"
+                pluginSearchResultRef={resultRef}
+                aggregate
+            />
+        </View>
+    );
+}
 
 interface IResultSubPanelProps {
     tab: ICommon.SupportMediaType;
@@ -56,8 +88,9 @@ function getSubRouterScene(
 ) {
     const scene: Record<string, React.FC> = {};
     routes.forEach(r => {
-        // todo: 是否声明不可搜索
-        scene[r.key] = getResultComponent(tab, r.key, r.title);
+        scene[r.key] = r.key === ALL_SOURCES_HASH
+            ? () => <AggregateResultScene />
+            : getResultComponent(tab, r.key, r.title);
     });
     return SceneMap(scene);
 }
@@ -67,15 +100,20 @@ function ResultSubPanel(props: IResultSubPanelProps) {
     const colors = useColors();
     const { t } = useI18N();
 
-    const routes = PluginManager.getSortedSearchablePlugins(props.tab).map(
+    const pluginRoutes = PluginManager.getSortedSearchablePlugins(props.tab).map(
         _ => ({
             key: _.hash,
             title: _.name,
         }),
     );
+    const routes = props.tab === "music" && pluginRoutes.length
+        ? [{ key: ALL_SOURCES_HASH, title: t("searchPage.allSources") }, ...pluginRoutes]
+        : pluginRoutes;
+    // Keep scene component identities stable until the actual routes change.
+    const routesKey = JSON.stringify(routes);
     const renderScene = useMemo(
-        () => getSubRouterScene(props.tab, routes),
-        [props.tab],
+        () => getSubRouterScene(props.tab, JSON.parse(routesKey)),
+        [props.tab, routesKey],
     );
 
     if (!routes.length) {
@@ -93,29 +131,21 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                 <TabBar
                     {..._}
                     scrollEnabled
-                    style={{
-                        backgroundColor: "transparent",
-                        shadowColor: "transparent",
-                        borderColor: "transparent",
-                    }}
+                    style={styles.tabBar}
                     inactiveColor={colors.text}
                     activeColor={colors.primary}
-                    tabStyle={{
-                        width: "auto",
-                    }}
+                    tabStyle={styles.tab}
                     renderIndicator={() => null}
                     pressColor="transparent"
                     renderLabel={({ route, focused, color }) => (
                         <Text
                             numberOfLines={1}
-                            style={{
-                                width: rpx(140),
+                            style={[styles.label, {
                                 fontWeight: focused
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,
                                 color,
-                                textAlign: "center",
-                            }}>
+                            }]}>
                             {route.title ?? `(${t("common.unknownName")})`}
                         </Text>
                     )}
@@ -130,3 +160,15 @@ function ResultSubPanel(props: IResultSubPanelProps) {
 
 // 不然会一直重新渲染
 export default memo(ResultSubPanel);
+
+const styles = StyleSheet.create({
+    aggregateScene: { flex: 1 },
+    expandButton: { padding: 12 },
+    tabBar: {
+        backgroundColor: "transparent",
+        shadowColor: "transparent",
+        borderColor: "transparent",
+    },
+    tab: { width: "auto" },
+    label: { width: rpx(140), textAlign: "center" },
+});
