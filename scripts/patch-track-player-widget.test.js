@@ -54,7 +54,7 @@ it("foregrounds the clicked service before JS and limits background setup to its
     patchWidget(service, nativeModule);
     const output = fs.readFileSync(service, "utf8");
     expect(output.indexOf("startForeground(EMPTY_NOTIFICATION_ID")).toBeLessThan(output.indexOf("startTask(HeadlessJsTaskConfig"));
-    expect(output).toContain('setOf("toggle", "previous", "next")');
+    expect(output).toContain('setOf("toggle", "previous", "next", "shiyin")');
     expect(output).toContain("widgetHandler.postDelayed(timeout, 120_000)");
     expect(output).toContain("return widgetRequests.isEmpty() && stopForegroundWhenNotOngoing");
     expect(output).toContain("stopForeground(!hasTrack)");
@@ -78,4 +78,12 @@ it.each(["service", "module"])("leaves both files unchanged when a %s anchor cha
     const before = [fs.readFileSync(service, "utf8"), fs.readFileSync(nativeModule, "utf8")];
     expect(() => patchWidget(service, nativeModule)).toThrow("anchor missing");
     expect([fs.readFileSync(service, "utf8"), fs.readFileSync(nativeModule, "utf8")]).toEqual(before);
+});
+
+it("upgrades playback-only installations to discovery without duplicating lifecycle hooks", () => {
+    patchWidget(service, nativeModule);
+    const current = fs.readFileSync(service, "utf8");
+    fs.writeFileSync(service, current.replace('setOf("toggle", "previous", "next", "shiyin")', 'setOf("toggle", "previous", "next")'));
+    patchWidget(service, nativeModule);
+    expect(fs.readFileSync(service, "utf8")).toBe(current);
 });

@@ -1,5 +1,9 @@
 // 国际化语言数据接口定义
 export interface ILanguageData {
+    "toast.shiyinNoSource": string;
+    "toast.shiyinNoMusic": string;
+    "toast.shiyinPoolEmpty": string;
+    "toast.shiyinStarted": string;
     "toast.widgetQueueEmpty": string;
     "toast.widgetStartupFailed": string;
     "toast.widgetActionFailed": string;

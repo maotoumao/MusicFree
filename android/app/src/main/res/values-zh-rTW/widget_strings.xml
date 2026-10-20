@@ -1,6 +1,6 @@
 <resources>
-    <string name="widget_name">MusicFree · 播放器</string>
-    <string name="widget_description">在桌面查看歌曲並控制播放</string>
+    <string name="widget_name">MusicFree · 雲光淺色</string>
+    <string name="widget_description">在桌面拾音並控制播放</string>
     <string name="widget_empty_title">尚未播放音樂</string>
     <string name="widget_empty_artist">點擊封面開啟 MusicFree</string>
     <string name="widget_unknown_artist">未知歌手</string>
@@ -14,4 +14,10 @@
     <string name="widget_paused">已暫停</string>
     <string name="widget_starting">正在恢復播放…</string>
     <string name="widget_start_failed">無法啟動播放，請開啟 MusicFree 後重試</string>
+    <string name="widget_dark_name">MusicFree · 沉浸深藍</string>
+    <string name="widget_discovery_title">拾音</string>
+    <string name="widget_discovery_subtitle">從熱歌裡\n遇見驚喜</string>
+    <string name="widget_discovery_loading">正在拾音…</string>
+    <string name="widget_discovery_action">拾音並播放</string>
+    <string name="widget_resume">點擊繼續播放</string>
 </resources>

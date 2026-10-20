@@ -4,13 +4,15 @@ import TrackPlayer from "@/core/trackPlayer";
 import { TrackPlayerEvents } from "@/core.defination/trackPlayer";
 import i18n from "@/core/i18n";
 import { errorLog } from "@/utils/log";
-import type { WidgetColors } from "@/utils/widgetColors";
+import { startWidgetShiYin } from "./widgetShiYin";
+import type { WidgetAppearances } from "@/utils/widgetColors";
 
 const bridge = () => Platform.OS === "android" ? NativeModules.MusicWidget : undefined;
 let installed = false;
 let state: State = State.None;
 let revision = 0;
 let actions = Promise.resolve();
+let discovering = false;
 
 function publish() {
     const music = TrackPlayer.currentMusic;
@@ -18,6 +20,7 @@ function publish() {
         title: music?.title ?? "",
         artist: music?.artist ?? "",
         artwork: typeof music?.artwork === "string" ? music.artwork : "",
+        discovering,
         hasTrack: !!music,
         playing: !!music && state === State.Playing,
         loading: !!music && (state === State.Buffering || state === State.Loading),
@@ -26,9 +29,18 @@ function publish() {
 
 /** The app owns queue order and plugin sources; native skip would bypass them. */
 export function runMusicWidgetAction(action: string, isActive?: () => Promise<boolean>) {
-    if (!["toggle", "previous", "next"].includes(action)) return Promise.resolve();
+    if (!["toggle", "previous", "next", "shiyin"].includes(action)) return Promise.resolve();
+    if (action === "shiyin") {
+        if (discovering) return actions;
+        discovering = true;
+        publish();
+    }
     actions = actions.then(async () => {
         if (isActive && !await isActive()) return;
+        if (action === "shiyin") {
+            await startWidgetShiYin(isActive);
+            return;
+        }
         if (!TrackPlayer.currentMusic) {
             ToastAndroid.show(i18n.t("toast.widgetQueueEmpty"), ToastAndroid.LONG);
             return;
@@ -40,6 +52,11 @@ export function runMusicWidgetAction(action: string, isActive?: () => Promise<bo
     }).catch(error => {
         errorLog("Music widget action failed", error);
         ToastAndroid.show(i18n.t("toast.widgetActionFailed"), ToastAndroid.LONG);
+    }).finally(() => {
+        if (action === "shiyin") {
+            discovering = false;
+            publish();
+        }
     });
     return actions;
 }
@@ -68,6 +85,6 @@ export function setupMusicWidget() {
     bridge().setReady(true)?.catch(() => undefined);
 }
 
-export function syncMusicWidgetColors(colors: WidgetColors) {
+export function syncMusicWidgetColors(colors: WidgetAppearances) {
     bridge()?.updateColors(colors)?.catch(() => undefined);
 }

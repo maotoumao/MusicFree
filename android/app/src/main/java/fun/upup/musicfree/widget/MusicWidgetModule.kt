@@ -47,8 +47,13 @@ class MusicWidgetModule(private val context: ReactApplicationContext) : ReactCon
     fun updateColors(colors: ReadableMap, promise: Promise) {
         try {
             val edit = MusicWidgetStore.preferences(context).edit()
-            for (key in listOf("surface", "text", "secondary", "primary", "onPrimary")) {
-                if (colors.hasKey(key)) colors.getString(key)?.let { edit.putString(key, it) }
+            for (appearance in listOf("light", "dark")) {
+                val palette = if (colors.hasKey(appearance)) colors.getMap(appearance) else null
+                for (key in listOf("surface", "text", "secondary", "primary", "onPrimary", "discoverySurface", "onDiscovery", "divider")) {
+                    if (palette?.hasKey(key) == true) palette.getString(key)?.let {
+                        edit.putString("appearance_${appearance}_$key", it)
+                    }
+                }
             }
             edit.apply()
             MusicWidgetProvider.updateAll(context)
@@ -70,6 +75,7 @@ class MusicWidgetModule(private val context: ReactApplicationContext) : ReactCon
             MusicWidgetStore.reactContext = null
             MusicWidgetStore.playing = false
             MusicWidgetStore.loading = false
+            MusicWidgetStore.discovering = false
             MusicWidgetProvider.updateAll(context)
         }
         super.invalidate()

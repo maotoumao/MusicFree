@@ -189,3 +189,16 @@ dependencies {
     implementation 'androidx.core:core-splashscreen:1.0.0'
 }
 
+
+// Generate appearance variants from one palette, shared layouts and existing icons.
+def widgetResources = layout.buildDirectory.dir("generated/musicWidget/res")
+def generateWidgetResources = tasks.register("generateWidgetResources", Exec) {
+    inputs.file(rootProject.file("../scripts/generate-widget-resources.mjs"))
+    inputs.file(rootProject.file("../src/constants/widgetPalette.json"))
+    inputs.files(fileTree(rootProject.file("../src/assets/icons")) { include "*.svg" })
+    inputs.files(fileTree("src/main/res/layout") { include "music_widget*.xml" })
+    outputs.dir(widgetResources)
+    commandLine "node", rootProject.file("../scripts/generate-widget-resources.mjs"), widgetResources.get().asFile
+}
+android.sourceSets.main.res.srcDir(widgetResources)
+tasks.named("preBuild").configure { dependsOn(generateWidgetResources) }

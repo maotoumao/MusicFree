@@ -17,7 +17,7 @@ module.exports = function patchWidgetPlayback(servicePath, modulePath) {
 
     private fun startWidgetAction(intent: Intent) {
         val control = intent.getStringExtra("control") ?: return
-        if (control !in setOf("toggle", "previous", "next")) return
+        if (control !in setOf("toggle", "previous", "next", "shiyin")) return
         // Satisfy the foreground-service deadline before loading React/Hermes/plugins.
         if (!isForegroundService()) {
             val channel = getString(TrackPlayerR.string.rntp_temporary_channel_id)
@@ -126,6 +126,12 @@ module.exports = function patchWidgetPlayback(servicePath, modulePath) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) context.startForegroundService(intent)
             else context.startService(intent)
         }`);
+    }
+    // Upgrade already-patched playback-only checkouts without duplicating hooks.
+    if (!service.includes('if (control !in setOf("toggle", "previous", "next", "shiyin"))')) {
+        service = replace(service,
+            'if (control !in setOf("toggle", "previous", "next"))',
+            'if (control !in setOf("toggle", "previous", "next", "shiyin"))');
     }
     fs.writeFileSync(servicePath, service);
     fs.writeFileSync(modulePath, nativeModule);

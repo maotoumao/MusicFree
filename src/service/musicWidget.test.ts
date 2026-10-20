@@ -21,6 +21,8 @@ const mockTrack = {
 };
 const mockErrorLog = jest.fn();
 const mockToast = jest.fn();
+const mockStartShiYin = jest.fn();
+jest.mock("./widgetShiYin", () => ({ startWidgetShiYin: (...args: any[]) => mockStartShiYin(...args) }));
 jest.mock("@/core/i18n", () => ({ __esModule: true, default: { t: (key: string) => key } }));
 jest.mock("react-native", () => ({
     Platform: mockPlatform, NativeModules: mockModules,
@@ -46,6 +48,7 @@ beforeEach(() => {
     mockPlatform.OS = "android";
     mockModules.MusicWidget = mockBridge;
     mockTrack.currentMusic = song;
+    mockStartShiYin.mockResolvedValue(undefined);
     mockNative.getPlaybackState.mockResolvedValue({ state: "paused" });
     mockNative.getPlayWhenReady.mockResolvedValue(false);
     for (const fn of [mockTrack.play, mockTrack.pause, mockTrack.skipToNext, mockTrack.skipToPrevious]) fn.mockResolvedValue(undefined);
@@ -56,7 +59,7 @@ it("installs once after restoration and updates metadata, loading, playing and e
     setupMusicWidget(); setupMusicWidget();
     await flush();
     expect(mockBridge.setReady).toHaveBeenCalledTimes(1);
-    expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith({ ...song, hasTrack: true, playing: false, loading: false });
+    expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith({ ...song, hasTrack: true, playing: false, loading: false, discovering: false });
     mockNativeEvents.get("state")!({ state: "playing" });
     expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith(expect.objectContaining({ playing: true }));
     mockNativeEvents.get("state")!({ state: "buffering" });
@@ -69,7 +72,7 @@ it("installs once after restoration and updates metadata, loading, playing and e
     expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith(expect.objectContaining({ artwork: "content://covers/edited" }));
     mockTrack.currentMusic = null;
     mockTrackEvents.get("current")!(null);
-    expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith({ title: "", artist: "", artwork: "", hasTrack: false, playing: false, loading: false });
+    expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith({ title: "", artist: "", artwork: "", hasTrack: false, playing: false, loading: false, discovering: false });
 });
 
 it("does not overwrite a newer playback event with an older asynchronous snapshot", async () => {
@@ -153,7 +156,7 @@ it.each(["ios", "web"])("leaves %s untouched and tolerates an unavailable native
 });
 
 it("sends only resolved semantic colors to the native widget", () => {
-    const colors = { surface: "#262626", text: "#FCFCFC", secondary: "#C6C6C6", primary: "#3FA3B5", onPrimary: "#000000" };
+    const colors = require("@/constants/widgetPalette.json");
     require("./musicWidget").syncMusicWidgetColors(colors);
     expect(mockBridge.updateColors).toHaveBeenCalledWith(colors);
 });
@@ -165,4 +168,31 @@ it("discards queued controls after the native service lease expires", async () =
     expect(mockTrack.skipToNext).not.toHaveBeenCalled();
     await runMusicWidgetAction("next", async () => true);
     expect(mockTrack.skipToNext).toHaveBeenCalledTimes(1);
+});
+
+it("starts discovery with an empty queue, coalesces repeated taps, and clears loading after failure", async () => {
+    const { runMusicWidgetAction } = require("./musicWidget");
+    mockTrack.currentMusic = null;
+    let reject!: (error: Error) => void;
+    mockStartShiYin.mockReturnValueOnce(new Promise((_done, fail) => {
+        reject = fail;
+    }));
+    const first = runMusicWidgetAction("shiyin");
+    const second = runMusicWidgetAction("shiyin");
+    await flush();
+    expect(mockStartShiYin).toHaveBeenCalledTimes(1);
+    expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith(expect.objectContaining({ discovering: true }));
+    reject(new Error("offline"));
+    await Promise.all([first, second]);
+    expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith(expect.objectContaining({ discovering: false }));
+    await runMusicWidgetAction("shiyin");
+    expect(mockStartShiYin).toHaveBeenCalledTimes(2);
+});
+
+
+it("checks a queued discovery lease before starting and always clears its loading state", async () => {
+    const { runMusicWidgetAction } = require("./musicWidget");
+    await runMusicWidgetAction("shiyin", async () => false);
+    expect(mockStartShiYin).not.toHaveBeenCalled();
+    expect(mockBridge.updatePlayback).toHaveBeenLastCalledWith(expect.objectContaining({ discovering: false }));
 });

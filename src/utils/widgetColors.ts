@@ -1,40 +1,28 @@
 import Color from "color";
 import type { CustomizedColors } from "@/hooks/useColors";
+import palette from "@/constants/widgetPalette.json";
 
-export type WidgetColors = {
-    surface: string;
-    text: string;
-    secondary: string;
-    primary: string;
-    onPrimary: string;
-};
+export type WidgetColors = typeof palette.light;
+export type WidgetAppearances = { light: WidgetColors; dark: WidgetColors };
 
-const black = "#000000";
-const white = "#FFFFFF";
-
-/** Resolve alpha against a known surface: wallpaper must not affect contrast. */
-function opaque(value: string, background: string) {
-    const foreground = Color(value);
-    return foreground.alpha(1).mix(Color(background).alpha(1), 1 - foreground.alpha()).hex();
-}
-
-function readable(value: string, surface: string, ratio: number) {
-    const preferred = opaque(value, surface);
-    if (Color(preferred).contrast(Color(surface)) >= ratio) return preferred;
-    return Color(black).contrast(Color(surface)) > Color(white).contrast(Color(surface)) ? black : white;
-}
-
-/** Consume the existing theme without changing its stored colors or opacity. */
-export function resolveWidgetColors(colors: CustomizedColors): WidgetColors {
-    const page = opaque(colors.pageBackground ?? white, white);
-    const surface = opaque(colors.musicBar ?? colors.card, page);
-    const text = readable(colors.musicBarText ?? colors.text, surface, 4.5);
-    const secondary = readable(colors.textSecondary ?? text, surface, 4.5);
-    let primary = opaque(colors.primary, surface);
-    const target = readable(primary, surface, 3);
-    const original = Color(primary);
-    for (let step = 1; Color(primary).contrast(Color(surface)) < 3 && step <= 100; step++) {
-        primary = original.mix(Color(target), step / 100).hex();
+/** A picker appearance stays stable when the app changes between its preset themes. */
+export function resolveWidgetColors(colors: CustomizedColors, customPrimary = false): WidgetAppearances {
+    function appearance(preset: WidgetColors): WidgetColors {
+        if (!customPrimary) return { ...preset };
+        let original;
+        try {
+            original = Color(colors.primary).alpha(1);
+        } catch {
+            original = Color(preset.primary);
+        }
+        let primary = original.hex();
+        const surface = Color(preset.surface);
+        const target = Color("#000000").contrast(surface) > Color("#FFFFFF").contrast(surface) ? "#000000" : "#FFFFFF";
+        for (let step = 1; Color(primary).contrast(surface) < 3 && step <= 100; step++) {
+            primary = original.mix(Color(target), step / 100).hex();
+        }
+        const onPrimary = Color("#FFFFFF").contrast(Color(primary)) >= 3 ? "#FFFFFF" : "#000000";
+        return { ...preset, primary, onPrimary };
     }
-    return { surface, text, secondary, primary, onPrimary: readable(white, primary, 3) };
+    return { light: appearance(palette.light), dark: appearance(palette.dark) };
 }

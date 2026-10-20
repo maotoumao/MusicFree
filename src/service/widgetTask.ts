@@ -9,7 +9,7 @@ type WidgetTask = { control?: string; request?: string };
 /** Invoked by the foreground playback service without rendering the UI. */
 export default async function runWidgetTask({ control, request }: WidgetTask) {
     try {
-        if (!["toggle", "previous", "next"].includes(control ?? "")) return;
+        if (!["toggle", "previous", "next", "shiyin"].includes(control ?? "")) return;
         await require("./index")();
         await initTrackPlayer(undefined, true);
         const isActive = request ? () => NativeModules.MusicWidget.isActionActive(request) : undefined;

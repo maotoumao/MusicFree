@@ -27,6 +27,7 @@ object MusicWidgetStore {
     @Volatile var reactContext: WeakReference<ReactApplicationContext>? = null
     @Volatile var playing = false
     @Volatile var loading = false
+    @Volatile var discovering = false
     @Volatile var artworkBitmap: Bitmap? = null
     private var artworkKey: String? = null
     private var requestedKey: String? = null
@@ -43,6 +44,7 @@ object MusicWidgetStore {
     fun updatePlayback(context: Context, snapshot: ReadableMap) {
         playing = snapshot.getBoolean("playing")
         loading = snapshot.getBoolean("loading")
+        discovering = snapshot.hasKey("discovering") && snapshot.getBoolean("discovering")
         preferences(context).edit()
             .putString("title", snapshot.getString("title"))
             .putString("artist", snapshot.getString("artist"))

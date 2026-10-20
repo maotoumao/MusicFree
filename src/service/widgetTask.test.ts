@@ -24,7 +24,7 @@ beforeEach(() => {
     mockActive.mockResolvedValue(true);
 });
 
-it.each(["toggle", "previous", "next"])("restores in the background before %s and releases its service lease", async control => {
+it.each(["toggle", "previous", "next", "shiyin"])("restores in the background before %s and releases its service lease", async control => {
     let resolve!: () => void;
     mockInit.mockReturnValueOnce(new Promise<void>(done => {
         resolve = done;

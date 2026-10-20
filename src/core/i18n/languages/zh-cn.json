@@ -1,5 +1,9 @@
 {
-    "toast.widgetQueueEmpty": "请先在 MusicFree 中播放一首歌曲",
+    "toast.shiyinNoSource": "还没有可用的榜单音源",
+    "toast.shiyinNoMusic": "暂时没能挑出歌曲，稍后再试试",
+    "toast.shiyinPoolEmpty": "榜单没拉到歌，检查网络或音源后再试",
+    "toast.shiyinStarted": "拾音 · 已播放 {count} 首热门",
+    "toast.widgetQueueEmpty": "暂无播放队列，请先点击拾音",
     "toast.widgetStartupFailed": "无法启动播放，请打开 MusicFree 后重试",
     "toast.widgetActionFailed": "播放操作失败，请稍后重试",
     "common.setting": "设置",

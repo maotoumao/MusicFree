@@ -1,4 +1,0 @@
-<!-- Based on src/assets/icons/skip-right.svg. -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
-    <path android:fillColor="@color/widget_text" android:fillType="evenOdd" android:pathData="M18.1513 6.29553C17.6513 6.29553 17.4013 6.54553 17.4013 7.04553L17.4013 17.5455C17.4013 18.0455 17.6513 18.2955 18.1513 18.2955L18.9013 18.2955C19.4013 18.2955 19.6513 18.0455 19.6513 17.5455L19.6513 7.04553C19.6513 6.54553 19.4013 6.29553 18.9013 6.29553L18.1513 6.29553ZM8.20628 6.60559C6.95628 5.89258 5.40129 6.79553 5.40129 8.23547L5.40129 16.3575C5.40129 17.7975 6.95628 18.7006 8.20628 17.9855L15.3143 13.9246C16.5743 13.2046 16.5743 11.3885 15.3143 10.6686L8.20628 6.60559Z" />
-</vector>
