@@ -68,6 +68,7 @@ module.exports = function patchWidgetPlayback(servicePath, modulePath) {
             val hasTrack = this::player.isInitialized && player.currentItem != null
             @Suppress("DEPRECATION")
             stopForeground(!hasTrack)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

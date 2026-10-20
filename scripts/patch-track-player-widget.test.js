@@ -58,6 +58,7 @@ it("foregrounds the clicked service before JS and limits background setup to its
     expect(output).toContain("widgetHandler.postDelayed(timeout, 120_000)");
     expect(output).toContain("return widgetRequests.isEmpty() && stopForegroundWhenNotOngoing");
     expect(output).toContain("stopForeground(!hasTrack)");
+    expect((output.match(/\{/g) || []).length).toBe((output.match(/\}/g) || []).length);
     const moduleOutput = fs.readFileSync(nativeModule, "utf8");
     expect(moduleOutput).toContain("AppForegroundTracker.backgrounded && !MusicService.widgetStartupInProgress");
     expect(moduleOutput).toContain("if (!MusicService.widgetStartupInProgress)");
