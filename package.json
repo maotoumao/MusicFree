@@ -19,6 +19,7 @@
     "connect-mumu": "adb kill-server & adb connect localhost:7555",
     "build-android": "cd .\\android\\ && .\\gradlew assembleRelease",
     "generate-assets": "node ./generator/generate-assets.mjs",
+    "postinstall": "node scripts/patch-track-player-widget.js",
     "prepare": "husky"
   },
   "dependencies": {
@@ -99,6 +100,7 @@
     "@types/color": "^3.0.6",
     "@types/crypto-js": "^4.2.2",
     "@types/he": "^1.2.3",
+    "@types/jest": "^29.5.14",
     "@types/lodash.shuffle": "^4.2.9",
     "@types/object-path": "^0.11.4",
     "@types/path-browserify": "^1.0.2",

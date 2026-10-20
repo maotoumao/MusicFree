@@ -1,4 +1,7 @@
 {
+    "toast.widgetQueueEmpty": "Play a song in MusicFree first",
+    "toast.widgetStartupFailed": "Unable to start playback. Please open MusicFree and try again.",
+    "toast.widgetActionFailed": "Unable to complete the playback action",
     "common.setting": "Settings",
     "common.software": "Software",
     "common.language": "Language",

@@ -1,4 +1,5 @@
 import React from "react";
+import MusicWidgetThemeSync from "@/components/musicWidgetThemeSync";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import bootstrap from "./bootstrap/bootstrap";
@@ -38,6 +39,7 @@ export default function Pages() {
             <GestureHandlerRootView style={globalStyle.flex1}>
                 <SafeAreaProvider>
                     <NavigationContainer theme={theme}>
+                        <MusicWidgetThemeSync />
                         <PageBackground />
                         <Stack.Navigator
                             initialRouteName={routes[0].path}

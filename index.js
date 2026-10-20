@@ -5,7 +5,9 @@
 import {AppRegistry} from 'react-native';
 import {name as appName} from './app.json';
 import TrackPlayer from 'react-native-track-player';
-import Pages from '@/entry';
+import NativeRoot from './src/entry/nativeRoot';
 
-AppRegistry.registerComponent(appName, () => Pages);
+AppRegistry.registerComponent(appName, () => NativeRoot);
 TrackPlayer.registerPlaybackService(() => require('./src/service/index'));
+
+AppRegistry.registerHeadlessTask("MusicFreeWidget", () => require("./src/service/widgetTask").default);

@@ -16,6 +16,7 @@ import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import `fun`.upup.musicfree.lyricUtil.LyricUtilPackage
 import `fun`.upup.musicfree.mp3Util.Mp3UtilPackage
+import `fun`.upup.musicfree.widget.MusicWidgetPackage
 import `fun`.upup.musicfree.utils.UtilsPackage
 
 class MainApplication : Application(), ReactApplication {
@@ -26,6 +27,7 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
+              add(MusicWidgetPackage())
               add(UtilsPackage())
               add(Mp3UtilPackage())
               add(LyricUtilPackage())

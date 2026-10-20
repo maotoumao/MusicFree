@@ -1,0 +1,17 @@
+<resources>
+    <string name="widget_name">MusicFree · Player</string>
+    <string name="widget_description">View and control music on your home screen</string>
+    <string name="widget_empty_title">No music selected</string>
+    <string name="widget_empty_artist">Tap the cover to open MusicFree</string>
+    <string name="widget_unknown_artist">Unknown artist</string>
+    <string name="widget_open">Open MusicFree</string>
+    <string name="widget_previous">Previous track</string>
+    <string name="widget_next">Next track</string>
+    <string name="widget_play">Play</string>
+    <string name="widget_pause">Pause</string>
+    <string name="widget_loading">Loading</string>
+    <string name="widget_playing">Playing</string>
+    <string name="widget_paused">Paused</string>
+    <string name="widget_starting">Restoring playback…</string>
+    <string name="widget_start_failed">Unable to start playback. Open MusicFree and try again.</string>
+</resources>

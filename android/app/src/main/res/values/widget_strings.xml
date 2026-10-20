@@ -1,0 +1,17 @@
+<resources>
+    <string name="widget_name">MusicFree · 播放器</string>
+    <string name="widget_description">在桌面查看歌曲并控制播放</string>
+    <string name="widget_empty_title">尚未播放音乐</string>
+    <string name="widget_empty_artist">点击封面打开 MusicFree</string>
+    <string name="widget_unknown_artist">未知歌手</string>
+    <string name="widget_open">打开 MusicFree</string>
+    <string name="widget_previous">上一首</string>
+    <string name="widget_next">下一首</string>
+    <string name="widget_play">播放</string>
+    <string name="widget_pause">暂停</string>
+    <string name="widget_loading">加载中</string>
+    <string name="widget_playing">正在播放</string>
+    <string name="widget_paused">已暂停</string>
+    <string name="widget_starting">正在恢复播放…</string>
+    <string name="widget_start_failed">无法启动播放，请打开 MusicFree 后重试</string>
+</resources>

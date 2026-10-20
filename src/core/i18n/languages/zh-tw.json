@@ -1,4 +1,7 @@
 {
+    "toast.widgetQueueEmpty": "請先在 MusicFree 中播放一首歌曲",
+    "toast.widgetStartupFailed": "無法啟動播放，請開啟 MusicFree 後重試",
+    "toast.widgetActionFailed": "播放操作失敗，請稍後重試",
     "common.setting": "設定",
     "common.software": "軟體",
     "common.language": "語言",

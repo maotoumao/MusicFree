@@ -1,5 +1,8 @@
 // 国际化语言数据接口定义
 export interface ILanguageData {
+    "toast.widgetQueueEmpty": string;
+    "toast.widgetStartupFailed": string;
+    "toast.widgetActionFailed": string;
     // 通用词汇
     "common.setting": string; // 设置
     "common.software": string; // 软件
