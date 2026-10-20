@@ -45,7 +45,7 @@ export interface ITrackPlayer extends IInjectable, EventEmitter<{
     /**
      * 初始化音乐播放器，恢复上次播放状态
      */
-    setupTrackPlayer(): Promise<void>;
+    setupTrackPlayer(options?: { background?: boolean }): Promise<void>;
 
     /**
      * 获取音乐在播放列表中的索引

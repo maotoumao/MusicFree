@@ -65,6 +65,7 @@ class TrackPlayer extends EventEmitter<{
     private currentIndex = -1;
     // 音乐播放器服务是否启动
     private serviceInited = false;
+    private pendingRestoreProgress: { music: IMusic.IMusicItem; position: number } | null = null;
     // 播放队列索引map
     private playListIndexMap = createMediaIndexMap([] as IMusic.IMusicItem[]);
 
@@ -125,7 +126,7 @@ class TrackPlayer extends EventEmitter<{
     }
 
 
-    async setupTrackPlayer() {
+    async setupTrackPlayer({ background = false }: { background?: boolean } = {}) {
         const rate = PersistStatus.get("music.rate");
         const musicQueue = PersistStatus.get("music.playList");
         const repeatMode = PersistStatus.get("music.repeatMode");
@@ -153,28 +154,33 @@ class TrackPlayer extends EventEmitter<{
         }
 
         if (track && this.isInPlayList(track)) {
-            if (!this.configService.getConfig("basic.autoPlayWhenAppStart")) {
+            if (background && progress && Number.isFinite(progress) && progress > 0) {
+                this.pendingRestoreProgress = { music: track, position: progress };
+            }
+            if (background || !this.configService.getConfig("basic.autoPlayWhenAppStart")) {
                 track.isInit = true;
             }
 
-            // 异步
-            this.pluginManagerService.getByMedia(track)
-                ?.methods.getMediaSource(track, quality)
-                .then(async newSource => {
-                    track.url = newSource?.url || track.url;
-                    track.headers = newSource?.headers || track.headers;
+            if (!background) {
+                // 异步
+                this.pluginManagerService.getByMedia(track)
+                    ?.methods.getMediaSource(track, quality)
+                    .then(async newSource => {
+                        track.url = newSource?.url || track.url;
+                        track.headers = newSource?.headers || track.headers;
 
-                    if (isSameMediaItem(this.currentMusic, track)) {
-                        await this.setTrackSource(track as Track, false);
-                        if (progress) {
-                            // 异步
-                            this.seekTo(progress);
+                        if (isSameMediaItem(this.currentMusic, track)) {
+                            await this.setTrackSource(track as Track, false);
+                            if (progress) {
+                                // 异步
+                                this.seekTo(progress);
+                            }
                         }
-                    }
-                });
+                    });
+            }
             this.setCurrentMusic(track);
 
-            if (progress) {
+            if (progress && !background) {
                 // 异步
                 this.seekTo(progress);
             }
@@ -803,8 +809,12 @@ class TrackPlayer extends EventEmitter<{
             return;
         }
         await ReactNativeTrackPlayer.setQueue([clonedTrack, this.getFakeNextTrack()]);
+        const restored = this.pendingRestoreProgress;
+        this.pendingRestoreProgress = null;
+        const position = restored && isSameMediaItem(restored.music, track as IMusic.IMusicItem) ? restored.position : 0;
         PersistStatus.set("music.musicItem", track as IMusic.IMusicItem);
-        PersistStatus.set("music.progress", 0);
+        PersistStatus.set("music.progress", position);
+        if (position > 0) await ReactNativeTrackPlayer.seekTo(position);
         if (autoPlay) {
             await ReactNativeTrackPlayer.play();
         }

@@ -1,4 +1,11 @@
 {
+    "toast.shiyinNoSource": "No chart source available",
+    "toast.shiyinNoMusic": "Could not pick any track, try again later",
+    "toast.shiyinPoolEmpty": "Could not load any chart, check network or source",
+    "toast.shiyinStarted": "Shuffle Hits · playing {count} tracks",
+    "toast.widgetQueueEmpty": "No playback queue. Tap Discover to start listening.",
+    "toast.widgetStartupFailed": "Unable to start playback. Please open MusicFree and try again.",
+    "toast.widgetActionFailed": "Unable to complete the playback action",
     "common.setting": "Settings",
     "common.software": "Software",
     "common.language": "Language",

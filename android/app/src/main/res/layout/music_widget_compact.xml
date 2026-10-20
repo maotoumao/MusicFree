@@ -1,0 +1,94 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:contentDescription="@string/widget_open">
+    <ImageView
+        android:id="@+id/widget_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/widget_light_background"
+        android:scaleType="fitXY"
+        android:importantForAccessibility="no" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="6dp">
+        <ImageView
+            android:id="@+id/widget_cover"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/widget_album_default"
+            android:contentDescription="@string/widget_open"
+            android:scaleType="fitCenter" />
+        <LinearLayout
+            android:id="@+id/widget_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="4dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/widget_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_empty_title"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/widget_light_text"
+                android:maxLines="1"
+                android:ellipsize="end" />
+            <TextView
+                android:id="@+id/widget_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_empty_artist"
+                android:textSize="12sp"
+                android:textColor="@color/widget_light_secondary"
+                android:maxLines="1"
+                android:ellipsize="end" />
+            <TextView
+                android:id="@+id/widget_status"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/widget_previous"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:src="@drawable/widget_light_previous"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/widget_previous" />
+        <FrameLayout android:layout_width="48dp" android:layout_height="48dp">
+            <ImageView
+                android:id="@+id/widget_play_background"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/widget_light_play_background"
+                android:importantForAccessibility="no" />
+            <ImageView
+                android:id="@+id/widget_toggle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:src="@drawable/widget_light_play"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/widget_play" />
+        </FrameLayout>
+        <ImageView
+            android:id="@+id/widget_next"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:src="@drawable/widget_light_next"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/widget_next" />
+    </LinearLayout>
+</FrameLayout>

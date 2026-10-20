@@ -1,41 +1,28 @@
 import "react-native-get-random-values";
 
 import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog.ts";
-import { ImgAsset } from "@/constants/assetsConst";
 import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
-import pathConst from "@/constants/pathConst";
 import Config from "@/core/appConfig";
 import downloader, { DownloadFailReason, DownloaderEvent } from "@/core/downloader";
 import LocalMusicSheet from "@/core/localMusicSheet";
-import lyricManager from "@/core/lyricManager";
-import musicHistory from "@/core/musicHistory";
-import MusicSheet from "@/core/musicSheet";
 import PluginManager from "@/core/pluginManager";
 import Theme from "@/core/theme";
 import TrackPlayer from "@/core/trackPlayer";
 import NativeUtils from "@/native/utils";
-import { checkAndCreateDir } from "@/utils/fileUtils";
 import { errorLog, trace } from "@/utils/log";
-import { IPerfLogger, perfLogger } from "@/utils/perfLogger";
+import { perfLogger } from "@/utils/perfLogger";
 import PersistStatus from "@/utils/persistStatus";
 import Toast from "@/utils/toast";
 import * as SplashScreen from "expo-splash-screen";
 import {  Linking, Platform } from "react-native";
 import { PERMISSIONS, check, request } from "react-native-permissions";
-import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 import i18n from "@/core/i18n";
 import bootstrapAtom from "./bootstrap.atom";
 import { getDefaultStore } from "jotai";
 
 
-// 依赖管理
-PluginManager.injectDependencies(Config);
-musicHistory.injectDependencies(Config);
-TrackPlayer.injectDependencies(Config, musicHistory, PluginManager);
-downloader.injectDependencies(Config, PluginManager);
-lyricManager.injectDependencies(TrackPlayer, Config, PluginManager);
-MusicSheet.injectDependencies(Config);
-
+import { initTrackPlayer, setupPlaybackData, setupPlaybackPlugins, startedFromWidget } from "@/service/playbackRuntime";
+export { initTrackPlayer } from "@/service/playbackRuntime";
 
 async function bootstrapImpl() {
     await SplashScreen.preventAutoHideAsync()
@@ -75,31 +62,10 @@ async function bootstrapImpl() {
 
     // 2. 数据初始化
     /** 初始化路径 */
-    await setupFolder();
-    trace("文件夹初始化完成");
-    logger.mark("文件夹初始化完成");
-
-
-
-    // 加载配置
-    await Promise.all([
-        Config.setup().then(() => {
-            logger.mark("Config");
-        }),
-        MusicSheet.setup().then(() => {
-            logger.mark("MusicSheet");
-        }),
-        musicHistory.setup().then(() => {
-            logger.mark("musicHistory");
-        }),
-    ]);
-    trace("配置初始化完成");
+    await setupPlaybackData();
     logger.mark("配置初始化完成");
-
-    // 加载插件
-    await PluginManager.setup();
+    await setupPlaybackPlugins();
     logger.mark("插件初始化完成");
-    trace("插件初始化完成");
 
     await initTrackPlayer(logger).catch(err => {
         // 初始化播放器出错，延迟初始化
@@ -130,77 +96,6 @@ async function bootstrapImpl() {
         errorLog("未捕获的错误", error);
     });
 }
-
-/** 初始化 */
-async function setupFolder() {
-    await Promise.all([
-        checkAndCreateDir(pathConst.dataPath),
-        checkAndCreateDir(pathConst.logPath),
-        checkAndCreateDir(pathConst.cachePath),
-        checkAndCreateDir(pathConst.pluginPath),
-        checkAndCreateDir(pathConst.lrcCachePath),
-        checkAndCreateDir(pathConst.downloadCachePath),
-        checkAndCreateDir(pathConst.localLrcPath),
-        checkAndCreateDir(pathConst.downloadPath).then(() => {
-            checkAndCreateDir(pathConst.downloadMusicPath);
-        }),
-    ]);
-}
-
-export async function initTrackPlayer(logger?: IPerfLogger) {
-    try {
-        await RNTrackPlayer.setupPlayer({
-            maxCacheSize:
-                Config.getConfig("basic.maxCacheSize") ?? 1024 * 1024 * 512,
-        });
-    } catch (e: any) {
-        if (
-            e?.message !==
-            "The player has already been initialized via setupPlayer."
-        ) {
-            throw e;
-        }
-    }
-    logger?.mark("加载播放器");
-
-    const capabilities = Config.getConfig("basic.showExitOnNotification")
-        ? [
-            Capability.Play,
-            Capability.Pause,
-            Capability.SkipToNext,
-            Capability.SkipToPrevious,
-            Capability.Stop,
-        ]
-        : [
-            Capability.Play,
-            Capability.Pause,
-            Capability.SkipToNext,
-            Capability.SkipToPrevious,
-        ];
-    await RNTrackPlayer.updateOptions({
-        icon: ImgAsset.logoTransparent,
-        progressUpdateEventInterval: 1,
-        android: {
-            alwaysPauseOnInterruption: true,
-            appKilledPlaybackBehavior:
-                AppKilledPlaybackBehavior.ContinuePlayback,
-        },
-        capabilities: capabilities,
-        compactCapabilities: capabilities,
-        notificationCapabilities: [...capabilities, Capability.SeekTo],
-    });
-    logger?.mark("播放器初始化完成");
-    trace("播放器初始化完成");
-
-    await TrackPlayer.setupTrackPlayer();
-    trace("播放列表初始化完成");
-    logger?.mark("播放列表初始化完成");
-
-    await lyricManager.setup();
-
-    logger?.mark("歌词初始化完成");
-}
-
 
 /** 不需要阻塞的 */
 async function extraMakeup() {
@@ -278,7 +173,7 @@ async function extraMakeup() {
         handleLinkingUrl(initUrl);
     }
 
-    if (Config.getConfig("basic.autoPlayWhenAppStart")) {
+    if (!startedFromWidget && Config.getConfig("basic.autoPlayWhenAppStart")) {
         TrackPlayer.play();
     }
 }

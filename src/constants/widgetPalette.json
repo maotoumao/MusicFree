@@ -1,0 +1,22 @@
+{
+    "light": {
+        "surface": "#FFFFFF",
+        "text": "#10172D",
+        "secondary": "#5B657C",
+        "primary": "#3867F4",
+        "onPrimary": "#FFFFFF",
+        "discoverySurface": "#1F3A89",
+        "onDiscovery": "#FFFFFF",
+        "divider": "#DBDCE0"
+    },
+    "dark": {
+        "surface": "#18233C",
+        "text": "#F7FAFF",
+        "secondary": "#B6C1D8",
+        "primary": "#6D8DFF",
+        "onPrimary": "#FFFFFF",
+        "discoverySurface": "#18233C",
+        "onDiscovery": "#FFFFFF",
+        "divider": "#394359"
+    }
+}

@@ -79,7 +79,10 @@ keystore.properties
 
 .vscode/
 tmp/
-scripts/
+scripts/*
+!scripts/patch-track-player-widget.js
+!scripts/patch-track-player-widget.test.js
+!scripts/generate-widget-resources.mjs
 
 *.log
 # Expo

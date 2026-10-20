@@ -1,4 +1,11 @@
 {
+    "toast.shiyinNoSource": "還沒有可用的榜單音源",
+    "toast.shiyinNoMusic": "暫時沒能挑出歌曲，稍後再試試",
+    "toast.shiyinPoolEmpty": "榜單沒抓到歌，檢查網路或音源後再試",
+    "toast.shiyinStarted": "拾音 · 已播放 {count} 首熱門",
+    "toast.widgetQueueEmpty": "暫無播放佇列，請先點選拾音",
+    "toast.widgetStartupFailed": "無法啟動播放，請開啟 MusicFree 後重試",
+    "toast.widgetActionFailed": "播放操作失敗，請稍後重試",
     "common.setting": "設定",
     "common.software": "軟體",
     "common.language": "語言",

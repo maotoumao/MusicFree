@@ -5,7 +5,10 @@ import { musicIsPaused } from "@/utils/trackUtils";
 import PersistStatus from "@/utils/persistStatus";
 
 let resumeState: State | null;
+let installed = false;
 module.exports = async function () {
+    if (installed) return;
+    installed = true;
     RNTrackPlayer.addEventListener(Event.RemotePlay, () => TrackPlayer.play());
     RNTrackPlayer.addEventListener(Event.RemotePause, () =>
         TrackPlayer.pause(),
