@@ -30,6 +30,7 @@ import ReactNativeTrackPlayer, {
     useProgress,
 } from "react-native-track-player";
 import LocalMusicSheet from "../localMusicSheet";
+import bluetoothLyric from "@/core/bluetoothLyric";
 
 import { TrackPlayerEvents } from "@/core.defination/trackPlayer";
 import type { IAppConfig } from "@/types/core/config";
@@ -638,6 +639,9 @@ class TrackPlayer extends EventEmitter<{
         this.setCurrentMusic(null);
 
         await ReactNativeTrackPlayer.reset();
+        // 队列已清空，蓝牙歌词那边缓存的「上句歌词」要一并清掉，
+        // 否则下一首歌首句若与之相同会被去重跳过，车机上就少显示一句
+        bluetoothLyric.clearCache();
         PersistStatus.set("music.musicItem", undefined);
         PersistStatus.set("music.progress", 0);
     }

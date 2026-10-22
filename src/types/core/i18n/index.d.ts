@@ -232,7 +232,6 @@ export interface ILanguageData {
     "themeSettings.setTheme": string; // 设置主题
     "themeSettings.lightMode": string; // 明亮模式
     "themeSettings.darkMode": string; // 黑暗模式
-    "themeSettings.bakaMode": string; // 暗夜暖金（Baka 风格）
     "themeSettings.customMode": string; // 自定义模式
 
 
@@ -338,10 +337,10 @@ export interface ILanguageData {
     "basicSettings.useCelluarNetworkDownload": string; // 使用移动网络下载
     
     "basicSettings.lyric": string; // 歌词
-    "basicSettings.lyric.amllStyle": string; // 歌词页 AMLL 风格
-    "basicSettings.lyric.amllStyleDesc": string; // AMLL 风格说明
     "basicSettings.lyric.autoSearchLyric": string; // 歌词缺失时自动搜索歌词
     "basicSettings.lyric.showStatusBarLyric": string; // 开启桌面歌词
+    "basicSettings.lyric.hideStatusBarLyricWhenPaused": string; // 暂停时隐藏桌面歌词
+    "basicSettings.lyric.hideStatusBarLyricWhenPausedDesc": string; // 说明
     "basicSettings.lyric.align": string; // 对齐方式
     "basicSettings.lyric.align.left": string; // 左对齐
     "basicSettings.lyric.align.center": string; // 居中对齐

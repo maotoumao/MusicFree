@@ -686,7 +686,9 @@ function LyricSetting() {
     const widthPercent = useAppConfig("lyric.widthPercent");
     const fontSize = useAppConfig("lyric.fontSize");
     const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");
-    const enableAmllStyle = useAppConfig("lyric.amllStyle");
+    const enableHideStatusBarLyricWhenPaused = useAppConfig(
+        "lyric.hideStatusBarLyricWhenPaused",
+    );
     const enableBluetoothLyric = useAppConfig("lyric.bluetoothLyric");
     const bluetoothLyricField = useAppConfig("lyric.bluetoothLyricField");
     const enableBluetoothLyricTranslation = useAppConfig(
@@ -703,16 +705,6 @@ function LyricSetting() {
         t("basicSettings.lyric.autoSearchLyric"),
         "lyric.autoSearchLyric",
         enableAutoSearchLyric ?? false,
-    );
-
-    /** AMLL 风格歌词：左对齐 + 当前行放大加粗 */
-    const amllStyle = createSwitch(
-        t("basicSettings.lyric.amllStyle"),
-        "lyric.amllStyle",
-        enableAmllStyle ?? false,
-        newValue => {
-            Config.setConfig("lyric.amllStyle", newValue);
-        },
     );
 
     const openStatusBarLyric = createSwitch(
@@ -740,6 +732,8 @@ function LyricSetting() {
                             statusBarLyricConfig ?? {}
                         );
                         Config.setConfig("lyric.showStatusBarLyric", true);
+                        // 如果此刻是暂停状态、且开了「暂停隐藏」，刚拉起的窗口要再收起来
+                        lyricManager.refreshStatusBarLyricVisibility();
                     } else {
                         LyricUtil.requestSystemAlertPermission().finally(() => {
                             Toast.warn(t("toast.noFloatWindowPermission"));
@@ -750,6 +744,23 @@ function LyricSetting() {
                     Config.setConfig("lyric.showStatusBarLyric", false);
                 }
             } catch { }
+        },
+    );
+
+    /** 暂停时隐藏桌面歌词，继续播放再显示 */
+    const hideStatusBarLyricWhenPaused = createSwitch(
+        t("basicSettings.lyric.hideStatusBarLyricWhenPaused"),
+        "lyric.hideStatusBarLyricWhenPaused",
+        enableHideStatusBarLyricWhenPaused ?? false,
+        newValue => {
+            Config.setConfig(
+                "lyric.hideStatusBarLyricWhenPaused",
+                newValue,
+            );
+            // 立即按当前播放状态应用一次：开着时若正暂停就收起，关掉时补回来
+            if (showStatusBarLyric) {
+                lyricManager.refreshStatusBarLyricVisibility();
+            }
         },
     );
 
@@ -841,20 +852,24 @@ function LyricSetting() {
             <ListItem
                 withHorizontalPadding
                 heightType="small"
-                onPress={amllStyle.onPress}>
-                <ListItem.Content
-                    title={amllStyle.title}
-                    description={t("basicSettings.lyric.amllStyleDesc")}
-                />
-                {amllStyle.right}
-            </ListItem>
-            <ListItem
-                withHorizontalPadding
-                heightType="small"
                 onPress={openStatusBarLyric.onPress}>
                 <ListItem.Content title={openStatusBarLyric.title} />
                 {openStatusBarLyric.right}
             </ListItem>
+            {showStatusBarLyric ? (
+                <ListItem
+                    withHorizontalPadding
+                    heightType="small"
+                    onPress={hideStatusBarLyricWhenPaused.onPress}>
+                    <ListItem.Content
+                        title={hideStatusBarLyricWhenPaused.title}
+                        description={t(
+                            "basicSettings.lyric.hideStatusBarLyricWhenPausedDesc",
+                        )}
+                    />
+                    {hideStatusBarLyricWhenPaused.right}
+                </ListItem>
+            ) : null}
             <ListItem
                 withHorizontalPadding
                 heightType="small"

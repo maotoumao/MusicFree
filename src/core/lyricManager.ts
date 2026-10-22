@@ -10,12 +10,13 @@ import { Plugin } from "./pluginManager";
 
 import pathConst from "@/constants/pathConst";
 import bluetoothLyric from "@/core/bluetoothLyric";
+import { errorLog } from "@/utils/log";
 import LyricUtil from "@/native/lyricUtil";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import PersistStatus from "@/utils/persistStatus";
 import CryptoJs from "crypto-js";
 import { unlink, writeFile } from "react-native-fs";
-import RNTrackPlayer, { Event } from "react-native-track-player";
+import RNTrackPlayer, { Event, State } from "react-native-track-player";
 import { TrackPlayerEvents } from "@/core.defination/trackPlayer";
 import { IPluginManager } from "@/types/core/pluginManager";
 
@@ -45,6 +46,11 @@ class LyricManager implements IInjectable {
 
     private lyricParser: LyricParser | null = null;
 
+    /** 桌面歌词悬浮窗当前是否处于「因暂停而被隐藏」的状态 */
+    private statusBarLyricHidden = false;
+    /** 最近一次要显示的歌词文本，隐藏后重新拉起时用它做初始文本 */
+    private lastStatusBarLyricText: string | null = null;
+
 
     get currentLyricItem() {
         return getDefaultStore().get(currentLyricItemAtom);
@@ -72,13 +78,87 @@ class LyricManager implements IInjectable {
         translation?: string | null,
     ) {
         if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
-            LyricUtil.setStatusBarLyricText(text);
+            // 记下最新文本：暂停隐藏后重新拉起时用它做初始文本，
+            // 避免先闪一下「MusicFree」再跳到歌词
+            this.lastStatusBarLyricText = text;
+            if (!this.statusBarLyricHidden) {
+                LyricUtil.setStatusBarLyricText(text);
+            }
         }
         bluetoothLyric.update(
             musicItem ?? this.trackPlayer.currentMusic,
             lrc,
             translation,
         );
+    }
+
+    /**
+     * 拉起桌面歌词悬浮窗
+     * 注意：原生侧 hide 之后只调 setText 是不会重新出现的，必须重新 show
+     */
+    private showStatusBarLyric(initText?: string) {
+        const statusBarLyricConfig = {
+            topPercent: this.appConfig.getConfig("lyric.topPercent"),
+            leftPercent: this.appConfig.getConfig("lyric.leftPercent"),
+            align: this.appConfig.getConfig("lyric.align"),
+            color: this.appConfig.getConfig("lyric.color"),
+            backgroundColor: this.appConfig.getConfig("lyric.backgroundColor"),
+            widthPercent: this.appConfig.getConfig("lyric.widthPercent"),
+            fontSize: this.appConfig.getConfig("lyric.fontSize"),
+        };
+        LyricUtil.showStatusBarLyric(
+            initText ?? this.lastStatusBarLyricText ?? "MusicFree",
+            statusBarLyricConfig ?? {},
+        );
+        this.statusBarLyricHidden = false;
+    }
+
+    /**
+     * 「暂停时隐藏桌面歌词」：暂停把悬浮窗收起来，继续播放再拉起
+     * @param state 当前播放状态，传 undefined 时按「暂停」处理（保守隐藏）
+     */
+    private async syncStatusBarLyricWithPlaybackState(state?: State) {
+        if (!this.appConfig.getConfig("lyric.showStatusBarLyric")) {
+            return;
+        }
+        const hideWhenPaused = this.appConfig.getConfig(
+            "lyric.hideStatusBarLyricWhenPaused",
+        );
+        // 除了 Playing，其余（暂停/缓冲/停止/出错）都按暂停处理
+        const paused = state !== State.Playing;
+
+        if (!hideWhenPaused) {
+            // 开关关掉时把悬浮窗补回来，否则会一直不显示
+            if (this.statusBarLyricHidden) {
+                this.showStatusBarLyric();
+            }
+            return;
+        }
+
+        if (paused) {
+            if (!this.statusBarLyricHidden) {
+                try {
+                    await LyricUtil.hideStatusBarLyric();
+                } catch (e) {
+                    errorLog("隐藏桌面歌词失败", e);
+                }
+                this.statusBarLyricHidden = true;
+            }
+        } else if (this.statusBarLyricHidden) {
+            this.showStatusBarLyric();
+        }
+    }
+
+    /** 设置项改完后立即按当前播放状态刷新一次，不用等下次暂停/播放 */
+    async refreshStatusBarLyricVisibility() {
+        let state: State | undefined;
+        try {
+            const playbackState: any = await RNTrackPlayer.getPlaybackState();
+            state = playbackState?.state;
+        } catch (e) {
+            errorLog("获取播放状态失败", e);
+        }
+        await this.syncStatusBarLyricWithPlaybackState(state);
     }
 
     setup() {
@@ -123,20 +203,14 @@ class LyricManager implements IInjectable {
 
 
         if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
-            const statusBarLyricConfig = {
-                topPercent: this.appConfig.getConfig("lyric.topPercent"),
-                leftPercent: this.appConfig.getConfig("lyric.leftPercent"),
-                align: this.appConfig.getConfig("lyric.align"),
-                color: this.appConfig.getConfig("lyric.color"),
-                backgroundColor: this.appConfig.getConfig("lyric.backgroundColor"),
-                widthPercent: this.appConfig.getConfig("lyric.widthPercent"),
-                fontSize: this.appConfig.getConfig("lyric.fontSize"),
-            };
-            LyricUtil.showStatusBarLyric(
-                "MusicFree",
-                statusBarLyricConfig ?? {}
-            );
+            // 初始文本用「MusicFree」，随后会被 pushLyric 覆盖成真正的歌词
+            this.showStatusBarLyric("MusicFree");
         }
+
+        // 监听播放 / 暂停，配合「暂停时隐藏桌面歌词」
+        RNTrackPlayer.addEventListener(Event.PlaybackState, (evt: any) => {
+            this.syncStatusBarLyricWithPlaybackState(evt?.state);
+        });
 
         this.refreshLyric(true);
     }
