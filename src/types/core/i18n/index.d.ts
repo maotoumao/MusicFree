@@ -136,6 +136,7 @@ export interface ILanguageData {
     // 歌单详情相关
     "sheetDetail.totalMusicCount": string; // 歌曲总数
     "sheetDetail.editSheetInfo": string; // 编辑歌单信息
+    "sheetDetail.syncSubscription": string; // 订阅与同步
     "sheetDetail.batchEditMusic": string; // 批量编辑音乐
     "sheetDetail.sortMusic": string; // 排序音乐
     "sheetDetail.sortMusicOption.byTitle": string; // 按标题排序
@@ -445,7 +446,8 @@ export interface ILanguageData {
     "panel.addToMusicSheet.title": string; // 添加到歌单
     "panel.addToMusicSheet.newMusicSheet": string; // 新建歌单
     "panel.addToMusicSheet.count": string; // 歌曲数量
-    "panel.addToMusicSheet.toast.success": string; // 已添加到歌单
+    "panel.addToMusicSheet.toast.success": string;
+    "panel.addToMusicSheet.toast.subscribed": string; // 已记住来源 // 已添加到歌单
     "panel.addToMusicSheet.toast.fail": string; // 添加到歌单失败
     "panel.associateLrc.title": string; // 关联歌词
     "panel.associateLrc.inputPlaceholder": string; // 输入要关联歌词的歌曲ID
@@ -465,6 +467,39 @@ export interface ILanguageData {
     "panel.colorPicker.title": string; // 选择颜色
     "panel.createMusicSheet.inputLabel": string; // 输入框
     "panel.importMusicSheet.title": string; // 导入歌单
+    "panel.sheetSubscription.title": string; // 歌单订阅
+    "panel.sheetSubscription.notSyncable": string; // 该歌单不可同步
+    "panel.sheetSubscription.notSyncableDesc": string; // 不可同步说明
+    "panel.sheetSubscription.neverSync": string; // 从未同步
+    "panel.sheetSubscription.justNow": string; // 刚刚
+    "panel.sheetSubscription.minutesAgo": string; // 分钟前
+    "panel.sheetSubscription.hoursAgo": string; // 小时前
+    "panel.sheetSubscription.daysAgo": string; // 天前
+    "panel.sheetSubscription.status.success": string; // 同步成功
+    "panel.sheetSubscription.status.partial": string; // 部分同步
+    "panel.sheetSubscription.status.failed": string; // 同步失败
+    "panel.sheetSubscription.source": string; // 来源链接
+    "panel.sheetSubscription.lastSync": string; // 上次同步
+    "panel.sheetSubscription.syncing": string; // 正在同步
+    "panel.sheetSubscription.syncFailed": string; // 同步失败
+    "panel.sheetSubscription.addedSongs": string; // 新增歌曲数
+    "panel.sheetSubscription.upToDate": string; // 已是最新
+    "panel.sheetSubscription.missingTitle": string; // 有歌曲不可见标题
+    "panel.sheetSubscription.missingContent": string; // 有歌曲不可见说明
+    "panel.sheetSubscription.syncNow": string; // 立即同步
+    "panel.sheetSubscription.syncNowDesc": string; // 立即同步说明
+    "panel.sheetSubscription.autoSync": string; // 自动同步
+    "panel.sheetSubscription.autoSyncDesc": string; // 自动同步说明
+    "panel.sheetSubscription.syncMode": string; // 同步模式
+    "panel.sheetSubscription.syncMode.append": string; // 只追加
+    "panel.sheetSubscription.syncMode.mirror": string; // 完全跟随
+    "panel.sheetSubscription.changeUrl": string; // 更换来源链接
+    "panel.sheetSubscription.changeUrlDesc": string; // 更换来源说明
+    "panel.sheetSubscription.urlUpdated": string; // 来源已更新
+    "panel.sheetSubscription.unsubscribe": string; // 解除订阅
+    "panel.sheetSubscription.unsubscribeConfirm": string; // 解除订阅确认
+    "panel.sheetSubscription.unsubscribed": string; // 已解除订阅
+    "panel.sheetSubscription.unsubscribeDesc": string; // 解除订阅说明
     "panel.importMusicSheet.placeholder": string; // 输入目标歌单
     "panel.importMusicSheet.importing": string; // 正在导入中
     "panel.importMusicSheet.prepareImport": string; // 准备导入

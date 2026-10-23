@@ -4,6 +4,7 @@ import { showPanel } from "@/components/panels/usePanel.ts";
 import { SortType } from "@/constants/commonConst.ts";
 import { useI18N } from "@/core/i18n";
 import MusicSheet, { useSheetItem } from "@/core/musicSheet";
+import { isSyncable } from "@/core/syncSubscription";
 import { ROUTE_PATH, useParams } from "@/core/router";
 import { default as Toast, default as toast } from "@/utils/toast";
 import { useNavigation } from "@react-navigation/native";
@@ -19,6 +20,19 @@ export default function () {
         <>
             <AppBar
                 menu={[
+                    ...(isSyncable(musicSheet)
+                        ? [
+                            {
+                                icon: "arrow-path" as const,
+                                title: t("sheetDetail.syncSubscription"),
+                                onPress() {
+                                    showPanel("SheetSubscription", {
+                                        sheetId: id,
+                                    });
+                                },
+                            },
+                        ]
+                        : []),
                     {
                         icon: "pencil-outline",
                         title: t("sheetDetail.editSheetInfo"),

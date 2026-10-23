@@ -11,18 +11,27 @@ import { FlatList } from "react-native-gesture-handler";
 import { hidePanel, showPanel } from "../usePanel";
 import PanelHeader from "../base/panelHeader";
 import MusicSheet, { useSheetsBase } from "@/core/musicSheet";
+import { subscribeSheet } from "@/core/syncSubscription";
 import { useI18N } from "@/core/i18n";
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
     // 如果是新建歌单，可以传入一个默认的名称
     newSheetDefaultName?: string;
+    /**
+     * 订阅来源：从「导入歌单」进来时带上（分享链接 + 来源插件）。
+     * 有值时，导入完成后把来源记到目标歌单上，之后就能一键同步。
+     */
+    subscription?: {
+        url: string;
+        platform: string;
+    };
 }
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
     const sheets = useSheetsBase();
 
-    const { musicItem = [], newSheetDefaultName } = props ?? {};
+    const { musicItem = [], newSheetDefaultName, subscription } = props ?? {};
     const safeAreaInsets = useSafeAreaInsets();
     const { t } = useI18N();
 
@@ -58,9 +67,20 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                                         sheetId,
                                                         musicItem,
                                                     );
-                                                    Toast.success(
-                                                        t("panel.addToMusicSheet.toast.success"),
-                                                    );
+                                                    if (subscription) {
+                                                        await subscribeSheet(
+                                                            sheetId,
+                                                            subscription.url,
+                                                            subscription.platform,
+                                                        );
+                                                        Toast.success(
+                                                            t("panel.addToMusicSheet.toast.subscribed"),
+                                                        );
+                                                    } else {
+                                                        Toast.success(
+                                                            t("panel.addToMusicSheet.toast.success"),
+                                                        );
+                                                    }
                                                 } catch {
                                                     Toast.warn(
                                                         t("panel.addToMusicSheet.toast.fail"),
@@ -91,7 +111,19 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                                 sheet.id,
                                                 musicItem,
                                             );
+                                            if (subscription) {
+                                                await subscribeSheet(
+                                                    sheet.id,
+                                                    subscription.url,
+                                                    subscription.platform,
+                                                );
+                                            }
                                             hidePanel();
+                                            Toast.success(
+                                                subscription
+                                                    ? t("panel.addToMusicSheet.toast.subscribed")
+                                                    : t("panel.addToMusicSheet.toast.success"),
+                                            );
                                             Toast.success(t("panel.addToMusicSheet.toast.success"));
                                         } catch {
                                             Toast.warn(t("panel.addToMusicSheet.toast.fail"));

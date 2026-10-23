@@ -54,18 +54,36 @@ export default function ImportMusicSheet() {
                                                         await plugin.methods.importMusicSheet(
                                                             text,
                                                         );
-                                                    if (result && result.length > 0) {
+                                                    // 打上「同步来的」标记：之后同步时才能区分
+                                                    // 哪些是订阅拉进来的、哪些是用户手动加的
+                                                    const syncedResult = (
+                                                        result ?? []
+                                                    ).map(it => ({
+                                                        ...it,
+                                                        $sync: {
+                                                            fromSubscription:
+                                                                true as const,
+                                                            syncedAt: Date.now(),
+                                                        },
+                                                    }));
+                                                    if (syncedResult.length > 0) {
                                                         showDialog(
                                                             "SimpleDialog",
                                                             {
                                                                 title: t("panel.importMusicSheet.prepareImport"),
-                                                                content: t("panel.importMusicSheet.foundSongs", { count: result.length }),
+                                                                content: t("panel.importMusicSheet.foundSongs", { count: syncedResult.length }),
                                                                 onOk() {
                                                                     showPanel(
                                                                         "AddToMusicSheet",
                                                                         {
                                                                             musicItem:
-                                                                                result,
+                                                                                syncedResult,
+                                                                            // 记住来源，之后才能按这个链接重新同步
+                                                                            subscription: {
+                                                                                url: text,
+                                                                                platform:
+                                                                                    plugin.name,
+                                                                            },
                                                                         },
                                                                     );
                                                                 },

@@ -130,6 +130,18 @@ class MusicSheetClazz implements IInjectable {
 
     }
 
+    /** 取歌单的基本信息（不含歌曲列表） */
+    getSheetBase(sheetId: string): IMusic.IMusicSheetItemBase | undefined {
+        return getDefaultStore()
+            .get(musicSheetsBaseAtom)
+            .find(it => it.id === sheetId);
+    }
+
+    /** 取全部歌单的基本信息 */
+    getSheetsBase(): IMusic.IMusicSheetItemBase[] {
+        return getDefaultStore().get(musicSheetsBaseAtom);
+    }
+
     // 获取音乐
     getSortedMusicListBySheetId(sheetId: string) {
         let musicList: SortedMusicList;

@@ -10,6 +10,7 @@ import LocalMusicSheet from "@/core/localMusicSheet";
 import lyricManager from "@/core/lyricManager";
 import musicHistory from "@/core/musicHistory";
 import MusicSheet from "@/core/musicSheet";
+import { syncAll } from "@/core/syncSubscription";
 import PluginManager from "@/core/pluginManager";
 import Theme from "@/core/theme";
 import TrackPlayer from "@/core/trackPlayer";
@@ -20,7 +21,7 @@ import { IPerfLogger, perfLogger } from "@/utils/perfLogger";
 import PersistStatus from "@/utils/persistStatus";
 import Toast from "@/utils/toast";
 import * as SplashScreen from "expo-splash-screen";
-import {  Linking, Platform } from "react-native";
+import { AppState, Linking, Platform } from "react-native";
 import { PERMISSIONS, check, request } from "react-native-permissions";
 import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 import i18n from "@/core/i18n";
@@ -304,6 +305,41 @@ function bindEvents() {
     });
 }
 
+/**
+ * 绑定歌单自动同步
+ *
+ * 安卓不依赖系统级定时：国产 ROM 后台限制严格，定时器大概率被杀。
+ * 这里用「启动 + 切回前台」两个时机做机会型检查，配合每个歌单自己的
+ * autoSync 开关与同步周期，够用且不耗电。
+ */
+function bindAutoSync() {
+    let lastCheckAt = 0;
+    const MIN_CHECK_INTERVAL = 60 * 1000; // 同一分钟内不重复检查
+
+    const trySync = () => {
+        const now = Date.now();
+        if (now - lastCheckAt < MIN_CHECK_INTERVAL) {
+            return;
+        }
+        lastCheckAt = now;
+        // 不阻塞启动，后台慢慢跑
+        syncAll(true).catch(e => {
+            errorLog("自动同步歌单失败", e);
+        });
+    };
+
+    // 延迟一小会儿，避免和启动时的其他网络请求抢资源
+    setTimeout(trySync, 5000);
+
+    const subscription = AppState.addEventListener("change", state => {
+        if (state === "active") {
+            trySync();
+        }
+    });
+
+    return () => subscription?.remove?.();
+}
+
 export default async function () {
     try {
         getDefaultStore().set(bootstrapAtom, {
@@ -311,6 +347,9 @@ export default async function () {
         });
         await bootstrapImpl();
         bindEvents();
+        // 机会型同步：不依赖系统定时任务（国产 ROM 后台会被杀），
+        // 只在启动 / 切回前台时检查「距上次同步是否超过周期」
+        bindAutoSync();
         getDefaultStore().set(bootstrapAtom, {
             "state": "Done",
         });

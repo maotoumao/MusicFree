@@ -56,6 +56,17 @@ declare namespace IMusic {
         rawLrc?: string;
         /** 音质信息 */
         qualities?: IQuality;
+        /**
+         * 是否由「歌单订阅同步」拉进来的
+         *
+         * 用途：区分「同步来的歌」和「用户自己手动加的歌」。
+         * 这是同步时不会把用户手动收藏冲掉的唯一依据。
+         * 用 $ 前缀（与 $timestamp / $sortIndex 一致）避免和插件返回的原始字段冲突。
+         */
+        $sync?: {
+            fromSubscription: true;
+            syncedAt: number;
+        };
         /** 其他可以被序列化的信息 */
         [k: string]: any;
         /** 内部信息 */
