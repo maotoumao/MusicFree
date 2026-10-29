@@ -10,16 +10,18 @@ import useColors from "@/hooks/useColors.ts";
 
 interface ICommentProps {
     comment: IMedia.IComment;
+    // 是否作为子评论渲染
+    isReply?: boolean;
 }
 
 export default function Comment(props: ICommentProps) {
-    const { comment } = props;
+    const { comment, isReply } = props;
 
     const hasFooter = comment.like || comment.createAt || comment.location;
     const colors = useColors();
 
     return (
-        <View style={styles.container}>
+        <View style={isReply ? styles.replyContainer : styles.container}>
             <View style={styles.headerLine}>
                 <FastImage source={comment.avatar} style={styles.avatar} />
                 <ThemeText numberOfLines={1} fontSize={"subTitle"}>
@@ -59,6 +61,17 @@ export default function Comment(props: ICommentProps) {
                     ) : null}
                 </View>
             ) : null}
+            {comment.replies?.length ? (
+                <View style={styles.replies}>
+                    {comment.replies.map((reply, index) => (
+                        <Comment
+                            key={reply.id ?? index}
+                            comment={reply}
+                            isReply
+                        />
+                    ))}
+                </View>
+            ) : null}
         </View>
     );
 }
@@ -89,6 +102,14 @@ const styles = StyleSheet.create({
         paddingLeft: rpx(64),
         flexDirection: "row",
         justifyContent: "space-between",
+    },
+    replyContainer: {
+        width: "100%",
+        gap: rpx(16),
+    },
+    replies: {
+        paddingLeft: rpx(64),
+        gap: rpx(24),
     },
     like: {
         flexDirection: "row",
