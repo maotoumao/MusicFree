@@ -32,7 +32,7 @@ export default function ActionButton(props: IActionButtonProps) {
                 <Icon
                     accessible={false}
                     name={iconName}
-                    color={iconColor ?? colors.text}
+                    color={iconColor ?? colors.primary}
                     size={rpx(48)}
                 />
                 <ThemeText
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     wrapper: {
         width: rpx(140),
         height: rpx(144),
-        borderRadius: rpx(12),
+        borderRadius: rpx(24),
         flexGrow: 1,
         flexShrink: 0,
         flexDirection: "column",

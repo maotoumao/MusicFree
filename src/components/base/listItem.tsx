@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     leftImage: {
         width: rpx(80),
         height: rpx(80),
-        borderRadius: rpx(16),
+        borderRadius: rpx(12),
     },
     imageMask: {
         position: "absolute",

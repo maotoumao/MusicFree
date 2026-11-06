@@ -72,6 +72,7 @@ export interface ILanguageData {
     "home.starredPlaylistsCount.a11y": string; // 我喜欢的歌单数量
     "home.songCount": string; // 歌曲数量
     "home.clickToSearch": string; // 点击搜索
+    "home.title": string; // 首页大标题
 
     // 对话框相关
     "dialog.deleteSheetTitle": string; // 删除歌单

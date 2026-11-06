@@ -58,6 +58,7 @@
     "home.starredPlaylistsCount.a11y": "收藏歌單，共{count}個",
     "home.songCount": "{count}首",
     "home.clickToSearch": "點擊這裡開始搜尋",
+    "home.title": "音樂庫",
     "dialog.deleteSheetTitle": "刪除歌單",
     "dialog.deleteSheetContent": "確認刪除歌單「{name}」嗎？",
     "toast.deleteSuccess": "刪除成功",

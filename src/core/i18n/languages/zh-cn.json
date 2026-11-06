@@ -58,6 +58,7 @@
     "home.starredPlaylistsCount.a11y": "收藏歌单，共{count}个",
     "home.songCount": "{count}首",
     "home.clickToSearch": "点击这里开始搜索",
+    "home.title": "音乐库",
     "dialog.deleteSheetTitle": "删除歌单",
     "dialog.deleteSheetContent": "确认删除歌单「{name}」吗？",
     "toast.deleteSuccess": "删除成功",

@@ -58,6 +58,7 @@
     "home.starredPlaylistsCount.a11y": "Starred Playlists, {count} total",
     "home.songCount": "{count} songs",
     "home.clickToSearch": "Click here to start searching",
+    "home.title": "Library",
     "dialog.deleteSheetTitle": "Delete Playlist",
     "dialog.deleteSheetContent": "Are you sure to delete playlist「{name}」?",
     "toast.deleteSuccess": "Deleted successfully",
