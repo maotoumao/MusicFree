@@ -1,13 +1,11 @@
 import { ROUTE_PATH } from "@/core/router";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import rpx from "@/utils/rpx";
 import useColors from "@/hooks/useColors";
 import ThemeText from "@/components/base/themeText";
-import Color from "color";
 import IconButton from "@/components/base/iconButton";
-import Icon from "@/components/base/icon.tsx";
 import { useI18N } from "@/core/i18n";
 
 export default function NavBar() {
@@ -27,31 +25,20 @@ export default function NavBar() {
                         navigation?.openDrawer();
                     }}
                 />
-                <Pressable
-                    style={[
-                        styles.searchBar,
-                        {
-                            backgroundColor: colors.placeholder,
-                        },
-                    ]}
+                <TouchableOpacity
                     accessible
                     accessibilityLabel={t("home.clickToSearch")}
+                    style={styles.searchButton}
                     onPress={() => {
                         navigation.navigate(ROUTE_PATH.SEARCH_PAGE);
                     }}>
-                    <Icon
+                    <IconButton
                         accessible={false}
                         name="magnifying-glass"
-                        size={rpx(32)}
-                        color={Color(colors.text).alpha(0.6).toString()}
+                        sizeType="normal"
+                        color={colors.text}
                     />
-                    <ThemeText
-                        accessible={false}
-                        fontSize="subTitle"
-                        style={[styles.text]}>
-                        {t("home.clickToSearch")}
-                    </ThemeText>
-                </Pressable>
+                </TouchableOpacity>
             </View>
             <ThemeText
                 fontSize="pageTitle"
@@ -72,22 +59,14 @@ const styles = StyleSheet.create({
     topBar: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "space-between",
         width: "100%",
         height: rpx(88),
     },
-    searchBar: {
-        marginHorizontal: rpx(24),
-        flexDirection: "row",
-        alignItems: "center",
-        flex: 1,
-        height: "72%",
-        maxHeight: rpx(64),
-        borderRadius: rpx(36),
-        paddingHorizontal: rpx(20),
-    },
-    text: {
-        marginLeft: rpx(12),
-        opacity: 0.6,
+    // 图标按钮 + 内边距, 保证命中区域不小于 44pt
+    searchButton: {
+        padding: rpx(24),
+        marginRight: rpx(8),
     },
     menu: {
         marginLeft: rpx(24),
