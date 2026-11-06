@@ -4,15 +4,14 @@ import rpx from "@/utils/rpx";
 import { useNavigation } from "@react-navigation/native";
 import Tag from "@/components/base/tag";
 import { fontSizeConst, fontWeightConst } from "@/constants/uiConst";
-import Share from "react-native-share";
-import { B64Asset } from "@/constants/assetsConst";
 import IconButton from "@/components/base/iconButton";
 import { useCurrentMusic } from "@/core/trackPlayer";
+import { ROUTE_PATH } from "@/core/router";
+import { showPanel } from "@/components/panels/usePanel";
 
 export default function NavBar() {
     const navigation = useNavigation();
     const musicItem = useCurrentMusic();
-    // const {showShare} = useShare();
 
     return (
         <View style={styles.container}>
@@ -43,20 +42,17 @@ export default function NavBar() {
                 </View>
             </View>
             <IconButton
-                name="share"
+                name="ellipsis-vertical"
                 color="white"
                 sizeType="normal"
                 style={styles.button}
-                onPress={async () => {
-                    try {
-                        await Share.open({
-                            type: "image/jpeg",
-                            title: "MusicFree-一个插件化的免费音乐播放器",
-                            message: "MusicFree-一个插件化的免费音乐播放器",
-                            url: B64Asset.share,
-                            subject: "MusicFree分享",
+                onPress={() => {
+                    if (musicItem) {
+                        showPanel("MusicItemOptions", {
+                            musicItem: musicItem,
+                            from: ROUTE_PATH.MUSIC_DETAIL,
                         });
-                    } catch {}
+                    }
                 }}
             />
         </View>

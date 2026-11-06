@@ -25,12 +25,16 @@ import Config from "@/core/appConfig";
 import TrackPlayer from "@/core/trackPlayer";
 import mediaCache from "@/core/mediaCache";
 import { IIconName } from "@/components/base/icon.tsx";
-import MusicSheet from "@/core/musicSheet";
+import MusicSheet, { useFavorite } from "@/core/musicSheet";
 import downloader from "@/core/downloader";
 import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager from "@/core/lyricManager";
 import { useI18N } from "@/core/i18n";
 import pluginManager from "@/core/pluginManager";
+import PersistStatus from "@/utils/persistStatus";
+import i18n from "@/core/i18n";
+import Share from "react-native-share";
+import { B64Asset } from "@/constants/assetsConst";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -58,8 +62,31 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
     const associatedLrc = getMediaExtraProperty(musicItem, "associatedLrc");
+    const isFavorite = useFavorite(musicItem);
+    const rate = PersistStatus.useValue("music.rate", 100);
+    const isFromMusicDetail = from === ROUTE_PATH.MUSIC_DETAIL;
 
     const options: IOption[] = [
+        {
+            icon: isFavorite ? "heart" : "heart-outline",
+            title: isFavorite
+                ? t("panel.musicItemOptions.unfavorite")
+                : t("panel.musicItemOptions.favorite"),
+            show: isFromMusicDetail,
+            onPress: () => {
+                if (!musicItem) {
+                    return;
+                }
+                if (isFavorite) {
+                    MusicSheet.removeMusic(
+                        MusicSheet.defaultSheet.id,
+                        musicItem,
+                    );
+                } else {
+                    MusicSheet.addMusic(MusicSheet.defaultSheet.id, musicItem);
+                }
+            },
+        },
         {
             icon: "identification",
             title: `ID: ${getMediaUniqueKey(musicItem)}`,
@@ -116,6 +143,47 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: t("musicListEditor.addToSheet"),
             onPress: () => {
                 showPanel("AddToMusicSheet", { musicItem });
+            },
+        },
+        {
+            icon: "equalizer",
+            title: t("panel.musicItemOptions.quality"),
+            show: isFromMusicDetail,
+            onPress: () => {
+                if (!musicItem) {
+                    return;
+                }
+                showPanel("MusicQuality", {
+                    musicItem,
+                    async onQualityPress(quality) {
+                        const changeResult =
+                            await TrackPlayer.changeQuality(quality);
+                        if (!changeResult) {
+                            Toast.warn(
+                                i18n.t(
+                                    "toast.currentQualityNotAvailableForCurrentMusic",
+                                ),
+                            );
+                        }
+                    },
+                });
+            },
+        },
+        {
+            icon: "speed",
+            title: t("panel.musicItemOptions.playRate"),
+            show: isFromMusicDetail,
+            onPress: () => {
+                showPanel("PlayRate", {
+                    async onRatePress(newRate) {
+                        if (rate !== newRate) {
+                            try {
+                                await TrackPlayer.setRate(newRate / 100);
+                                PersistStatus.set("music.rate", newRate);
+                            } catch {}
+                        }
+                    },
+                });
             },
         },
         {
@@ -184,6 +252,22 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
                 showPanel("MusicComment", {
                     musicItem: musicItem,
                 });
+            },
+        },
+        {
+            icon: "share",
+            title: t("panel.musicItemOptions.share"),
+            show: isFromMusicDetail,
+            onPress: async () => {
+                try {
+                    await Share.open({
+                        type: "image/jpeg",
+                        title: "MusicFree-一个插件化的免费音乐播放器",
+                        message: "MusicFree-一个插件化的免费音乐播放器",
+                        url: B64Asset.share,
+                        subject: "MusicFree分享",
+                    });
+                } catch {}
             },
         },
         {

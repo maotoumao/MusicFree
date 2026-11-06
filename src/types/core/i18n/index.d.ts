@@ -487,6 +487,11 @@ export interface ILanguageData {
     "panel.musicItemOptions.unassociateLyric": string; // 解除关联歌词    
     "panel.musicItemOptions.unassociateLyricSuccess": string; // 已解除关联歌词
     "panel.musicItemOptions.timingClose": string; // 定时关闭
+    "panel.musicItemOptions.favorite": string; // 收藏到我喜欢
+    "panel.musicItemOptions.unfavorite": string; // 从我喜欢中移除
+    "panel.musicItemOptions.quality": string; // 音质选择
+    "panel.musicItemOptions.playRate": string; // 倍速播放
+    "panel.musicItemOptions.share": string; // 分享歌曲
     "panel.musicItemOptions.clearPluginCache": string; // 清除插件缓存
     "panel.musicItemOptions.cacheCleared": string; // 缓存已清除
     "panel.musicItemOptions.deleteFailed": string; // 删除失败

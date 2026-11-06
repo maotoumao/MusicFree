@@ -7,7 +7,6 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useCurrentMusic } from "@/core/trackPlayer";
 import globalStyle from "@/constants/globalStyle";
 import { View } from "react-native";
-import Operations from "./operations";
 import { showPanel } from "@/components/panels/usePanel.ts";
 
 interface IProps {
@@ -23,13 +22,15 @@ export default function AlbumCover(props: IProps) {
     const artworkStyle = useMemo(() => {
         if (orientation === "vertical") {
             return {
-                width: rpx(500),
-                height: rpx(500),
+                width: rpx(560),
+                height: rpx(560),
+                borderRadius: rpx(12),
             };
         } else {
             return {
                 width: rpx(260),
                 height: rpx(260),
+                borderRadius: rpx(12),
             };
         }
     }, [orientation]);
@@ -63,7 +64,6 @@ export default function AlbumCover(props: IProps) {
                     />
                 </View>
             </GestureDetector>
-            <Operations />
         </>
     );
 }
