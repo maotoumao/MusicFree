@@ -119,11 +119,22 @@ export default memo(MusicBar, () => true);
 
 const style = StyleSheet.create({
     wrapper: {
-        width: "100%",
-        height: rpx(132),
+        alignSelf: "stretch",
+        height: rpx(112),
         flexDirection: "row",
         alignItems: "center",
         paddingRight: rpx(24),
+        marginHorizontal: rpx(32),
+        marginBottom: rpx(12),
+        borderRadius: rpx(24),
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 12,
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        elevation: 10,
     },
     actionGroup: {
         width: rpx(200),

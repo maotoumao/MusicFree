@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     artworkImg: {
         width: rpx(96),
         height: rpx(96),
-        borderRadius: rpx(48),
+        borderRadius: rpx(16),
         marginRight: rpx(24),
     },
 });
