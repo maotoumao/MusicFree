@@ -3,15 +3,17 @@ import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import SeekBar from "./seekBar";
 import PlayControl from "./playControl";
+import ExtraControls from "./extraControls";
 import useOrientation from "@/hooks/useOrientation";
 
 export default function Bottom() {
     const orientation = useOrientation();
+    const isLandscape = orientation === "horizontal";
     return (
         <View
             style={[
                 style.wrapper,
-                orientation === "horizontal"
+                isLandscape
                     ? {
                         height: rpx(156),
                     }
@@ -19,6 +21,7 @@ export default function Bottom() {
             ]}>
             <SeekBar />
             <PlayControl />
+            {isLandscape ? null : <ExtraControls />}
         </View>
     );
 }
@@ -26,6 +29,6 @@ export default function Bottom() {
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        height: rpx(240),
+        height: rpx(328),
     },
 });

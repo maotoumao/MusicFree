@@ -24,6 +24,7 @@ import CodeBracketSquareIcon from "@/assets/icons/code-bracket-square.svg";
 import Cog8ToothIcon from "@/assets/icons/cog-8-tooth.svg";
 import CrosshairIcon from "@/assets/icons/crosshair.svg";
 import DocumentOutlineIcon from "@/assets/icons/document-outline.svg";
+import EllipsisHorizontalIcon from "@/assets/icons/ellipsis-horizontal.svg";
 import EllipsisVerticalIcon from "@/assets/icons/ellipsis-vertical.svg";
 import EqualizerIcon from "@/assets/icons/equalizer.svg";
 import ExclamationCircleIcon from "@/assets/icons/exclamation-circle.svg";
@@ -77,7 +78,7 @@ import TrophyIcon from "@/assets/icons/trophy.svg";
 import UserIcon from "@/assets/icons/user.svg";
 import XMarkIcon from "@/assets/icons/x-mark.svg";
 
-export type IIconName = "alarm-outline" | "album-outline" | "archive-box-x-mark" | "arrow-down-tray" | "arrow-left" | "arrow-long-left" | "arrow-path" | "arrow-right-end-on-rectangle" | "arrow-up-tray" | "arrow-uturn-left" | "arrows-left-right" | "bars-3" | "bookmark-square" | "chat-bubble-oval-left-ellipsis" | "check-circle-outline" | "check-circle" | "check" | "circle-stack" | "clock-outline" | "code-bracket-square" | "cog-8-tooth" | "crosshair" | "document-outline" | "ellipsis-vertical" | "equalizer" | "exclamation-circle" | "fire-outline" | "fire" | "folder-music-outline" | "folder-outline" | "folder-plus" | "font-size" | "hand-thumb-up" | "heart-outline" | "heart" | "home-outline" | "identification" | "inbox-arrow-down" | "information-circle" | "javascript" | "language" | "link-slash" | "link" | "lyric" | "magnifying-glass" | "minus" | "motion-play" | "musical-note" | "pause-circle-outline" | "pause" | "pencil-outline" | "pencil-square" | "play-circle-outline" | "play-circle" | "play" | "playlist" | "plus" | "power-outline" | "question-mark-circle" | "repeat-song-1" | "repeat-song" | "share" | "shield-keyhole-outline" | "shuffle" | "skip-left" | "skip-right" | "sort-outline" | "speed" | "strategy" | "t-shirt-outline" | "translation" | "trash-outline" | "trophy" | "user" | "x-mark";
+export type IIconName = "alarm-outline" | "album-outline" | "archive-box-x-mark" | "arrow-down-tray" | "arrow-left" | "arrow-long-left" | "arrow-path" | "arrow-right-end-on-rectangle" | "arrow-up-tray" | "arrow-uturn-left" | "arrows-left-right" | "bars-3" | "bookmark-square" | "chat-bubble-oval-left-ellipsis" | "check-circle-outline" | "check-circle" | "check" | "circle-stack" | "clock-outline" | "code-bracket-square" | "cog-8-tooth" | "crosshair" | "document-outline" | "ellipsis-horizontal" | "ellipsis-vertical" | "equalizer" | "exclamation-circle" | "fire-outline" | "fire" | "folder-music-outline" | "folder-outline" | "folder-plus" | "font-size" | "hand-thumb-up" | "heart-outline" | "heart" | "home-outline" | "identification" | "inbox-arrow-down" | "information-circle" | "javascript" | "language" | "link-slash" | "link" | "lyric" | "magnifying-glass" | "minus" | "motion-play" | "musical-note" | "pause-circle-outline" | "pause" | "pencil-outline" | "pencil-square" | "play-circle-outline" | "play-circle" | "play" | "playlist" | "plus" | "power-outline" | "question-mark-circle" | "repeat-song-1" | "repeat-song" | "share" | "shield-keyhole-outline" | "shuffle" | "skip-left" | "skip-right" | "sort-outline" | "speed" | "strategy" | "t-shirt-outline" | "translation" | "trash-outline" | "trophy" | "user" | "x-mark";
 
 interface IProps extends SvgProps {
     /** 图标名称 */
@@ -110,6 +111,7 @@ const iconMap = {
     "cog-8-tooth": Cog8ToothIcon,
     "crosshair": CrosshairIcon,
     "document-outline": DocumentOutlineIcon,
+    "ellipsis-horizontal": EllipsisHorizontalIcon,
     "ellipsis-vertical": EllipsisVerticalIcon,
     "equalizer": EqualizerIcon,
     "exclamation-circle": ExclamationCircleIcon,

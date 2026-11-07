@@ -8,11 +8,17 @@ import TrackPlayer, { useProgress } from "@/core/trackPlayer";
 
 interface ITimeLabelProps {
     time: number;
+    /** 显示为剩余时间（前面加负号） */
+    remaining?: boolean;
 }
 
 function TimeLabel(props: ITimeLabelProps) {
+    const { time, remaining } = props;
     return (
-        <Text style={style.text}>{timeformat(Math.max(props.time, 0))}</Text>
+        <Text style={style.text}>
+            {remaining ? "-" : ""}
+            {timeformat(Math.max(time, 0))}
+        </Text>
     );
 }
 
@@ -21,14 +27,16 @@ export default function SeekBar() {
     const [tmpProgress, setTmpProgress] = useState<number | null>(null);
     const slidingRef = useRef(false);
 
+    const currentTime = tmpProgress ?? progress.position;
+
     return (
         <View style={style.wrapper}>
-            <TimeLabel time={tmpProgress ?? progress.position} />
+            <TimeLabel time={currentTime} />
             <Slider
                 style={style.slider}
-                minimumTrackTintColor={"#cccccc"}
-                maximumTrackTintColor={"#999999"}
-                thumbTintColor={"#dddddd"}
+                minimumTrackTintColor={"#ffffff"}
+                maximumTrackTintColor={"rgba(255,255,255,0.3)"}
+                thumbTintColor={"#ffffff"}
                 minimumValue={0}
                 maximumValue={progress.duration}
                 onSlidingStart={() => {
@@ -49,7 +57,10 @@ export default function SeekBar() {
                 }}
                 value={progress.position}
             />
-            <TimeLabel time={progress.duration} />
+            <TimeLabel
+                time={progress.duration - currentTime}
+                remaining
+            />
         </View>
     );
 }
@@ -61,14 +72,18 @@ const style = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
+        paddingHorizontal: rpx(32),
     },
     slider: {
-        width: "73%",
+        flex: 1,
+        marginHorizontal: rpx(16),
         height: rpx(40),
     },
     text: {
-        fontSize: fontSizeConst.description,
+        fontSize: fontSizeConst.tag,
         includeFontPadding: false,
-        color: "#cccccc",
+        color: "rgba(255,255,255,0.6)",
+        minWidth: rpx(72),
+        textAlign: "center",
     },
 });
