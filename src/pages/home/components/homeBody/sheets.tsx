@@ -51,7 +51,7 @@ export default function Sheets() {
                     }}>
                     <ThemeText
                         accessible={false}
-                        fontSize="title"
+                        fontSize="content"
                         style={[
                             styles.tabText,
                             index === 0 ? selectedTabTextStyle : null,
@@ -69,7 +69,7 @@ export default function Sheets() {
                         setIndex(1);
                     }}>
                     <ThemeText
-                        fontSize="title"
+                        fontSize="content"
                         accessible={false}
                         style={[
                             styles.tabText,
@@ -169,7 +169,14 @@ export default function Sheets() {
                                         }
                                     />
                                     <ListItem.Content
-                                        title={sheet.title}
+                                        title={
+                                            <ThemeText
+                                                fontSize="subTitle"
+                                                fontWeight="medium"
+                                                numberOfLines={1}>
+                                                {sheet.title}
+                                            </ThemeText>
+                                        }
                                         description={
                                             isLocalSheet
                                                 ? t("home.songCount", { count: sheet.worksNum })
