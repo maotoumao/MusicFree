@@ -31,8 +31,8 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
     return (
         <SafeAreaView
             edges={["bottom"]}
-            style={[globalStyle.fwflex1, styles.pageBg, styles.debugMark]}>
-            <StatusBar />
+            style={[globalStyle.fwflex1, styles.pageBg,]}>
+            <StatusBar backgroundColor={"transparent"} />
             <NavBar
                 musicList={musicList ?? sheetInfo?.musicList ?? []}
                 navTitle={navTitle}

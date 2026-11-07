@@ -20,7 +20,7 @@ export default function SheetDetail() {
         <SafeAreaView
             edges={["bottom"]}
             style={[globalStyle.fwflex1, styles.pageBg, { backgroundColor: bgColor }]}>
-            <StatusBar />
+            <StatusBar backgroundColor={"transparent"} />
             <NavBar />
             <SheetMusicList />
             <MusicBar />

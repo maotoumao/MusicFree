@@ -67,7 +67,7 @@ export default function MusicItem(props: IMusicItemProps) {
                     <TitleAndTag
                         title={musicItem.title}
                         titleFontColor={highlight ? "primary": "text"}
-                        tag={musicItem.platform}
+                        // tag={musicItem.platform}
                     />
                 }
                 description={
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     },
 
     indexText: {
-        fontStyle: "italic",
+        // fontStyle: "italic",
         textAlign: "center",
         padding: rpx(2),
     },

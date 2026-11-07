@@ -57,7 +57,7 @@ export default function Header(props: IHeaderProps) {
                 {/* 底部渐暗, 衬托标题与操作行 */}
                 <LinearGradient
                     style={[StyleSheet.absoluteFill, styles.bottomMask]}
-                    colors={["rgba(0,0,0,0)", "rgba(0,0,0,0) 55%", "rgba(0,0,0,0.6)"]}
+                    colors={["rgba(0,0,0,0)", "rgba(0,0,0,0) 55%", "rgb(0, 0, 0)"]}
                     pointerEvents="none"
                 />
                 {/* 标题覆盖区 */}
@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
     bottomMask: {},
     titleOverlay: {
         position: "absolute",
-        left: rpx(24),
-        right: rpx(24),
+        left: rpx(32),
+        right: rpx(32),
         bottom: rpx(160),
         alignItems: "center",
     },
@@ -143,18 +143,17 @@ const styles = StyleSheet.create({
     },
     actions: {
         position: "absolute",
-        left: rpx(32),
-        right: rpx(32),
+        width: "100%",
         bottom: rpx(28),
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "center",
     },
     roundBtn: {
         width: rpx(96),
         height: rpx(96),
         borderRadius: rpx(48),
-        backgroundColor: "rgba(120,120,120,0.35)",
+        backgroundColor: "rgba(124, 124, 124, 0.34)",
         justifyContent: "center",
         alignItems: "center",
     },
@@ -162,6 +161,7 @@ const styles = StyleSheet.create({
         width: rpx(320),
         height: rpx(96),
         borderRadius: rpx(48),
+        marginHorizontal: rpx(32),
         backgroundColor: "#F5F1EC",
         flexDirection: "row",
         justifyContent: "center",

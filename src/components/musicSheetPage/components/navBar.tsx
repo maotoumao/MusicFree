@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     moreButton: {
-        marginLeft: rpx(8),
+        marginLeft: rpx(16),
     },
     menuPanel: {
         position: "absolute",

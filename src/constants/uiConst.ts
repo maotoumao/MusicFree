@@ -5,7 +5,7 @@ const fontSizeConst = {
     /** 标签 */
     tag: rpx(24),
     /** 描述文本等字体 */
-    description: rpx(24),
+    description: rpx(20),
     /** 副标题 */
     subTitle: rpx(24),
     /** 正文字体 */
@@ -29,7 +29,7 @@ const fontWeightConst = {
 const iconSizeConst = {
     small: rpx(30),
     light: rpx(36),
-    normal: rpx(42),
+    normal: rpx(48),
     big: rpx(60),
     large: rpx(72),
 };

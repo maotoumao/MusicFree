@@ -47,7 +47,7 @@ export default function Header() {
                 />
                 <LinearGradient
                     style={[StyleSheet.absoluteFill, styles.bottomMask]}
-                    colors={["rgba(0,0,0,0)", "rgba(0,0,0,0) 55%", "rgba(0,0,0,0.6)"]}
+                    colors={["rgba(0,0,0,0)", "rgba(0,0,0,0) 55%", "rgb(0, 0, 0)"]}
                     pointerEvents="none"
                 />
                 <View style={styles.titleOverlay} pointerEvents="none">
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
         bottom: rpx(28),
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "center",
     },
     roundBtn: {
         width: rpx(96),
@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
         width: rpx(320),
         height: rpx(96),
         borderRadius: rpx(48),
+        marginHorizontal: rpx(32),
         backgroundColor: "#F5F1EC",
         flexDirection: "row",
         justifyContent: "center",
