@@ -3,6 +3,7 @@ import { Keyboard, StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { showPanel } from "@/components/panels/usePanel";
 import useColors from "@/hooks/useColors";
 import IconButton from "../base/iconButton";
 import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
@@ -70,8 +71,8 @@ function MusicBar() {
                             }}
                         />
                         <IconButton
-                            accessibilityLabel={"下一首"}
-                            name="skip-right"
+                            accessibilityLabel={"播放列表"}
+                            name="playlist"
                             sizeType={"normal"}
                             hitSlop={{
                                 top: 12,
@@ -81,7 +82,7 @@ function MusicBar() {
                             }}
                             color={colors.musicBarText}
                             onPress={() => {
-                                TrackPlayer.skipToNext();
+                                showPanel("PlayList");
                             }}
                             style={[style.actionIcon]}
                         />

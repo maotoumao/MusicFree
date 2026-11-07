@@ -15,7 +15,7 @@ const fontSizeConst = {
     /** appbar的字体 */
     appbar: rpx(32),
     /** 页面大标题 */
-    pageTitle: rpx(54),
+    pageTitle: rpx(40),
 };
 
 const fontWeightConst = {
