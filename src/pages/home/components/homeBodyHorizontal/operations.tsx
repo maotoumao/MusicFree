@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     },
     actionButtonStyle: {
         width: rpx(157.5),
-        height: rpx(208),
+        height: rpx(157.5),
         borderRadius: rpx(18),
     },
     actionMarginLeft: {

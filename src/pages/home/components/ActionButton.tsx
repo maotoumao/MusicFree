@@ -33,7 +33,7 @@ export default function ActionButton(props: IActionButtonProps) {
                     accessible={false}
                     name={iconName}
                     color={iconColor ?? colors.primary}
-                    size={rpx(96)}
+                    size={rpx(72)}
                 />
                 <ThemeText
                     accessible={false}
@@ -59,6 +59,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     text: {
-        marginTop: rpx(12),
+        marginTop: rpx(24),
     },
 });
