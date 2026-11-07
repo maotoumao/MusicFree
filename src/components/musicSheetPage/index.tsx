@@ -4,7 +4,8 @@ import MusicBar from "@/components/musicBar";
 import SheetMusicList from "./components/sheetMusicList";
 import StatusBar from "@/components/base/statusBar";
 import globalStyle from "@/constants/globalStyle";
-import VerticalSafeAreaView from "../base/verticalSafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Image, StyleSheet } from "react-native";
 import { RequestStateCode } from "@/constants/commonConst";
 
 interface IMusicSheetPageProps {
@@ -23,15 +24,29 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
     const { navTitle, sheetInfo, musicList, canStar, onLoadMore, onRetry, state } =
         props;
 
+    const cover = sheetInfo?.artwork ?? sheetInfo?.coverImg;
+
     return (
-        <VerticalSafeAreaView style={globalStyle.fwflex1}>
+        <SafeAreaView
+            edges={["bottom"]}
+            style={[globalStyle.fwflex1, styles.pageBg, styles.debugMark]}>
+            {/* 封面模糊氛围背景 */}
+            {cover ? (
+                <Image
+                    blurRadius={40}
+                    source={typeof cover === "string" ? { uri: cover } : cover}
+                    style={styles.artworkBg}
+                />
+            ) : null}
             <StatusBar />
             <NavBar
                 musicList={musicList ?? sheetInfo?.musicList ?? []}
                 navTitle={navTitle}
+                sheetInfo={sheetInfo as any}
+                canStar={canStar}
             />
             <SheetMusicList
-                canStar={canStar}
+                navTitle={navTitle}
                 sheetInfo={sheetInfo as any}
                 musicList={musicList ?? sheetInfo?.musicList}
                 state={state}
@@ -39,6 +54,26 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
                 onLoadMore={onLoadMore}
             />
             <MusicBar />
-        </VerticalSafeAreaView>
+        </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    pageBg: {
+        backgroundColor: "#000000",
+    },
+    debugMark: {
+        borderWidth: 6,
+        borderColor: "red",
+    },
+    artworkBg: {
+        position: "absolute",
+        width: "100%",
+        height: "100%",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        opacity: 0.25,
+    },
+});

@@ -13,15 +13,14 @@ import { RequestStateCode } from "@/constants/commonConst";
 interface IMusicListProps {
     sheetInfo: IMusic.IMusicSheetItem | null;
     musicList?: IMusic.IMusicItem[] | null;
-    // 是否可收藏
-    canStar?: boolean;
+    navTitle: string;
     // 状态
     state: RequestStateCode;
     onRetry?: () => void;
     onLoadMore?: () => void;
 }
 export default function SheetMusicList(props: IMusicListProps) {
-    const { sheetInfo, musicList, canStar, state, onRetry, onLoadMore } = props;
+    const { sheetInfo, musicList, navTitle, state, onRetry, onLoadMore } = props;
 
     return (
         <View style={globalStyle.fwflex1}>
@@ -33,7 +32,7 @@ export default function SheetMusicList(props: IMusicListProps) {
                         showIndex
                         Header={
                             <Header
-                                canStar={canStar}
+                                navTitle={navTitle}
                                 musicSheet={sheetInfo}
                                 musicList={musicList}
                             />
