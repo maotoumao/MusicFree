@@ -42,7 +42,7 @@ export default function Header() {
                 />
                 <LinearGradient
                     style={[StyleSheet.absoluteFill, styles.topMask]}
-                    colors={["rgba(0,0,0,0.45)", "rgba(0,0,0,0)"]}
+                    colors={["rgba(2, 2, 2, 0.45)", "rgba(0,0,0,0)"]}
                     pointerEvents="none"
                 />
                 <LinearGradient

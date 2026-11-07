@@ -1,14 +1,58 @@
 import React, { memo, useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
+import { CircularProgressBase } from "react-native-circular-progress-indicator";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { showPanel } from "@/components/panels/usePanel";
 import useColors from "@/hooks/useColors";
 import IconButton from "../base/iconButton";
-import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
+import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import MusicInfo from "./musicInfo";
+
+function CircularPlayBtn() {
+    const progress = useProgress();
+    const musicState = useMusicState();
+    const colors = useColors();
+    const isPaused = musicIsPaused(musicState);
+
+    return (
+        <CircularProgressBase
+            activeStrokeWidth={rpx(4)}
+            inActiveStrokeWidth={rpx(2)}
+            inActiveStrokeOpacity={0.2}
+            value={
+                progress?.duration
+                    ? (100 * progress.position) / progress.duration
+                    : 0
+            }
+            duration={100}
+            radius={rpx(34)}
+            activeStrokeColor={colors.musicBarText}
+            inActiveStrokeColor={colors.textSecondary}>
+            <IconButton
+                accessibilityLabel={"播放或暂停歌曲"}
+                name={isPaused ? "play" : "pause"}
+                sizeType={"normal"}
+                hitSlop={{
+                    top: 10,
+                    left: 10,
+                    right: 10,
+                    bottom: 10,
+                }}
+                color={colors.musicBarText}
+                onPress={async () => {
+                    if (isPaused) {
+                        await TrackPlayer.play();
+                    } else {
+                        await TrackPlayer.pause();
+                    }
+                }}
+            />
+        </CircularProgressBase>
+    );
+}
 
 function MusicBar() {
     const musicItem = useCurrentMusic();
@@ -33,8 +77,6 @@ function MusicBar() {
         };
     }, []);
 
-    const isPaused = musicIsPaused(musicState);
-
     return (
         <>
             {musicItem && !showKeyboard && (
@@ -51,25 +93,7 @@ function MusicBar() {
                 >
                     <MusicInfo musicItem={musicItem} />
                     <View style={style.actionGroup}>
-                        <IconButton
-                            accessibilityLabel={"播放或暂停歌曲"}
-                            name={isPaused ? "play" : "pause"}
-                            sizeType={"normal"}
-                            hitSlop={{
-                                top: 12,
-                                left: 12,
-                                right: 12,
-                                bottom: 12,
-                            }}
-                            color={colors.musicBarText}
-                            onPress={async () => {
-                                if (isPaused) {
-                                    await TrackPlayer.play();
-                                } else {
-                                    await TrackPlayer.pause();
-                                }
-                            }}
-                        />
+                        <CircularPlayBtn />
                         <IconButton
                             accessibilityLabel={"播放列表"}
                             name="playlist"
@@ -98,13 +122,13 @@ export default memo(MusicBar, () => true);
 const style = StyleSheet.create({
     wrapper: {
         alignSelf: "stretch",
-        height: rpx(136),
+        height: rpx(128),
         flexDirection: "row",
         alignItems: "center",
         paddingRight: rpx(24),
         marginHorizontal: rpx(20),
         marginBottom: rpx(12),
-        borderRadius: rpx(24),
+        borderRadius: rpx(100),
         shadowColor: "#000",
         shadowOpacity: 0.35,
         shadowRadius: 12,
@@ -122,5 +146,6 @@ const style = StyleSheet.create({
     },
     actionIcon: {
         marginLeft: rpx(32),
+        marginRight: rpx(12),
     },
 });
