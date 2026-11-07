@@ -103,6 +103,7 @@ export default function Sheets() {
                     styles.groupContainer,
                     {
                         backgroundColor: colors.card,
+                        marginTop: rpx(24),
                     },
                 ]}>
                 <FlashList

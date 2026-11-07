@@ -9,7 +9,7 @@ const fontSizeConst = {
     /** 副标题 */
     subTitle: rpx(24),
     /** 正文字体 */
-    content: rpx(32),
+    content: rpx(28),
     /** 标题字体 */
     title: rpx(36),
     /** appbar的字体 */

@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        height: rpx(110),
+        height: rpx(90),
     },
     titleButton: {
         marginLeft: rpx(24),

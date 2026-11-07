@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import rpx from "@/utils/rpx";
+import rpx, { vh } from "@/utils/rpx";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
 import { ImgAsset } from "@/constants/assetsConst";
@@ -487,6 +487,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
 
     return (
         <PanelBase
+            height={vh(70)}
             renderBody={() => (
                 <>
                     <View style={style.header}>
