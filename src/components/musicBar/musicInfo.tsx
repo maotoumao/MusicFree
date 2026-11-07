@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     artworkImg: {
         width: rpx(80),
         height: rpx(80),
-        borderRadius: rpx(100),
+        borderRadius: rpx(16),
         marginRight: rpx(24),
     },
 });

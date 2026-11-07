@@ -19,7 +19,9 @@ export default function SheetDetail() {
     return (
         <SafeAreaView
             edges={["bottom"]}
-            style={[globalStyle.fwflex1, styles.pageBg, { backgroundColor: bgColor }]}>
+            style={[globalStyle.fwflex1, styles.pageBg, 
+            // { backgroundColor: bgColor }
+            ]}>
             <StatusBar backgroundColor={"transparent"} />
             <NavBar />
             <SheetMusicList />

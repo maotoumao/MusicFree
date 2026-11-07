@@ -128,7 +128,7 @@ const style = StyleSheet.create({
         paddingRight: rpx(24),
         marginHorizontal: rpx(20),
         marginBottom: rpx(12),
-        borderRadius: rpx(100),
+        borderRadius: rpx(24),
         shadowColor: "#000",
         shadowOpacity: 0.35,
         shadowRadius: 12,
