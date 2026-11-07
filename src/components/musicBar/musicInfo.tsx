@@ -3,9 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import rpx from "@/utils/rpx";
 import FastImage from "../base/fastImage";
 import { ImgAsset } from "@/constants/assetsConst";
-import Color from "color";
 import ThemeText from "../base/themeText";
-import useColors from "@/hooks/useColors";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import TrackPlayer, { usePlayList } from "@/core/trackPlayer";
@@ -26,7 +24,6 @@ interface IBarMusicItemProps {
 }
 function _BarMusicItem(props: IBarMusicItemProps) {
     const { musicItem, activeIndex, transformSharedValue } = props;
-    const colors = useColors();
     const safeAreaInsets = useSafeAreaInsets();
 
     const animatedStyles = useAnimatedStyle(() => {
@@ -58,19 +55,12 @@ function _BarMusicItem(props: IBarMusicItemProps) {
                 accessible={false}
                 style={styles.textWrapper}
                 numberOfLines={1}>
-                <ThemeText fontSize="content" fontColor="musicBarText">
+                <ThemeText
+                    fontSize="content"
+                    fontColor="musicBarText"
+                    fontWeight="medium">
                     {musicItem?.title}
                 </ThemeText>
-                {musicItem?.artist && (
-                    <ThemeText
-                        fontSize="description"
-                        color={Color(colors.musicBarText)
-                            .alpha(0.6)
-                            .toString()}>
-                        {" "}
-                        -{musicItem.artist}
-                    </ThemeText>
-                )}
             </Text>
         </Animated.View>
     );
@@ -95,8 +85,8 @@ const styles = StyleSheet.create({
         flexShrink: 1,
     },
     artworkImg: {
-        width: rpx(96),
-        height: rpx(96),
+        width: rpx(80),
+        height: rpx(80),
         borderRadius: rpx(16),
         marginRight: rpx(24),
     },
