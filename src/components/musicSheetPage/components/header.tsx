@@ -44,6 +44,7 @@ export default function Header(props: IHeaderProps) {
             <View style={styles.coverWrapper}>
                 <FastImage
                     style={styles.cover}
+                    resizeMode="cover"
                     source={cover}
                     placeholderSource={ImgAsset.albumDefault}
                 />

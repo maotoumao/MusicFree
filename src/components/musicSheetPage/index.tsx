@@ -5,8 +5,9 @@ import SheetMusicList from "./components/sheetMusicList";
 import StatusBar from "@/components/base/statusBar";
 import globalStyle from "@/constants/globalStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { RequestStateCode } from "@/constants/commonConst";
+import useDarkDominantColor from "@/hooks/useDarkDominantColor";
 
 interface IMusicSheetPageProps {
     navTitle: string;
@@ -25,19 +26,12 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
         props;
 
     const cover = sheetInfo?.artwork ?? sheetInfo?.coverImg;
+    const bgColor = useDarkDominantColor(cover);
 
     return (
         <SafeAreaView
             edges={["bottom"]}
             style={[globalStyle.fwflex1, styles.pageBg, styles.debugMark]}>
-            {/* 封面模糊氛围背景 */}
-            {cover ? (
-                <Image
-                    blurRadius={40}
-                    source={typeof cover === "string" ? { uri: cover } : cover}
-                    style={styles.artworkBg}
-                />
-            ) : null}
             <StatusBar />
             <NavBar
                 musicList={musicList ?? sheetInfo?.musicList ?? []}
