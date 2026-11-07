@@ -97,7 +97,7 @@ export default memo(MusicBar, () => true);
 const style = StyleSheet.create({
     wrapper: {
         alignSelf: "stretch",
-        height: rpx(112),
+        height: rpx(136),
         flexDirection: "row",
         alignItems: "center",
         paddingRight: rpx(24),
@@ -120,6 +120,6 @@ const style = StyleSheet.create({
         alignItems: "center",
     },
     actionIcon: {
-        marginLeft: rpx(28),
+        marginLeft: rpx(32),
     },
 });

@@ -33,7 +33,7 @@ export default function ActionButton(props: IActionButtonProps) {
                     accessible={false}
                     name={iconName}
                     color={iconColor ?? colors.primary}
-                    size={rpx(48)}
+                    size={rpx(96)}
                 />
                 <ThemeText
                     accessible={false}

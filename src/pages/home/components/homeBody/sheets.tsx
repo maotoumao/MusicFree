@@ -58,14 +58,6 @@ export default function Sheets() {
                         ]}>
                         {t("home.myPlaylists")}
                     </ThemeText>
-                    <ThemeText
-                        accessible={false}
-                        fontColor="textSecondary"
-                        fontSize="subTitle"
-                        style={styles.tabText}>
-                        {" "}
-                        ({allSheets.length})
-                    </ThemeText>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback
                     style={styles.tabContainer}
@@ -84,14 +76,6 @@ export default function Sheets() {
                             index === 1 ? selectedTabTextStyle : null,
                         ]}>
                         {t("home.starredPlaylists")}
-                    </ThemeText>
-                    <ThemeText
-                        fontColor="textSecondary"
-                        fontSize="subTitle"
-                        accessible={false}
-                        style={styles.tabText}>
-                        {" "}
-                        ({staredSheets.length})
                     </ThemeText>
                 </TouchableWithoutFeedback>
                 <View style={styles.more}>
@@ -133,12 +117,37 @@ export default function Sheets() {
                         const sheetData =
                             (index === 0 ? allSheets : staredSheets) ?? [];
 
+                        const deleteSheet = async () => {
+                            if (sheet.id === MusicSheet.defaultSheet.id) {
+                                return;
+                            }
+                            showDialog("SimpleDialog", {
+                                title: t("dialog.deleteSheetTitle"),
+                                content: t("dialog.deleteSheetContent", {
+                                    name: sheet.title,
+                                }),
+                                onOk: async () => {
+                                    if (isLocalSheet) {
+                                        await MusicSheet.removeSheet(
+                                            sheet.id,
+                                        );
+                                        Toast.success(t("toast.deleteSuccess"));
+                                    } else {
+                                        await MusicSheet.unstarMusicSheet(
+                                            sheet,
+                                        );
+                                        Toast.success(t("toast.hasUnstarred"));
+                                    }
+                                },
+                            });
+                        };
 
                         return (
                             <View key={`${sheet.id}`}>
                                 <ListItem
                                     heightType="big"
                                     withHorizontalPadding
+                                    onLongPress={deleteSheet}
                                     onPress={() => {
                                         if (isLocalSheet) {
                                             navigate(ROUTE_PATH.LOCAL_SHEET_DETAIL, {
@@ -167,33 +176,6 @@ export default function Sheets() {
                                                 : `${sheet.artist ?? ""}`
                                         }
                                     />
-                                    {sheet.id !== MusicSheet.defaultSheet.id ? (
-                                        <ListItem.ListItemIcon
-                                            position="right"
-                                            icon="trash-outline"
-                                            onPress={() => {
-                                                showDialog("SimpleDialog", {
-                                                    title: t("dialog.deleteSheetTitle"),
-                                                    content: t("dialog.deleteSheetContent", {
-                                                        name: sheet.title,
-                                                    }),
-                                                    onOk: async () => {
-                                                        if (isLocalSheet) {
-                                                            await MusicSheet.removeSheet(
-                                                                sheet.id,
-                                                            );
-                                                            Toast.success(t("toast.deleteSuccess"));
-                                                        } else {
-                                                            await MusicSheet.unstarMusicSheet(
-                                                                sheet,
-                                                            );
-                                                            Toast.success(t("toast.hasUnstarred"));
-                                                        }
-                                                    },
-                                                });
-                                            }}
-                                        />
-                                    ) : null}
                                 </ListItem>
                                 {rowIndex < sheetData.length - 1 ? <Divider /> : null}
                             </View>
