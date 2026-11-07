@@ -11,7 +11,6 @@
         <item name="windowSplashScreenBackground">@color/splashscreen_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen_image</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
-        <item name="android:windowSplashScreenBrandingImage">@drawable/spashscreen_branding_image</item>
     </style>
 
 </resources>
