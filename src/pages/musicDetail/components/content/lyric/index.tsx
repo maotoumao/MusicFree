@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
         maxWidth: "80%",
     },
     linkText: {
-        color: "#66ccff",
+        color: "#ea419e",
         textDecorationLine: "underline",
     },
     draggingTime: {
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
         width: "67%",
         height: 1,
         backgroundColor: "#cccccc",
-        opacity: 0.4,
+        opacity: 0.2,
     },
     playIcon: {
         width: rpx(100),
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
         paddingVertical: rpx(10),
         textAlign: "center",
         alignSelf: "center",
-        color: "#66eeff",
+        color: "#66a8ff",
         textDecorationLine: "underline",
     },
 });

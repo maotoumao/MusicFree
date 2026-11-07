@@ -50,6 +50,6 @@ const style = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: rpx(100),
-        height: rpx(120),
+        height: rpx(160),
     },
 });

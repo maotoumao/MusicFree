@@ -7,15 +7,15 @@ const fontSizeConst = {
     /** 描述文本等字体 */
     description: rpx(24),
     /** 副标题 */
-    subTitle: rpx(30),
+    subTitle: rpx(24),
     /** 正文字体 */
-    content: rpx(34),
+    content: rpx(32),
     /** 标题字体 */
-    title: rpx(44),
+    title: rpx(36),
     /** appbar的字体 */
-    appbar: rpx(34),
+    appbar: rpx(32),
     /** 页面大标题 */
-    pageTitle: rpx(68),
+    pageTitle: rpx(54),
 };
 
 const fontWeightConst = {

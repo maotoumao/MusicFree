@@ -29,6 +29,6 @@ export default function Bottom() {
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        height: rpx(328),
+        height: rpx(400),
     },
 });

@@ -73,8 +73,8 @@ const style = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         paddingHorizontal: rpx(24),
-        paddingTop: rpx(8),
-        paddingBottom: rpx(24),
+        paddingTop: rpx(2),
+        paddingBottom: rpx(8),
     },
     text: {
         fontSize: fontSizeConst.tag,

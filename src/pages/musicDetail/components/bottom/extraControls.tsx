@@ -95,7 +95,8 @@ const style = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
-        paddingHorizontal: rpx(48),
+        paddingHorizontal: rpx(24),
+        paddingBottom: rpx(24),
         opacity: 0.85,
     },
 });

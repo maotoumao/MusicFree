@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingHorizontal: rpx(52),
         marginTop: rpx(0),
-        marginBottom: rpx(22),
+        marginBottom: rpx(48),
     },
     line: {
         fontSize: rpx(26),

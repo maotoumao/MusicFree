@@ -59,7 +59,7 @@ const lyricStyles = StyleSheet.create({
     },
     item: {
         color: "white",
-        opacity: 0.42,
+        opacity: 0.22,
         paddingHorizontal: rpx(52),
         paddingVertical: rpx(24),
         width: "100%",
@@ -68,6 +68,6 @@ const lyricStyles = StyleSheet.create({
     },
     draggingItem: {
         opacity: 0.9,
-        color: "white",
+        color: "#ea419e",
     },
 });
