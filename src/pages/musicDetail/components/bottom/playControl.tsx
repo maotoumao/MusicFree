@@ -1,4 +1,5 @@
 import rpx from "@/utils/rpx";
+import useColors from "@/hooks/useColors";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -7,12 +8,13 @@ import TrackPlayer, { useMusicState } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 
 export default function () {
+    const colors = useColors();
     const musicState = useMusicState();
 
     return (
         <View style={style.wrapper}>
             <Icon
-                color={"white"}
+                color={colors.text}
                 name={"skip-left"}
                 size={rpx(70)}
                 onPress={() => {
@@ -20,7 +22,7 @@ export default function () {
                 }}
             />
             <Icon
-                color={"white"}
+                color={colors.text}
                 name={musicIsPaused(musicState) ? "play" : "pause"}
                 size={rpx(90)}
                 onPress={() => {
@@ -32,7 +34,7 @@ export default function () {
                 }}
             />
             <Icon
-                color={"white"}
+                color={colors.text}
                 name={"skip-right"}
                 size={rpx(70)}
                 onPress={() => {

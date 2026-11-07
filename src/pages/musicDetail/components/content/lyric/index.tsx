@@ -20,6 +20,7 @@ import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
 import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager, { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
 import { useI18N } from "@/core/i18n";
+import useColors from "@/hooks/useColors";
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -61,6 +62,7 @@ export default function Lyric(props: IProps) {
         useDelayFalsy<number | undefined>(undefined, 2000);
     const musicState = useMusicState();
     const { t } = useI18N();
+    const colors = useColors();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
 
@@ -260,14 +262,14 @@ export default function Lyric(props: IProps) {
                         <Icon
                             name="ellipsis-vertical"
                             size={rpx(48)}
-                            color="white"
+                            color={colors.text}
                         />
                     </TouchableOpacity>
                 </View>
                 <GestureDetector gesture={tapGesture}>
                     <View style={globalStyle.fwflex1}>
                         {loading ? (
-                        <Loading color="white" />
+                        <Loading color={colors.text} />
                     ) : lyrics?.length ? (
                         <FlatList
                             ref={_ => {
@@ -358,7 +360,7 @@ export default function Lyric(props: IProps) {
                         />
                     ) : (
                         <View style={globalStyle.fullCenter}>
-                            <Text style={[styles.white, fontSizeStyle]}>
+                            <Text style={[styles.white, fontSizeStyle, {color: colors.text}]}>
                                 {t("lyric.noLyric")}
                             </Text>
                             <TapGestureHandler
@@ -423,13 +425,12 @@ const styles = StyleSheet.create({
         marginRight: rpx(24),
     },
     headerTitle: {
-        color: "white",
         includeFontPadding: false,
     },
     headerArtist: {
-        color: "rgba(255,255,255,0.6)",
         includeFontPadding: false,
         marginTop: rpx(6),
+        opacity: 0.6,
     },
     wrapper: {
         width: "100%",

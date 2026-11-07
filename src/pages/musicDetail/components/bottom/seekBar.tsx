@@ -5,18 +5,17 @@ import Slider from "@react-native-community/slider";
 import timeformat from "@/utils/timeformat";
 import { fontSizeConst } from "@/constants/uiConst";
 import TrackPlayer, { useProgress } from "@/core/trackPlayer";
+import useColors from "@/hooks/useColors";
 
 interface ITimeLabelProps {
     time: number;
-    /** 显示为剩余时间（前面加负号） */
-    remaining?: boolean;
+    color?: string;
 }
 
 function TimeLabel(props: ITimeLabelProps) {
-    const { time, remaining } = props;
+    const { time, color } = props;
     return (
-        <Text style={style.text}>
-            {remaining ? "-" : ""}
+        <Text style={[style.text, {color}]}>
             {timeformat(Math.max(time, 0))}
         </Text>
     );
@@ -26,17 +25,18 @@ export default function SeekBar() {
     const progress = useProgress(1000);
     const [tmpProgress, setTmpProgress] = useState<number | null>(null);
     const slidingRef = useRef(false);
+    const colors = useColors();
 
     const currentTime = tmpProgress ?? progress.position;
 
     return (
         <View style={style.wrapper}>
-            <TimeLabel time={currentTime} />
+            <TimeLabel time={currentTime} color={colors.text} />
             <Slider
                 style={style.slider}
-                minimumTrackTintColor={"#ffffff"}
-                maximumTrackTintColor={"rgba(255,255,255,0.3)"}
-                thumbTintColor={"#ffffff"}
+                minimumTrackTintColor={colors.text}
+                maximumTrackTintColor={"rgba(128,128,128,0.4)"}
+                thumbTintColor={colors.text}
                 minimumValue={0}
                 maximumValue={progress.duration}
                 onSlidingStart={() => {
@@ -57,10 +57,7 @@ export default function SeekBar() {
                 }}
                 value={progress.position}
             />
-            <TimeLabel
-                time={progress.duration - currentTime}
-                remaining
-            />
+            <TimeLabel time={progress.duration} color={colors.text} />
         </View>
     );
 }
@@ -82,7 +79,6 @@ const style = StyleSheet.create({
     text: {
         fontSize: fontSizeConst.tag,
         includeFontPadding: false,
-        color: "rgba(255,255,255,0.6)",
         minWidth: rpx(72),
         textAlign: "center",
     },
