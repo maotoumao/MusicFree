@@ -1,30 +1,19 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import rpx from "@/utils/rpx";
-import { useNavigation } from "@react-navigation/native";
-import IconButton from "@/components/base/iconButton";
-import ThemeText from "@/components/base/themeText";
 import Icon from "@/components/base/icon.tsx";
+import ThemeText from "@/components/base/themeText";
 import useColors from "@/hooks/useColors";
 import { useCurrentMusic } from "@/core/trackPlayer";
 import MusicSheet, { useFavorite } from "@/core/musicSheet";
 
 export default function NavBar() {
-    const navigation = useNavigation();
     const colors = useColors();
     const musicItem = useCurrentMusic();
     const isFavorite = useFavorite(musicItem);
 
     return (
         <View style={styles.container}>
-            <IconButton
-                name="arrow-left"
-                sizeType={"normal"}
-                color={colors.text}
-                onPress={() => {
-                    navigation.goBack();
-                }}
-            />
             <View style={styles.titleMain}>
                 <ThemeText
                     fontSize="title"
@@ -63,7 +52,7 @@ export default function NavBar() {
                 <Icon
                     name={isFavorite ? "heart" : "heart-outline"}
                     size={rpx(48)}
-                    color={isFavorite ? colors.primary : colors.text}
+                    color={isFavorite ? colors.primary : "white"}
                 />
             </TouchableOpacity>
         </View>
@@ -76,21 +65,20 @@ const styles = StyleSheet.create({
         height: rpx(120),
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: rpx(24),
+        paddingHorizontal: rpx(52),
     },
     titleMain: {
         flex: 1,
-        marginLeft: rpx(16),
         marginRight: rpx(16),
     },
     titleText: {
-        color: undefined,
+        color: "white",
         includeFontPadding: false,
     },
     artistText: {
+        color: "rgba(255,255,255,0.6)",
         includeFontPadding: false,
         marginTop: rpx(4),
-        opacity: 0.6,
     },
     favoriteButton: {
         padding: rpx(8),

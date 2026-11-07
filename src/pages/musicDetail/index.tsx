@@ -10,12 +10,10 @@ import Content from "./components/content";
 import Lyric from "./components/content/lyric";
 import NavBar from "./components/navBar";
 import Config from "@/core/appConfig";
-import Theme from "@/core/theme";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 
 export default function MusicDetail() {
     const orientation = useOrientation();
-    const theme = Theme.useTheme();
 
     useEffect(() => {
         const needAwake = Config.getConfig("basic.musicDetailAwake");
@@ -33,10 +31,7 @@ export default function MusicDetail() {
         <>
             <Background />
             <SafeAreaView style={globalStyle.fwflex1}>
-                <StatusBar
-                    backgroundColor={"transparent"}
-                    barStyle={theme.dark ? "light-content" : "dark-content"}
-                />
+                <StatusBar backgroundColor={"transparent"} />
                 <View style={style.bodyWrapper}>
                     <View style={globalStyle.flex1}>
                         <NavBar />

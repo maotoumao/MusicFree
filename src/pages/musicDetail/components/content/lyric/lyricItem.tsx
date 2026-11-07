@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import { StyleSheet, Text } from "react-native";
 import rpx from "@/utils/rpx";
-import useColors from "@/hooks/useColors";
 import { fontSizeConst } from "@/constants/uiConst";
 
 interface ILyricItemComponentProps {
@@ -21,7 +20,6 @@ interface ILyricItemComponentProps {
 
 function _LyricItemComponent(props: ILyricItemComponentProps) {
     const { light, highlight, text, onLayout, index, fontSize } = props;
-    const colors = useColors();
 
     return (
         <Text
@@ -32,9 +30,6 @@ function _LyricItemComponent(props: ILyricItemComponentProps) {
             }}
             style={[
                 lyricStyles.item,
-                {
-                    color: colors.text,
-                },
                 {
                     fontSize: fontSize || fontSizeConst.content,
                 },

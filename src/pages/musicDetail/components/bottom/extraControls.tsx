@@ -1,7 +1,6 @@
 import React from "react";
 import { InteractionManager, StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
-import useColors from "@/hooks/useColors";
 
 import Icon from "@/components/base/icon.tsx";
 import { showPanel } from "@/components/panels/usePanel";
@@ -16,14 +15,13 @@ import i18n from "@/core/i18n";
 import { ROUTE_PATH } from "@/core/router";
 
 export default function ExtraControls() {
-    const colors = useColors();
     const repeatMode = useRepeatMode();
     const musicItem = useCurrentMusic();
 
     return (
         <View style={style.wrapper}>
             <Icon
-                color={colors.text}
+                color="white"
                 name={repeatModeConst[repeatMode].icon}
                 size={rpx(48)}
                 onPress={async () => {
@@ -34,7 +32,7 @@ export default function ExtraControls() {
                 }}
             />
             <Icon
-                color={colors.text}
+                color="white"
                 name="timer"
                 size={rpx(48)}
                 onPress={() => {
@@ -42,7 +40,7 @@ export default function ExtraControls() {
                 }}
             />
             <Icon
-                color={colors.text}
+                color="white"
                 name="graphic-eq"
                 size={rpx(48)}
                 onPress={() => {
@@ -66,7 +64,7 @@ export default function ExtraControls() {
                 }}
             />
             <Icon
-                color={colors.text}
+                color="white"
                 name="playlist"
                 size={rpx(48)}
                 onPress={() => {
@@ -74,7 +72,7 @@ export default function ExtraControls() {
                 }}
             />
             <Icon
-                color={colors.text}
+                color="white"
                 name="ellipsis-horizontal"
                 size={rpx(48)}
                 onPress={() => {

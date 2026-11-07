@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import rpx from "@/utils/rpx";
 import { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
-import useColors from "@/hooks/useColors";
 
 interface ILyricPreviewProps {
     onPress?: () => void;
@@ -12,7 +11,6 @@ export default function LyricPreview(props: ILyricPreviewProps) {
     const { onPress } = props;
     const { lyrics } = useLyricState();
     const currentLrcItem = useCurrentLyricItem();
-    const colors = useColors();
 
     const lines = useMemo(() => {
         if (!lyrics?.length) {
@@ -42,19 +40,19 @@ export default function LyricPreview(props: ILyricPreviewProps) {
             accessible
             accessibilityLabel={"歌词预览, 点击查看完整歌词"}
             onPress={onPress}>
-            <Text style={[styles.line, styles.dim, {color: colors.text}]} numberOfLines={1}>
+            <Text style={[styles.line, styles.dim, ]} numberOfLines={1}>
                 {lines.prev ?? ""}
             </Text>
             <Text
                 style={[
                     styles.line,
                     lines.active ? styles.current : styles.dim,
-                    {color: colors.text},
+                    ,
                 ]}
                 numberOfLines={1}>
                 {lines.current}
             </Text>
-            <Text style={[styles.line, styles.dim, {color: colors.text}]} numberOfLines={1}>
+            <Text style={[styles.line, styles.dim, ]} numberOfLines={1}>
                 {lines.next ?? ""}
             </Text>
         </TouchableOpacity>
@@ -65,7 +63,8 @@ const styles = StyleSheet.create({
     wrapper: {
         width: "100%",
         paddingHorizontal: rpx(52),
-        marginTop: rpx(48),
+        marginTop: rpx(16),
+        marginBottom: rpx(56),
     },
     line: {
         fontSize: rpx(36),

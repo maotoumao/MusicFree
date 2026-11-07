@@ -20,7 +20,6 @@ import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
 import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager, { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
 import { useI18N } from "@/core/i18n";
-import useColors from "@/hooks/useColors";
 
 const ITEM_HEIGHT = rpx(92);
 
@@ -62,7 +61,6 @@ export default function Lyric(props: IProps) {
         useDelayFalsy<number | undefined>(undefined, 2000);
     const musicState = useMusicState();
     const { t } = useI18N();
-    const colors = useColors();
 
     const [layout, setLayout] = useState<LayoutRectangle>();
 
@@ -262,14 +260,14 @@ export default function Lyric(props: IProps) {
                         <Icon
                             name="ellipsis-vertical"
                             size={rpx(48)}
-                            color={colors.text}
+                            color="white"
                         />
                     </TouchableOpacity>
                 </View>
                 <GestureDetector gesture={tapGesture}>
                     <View style={globalStyle.fwflex1}>
                         {loading ? (
-                        <Loading color={colors.text} />
+                        <Loading color="white" />
                     ) : lyrics?.length ? (
                         <FlatList
                             ref={_ => {
@@ -360,7 +358,7 @@ export default function Lyric(props: IProps) {
                         />
                     ) : (
                         <View style={globalStyle.fullCenter}>
-                            <Text style={[styles.white, fontSizeStyle, {color: colors.text}]}>
+                            <Text style={[styles.white, fontSizeStyle]}>
                                 {t("lyric.noLyric")}
                             </Text>
                             <TapGestureHandler
