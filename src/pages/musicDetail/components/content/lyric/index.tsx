@@ -7,8 +7,6 @@ import { fontSizeConst } from "@/constants/uiConst";
 import Loading from "@/components/base/loading";
 import globalStyle from "@/constants/globalStyle";
 import { showPanel } from "@/components/panels/usePanel";
-import ThemeText from "@/components/base/themeText";
-import Icon from "@/components/base/icon.tsx";
 import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
@@ -230,42 +228,8 @@ export default function Lyric(props: IProps) {
 
     return (
         <>
-            <View style={globalStyle.fwflex1}>
-                <View style={styles.header}>
-                    <View style={styles.headerTexts}>
-                        <ThemeText
-                            fontSize="title"
-                            fontWeight="bold"
-                            numberOfLines={1}
-                            style={styles.headerTitle}>
-                            {currentMusicItem?.title ?? "--"}
-                        </ThemeText>
-                        <ThemeText
-                            fontSize="subTitle"
-                            numberOfLines={1}
-                            style={styles.headerArtist}>
-                            {currentMusicItem?.artist}
-                        </ThemeText>
-                    </View>
-                    <TouchableOpacity
-                        accessible
-                        accessibilityLabel={"歌词操作"}
-                        onPress={() => {
-                            if (currentMusicItem) {
-                                showPanel("MusicItemLyricOptions", {
-                                    musicItem: currentMusicItem,
-                                });
-                            }
-                        }}>
-                        <Icon
-                            name="ellipsis-vertical"
-                            size={rpx(48)}
-                            color="white"
-                        />
-                    </TouchableOpacity>
-                </View>
-                <GestureDetector gesture={tapGesture}>
-                    <View style={globalStyle.fwflex1}>
+            <GestureDetector gesture={tapGesture}>
+                <View style={globalStyle.fwflex1}>
                         {loading ? (
                         <Loading color="white" />
                     ) : lyrics?.length ? (
@@ -402,34 +366,13 @@ export default function Lyric(props: IProps) {
                             />
                         </View>
                     )}
-                    </View>
-                </GestureDetector>
-            </View>
+                </View>
+            </GestureDetector>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-    header: {
-        width: "100%",
-        flexDirection: "row",
-        alignItems: "flex-start",
-        justifyContent: "space-between",
-        paddingHorizontal: rpx(52),
-        paddingTop: rpx(8),
-    },
-    headerTexts: {
-        flex: 1,
-        marginRight: rpx(24),
-    },
-    headerTitle: {
-        includeFontPadding: false,
-    },
-    headerArtist: {
-        includeFontPadding: false,
-        marginTop: rpx(6),
-        opacity: 0.6,
-    },
     wrapper: {
         width: "100%",
         marginVertical: rpx(24),

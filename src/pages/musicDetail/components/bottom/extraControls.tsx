@@ -91,7 +91,7 @@ export default function ExtraControls() {
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        height: rpx(88),
+        height: rpx(138),
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",

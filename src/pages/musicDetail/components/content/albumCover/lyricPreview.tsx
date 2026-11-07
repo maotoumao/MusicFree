@@ -63,12 +63,13 @@ const styles = StyleSheet.create({
     wrapper: {
         width: "100%",
         paddingHorizontal: rpx(52),
-        marginTop: rpx(16),
-        marginBottom: rpx(56),
+        marginTop: rpx(0),
+        marginBottom: rpx(22),
     },
     line: {
-        fontSize: rpx(36),
-        lineHeight: rpx(56),
+        fontSize: rpx(26),
+        lineHeight: rpx(50),
+        color: "rgba(255,255,255,0.6)",
         includeFontPadding: false,
     },
     current: {

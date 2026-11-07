@@ -29,7 +29,7 @@ export default function SeekBar() {
                 style={style.slider}
                 minimumTrackTintColor={"#ffffff"}
                 maximumTrackTintColor={"rgba(255,255,255,0.3)"}
-                thumbTintColor={"#ffffff"}
+                thumbTintColor={"#ffffff00"}
                 minimumValue={0}
                 maximumValue={progress.duration}
                 onSlidingStart={() => {
@@ -61,7 +61,7 @@ export default function SeekBar() {
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        paddingHorizontal: rpx(48),
+        paddingHorizontal: rpx(28),
         paddingTop: rpx(8),
     },
     slider: {
@@ -72,11 +72,13 @@ const style = StyleSheet.create({
         width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingHorizontal: rpx(8),
+        paddingHorizontal: rpx(24),
+        paddingTop: rpx(8),
+        paddingBottom: rpx(24),
     },
     text: {
         fontSize: fontSizeConst.tag,
         includeFontPadding: false,
-        color: "rgba(255,255,255,0.6)",
+        color: "rgba(255,255,255,0.4)",
     },
 });
