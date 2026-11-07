@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LayoutRectangle, StyleSheet, Text, View } from "react-native";
+import { LayoutRectangle, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import rpx from "@/utils/rpx";
 import useDelayFalsy from "@/hooks/useDelayFalsy";
 import { FlatList, Gesture, GestureDetector, TapGestureHandler } from "react-native-gesture-handler";
@@ -7,13 +7,14 @@ import { fontSizeConst } from "@/constants/uiConst";
 import Loading from "@/components/base/loading";
 import globalStyle from "@/constants/globalStyle";
 import { showPanel } from "@/components/panels/usePanel";
+import ThemeText from "@/components/base/themeText";
+import Icon from "@/components/base/icon.tsx";
 import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
 import DraggingTime from "./draggingTime";
 import LyricItemComponent from "./lyricItem";
 import PersistStatus from "@/utils/persistStatus";
-import LyricOperations from "./lyricOperations";
 import { IParsedLrcItem } from "@/utils/lrcParser";
 import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
 import { getMediaExtraProperty } from "@/utils/mediaExtra";
@@ -32,10 +33,10 @@ interface IProps {
 }
 
 const fontSizeMap = {
-    0: rpx(24),
-    1: rpx(30),
-    2: rpx(36),
-    3: rpx(42),
+    0: rpx(44),
+    1: rpx(56),
+    2: rpx(68),
+    3: rpx(80),
 } as Record<number, number>;
 
 export default function Lyric(props: IProps) {
@@ -132,6 +133,11 @@ export default function Lyric(props: IProps) {
         };
     }, []);
 
+    // 字号/翻译切换后行高变化, 延迟重新定位到当前行
+    useEffect(() => {
+        delayedScrollToCurrentLrcItem();
+    }, [fontSizeKey, showTranslation, delayedScrollToCurrentLrcItem]);
+
     useEffect(() => {
         // 暂停且拖拽才返回
         if (
@@ -224,9 +230,43 @@ export default function Lyric(props: IProps) {
 
     return (
         <>
-            <GestureDetector gesture={tapGesture}>
-                <View style={globalStyle.fwflex1}>
-                    {loading ? (
+            <View style={globalStyle.fwflex1}>
+                <View style={styles.header}>
+                    <View style={styles.headerTexts}>
+                        <ThemeText
+                            fontSize="title"
+                            fontWeight="bold"
+                            numberOfLines={1}
+                            style={styles.headerTitle}>
+                            {currentMusicItem?.title ?? "--"}
+                        </ThemeText>
+                        <ThemeText
+                            fontSize="subTitle"
+                            numberOfLines={1}
+                            style={styles.headerArtist}>
+                            {currentMusicItem?.artist}
+                        </ThemeText>
+                    </View>
+                    <TouchableOpacity
+                        accessible
+                        accessibilityLabel={"歌词操作"}
+                        onPress={() => {
+                            if (currentMusicItem) {
+                                showPanel("MusicItemLyricOptions", {
+                                    musicItem: currentMusicItem,
+                                });
+                            }
+                        }}>
+                        <Icon
+                            name="ellipsis-vertical"
+                            size={rpx(48)}
+                            color="white"
+                        />
+                    </TouchableOpacity>
+                </View>
+                <GestureDetector gesture={tapGesture}>
+                    <View style={globalStyle.fwflex1}>
+                        {loading ? (
                         <Loading color="white" />
                     ) : lyrics?.length ? (
                         <FlatList
@@ -362,19 +402,38 @@ export default function Lyric(props: IProps) {
                             />
                         </View>
                     )}
-                </View>
-            </GestureDetector>
-            <LyricOperations
-                scrollToCurrentLrcItem={delayedScrollToCurrentLrcItem}
-            />
+                    </View>
+                </GestureDetector>
+            </View>
         </>
     );
 }
 
 const styles = StyleSheet.create({
+    header: {
+        width: "100%",
+        flexDirection: "row",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        paddingHorizontal: rpx(52),
+        paddingTop: rpx(8),
+    },
+    headerTexts: {
+        flex: 1,
+        marginRight: rpx(24),
+    },
+    headerTitle: {
+        color: "white",
+        includeFontPadding: false,
+    },
+    headerArtist: {
+        color: "rgba(255,255,255,0.6)",
+        includeFontPadding: false,
+        marginTop: rpx(6),
+    },
     wrapper: {
         width: "100%",
-        marginVertical: rpx(48),
+        marginVertical: rpx(24),
         flex: 1,
     },
     empty: {

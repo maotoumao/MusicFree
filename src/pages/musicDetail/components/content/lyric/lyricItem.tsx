@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import { StyleSheet, Text } from "react-native";
 import rpx from "@/utils/rpx";
-import useColors from "@/hooks/useColors";
 import { fontSizeConst } from "@/constants/uiConst";
 
 interface ILyricItemComponentProps {
@@ -22,8 +21,6 @@ interface ILyricItemComponentProps {
 function _LyricItemComponent(props: ILyricItemComponentProps) {
     const { light, highlight, text, onLayout, index, fontSize } = props;
 
-    const colors = useColors();
-
     return (
         <Text
             onLayout={({ nativeEvent }) => {
@@ -36,14 +33,7 @@ function _LyricItemComponent(props: ILyricItemComponentProps) {
                 {
                     fontSize: fontSize || fontSizeConst.content,
                 },
-                highlight
-                    ? [
-                        lyricStyles.highlightItem,
-                        {
-                            color: colors.primary,
-                        },
-                    ]
-                    : null,
+                highlight ? lyricStyles.highlightItem : null,
                 light ? lyricStyles.draggingItem : null,
             ]}>
             {text}
@@ -69,11 +59,11 @@ const lyricStyles = StyleSheet.create({
     },
     item: {
         color: "white",
-        opacity: 0.6,
-        paddingHorizontal: rpx(64),
+        opacity: 0.42,
+        paddingHorizontal: rpx(52),
         paddingVertical: rpx(24),
         width: "100%",
-        textAlign: "center",
+        textAlign: "left",
         textAlignVertical: "center",
     },
     draggingItem: {

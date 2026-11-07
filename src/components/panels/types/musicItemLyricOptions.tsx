@@ -11,12 +11,13 @@ import { StyleSheet, View } from "react-native";
 
 import Divider from "@/components/base/divider";
 import { IIconName } from "@/components/base/icon.tsx";
-import { hidePanel } from "@/components/panels/usePanel.ts";
+import { hidePanel, showPanel } from "@/components/panels/usePanel.ts";
 import { iconSizeConst } from "@/constants/uiConst";
 import Config from "@/core/appConfig";
-import lyricManager from "@/core/lyricManager";
+import lyricManager, { useLyricState } from "@/core/lyricManager";
 import mediaCache from "@/core/mediaCache";
 import LyricUtil from "@/native/lyricUtil";
+import PersistStatus from "@/utils/persistStatus";
 import { getDocumentAsync } from "expo-document-picker";
 import { readAsStringAsync } from "expo-file-system";
 import { FlatList } from "react-native-gesture-handler";
@@ -45,8 +46,60 @@ export default function MusicItemLyricOptions(
 
     const safeAreaInsets = useSafeAreaInsets();
     const { t } = useI18N();
+    const { hasTranslation } = useLyricState();
+    const showTranslation = PersistStatus.useValue(
+        "lyric.showTranslation",
+        false,
+    );
 
     const options: IOption[] = [
+        {
+            icon: "font-size",
+            title: t("panel.musicItemLyricOptions.fontSize"),
+            onPress: () => {
+                showPanel("SetFontSize", {
+                    defaultSelect: Config.getConfig("lyric.detailFontSize") ?? 1,
+                    onSelectChange(value) {
+                        PersistStatus.set("lyric.detailFontSize", value);
+                    },
+                });
+            },
+        },
+        {
+            icon: "arrows-left-right",
+            title: t("panel.musicItemLyricOptions.lyricOffset"),
+            onPress: () => {
+                showPanel("SetLyricOffset", {
+                    musicItem,
+                    onSubmit(offset) {
+                        lyricManager.updateLyricOffset(musicItem, offset);
+                        hidePanel();
+                    },
+                });
+            },
+        },
+        {
+            icon: "magnifying-glass",
+            title: t("panel.musicItemLyricOptions.searchLyric"),
+            onPress: () => {
+                showPanel("SearchLrc", {
+                    musicItem,
+                });
+            },
+        },
+        {
+            icon: "translation",
+            title: showTranslation
+                ? t("panel.musicItemLyricOptions.hideTranslation")
+                : t("panel.musicItemLyricOptions.showTranslation"),
+            show: !!hasTranslation,
+            onPress: () => {
+                PersistStatus.set(
+                    "lyric.showTranslation",
+                    !showTranslation,
+                );
+            },
+        },
         {
             icon: "identification",
             title: `ID: ${getMediaUniqueKey(musicItem)}`,

@@ -469,6 +469,11 @@ export interface ILanguageData {
     "panel.musicItemLyricOptions.enableDesktopLyric": string; // 开启
     "panel.musicItemLyricOptions.disableDesktopLyric": string; // 关闭
     "panel.musicItemLyricOptions.desktopLyricPermissionError": string; // 桌面歌词权限错误
+    "panel.musicItemLyricOptions.fontSize": string; // 字号大小
+    "panel.musicItemLyricOptions.lyricOffset": string; // 歌词偏移
+    "panel.musicItemLyricOptions.searchLyric": string; // 搜索歌词
+    "panel.musicItemLyricOptions.showTranslation": string; // 显示翻译
+    "panel.musicItemLyricOptions.hideTranslation": string; // 隐藏翻译
     "panel.musicItemLyricOptions.uploadLocalLyric": string; // 上传本地歌词
     "panel.musicItemLyricOptions.uploadLocalLyricTranslation": string; // 上传本地歌词翻译
     "panel.musicItemLyricOptions.deleteLocalLyric": string; // 删除本地歌词
