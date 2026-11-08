@@ -29,8 +29,8 @@ export default function AlbumCover(props: IProps) {
             };
         } else {
             return {
-                width: rpx(260),
-                height: rpx(260),
+                width: rpx(160),
+                height: rpx(160),
                 borderRadius: rpx(16),
             };
         }

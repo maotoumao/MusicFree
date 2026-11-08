@@ -3,7 +3,7 @@ import globalStyle from "@/constants/globalStyle";
 import useOrientation from "@/hooks/useOrientation";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import Background from "./components/background";
 import Bottom from "./components/bottom";
 import Content from "./components/content";
@@ -30,7 +30,7 @@ export default function MusicDetail() {
     return (
         <>
             <Background />
-            <SafeAreaView style={globalStyle.fwflex1}>
+            <View style={globalStyle.fwflex1}>
                 <StatusBar backgroundColor={"transparent"} />
                 <View style={style.bodyWrapper}>
                     <View style={globalStyle.flex1}>
@@ -44,7 +44,7 @@ export default function MusicDetail() {
                         </View>
                     ) : null}
                 </View>
-            </SafeAreaView>
+            </View>
         </>
     );
 }

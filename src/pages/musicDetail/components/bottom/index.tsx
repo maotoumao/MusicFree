@@ -1,4 +1,5 @@
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import SeekBar from "./seekBar";
@@ -8,6 +9,7 @@ import useOrientation from "@/hooks/useOrientation";
 
 export default function Bottom() {
     const orientation = useOrientation();
+    const safeAreaInsets = useSafeAreaInsets();
     const isLandscape = orientation === "horizontal";
     return (
         <View
@@ -15,9 +17,9 @@ export default function Bottom() {
                 style.wrapper,
                 isLandscape
                     ? {
-                        height: rpx(156),
+                        height: rpx(190),
                     }
-                    : undefined,
+                    : { paddingBottom: safeAreaInsets.bottom },
             ]}>
             <SeekBar />
             <PlayControl />

@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import rpx from "@/utils/rpx";
 import Icon from "@/components/base/icon.tsx";
 import ThemeText from "@/components/base/themeText";
@@ -11,9 +12,10 @@ export default function NavBar() {
     const colors = useColors();
     const musicItem = useCurrentMusic();
     const isFavorite = useFavorite(musicItem);
+    const safeAreaInsets = useSafeAreaInsets();
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
             <View style={styles.titleMain}>
                 <ThemeText
                     fontSize="title"
