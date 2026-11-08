@@ -9,6 +9,7 @@ import {
     getLocalPath,
     isSameMediaItem,
 } from "@/utils/mediaUtils";
+import { getMediaExtraProperty, patchMediaExtra } from "@/utils/mediaExtra";
 import StateMapper from "@/utils/stateMapper";
 import { getStorage, setStorage } from "@/utils/storage";
 import CryptoJs from "crypto-js";
@@ -78,27 +79,31 @@ export async function removeMusic(
     musicItem: IMusic.IMusicItem,
     deleteOriginalFile = false,
 ) {
-    const idx = localSheet.findIndex(_ => isSameMediaItem(_, musicItem));
-    let newSheet = [...localSheet];
-    if (idx !== -1) {
-        const localMusicItem = localSheet[idx];
-        newSheet.splice(idx, 1);
-        const localPath =
-            musicItem[internalSerializeKey]?.localPath ??
-            localMusicItem[internalSerializeKey]?.localPath;
-        if (deleteOriginalFile && localPath) {
-            try {
-                await unlink(localPath);
-            } catch (e: any) {
-                if (e.message !== "File does not exist") {
-                    throw e;
-                }
+    const localMusicItem = localSheet.find(_ => isSameMediaItem(_, musicItem));
+    if (!localMusicItem) {
+        return;
+    }
+    const localPath =
+        getLocalPath(localMusicItem) ?? musicItem[internalSerializeKey]?.localPath;
+    if (deleteOriginalFile && localPath) {
+        try {
+            await unlink(localPath);
+        } catch (e: any) {
+            if (e.message !== "File does not exist") {
+                throw e;
             }
         }
+        const downloadPath = getMediaExtraProperty(localMusicItem, "localPath");
+        if (!downloadPath || downloadPath === localPath) {
+            patchMediaExtra(localMusicItem, {
+                downloaded: false,
+                localPath: undefined,
+            });
+        }
     }
-    localSheet = newSheet;
+    localSheet = localSheet.filter(item => item !== localMusicItem);
     localSheetStateMapper.notify();
-    saveLocalSheet();
+    await saveLocalSheet();
 }
 
 function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
