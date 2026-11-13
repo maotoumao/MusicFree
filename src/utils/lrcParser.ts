@@ -221,7 +221,7 @@ export default class LyricParser {
                 rawLrcItems.push({
                     time: this.parseTime(rawTimes[i]),
                     lrc,
-                    index: j,
+                    index: i,
                 });
             }
             rawLrcs.shift();
