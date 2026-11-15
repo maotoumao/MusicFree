@@ -89,6 +89,9 @@ npx react-native run-ios --device "<iPhone 名称>"
     `AVAssetExportSession` 重写 metadata（title/artist/album/comment/lyric），
     先导出到同目录临时文件再原子替换原文件，失败不会破坏原文件；
     `getMediaTag` 同步补上 comment 读回；MP3 明确 reject 并返回可读错误。
+13. `src/core/pluginManager/plugin.ts`：全局 `axios.defaults.timeout` 从 2s 调到 10s。
+    2s 会让稍慢的插件接口（尤其境外 API）在搜索、插件安装时被误判为超时，实测
+    udio 搜索耗时约 2.2s 时稳定报 `timeout of 2000ms exceeded`；改后正常。
 
 ## 当前卡点（不是代码问题）
 
@@ -149,6 +152,31 @@ npx react-native run-ios --device "<iPhone 名称>"
   且没有 Pod 链接 ActivityKit。
 - 仍未验证：真机后台播放/锁屏控制/耳机线控/来电打断（等签名与设备）；
   MP3 ID3 写入仍不支持（m4a/mp4 已完成，见上）。
+- 核心使用链路（2026-11-15，iPhone 17 Pro Max 模拟器）：官方插件源
+  `maotoumao/MusicFreePlugins` 的示例插件当前基本不可播放——Audiomack 播放接口 403；
+  bilibili 的 `.m4s` 被 AVPlayer 判为无法识别（-11828）；猫耳FM 的 HLS 是
+  SAMPLE-AES/Widevine DRM，AVPlayer 无 FairPlay 解密能力；快手搜索返回 0；
+  YouTube 播放接口要求登录；音悦台在本机网络 TLS 不可达；suno 503。
+  改用公开插件源 `qwerwhr/musicfree-plugins` 的 `GD音乐台`（https API，
+  netease 源）跑通：搜索「晴天」返回 20 条，点播 270.7s 的 https MP3，
+  `playing` 且进度正常；歌词页自动加载并高亮当前行；音质 `standard → high`
+  切换后进度保持在 93.05s 并继续播放；上一首/下一首正常；加入「我喜欢」后
+  首页显示 1 首；播放历史记录了本轮的 5 首歌。GD 插件的音质映射本身有 bug
+  （所有档位都回 320），属插件侧问题。
+- 断网/弱网：NetInfo 读取到 `Wifi`；搜索请求失败时结果页显示「出错啦…/点击重试」，
+  修好超时后重试可以恢复；播放失败没有 Toast，`handlePlayFail` 只会在 500ms 后
+  自动跳下一首，也没有全局离线提示。建议后续补一个播放失败 Toast（最小改动）。
+- 本地音乐：从 Files 拖音频到 `Documents` 根目录后，「扫描本地音乐」的选择器
+  因 `fileType: "folder"` 只列文件夹，既不能选 `Documents` 本身，也看不到根目录
+  里的音频文件；必须先建子文件夹或放进 `download` 才能扫描。最小改动方案：把
+  `src/pages/localMusic/mainPage/index.tsx` 里扫描的 `fileType` 改成
+  `"file-and-folder"`（并加音频后缀过滤），即可在根目录直接多选文件。
+- 下载完成只有 Toast「下载任务已完成」，没有「在 Files 中查看」引导；文件实际在
+  `Documents/download/music`，Files App 的「我的 iPhone → MusicFree」可见。
+  最小改动：在完成 Toast 或下载列表页补一句路径说明；iOS 不能深链到具体文件夹。
+- 启动图：冷启动为白色 MusicFree 启动图约 0.6s，随后进入深色首页；无黑屏、
+  无空白白屏。深色主题下白色启动图到深色首页的过渡较明显，若要统一可改
+  `SplashScreen.storyboard` 背景色（等图标/素材一起处理）。
 - 注意：ATS 仍禁止明文 HTTP（`NSAllowsArbitraryLoads` 为 false），只开了
   `NSAllowsLocalNetworking`（Metro/本机测试）与 `NSAllowsArbitraryLoadsForMedia`；
   远程 http 插件 API 仍会失败，遇到只记录、不私自放开，是否允许需用户确认。
