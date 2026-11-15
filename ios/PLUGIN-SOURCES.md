@@ -234,7 +234,7 @@ qwerwhr 是能导入但取流 429；GD 根本没有导入。所以由本插件�
 | 直接粘贴数字 `2678496359` | 导入 15 首 |
 | `getMusicSheetInfo` | 歌单名「朗朗晴天」，`musicList` 15 首，`isEnd=true`，封面 https |
 | 写入本地「我的歌单」（与 `AddToMusicSheet` 面板相同的 `addSheet`/`addMusic`） | 歌单 15 首，平台显示「网易云音乐（GD 源）」 |
-| 播放第一首 | `playing`，position 0 → 8.96s / 21.54s，无 `PlaybackError` |
+| 播放第一首 | 最终 `playing`，position 0 → 5.36s / 21.54s；从固定 URL 重装后的首播有 1 次瞬时 `error`，约 2s 后自动恢复 |
 | 全部 15 首 `getMediaSource("standard")` | **15/15** 返回 https 地址，0 失败 |
 
 大歌单补充：公开「热歌榜」ID `3778678` 实测导入 **200 首**；按 `fee` 字段标记
