@@ -67,9 +67,10 @@ target 'MusicFree' do
       # :ccache_enabled => true
     )
 
-    # Xcode 27 rejects pods whose deployment target is below 15.0.
-    # Keep every pod aligned with the app target so the project builds on
-    # both the iOS 27 SDK and older supported Xcode versions.
+    # App target: iOS 16.2 (ActivityKit's ActivityContent requires 16.2).
+    # Pods: iOS 15.1 — React Native's minimum. Keep them here because Xcode 27
+    # rejects pods below 15.0, and no pod links ActivityKit, so this lower
+    # target does not affect the app's ActivityKit availability.
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |build_config|
         build_config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'

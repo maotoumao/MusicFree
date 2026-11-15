@@ -51,8 +51,10 @@ npx react-native run-ios --device "<iPhone 名称>"
 
 ## 已经做完的改动
 
-1. `ios/Podfile`：`post_install` 把所有 Pod 的 `IPHONEOS_DEPLOYMENT_TARGET` 统一到 15.1，
-   解决 Xcode 27 拒绝低版本 Pod（原报错来自 MMKV/RNSVG/RNDeviceInfo 等）。
+1. `ios/Podfile`：App target 最低 iOS 16.2；`post_install` 把所有 Pod 的
+   `IPHONEOS_DEPLOYMENT_TARGET` 留在 15.1，解决 Xcode 27 拒绝低版本 Pod
+   （原报错来自 MMKV/RNSVG/RNDeviceInfo 等）。Pod 都不链接 ActivityKit，
+   不影响 App 的 16.2 可用性。
 2. `ios/MusicFreeNative/`：新增本地 Pod，补齐三个原本只有 Kotlin 实现的原生模块
    - `NativeUtils`：`exitApp`（iOS 上退到后台）、`checkStoragePermission`（沙盒恒 true）、
      `getWindowDimensions`（阻塞式同步方法）
@@ -80,8 +82,13 @@ npx react-native run-ios --device "<iPhone 名称>"
    App 冷启动时 `MFLiveActivity.cleanupOrphans()` 清理上次进程残留的活动。
 10. 设置页新增 iOS 专用的「实时活动歌词」开关（`src/pages/setting/settingTypes/basicSetting.tsx`），
     系统不允许实时活动时显示提示
-11. App 与 Widget Extension 的 `IPHONEOS_DEPLOYMENT_TARGET` 为 16.1；
-    16.1 走 `Activity.request(contentState:)` / `update(using:)`，16.2+ 走 `ActivityContent`
+11. iOS 最低版本 **16.2**（ActivityKit 的 `ActivityContent` 要求），App 与 Widget
+    Extension 均为 16.2，低于 16.2 的设备不支持实时活动歌词；代码统一使用
+    `ActivityContent` API，不保留 16.1 分支。
+12. `ios/MusicFreeNative/MFMp3Util.mm`：m4a/mp4 的 `setMediaTag` 用
+    `AVAssetExportSession` 重写 metadata（title/artist/album/comment/lyric），
+    先导出到同目录临时文件再原子替换原文件，失败不会破坏原文件；
+    `getMediaTag` 同步补上 comment 读回；MP3 明确 reject 并返回可读错误。
 
 ## 当前卡点（不是代码问题）
 
@@ -115,21 +122,33 @@ npx react-native run-ios --device "<iPhone 名称>"
   `musicfree://install/` 的 URL 由系统弹出「在 MusicFree 中打开?」确认框，
   headless 环境无法点按，改为通过 Metro CDP 触发同一个 `Linking` url 事件完成安装，
   插件管理页出现 VerifyPluginInstall（0.0.1）。整轮 Documents/log 无 JS 错误。
-- 实时活动歌词已完成并在 iPhone 17 Pro Max 验证（2026-11-15）：播放 0.3s/行的测试 `.lrc`，
-  `[MFLiveActivity] update` 日志显示实际更新间隔约 1.00s，content state 同时携带
+- 实时活动歌词已完成并在 iPhone 17 Pro Max 验证（2026-11-15，最低 iOS 16.2）：播放 0.3s/行的
+  测试 `.lrc`，`[MFLiveActivity] update` 日志显示实际更新间隔约 1.00s，content state 同时携带
   上一句/下一句/进度/播放状态；暂停/继续时日志分别为 `playing=false` / `playing=true`；
   关闭开关触发 `end count=1 reason=disabled` 和 ActivityKit `Ending activity`；
   强杀 App 后重启，日志为 `cleanup class=MFLiveActivity` + `end count=1 reason=orphan-cleanup`，
   旧活动消失且不会自动新建；chronod 日志显示 Widget Extension reload 成功
-  （activity archive 约 53KB）。
+  （activity archive 约 53KB）。改为 16.2 API 后在最终 Debug 构建上复测：
+  `start title=MF标签标题`、三行歌词 update、`playing=true/false` 均正常。
   由于 Xcode 27 没带 Simulator.app（只有 headless CoreSimulator），无法锁屏或点击，
   锁屏/灵动岛的视觉效果与播放按钮的点按仍需真机或带 Simulator UI 的环境复核；
   播放按钮的 URL 处理已通过 Metro CDP 触发同一个 `Linking` 事件验证。
+- m4a 标签写入已在 iPhone 17 Pro Max 模拟器验证（2026-11-15）：对 `Documents/test-tone.m4a`
+  调用 `setMediaTag` 写入 title/artist/album/comment/lyric（含中文）后，`getMediaTag` 读回
+  `{"title":"MF标签标题","artist":"MF标签歌手","album":"MF标签专辑","comment":"这是备注","lyric":"..."}`，
+  `getBasicMeta` 读回 title/artist/album 且时长仍为 3000ms；只传 `title` 时
+  artist/album/comment/lyric 保持不变（保留逻辑已实测）；TrackPlayer 播放到
+  `playing`（进度 1.73s），播完后 active track 标题为「MF标签标题」。
+  MP3 返回 `Unsupported ... .mp3` 且文件哈希不变；对损坏的 `.m4a` 导出失败（`ExportFailed`）后
+  原文件内容与哈希不变、无临时文件残留。
 - 设置页新增「实时活动歌词」开关，截图确认开关、说明文字正常显示，默认关闭。
-- 真机构建：Debug / Release 的 `iphoneos` 无签名编译均通过；Release 产物已内嵌
-  `MusicFreeLiveActivity.appex`（arm64，MinimumOSVersion 16.1），随 App 一起签名。
+- 真机构建：Debug / Release 的 `iphoneos` 无签名编译均通过；App 与 Widget Extension 的
+  `IPHONEOS_DEPLOYMENT_TARGET` 均为 16.2，Release 产物内嵌
+  `MusicFreeLiveActivity.appex`（arm64，MinimumOSVersion 16.2）；ActivityKit 在 App 与
+  扩展二进制中都是 `LC_LOAD_DYLIB`（强链接，不是弱链接）。Pods 保持 15.1，
+  且没有 Pod 链接 ActivityKit。
 - 仍未验证：真机后台播放/锁屏控制/耳机线控/来电打断（等签名与设备）；
-  MP3 ID3 写入（P2）。
+  MP3 ID3 写入仍不支持（m4a/mp4 已完成，见上）。
 - 注意：ATS 仍禁止明文 HTTP（`NSAllowsArbitraryLoads` 为 false），只开了
   `NSAllowsLocalNetworking`（Metro/本机测试）与 `NSAllowsArbitraryLoadsForMedia`；
   远程 http 插件 API 仍会失败，遇到只记录、不私自放开，是否允许需用户确认。
@@ -147,13 +166,13 @@ npx react-native run-ios --device "<iPhone 名称>"
 6. 插件安装/订阅在 iOS 上的文件选择链路
 
 **P2 iOS 独有能力**
-7. 灵动岛/实时活动歌词：已完成（ActivityKit + Widget Extension，iOS 16.1+；
-   1s 更新限流、暂停状态、三行歌词、播放/暂停 deep link、冷启动孤儿清理）；
-   真机上的锁屏/灵动岛视觉与按钮点按待复核
-8. MP3 ID3 写入评估结论：m4a/mp4 用 AVFoundation 直接写元数据，约 150–250 行、
-   无新依赖，风险低；MP3 推荐引入 ID3TagEditor（Swift，中等工作量），
+7. 灵动岛/实时活动歌词：已完成（ActivityKit + Widget Extension，iOS 16.2+，
+   低于 16.2 的设备不支持；1s 更新限流、暂停状态、三行歌词、播放/暂停 deep link、
+   冷启动孤儿清理）；真机上的锁屏/灵动岛视觉与按钮点按待复核
+8. m4a/mp4 标签写入已实现（`MFMp3Util.mm`，见「已经做完的改动」第 12 条）；
+   MP3 的后续方案评估：推荐引入 ID3TagEditor（Swift，中等工作量），
    TagLib 需要 C++ 桥接、成本高，自研 ID3v2 风险高。注意 `setMediaTag`
-   目前没有任何 JS 调用方，先等「编辑标签」入口明确后再动手。
+   目前没有任何 JS 调用方，先等「编辑标签」入口明确后再接 UI。
 9. 品质打磨：图标重绘（现在是把 512 图标放大）、启动图、ATS 收紧
 
 ## 协作约定
