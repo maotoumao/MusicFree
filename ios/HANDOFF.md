@@ -166,9 +166,16 @@ npx react-native run-ios --device "<iPhone 名称>"
   再安装插件，插件 tab 不会刷新（`ResultPanel` 的 memo 没有依赖插件列表），
   重新进入搜索页即可；冷启动恢复上次歌曲后歌词不会自动加载，歌词页显示
   「暂无歌词/搜索歌词」，需要手动搜索或重新播放。
+- 修复 iOS 播放失败不自动跳下一首（2026-11-15）：RNTP iOS 的
+  `playback-error` 事件 payload 只有 `{ error: <SwiftAudioEx 文案> }`，没有
+  `message`/`code`，而 `src/core/trackPlayer/index.ts` 的判断依赖 `e.message`，
+  条件恒为 false。改为 `e.message || e.error` 并补上 `error` 的类型；实测播放
+  返回 403 的 udio 源后 500ms 自动跳到下一首本地歌曲，状态从 `error` 恢复为
+  `playing`，且只跳一首（iOS 同一次失败会发两次事件，第二次到达时当前曲已变化，
+  不会重复处理）。
 - 断网/弱网：NetInfo 读取到 `Wifi`；搜索请求失败时结果页显示「出错啦…/点击重试」，
-  修好超时后重试可以恢复；播放失败没有 Toast，`handlePlayFail` 只会在 500ms 后
-  自动跳下一首，也没有全局离线提示。建议后续补一个播放失败 Toast（最小改动）。
+  修好超时后重试可以恢复；播放失败仍没有 Toast，也没有全局离线提示；修复事件
+  字段后会在 500ms 后自动跳下一首。建议后续补一个播放失败 Toast（最小改动）。
 - 本地音乐：从 Files 拖音频到 `Documents` 根目录后，「扫描本地音乐」的选择器
   因 `fileType: "folder"` 只列文件夹，既不能选 `Documents` 本身，也看不到根目录
   里的音频文件；必须先建子文件夹或放进 `download` 才能扫描。最小改动方案：把
