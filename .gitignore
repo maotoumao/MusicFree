@@ -80,6 +80,8 @@ keystore.properties
 .vscode/
 tmp/
 scripts/
+!scripts/
+!scripts/ios-device.sh
 
 *.log
 # Expo

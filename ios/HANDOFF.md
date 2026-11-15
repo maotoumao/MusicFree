@@ -254,8 +254,10 @@ scripts/ios-device.sh              # Release 构建 + 安装 + 启动
 - 真机构建：Debug / Release 的 `iphoneos` 无签名编译均通过；Release 产物内嵌
   `MusicFreeLiveActivity.appex`（arm64，MinimumOSVersion 16.2）。最低版本最终定为
   16.2 后重新构建，App 与 appex 的 `MinimumOSVersion` 均为 16.2；ActivityKit 在 App 与
-  扩展二进制中都是 `LC_LOAD_DYLIB`（强链接，不是弱链接）。Pods 保持 15.1，
-  且没有 Pod 链接 ActivityKit。真机签名构建由 `scripts/ios-device.sh` 执行。
+  扩展二进制中都是 `LC_LOAD_DYLIB`（强链接，不是弱链接）。**最低版本固定为 16.2，
+  不再改动**，理由：只保留运行验证过的路径——本机只有 iOS 27.2 runtime，16.1 分支只编译过、
+  没运行过；能升到 16.x 的机器基本都能到 16.7，16.1 与 16.2 的实际覆盖几乎无差别。
+  Pods 保持 15.1，且没有 Pod 链接 ActivityKit。真机签名构建由 `scripts/ios-device.sh` 执行。
 - 仍未验证：真机后台播放/锁屏控制/耳机线控/来电打断（等签名与设备）；
   MP3 ID3 写入仍不支持（m4a/mp4 已完成，见上）。
 - 核心使用链路（2026-11-15，iPhone 17 Pro Max 模拟器）：官方插件源
@@ -398,6 +400,6 @@ Live Activity 锁屏/灵动岛视觉与播放按钮点按、Files 文件选择�
 - 不要在别人的 `~/.codync` 目录下写文件；所有产物放 `~/code/musicfree-ios`
 - `pod install` 会改 `project.pbxproj` 和 `PrivacyInfo.xcprivacy`，属正常，提交即可
 - `ios/MusicFree.xcworkspace/` 已加入 `.gitignore`（由 pod install 生成）
-- 上游 `.gitignore` 忽略了 `scripts/`；`scripts/ios-device.sh` 是用 `git add -f`
-  纳入版本管理的，以后改这个脚本也要 `git add -f`
+- 上游 `.gitignore` 忽略了 `scripts/`，但已加例外 `!scripts/`、`!scripts/ios-device.sh`；
+  `scripts/ios-device.sh` 是正常 `git add` 纳入版本管理的，改脚本后直接 add 即可，不再需要 `-f`
 - 每次提交前 `npm run lint` 会自动跑（lint-staged），提交信息用上面的 type
