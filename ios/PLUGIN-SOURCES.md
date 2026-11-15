@@ -176,14 +176,14 @@ GET https://music-api.gdstudio.xyz/api.php
 | --- | --- |
 | 文件 | `ios/plugins/netease-gd.plugin.js`（约 8 KB，可读源码） |
 | 插件名 | `网易云音乐（GD 源）` |
-| 安装地址 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js` |
+| 安装地址 | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-gd.plugin.js`（备用：`https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js`） |
 | 支持 | 搜索（music/album/artist）、播放、歌词、封面；音质 low/standard/high/super → 128/320/740/999 |
 | 不含 | 登录、VIP/付费破解、DRM 破解；接口没返回地址的歌曲就是不能播 |
 
 **复现步骤：**
 
 1. 设置 → 插件管理 → 右下角 `+` → 从网络安装插件。
-2. 粘贴上面的 raw 地址，安装成功后会多出「网易云音乐（GD 源）」。
+2. 粘贴上面的 jsDelivr 地址（raw 的 CDN 缓存未刷新时用它），安装成功后会多出「网易云音乐（GD 源）」。
 3. 搜索「晴天」，点第一首；实测 `playing`，position 从 0 前进到 22.3s / 270.74s，无 `PlaybackError`。
 4. 歌词实测 65 行；封面返回 `https://p2.music.126.net/...jpg?param=500y500`。
 
@@ -211,7 +211,7 @@ GET https://music-api.gdstudio.xyz/api.php
 | 2 | 酷狗音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/kugou-source.plugin.v1.9.24.js` | 备用曲库；首条常是翻唱，选原唱版本即可 |
 | 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
 | 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
-| 5 | 网易云音乐（GD 源） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js` | 网易云搜索/播放/歌词；播放地址为 https，避开 ATS |
+| 5 | 网易云音乐（GD 源） | 单插件 | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-gd.plugin.js` | 网易云搜索/播放/歌词；播放地址为 https，避开 ATS |
 
 也可以直接订阅 **heb-main**（`https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json`），
 一次装 6 个：QQ、酷狗、咪咕可播，酷我、网易云可搜，汽水当前搜索失败。

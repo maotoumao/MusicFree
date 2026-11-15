@@ -11,7 +11,7 @@
 | heb-main（订阅） | `https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json` | 一次装 6 个；QQ、酷狗、咪咕能播 |
 | heb-music（订阅） | `https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/music.json` | 一次装 11 个；实测只有 B站能播，嫌多可用下面的 B站单地址 |
 | GD音乐台（单插件） | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 能播；歌词由 App 自动搜索兜底 |
-| 网易云音乐（GD 源，单插件） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js` | 能播；网易云搜索/歌词/封面都走 GD 镜像，避开 http 被 ATS 拦 |
+| 网易云音乐（GD 源，单插件） | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-gd.plugin.js` | 能播；网易云搜索/歌词/封面都走 GD 镜像，避开 http 被 ATS 拦 |
 
 如果不想一次装 11 个，B站用这个单插件地址：
 
