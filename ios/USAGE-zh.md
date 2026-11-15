@@ -11,7 +11,7 @@
 | heb-main（订阅） | `https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json` | 一次装 6 个；QQ、酷狗、咪咕能播 |
 | heb-music（订阅） | `https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/music.json` | 一次装 11 个；实测只有 B站能播，嫌多可用下面的 B站单地址 |
 | GD音乐台（单插件） | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 能播；歌词由 App 自动搜索兜底 |
-| 网易云音乐（开源增强） | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/8b542254684ff5d2ec2b0135a9b02d46e61631af/plugin/musicfree-netease-plugin.js` | 能搜、能播、能导入歌单；公开内容不需要 Cookie，私有歌单/`all` 需自己填 `MUSIC_U` |
+| 网易云音乐（开源增强，本仓库适配版） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-plus.plugin.js` | 能搜、能播、能导入歌单、能扫码登录；公开内容不需要 Cookie，私有歌单/`all` 需自己填 `MUSIC_U` |
 | 网易云音乐（GD 源，备用） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` | plus 插件风控/改版时备用；搜索/播放/导入走 GD 镜像 |
 
 如果不想一次装 11 个，B站用这个单插件地址：
@@ -36,6 +36,8 @@
 **网易云怎么播：** 官方 heb 网易云插件搜索/歌词正常，但取流返回 `http://m701.music.126.net`，iOS 播放器会被 ATS 拦。装上面的「网易云音乐（开源增强）」即可：实测无 Cookie 搜索 30 条、公开歌单「朗朗晴天」导入 15 首、首曲播放 16.9s / 21.54s。App 已在播放器入口把 `m*.music.126.net` 的 http 地址升级为 https；没有放开任意 HTTP。
 
 **网易云歌单怎么导：** 设置 → 插件管理 → `网易云音乐（开源增强）` → **导入歌单**，粘贴 `https://music.163.com/playlist?id=...`、`https://y.music.163.com/m/playlist?id=...`、纯数字 ID 或歌单名。公开歌单不需要 Cookie；私有歌单、我的歌单、输入 `all` 一键导入全部歌单，需要先在插件「用户变量 → 网易云 Cookie」里填自己账号的 `MUSIC_U`（只填自己的，不要用他人 Cookie）。没登录时输入 `all` 会提示「未登录，读不到你的歌单」。VIP/付费曲目不保证能播，插件不做绕过；B 站回退不作为验收项。
+
+**网易云扫码登录：** 设置 → 插件管理 → `网易云音乐（开源增强）` → **导入单曲** → 输入 `login` → 回到插件卡片，点右上角 `?` 打开插件说明，用**网易云音乐 App** 扫里面的二维码，并在手机上点「确认登录」。二维码有效期约 4 分钟，过期就再输入一次 `login`。本仓库适配版会在扫码成功后把登录凭证自动写入「用户变量 → 网易云 Cookie」，重启 App 后仍然有效；如果你装的是上游 0.7.0，凭证只存在本次运行内存里，重启后要重新扫码，或趁成功时把说明页里的整行 Cookie 复制到用户变量。扫码登录后「我的歌单」「我喜欢的音乐」「输入 `all`」才能读到自己的歌单。
 
 ## 3. 本地音乐
 

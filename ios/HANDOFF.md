@@ -116,7 +116,8 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
     中间 `MusicFree` 文案使用 `labelColor`，底部文案使用 `secondaryLabelColor`；
     布局约束未改。模拟器系统深色/浅色各截图验证，深色下不再白闪。
 20. 网易云换源：改用 AGPL-3.0 开源增强插件 `qingniaoheyu/musicfree-netease-plugin-plus`
-    0.7.0（207,185 字节，SHA256 `b4d8c783...`），不再依赖 hebijunge 的混淆 dist 包。
+    0.7.0（207,185 字节，SHA256 `b4d8c783...`），不再依赖 hebijunge 的混淆 dist 包；
+    后续在 23/24 升级为 `ios/plugins/netease-plus.plugin.js` 0.7.1 适配版。
     无 Cookie 实测搜索 30 条、公开歌单「朗朗晴天」导入 15 首；`all` 在未登录时按预期报错。
 21. `scripts/apply-react-native-patches.js` + `package.json` 的 `postinstall`：iOS 显式
     `Cookie` 请求头不再和 `NSHTTPCookieStorage` 合并。修复前 httpbin 实测原生
@@ -127,6 +128,17 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
     升级为 https（只限这个网易云 CDN），修复 plus 插件返回 http 地址导致
     `ios_failed_to_load_resource`；其他 http 源不动。实测同一首歌修复前 error、
     修复后 `playing` 16.9s / 21.54s。
+23. 网易云扫码登录（eapi）验证：`导入单曲 → 输入 login` 生成 quickchart 二维码；
+    `/eapi/register/anonimous`、`/eapi/login/qrcode/unikey` 均 200，轮询
+    `/eapi/login/qrcode/client/login` 稳定返回 801「等待扫码」，没有 `-462`。
+    用假 `Set-Cookie` + 803 验证成功分支：插件进入「扫码成功」并把凭证写入用户变量。
+    真实 802/803 需要用户用自己的网易云 App 扫码，本次未测。
+24. 扫码凭证持久化：上游 0.7.0 的 `qrLoginCookie` 只在模块内存，JS 重载后丢失。
+    `src/core/pluginManager/plugin.ts` 的插件环境新增 `env.setUserVariables`，
+    `ios/plugins/netease-plus.plugin.js`（0.7.1 适配版）在 803 成功后自动把
+    整份 Cookie 合并写回用户变量；实测重载后用户变量仍在、扫码会话状态已清空。
+    旧客户端没有 setter 时自动退化为内存模式，并在说明页提示「重启后需重扫」。
+    凭证只写本机存储，不写仓库/日志。
 
 ## 当前卡点（不是代码问题）
 
@@ -357,8 +369,9 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 官方 heb 网易云取流返回 `http://m701.music.126.net` | 播放 `error`、position 0；插件内 2s Range 探测报 `Network Error` | 不是登录/VIP/版权问题。已改用 qingniaoheyu 开源增强插件，并在 `src/core/trackPlayer/index.ts` 把 `m*.music.126.net` 升级为 https；不改 ATS |
 | heb 网易云歌单导入返回 0 首 | 底层返回歌单对象（`musicList` 嵌套），App 期望数组；`getMusicSheetInfo` 对纯 ID 报无详情源 | 用「网易云音乐（开源增强）」或备用 GD 源的导入，不修 App 的插件适配层 |
 | qwerwhr 网易云取流 API 429 | 搜索/导入正常、播放 `error` | 上游 Cloudflare Workers 每日额度用尽；换「网易云音乐（开源增强）」或备用 GD 源 |
+| 网易云扫码真实 802/803 | 未实测 | 需要用户用自己的网易云 App 扫一次并确认；801 轮询和假 803 成功分支已验证。上游 0.7.0 扫码凭证只存内存，重启后需重扫；本仓库 0.7.1 适配版会自动写回用户变量 |
 
-选插件时的优先级：**QQ音乐、酷狗音乐、咪咕音乐、GD音乐台、B站、网易云音乐（开源增强）**已验证可播；
+选插件时的优先级：**QQ音乐、酷狗音乐、咪咕音乐、GD音乐台、B站、网易云音乐（本仓库 0.7.1 适配版）**已验证可播；
 网易云音乐（GD 源）作为备用。详见 `ios/PLUGIN-SOURCES.md` 的四源 21 插件实测和网易云专项。官方示例插件（bilibili、猫耳、
 快手、YouTube、音悦台、suno 等）当前基本不可用，除非插件本身更新，否则不再重复尝试。
 插件请求超时已从 2s 调到 10s（`src/core/pluginManager/plugin.ts`），慢接口不会再被
@@ -379,6 +392,8 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 网易云开源增强插件（无 Cookie） | 通过 | `qingniaoheyu` 0.7.0（hash `b4d8c783...`）：搜索「晴天」`/weapi/cloudsearch/pc` 200、30 条，未出现 `-462`；公开歌单「朗朗晴天」导入 15 首，`getMusicSheetInfo` 15 首、`isEnd=true`；`all` 未登录报「未登录，读不到你的歌单」，符合预期 |
 | iOS 显式 Cookie 透传 | 通过 | 修复前 httpbin 收到 `MUSIC_U=NATIVE; ...,MUSIC_U=HEADER; __csrf=...`（原生在前）；`RCTNetworking` 补丁后只收到手写值。正常请求仍带原生 Cookie；插件假 Cookie 测试中 `/weapi/cloudsearch/pc` 含假值、不含原生标记；`Set-Cookie` 响应头仍可读 |
 | 网易云 http→https | 通过 | plus 插件 `getMediaSource` 返回 `http://m10.music.126.net/...`，直接播放报 `ios_failed_to_load_resource`；同一 URL https 版 `playing` 8.76s/21.54s；App `normalizeMediaUrl` 生效后导入 15 首、首曲 `playing` 16.9s/21.54s |
+| 网易云扫码登录 | 通过（801）/ 逻辑验证（803） | `login` 生成二维码，quickchart 图片 200/400×400；eapi 匿名注册/unikey 200；轮询稳定 801「等待扫码」，无 `-462`。假 `Set-Cookie` + 803 时插件显示「扫码成功」并写入用户变量。真实 802/803 待用户扫码 |
+| 扫码凭证持久化 | 通过 | 0.7.1 适配版扫码 803 后 `getUserVariables()` 出现假凭证；JS 重载后用户变量仍在、二维码/轮询状态消失；旧版 0.7.0 重载后两者都丢。测试用假值，已清空 |
 | 本地导入 | 通过 | `Documents` 根目录的选择器会列出音频文件并隐藏 `.lrc`；直接选中单个 `test-tone.m4a` 导入成功（1 首，标题读为「MF标签标题」）；文件夹递归导入此前已验证 4 首 |
 | 播放失败提示 | 通过 | 在线弹「《晴天》播放失败：网络超时，已暂停」；重复触发同一首歌时 `lastPlayFailToastAt` 不变（30s 节流生效）；离线弹「当前无网络，无法播放《晴天》」 |
 | 冷启动歌词 | 通过 | QQ 歌曲播放后暂停 → 杀进程 → 冷启动，自动恢复当前歌曲并加载 63 行歌词；“启动自动播放”开/关两种配置都复测通过，无需进入播放页 |

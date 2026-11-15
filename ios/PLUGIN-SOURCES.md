@@ -32,7 +32,7 @@
 1. `hebijunge main.json`（QQ音乐、酷狗音乐、咪咕音乐）
 2. `qwerwhr plugins.json`（GD音乐台）
 3. `hebijunge music.json`（B站）
-4. 网易云：`qingniaoheyu/musicfree-netease-plugin-plus` 0.7.0（开源增强版；公开内容无需 Cookie，私有歌单/`all` 需要用户自己的 `MUSIC_U`）
+4. 网易云：`qingniaoheyu/musicfree-netease-plugin-plus` 上游 0.7.0 + 本仓库 iOS 适配版 0.7.1（开源增强版；公开内容无需 Cookie，私有歌单/`all`/扫码登录需要用户自己的账号）
 
 heb-main 的 6 个插件里有 3 个可播（QQ/酷狗/咪咕），是可用率最高的源。日常使用按下面的
 「最小可用安装集」装 5 个即可，不要把所有源全量导入：同名的插件会互相覆盖，
@@ -277,23 +277,30 @@ Cookie 只用于 `music.163.com/api/v6/playlist/detail` 和 `api/song/detail` �
 失败表现记录，未做账号实测；如果填了 Cookie 仍失败，说明该歌单还要求别的登录校验，
 插件不会继续绕过。
 
-## 开源增强网易云插件专项（qingniaoheyu 0.7.0，2026-11-15 19:30–20:10 补测）
+## 开源增强网易云插件专项（qingniaoheyu 0.7.0 → 本仓库 0.7.1，2026-11-15 补测）
 
 用户确定不再使用 hebijunge 的混淆 dist 包，改用 AGPL-3.0 的开源增强插件。本节的结论是
-**这个插件可以作为网易云首选**，但需要配合本 App 的两个 iOS 修复：显式 Cookie 头不被原生
-Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https。
+**这个插件可以作为网易云首选**，但需要配合本 App 的三个 iOS 修复：显式 Cookie 头不被原生
+Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https、扫码登录凭证写回用户变量
+（新增 `env.setUserVariables`）。本仓库在 `ios/plugins/netease-plus.plugin.js` 放了 0.7.1
+适配版；上游 0.7.0 仍可直接安装，但扫码凭证只存在内存里。
 
 | 项目 | 值 |
 | --- | --- |
 | 仓库 | `https://github.com/qingniaoheyu/musicfree-netease-plugin-plus` |
 | 许可证 | AGPL-3.0 |
 | 上游文件 | `plugin/musicfree-netease-plugin.js`，207,185 字节，版本 0.7.0 |
-| SHA256 | `b4d8c7837b1809ccdd1ccacd1d8e7652b541bc60b334b7707f2cb59d7cb64407` |
-| 固定安装地址（推荐） | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/8b542254684ff5d2ec2b0135a9b02d46e61631af/plugin/musicfree-netease-plugin.js` |
-| 跟随 main 的地址 | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/main/plugin/musicfree-netease-plugin.js`（实测 HTTP 200，hash 与上表一致） |
-| 模拟器安装文件 | `Documents/plugins/netease-plus.js`，hash 与上游完全一致 |
+| 上游 SHA256 | `b4d8c7837b1809ccdd1ccacd1d8e7652b541bc60b334b7707f2cb59d7cb64407` |
+| 本仓库适配版 | `ios/plugins/netease-plus.plugin.js`，202,872 字节，版本 0.7.1 |
+| 适配版 SHA256 | `82b4a6d05ceaeafa190a1368302b3ffd08031ece02f698138e0623826b9dd0aa` |
+| 本仓库安装地址（推荐） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-plus.plugin.js` |
+| 上游固定地址（0.7.0，备用） | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/8b542254684ff5d2ec2b0135a9b02d46e61631af/plugin/musicfree-netease-plugin.js` |
+| 上游跟随 main | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/main/plugin/musicfree-netease-plugin.js`（实测 HTTP 200，hash 与上游一致） |
+| 模拟器安装文件 | 源文件 `Documents/netease-plus-0.7.1.js`；安装后实际加载 `Documents/plugins/<nanoid>.js`，hash 与适配版一致 |
+| 适配版改动 | 扫码 803 成功后把凭证写入插件用户变量（重启仍有效）；更新说明页里「iOS 会覆盖 Cookie」的过时提示；补充 `login` 命令提示；扫码成功后的诊断只显示 MUSIC_U 首尾，不打印完整值；版本号 0.7.1 |
 | 支持 | 搜索（music/album/artist/sheet）、播放、歌词、封面、评论、歌单广场、我的歌单（含「我喜欢的音乐」）、排行榜、专辑、歌手、扫码登录、按链接/ID/歌单名导入、输入 `all` 一键导入全部歌单 |
 | 用户变量 | `cookie`（网易云 Cookie）、`bilibiliFallback`（B 站回退，默认开）、`bilibiliMp4`（容器开关） |
+| 兼容性 | 适配版的自动保存需要 App 提供 `env.setUserVariables`；旧客户端上会自动退化为「只在本次运行有效」，并显示明确提示 |
 | 不含 | VIP/付费破解；会员曲目仍受平台限制，拿不到音源时会按插件自己的 B 站回退逻辑处理 |
 
 **本次验收不使用 B 站回退**：下面所有「可播」结论都来自网易云原生取流，不把 B 站回退算作通过项。
@@ -345,6 +352,43 @@ Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https。
 **真实 Cookie 只在用户手机上填写，不写入仓库、不打印到日志。扫码登录依赖的
 `Set-Cookie` 响应头仍然可读，未受这个改动影响。**
 
+### 扫码登录（eapi）实测
+
+`导入单曲 → 输入 login` 会生成诊断条目和二维码；二维码图片由 quickchart.io 渲染，显示在
+插件说明（卡片上的 `?`）顶部。模拟器实测（没有扫真实账号）：
+
+| 步骤 | 结果 |
+| --- | --- |
+| 生成二维码 | `p.instance.importMusicItem("login")` 返回 `__diagnostic__` 条目，说明页出现 quickchart `https://quickchart.io/qr?size=400&margin=2&text=...`，图片实测 HTTP 200、`image/png`、400×400 |
+| 匿名设备 | `POST https://interfacepc.music.163.com/eapi/register/anonimous` → 200，`code=200`，带 `Set-Cookie` |
+| 取 unikey | `POST https://interfacepc.music.163.com/eapi/login/qrcode/unikey`（`type=3`）→ 200，`code=200`，返回 unikey；**没有走 weapi，也没有 `-462`** |
+| 轮询 | 每 3 秒 `POST https://interfacepc.music.163.com/eapi/login/qrcode/client/login` → 200，`code=801`、`message=等待扫码`，连续多次稳定；响应带 `Set-Cookie` |
+| 成功分支 | 用 axios 拦截把轮询响应替换成假 `803` + `Set-Cookie`（`MUSIC_U=FAKE...`、`MUSIC_A=FAKE...`、`__csrf=FAKE...`、`NMTID=FAKE...`），插件立即进入「扫码成功」状态，并把凭证写入用户变量。假值仅用于逻辑测试，不是真实账号，测试后已清空 |
+
+**持久化（关键）：**
+
+- 上游 0.7.0 的 `qrLoginCookie` 是模块级变量，只存在内存；JS 重载 / App 重启后丢失。
+  实测重载后说明页的扫码面板消失，`qrLoginCookie` 归零。
+- 适配版在扫码 803 成功后调用 `env.setUserVariables({ ...原变量, cookie: 新凭证 })`，
+  把整份 `MUSIC_U / MUSIC_A / __csrf / NMTID` 写进插件用户变量。实测：假凭证写入后
+  `getUserVariables()` 能读到；重载后用户变量仍在，而扫码会话状态（二维码/轮询）已清空。
+- 写入失败（旧客户端没有 setter）时自动退回内存模式，并在说明页显示「重启后需要重新扫码」。
+- 凭证只写入本机插件存储，不写仓库、不打印到日志；文档里只记录假值。
+
+**真实扫码的 802/803 还没测**：需要用户用自己的网易云 App 扫一次码并确认。801（等待扫码）
+和 803（成功）分支的处理逻辑已经分别用真实轮询和假响应验证；真实 802 只是状态文案不同，
+代码路径相同。
+
+### `probeCookieHeaderEcho` 的 ATS 检查
+
+插件模块末尾 `setTimeout(refreshLoginUi, 0)` 会异步校验登录态。`refreshLoginUi` 第一行是
+`if (!getRawCookieInput()) return;`，所以**用户没填 Cookie 时直接返回**，不会发 httpbin 请求，
+也不影响初始化。填了 Cookie 后才会调用 `probeCookieHeaderEcho()`：
+
+- 地址是 `https://httpbin.org/headers`，不是 http，ATS 不会拦；
+- 整个函数有 `try/catch`，失败只写 `lastEchoResult`，不会抛出到插件初始化；
+- 它只用于显示「Cookie 头有没有发出去」的诊断，不参与搜索/播放主流程。
+
 ### 播放地址 http → https
 
 `src/core/trackPlayer/index.ts` 的 `normalizeMediaUrl()` 在进入播放器前只把
@@ -355,18 +399,19 @@ Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https。
 
 | 入口 | 结果 |
 | --- | --- |
-| 插件管理 → `网易云音乐` 0.7.0（作者 qingniaoheyu） | 卡片上同时有「导入歌单」「导入单曲」「用户变量」 |
+| 插件管理 → `网易云音乐` 0.7.1（本仓库适配版，上游作者 qingniaoheyu） | 卡片上同时有「导入歌单」「导入单曲」「用户变量」 |
 | 插件 → 用户变量 | 面板标题「设置用户变量」，包含「网易云 Cookie」「B 站音源回退」「改用 mp4 容器」三项 |
 | 插件 → 导入歌单 | 面板可打开并输入；`supportedMethods` 运行时包含 `importMusicSheet`，`userVariables` 包含 `cookie` |
 | 输入 `all` | 未登录时按上面的预期报错；登录后的真实导入需要用户自己的 Cookie，本次没有真实账号可测 |
 
 ### 结论与建议
 
-1. 网易云首选 **qingniaoheyu 0.7.0**；公开内容无需 Cookie，私有歌单/我的歌单/`all` 需要用户自己填 `MUSIC_U`。
-2. 本 App 的两个 iOS 修复必须随包一起更新：`RCTNetworking` 显式 Cookie 透传、`m*.music.126.net` 升级 https。
-   真机上已经复制了插件文件，但 **App 二进制也要重新构建安装**，否则旧包仍会出现「Cookie 被合并」和「http 播放失败」。
+1. 网易云首选 **本仓库适配版 0.7.1**（基于 qingniaoheyu 0.7.0）；公开内容无需 Cookie，私有歌单/我的歌单/`all`/扫码登录需要用户自己的账号。
+2. 本 App 的三个 iOS 修复必须随包一起更新：`RCTNetworking` 显式 Cookie 透传、`m*.music.126.net` 升级 https、插件环境 `env.setUserVariables`（扫码凭证持久化）。
+   真机上已经复制了插件文件，但 **App 二进制也要重新构建安装**，否则旧包仍会出现「Cookie 被合并」「http 播放失败」，扫码凭证也无法自动保存。
 3. `网易云音乐（GD 源）` 1.1.0 保留为备用：如果网易云接口风控/改版导致 plus 插件不可用，可以用它继续搜索/播放/导入。
 4. 不做 VIP/付费破解；B 站回退不作为验收项，VIP 曲目能否播放取决于接口当时返回的地址。
+5. 真实扫码 802/803 需要用户用自己的网易云 App 完成；本次只验证到 801 和假 803。
 
 ## 最小可用安装集
 
@@ -378,8 +423,10 @@ Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https。
 | 2 | 酷狗音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/kugou-source.plugin.v1.9.24.js` | 备用曲库；首条常是翻唱，选原唱版本即可 |
 | 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
 | 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
-| 5 | 网易云音乐（开源增强） | 单插件 | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/8b542254684ff5d2ec2b0135a9b02d46e61631af/plugin/musicfree-netease-plugin.js` | 网易云搜索/播放/歌词/歌单导入/我的歌单/`all`；公开内容无需 Cookie |
+| 5 | 网易云音乐（开源增强，本仓库适配版） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-plus.plugin.js` | 网易云搜索/播放/歌词/歌单导入/我的歌单/`all`/扫码登录；公开内容无需 Cookie，扫码凭证自动保存 |
 | 6 | 网易云音乐（GD 源，备用） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` | 备用；plus 插件风控/改版时仍可搜索、播放、导入 |
+
+> 只想用上游 0.7.0 时，把第 5 行换成上面的「上游固定地址」；功能相同，但扫码凭证只存在内存，重启后需要重扫或手动复制到用户变量。
 
 也可以直接订阅 **heb-main**（`https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json`），
 一次装 6 个：QQ、酷狗、咪咕可播，酷我、网易云可搜，汽水当前搜索失败。

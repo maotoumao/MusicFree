@@ -919,6 +919,20 @@ export class Plugin {
                             _internalPluginMeta.getUserVariables(this.name)
                         );
                     },
+                    /**
+                     * 允许插件把运行期得到的数据写回自己的用户变量。
+                     * 典型场景：网易云插件扫码登录成功后，把服务端下发的
+                     * MUSIC_U / __csrf 存下来，否则只存在内存里，App 重启就丢。
+                     * 写入的是插件自己的 userVariables，不会和其他插件串。
+                     */
+                    setUserVariables: (
+                        userVariables: Record<string, string>,
+                    ) => {
+                        _internalPluginMeta.setUserVariables(
+                            this.name,
+                            userVariables,
+                        );
+                    },
                     get userVariables() {
                         return this.getUserVariables() ?? {};
                     },
