@@ -60,5 +60,14 @@ target 'MusicFree' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Xcode 27 rejects pods whose deployment target is below 15.0.
+    # Keep every pod aligned with the app target so the project builds on
+    # both the iOS 27 SDK and older supported Xcode versions.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |build_config|
+        build_config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+      end
+    end
   end
 end

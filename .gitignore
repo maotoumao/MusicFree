@@ -86,3 +86,5 @@ scripts/
 .expo
 dist/
 web-build/
+# iOS build artifacts
+ios/MusicFree.xcworkspace/
