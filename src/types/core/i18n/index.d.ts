@@ -81,6 +81,9 @@ export interface ILanguageData {
 
     // 提示消息相关
     "toast.deleteSuccess": string; // 删除成功
+    "toast.playErrorAndSkipped": string; // 播放失败，已自动跳到下一首
+    "toast.playErrorStopped": string; // 播放失败，已暂停
+    "toast.networkUnavailable": string; // 网络不可用，请检查网络连接
     "toast.hasStarred": string; // 已收藏歌单
     "toast.hasUnstarred": string; // 已取消收藏歌单
     "toast.importSuccess": string; // 导入成功

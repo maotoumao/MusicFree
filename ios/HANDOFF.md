@@ -93,6 +93,14 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
 13. `src/core/pluginManager/plugin.ts`：全局 `axios.defaults.timeout` 从 2s 调到 10s。
     2s 会让稍慢的插件接口（尤其境外 API）在搜索、插件安装时被误判为超时，实测
     udio 搜索耗时约 2.2s 时稳定报 `timeout of 2000ms exceeded`；改后正常。
+14. 本地扫描：`src/pages/localMusic/mainPage/index.tsx` 的 `fileType` 从 `folder`
+    改为 `file-and-folder`，并传入 `isLocalMediaFile` 过滤音频后缀；
+    `src/core/localMusicSheet.ts` 的 `getMusicStats` 支持直接选中单个文件，
+    不再把文件路径当目录 `readDir`。
+15. 播放失败提示：`src/core/trackPlayer/index.ts` 在 `handlePlayFail` 中弹出 Toast。
+    在线失败显示「播放失败，已自动跳到下一首」或「播放失败，已暂停」；
+    断网时 60s 内只提示一次「网络不可用，请检查网络连接」。普通失败 2s 内只提示一次，
+    避免 iOS 同一次错误触发多个事件时重复弹窗。
 
 ## 当前卡点（不是代码问题）
 
@@ -262,14 +270,13 @@ scripts/ios-device.sh              # Release 构建 + 安装 + 启动
   `playing`，且只跳一首（iOS 同一次失败会发两次事件，第二次到达时当前曲已变化，
   不会重复处理）。修复后重新用 GD 音乐台搜索《稻香》并在线播放，https 流媒体
   `playing`、进度正常，在线链路未受影响。
-- 断网/弱网：NetInfo 读取到 `Wifi`；搜索请求失败时结果页显示「出错啦…/点击重试」，
-  修好超时后重试可以恢复；播放失败仍没有 Toast，也没有全局离线提示；修复事件
-  字段后会在 500ms 后自动跳下一首。建议后续补一个播放失败 Toast（最小改动）。
-- 本地音乐：从 Files 拖音频到 `Documents` 根目录后，「扫描本地音乐」的选择器
-  因 `fileType: "folder"` 只列文件夹，既不能选 `Documents` 本身，也看不到根目录
-  里的音频文件；必须先建子文件夹或放进 `download` 才能扫描。最小改动方案：把
-  `src/pages/localMusic/mainPage/index.tsx` 里扫描的 `fileType` 改成
-  `"file-and-folder"`（并加音频后缀过滤），即可在根目录直接多选文件。
+- 断网/弱网：NetInfo 读取到 `Wifi`；搜索请求失败时结果页显示「出错啦…/点击重试」。
+  播放失败现在会立即弹出 Toast：「播放失败，已自动跳到下一首」或
+  「播放失败，已暂停」（取决于「播放失败时自动暂停」）；断网时 60s 内只提示一次
+  「网络不可用，请检查网络连接」，避免每首歌都弹。自动跳歌仍是 500ms 后执行。
+- 本地音乐：扫描选择器已改为 `file-and-folder` + 音频后缀过滤，`Documents`
+  根目录的音频文件会直接列出并可多选；`importLocal` 也能处理单个文件路径
+  （不会把文件当目录 `readDir`）。仍可递归导入文件夹。
 - 下载完成只有 Toast「下载任务已完成」，没有「在 Files 中查看」引导；文件实际在
   `Documents/download/music`，Files App 的「我的 iPhone → MusicFree」可见。
   最小改动：在完成 Toast 或下载列表页补一句路径说明；iOS 不能深链到具体文件夹。
@@ -306,6 +313,24 @@ scripts/ios-device.sh              # Release 构建 + 安装 + 启动
 结论：iOS 侧「搜索 → 在线播放 → 歌词 → 上下首 → 歌单 → 历史」主链路已通，
 播放可用性主要受插件输出格式和 DRM 限制，App 侧不需要为此改 ATS。
 
+## 已知限制（插件生态）
+
+App 侧播放链路已经跑通；下面这些失败是插件输出或版权保护导致的，**不要**再当成
+App bug 逐个排查，也不要为了它们放开 ATS：
+
+| 限制 | 影响 | 处理 |
+| --- | --- | --- |
+| bilibili 返回 `.m4s` | AVPlayer 无法识别，报 `ios_track_unplayable` | 插件输出格式问题；需要插件改回 mp4/m4a，App 不做格式转换 |
+| 猫耳FM HLS 为 SAMPLE-AES/Widevine DRM | AVPlayer 无 FairPlay 解密能力，播放停在 buffering | DRM 限制，iOS 无法播放 |
+| Audiomack 仅支持 `standard` 音质 | 切 high 等档位返回 false | 插件接口能力，保持 standard 即可 |
+| 官方插件 403 / 503 / 要求登录 / TLS 不可达 | 搜索或取流失败 | 插件服务端/网络问题，换可用插件，不要改 App |
+| 只提供 http 的插件 API | ATS 拦截（https-only） | 只记录；是否放开需用户确认，默认不动 ATS |
+
+选插件时的优先级：**Audiomack、GD音乐台**已验证可播；官方示例插件（bilibili、猫耳、
+快手、YouTube、音悦台、suno 等）当前基本不可用，除非插件本身更新，否则不再重复尝试。
+插件请求超时已从 2s 调到 10s（`src/core/pluginManager/plugin.ts`），慢接口不会再被
+误判为超时。
+
 ## 回归清单（2026-11-15，iPhone 17 Pro Max 模拟器）
 
 | 项目 | 结果 | 证据 / 备注 |
@@ -314,7 +339,9 @@ scripts/ios-device.sh              # Release 构建 + 安装 + 启动
 | 搜索 | 通过 | 搜索页搜索「晴天」；默认「快手」tab 为 0 条，切到「猫耳FM」tab 显示 10 条（默认 tab 无结果是插件数据问题） |
 | 在线播放 | 通过 | Audiomack `playing`，进度从 7.24s 推进到 17.08s / 269.8s（最终 16.2 构建） |
 | 下载 | 通过 | 7,634,986 bytes，状态 1→2→3，队列完成；文件落 `Documents/download/music` |
-| 本地导入 | 通过 | 对 `Documents/download/music` 执行 `importLocal`，歌单从 1 首恢复到 4 首（青花瓷、晴天、VerifyDownload、DownloadTest17） |
+| 本地导入 | 通过 | `Documents` 根目录的选择器会列出音频文件并隐藏 `.lrc`；直接选中单个 `test-tone.m4a` 导入成功（1 首，标题读为「MF标签标题」）；文件夹递归导入此前已验证 4 首 |
+| 播放失败提示 | 通过 | 在线失败弹「播放失败，已自动跳到下一首」；开启「播放失败时自动暂停」后弹「播放失败，已暂停」 |
+| 断网提示 | 通过 | 模拟离线后播放失败，弹「网络不可用，请检查网络连接」，且 60s 内只提示一次 |
 | 主题切换 | 通过 | 设置 → 主题设置，点「浅色模式」→ `p-light`，点「深色模式」→ `p-dark`，配置持久化 |
 | 插件增删 | 通过 | 卸载 TestPlugin：9→8 且插件管理页消失；从本地文件重新安装：8→9，插件管理页重新出现。headless 环境无法点按，调用的是页面按钮背后的同一个 `pluginManager` 方法 |
 | Live Activity 开关 | 通过 | 基本设置 → 实时活动歌词：关 → `lyric.showStatusBarLyric=false`，开 → `true`；原生 end/show 调用无报错 |

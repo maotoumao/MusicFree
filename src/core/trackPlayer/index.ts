@@ -1,4 +1,6 @@
 import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog";
+import i18n from "@/core/i18n";
+import Toast from "@/utils/toast";
 import {
     internalFakeSoundKey,
     sortIndexSymbol,
@@ -67,6 +69,9 @@ class TrackPlayer extends EventEmitter<{
     private serviceInited = false;
     // 播放队列索引map
     private playListIndexMap = createMediaIndexMap([] as IMusic.IMusicItem[]);
+    // 播放失败提示：网络异常做长间隔节流，普通失败做短间隔节流
+    private lastOfflineToastAt = 0;
+    private lastPlayErrorToastAt = 0;
 
 
     private static maxMusicQueueLength = 10000;
@@ -911,7 +916,35 @@ class TrackPlayer extends EventEmitter<{
     }
 
 
+    private showPlayFailToast() {
+        const now = Date.now();
+        if (Network.isOffline) {
+            // 断网时 60s 内只提示一次，避免每首歌失败都弹一次
+            if (now - this.lastOfflineToastAt < 60000) {
+                return;
+            }
+            this.lastOfflineToastAt = now;
+            Toast.warn(i18n.t("toast.networkUnavailable"), {
+                duration: 3000,
+            });
+            return;
+        }
+        if (now - this.lastPlayErrorToastAt < 2000) {
+            return;
+        }
+        this.lastPlayErrorToastAt = now;
+        Toast.warn(
+            this.configService.getConfig("basic.autoStopWhenError")
+                ? i18n.t("toast.playErrorStopped")
+                : i18n.t("toast.playErrorAndSkipped"),
+            {
+                duration: 3000,
+            },
+        );
+    }
+
     private async handlePlayFail() {
+        this.showPlayFailToast();
         // 如果自动跳转下一曲, 500s后自动跳转
         if (!this.configService.getConfig("basic.autoStopWhenError")) {
             await delay(500);
