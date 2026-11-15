@@ -114,9 +114,11 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
 
 ## 当前卡点（不是代码问题）
 
-- **签名**：`security find-identity -v -p codesigning` 为 0，Xcode 尚未登录 Apple ID，
-  所以还不能装真机。需要用户在 Xcode → Settings → Accounts 登录（免费账号即可）。
-- **真机连接**：`xcrun devicectl list devices` 为空，需要数据线连接 + 信任 + 开发者模式。
+- **签名**：已登录 Apple ID，`security find-identity -v -p codesigning` 有 1 个有效
+  `Apple Development: 739686898@qq.com (7C4Q7824B6)`，可以走自动签名。
+- **真机连接**：`sky_17pm`（UDID `00008150-001264103A03401C`）已配对，但当前
+  `devicectl` 状态为 `unavailable`。需要数据线连接（或同一 Wi-Fi）、手机上点「信任」、
+  打开「开发者模式」；就绪后跑 `scripts/ios-device.sh --check` 确认。
 - **模拟器**：iOS 27.2 有两个 runtime：按机型的 24B91014 只支持 iPhone Duo；
   通用版 24B8117 支持 iPhone 15–18 全系。当前验证机为 iPhone 17 Pro Max
   （UDID `9959CA3C-AA80-4485-BED0-4E680F998704`），启动和主要功能已验证，见下方进展。
