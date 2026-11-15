@@ -70,8 +70,9 @@ npx react-native run-ios --device "<iPhone 名称>"
 - **签名**：`security find-identity -v -p codesigning` 为 0，Xcode 尚未登录 Apple ID，
   所以还不能装真机。需要用户在 Xcode → Settings → Accounts 登录（免费账号即可）。
 - **真机连接**：`xcrun devicectl list devices` 为空，需要数据线连接 + 信任 + 开发者模式。
-- **模拟器**：runtime 已就绪（iOS 27.2，设备类型只能用 iPhone Duo；iPhone 16/17
-  会报 "Incompatible device"）。启动和主要功能已在模拟器验证，见下方进展。
+- **模拟器**：iOS 27.2 有两个 runtime：按机型的 24B91014 只支持 iPhone Duo；
+  通用版 24B8117 支持 iPhone 15–18 全系。当前验证机为 iPhone 17 Pro Max
+  （UDID `9959CA3C-AA80-4485-BED0-4E680F998704`），启动和主要功能已验证，见下方进展。
 
 ## 接手进展（2026-11-15）
 
