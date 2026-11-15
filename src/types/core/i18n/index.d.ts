@@ -339,6 +339,8 @@ export interface ILanguageData {
     "basicSettings.lyric": string; // 歌词
     "basicSettings.lyric.autoSearchLyric": string; // 歌词缺失时自动搜索歌词
     "basicSettings.lyric.showStatusBarLyric": string; // 开启桌面歌词
+    "basicSettings.lyric.liveActivity": string; // 实时活动歌词
+    "basicSettings.lyric.liveActivityDescription": string; // 实时活动歌词说明
     "basicSettings.lyric.align": string; // 对齐方式
     "basicSettings.lyric.align.left": string; // 左对齐
     "basicSettings.lyric.align.center": string; // 居中对齐
@@ -388,6 +390,7 @@ export interface ILanguageData {
     "toast.imageCacheCleared": string; // 已清除图片缓存
     "toast.logCleared": string; // 日志已清空
     "toast.noFloatWindowPermission": string; // 无悬浮窗权限
+    "toast.liveActivityDisabled": string; // 实时活动未开启
     "toast.folderNotExistOrNoPermission": string; // 文件夹不存在或无权限
     
     // 音质相关

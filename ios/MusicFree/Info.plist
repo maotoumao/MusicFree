@@ -66,6 +66,10 @@
 	<string>选择本地图片作为歌单封面</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>开发调试时连接本机的 Metro 服务</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

@@ -64,6 +64,12 @@ npx react-native run-ios --device "<iPhone 名称>"
 7. `ios/MusicFree/Info.plist`：后台音频、Files App 文件共享（`UIFileSharingEnabled` +
    `LSSupportsOpeningDocumentsInPlace`）、相册权限说明、`NSAllowsArbitraryLoadsForMedia`
 8. Bundle ID 改为 `fun.upup.musicfree`；AppIcon 全尺寸已生成（源图是 512 的 Android 图标放大）
+9. `ios/MusicFreeLiveActivity/`：新增 Widget Extension（ActivityKit + WidgetKit），
+   展示锁屏与灵动岛的实时活动歌词；`ios/MusicFree/MFLiveActivity.swift` 管理活动生命周期，
+   `LyricUtil` 改由 App target 的 Swift + ObjC 桥接实现，复用原来的 JS 调用链
+10. 设置页新增 iOS 专用的「实时活动歌词」开关（`src/pages/setting/settingTypes/basicSetting.tsx`）
+11. App 的 `IPHONEOS_DEPLOYMENT_TARGET` 从 15.1 提升到 16.2（ActivityKit `ActivityContent`
+    需要 16.2）；Widget Extension 也为 16.2
 
 ## 当前卡点（不是代码问题）
 
@@ -88,9 +94,18 @@ npx react-native run-ios --device "<iPhone 名称>"
 - 已在模拟器验证：本地音乐导入（Documents → 扫描 → Mp3Util 元数据）、本地音乐播放、
   后台播放（切到别的 App 后进度继续）、`musicfree://install/<url>` 热启动安装插件、
   RNFS 下载到 Documents/download。
-- 真机构建：Debug / Release 的 `iphoneos` 无签名编译均已通过（Release 带 JS bundle）。
+- 实时活动歌词（MVP）已在 iPhone 17 Pro Max 模拟器跑通：播放带 `.lrc` 的本地歌曲后，
+  `com.apple.activitykit` 日志可见活动被创建、每句歌词更新一次（content state 大小随歌词变化）；
+  切到后台后手动更新歌词，同一个 activity 继续更新，没有重新请求活动。
+  WidgetRenderer 日志显示灵动岛 compact leading/trailing 已按内容布局
+  （19.3pt / 71pt），说明 Widget Extension 正常渲染。
+  由于 Xcode 27 没带 Simulator.app（只有 headless CoreSimulator），无法锁屏截图，
+  锁屏界面的视觉效果尚未人工确认，需真机或带 Simulator UI 的环境复核。
+- 设置页新增「实时活动歌词」开关，截图确认开关、说明文字正常显示，默认关闭。
+- 真机构建：Debug / Release 的 `iphoneos` 无签名编译之前均已通过（Release 带 JS bundle）；
+  新增 Widget Extension 后还需要在真机签名流程里复核（扩展会随 App 一起签名）。
 - 仍未验证：真机后台播放/锁屏控制/耳机线控/来电打断（等签名与设备）；
-  Live Activity 歌词、MP3 ID3 写入（P2）。
+  MP3 ID3 写入（P2）。
 - 注意：ATS 仍禁止明文 HTTP（`NSAllowsArbitraryLoads` 为 false），插件 API 若走 http 会失败；
   是否放开需用户决定（Android 侧允许 cleartext）。
 
@@ -107,8 +122,8 @@ npx react-native run-ios --device "<iPhone 名称>"
 6. 插件安装/订阅在 iOS 上的文件选择链路
 
 **P2 iOS 独有能力**
-7. 灵动岛/实时活动歌词（ActivityKit + Widget Extension，替代 Android 悬浮窗歌词）
-8. MP3 ID3 写入（TagLib 或自研 ID3v2）
+7. 灵动岛/实时活动歌词：已完成 MVP（ActivityKit + Widget Extension），真机视觉与后台切换待复核
+8. MP3 ID3 写入（TagLib 或自研 ID3v2）；可先做 m4a/mp4 元数据写入
 9. 品质打磨：图标重绘（现在是把 512 图标放大）、启动图、ATS 收紧
 
 ## 协作约定

@@ -415,16 +415,16 @@ export default function BasicSetting() {
                 ),
             ],
         },
-        // iOS 没有悬浮窗/状态栏歌词，相关设置只在 Android 展示
-        ...(Platform.OS === "android"
-            ? [
-                {
-                    title: t("basicSettings.lyric"),
-                    data: [],
-                    footer: <LyricSetting />,
-                },
-            ]
-            : []),
+        {
+            title: t("basicSettings.lyric"),
+            data: [],
+            footer:
+                Platform.OS === "ios" ? (
+                    <LiveActivityLyricSetting />
+                ) : (
+                    <LyricSetting />
+                ),
+        },
         {
             title: t("basicSettings.cache"),
             data: [
@@ -664,6 +664,66 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 });
+
+function LiveActivityLyricSetting() {
+    const showStatusBarLyric = useAppConfig("lyric.showStatusBarLyric");
+    const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");
+
+    const { t } = useI18N();
+
+    const autoSearchLyric = createSwitch(
+        t("basicSettings.lyric.autoSearchLyric"),
+        "lyric.autoSearchLyric",
+        enableAutoSearchLyric ?? false,
+    );
+
+    const liveActivityLyric = createSwitch(
+        t("basicSettings.lyric.liveActivity"),
+        "lyric.showStatusBarLyric",
+        showStatusBarLyric ?? false,
+        async newValue => {
+            if (newValue) {
+                const hasPermission = await LyricUtil.checkSystemAlertPermission().catch(
+                    () => false,
+                );
+                if (!hasPermission) {
+                    Toast.warn(t("toast.liveActivityDisabled"));
+                    return;
+                }
+                Config.setConfig("lyric.showStatusBarLyric", true);
+                LyricUtil.showStatusBarLyric("MusicFree", {}).catch(() => {});
+            } else {
+                LyricUtil.hideStatusBarLyric().catch(() => {});
+                Config.setConfig("lyric.showStatusBarLyric", false);
+            }
+        },
+    );
+
+    return (
+        <View>
+            <ListItem
+                withHorizontalPadding
+                heightType="small"
+                onPress={autoSearchLyric.onPress}>
+                <ListItem.Content title={autoSearchLyric.title} />
+                {autoSearchLyric.right}
+            </ListItem>
+            <ListItem
+                withHorizontalPadding
+                heightType="small"
+                onPress={liveActivityLyric.onPress}>
+                <ListItem.Content title={liveActivityLyric.title} />
+                {liveActivityLyric.right}
+            </ListItem>
+            <ThemeText
+                fontSize="subTitle"
+                fontColor="textSecondary"
+                style={lyricStyles.description}>
+                {t("basicSettings.lyric.liveActivityDescription")}
+            </ThemeText>
+        </View>
+    );
+}
 
 function LyricSetting() {
     /**
@@ -926,5 +986,9 @@ const lyricStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: rpx(24),
+    },
+    description: {
+        paddingHorizontal: rpx(24),
+        paddingBottom: rpx(16),
     },
 });

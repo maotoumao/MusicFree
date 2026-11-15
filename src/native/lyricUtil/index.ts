@@ -1,6 +1,7 @@
 import Config from "@/core/appConfig";
+import i18n from "@/core/i18n";
 import Toast from "@/utils/toast";
-import { NativeModule, NativeModules } from "react-native";
+import { NativeModule, NativeModules, Platform } from "react-native";
 import { errorLog } from "@/utils/log.ts";
 
 export enum NativeTextAlignment {
@@ -56,7 +57,11 @@ const showStatusBarLyric: ILyricUtil["showStatusBarLyric"] = async (
         await originalShowStatusBarLyric(initLyric, config);
     } catch (e) {
         errorLog("状态栏歌词开启失败", e);
-        Toast.warn("状态栏歌词开启失败，请到手机系统设置打开悬浮窗权限");
+        Toast.warn(
+            Platform.OS === "ios"
+                ? i18n.t("toast.liveActivityDisabled")
+                : "状态栏歌词开启失败，请到手机系统设置打开悬浮窗权限",
+        );
         Config.setConfig("lyric.showStatusBarLyric", false);
     }
 };
