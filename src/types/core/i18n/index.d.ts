@@ -93,6 +93,8 @@ export interface ILanguageData {
     "toast.commmentNotAvaliableForCurrentMusic": string; // 当前音乐无法进行评论
     "toast.addToNextPlay": string; // 添加到下一曲
     "toast.beginDownload": string; // 开始下载
+    "toast.downloadCompletedIos": string; // 下载完成，文件在「文件」App的路径
+    "toast.downloadCompleted": string; // 下载完成，文件保存目录
     "toast.rememberToSave": string; // 请记得保存
 
     // 本地音乐相关

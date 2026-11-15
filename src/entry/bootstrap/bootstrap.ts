@@ -294,6 +294,20 @@ async function extraMakeup() {
 }
 
 
+function getDownloadFolderHint() {
+    const downloadPath =
+        Config.getConfig("basic.downloadPath") ?? pathConst.downloadMusicPath;
+    if (downloadPath.startsWith(pathConst.basePath)) {
+        // iOS 的 Documents 目录会映射到「文件」App 里的 MusicFree
+        return (
+            downloadPath
+                .slice(pathConst.basePath.length)
+                .replace(/^\/+|\/+$/g, "") || "download/music"
+        );
+    }
+    return downloadPath;
+}
+
 function bindEvents() {
     // 下载事件
     downloader.on(DownloaderEvent.DownloadError, (reason) => {
@@ -310,7 +324,14 @@ function bindEvents() {
     });
 
     downloader.on(DownloaderEvent.DownloadQueueCompleted, () => {
-        Toast.success("下载任务已完成");
+        const args = { path: getDownloadFolderHint() };
+        // 路径提示稍长，展示时间放宽一点
+        Toast.success(
+            Platform.OS === "ios"
+                ? i18n.t("toast.downloadCompletedIos", args)
+                : i18n.t("toast.downloadCompleted", args),
+            { duration: 4000 },
+        );
     });
 }
 

@@ -73,6 +73,8 @@
     "toast.commmentNotAvaliableForCurrentMusic": "當前歌曲暫無評論",
     "toast.addToNextPlay": "已添加到下一首播放",
     "toast.beginDownload": "開始下載，全部下載完成之前請不要關閉應用",
+    "toast.downloadCompletedIos": "下載完成，檔案已儲存到「檔案」App → 我的 iPhone → MusicFree → {path}",
+    "toast.downloadCompleted": "下載完成，檔案已儲存到 {path} 目錄",
     "toast.rememberToSave": "記得儲存哦~",
     "localMusic.scanLocalMusic": "掃描本地音樂",
     "localMusic.beginScan": "開始掃描",

@@ -73,6 +73,8 @@
     "toast.commmentNotAvaliableForCurrentMusic": "No comments available for current song",
     "toast.addToNextPlay": "Added to play next",
     "toast.beginDownload": "Download started, please don't close the app until all downloads complete",
+    "toast.downloadCompletedIos": "Download complete. Open Files → On My iPhone → MusicFree → {path}",
+    "toast.downloadCompleted": "Download complete. Saved to {path}",
     "toast.rememberToSave": "Remember to save~",
     "localMusic.scanLocalMusic": "Scan Local Music",
     "localMusic.beginScan": "Start Scan",
