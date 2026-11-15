@@ -23,10 +23,23 @@
   }
 
   AppDelegate *appDelegate = (AppDelegate *)UIApplication.sharedApplication.delegate;
+
+  // Under the scene life cycle the URL that launched the app arrives here
+  // instead of in the app delegate's launch options. Forward it so that
+  // Linking.getInitialURL() can resolve cold-start deep links.
+  NSMutableDictionary *launchOptions = [NSMutableDictionary new];
+  UIOpenURLContext *urlContext = connectionOptions.URLContexts.anyObject;
+  if (urlContext) {
+    launchOptions[UIApplicationLaunchOptionsURLKey] = urlContext.URL;
+    if (urlContext.options.sourceApplication) {
+      launchOptions[UIApplicationLaunchOptionsSourceApplicationKey] = urlContext.options.sourceApplication;
+    }
+  }
+
   UIWindow *window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
   UIView *rootView = [appDelegate.rootViewFactory viewWithModuleName:appDelegate.moduleName
                                                    initialProperties:appDelegate.initialProps
-                                                       launchOptions:nil];
+                                                       launchOptions:launchOptions];
   UIViewController *rootViewController = [appDelegate createRootViewController];
   [appDelegate setRootView:rootView toRootViewController:rootViewController];
   window.rootViewController = rootViewController;
