@@ -70,8 +70,28 @@ npx react-native run-ios --device "<iPhone 名称>"
 - **签名**：`security find-identity -v -p codesigning` 为 0，Xcode 尚未登录 Apple ID，
   所以还不能装真机。需要用户在 Xcode → Settings → Accounts 登录（免费账号即可）。
 - **真机连接**：`xcrun devicectl list devices` 为空，需要数据线连接 + 信任 + 开发者模式。
-- **模拟器**：runtime 还在下载；Xcode 27.2 之前因 CoreSimulator 版本不一致报过错，
-  现在版本已对齐（1174.21），下载完成后应可用。
+- **模拟器**：runtime 已就绪（iOS 27.2，设备类型只能用 iPhone Duo；iPhone 16/17
+  会报 "Incompatible device"）。启动和主要功能已在模拟器验证，见下方进展。
+
+## 接手进展（2026-11-15）
+
+- 模拟器已跑通：iPhone Duo（iOS 27.2）上 App 能启动，bootstrap 全流程通过，
+  首页正常渲染，`Documents/log` 无 JS 错误。
+- 关键决定：iOS 端关闭 New Architecture（`ios/Podfile` 中 `ENV['RCT_NEW_ARCH_ENABLED'] = '0'`）。
+  react-native-mmkv 2.x 需要 legacy bridge；RNTP 4.x 的 iOS 模块缺少 RN 0.76
+  TurboModule 互操作会解析的方法。
+- iOS 27 SDK 必须使用 UIScene 生命周期：窗口改由 `AppDelegate.mm` 里的 `SceneDelegate`
+  创建（含冷启动 deep link 的 launchOptions 转发）；`expo-splash-screen` 需要
+  `SplashScreen.storyboard` 资源。
+- `react-native-permissions` 改为只在 Android 分支 require，避免 iOS 读取不存在的权限 handler。
+- 已在模拟器验证：本地音乐导入（Documents → 扫描 → Mp3Util 元数据）、本地音乐播放、
+  后台播放（切到别的 App 后进度继续）、`musicfree://install/<url>` 热启动安装插件、
+  RNFS 下载到 Documents/download。
+- 真机构建：Debug / Release 的 `iphoneos` 无签名编译均已通过（Release 带 JS bundle）。
+- 仍未验证：真机后台播放/锁屏控制/耳机线控/来电打断（等签名与设备）；
+  Live Activity 歌词、MP3 ID3 写入（P2）。
+- 注意：ATS 仍禁止明文 HTTP（`NSAllowsArbitraryLoads` 为 false），插件 API 若走 http 会失败；
+  是否放开需用户决定（Android 侧允许 cleartext）。
 
 ## 建议的下一步（按优先级）
 
