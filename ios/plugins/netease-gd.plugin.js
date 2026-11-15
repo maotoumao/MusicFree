@@ -27,6 +27,9 @@ const NETEASE_PLAYLIST_API = "https://music.163.com/api/v6/playlist/detail";
 const NETEASE_SONG_API = "https://music.163.com/api/song/detail";
 const SOURCE = "netease";
 const SEARCH_PAGE_SIZE = 20;
+// `/api/song/detail` 单次最多稳定返回约 200 首；500 个 ID 会被服务端
+// 截断或直接报 400。留一首余量，按 199 一批补全。
+const SONG_DETAIL_BATCH_SIZE = 199;
 const DEFAULT_ARTWORK =
     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzQyYTVmNSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5HRDwvdGV4dD48L3N2Zz4=";
 
@@ -209,8 +212,8 @@ function parsePlaylistResponse(data) {
 async function fetchSongsByIds(ids) {
     const result = {};
     const cookie = getCookie();
-    for (let start = 0; start < ids.length; start += 200) {
-        const chunk = ids.slice(start, start + 200);
+    for (let start = 0; start < ids.length; start += SONG_DETAIL_BATCH_SIZE) {
+        const chunk = ids.slice(start, start + SONG_DETAIL_BATCH_SIZE);
         try {
             const headers = {
                 "User-Agent":
@@ -539,7 +542,7 @@ async function importMusicSheet(urlLike) {
 
 module.exports = {
     platform: "网易云音乐（GD 源）",
-    version: "1.1.1",
+    version: "1.1.2",
     srcUrl:
         "https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js",
     description:
