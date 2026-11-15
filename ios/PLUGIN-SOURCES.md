@@ -175,12 +175,14 @@ GET https://music-api.gdstudio.xyz/api.php
 
 | 项目 | 值 |
 | --- | --- |
-| 文件 | `ios/plugins/netease-gd.plugin.js`（约 17 KB，可读源码） |
+| 文件 | `ios/plugins/netease-gd.plugin.js`（约 17 KB，可读源码）；当前 1.1.1 |
 | 插件名 | `网易云音乐（GD 源）` |
-| 安装地址（固定版本，推荐） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` |
-| 安装地址（跟随分支） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js`（jsDelivr 分支缓存可能滞后，不建议用于首次安装） |
-| 支持 | 搜索（music/album/artist）、播放、歌词、封面、歌单导入、`getMusicSheetInfo`；音质 low/standard/high/super → 128/320/740/999 |
-| 不含 | 登录、VIP/付费破解、DRM 破解；接口没返回地址的歌曲就是不能播 |
+| SHA256（1.1.1） | `34f0aed6c10b8db7e210add809de65485c22a98f048ddba3b52b4c913733d61d` |
+| 安装地址（固定版本，推荐） | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ad591e24dfafd9d1440bec662771478d463b5225/ios/plugins/netease-gd.plugin.js` |
+| 安装地址（raw 固定版本，备用） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ad591e24dfafd9d1440bec662771478d463b5225/ios/plugins/netease-gd.plugin.js`（GitHub raw 偶发 503，重试即可） |
+| 安装地址（跟随分支） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js`（jsDelivr 分支缓存可能滞后） |
+| 支持 | 搜索（music/album/artist）、播放、歌词、封面、公开歌单导入、`getMusicSheetInfo`；私有歌单需自己账号的 `MUSIC_U`；音质 low/standard/high/super → 128/320/740/999 |
+| 不含 | VIP/付费破解、DRM 破解；私有歌单没有有效 Cookie 时读不到；接口没返回地址的歌曲就是不能播 |
 
 **复现步骤：**
 
@@ -193,7 +195,8 @@ GET https://music-api.gdstudio.xyz/api.php
 
 本次实测的公开歌单/歌曲不需要 Cookie。如果要导入**自己账号可见的私有歌单**，在
 设置 → 插件管理 → `网易云音乐（GD 源）` → 用户变量 → **网易云 Cookie（可选，仅私有歌单）**
-里粘贴自己账号的 `MUSIC_U=...`。插件只把它用于 `music.163.com` 的歌单详情请求，
+里粘贴自己账号的 `MUSIC_U=...`；如果仍读不到，再粘贴浏览器 `music.163.com` 的完整
+Cookie（含 `__csrf`）。插件只把它用于 `music.163.com` 的歌单详情/歌曲详情请求，
 不参与 GD 取流，也不会绕过 VIP/付费。**不要使用他人 Cookie，不要用来绕过付费墙**；
 没有权限的歌单/歌曲仍然会失败，这是预期行为。
 
@@ -219,7 +222,7 @@ GET https://music-api.gdstudio.xyz/api.php
 | heb 官方 `netease` 1.9.27 | 已注册 | 已注册 | 底层 `_internal.importMusicSheetImpl` 能拿到「朗朗晴天」15 首，但返回的是**歌单对象**（`{title, musicList, ...}`），不是 App 期望的歌曲数组；`p.methods.importMusicSheet` 实测返回 0。`getMusicSheetInfo({id:"2678496359"})` 报「该条目无可用的歌单详情源」 |
 | qwerwhr `网易云` 0.1.0 | 已注册 | 已注册 | `importMusicSheet` 返回 15 首；`getMusicSheetInfo` 返回「朗朗晴天」15 首、`isEnd=true`。但 `getMediaSource` 取流 API 仍返回 429，导入后不能播 |
 | GD `GD音乐台` 1.0.0 | 无 | 无 | 不支持歌单导入 |
-| 本插件 `网易云音乐（GD 源）` 1.1.0 | 已注册 | 已注册 | 15 首导入成功，写入本地歌单 15 首；15/15 能取到 https 流；首曲实测 `playing` |
+| 本插件 `网易云音乐（GD 源）` 1.1.1 | 已注册 | 已注册 | 公开歌单 200/728 首导入成功，写入本地歌单；首曲实测 `playing`；私有歌单需自己账号 Cookie |
 
 结论：**heb/qwerwhr 的导入功能不能直接满足「导入后能播」**。heb 是返回结构不兼容，
 qwerwhr 是能导入但取流 429；GD 根本没有导入。所以由本插件同时实现导入和可播取流。
@@ -238,10 +241,19 @@ qwerwhr 是能导入但取流 429；GD 根本没有导入。所以由本插件�
 | 播放第一首 | 最终 `playing`，position 0 → 5.36s / 21.54s；从固定 URL 重装后的首播有 1 次瞬时 `error`，约 2s 后自动恢复 |
 | 全部 15 首 `getMediaSource("standard")` | **15/15** 返回 https 地址，0 失败 |
 
-大歌单补充：公开「热歌榜」ID `3778678` 实测导入 **200 首**；按 `fee` 字段标记
-**126 首 VIP、74 首免费**；抽样 5 首 VIP + 5 首免费，GD 均返回 https 地址，未逐首播放。
-歌单详情接口只返回前 10 首时，插件会用 `/api/song/detail` 按 `trackIds` 补齐；
-15 首歌单就是这样拿到全量的。
+大歌单补充（1.1.1，2026-11-15 20:35 实测）：公开「热歌榜」ID `3778678`：
+`importMusicSheet` **200 首**，`getMusicSheetInfo` 标题「热歌榜」、**200 首**、`isEnd=true`；
+取第 1 首「海屿你」的 `getMediaSource("standard")` 返回
+`https://m801.music.126.net/...mp3`，播放器 `state=playing`，position **9.77s / 295.94s**。
+更大的公开歌单「杂乱无章 勿听」ID `5077188964`：**728 首**导入成功，`isEnd=true`；
+说明 `trackIds` 超过 200 时按 200 一批补齐的路径有效，不再截断。
+
+**VIP / 私有歌单限制：** 导入时按 `fee` 给标题加 `（VIP）/（付费）` 后缀，只做标记，
+不做任何绕过；VIP 曲目能否播放取决于 GD 当时是否返回地址，不保证。私有歌单（包括
+自己账号的「我喜欢的音乐」）需要用户自己的 `MUSIC_U`；公开的 `specialType=5`
+「喜欢的音乐」歌单不需要 Cookie，实测 `433804666`（PiSen-喜欢的音乐）读取 **120 首**。
+本次没有真实账号 Cookie，私有（`privacy=10`）歌单**未做账号实测**，只按代码和未登录
+失败表现记录，不伪造成功。
 
 ### VIP / 付费曲目
 
@@ -266,16 +278,21 @@ qwerwhr 是能导入但取流 429；GD 根本没有导入。所以由本插件�
 
 ### 私有歌单 Cookie
 
-公开歌单不需要 Cookie。私有歌单需要用户自己账号的 `MUSIC_U`：
+公开歌单不需要 Cookie。私有歌单需要用户自己账号的登录 Cookie：
 
 1. 设置 → 插件管理 → `网易云音乐（GD 源）` → 用户变量。
-2. 在「网易云 Cookie（可选，仅私有歌单）」里粘贴 `MUSIC_U=...`（只填自己账号的值）。
-3. 回到插件页 → 导入歌单 → 粘贴私有歌单链接。
+2. 在「网易云 Cookie（可选，仅私有歌单）」里粘贴自己账号的 `MUSIC_U=...`（只填自己的值）。
+3. 如果仍读不到，改粘贴浏览器 `music.163.com` 的**完整 Cookie**（含 `__csrf`）。
+4. 回到插件页 → 导入歌单 → 粘贴私有歌单链接。
 
-Cookie 只用于 `music.163.com/api/v6/playlist/detail` 和 `api/song/detail` 请求，
-不参与 GD 取流；不会绕过 VIP/付费。**没有真实私有歌单可测**，这条路径按代码和未登录
-失败表现记录，未做账号实测；如果填了 Cookie 仍失败，说明该歌单还要求别的登录校验，
-插件不会继续绕过。
+代码层面：`getCookie()` 支持「完整 Cookie」「只写 `MUSIC_U=...`」「只写 MUSIC_U 的值」
+三种写法；有 `=` 时原样发送，不会截断 `__csrf`。实测用假 `MUSIC_U` 只写和
+`MUSIC_U + __csrf` 两种写法，`api/v6/playlist/detail` 请求头分别是
+`MUSIC_U=FAKE...` 和 `MUSIC_U=FAKE...; __csrf=FAKE...`，公开歌单都正常返回 120 首。
+`api/v6/playlist/detail` 是 GET 请求，通常只需要 `MUSIC_U`；`__csrf` 主要用于写操作，
+但部分风控场景可能要求完整 Cookie，所以 hint 已改为「先 MUSIC_U，失败再完整 Cookie」。
+**没有真实私有歌单可测**，这条路径按代码和未登录失败表现记录，未做账号实测；
+如果填了 Cookie 仍失败，说明该歌单还要求别的登录校验，插件不会继续绕过。
 
 ## 开源增强网易云插件专项（qingniaoheyu 0.7.0 → 本仓库 0.7.1，2026-11-15 补测）
 
@@ -410,7 +427,7 @@ Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https、扫�
 1. 网易云首选 **本仓库适配版 0.7.1**（基于 qingniaoheyu 0.7.0）；公开内容无需 Cookie，私有歌单/我的歌单/`all`/扫码登录需要用户自己的账号。
 2. 本 App 的三个 iOS 修复必须随包一起更新：`RCTNetworking` 显式 Cookie 透传、`m*.music.126.net` 升级 https、插件环境 `env.setUserVariables`（扫码凭证持久化）。
    真机上已经复制了插件文件，但 **App 二进制也要重新构建安装**，否则旧包仍会出现「Cookie 被合并」「http 播放失败」，扫码凭证也无法自动保存。
-3. `网易云音乐（GD 源）` 1.1.0 保留为备用：如果网易云接口风控/改版导致 plus 插件不可用，可以用它继续搜索/播放/导入。
+3. `网易云音乐（GD 源）` 1.1.1 保留为备用：搜索/播放/公开歌单导入已验证可用，私有歌单需自己的 `MUSIC_U`；如果网易云接口风控/改版导致 plus 插件不可用，可以用它继续搜索/播放/导入。
 4. 不做 VIP/付费破解；B 站回退不作为验收项，VIP 曲目能否播放取决于接口当时返回的地址。
 5. 真实扫码 802/803 需要用户用自己的网易云 App 完成；本次只验证到 801 和假 803。
 
@@ -425,7 +442,7 @@ Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https、扫�
 | 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
 | 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
 | 5 | 网易云音乐（开源增强，本仓库适配版） | 单插件 | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-plus.plugin.js` | 网易云搜索/播放/歌词/歌单导入/我的歌单/`all`/扫码登录；公开内容无需 Cookie，扫码凭证自动保存 |
-| 6 | 网易云音乐（GD 源，备用） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` | 备用；plus 插件风控/改版时仍可搜索、播放、导入 |
+| 6 | 网易云音乐（GD 源，备用） | 单插件 | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ad591e24dfafd9d1440bec662771478d463b5225/ios/plugins/netease-gd.plugin.js` | 搜索/播放/公开歌单导入可用；VIP 不保证，私有歌单需自己的 `MUSIC_U`；plus 插件风控时备用 |
 
 > 只想用上游 0.7.0 时，把第 5 行换成上面的「上游固定地址」；功能相同，但扫码凭证只存在内存，重启后需要重扫或手动复制到用户变量。
 

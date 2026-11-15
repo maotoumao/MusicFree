@@ -139,6 +139,11 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
     整份 Cookie 合并写回用户变量；实测重载后用户变量仍在、扫码会话状态已清空。
     旧客户端没有 setter 时自动退化为内存模式，并在说明页提示「重启后需重扫」。
     凭证只写本机存储，不写仓库/日志。
+25. 网易云 GD 源升到 1.1.1：`trackIds` 按 200 一批补 `/api/song/detail`，不再按 500；
+    公开「热歌榜」`3778678` 200 首、`5077188964` 728 首都完整导入，首曲
+    `getMediaSource("standard")` 返回 https，播放器 `playing` 9.77s/295.94s。
+    私有歌单只做代码级验证：公开 `specialType=5` 歌单 120 首可读；私有需自己的
+    `MUSIC_U`，hint 改为失败时补完整 Cookie（含 `__csrf`），没有真实账号不伪造成功。
 
 ## 当前卡点（不是代码问题）
 
@@ -369,6 +374,7 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 官方 heb 网易云取流返回 `http://m701.music.126.net` | 播放 `error`、position 0；插件内 2s Range 探测报 `Network Error` | 不是登录/VIP/版权问题。已改用 qingniaoheyu 开源增强插件，并在 `src/core/trackPlayer/index.ts` 把 `m*.music.126.net` 升级为 https；不改 ATS |
 | heb 网易云歌单导入返回 0 首 | 底层返回歌单对象（`musicList` 嵌套），App 期望数组；`getMusicSheetInfo` 对纯 ID 报无详情源 | 用「网易云音乐（开源增强）」或备用 GD 源的导入，不修 App 的插件适配层 |
 | qwerwhr 网易云取流 API 429 | 搜索/导入正常、播放 `error` | 上游 Cloudflare Workers 每日额度用尽；换「网易云音乐（开源增强）」或备用 GD 源 |
+| 网易云 GD 源私有歌单 | 未账号实测 | 无真实 Cookie；公开 `specialType=5` 歌单已验证可读。私有歌单需自己账号 `MUSIC_U`，失败时改填完整 Cookie（含 `__csrf`） |
 | 网易云扫码真实 802/803 | 未实测 | 需要用户用自己的网易云 App 扫一次并确认；801 轮询和假 803 成功分支已验证。上游 0.7.0 扫码凭证只存内存，重启后需重扫；本仓库 0.7.1 适配版会自动写回用户变量 |
 
 选插件时的优先级：**QQ音乐、酷狗音乐、咪咕音乐、GD音乐台、B站、网易云音乐（本仓库 0.7.1 适配版）**已验证可播；
@@ -389,6 +395,8 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 插件源实测 | 通过 | 4 个订阅源、21 个代表插件、统一搜「晴天」并试播；结果与最小安装集见 `ios/PLUGIN-SOURCES.md` |
 | 网易云专项 | 通过 | 官方 heb 插件返回 http CDN（ATS 拦）；qwerwhr 取流 429；`ios/plugins/netease-gd.plugin.js` 搜索 20 条、`playing` 0→22.3s/270.74s、歌词 65 行、封面 https |
 | 网易云歌单导入 | 通过 | 公开歌单「朗朗晴天」ID `2678496359`：15 首导入，写入本地歌单 15 首，首曲最终 `playing` 0→5.36s/21.54s（固定 URL 重装后首播 1 次瞬时 error 后恢复）；15/15 取流成功。大歌单「热歌榜」`3778678` 导入 200 首，126 首标 VIP；heb 导入返回 0（返回结构不兼容）、qwerwhr 可导入但取流 429 |
+| 网易云 GD 源 1.1.1 公开歌单 | 通过 | `getMusicSheetInfo("3778678")` → 「热歌榜」200 首、`isEnd=true`；`importMusicSheet` → 200 首；首曲「海屿你」`getMediaSource("standard")` → `https://m801.music.126.net/...`，播放器 `playing` 9.77s/295.94s。`5077188964` 728 首导入成功，验证 200 一批的 `trackIds` 补齐不截断 |
+| 网易云 GD 源私有歌单 | 代码级结论 | 无真实账号 Cookie，未伪造。公开 `specialType=5`「喜欢的音乐」`433804666` 无 Cookie 读取 120 首；假 `MUSIC_U` 和 `MUSIC_U+__csrf` 两种写法都能发出，公开歌单均返回 120 首。私有 `privacy=10` 未实测；`api/v6/playlist/detail` 是 GET，通常只需 `MUSIC_U`，hint 已改为失败时补完整 Cookie（含 `__csrf`） |
 | 网易云开源增强插件（无 Cookie） | 通过 | `qingniaoheyu` 0.7.0（hash `b4d8c783...`）：搜索「晴天」`/weapi/cloudsearch/pc` 200、30 条，未出现 `-462`；公开歌单「朗朗晴天」导入 15 首，`getMusicSheetInfo` 15 首、`isEnd=true`；`all` 未登录报「未登录，读不到你的歌单」，符合预期 |
 | iOS 显式 Cookie 透传 | 通过 | 修复前 httpbin 收到 `MUSIC_U=NATIVE; ...,MUSIC_U=HEADER; __csrf=...`（原生在前）；`RCTNetworking` 补丁后只收到手写值。正常请求仍带原生 Cookie；插件假 Cookie 测试中 `/weapi/cloudsearch/pc` 含假值、不含原生标记；`Set-Cookie` 响应头仍可读 |
 | 网易云 http→https | 通过 | plus 插件 `getMediaSource` 返回 `http://m10.music.126.net/...`，直接播放报 `ios_failed_to_load_resource`；同一 URL https 版 `playing` 8.76s/21.54s；App `normalizeMediaUrl` 生效后导入 15 首、首曲 `playing` 16.9s/21.54s |
