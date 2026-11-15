@@ -83,6 +83,17 @@ export interface ILanguageData {
     "toast.deleteSuccess": string; // 删除成功
     "toast.playErrorAndSkipped": string; // 播放失败，已自动跳到下一首
     "toast.playErrorStopped": string; // 播放失败，已暂停
+    "toast.playFailWithReason": string; // 《歌名》播放失败：原因，已自动跳到下一首
+    "toast.playFailWithReasonStopped": string; // 《歌名》播放失败：原因，已暂停
+    "toast.playFailOffline": string; // 当前无网络，无法播放《歌名》
+    "toast.playFailReasonNetwork": string; // 网络错误
+    "toast.playFailReasonTimeout": string; // 网络超时
+    "toast.playFailReasonForbidden": string; // 音源被拒绝（403）
+    "toast.playFailReasonNotFound": string; // 音源不存在（404）
+    "toast.playFailReasonDrm": string; // 版权保护（DRM）
+    "toast.playFailReasonFormat": string; // 音频格式不支持
+    "toast.playFailReasonInvalidSource": string; // 音源无效
+    "toast.playFailReasonUnknown": string; // 音源不可用
     "toast.networkUnavailable": string; // 网络不可用，请检查网络连接
     "toast.hasStarred": string; // 已收藏歌单
     "toast.hasUnstarred": string; // 已取消收藏歌单

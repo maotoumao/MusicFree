@@ -69,9 +69,14 @@ class TrackPlayer extends EventEmitter<{
     private serviceInited = false;
     // 播放队列索引map
     private playListIndexMap = createMediaIndexMap([] as IMusic.IMusicItem[]);
-    // 播放失败提示：网络异常做长间隔节流，普通失败做短间隔节流
+    // 播放失败提示：同一首歌 30s 内不重复；普通失败再加 2s 全局节流
     private lastOfflineToastAt = 0;
     private lastPlayErrorToastAt = 0;
+    private lastPlayFailKey = "";
+    private lastPlayFailToastAt = 0;
+    // 同一首歌的失败只处理一次，避免连续 PlaybackError 触发多次自动切歌
+    private lastHandledFailKey = "";
+    private lastHandledFailAt = 0;
 
 
     private static maxMusicQueueLength = 10000;
@@ -249,7 +254,7 @@ class TrackPlayer extends EventEmitter<{
                             code: errorCode,
                         });
 
-                        this.handlePlayFail();
+                        this.handlePlayFail(errorMessage);
                     }
                 },
             );
@@ -916,35 +921,114 @@ class TrackPlayer extends EventEmitter<{
     }
 
 
-    private showPlayFailToast() {
+    private getPlayFailReason(errorMessage?: string) {
+        if (!errorMessage) {
+            return i18n.t("toast.playFailReasonInvalidSource");
+        }
+        if (/timeout|timed out|超时/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonTimeout");
+        }
+        if (/403|forbidden/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonForbidden");
+        }
+        if (/404|not found/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonNotFound");
+        }
+        if (/drm|decrypt|fairplay|sample-aes/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonDrm");
+        }
+        if (/network|offline|internet|not connected|连接/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonNetwork");
+        }
+        if (/format|codec|unplayable|not supported|mime|m4s/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonFormat");
+        }
+        // 原生报错文案通常是英文技术信息，不直接展示给用户
+        return i18n.t("toast.playFailReasonUnknown");
+    }
+
+    private showPlayFailToast(errorMessage?: string) {
         const now = Date.now();
+        const musicItem = this.currentMusic;
+        const title = musicItem?.title;
+        const key = musicItem
+            ? `${musicItem.platform}@@${musicItem.id}`
+            : "";
+
         if (Network.isOffline) {
             // 断网时 60s 内只提示一次，避免每首歌失败都弹一次
             if (now - this.lastOfflineToastAt < 60000) {
                 return;
             }
             this.lastOfflineToastAt = now;
-            Toast.warn(i18n.t("toast.networkUnavailable"), {
-                duration: 3000,
-            });
+            Toast.warn(
+                title
+                    ? i18n.t("toast.playFailOffline", { title })
+                    : i18n.t("toast.networkUnavailable"),
+                { duration: 3500 },
+            );
+            return;
+        }
+
+        // 同一首歌 30s 内不重复提示；连续切歌时 2s 内也只提示一次
+        if (
+            key &&
+            key === this.lastPlayFailKey &&
+            now - this.lastPlayFailToastAt < 30000
+        ) {
             return;
         }
         if (now - this.lastPlayErrorToastAt < 2000) {
             return;
         }
+        this.lastPlayFailKey = key;
+        this.lastPlayFailToastAt = now;
         this.lastPlayErrorToastAt = now;
+
+        const stopped = this.configService.getConfig(
+            "basic.autoStopWhenError",
+        );
+        if (!title) {
+            Toast.warn(
+                stopped
+                    ? i18n.t("toast.playErrorStopped")
+                    : i18n.t("toast.playErrorAndSkipped"),
+                { duration: 3500 },
+            );
+            return;
+        }
         Toast.warn(
-            this.configService.getConfig("basic.autoStopWhenError")
-                ? i18n.t("toast.playErrorStopped")
-                : i18n.t("toast.playErrorAndSkipped"),
-            {
-                duration: 3000,
-            },
+            i18n.t(
+                stopped
+                    ? "toast.playFailWithReasonStopped"
+                    : "toast.playFailWithReason",
+                {
+                    title,
+                    reason: this.getPlayFailReason(errorMessage),
+                },
+            ),
+            { duration: 3500 },
         );
     }
 
-    private async handlePlayFail() {
-        this.showPlayFailToast();
+    private async handlePlayFail(errorMessage?: string) {
+        const now = Date.now();
+        const musicItem = this.currentMusic;
+        const key = musicItem
+            ? `${musicItem.platform}@@${musicItem.id}`
+            : "";
+        // 连续 PlaybackError 只处理一次，避免同一首歌触发多次 skipToNext
+        if (
+            key &&
+            key === this.lastHandledFailKey &&
+            now - this.lastHandledFailAt < 1000
+        ) {
+            return;
+        }
+        this.lastHandledFailKey = key;
+        this.lastHandledFailAt = now;
+
+        this.showPlayFailToast(errorMessage);
         // 如果自动跳转下一曲, 500s后自动跳转
         if (!this.configService.getConfig("basic.autoStopWhenError")) {
             await delay(500);

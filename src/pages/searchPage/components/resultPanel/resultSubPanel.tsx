@@ -1,7 +1,7 @@
 import Empty from "@/components/base/empty";
 import { fontWeightConst } from "@/constants/uiConst";
 import { useI18N } from "@/core/i18n";
-import PluginManager from "@/core/pluginManager";
+import PluginManager, { usePlugins } from "@/core/pluginManager";
 import useColors from "@/hooks/useColors";
 import rpx, { vw } from "@/utils/rpx";
 import { useAtomValue } from "jotai";
@@ -66,17 +66,28 @@ function ResultSubPanel(props: IResultSubPanelProps) {
     const [index, setIndex] = useState(0);
     const colors = useColors();
     const { t } = useI18N();
+    // 订阅插件列表：搜索页打开期间安装/卸载插件后，tab 立即刷新
+    const plugins = usePlugins();
 
-    const routes = PluginManager.getSortedSearchablePlugins(props.tab).map(
-        _ => ({
-            key: _.hash,
-            title: _.name,
-        }),
+    const routes = useMemo(
+        () =>
+            PluginManager.getSortedSearchablePlugins(props.tab).map(_ => ({
+                key: _.hash,
+                title: _.name,
+            })),
+        [props.tab, plugins],
     );
     const renderScene = useMemo(
         () => getSubRouterScene(props.tab, routes),
-        [props.tab],
+        [props.tab, routes],
     );
+
+    useEffect(() => {
+        // 卸载当前 tab 对应的插件后，把选中项收回到仍然存在的 tab
+        if (routes.length && index >= routes.length) {
+            setIndex(routes.length - 1);
+        }
+    }, [routes.length, index]);
 
     if (!routes.length) {
         return <Empty />;

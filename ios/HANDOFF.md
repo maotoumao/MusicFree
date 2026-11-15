@@ -97,13 +97,20 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
     改为 `file-and-folder`，并传入 `isLocalMediaFile` 过滤音频后缀；
     `src/core/localMusicSheet.ts` 的 `getMusicStats` 支持直接选中单个文件，
     不再把文件路径当目录 `readDir`。
-15. 播放失败提示：`src/core/trackPlayer/index.ts` 在 `handlePlayFail` 中弹出 Toast。
-    在线失败显示「播放失败，已自动跳到下一首」或「播放失败，已暂停」；
-    断网时 60s 内只提示一次「网络不可用，请检查网络连接」。普通失败 2s 内只提示一次，
-    避免 iOS 同一次错误触发多个事件时重复弹窗。
+15. 播放失败提示：`src/core/trackPlayer/index.ts` 在 `handlePlayFail` 中弹出 Toast，
+    文案带歌名和简短原因（如「《晴天》播放失败：网络超时，已自动跳到下一首」）；
+    离线时显示「当前无网络，无法播放《晴天》」。同一首歌 30s 内不重复提示，
+    连续 PlaybackError 1s 内只处理一次，避免同一首歌触发多次自动切歌；普通失败全局 2s 节流。
 16. 下载完成路径提示：`src/entry/bootstrap/bootstrap.ts` 在下载队列完成时，把实际下载目录
     拼进 Toast。iOS 显示「文件」App → 我的 iPhone → MusicFree → `download/music`
     （自定义目录则显示相对 Documents 的路径）；Android 显示实际目录。Toast 时长 4s。
+17. 搜索页插件 tab 刷新：`src/pages/searchPage/components/resultPanel/resultSubPanel.tsx`
+    通过 `usePlugins()` 订阅插件列表，routes / renderScene 依赖插件列表变化；
+    卸载当前 tab 对应插件时把 index 收回到最后一个可用 tab。搜索页打开期间安装插件后，
+    tab 无需退出重进即可出现。
+18. 冷启动歌词：复测 `setupTrackPlayer()` 恢复 `music.musicItem` → `setCurrentMusic()`
+    → `lyricManager.setup()` 末尾 `refreshLyric(true)` 的链路，冷启动后 QQ 歌曲自动加载
+    63 行歌词，无需额外改动；保留该调用作为回归点。
 
 ## 当前卡点（不是代码问题）
 
@@ -345,7 +352,9 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 下载 | 通过 | 7,634,986 bytes，状态 1→2→3，队列完成；文件落 `Documents/download/music`；完成 Toast 带「文件」App 路径 |
 | 插件源实测 | 通过 | 4 个订阅源、21 个代表插件、统一搜「晴天」并试播；结果与最小安装集见 `ios/PLUGIN-SOURCES.md` |
 | 本地导入 | 通过 | `Documents` 根目录的选择器会列出音频文件并隐藏 `.lrc`；直接选中单个 `test-tone.m4a` 导入成功（1 首，标题读为「MF标签标题」）；文件夹递归导入此前已验证 4 首 |
-| 播放失败提示 | 通过 | 在线失败弹「播放失败，已自动跳到下一首」；开启「播放失败时自动暂停」后弹「播放失败，已暂停」 |
+| 播放失败提示 | 通过 | 在线弹「《晴天》播放失败：网络超时，已暂停」；重复触发同一首歌时 `lastPlayFailToastAt` 不变（30s 节流生效）；离线弹「当前无网络，无法播放《晴天》」 |
+| 冷启动歌词 | 通过 | QQ 歌曲播放后暂停 → 杀进程 → 冷启动，自动恢复当前歌曲并加载 63 行歌词，无需进入播放页 |
+| 搜索页插件 tab | 代码验证 | `ResultSubPanel` 已订阅 `usePlugins()` 并补 routes/renderScene 依赖；headless 无法点按搜索页，待真机复核 |
 | 断网提示 | 通过 | 模拟离线后播放失败，弹「网络不可用，请检查网络连接」，且 60s 内只提示一次 |
 | 主题切换 | 通过 | 设置 → 主题设置，点「浅色模式」→ `p-light`，点「深色模式」→ `p-dark`，配置持久化 |
 | 插件增删 | 通过 | 卸载 TestPlugin：9→8 且插件管理页消失；从本地文件重新安装：8→9，插件管理页重新出现。headless 环境无法点按，调用的是页面按钮背后的同一个 `pluginManager` 方法 |
