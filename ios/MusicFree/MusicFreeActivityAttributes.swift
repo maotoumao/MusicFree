@@ -9,7 +9,7 @@ import Foundation
  * can switch songs while the app is in the background; ending and requesting a
  * new activity is only allowed while the app is foreground.
  */
-@available(iOS 16.1, *)
+@available(iOS 16.2, *)
 struct MusicFreeActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         var title: String

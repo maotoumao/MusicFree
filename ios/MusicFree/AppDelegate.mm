@@ -77,7 +77,7 @@
 
   // A Live Activity outlives the process. On a cold start there is no playback
   // yet, so anything ActivityKit still knows about belongs to a previous run.
-  if (@available(iOS 16.1, *)) {
+  if (@available(iOS 16.2, *)) {
     Class liveActivityClass = NSClassFromString(@"MFLiveActivity");
     SEL cleanupSelector = NSSelectorFromString(@"cleanupOrphans");
 #if DEBUG

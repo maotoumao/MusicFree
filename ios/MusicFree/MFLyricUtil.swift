@@ -20,7 +20,7 @@ final class LyricUtil: NSObject {
         _ resolve: @escaping RCTPromiseResolveBlock,
         rejecter reject: @escaping RCTPromiseRejectBlock
     ) {
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             resolve(MFLiveActivity.isSupported())
         } else {
             resolve(false)
@@ -34,7 +34,7 @@ final class LyricUtil: NSObject {
     ) {
         // Live Activities have no permission prompt; the user has to enable
         // them in Settings. Report the current state so JS can show a hint.
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             resolve(MFLiveActivity.isSupported())
         } else {
             resolve(false)
@@ -48,13 +48,13 @@ final class LyricUtil: NSObject {
         resolver resolve: @escaping RCTPromiseResolveBlock,
         rejecter reject: @escaping RCTPromiseRejectBlock
     ) {
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             MFLiveActivity.show(lyric: lyric ?? "")
             resolve(nil)
         } else {
             reject(
                 "Unsupported",
-                "Live Activity lyrics require iOS 16.1 or later",
+                "Live Activity lyrics require iOS 16.2 or later",
                 nil
             )
         }
@@ -65,7 +65,7 @@ final class LyricUtil: NSObject {
         _ resolve: @escaping RCTPromiseResolveBlock,
         rejecter reject: @escaping RCTPromiseRejectBlock
     ) {
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             MFLiveActivity.end()
         }
         resolve(nil)
@@ -76,7 +76,7 @@ final class LyricUtil: NSObject {
         _ resolve: @escaping RCTPromiseResolveBlock,
         rejecter reject: @escaping RCTPromiseRejectBlock
     ) {
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             MFLiveActivity.endActivity()
         }
         resolve(nil)
@@ -88,7 +88,7 @@ final class LyricUtil: NSObject {
         resolver resolve: @escaping RCTPromiseResolveBlock,
         rejecter reject: @escaping RCTPromiseRejectBlock
     ) {
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             MFLiveActivity.setPlaying(isPlaying)
         }
         resolve(nil)
@@ -100,7 +100,7 @@ final class LyricUtil: NSObject {
         resolver resolve: @escaping RCTPromiseResolveBlock,
         rejecter reject: @escaping RCTPromiseRejectBlock
     ) {
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             MFLiveActivity.update(
                 lyric: state?["lyric"] as? String ?? "",
                 previousLine: state?["previousLine"] as? String ?? "",
@@ -117,7 +117,7 @@ final class LyricUtil: NSObject {
         resolver resolve: @escaping RCTPromiseResolveBlock,
         rejecter reject: @escaping RCTPromiseRejectBlock
     ) {
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             MFLiveActivity.update(
                 lyric: lyric ?? "",
                 previousLine: "",
