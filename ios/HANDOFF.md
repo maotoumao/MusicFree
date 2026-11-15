@@ -304,7 +304,7 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
 | 下载 | 通过 | 7,634,986 bytes，状态 1→2→3，队列完成；文件落 `Documents/download/music` |
 | 本地导入 | 通过 | 对 `Documents/download/music` 执行 `importLocal`，歌单从 1 首恢复到 4 首（青花瓷、晴天、VerifyDownload、DownloadTest17） |
 | 主题切换 | 通过 | 设置 → 主题设置，点「浅色模式」→ `p-light`，点「深色模式」→ `p-dark`，配置持久化 |
-| 插件增删 | 通过 | 卸载 TestPlugin：9→8 且插件管理页消失；从本地文件重新安装：8→9，插件管理页重新出现 |
+| 插件增删 | 通过 | 卸载 TestPlugin：9→8 且插件管理页消失；从本地文件重新安装：8→9，插件管理页重新出现。headless 环境无法点按，调用的是页面按钮背后的同一个 `pluginManager` 方法 |
 | Live Activity 开关 | 通过 | 基本设置 → 实时活动歌词：关 → `lyric.showStatusBarLyric=false`，开 → `true`；原生 end/show 调用无报错 |
 | 歌词 | 通过 | Audiomack 无歌词源，自动搜索「歌词网」返回 39 行，当前行随进度更新 |
 | 上一首/下一首 | 通过 | 青花瓷 → 七里香.FLAC → 青花瓷，均 `playing` |
