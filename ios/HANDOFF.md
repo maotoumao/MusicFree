@@ -139,19 +139,104 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
     整份 Cookie 合并写回用户变量；实测重载后用户变量仍在、扫码会话状态已清空。
     旧客户端没有 setter 时自动退化为内存模式，并在说明页提示「重启后需重扫」。
     凭证只写本机存储，不写仓库/日志。
-25. 网易云 GD 源升到 1.1.1：`trackIds` 按 200 一批补 `/api/song/detail`，不再按 500；
-    公开「热歌榜」`3778678` 200 首、`5077188964` 728 首都完整导入，首曲
-    `getMediaSource("standard")` 返回 https，播放器 `playing` 9.77s/295.94s。
+25. 网易云 GD 源升到 1.1.2：`trackIds` 按 **199** 一批补 `/api/song/detail`，
+    留出服务端约 201 首上限的余量；公开 999 首歌单 `4987986874` 完整导入
+    999/999（1.66s），10k 歌单 `12708387047` 跑满 54 批，但 NetEase 在约 50 批后
+    开始返回 405 限流，10k 只验证了分批路径，不冒充全量成功。
+    1.1.1 已验证的 200/728 首、首曲 `playing` 9.77s/295.94s 仍有效。
     私有歌单只做代码级验证：公开 `specialType=5` 歌单 120 首可读；私有需自己的
     `MUSIC_U`，hint 改为失败时补完整 Cookie（含 `__csrf`），没有真实账号不伪造成功。
+26. 真机续签收口：`scripts/ios-device.sh` 的 `find_team()` 不再从证书 CN 括号里取
+    10 位值（`7C4Q7824B6` 是证书 ID），改为解析证书 subject 的 `OU=83Q9ZCWJQ4`；
+    失败时回退到最新 `.mobileprovision` 的 `TeamIdentifier`。新增
+    `scripts/ios-refresh.sh`：预检团队/物理设备，优先网络连接，构建 + 覆盖安装 +
+    启动，成功只输出一行，失败输出一行原因；日志留在 `build/ios-device/`。
+    默认会先轮换本 App 的旧 profile（备份到 `build/ios-profile-backup-*`，失败恢复），
+    保证 `-allowProvisioningUpdates` 真的向 Apple 换新。
+    Xcode 27 的设备菜单是 **Window → Manage Devices**，不是旧的
+    “Devices and Simulators”。
+
+## 每周续签
+
+```bash
+cd ~/code/musicfree-ios
+scripts/ios-refresh.sh
+```
+
+成功输出示例：
+
+```text
+续签成功 team=83Q9ZCWJQ4 device=sky_17pm 耗时 3m12s 新到期 2026-11-29
+```
+
+- 免费账号 profile 7 天过期；建议每周固定跑一次，手机保持同一 Wi-Fi 并解锁。
+- Xcode 不会因为 `-allowProvisioningUpdates` 就主动延长仍然有效的 profile。
+  `ios-refresh.sh` 默认先把本 App 的两个旧 profile 移到
+  `build/ios-profile-backup-*`，强制 Xcode 向 Apple 换新；构建失败会自动
+  恢复旧 profile。`--no-force-profile` 可关闭这一步（只做普通重装）。
+- 覆盖安装使用同一个 bundle id `fun.upup.musicfree`，保留 Documents 下的歌单、
+  插件和登录态；不会先卸载。本次实测 `Documents/plugins` 仍是 5 个，
+  `LocalSheet.*` 文件时间仍是安装前的 19:44/19:45。
+- 真机 `plugin-meta` 当前没有任何 `*.userVariables`，说明这台机器没有可验证的
+  持久化网易云登录 Cookie；不是覆盖安装清掉的，需要用户在 App 内重新扫码/填 Cookie。
+- 失败最后一行是原因，非 0 退出；完整日志在 `build/ios-device/refresh-*.log`。
+- 锁屏时 `devicectl` 可能装完但拒绝启动，输出会提示解锁后重跑。
+
+### 每周定时（可选，Mac 端）
+
+用 launchd 每周五 10:00 自动跑一次（需要 Mac 醒着、手机同一 Wi-Fi）：
+
+```bash
+cat > ~/Library/LaunchAgents/fun.upup.musicfree.refresh.plist <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>fun.upup.musicfree.refresh</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/sky/code/musicfree-ios/scripts/ios-refresh.sh</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/sky/code/musicfree-ios</string>
+  <key>StartCalendarInterval</key>
+  <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>10</integer><key>Minute</key><integer>0</integer></dict>
+  <key>StandardOutPath</key><string>/Users/sky/code/musicfree-ios/build/ios-device/refresh.out.log</string>
+  <key>StandardErrorPath</key><string>/Users/sky/code/musicfree-ios/build/ios-device/refresh.err.log</string>
+</dict>
+</plist>
+PLIST
+launchctl unload ~/Library/LaunchAgents/fun.upup.musicfree.refresh.plist 2>/dev/null || true
+launchctl load ~/Library/LaunchAgents/fun.upup.musicfree.refresh.plist
+```
+
+脚本成功只写一行到 `refresh.out.log`（`续签成功 team=... device=... 耗时 ... 新到期 ...`），
+失败写 `续签失败: ...` 并以非 0 退出。本次只写文档，没有在这台 Mac 上安装这个定时任务。
+
+### 2026-11-15 实测
+
+- `scripts/ios-device.sh --check`：`签名团队: 83Q9ZCWJQ4`，`目标设备: sky_17pm`。
+- 临时 bundle id `fun.upup.musicfree.refreshtest.*` 构建成功，Apple 新发了
+  app + widget 两个 profile（TeamIdentifier `83Q9ZCWJQ4`，到期 11-22）；
+  验证后临时 profile 和 `build/ios-refresh-test` 已删除，未改真实 bundle 配置。
+- 真实 `scripts/ios-refresh.sh`：增量构建 + 安装约 40s（20:48:37 开始，
+  20:49:17 结束），`BUILD SUCCEEDED`、`App installed`；启动被锁屏拒绝，脚本按设计
+  非 0 退出并输出一行原因。
+- 新 profile（脚本轮换后）：app 到期 `2026-11-22T12:48:48Z`，widget 到期
+  `2026-11-22T12:48:51Z`；旧 profile 已移到 `build/ios-profile-backup-*` 并在
+  构建成功后清理。
+- 本地歌单上限：模拟器新建歌单写入 1001 首，`musicList.length=1001`、
+  `worksNum=1001`，删除成功；确认「我的歌单」没有 1000 首上限。导入面板的
+  `maxLength: 1000` 只是输入框文本长度，不是歌曲数量。
 
 ## 当前卡点（不是代码问题）
 
 - **签名**：已登录 Apple ID，`security find-identity -v -p codesigning` 有 1 个有效
-  `Apple Development: 739686898@qq.com (7C4Q7824B6)`，可以走自动签名。
-- **真机连接**：`sky_17pm`（UDID `00008150-001264103A03401C`）已配对，但当前
-  `devicectl` 状态为 `unavailable`。需要数据线连接（或同一 Wi-Fi）、手机上点「信任」、
-  打开「开发者模式」；就绪后跑 `scripts/ios-device.sh --check` 确认。
+  `Apple Development: 739686898@qq.com (7C4Q7824B6)`。CN 括号里的是证书 ID；
+  真实团队 ID 是证书 subject 的 `OU=83Q9ZCWJQ4`。
+- **真机连接**：`sky_17pm`（devicectl ID `17A47821-4A2D-5FD0-8D5A-9288B86EB8F9`，
+  硬件 UDID `00008150-001264103A03401C`）已连接；`scripts/ios-device.sh --check`
+  能解析出团队和设备。无线续签需在 Xcode 的 **Window → Manage Devices** 里开启
+  Wi-Fi 连接。
 - **模拟器**：iOS 27.2 有两个 runtime：按机型的 24B91014 只支持 iPhone Duo；
   通用版 24B8117 支持 iPhone 15–18 全系。当前验证机为 iPhone 17 Pro Max
   （UDID `9959CA3C-AA80-4485-BED0-4E680F998704`），启动和主要功能已验证，见下方进展。
@@ -169,17 +254,28 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
    按提示重启手机并确认。
 4. 回到 Mac 验证：
    ```bash
-   security find-identity -v -p codesigning   # 应有一条 Apple Development: ... (TEAMID)
+   security find-identity -v -p codesigning   # 应有一条 Apple Development: ... (证书ID)
    xcrun devicectl list devices               # 应出现 connected 的真机
    ```
+   注意：证书 CN 括号里的值（如 `7C4Q7824B6`）是证书 ID，不是 Team ID；
+   Team ID 在证书 subject 的 `OU=` 字段（当前为 `83Q9ZCWJQ4`）。
+
+### Xcode 27 的无线连接
+
+Xcode 27 已经移除了旧的 **Devices and Simulators** 窗口。现在用菜单
+**Window → Manage Devices**（IDEKit 里的 `Xcode.IDEKit.CmdDefinition.ManageDevices`），
+选中 iPhone 后勾选通过 Wi-Fi 连接。开启后 `devicectl` 会显示
+`transportType=localNetwork`，`ios-device.sh` / `ios-refresh.sh` 会优先选这条连接；
+没有 Wi-Fi 时插线也能续签。
 
 ### 跑脚本
 
 ```bash
 cd ~/code/musicfree-ios
-scripts/ios-device.sh --check      # 预检签名证书和物理设备
+scripts/ios-device.sh --check      # 预检签名团队、证书和物理设备
 scripts/ios-device.sh --list       # 查看签名身份和设备
 scripts/ios-device.sh              # Release 构建 + 安装 + 启动
+scripts/ios-refresh.sh             # 每周续签（构建 + 覆盖安装 + 启动）
 ```
 
 常用参数：
@@ -204,12 +300,14 @@ scripts/ios-device.sh              # Release 构建 + 安装 + 启动
 
 脚本行为：
 
-- 从 `security find-identity -v -p codesigning` 解析 `Apple Development` 身份和 TEAMID，
-  找不到时提示登录 Apple ID / 生成证书；
+- 签名团队优先取证书 subject 的 `OU=`（不是 CN 括号里的证书 ID），取不到时
+  回退到最新 `.mobileprovision` 的 `TeamIdentifier`；`--team` / `MUSICFREE_TEAM_ID`
+  仍可显式覆盖。找不到证书时提示登录 Apple ID / 生成证书；
 - 用 `xcrun devicectl list devices --json-output` 找设备，并按
   `properties.hardware.reality == "simulated"` 过滤掉模拟器
-  （devicectl 会把模拟器也标成 connected，不能直接信）；检测到物理设备但未连接时
-  会列出设备并提示信任/开发者模式；
+  （devicectl 会把模拟器也标成 connected，不能直接信）；优先选
+  `transportType != wired` 的网络连接，插线也能用；检测到物理设备但未连接时
+  会列出设备并提示「同一 Wi-Fi / 解锁 / 信任」；
 - `xcodebuild -workspace ios/MusicFree.xcworkspace -scheme MusicFreeNew
   -configuration Release -destination 'generic/platform=iOS'
   -allowProvisioningUpdates -allowProvisioningDeviceRegistration
@@ -395,7 +493,7 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 插件源实测 | 通过 | 4 个订阅源、21 个代表插件、统一搜「晴天」并试播；结果与最小安装集见 `ios/PLUGIN-SOURCES.md` |
 | 网易云专项 | 通过 | 官方 heb 插件返回 http CDN（ATS 拦）；qwerwhr 取流 429；`ios/plugins/netease-gd.plugin.js` 搜索 20 条、`playing` 0→22.3s/270.74s、歌词 65 行、封面 https |
 | 网易云歌单导入 | 通过 | 公开歌单「朗朗晴天」ID `2678496359`：15 首导入，写入本地歌单 15 首，首曲最终 `playing` 0→5.36s/21.54s（固定 URL 重装后首播 1 次瞬时 error 后恢复）；15/15 取流成功。大歌单「热歌榜」`3778678` 导入 200 首，126 首标 VIP；heb 导入返回 0（返回结构不兼容）、qwerwhr 可导入但取流 429 |
-| 网易云 GD 源 1.1.1 公开歌单 | 通过 | `getMusicSheetInfo("3778678")` → 「热歌榜」200 首、`isEnd=true`；`importMusicSheet` → 200 首；首曲「海屿你」`getMediaSource("standard")` → `https://m801.music.126.net/...`，播放器 `playing` 9.77s/295.94s。`5077188964` 728 首导入成功，验证 200 一批的 `trackIds` 补齐不截断 |
+| 网易云 GD 源 1.1.2 公开歌单 | 通过（10k 限流除外） | 1.1.1：`getMusicSheetInfo("3778678")` → 「热歌榜」200 首、`isEnd=true`；首曲 `playing` 9.77s/295.94s；`5077188964` 728 首导入成功。1.1.2：`4987986874` 999/999 全量导入（1.66s，去重 999）；`12708387047` 10k 跑 54 批，NetEase 约 50 批后 405 限流，只导入 9960/10644 |
 | 网易云 GD 源私有歌单 | 代码级结论 | 无真实账号 Cookie，未伪造。公开 `specialType=5`「喜欢的音乐」`433804666` 无 Cookie 读取 120 首；假 `MUSIC_U` 和 `MUSIC_U+__csrf` 两种写法都能发出，公开歌单均返回 120 首。私有 `privacy=10` 未实测；`api/v6/playlist/detail` 是 GET，通常只需 `MUSIC_U`，hint 已改为失败时补完整 Cookie（含 `__csrf`） |
 | 网易云开源增强插件（无 Cookie） | 通过 | `qingniaoheyu` 0.7.0（hash `b4d8c783...`）：搜索「晴天」`/weapi/cloudsearch/pc` 200、30 条，未出现 `-462`；公开歌单「朗朗晴天」导入 15 首，`getMusicSheetInfo` 15 首、`isEnd=true`；`all` 未登录报「未登录，读不到你的歌单」，符合预期 |
 | iOS 显式 Cookie 透传 | 通过 | 修复前 httpbin 收到 `MUSIC_U=NATIVE; ...,MUSIC_U=HEADER; __csrf=...`（原生在前）；`RCTNetworking` 补丁后只收到手写值。正常请求仍带原生 Cookie；插件假 Cookie 测试中 `/weapi/cloudsearch/pc` 含假值、不含原生标记；`Set-Cookie` 响应头仍可读 |

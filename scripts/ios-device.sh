@@ -139,17 +139,44 @@ require codesign
 }
 
 find_team() {
-    local identity team
+    local identity subject team profile profile_dir
     identity="$(security find-identity -v -p codesigning 2>/dev/null \
         | sed -n 's/.*"\(Apple Development:.*\)"/\1/p' | head -1)"
     if [[ -z "$identity" ]]; then
         return 1
     fi
-    team="$(printf '%s\n' "$identity" | sed -n 's/.*(\([A-Z0-9]\{10\}\)).*/\1/p')"
-    if [[ -z "$team" ]]; then
-        return 1
+
+    # 1. Team ID is the certificate subject's OU field. The value in the
+    #    CN parentheses (e.g. "(7C4Q7824B6)") is the certificate ID, not
+    #    a team ID; never use it for DEVELOPMENT_TEAM.
+    subject="$(security find-certificate -c "$identity" -p 2>/dev/null \
+        | openssl x509 -noout -subject -nameopt RFC2253 2>/dev/null || true)"
+    team="$(printf '%s\n' "$subject" \
+        | sed -n 's/.*OU=\([A-Z0-9]\{10\}\).*/\1/p' | head -1)"
+    if [[ -n "$team" ]]; then
+        printf '%s\t%s\n' "$team" "$identity"
+        return 0
     fi
-    printf '%s\t%s\n' "$team" "$identity"
+
+    # 2. Fallback: read TeamIdentifier from the newest provisioning profile.
+    profile_dir="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+    if [[ -d "$profile_dir" ]]; then
+        shopt -s nullglob
+        local profiles=("$profile_dir"/*.mobileprovision)
+        shopt -u nullglob
+        if (( ${#profiles[@]} > 0 )); then
+            while IFS= read -r profile; do
+                [[ -n "$profile" ]] || continue
+                team="$(security cms -D -i "$profile" 2>/dev/null \
+                    | plutil -extract TeamIdentifier.0 raw -o - - 2>/dev/null || true)"
+                if [[ "$team" =~ ^[A-Z0-9]{10}$ ]]; then
+                    printf '%s\t%s\n' "$team" "$identity"
+                    return 0
+                fi
+            done < <(ls -t "${profiles[@]}" 2>/dev/null)
+        fi
+    fi
+    return 1
 }
 
 list_identities() {
@@ -189,7 +216,17 @@ for device in devices:
     name = state.get("name") or hardware.get("marketingName") or udid
     physical.append((udid, name, connection))
     if connection.get("state") == "connected":
-        connected.append((udid, name))
+        connected.append((udid, name, connection))
+
+
+def transport(connection):
+    return (connection.get("transportType") or "").lower() or "unknown"
+
+
+def network_rank(connection):
+    # Prefer Wi-Fi / network connections; a wired device is still usable.
+    return 0 if transport(connection) != "wired" else 1
+
 
 if requested:
     matches = [
@@ -201,29 +238,34 @@ if requested:
 else:
     matches = connected
 
+matches.sort(key=lambda item: (network_rank(item[2]), item[1].lower()))
+
 if not matches:
     if connected:
-        print("找到多个已连接的 iPhone，请用 --device 指定：", file=sys.stderr)
-        for udid, name in connected:
-            print(f"  {name}  {udid}", file=sys.stderr)
+        print("没有匹配的已连接 iPhone，请用 --device 指定：", file=sys.stderr)
+        for udid, name, connection in connected:
+            print(f"  {name}  {udid}  transport={transport(connection)}", file=sys.stderr)
     elif physical:
-        print("检测到物理 iPhone，但没有可用的连接：", file=sys.stderr)
+        print("检测到物理 iPhone，但没有可用连接（手机可能不在同一 Wi-Fi、未解锁或未信任）：", file=sys.stderr)
         for udid, name, connection in physical:
             pairing = connection.get("pairingState", "unknown")
-            print(f"  {name}  {udid}  (pairing={pairing})", file=sys.stderr)
-        print("请用数据线连接、在手机上点「信任」，并打开开发者模式。", file=sys.stderr)
+            print(
+                f"  {name}  {udid}  (pairing={pairing}, transport={transport(connection)})",
+                file=sys.stderr,
+            )
+        print("请在手机上解锁、点「信任」，并在 Xcode 的 Window -> Manage Devices 中开启 Wi-Fi 连接。", file=sys.stderr)
     else:
-        print("没有找到已连接的物理 iPhone（模拟器不算）。", file=sys.stderr)
-        print("请用数据线连接手机、点信任，并打开开发者模式。", file=sys.stderr)
+        print("没有找到物理 iPhone（模拟器不算）。", file=sys.stderr)
+        print("请确认手机与 Mac 在同一 Wi-Fi（或插线）、已解锁并信任这台 Mac。", file=sys.stderr)
     sys.exit(1)
 
 if len(matches) > 1:
     print("设备名不唯一，请改用 UDID：", file=sys.stderr)
-    for udid, name in matches:
-        print(f"  {name}  {udid}", file=sys.stderr)
+    for udid, name, connection in matches:
+        print(f"  {name}  {udid}  transport={transport(connection)}", file=sys.stderr)
     sys.exit(1)
 
-udid, name = matches[0]
+udid, name, _ = matches[0]
 print(f"{udid}\t{name}")
 PY
 }
@@ -231,7 +273,14 @@ PY
 show_build_hints() {
     local log="$1"
     echo "构建失败，完整日志见 $log" >&2
-    if grep -qiE "No signing certificate|No profiles for|requires a development team|does not have a membership|not signed in|Unable to find a team" "$log"; then
+    if grep -qiE "No Account for Team|not signed in|Unable to find a team" "$log"; then
+        cat >&2 <<'MSG'
+[Apple ID] Xcode 里没有该签名团队的账号，无法自动换新描述文件。
+  1. Xcode -> Settings -> Accounts 登录 Apple ID
+  2. 确认账号属于该团队，然后重跑 scripts/ios-refresh.sh
+MSG
+    fi
+    if grep -qiE "No signing certificate|No profiles for|requires a development team|does not have a membership" "$log"; then
         cat >&2 <<'MSG'
 [签名] 没有可用的 Apple Development 证书或描述文件。
   1. Xcode -> Settings -> Accounts 登录 Apple ID（免费账号即可）
@@ -250,7 +299,7 @@ MSG
         echo "[开发者模式] 请在 iPhone 设置 -> 隐私与安全性 -> 开发者模式 打开并重启手机。" >&2
     fi
     if grep -qiE "Unable to connect|not connected|No devices|device.*unavailable" "$log"; then
-        echo "[设备] 未检测到可用 iPhone，请检查数据线、信任状态和开发者模式。" >&2
+        echo "[设备] 未检测到可用 iPhone，请确认手机与 Mac 在同一 Wi-Fi（或插线）、已解锁并信任。" >&2
     fi
 }
 
@@ -269,7 +318,7 @@ MSG
     elif grep -qiE "Unable to connect|not connected|No devices|device.*unavailable" "$log"; then
         echo "[设备] 安装时设备不可用，请重新连接、解锁手机并确认开发者模式。" >&2
     else
-        echo "可在 Xcode -> Window -> Devices and Simulators 查看设备日志。" >&2
+        echo "可在 Xcode 的 Window -> Manage Devices 查看设备日志。" >&2
     fi
 }
 
@@ -408,7 +457,11 @@ if [[ "$INSTALL" == true ]]; then
         launch_status=${PIPESTATUS[0]}
         set -e
         if [[ "$launch_status" -ne 0 ]]; then
-            echo "启动失败；确认 $BUNDLE_ID 已安装，且手机已解锁。" >&2
+            if grep -qiE "Locked|not, or could not be, unlocked" "$DERIVED_DATA/launch.log"; then
+                echo "启动失败：手机锁屏。请解锁 iPhone 后重跑，或加 --no-launch 只安装。" >&2
+            else
+                echo "启动失败；确认 $BUNDLE_ID 已安装，且手机已解锁。" >&2
+            fi
             exit "$launch_status"
         fi
     else
