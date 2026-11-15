@@ -111,6 +111,10 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
 18. 冷启动歌词：复测 `setupTrackPlayer()` 恢复 `music.musicItem` → `setCurrentMusic()`
     → `lyricManager.setup()` 末尾 `refreshLyric(true)` 的链路，冷启动后 QQ 歌曲自动加载
     63 行歌词，无需额外改动；保留该调用作为回归点。
+19. 启动图深色适配：`LaunchScreen.storyboard` / `SplashScreen.storyboard` 背景改为
+    asset catalog 的 `LaunchBackground`（Light `#FFFFFF`，Dark `#1E1E1E`）；
+    中间 `MusicFree` 文案使用 `labelColor`，底部文案使用 `secondaryLabelColor`；
+    布局约束未改。模拟器系统深色/浅色各截图验证，深色下不再白闪。
 
 ## 当前卡点（不是代码问题）
 
@@ -350,6 +354,7 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 项目 | 结果 | 证据 / 备注 |
 | --- | --- | --- |
 | 冷启动 | 通过 | `simctl terminate` + `launch`，7s 内进入首页；深色主题、歌单保留；无 JS 错误 |
+| 启动图 | 通过 | 系统深色 `#1E1E1E` + 白字，系统浅色白底 + 黑字；布局约束未改 |
 | 搜索 | 通过 | 搜索页搜索「晴天」；默认「快手」tab 为 0 条，切到「猫耳FM」tab 显示 10 条（默认 tab 无结果是插件数据问题） |
 | 在线播放 | 通过 | Audiomack `playing`，进度从 7.24s 推进到 17.08s / 269.8s（最终 16.2 构建） |
 | 下载 | 通过 | 7,634,986 bytes，状态 1→2→3，队列完成；文件落 `Documents/download/music`；完成 Toast 带「文件」App 路径 |
@@ -393,7 +398,21 @@ Live Activity 锁屏/灵动岛视觉与播放按钮点按、Files 文件选择�
    MP3 的后续方案评估：推荐引入 ID3TagEditor（Swift，中等工作量），
    TagLib 需要 C++ 桥接、成本高，自研 ID3v2 风险高。注意 `setMediaTag`
    目前没有任何 JS 调用方，先等「编辑标签」入口明确后再接 UI。
-9. 品质打磨：图标重绘（现在是把 512 图标放大）、启动图、ATS 收紧
+9. 品质打磨：图标重绘（已完成）、启动图深色适配（已完成，Light `#FFFFFF` / Dark `#1E1E1E`）、
+   ATS 保持 https-only（`NSAllowsArbitraryLoads` 未开启）
+
+## 最终检查（2026-11-15）
+
+| 检查 | 结果 |
+| --- | --- |
+| `npx tsc --noEmit` | 通过（无输出，exit 0） |
+| `npm run lint` | 通过（0 errors；108 warnings，均为既有 inline-style / hook deps 告警） |
+| Debug `iphoneos` 无签名编译 | `BUILD SUCCEEDED`；产物 `MinimumOSVersion` 16.2 |
+| Release `iphoneos` 无签名编译 | `BUILD SUCCEEDED`；App 与 `MusicFreeLiveActivity.appex` 均 16.2 |
+| 模拟器启动图 | 系统深色：`#1E1E1E` + 白字；系统浅色：白底 + 黑字；布局未变 |
+| 最低版本 | 全工程 16.2，HANDOFF 与代码一致 |
+
+真机仍待连接；连接后先跑 `scripts/ios-device.sh --check`，再跑 `scripts/ios-device.sh`。
 
 ## 协作约定
 
