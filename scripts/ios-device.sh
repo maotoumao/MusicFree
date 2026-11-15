@@ -17,13 +17,13 @@
 #   scripts/ios-device.sh --team <TEAMID>  # override the signing team
 #   scripts/ios-device.sh --build-only
 #   scripts/ios-device.sh --install-only
-#   scripts/ios-device.sh --launch         # launch after installing
+#   scripts/ios-device.sh --no-launch      # do not launch after installing
 #
 # Environment overrides:
 #   MUSICFREE_TEAM_ID        signing team (fallback: DEVELOPMENT_TEAM)
 #   MUSICFREE_DEVICE         device UDID or name (same as --device)
 #   MUSICFREE_CONFIGURATION  Debug or Release (default Release)
-#   MUSICFREE_BUNDLE_ID      bundle id used by --launch (default fun.upup.musicfree)
+#   MUSICFREE_BUNDLE_ID      bundle id used on launch (default fun.upup.musicfree)
 #
 set -euo pipefail
 
@@ -38,7 +38,7 @@ TEAM_ID="${MUSICFREE_TEAM_ID:-${DEVELOPMENT_TEAM:-}}"
 CONFIGURATION="${MUSICFREE_CONFIGURATION:-Release}"
 BUILD=true
 INSTALL=true
-LAUNCH=false
+LAUNCH=true
 CHECK_ONLY=false
 LIST_ONLY=false
 
@@ -56,13 +56,14 @@ Usage:
   scripts/ios-device.sh --configuration <Debug|Release>
   scripts/ios-device.sh --build-only     build, do not install
   scripts/ios-device.sh --install-only   install the existing build
-  scripts/ios-device.sh --launch         launch after installing
+  scripts/ios-device.sh --no-launch      do not launch after installing
+                                     (launching is the default)
 
 Environment overrides:
   MUSICFREE_TEAM_ID        signing team (fallback: DEVELOPMENT_TEAM)
   MUSICFREE_DEVICE         device UDID or name
   MUSICFREE_CONFIGURATION  Debug or Release
-  MUSICFREE_BUNDLE_ID      bundle id used by --launch
+  MUSICFREE_BUNDLE_ID      bundle id used on launch
 EOF
 }
 
@@ -93,6 +94,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --launch)
             LAUNCH=true
+            shift
+            ;;
+        --no-launch)
+            LAUNCH=false
             shift
             ;;
         --check)
@@ -407,6 +412,6 @@ if [[ "$INSTALL" == true ]]; then
             exit "$launch_status"
         fi
     else
-        echo "安装完成。加 --launch 可直接启动。"
+        echo "安装完成（--no-launch 已跳过启动）。"
     fi
 fi
