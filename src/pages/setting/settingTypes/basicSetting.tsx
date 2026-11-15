@@ -21,7 +21,7 @@ import Toast from "@/utils/toast";
 import Clipboard from "@react-native-clipboard/clipboard";
 import Slider from "@react-native-community/slider";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { readdir } from "react-native-fs";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 
@@ -415,11 +415,16 @@ export default function BasicSetting() {
                 ),
             ],
         },
-        {
-            title: t("basicSettings.lyric"),
-            data: [],
-            footer: <LyricSetting />,
-        },
+        // iOS 没有悬浮窗/状态栏歌词，相关设置只在 Android 展示
+        ...(Platform.OS === "android"
+            ? [
+                {
+                    title: t("basicSettings.lyric"),
+                    data: [],
+                    footer: <LyricSetting />,
+                },
+            ]
+            : []),
         {
             title: t("basicSettings.cache"),
             data: [
