@@ -118,20 +118,28 @@ qwerwhr 这种 76 个的源不要整包订阅；只想要最小集时，用各�
 
 目标：装完就能搜、能播、能有歌词，tab 又不至于太多。
 
-| 顺序 | 插件 | 来源 | 作用 |
-| --- | --- | --- | --- |
-| 1 | QQ音乐 | heb-main | 主曲库，搜索/播放/歌词都通过 |
-| 2 | 酷狗音乐 | heb-main | 备用曲库；首条常是翻唱，选原唱版本即可 |
-| 3 | GD音乐台 | qwerwhr | 聚合音源，可播放；歌词靠 App 兜底 |
-| 4 | B站 | heb-music | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
+| 顺序 | 插件 | 安装方式 | 可直接复制的地址 | 作用 |
+| --- | --- | --- | --- | --- |
+| 1 | QQ音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/qq-source.plugin.v1.9.26.js` | 主曲库，搜索/播放/歌词都通过 |
+| 2 | 酷狗音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/kugou-source.plugin.v1.9.24.js` | 备用曲库；首条常是翻唱，选原唱版本即可 |
+| 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
+| 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
+
+也可以直接订阅 **heb-main**（`https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json`），
+一次装 6 个：QQ、酷狗、咪咕可播，酷我、网易云可搜，汽水当前搜索失败。
+
+**heb-music 订阅会一次装 11 个插件，本次实测的 5 个里只有 B站 可播**；嫌多就用上表 B站 的单个 `.js` 地址，
+不要整包订阅（其余 6 个未逐个试播，不值得为它们多装 10 个）。GD音乐台必须用上面的**百分号编码**地址（`GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js`），
+直接贴中文文件名在部分客户端会 404。
 
 可选「歌词源」：网易云（heb-main 或 qwerwhr）。它自己不能播，但插件歌词可用，能补 GD/B站
 没有歌词的情况。酷我（heb-main）同理，但优先级更低。
 
-想要更多主流曲库时，可以再加 **咪咕音乐**（heb-main，可播 + 插件歌词）；它和酷狗二选一即可，
-不必都装。
+想要更多主流曲库时，可以再加 **咪咕音乐**（heb-main，可播 + 插件歌词；单插件地址
+`https://hebijunge.github.io/musicfree-plugins/plugins/migu-source.plugin.v1.9.19.js`）；
+它和酷狗二选一即可，不必都装。
 
-只需要一个源时：先订 **heb-main**，装 QQ + 酷狗；不够再补 GD 和 B站。
+只需要一个源时：先订 **heb-main**（或单装 QQ + 酷狗）；不够再补 GD 和 B站。
 
 ## 已知失效清单
 
