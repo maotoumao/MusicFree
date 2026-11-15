@@ -12,7 +12,7 @@ import UIKit
  * Activities have a limited update budget. Playback state comes from the JS
  * event listener so the activity can show a correct play/pause button.
  */
-@available(iOS 16.2, *)
+@available(iOS 16.1, *)
 @objcMembers
 @objc(MFLiveActivity)
 final class MFLiveActivity: NSObject {
@@ -133,11 +133,20 @@ final class MFLiveActivity: NSObject {
         }
         let state = makeState()
         do {
-            _ = try Activity.request(
-                attributes: MusicFreeActivityAttributes(),
-                content: ActivityContent(state: state, staleDate: staleDate()),
-                pushType: nil
-            )
+            if #available(iOS 16.2, *) {
+                _ = try Activity.request(
+                    attributes: MusicFreeActivityAttributes(),
+                    content: ActivityContent(state: state, staleDate: staleDate()),
+                    pushType: nil
+                )
+            } else {
+                // iOS 16.1 has ActivityKit but not ActivityContent.
+                _ = try Activity.request(
+                    attributes: MusicFreeActivityAttributes(),
+                    contentState: state,
+                    pushType: nil
+                )
+            }
             lastUpdateAt = Date()
             debugLog("start title=\(latestTitle) lyric=\(latestLyric)")
         } catch {
@@ -182,9 +191,13 @@ final class MFLiveActivity: NSObject {
         let previous = updateChain
         updateChain = Task {
             _ = await previous.value
-            await activity.update(
-                ActivityContent(state: state, staleDate: staleDate())
-            )
+            if #available(iOS 16.2, *) {
+                await activity.update(
+                    ActivityContent(state: state, staleDate: staleDate())
+                )
+            } else {
+                await activity.update(using: state)
+            }
         }
     }
 
@@ -221,7 +234,11 @@ final class MFLiveActivity: NSObject {
         debugLog("end count=\(activities.count) reason=\(reason)")
         Task {
             for activity in activities {
-                await activity.end(nil, dismissalPolicy: .immediate)
+                if #available(iOS 16.2, *) {
+                    await activity.end(nil, dismissalPolicy: .immediate)
+                } else {
+                    await activity.end(using: nil, dismissalPolicy: .immediate)
+                }
             }
         }
     }

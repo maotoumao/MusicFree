@@ -67,7 +67,8 @@ target 'MusicFree' do
       # :ccache_enabled => true
     )
 
-    # App target: iOS 16.2 (ActivityKit's ActivityContent requires 16.2).
+    # App target: iOS 16.1 (ActivityKit is available from 16.1; the newer
+    # ActivityContent APIs are gated behind 16.2).
     # Pods: iOS 15.1 — React Native's minimum. Keep them here because Xcode 27
     # rejects pods below 15.0, and no pod links ActivityKit, so this lower
     # target does not affect the app's ActivityKit availability.
