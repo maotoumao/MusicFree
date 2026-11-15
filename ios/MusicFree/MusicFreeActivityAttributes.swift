@@ -15,6 +15,12 @@ struct MusicFreeActivityAttributes: ActivityAttributes {
         var title: String
         var artist: String
         /// The lyric line currently being played. Empty when no lyric exists.
-        var lyric: String
+        var lyricLine: String
+        /// Surrounding lines, so the expanded island can show a three-line window.
+        var previousLine: String
+        var nextLine: String
+        /// Playback progress, from 0 to 1.
+        var progress: Double
+        var isPlaying: Bool
     }
 }

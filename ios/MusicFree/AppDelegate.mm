@@ -75,6 +75,20 @@
   // The window is created by SceneDelegate instead.
   self.automaticallyLoadReactNativeWindow = NO;
 
+  // A Live Activity outlives the process. On a cold start there is no playback
+  // yet, so anything ActivityKit still knows about belongs to a previous run.
+  if (@available(iOS 16.1, *)) {
+    Class liveActivityClass = NSClassFromString(@"MFLiveActivity");
+    SEL cleanupSelector = NSSelectorFromString(@"cleanupOrphans");
+#if DEBUG
+    NSLog(@"[MFLiveActivity] cleanup class=%@", liveActivityClass);
+#endif
+    if (liveActivityClass && [liveActivityClass respondsToSelector:cleanupSelector]) {
+      ((void (*)(id, SEL))[liveActivityClass methodForSelector:cleanupSelector])(
+          liveActivityClass, cleanupSelector);
+    }
+  }
+
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 

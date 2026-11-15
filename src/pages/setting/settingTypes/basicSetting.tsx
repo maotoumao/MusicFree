@@ -668,8 +668,15 @@ const styles = StyleSheet.create({
 function LiveActivityLyricSetting() {
     const showStatusBarLyric = useAppConfig("lyric.showStatusBarLyric");
     const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");
+    const [liveActivitySupported, setLiveActivitySupported] = useState(true);
 
     const { t } = useI18N();
+
+    useEffect(() => {
+        LyricUtil.checkSystemAlertPermission()
+            .then(setLiveActivitySupported)
+            .catch(() => setLiveActivitySupported(false));
+    }, []);
 
     const autoSearchLyric = createSwitch(
         t("basicSettings.lyric.autoSearchLyric"),
@@ -687,9 +694,11 @@ function LiveActivityLyricSetting() {
                     () => false,
                 );
                 if (!hasPermission) {
+                    setLiveActivitySupported(false);
                     Toast.warn(t("toast.liveActivityDisabled"));
                     return;
                 }
+                setLiveActivitySupported(true);
                 Config.setConfig("lyric.showStatusBarLyric", true);
                 LyricUtil.showStatusBarLyric("MusicFree", {}).catch(() => {});
             } else {
@@ -721,6 +730,14 @@ function LiveActivityLyricSetting() {
                 style={lyricStyles.description}>
                 {t("basicSettings.lyric.liveActivityDescription")}
             </ThemeText>
+            {liveActivitySupported ? null : (
+                <ThemeText
+                    fontSize="subTitle"
+                    fontColor="textSecondary"
+                    style={lyricStyles.description}>
+                    {t("toast.liveActivityDisabled")}
+                </ThemeText>
+            )}
         </View>
     );
 }

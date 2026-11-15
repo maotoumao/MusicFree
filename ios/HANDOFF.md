@@ -70,12 +70,18 @@ npx react-native run-ios --device "<iPhone 名称>"
 7. `ios/MusicFree/Info.plist`：后台音频、Files App 文件共享（`UIFileSharingEnabled` +
    `LSSupportsOpeningDocumentsInPlace`）、相册权限说明、`NSAllowsArbitraryLoadsForMedia`
 8. Bundle ID 改为 `fun.upup.musicfree`；AppIcon 全尺寸已生成（源图是 512 的 Android 图标放大）
-9. `ios/MusicFreeLiveActivity/`：新增 Widget Extension（ActivityKit + WidgetKit），
-   展示锁屏与灵动岛的实时活动歌词；`ios/MusicFree/MFLiveActivity.swift` 管理活动生命周期，
-   `LyricUtil` 改由 App target 的 Swift + ObjC 桥接实现，复用原来的 JS 调用链
-10. 设置页新增 iOS 专用的「实时活动歌词」开关（`src/pages/setting/settingTypes/basicSetting.tsx`）
-11. App 的 `IPHONEOS_DEPLOYMENT_TARGET` 从 15.1 提升到 16.2（ActivityKit `ActivityContent`
-    需要 16.2）；Widget Extension 也为 16.2
+9. `ios/MusicFreeLiveActivity/`：新增 Widget Extension（ActivityKit + WidgetKit），只做实时活动
+   （target 名沿用已有的 `MusicFreeLiveActivity`，功能等价于建议的 `MusicFreeLyricWidget`）：
+   锁屏显示三行歌词 + 进度条 + 播放/暂停，灵动岛 compact 显示当前歌词，
+   expanded 显示上一句/当前/下一句 + 歌名歌手 + 播放/暂停按钮；
+   `ContentState` 字段为 `title`、`artist`、`lyricLine`、`previousLine`、`nextLine`、
+   `progress`、`isPlaying`；原生层把更新限流到 ≥1s/次。按钮通过
+   `musicfree://toggle-play` deep link 回到 App 切换播放。
+   App 冷启动时 `MFLiveActivity.cleanupOrphans()` 清理上次进程残留的活动。
+10. 设置页新增 iOS 专用的「实时活动歌词」开关（`src/pages/setting/settingTypes/basicSetting.tsx`），
+    系统不允许实时活动时显示提示
+11. App 与 Widget Extension 的 `IPHONEOS_DEPLOYMENT_TARGET` 为 16.1；
+    16.1 走 `Activity.request(contentState:)` / `update(using:)`，16.2+ 走 `ActivityContent`
 
 ## 当前卡点（不是代码问题）
 
@@ -109,16 +115,19 @@ npx react-native run-ios --device "<iPhone 名称>"
   `musicfree://install/` 的 URL 由系统弹出「在 MusicFree 中打开?」确认框，
   headless 环境无法点按，改为通过 Metro CDP 触发同一个 `Linking` url 事件完成安装，
   插件管理页出现 VerifyPluginInstall（0.0.1）。整轮 Documents/log 无 JS 错误。
-- 实时活动歌词（MVP）已在 iPhone 17 Pro Max 模拟器跑通：播放带 `.lrc` 的本地歌曲后，
-  `com.apple.activitykit` 日志可见活动被创建、每句歌词更新一次（content state 大小随歌词变化）；
-  切到后台后手动更新歌词，同一个 activity 继续更新，没有重新请求活动。
-  WidgetRenderer 日志显示灵动岛 compact leading/trailing 已按内容布局
-  （19.3pt / 71pt），说明 Widget Extension 正常渲染。
-  由于 Xcode 27 没带 Simulator.app（只有 headless CoreSimulator），无法锁屏截图，
-  锁屏界面的视觉效果尚未人工确认，需真机或带 Simulator UI 的环境复核。
+- 实时活动歌词已完成并在 iPhone 17 Pro Max 验证（2026-11-15）：播放 0.3s/行的测试 `.lrc`，
+  `[MFLiveActivity] update` 日志显示实际更新间隔约 1.00s，content state 同时携带
+  上一句/下一句/进度/播放状态；暂停/继续时日志分别为 `playing=false` / `playing=true`；
+  关闭开关触发 `end count=1 reason=disabled` 和 ActivityKit `Ending activity`；
+  强杀 App 后重启，日志为 `cleanup class=MFLiveActivity` + `end count=1 reason=orphan-cleanup`，
+  旧活动消失且不会自动新建；chronod 日志显示 Widget Extension reload 成功
+  （activity archive 约 53KB）。
+  由于 Xcode 27 没带 Simulator.app（只有 headless CoreSimulator），无法锁屏或点击，
+  锁屏/灵动岛的视觉效果与播放按钮的点按仍需真机或带 Simulator UI 的环境复核；
+  播放按钮的 URL 处理已通过 Metro CDP 触发同一个 `Linking` 事件验证。
 - 设置页新增「实时活动歌词」开关，截图确认开关、说明文字正常显示，默认关闭。
-- 真机构建：Debug / Release 的 `iphoneos` 无签名编译之前均已通过（Release 带 JS bundle）；
-  新增 Widget Extension 后还需要在真机签名流程里复核（扩展会随 App 一起签名）。
+- 真机构建：Debug / Release 的 `iphoneos` 无签名编译均通过；Release 产物已内嵌
+  `MusicFreeLiveActivity.appex`（arm64，MinimumOSVersion 16.1），随 App 一起签名。
 - 仍未验证：真机后台播放/锁屏控制/耳机线控/来电打断（等签名与设备）；
   MP3 ID3 写入（P2）。
 - 注意：ATS 仍禁止明文 HTTP（`NSAllowsArbitraryLoads` 为 false），只开了
@@ -138,7 +147,9 @@ npx react-native run-ios --device "<iPhone 名称>"
 6. 插件安装/订阅在 iOS 上的文件选择链路
 
 **P2 iOS 独有能力**
-7. 灵动岛/实时活动歌词：已完成 MVP（ActivityKit + Widget Extension），真机视觉与后台切换待复核
+7. 灵动岛/实时活动歌词：已完成（ActivityKit + Widget Extension，iOS 16.1+；
+   1s 更新限流、暂停状态、三行歌词、播放/暂停 deep link、冷启动孤儿清理）；
+   真机上的锁屏/灵动岛视觉与按钮点按待复核
 8. MP3 ID3 写入评估结论：m4a/mp4 用 AVFoundation 直接写元数据，约 150–250 行、
    无新依赖，风险低；MP3 推荐引入 ID3TagEditor（Swift，中等工作量），
    TagLib 需要 C++ 桥接、成本高，自研 ID3v2 风险高。注意 `setMediaTag`

@@ -21,7 +21,7 @@ import PersistStatus from "@/utils/persistStatus";
 import Toast from "@/utils/toast";
 import * as SplashScreen from "expo-splash-screen";
 import {  Linking, Platform } from "react-native";
-import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
+import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability, State } from "react-native-track-player";
 import i18n from "@/core/i18n";
 import bootstrapAtom from "./bootstrap.atom";
 import { getDefaultStore } from "jotai";
@@ -239,6 +239,14 @@ async function extraMakeup() {
                     ),
                 );
                 Toast.success("安装成功~");
+            } else if (url === "musicfree://toggle-play") {
+                // Live Activity 的播放/暂停按钮
+                const { state } = await RNTrackPlayer.getPlaybackState();
+                if (state === State.Playing || state === State.Buffering) {
+                    await TrackPlayer.pause();
+                } else {
+                    await TrackPlayer.play();
+                }
             } else if (url.endsWith(".js")) {
                 PluginManager.installPluginFromLocalFile(url, {
                     notCheckVersion: Config.getConfig(

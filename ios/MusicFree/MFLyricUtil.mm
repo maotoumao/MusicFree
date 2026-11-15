@@ -21,6 +21,17 @@ RCT_EXTERN_METHOD(showStatusBarLyric : (NSString *)lyric
 RCT_EXTERN_METHOD(hideStatusBarLyric : (RCTPromiseResolveBlock)resolve
                   rejecter : (RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(endLiveActivity : (RCTPromiseResolveBlock)resolve
+                  rejecter : (RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setLiveActivityPlaying : (BOOL)isPlaying
+                  resolver : (RCTPromiseResolveBlock)resolve
+                  rejecter : (RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateLiveActivityState : (NSDictionary *)state
+                  resolver : (RCTPromiseResolveBlock)resolve
+                  rejecter : (RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(setStatusBarLyricText : (NSString *)lyric
                   resolver : (RCTPromiseResolveBlock)resolve
                   rejecter : (RCTPromiseRejectBlock)reject)

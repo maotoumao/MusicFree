@@ -9,14 +9,59 @@ import { atom, getDefaultStore, useAtomValue } from "jotai";
 import { Plugin } from "./pluginManager";
 
 import pathConst from "@/constants/pathConst";
-import LyricUtil from "@/native/lyricUtil";
+import LyricUtil, {
+    endLiveActivity,
+    setLiveActivityPlaying,
+    updateLiveActivityState,
+} from "@/native/lyricUtil";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import PersistStatus from "@/utils/persistStatus";
 import CryptoJs from "crypto-js";
 import { unlink, writeFile } from "react-native-fs";
-import RNTrackPlayer, { Event } from "react-native-track-player";
+import RNTrackPlayer, { Event, State } from "react-native-track-player";
 import { TrackPlayerEvents } from "@/core.defination/trackPlayer";
 import { IPluginManager } from "@/types/core/pluginManager";
+import { Platform } from "react-native";
+
+interface ILiveActivityLineContext {
+    previousLine: string;
+    nextLine: string;
+    progress?: number;
+}
+
+/** iOS 走实时活动，Android 走原来的状态栏歌词 */
+function setStatusBarLyric(
+    lyric: string,
+    context?: ILiveActivityLineContext,
+) {
+    if (Platform.OS === "ios") {
+        updateLiveActivityState({
+            lyric,
+            previousLine: context?.previousLine ?? "",
+            nextLine: context?.nextLine ?? "",
+            progress: context?.progress,
+        }).catch(() => {});
+    } else {
+        LyricUtil.setStatusBarLyricText(lyric);
+    }
+}
+
+function getLiveActivityLineContext(
+    parser: LyricParser | null,
+    currentLyric: IParsedLrcItem | null,
+    progress?: number,
+): ILiveActivityLineContext {
+    const lyrics = parser?.getLyricItems() ?? [];
+    const index = currentLyric?.index ?? -1;
+    return {
+        previousLine: index > 0 ? lyrics[index - 1]?.lrc ?? "" : "",
+        nextLine:
+            index >= 0 && index + 1 < lyrics.length
+                ? lyrics[index + 1]?.lrc ?? ""
+                : "",
+        progress,
+    };
+}
 
 
 interface ILyricState {
@@ -66,8 +111,12 @@ class LyricManager implements IInjectable {
 
             if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
                 if (musicItem) {
-                    LyricUtil.setStatusBarLyricText(
-                        `${musicItem.title} - ${musicItem.artist}`,);
+                    setStatusBarLyric(
+                        `${musicItem.title} - ${musicItem.artist}`,
+                        { previousLine: "", nextLine: "", progress: 0 },
+                    );
+                } else if (Platform.OS === "ios") {
+                    endLiveActivity().catch(() => {});
                 } else {
                     LyricUtil.setStatusBarLyricText("MusicFree");
                 }
@@ -92,15 +141,53 @@ class LyricManager implements IInjectable {
                 const showTranslation = PersistStatus.get("lyric.showTranslation");
 
                 if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
-                    LyricUtil.setStatusBarLyricText(
+                    setStatusBarLyric(
                         (newLyricItem?.lrc ?? "") +
                         (showTranslation
                             ? `\n${newLyricItem?.translation ?? ""}`
                             : ""),
+                        getLiveActivityLineContext(
+                            parser,
+                            newLyricItem,
+                            evt.duration > 0 ? evt.position / evt.duration : 0,
+                        ),
                     );
                 }
             }
         });
+
+        RNTrackPlayer.addEventListener(Event.PlaybackState, evt => {
+            if (
+                Platform.OS !== "ios" ||
+                !this.appConfig.getConfig("lyric.showStatusBarLyric")
+            ) {
+                return;
+            }
+
+            if (evt.state === State.Stopped || evt.state === State.None) {
+                // 切歌时底层会短暂进入 Stopped，不要销毁活动；真正的退出
+                // 播放由 CurrentMusicChanged(null) 处理。
+                setLiveActivityPlaying(false).catch(() => {});
+            } else {
+                setLiveActivityPlaying(
+                    evt.state === State.Playing ||
+                    evt.state === State.Buffering,
+                ).catch(() => {});
+            }
+        });
+
+        if (
+            Platform.OS === "ios" &&
+            this.appConfig.getConfig("lyric.showStatusBarLyric")
+        ) {
+            RNTrackPlayer.getPlaybackState()
+                .then(({ state }) => {
+                    return setLiveActivityPlaying(
+                        state === State.Playing || state === State.Buffering,
+                    );
+                })
+                .catch(() => {});
+        }
 
 
         if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
@@ -242,7 +329,12 @@ class LyricManager implements IInjectable {
         getDefaultStore().set(currentLyricItemAtom, null);
         if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
             const musicItem = this.trackPlayer.currentMusic;
-            LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree");
+            setStatusBarLyric(
+                musicItem
+                    ? `${musicItem.title} - ${musicItem.artist}`
+                    : "MusicFree",
+                { previousLine: "", nextLine: "" },
+            );
         }
     }
 
@@ -292,7 +384,7 @@ class LyricManager implements IInjectable {
                 return;
             }
 
-            this.lyricParser = new LyricParser(lrcSource.rawLrc!, {
+            const parser = new LyricParser(lrcSource.rawLrc!, {
                 extra: {
                     offset: (getMediaExtraProperty(currentMusicItem, "lyricOffset") || 0) * -1,
                 },
@@ -300,28 +392,46 @@ class LyricManager implements IInjectable {
                 lyricSource: lrcSource,
                 translation: lrcSource.translation,
             });
+            this.lyricParser = parser;
 
             getDefaultStore().set(lyricStateAtom, {
                 loading: false,
-                lyrics: this.lyricParser.getLyricItems(),
+                lyrics: parser.getLyricItems(),
                 hasTranslation: !!lrcSource.translation,
-                meta: this.lyricParser.getMeta(),
+                meta: parser.getMeta(),
             });
 
-            const currentLyric = ignoreProgress ? (this.lyricParser.getLyricItems()?.[0] ?? null) : this.lyricParser.getPosition((await this.trackPlayer.getProgress()).position);
+            let currentLyric: IParsedLrcItem | null;
+            let progress = 0;
+            if (ignoreProgress) {
+                currentLyric = parser.getLyricItems()?.[0] ?? null;
+            } else {
+                const currentProgress = await this.trackPlayer.getProgress();
+                currentLyric = parser.getPosition(currentProgress.position);
+                progress =
+                    currentProgress.duration > 0
+                        ? currentProgress.position / currentProgress.duration
+                        : 0;
+            }
             getDefaultStore().set(currentLyricItemAtom, currentLyric || null);
 
             if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
                 if (currentLyric) {
-                    LyricUtil.setStatusBarLyricText(
+                    setStatusBarLyric(
                         (currentLyric?.lrc ?? "") +
-                        (this.lyricParser.hasTranslation
+                        (parser.hasTranslation
                             ? `\n${currentLyric?.translation ?? ""}`
                             : ""),
+                        getLiveActivityLineContext(parser, currentLyric, progress),
                     );
                 } else {
                     const musicItem = this.trackPlayer.currentMusic;
-                    LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree");
+                    setStatusBarLyric(
+                        musicItem
+                            ? `${musicItem.title} - ${musicItem.artist}`
+                            : "MusicFree",
+                        { previousLine: "", nextLine: "", progress },
+                    );
                 }
             }
         } catch (err) {
