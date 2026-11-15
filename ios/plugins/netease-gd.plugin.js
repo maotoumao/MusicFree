@@ -11,9 +11,9 @@
  * 不能播放的歌曲就是接口没有返回地址。
  *
  * 安装地址（push 后可用）：
- * https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-gd.plugin.js
- * 备用 raw 地址：
  * https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js
+ * jsDelivr 分支缓存可能滞后，仅作备用：
+ * https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-gd.plugin.js
  */
 
 "use strict";
@@ -529,7 +529,7 @@ module.exports = {
     platform: "网易云音乐（GD 源）",
     version: "1.1.0",
     srcUrl:
-        "https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-gd.plugin.js",
+        "https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js",
     description:
         "网易云音乐搜索/播放/歌词/歌单导入，播放地址由 GD 接口返回 https 版本，避免 iOS ATS 拦截 http CDN。不含 VIP/付费破解。",
     supportedSearchType: ["music", "album", "artist"],
