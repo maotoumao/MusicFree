@@ -18,6 +18,8 @@
 
 "use strict";
 
+/* global env */
+
 const axios = require("axios");
 
 const BASE_API = "https://music-api.gdstudio.xyz/api.php";

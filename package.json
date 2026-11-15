@@ -19,6 +19,7 @@
     "connect-mumu": "adb kill-server & adb connect localhost:7555",
     "build-android": "cd .\\android\\ && .\\gradlew assembleRelease",
     "generate-assets": "node ./generator/generate-assets.mjs",
+    "postinstall": "node scripts/apply-react-native-patches.js",
     "prepare": "husky"
   },
   "dependencies": {

@@ -32,6 +32,7 @@
 1. `hebijunge main.json`（QQ音乐、酷狗音乐、咪咕音乐）
 2. `qwerwhr plugins.json`（GD音乐台）
 3. `hebijunge music.json`（B站）
+4. 网易云：`qingniaoheyu/musicfree-netease-plugin-plus` 0.7.0（开源增强版；公开内容无需 Cookie，私有歌单/`all` 需要用户自己的 `MUSIC_U`）
 
 heb-main 的 6 个插件里有 3 个可播（QQ/酷狗/咪咕），是可用率最高的源。日常使用按下面的
 「最小可用安装集」装 5 个即可，不要把所有源全量导入：同名的插件会互相覆盖，
@@ -276,6 +277,97 @@ Cookie 只用于 `music.163.com/api/v6/playlist/detail` 和 `api/song/detail` �
 失败表现记录，未做账号实测；如果填了 Cookie 仍失败，说明该歌单还要求别的登录校验，
 插件不会继续绕过。
 
+## 开源增强网易云插件专项（qingniaoheyu 0.7.0，2026-11-15 19:30–20:10 补测）
+
+用户确定不再使用 hebijunge 的混淆 dist 包，改用 AGPL-3.0 的开源增强插件。本节的结论是
+**这个插件可以作为网易云首选**，但需要配合本 App 的两个 iOS 修复：显式 Cookie 头不被原生
+Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https。
+
+| 项目 | 值 |
+| --- | --- |
+| 仓库 | `https://github.com/qingniaoheyu/musicfree-netease-plugin-plus` |
+| 许可证 | AGPL-3.0 |
+| 上游文件 | `plugin/musicfree-netease-plugin.js`，207,185 字节，版本 0.7.0 |
+| SHA256 | `b4d8c7837b1809ccdd1ccacd1d8e7652b541bc60b334b7707f2cb59d7cb64407` |
+| 固定安装地址（推荐） | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/8b542254684ff5d2ec2b0135a9b02d46e61631af/plugin/musicfree-netease-plugin.js` |
+| 跟随 main 的地址 | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/main/plugin/musicfree-netease-plugin.js`（实测 HTTP 200，hash 与上表一致） |
+| 模拟器安装文件 | `Documents/plugins/netease-plus.js`，hash 与上游完全一致 |
+| 支持 | 搜索（music/album/artist/sheet）、播放、歌词、封面、评论、歌单广场、我的歌单（含「我喜欢的音乐」）、排行榜、专辑、歌手、扫码登录、按链接/ID/歌单名导入、输入 `all` 一键导入全部歌单 |
+| 用户变量 | `cookie`（网易云 Cookie）、`bilibiliFallback`（B 站回退，默认开）、`bilibiliMp4`（容器开关） |
+| 不含 | VIP/付费破解；会员曲目仍受平台限制，拿不到音源时会按插件自己的 B 站回退逻辑处理 |
+
+**本次验收不使用 B 站回退**：下面所有「可播」结论都来自网易云原生取流，不把 B 站回退算作通过项。
+
+### 无 Cookie 实测
+
+测试时插件用户变量为空（`getUserVariables()` 返回 `{}`），原生 Cookie 仓只有匿名
+`.music.163.com` 的 `NMTID`，没有 `MUSIC_U`。
+
+| 项目 | 结果 |
+| --- | --- |
+| 搜索「晴天」 | `POST https://music.163.com/weapi/cloudsearch/pc` → HTTP 200；返回 **30 条**；首条 `2668397359 / 晴天 (原唱 周杰伦) / RyaVocal`。本次**没有出现 `-462`**，也没有走明文 `/api/search/get` 回退；插件成功路径不打印日志，因此没有错误栈 |
+| 公开歌单链接导入 | `https://music.163.com/playlist?id=2678496359` → 经 `p.methods.importMusicSheet` 返回 **15 首**，条目带 `platform: 网易云音乐` |
+| `getMusicSheetInfo` | 歌单名「朗朗晴天」，`musicList` **15 首**，`isEnd=true` |
+| 输入 `all`（未登录） | 插件直接抛错：`未登录，读不到你的歌单。请先填写网易云 Cookie`；App 侧 `p.methods.importMusicSheet("all")` 捕获后返回 0，界面显示「导入失败」。这是预期的未登录行为 |
+| 已知歌曲取流 | `getMediaSource(item, "standard")` 返回 `http://m10.music.126.net/...mp3`；直接交给播放器时报 `ios_failed_to_load_resource`（`Failed to load resource`），position 0 |
+| 同一 URL 改 https | 用 RNTP 直接播放同一个 `m10.music.126.net` 地址的 https 版本：`state=playing`，position 8.76s / 21.54s；说明失败点是 ATS，不是 Cookie/版权/地区 |
+
+**结论：** 无 Cookie 时搜索、公开歌单导入都能用；播放失败不是 Cookie 问题，而是
+网易云取流接口返回了 http 地址。App 已在播放器入口把 `m*.music.126.net` 升级成 https，
+升级后同一首歌实测 `playing`。
+
+### iOS 显式 Cookie 头与原生 Cookie 仓
+
+用 httpbin 做了两组对照（只用 `MFTEST...` 假值，不涉及任何真实账号 Cookie）：
+
+| 场景 | 服务端实际收到的 Cookie |
+| --- | --- |
+| 修复前：原生仓先设置 `MUSIC_U=...NATIVE`，再手写 `Cookie: MUSIC_U=...HEADER; __csrf=...` | `MUSIC_U=...NATIVE; mf_native=... , MUSIC_U=...HEADER; __csrf=...` —— 原生值排在前面，和手写值用逗号拼在一起 |
+| 修复后：同样两个值 | 只有 `MUSIC_U=...HEADER; __csrf=...` —— 原生仓不再合并进来 |
+| 修复后：不带手写 Cookie 的普通请求 | 仍然正常带上原生仓里的 Cookie（回归通过） |
+
+根因在 RN 0.76 的 `RCTNetworking.mm`：`withCredentials=true`（默认）时先把
+`NSHTTPCookieStorage` 的 Cookie 塞进 `allHTTPHeaderFields`，再把插件手写的 Cookie
+`addValue` 进去；iOS 会把两者合并，原生匿名值排在前面。网易云服务端如果取到前面的
+`MUSIC_U`，就会出现「插件填了 Cookie 仍是未登录」。
+
+修复方式（不是照搬 Android CookieFix）：
+
+- `scripts/apply-react-native-patches.js` 在 `npm install` 的 `postinstall` 中执行；
+- 只改 `node_modules/react-native/Libraries/Network/RCTNetworking.mm` 的一处：
+  **请求头里出现显式 `Cookie` 时，关闭该请求的 `HTTPShouldHandleCookies`**，
+  让插件手写的值原样发出；没有显式 Cookie 的请求保持原行为；
+- 脚本幂等，已应用会跳过；RN 版本升级导致代码块变化时会报错提醒重新适配；
+- 不改 `Info.plist`、不放开 ATS。
+
+用插件本身验证：给用户变量填一个 `MFTEST...` 假 Cookie 后，`/weapi/cloudsearch/pc`
+请求头包含该假值、不包含原生 Cookie 标记；搜索仍返回 30 条。测试后已清空用户变量。
+**真实 Cookie 只在用户手机上填写，不写入仓库、不打印到日志。扫码登录依赖的
+`Set-Cookie` 响应头仍然可读，未受这个改动影响。**
+
+### 播放地址 http → https
+
+`src/core/trackPlayer/index.ts` 的 `normalizeMediaUrl()` 在进入播放器前只把
+`http://m*.music.126.net/...` 升级为 `https://`，其他 http 源不动。修复后
+「朗朗晴天」15 首导入、首曲实测 `playing`，position 16.9s / 21.54s。
+
+### iOS UI 入口
+
+| 入口 | 结果 |
+| --- | --- |
+| 插件管理 → `网易云音乐` 0.7.0（作者 qingniaoheyu） | 卡片上同时有「导入歌单」「导入单曲」「用户变量」 |
+| 插件 → 用户变量 | 面板标题「设置用户变量」，包含「网易云 Cookie」「B 站音源回退」「改用 mp4 容器」三项 |
+| 插件 → 导入歌单 | 面板可打开并输入；`supportedMethods` 运行时包含 `importMusicSheet`，`userVariables` 包含 `cookie` |
+| 输入 `all` | 未登录时按上面的预期报错；登录后的真实导入需要用户自己的 Cookie，本次没有真实账号可测 |
+
+### 结论与建议
+
+1. 网易云首选 **qingniaoheyu 0.7.0**；公开内容无需 Cookie，私有歌单/我的歌单/`all` 需要用户自己填 `MUSIC_U`。
+2. 本 App 的两个 iOS 修复必须随包一起更新：`RCTNetworking` 显式 Cookie 透传、`m*.music.126.net` 升级 https。
+   真机上已经复制了插件文件，但 **App 二进制也要重新构建安装**，否则旧包仍会出现「Cookie 被合并」和「http 播放失败」。
+3. `网易云音乐（GD 源）` 1.1.0 保留为备用：如果网易云接口风控/改版导致 plus 插件不可用，可以用它继续搜索/播放/导入。
+4. 不做 VIP/付费破解；B 站回退不作为验收项，VIP 曲目能否播放取决于接口当时返回的地址。
+
 ## 最小可用安装集
 
 目标：装完就能搜、能播、能有歌词，tab 又不至于太多。
@@ -286,7 +378,8 @@ Cookie 只用于 `music.163.com/api/v6/playlist/detail` 和 `api/song/detail` �
 | 2 | 酷狗音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/kugou-source.plugin.v1.9.24.js` | 备用曲库；首条常是翻唱，选原唱版本即可 |
 | 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
 | 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
-| 5 | 网易云音乐（GD 源） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` | 网易云搜索/播放/歌词/歌单导入；播放地址为 https，避开 ATS |
+| 5 | 网易云音乐（开源增强） | 单插件 | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/8b542254684ff5d2ec2b0135a9b02d46e61631af/plugin/musicfree-netease-plugin.js` | 网易云搜索/播放/歌词/歌单导入/我的歌单/`all`；公开内容无需 Cookie |
+| 6 | 网易云音乐（GD 源，备用） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` | 备用；plus 插件风控/改版时仍可搜索、播放、导入 |
 
 也可以直接订阅 **heb-main**（`https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json`），
 一次装 6 个：QQ、酷狗、咪咕可播，酷我、网易云可搜，汽水当前搜索失败。
@@ -316,19 +409,23 @@ Cookie 只用于 `music.163.com/api/v6/playlist/detail` 和 `api/song/detail` �
 | Jamendo | 要求 Client ID | 插件设计为自带密钥 | 注册后填设置；否则别装 |
 | heb 聚合 | `PLAY_TIMEOUT` | 聚合取流卡死 | 只当搜索/歌词源 |
 | heb 汽水 | 搜索「汽水源请求失败」 | 插件接口报错 | 暂不可用 |
-| heb 网易云 | 可搜不可播，position 0 | 官方取流返回 `http://m701.music.126.net`，ATS 拦截 | 装上面的「网易云音乐（GD 源）」；官方插件留作搜索/歌词 |
-| heb 网易云歌单导入 | 导入返回 0 首 | `importMusicSheetImpl` 返回歌单对象（`musicList` 嵌套），App 期望数组；`getMusicSheetInfo` 对纯 ID 报「该条目无可用的歌单详情源」 | 不用 heb 导入；用「网易云音乐（GD 源）」的导入 |
+| heb 网易云 | 可搜不可播，position 0 | 官方取流返回 `http://m701.music.126.net`，ATS 拦截 | 改用上面的「网易云音乐（开源增强）」；官方插件留作搜索/歌词 |
+| heb 网易云歌单导入 | 导入返回 0 首 | `importMusicSheetImpl` 返回歌单对象（`musicList` 嵌套），App 期望数组；`getMusicSheetInfo` 对纯 ID 报「该条目无可用的歌单详情源」 | 不用 heb 导入；用「网易云音乐（开源增强）」或备用的 GD 源导入 |
 | heb 酷我 | 可搜不可播 | 取流接口被平台限制 | 只当搜索/歌词源 |
-| qwerwhr 网易云 | 可搜 30 条、播放 error；歌单可导入 15 首但导入后不能播 | 取流 API `api.music.lerd.dpdns.org/mf/wy` 返回 429（Cloudflare Workers 每日额度） | 不用；改用「网易云音乐（GD 源）」 |
+| qwerwhr 网易云 | 可搜 30 条、播放 error；歌单可导入 15 首但导入后不能播 | 取流 API `api.music.lerd.dpdns.org/mf/wy` 返回 429（Cloudflare Workers 每日额度） | 不用；改用「网易云音乐（开源增强）」或备用的 GD 源 |
 | qwerwhr VIP 类插件 | 未测试 | 付费/破解类 | 不推荐、不内置 |
 
 ## 使用建议
 
 - 订阅后先在搜索页逐个平台搜「晴天」，能出结果不代表能播，**一定要点第一首听 15 秒**。
 - 播放失败时会弹「《歌名》播放失败：原因，已自动跳到下一首/已暂停」；若连续失败，换上面「最小可用安装集」里的插件。
-- 网易云歌单导入用「网易云音乐（GD 源）」：插件页 → 该插件 → 导入歌单，粘贴
-  `https://music.163.com/playlist?id=...` 或 `y.music.163.com/m/playlist?id=...`；私有歌单先在
-  用户变量填自己的 `MUSIC_U`。
+- 网易云先用「网易云音乐（开源增强）」：公开内容不需要 Cookie；私有歌单/我的歌单/输入
+  `all` 前，在该插件 → 用户变量 → 「网易云 Cookie」填自己账号的 `MUSIC_U`（不要填他人 Cookie）。
+- 网易云歌单导入：插件页 → 「网易云音乐（开源增强）」→ 导入歌单，粘贴
+  `https://music.163.com/playlist?id=...`、`y.music.163.com/m/playlist?id=...`、纯数字 ID
+  或歌单名；输入 `all` 会把账号下所有歌单合并导入。公开歌单已实测 15 首可导入可播。
+- 如果 plus 插件被网易云风控/改版，换「网易云音乐（GD 源）」备用；它搜索/播放/导入仍可用，
+  但曲库走 GD 镜像。
 - 同名插件会互相覆盖。比如 qwerwhr 的 GD音乐台与已有 GD 插件内容相同，装一个即可。
 - 下载完成的提示会给出文件位置：iOS 在「文件」App → 我的 iPhone → MusicFree → `download/music`
   （自定义下载目录时显示相对 Documents 的路径）。

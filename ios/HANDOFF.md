@@ -115,6 +115,18 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
     asset catalog 的 `LaunchBackground`（Light `#FFFFFF`，Dark `#1E1E1E`）；
     中间 `MusicFree` 文案使用 `labelColor`，底部文案使用 `secondaryLabelColor`；
     布局约束未改。模拟器系统深色/浅色各截图验证，深色下不再白闪。
+20. 网易云换源：改用 AGPL-3.0 开源增强插件 `qingniaoheyu/musicfree-netease-plugin-plus`
+    0.7.0（207,185 字节，SHA256 `b4d8c783...`），不再依赖 hebijunge 的混淆 dist 包。
+    无 Cookie 实测搜索 30 条、公开歌单「朗朗晴天」导入 15 首；`all` 在未登录时按预期报错。
+21. `scripts/apply-react-native-patches.js` + `package.json` 的 `postinstall`：iOS 显式
+    `Cookie` 请求头不再和 `NSHTTPCookieStorage` 合并。修复前 httpbin 实测原生
+    `MUSIC_U` 会排在插件手写值前面；修复后只发插件值，普通请求仍带原生 Cookie。
+    只改 `node_modules/react-native/Libraries/Network/RCTNetworking.mm`，脚本幂等，
+    RN 升级导致代码块变化时会报错提醒。不是照搬 Android CookieFix，不改 ATS/Info.plist。
+22. `src/core/trackPlayer/index.ts`：进入播放器前把 `http://m*.music.126.net/...`
+    升级为 https（只限这个网易云 CDN），修复 plus 插件返回 http 地址导致
+    `ios_failed_to_load_resource`；其他 http 源不动。实测同一首歌修复前 error、
+    修复后 `playing` 16.9s / 21.54s。
 
 ## 当前卡点（不是代码问题）
 
@@ -342,12 +354,12 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | Audiomack 仅支持 `standard` 音质 | 切 high 等档位返回 false | 插件接口能力，保持 standard 即可 |
 | 官方插件 403 / 503 / 要求登录 / TLS 不可达 | 搜索或取流失败 | 插件服务端/网络问题，换可用插件，不要改 App |
 | 只提供 http 的插件 API | ATS 拦截（https-only） | 只记录；是否放开需用户确认，默认不动 ATS |
-| 官方 heb 网易云取流返回 `http://m701.music.126.net` | 播放 `error`、position 0；插件内 2s Range 探测报 `Network Error` | 不是登录/VIP/版权问题。已提供 `ios/plugins/netease-gd.plugin.js`（GD 取流返回 https），实测可播；不改 ATS |
-| heb 网易云歌单导入返回 0 首 | 底层返回歌单对象（`musicList` 嵌套），App 期望数组；`getMusicSheetInfo` 对纯 ID 报无详情源 | 用「网易云音乐（GD 源）」的导入，不修 App 的插件适配层 |
-| qwerwhr 网易云取流 API 429 | 搜索/导入正常、播放 `error` | 上游 Cloudflare Workers 每日额度用尽；换「网易云音乐（GD 源）」 |
+| 官方 heb 网易云取流返回 `http://m701.music.126.net` | 播放 `error`、position 0；插件内 2s Range 探测报 `Network Error` | 不是登录/VIP/版权问题。已改用 qingniaoheyu 开源增强插件，并在 `src/core/trackPlayer/index.ts` 把 `m*.music.126.net` 升级为 https；不改 ATS |
+| heb 网易云歌单导入返回 0 首 | 底层返回歌单对象（`musicList` 嵌套），App 期望数组；`getMusicSheetInfo` 对纯 ID 报无详情源 | 用「网易云音乐（开源增强）」或备用 GD 源的导入，不修 App 的插件适配层 |
+| qwerwhr 网易云取流 API 429 | 搜索/导入正常、播放 `error` | 上游 Cloudflare Workers 每日额度用尽；换「网易云音乐（开源增强）」或备用 GD 源 |
 
-选插件时的优先级：**QQ音乐、酷狗音乐、咪咕音乐、GD音乐台、B站、网易云音乐（GD 源）**已验证可播（详见
-`ios/PLUGIN-SOURCES.md` 的四源 21 插件实测和网易云专项）。官方示例插件（bilibili、猫耳、
+选插件时的优先级：**QQ音乐、酷狗音乐、咪咕音乐、GD音乐台、B站、网易云音乐（开源增强）**已验证可播；
+网易云音乐（GD 源）作为备用。详见 `ios/PLUGIN-SOURCES.md` 的四源 21 插件实测和网易云专项。官方示例插件（bilibili、猫耳、
 快手、YouTube、音悦台、suno 等）当前基本不可用，除非插件本身更新，否则不再重复尝试。
 插件请求超时已从 2s 调到 10s（`src/core/pluginManager/plugin.ts`），慢接口不会再被
 误判为超时。完整的源/插件失效清单和可复制安装地址见 `ios/PLUGIN-SOURCES.md`。
@@ -364,6 +376,9 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 插件源实测 | 通过 | 4 个订阅源、21 个代表插件、统一搜「晴天」并试播；结果与最小安装集见 `ios/PLUGIN-SOURCES.md` |
 | 网易云专项 | 通过 | 官方 heb 插件返回 http CDN（ATS 拦）；qwerwhr 取流 429；`ios/plugins/netease-gd.plugin.js` 搜索 20 条、`playing` 0→22.3s/270.74s、歌词 65 行、封面 https |
 | 网易云歌单导入 | 通过 | 公开歌单「朗朗晴天」ID `2678496359`：15 首导入，写入本地歌单 15 首，首曲最终 `playing` 0→5.36s/21.54s（固定 URL 重装后首播 1 次瞬时 error 后恢复）；15/15 取流成功。大歌单「热歌榜」`3778678` 导入 200 首，126 首标 VIP；heb 导入返回 0（返回结构不兼容）、qwerwhr 可导入但取流 429 |
+| 网易云开源增强插件（无 Cookie） | 通过 | `qingniaoheyu` 0.7.0（hash `b4d8c783...`）：搜索「晴天」`/weapi/cloudsearch/pc` 200、30 条，未出现 `-462`；公开歌单「朗朗晴天」导入 15 首，`getMusicSheetInfo` 15 首、`isEnd=true`；`all` 未登录报「未登录，读不到你的歌单」，符合预期 |
+| iOS 显式 Cookie 透传 | 通过 | 修复前 httpbin 收到 `MUSIC_U=NATIVE; ...,MUSIC_U=HEADER; __csrf=...`（原生在前）；`RCTNetworking` 补丁后只收到手写值。正常请求仍带原生 Cookie；插件假 Cookie 测试中 `/weapi/cloudsearch/pc` 含假值、不含原生标记；`Set-Cookie` 响应头仍可读 |
+| 网易云 http→https | 通过 | plus 插件 `getMediaSource` 返回 `http://m10.music.126.net/...`，直接播放报 `ios_failed_to_load_resource`；同一 URL https 版 `playing` 8.76s/21.54s；App `normalizeMediaUrl` 生效后导入 15 首、首曲 `playing` 16.9s/21.54s |
 | 本地导入 | 通过 | `Documents` 根目录的选择器会列出音频文件并隐藏 `.lrc`；直接选中单个 `test-tone.m4a` 导入成功（1 首，标题读为「MF标签标题」）；文件夹递归导入此前已验证 4 首 |
 | 播放失败提示 | 通过 | 在线弹「《晴天》播放失败：网络超时，已暂停」；重复触发同一首歌时 `lastPlayFailToastAt` 不变（30s 节流生效）；离线弹「当前无网络，无法播放《晴天》」 |
 | 冷启动歌词 | 通过 | QQ 歌曲播放后暂停 → 杀进程 → 冷启动，自动恢复当前歌曲并加载 63 行歌词；“启动自动播放”开/关两种配置都复测通过，无需进入播放页 |

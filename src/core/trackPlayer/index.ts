@@ -49,6 +49,20 @@ const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
 const qualityAtom = atom<IMusic.IQualityKey>("standard");
 const playListAtom = atom<IMusic.IMusicItem[]>([]);
 
+/**
+ * 网易云取流接口经常返回 http://m*.music.126.net/...。
+ * iOS 的播放器路径会被 ATS 拦成 ios_failed_to_load_resource；
+ * 同一个地址换成 https 可以正常播放（实测 206 audio/mpeg），
+ * 所以只在进入播放器前把这一个 CDN 域名升级为 https，不动其他 http 源。
+ */
+function normalizeMediaUrl(url: string) {
+    if (typeof url !== "string") {
+        return url;
+    }
+    return url.replace(/^http:\/\/([^/]+\.music\.126\.net)\//i, "https://$1/");
+}
+
+
 
 class TrackPlayer extends EventEmitter<{
     [TrackPlayerEvents.PlayEnd]: () => void;
@@ -1109,6 +1123,7 @@ class TrackPlayer extends EventEmitter<{
         }
         return {
             ...track,
+            url: normalizeMediaUrl(track.url),
             artwork: resolveImportedAssetOrPath(
                 track.artwork?.trim?.()?.length ? track.artwork : ImgAsset.albumDefault,
             ) as unknown as any,
