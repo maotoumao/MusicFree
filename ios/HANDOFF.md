@@ -129,9 +129,8 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
 
 ### 用户需要做的（一次性准备）
 
-1. **Xcode 登录 Apple ID**：Xcode → Settings → Accounts → `+` → Apple ID。
-   免费账号即可；登录后 Xcode 会生成 `Apple Development` 证书（也可在
-   Manage Certificates 里手动 `+` 一次）。
+1. **Xcode 登录 Apple ID**：已完成（当前有 `Apple Development: 739686898@qq.com`），
+   可跳过；换账号时在 Xcode → Settings → Accounts 重新登录，免费账号即可。
 2. **连接 iPhone**：用数据线连接 Mac，手机上点「信任」并输入锁屏密码。
 3. **打开开发者模式**：iPhone → 设置 → 隐私与安全性 → 开发者模式 → 打开，
    按提示重启手机并确认。
@@ -334,19 +333,19 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 
 | 限制 | 影响 | 处理 |
 | --- | --- | --- |
-| bilibili 返回 `.m4s` | AVPlayer 无法识别，报 `ios_track_unplayable` | 插件输出格式问题；需要插件改回 mp4/m4a，App 不做格式转换 |
+| 官方 bilibili 插件返回 `.m4s` | AVPlayer 无法识别，报 `ios_track_unplayable`；heb-music 的「B站」插件实测可播 | 官方插件输出格式问题；需要插件改回 mp4/m4a，App 不做格式转换 |
 | 猫耳FM HLS 为 SAMPLE-AES/Widevine DRM | AVPlayer 无 FairPlay 解密能力，播放停在 buffering | DRM 限制，iOS 无法播放 |
 | Audiomack 仅支持 `standard` 音质 | 切 high 等档位返回 false | 插件接口能力，保持 standard 即可 |
 | 官方插件 403 / 503 / 要求登录 / TLS 不可达 | 搜索或取流失败 | 插件服务端/网络问题，换可用插件，不要改 App |
 | 只提供 http 的插件 API | ATS 拦截（https-only） | 只记录；是否放开需用户确认，默认不动 ATS |
 
 选插件时的优先级：**QQ音乐、酷狗音乐、咪咕音乐、GD音乐台、B站**已验证可播（详见
-`ios/PLUGIN-SOURCES.md` 的四源 20 插件实测）。官方示例插件（bilibili、猫耳、
+`ios/PLUGIN-SOURCES.md` 的四源 21 插件实测）。官方示例插件（bilibili、猫耳、
 快手、YouTube、音悦台、suno 等）当前基本不可用，除非插件本身更新，否则不再重复尝试。
 插件请求超时已从 2s 调到 10s（`src/core/pluginManager/plugin.ts`），慢接口不会再被
-误判为超时。
+误判为超时。完整的源/插件失效清单和可复制安装地址见 `ios/PLUGIN-SOURCES.md`。
 
-## 回归清单（2026-11-15，iPhone 17 Pro Max 模拟器）
+## 回归清单（2026-11-15，iPhone 17 Pro Max 模拟器；真机连接后需复测标「待真机」的项）
 
 | 项目 | 结果 | 证据 / 备注 |
 | --- | --- | --- |
@@ -359,7 +358,7 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 播放失败提示 | 通过 | 在线弹「《晴天》播放失败：网络超时，已暂停」；重复触发同一首歌时 `lastPlayFailToastAt` 不变（30s 节流生效）；离线弹「当前无网络，无法播放《晴天》」 |
 | 冷启动歌词 | 通过 | QQ 歌曲播放后暂停 → 杀进程 → 冷启动，自动恢复当前歌曲并加载 63 行歌词；“启动自动播放”开/关两种配置都复测通过，无需进入播放页 |
 | 搜索页插件 tab | 代码验证 | `ResultSubPanel` 已订阅 `usePlugins()` 并补 routes/renderScene 依赖；headless 无法点按搜索页，待真机复核 |
-| 断网提示 | 通过 | 模拟离线后播放失败，弹「网络不可用，请检查网络连接」，且 60s 内只提示一次 |
+| 断网提示 | 通过 | 模拟离线后播放失败，弹「当前无网络，无法播放《晴天》」；60s 内只提示一次 |
 | 主题切换 | 通过 | 设置 → 主题设置，点「浅色模式」→ `p-light`，点「深色模式」→ `p-dark`，配置持久化 |
 | 插件增删 | 通过 | 卸载 TestPlugin：9→8 且插件管理页消失；从本地文件重新安装：8→9，插件管理页重新出现。headless 环境无法点按，调用的是页面按钮背后的同一个 `pluginManager` 方法 |
 | Live Activity 开关 | 通过 | 基本设置 → 实时活动歌词：关 → `lyric.showStatusBarLyric=false`，开 → `true`；原生 end/show 调用无报错 |
