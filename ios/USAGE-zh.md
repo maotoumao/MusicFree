@@ -11,8 +11,10 @@
 | heb-main（订阅） | `https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json` | 一次装 6 个；QQ、酷狗、咪咕能播 |
 | heb-music（订阅） | `https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/music.json` | 一次装 11 个；实测只有 B站能播，嫌多可用下面的 B站单地址 |
 | GD音乐台（单插件） | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 能播；歌词由 App 自动搜索兜底 |
-| 网易云音乐（开源增强，本仓库适配版） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-plus.plugin.js` | 能搜、能播、能导入歌单、能扫码登录；公开内容不需要 Cookie，私有歌单/`all` 需自己填 `MUSIC_U` |
+| 网易云音乐（开源增强，本仓库适配版） | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-plus.plugin.js` | 能搜、能播、能导入歌单、能扫码登录；公开内容不需要 Cookie，私有歌单/`all` 需自己填 `MUSIC_U` |
 | 网易云音乐（GD 源，备用） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` | plus 插件风控/改版时备用；搜索/播放/导入走 GD 镜像 |
+
+> 网易云适配版是 202 KB 的大文件，GitHub raw 直链偶尔返回 `503 Backend.max_conn`；上面的 jsDelivr 地址实测可装。jsDelivr 分支缓存偶尔滞后，如果插件说明里的版本不是 `v0.7.1`，改用 raw 直链重试：`https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-plus.plugin.js`。
 
 如果不想一次装 11 个，B站用这个单插件地址：
 

@@ -293,7 +293,8 @@ Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https、扫�
 | 上游 SHA256 | `b4d8c7837b1809ccdd1ccacd1d8e7652b541bc60b334b7707f2cb59d7cb64407` |
 | 本仓库适配版 | `ios/plugins/netease-plus.plugin.js`，202,872 字节，版本 0.7.1 |
 | 适配版 SHA256 | `82b4a6d05ceaeafa190a1368302b3ffd08031ece02f698138e0623826b9dd0aa` |
-| 本仓库安装地址（推荐） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-plus.plugin.js` |
+| 本仓库安装地址（推荐） | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-plus.plugin.js`（实测 App 内安装成功，hash 一致） |
+| 本仓库 raw 直链（备用） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-plus.plugin.js`（202 KB 文件偶发 GitHub `503 Backend.max_conn`，重试或改用 jsDelivr） |
 | 上游固定地址（0.7.0，备用） | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/8b542254684ff5d2ec2b0135a9b02d46e61631af/plugin/musicfree-netease-plugin.js` |
 | 上游跟随 main | `https://raw.githubusercontent.com/qingniaoheyu/musicfree-netease-plugin-plus/main/plugin/musicfree-netease-plugin.js`（实测 HTTP 200，hash 与上游一致） |
 | 模拟器安装文件 | 源文件 `Documents/netease-plus-0.7.1.js`；安装后实际加载 `Documents/plugins/<nanoid>.js`，hash 与适配版一致 |
@@ -423,7 +424,7 @@ Cookie 仓合并、`http://m*.music.126.net` 播放地址升级为 https、扫�
 | 2 | 酷狗音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/kugou-source.plugin.v1.9.24.js` | 备用曲库；首条常是翻唱，选原唱版本即可 |
 | 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
 | 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
-| 5 | 网易云音乐（开源增强，本仓库适配版） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-plus.plugin.js` | 网易云搜索/播放/歌词/歌单导入/我的歌单/`all`/扫码登录；公开内容无需 Cookie，扫码凭证自动保存 |
+| 5 | 网易云音乐（开源增强，本仓库适配版） | 单插件 | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-plus.plugin.js` | 网易云搜索/播放/歌词/歌单导入/我的歌单/`all`/扫码登录；公开内容无需 Cookie，扫码凭证自动保存 |
 | 6 | 网易云音乐（GD 源，备用） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` | 备用；plus 插件风控/改版时仍可搜索、播放、导入 |
 
 > 只想用上游 0.7.0 时，把第 5 行换成上面的「上游固定地址」；功能相同，但扫码凭证只存在内存，重启后需要重扫或手动复制到用户变量。
