@@ -74,17 +74,17 @@
 cd ~/code/musicfree-ios
 scripts/ios-device.sh --check   # 检查签名团队、证书和已连接 iPhone
 scripts/ios-device.sh           # Release 构建 + 安装 + 启动
-scripts/ios-refresh.sh          # 每周续签：自动换 profile + 覆盖安装 + 启动
+scripts/ios-refresh.sh          # 每周续签：自动换 profile + 覆盖安装 + 尝试打开
 ```
 
 需要：Xcode 已登录 Apple ID、手机与 Mac 在同一 Wi-Fi（或插线）并在手机上点「信任」、打开「开发者模式」。免费账号的 profile 7 天过期；建议每周跑一次 `scripts/ios-refresh.sh`。
 
 `ios-refresh.sh` 成功时只输出一行结果，例如：
 
-`续签成功 team=83Q9ZCWJQ4 device=sky_17pm 耗时 3m12s 新到期 2026-11-29`
+`续签成功 team=83Q9ZCWJQ4 device=sky_17pm 耗时 3m12s 新到期 Nov 22 20:48`
 
 Xcode 默认不会主动延长仍然有效的 profile，所以脚本会先把本 App 的两个旧 profile 移到 `build/ios-profile-backup-*`，强制换新；构建失败会自动恢复。只想普通重装、不换 profile 时加 `--no-force-profile`。
 
-失败时最后一行是原因，并以非 0 退出；完整日志在 `build/ios-device/`。覆盖安装使用同一个 bundle id，不会清空歌单、插件和登录态。运行前请保持 iPhone 解锁：锁屏时通常能装完，但启动会被系统拒绝。
+失败时最后一行是原因，并以非 0 退出；完整日志在 `build/ios-device/`。覆盖安装使用同一个 bundle id，不会清空歌单、插件和登录态。续签以「构建 + 覆盖安装成功」为准：装完会尝试打开 App 一次，手机锁屏时只会在结果行末尾加「（手机锁着，没自动打开）」，退出码仍是 0，不影响每周任务。
 
 Xcode 27 里旧的 **Devices and Simulators** 已改成 **Window → Manage Devices**。在里面选中 iPhone，勾选通过 Wi-Fi 连接，才能免数据线续签；只插线也能用。

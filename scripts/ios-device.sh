@@ -255,7 +255,7 @@ if not matches:
             )
         print("请在手机上解锁、点「信任」，并在 Xcode 的 Window -> Manage Devices 中开启 Wi-Fi 连接。", file=sys.stderr)
     else:
-        print("没有找到物理 iPhone（模拟器不算）。", file=sys.stderr)
+        print("没有找到已连接的 iPhone（模拟器不算）。", file=sys.stderr)
         print("请确认手机与 Mac 在同一 Wi-Fi（或插线）、已解锁并信任这台 Mac。", file=sys.stderr)
     sys.exit(1)
 

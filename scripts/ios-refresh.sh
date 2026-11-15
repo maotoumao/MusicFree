@@ -4,7 +4,12 @@
 #
 # Builds the Release app with automatic signing, lets Xcode renew the
 # development provisioning profiles, installs over the existing app (same
-# bundle id, so data is kept), launches it, and prints one result line.
+# bundle id, so data is kept), then tries to launch it once.
+#
+# The install is what renews the profile, so a locked phone (launch refused)
+# is still a successful renewal; the result line just notes it. Only launch
+# errors that mean the app is unusable (not installed, signature mismatch)
+# fail the run.
 #
 # Usage:
 #   scripts/ios-refresh.sh
@@ -35,6 +40,7 @@ DEVICE_REQUEST="${MUSICFREE_DEVICE:-}"
 TEAM_ID="${MUSICFREE_TEAM_ID:-${DEVELOPMENT_TEAM:-}}"
 CONFIGURATION="${MUSICFREE_CONFIGURATION:-Release}"
 FORCE_PROFILE="${MUSICFREE_FORCE_PROFILE:-1}"
+BUNDLE_ID="${MUSICFREE_BUNDLE_ID:-fun.upup.musicfree}"
 
 usage() {
     cat <<'EOF'
@@ -54,8 +60,11 @@ usage() {
 默认会先把本 App 的旧 profile 移到 build/ios-profile-backup-*，
 强制 Xcode 向 Apple 换新；失败会自动恢复旧 profile。
 
+安装成功即视为续签成功；装完会尝试打开 App 一次，手机锁屏时只在
+结果行末尾加「（手机锁着，没自动打开）」，退出码仍为 0。
+
 成功时只输出一行:
-  续签成功 team=... device=... 耗时 ... 到期 ...
+  续签成功 team=... device=... 耗时 ... 新到期 Nov 22 20:48
 失败时最后一行输出原因，并以非 0 退出。
 EOF
 }
@@ -123,8 +132,8 @@ human_reason() {
         echo "手机未解锁，安装完成但启动失败；解锁后重跑"
         return
     fi
-    if grep -qiE "No devices|Unable to connect|not connected|device.*unavailable|没有找到物理 iPhone|没有可用连接" "$log" 2>/dev/null; then
-        echo "手机不在同一 Wi-Fi / 未解锁或未信任，找不到可用物理设备"
+    if grep -qiE "No devices|Unable to connect|not connected|device.*unavailable|没有找到(已连接的|物理) ?iPhone|没有可用连接" "$log" 2>/dev/null; then
+        echo "没找到已连接的 iPhone，请确认手机与 Mac 在同一 Wi-Fi（或插线）、已解锁并信任"
         return
     fi
     if grep -q "设备名不唯一" "$log" 2>/dev/null; then
@@ -143,8 +152,34 @@ human_reason() {
     echo "${line:-未知错误，请查看日志}"
 }
 
+# Reason for a launch that failed for something other than the lock screen.
+launch_reason() {
+    local log="$1"
+    local line
+
+    if grep -qiE "not installed|does not exist|unknown application|requested application" "$log" 2>/dev/null; then
+        echo "App 可能没装上或 bundle id 不匹配"
+        return
+    fi
+    if grep -qiE "code signature|signature invalid|invalid signature" "$log" 2>/dev/null; then
+        echo "签名不匹配，系统拒绝启动"
+        return
+    fi
+    if grep -qiE "No devices|Unable to connect|not connected|device.*unavailable" "$log" 2>/dev/null; then
+        echo "手机连接中断，请确认同一 Wi-Fi（或插线）、已解锁并信任"
+        return
+    fi
+
+    line="$(awk 'NF { line = $0 } END { print line }' "$log" 2>/dev/null \
+        | sed -E 's/\x1B\[[0-9;]*[A-Za-z]//g' \
+        | tr '\n' ' ' \
+        | cut -c1-180)"
+    echo "${line:-未知错误，请查看日志}"
+}
+
 finish_fail() {
     local reason="$1"
+    local log="${2:-$RUN_LOG}"
     # If the build itself succeeded, the new profiles are valid even when the
     # launch was blocked by the lock screen; keep them. Only restore old
     # profiles when signing/build never produced a usable app.
@@ -153,7 +188,7 @@ finish_fail() {
     else
         restore_app_profiles
     fi
-    printf '续签失败: %s（日志 %s）\n' "$reason" "$RUN_LOG"
+    printf '续签失败: %s（日志 %s）\n' "$reason" "$log"
     exit 1
 }
 
@@ -165,6 +200,17 @@ read_expiry() {
         | plutil -extract ExpirationDate raw -o - - 2>/dev/null || true)"
     [[ -n "$date_value" ]] || return 1
     printf '%s\n' "$date_value"
+}
+
+# Profile expiry is UTC ISO (2026-11-22T12:48:48Z); show it in the Mac's
+# local time so the result line reads naturally (Nov 22 20:48).
+format_expiry() {
+    local iso="$1"
+    local epoch
+    [[ -n "$iso" ]] || return 1
+    epoch="$(date -j -u -f "%Y-%m-%dT%H:%M:%SZ" "$iso" "+%s" 2>/dev/null)" || return 1
+    [[ -n "$epoch" ]] || return 1
+    LC_ALL=C date -r "$epoch" "+%b %d %H:%M" 2>/dev/null
 }
 
 PROFILE_DIRS=(
@@ -299,11 +345,24 @@ backup_app_profiles
         "${PROFILE_BACKUP:-none}" "$PROFILES_MOVED" "$FORCE_PROFILE"
 } >>"$RUN_LOG" 2>/dev/null || true
 
-build_args=(--device "$DEVICE_UDID" --team "$TEAM_ID" --configuration "$CONFIGURATION")
+build_args=(--device "$DEVICE_UDID" --team "$TEAM_ID" --configuration "$CONFIGURATION" --no-launch)
 if ! "$DEVICE_SCRIPT" "${build_args[@]}" >>"$RUN_LOG" 2>&1; then
     finish_fail "$(human_reason "$RUN_LOG")"
 fi
 cleanup_profile_backup
+
+# The install above is the renewal. Try to open the app once; a locked phone
+# only adds a note, it does not turn a successful renewal into a failure.
+LAUNCH_NOTE=""
+LAUNCH_LOG="$LOG_DIR/launch-$STAMP.log"
+if ! xcrun devicectl device process launch \
+        --device "$DEVICE_UDID" "$BUNDLE_ID" >"$LAUNCH_LOG" 2>&1; then
+    if grep -qiE "Locked|not, or could not be, unlocked" "$LAUNCH_LOG"; then
+        LAUNCH_NOTE="（手机锁着，没自动打开）"
+    else
+        finish_fail "安装完成但启动失败：$(launch_reason "$LAUNCH_LOG")" "$LAUNCH_LOG"
+    fi
+fi
 
 END_EPOCH="$(date +%s)"
 ELAPSED_SECONDS="$((END_EPOCH - START_EPOCH))"
@@ -314,8 +373,8 @@ EXPIRY_LABEL="到期"
 if [[ -n "$OLD_EXPIRY" && -n "$NEW_EXPIRY" && "$NEW_EXPIRY" > "$OLD_EXPIRY" ]]; then
     EXPIRY_LABEL="新到期"
 fi
-NEW_EXPIRY_DATE="${NEW_EXPIRY%%T*}"
-NEW_EXPIRY_DATE="${NEW_EXPIRY_DATE:-未知}"
+NEW_EXPIRY_HUMAN="$(format_expiry "$NEW_EXPIRY" || true)"
+NEW_EXPIRY_HUMAN="${NEW_EXPIRY_HUMAN:-未知}"
 
-printf '续签成功 team=%s device=%s 耗时 %s %s %s\n' \
-    "$TEAM_ID" "$DEVICE_NAME" "$ELAPSED" "$EXPIRY_LABEL" "$NEW_EXPIRY_DATE"
+printf '续签成功 team=%s device=%s 耗时 %s %s %s%s\n' \
+    "$TEAM_ID" "$DEVICE_NAME" "$ELAPSED" "$EXPIRY_LABEL" "$NEW_EXPIRY_HUMAN" "$LAUNCH_NOTE"

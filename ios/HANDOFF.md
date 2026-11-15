@@ -149,8 +149,10 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
 26. 真机续签收口：`scripts/ios-device.sh` 的 `find_team()` 不再从证书 CN 括号里取
     10 位值（`7C4Q7824B6` 是证书 ID），改为解析证书 subject 的 `OU=83Q9ZCWJQ4`；
     失败时回退到最新 `.mobileprovision` 的 `TeamIdentifier`。新增
-    `scripts/ios-refresh.sh`：预检团队/物理设备，优先网络连接，构建 + 覆盖安装 +
-    启动，成功只输出一行，失败输出一行原因；日志留在 `build/ios-device/`。
+    `scripts/ios-refresh.sh`：预检团队/物理设备，优先网络连接，构建 + 覆盖安装
+    （`--no-launch`）后单独尝试启动；安装成功即算续签成功，锁屏只在结果行末尾
+    加「（手机锁着，没自动打开）」，退出码仍为 0。成功只输出一行，失败输出一行
+    原因；日志留在 `build/ios-device/`。
     默认会先轮换本 App 的旧 profile（备份到 `build/ios-profile-backup-*`，失败恢复），
     保证 `-allowProvisioningUpdates` 真的向 Apple 换新。
     Xcode 27 的设备菜单是 **Window → Manage Devices**，不是旧的
@@ -166,7 +168,7 @@ scripts/ios-refresh.sh
 成功输出示例：
 
 ```text
-续签成功 team=83Q9ZCWJQ4 device=sky_17pm 耗时 3m12s 新到期 2026-11-29
+续签成功 team=83Q9ZCWJQ4 device=sky_17pm 耗时 3m12s 新到期 Nov 29 20:48
 ```
 
 - 免费账号 profile 7 天过期；建议每周固定跑一次，手机保持同一 Wi-Fi 并解锁。
@@ -180,7 +182,10 @@ scripts/ios-refresh.sh
 - 真机 `plugin-meta` 当前没有任何 `*.userVariables`，说明这台机器没有可验证的
   持久化网易云登录 Cookie；不是覆盖安装清掉的，需要用户在 App 内重新扫码/填 Cookie。
 - 失败最后一行是原因，非 0 退出；完整日志在 `build/ios-device/refresh-*.log`。
-- 锁屏时 `devicectl` 可能装完但拒绝启动，输出会提示解锁后重跑。
+- 续签以「构建 + 覆盖安装成功」为准，装完再单独尝试打开 App 一次。手机
+  锁屏时系统会拒绝启动，这时只在一行结果末尾加「（手机锁着，没自动打开）」，
+  退出码仍是 0，不会把一次成功的续签误报成失败。App 没装上、签名不匹配等
+  真正影响使用的启动错误仍然算失败。
 
 ### 每周定时（可选，Mac 端）
 
@@ -218,12 +223,18 @@ launchctl load ~/Library/LaunchAgents/fun.upup.musicfree.refresh.plist
 - 临时 bundle id `fun.upup.musicfree.refreshtest.*` 构建成功，Apple 新发了
   app + widget 两个 profile（TeamIdentifier `83Q9ZCWJQ4`，到期 11-22）；
   验证后临时 profile 和 `build/ios-refresh-test` 已删除，未改真实 bundle 配置。
-- 真实 `scripts/ios-refresh.sh`：增量构建 + 安装约 40s（20:48:37 开始，
-  20:49:17 结束），`BUILD SUCCEEDED`、`App installed`；启动被锁屏拒绝，脚本按设计
-  非 0 退出并输出一行原因。
-- 新 profile（脚本轮换后）：app 到期 `2026-11-22T12:48:48Z`，widget 到期
-  `2026-11-22T12:48:51Z`；旧 profile 已移到 `build/ios-profile-backup-*` 并在
-  构建成功后清理。
+- 真实 `scripts/ios-refresh.sh`（`--no-launch` + 单独尝试启动）连续跑了两次：
+  第一次 47s，最终脚本 **41s**（20:58→20:59），都是 `BUILD SUCCEEDED`、
+  `App installed`；手机锁屏，启动被系统拒绝，结果行末尾加
+  「（手机锁着，没自动打开）」，**退出码 0**。
+  输出：`续签成功 team=83Q9ZCWJQ4 device=sky_17pm 耗时 0m41s 新到期 Nov 22 20:59（手机锁着，没自动打开）`。
+- 新 profile（最后一次轮换后）：app 到期 `2026-11-22T12:59:10Z`，widget 到期
+  `2026-11-22T12:59:03Z`（本地 `Nov 22 20:59`）；`build/ios-profile-backup-*`
+  已清理。
+- 覆盖安装后数据：`Documents/plugins` 仍是 5 个文件（bilibili/gd/kugou/
+  netease-gd/qq），`LocalSheet.*` mtime 仍是 19:44/19:45，`plugin-meta` 安装前后
+  SHA256 都是 `bbe826a1...`。`plugin-meta` 里没有 `userVariables`，这台机器
+  本来就没有持久化的网易云登录态，不是覆盖安装清掉的。
 - 本地歌单上限：模拟器新建歌单写入 1001 首，`musicList.length=1001`、
   `worksNum=1001`，删除成功；确认「我的歌单」没有 1000 首上限。导入面板的
   `maxLength: 1000` 只是输入框文本长度，不是歌曲数量。
@@ -275,7 +286,7 @@ cd ~/code/musicfree-ios
 scripts/ios-device.sh --check      # 预检签名团队、证书和物理设备
 scripts/ios-device.sh --list       # 查看签名身份和设备
 scripts/ios-device.sh              # Release 构建 + 安装 + 启动
-scripts/ios-refresh.sh             # 每周续签（构建 + 覆盖安装 + 启动）
+scripts/ios-refresh.sh             # 每周续签（构建 + 覆盖安装 + 尝试打开）
 ```
 
 常用参数：
