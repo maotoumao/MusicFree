@@ -32,9 +32,27 @@ const QUALITY_TO_BR = {
 };
 
 function request(params, timeout) {
-    return axios.get(BASE_API, {
+    const options = {
         params: Object.assign({ btwaf: "99801110" }, params),
         timeout: timeout || 10000,
+    };
+    // GD 接口偶尔会返回 503/429（短时限流），重试两次通常可以恢复。
+    return new Promise(function (resolve, reject) {
+        let attempt = 0;
+        function run() {
+            axios.get(BASE_API, options).then(resolve).catch(function (e) {
+                const status = e && e.response && e.response.status;
+                const retryable =
+                    !status || status === 429 || status >= 500;
+                if (attempt < 2 && retryable) {
+                    attempt += 1;
+                    setTimeout(run, attempt * 700);
+                } else {
+                    reject(e);
+                }
+            });
+        }
+        run();
     });
 }
 
