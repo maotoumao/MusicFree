@@ -176,8 +176,8 @@ GET https://music-api.gdstudio.xyz/api.php
 | --- | --- |
 | 文件 | `ios/plugins/netease-gd.plugin.js`（约 17 KB，可读源码） |
 | 插件名 | `网易云音乐（GD 源）` |
-| 安装地址（固定版本，推荐） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/62a018ddd779c82b8bdfe987a66323b222410edc/ios/plugins/netease-gd.plugin.js` |
-| 安装地址（跟随分支） | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-gd.plugin.js` |
+| 安装地址（固定版本，推荐） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` |
+| 安装地址（跟随分支） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js`（jsDelivr 分支缓存可能滞后，不建议用于首次安装） |
 | 支持 | 搜索（music/album/artist）、播放、歌词、封面、歌单导入、`getMusicSheetInfo`；音质 low/standard/high/super → 128/320/740/999 |
 | 不含 | 登录、VIP/付费破解、DRM 破解；接口没返回地址的歌曲就是不能播 |
 
@@ -286,7 +286,7 @@ Cookie 只用于 `music.163.com/api/v6/playlist/detail` 和 `api/song/detail` �
 | 2 | 酷狗音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/kugou-source.plugin.v1.9.24.js` | 备用曲库；首条常是翻唱，选原唱版本即可 |
 | 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
 | 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
-| 5 | 网易云音乐（GD 源） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/62a018ddd779c82b8bdfe987a66323b222410edc/ios/plugins/netease-gd.plugin.js` | 网易云搜索/播放/歌词/歌单导入；播放地址为 https，避开 ATS |
+| 5 | 网易云音乐（GD 源） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/eb1d0f7b63a790df2c369ba017352bc8db763094/ios/plugins/netease-gd.plugin.js` | 网易云搜索/播放/歌词/歌单导入；播放地址为 https，避开 ATS |
 
 也可以直接订阅 **heb-main**（`https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json`），
 一次装 6 个：QQ、酷狗、咪咕可播，酷我、网易云可搜，汽水当前搜索失败。
