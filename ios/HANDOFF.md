@@ -26,7 +26,10 @@
 - Node 22.22，npm 10.9；CocoaPods 1.17（brew 安装）；Watchman 已装（Metro 必需）
 - `npm ci` 与 `pod install` 都已完成，`ios/Pods` 已生成
 - Metro 由 Codync 托管在 8081 端口（任务名 `musicfree-metro`）
-- iOS 27.2 模拟器 runtime 正在后台下载（任务名 `ios-simulator-runtime`，8GB，很慢）
+- iOS 27.2 模拟器已就绪：通用版 runtime 24B8117，验证机为 iPhone 17 Pro Max
+  （UDID `9959CA3C-AA80-4485-BED0-4E680F998704`）
+- 本机 Xcode 27 只有 headless CoreSimulator（没有 Simulator.app），
+  无法点击屏幕或锁屏；只能用 `simctl` 启动/截图、用 Metro CDP 驱动 JS
 
 ## 构建命令
 
@@ -55,12 +58,15 @@ npx react-native run-ios --device "<iPhone 名称>"
      `getWindowDimensions`（阻塞式同步方法）
    - `Mp3Util`：AVFoundation 读取标题/歌手/专辑/时长/内嵌封面/内嵌歌词；
      `setMediaTag` 目前只对 m4a/mp4 放行且未实现写入
-   - `LyricUtil`：占位，`checkSystemAlertPermission` 返回 false
+   - `LyricUtil`：iOS 上把原「状态栏歌词」调用链桥接到 ActivityKit 实时活动
+     （`MFLyricUtil.swift` + `MFLiveActivity.swift`）；iOS 没有悬浮窗权限，
+     `checkSystemAlertPermission` 返回实时活动是否可用
 3. `src/entry/bootstrap/bootstrap.ts`：存储权限分支只在 Android 执行（iOS 原来会抛错闪退）
 4. `src/components/panels/base/panelBase.tsx`：窗口高度改用 `getWindowDimensions`，
    缺失时回退 `Dimensions.get("window")`
 5. `src/pages/fileSelector/index.tsx`：iOS 从沙盒 `Documents` 开始浏览
-6. `src/pages/setting/settingTypes/basicSetting.tsx`：「状态栏歌词」分组只在 Android 显示
+6. `src/pages/setting/settingTypes/basicSetting.tsx`：「状态栏歌词」分组改为跨平台，
+   iOS 显示「实时活动歌词」开关，Android 仍为原来的状态栏歌词设置
 7. `ios/MusicFree/Info.plist`：后台音频、Files App 文件共享（`UIFileSharingEnabled` +
    `LSSupportsOpeningDocumentsInPlace`）、相册权限说明、`NSAllowsArbitraryLoadsForMedia`
 8. Bundle ID 改为 `fun.upup.musicfree`；AppIcon 全尺寸已生成（源图是 512 的 Android 图标放大）
@@ -79,6 +85,8 @@ npx react-native run-ios --device "<iPhone 名称>"
 - **模拟器**：iOS 27.2 有两个 runtime：按机型的 24B91014 只支持 iPhone Duo；
   通用版 24B8117 支持 iPhone 15–18 全系。当前验证机为 iPhone 17 Pro Max
   （UDID `9959CA3C-AA80-4485-BED0-4E680F998704`），启动和主要功能已验证，见下方进展。
+  截图用 `xcrun simctl io <UDID> screenshot <file>`，17 Pro Max 不需要 `--display`；
+  iPhone Duo 上 App 画面在 `--display=1`（不是 3）。iPhone Duo 已关机，不要启动。
 
 ## 接手进展（2026-11-15）
 
@@ -94,6 +102,13 @@ npx react-native run-ios --device "<iPhone 名称>"
 - 已在模拟器验证：本地音乐导入（Documents → 扫描 → Mp3Util 元数据）、本地音乐播放、
   后台播放（切到别的 App 后进度继续）、`musicfree://install/<url>` 热启动安装插件、
   RNFS 下载到 Documents/download。
+- 17 Pro Max 复跑一轮（2026-11-15，截图留证）：冷启动首页正常；从 Documents 递归导入
+  3 个本地音频（wav/m4a）加上之前下载的 m4a，共 4 首；本地限速 HTTP 服务下载 1.3MB wav，
+  「正在下载」显示 240.0KB / 1.3MB，完成后落到 Documents/download/music 并加入本地歌单；
+  播放 30s 本地歌曲后切到「设置」App，进度从 2.7s 继续到 16.9s，回到前台播放页正常；
+  `musicfree://install/` 的 URL 由系统弹出「在 MusicFree 中打开?」确认框，
+  headless 环境无法点按，改为通过 Metro CDP 触发同一个 `Linking` url 事件完成安装，
+  插件管理页出现 VerifyPluginInstall（0.0.1）。整轮 Documents/log 无 JS 错误。
 - 实时活动歌词（MVP）已在 iPhone 17 Pro Max 模拟器跑通：播放带 `.lrc` 的本地歌曲后，
   `com.apple.activitykit` 日志可见活动被创建、每句歌词更新一次（content state 大小随歌词变化）；
   切到后台后手动更新歌词，同一个 activity 继续更新，没有重新请求活动。
@@ -106,8 +121,9 @@ npx react-native run-ios --device "<iPhone 名称>"
   新增 Widget Extension 后还需要在真机签名流程里复核（扩展会随 App 一起签名）。
 - 仍未验证：真机后台播放/锁屏控制/耳机线控/来电打断（等签名与设备）；
   MP3 ID3 写入（P2）。
-- 注意：ATS 仍禁止明文 HTTP（`NSAllowsArbitraryLoads` 为 false），插件 API 若走 http 会失败；
-  是否放开需用户决定（Android 侧允许 cleartext）。
+- 注意：ATS 仍禁止明文 HTTP（`NSAllowsArbitraryLoads` 为 false），只开了
+  `NSAllowsLocalNetworking`（Metro/本机测试）与 `NSAllowsArbitraryLoadsForMedia`；
+  远程 http 插件 API 仍会失败，遇到只记录、不私自放开，是否允许需用户确认。
 
 ## 建议的下一步（按优先级）
 
@@ -123,7 +139,10 @@ npx react-native run-ios --device "<iPhone 名称>"
 
 **P2 iOS 独有能力**
 7. 灵动岛/实时活动歌词：已完成 MVP（ActivityKit + Widget Extension），真机视觉与后台切换待复核
-8. MP3 ID3 写入（TagLib 或自研 ID3v2）；可先做 m4a/mp4 元数据写入
+8. MP3 ID3 写入评估结论：m4a/mp4 用 AVFoundation 直接写元数据，约 150–250 行、
+   无新依赖，风险低；MP3 推荐引入 ID3TagEditor（Swift，中等工作量），
+   TagLib 需要 C++ 桥接、成本高，自研 ID3v2 风险高。注意 `setMediaTag`
+   目前没有任何 JS 调用方，先等「编辑标签」入口明确后再动手。
 9. 品质打磨：图标重绘（现在是把 512 图标放大）、启动图、ATS 收紧
 
 ## 协作约定
