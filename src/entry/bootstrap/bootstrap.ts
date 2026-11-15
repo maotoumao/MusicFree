@@ -154,6 +154,7 @@ export async function initTrackPlayer(logger?: IPerfLogger) {
         await RNTrackPlayer.setupPlayer({
             maxCacheSize:
                 Config.getConfig("basic.maxCacheSize") ?? 1024 * 1024 * 512,
+            autoHandleInterruptions: true,
         });
     } catch (e: any) {
         if (

@@ -78,7 +78,14 @@ function getNumericId(musicItem) {
     return String((musicItem && musicItem.id) || "").replace(/^netease_/i, "");
 }
 
-/** 读取用户变量里的 MUSIC_U（可选，仅用于访问自己账号可见的私有歌单）。 */
+/**
+ * 读取用户变量里的登录 Cookie（可选，仅用于访问自己账号可见的私有歌单）。
+ *
+ * 支持三种写法：
+ *   1. 完整 Cookie：`MUSIC_U=...; __csrf=...`（私有歌单优先用这个）
+ *   2. 只写 `MUSIC_U=...`（GET 歌单详情通常够用）
+ *   3. 只写 MUSIC_U 的值（没有 `=`，自动补前缀）
+ */
 function getCookie() {
     try {
         const vars =
@@ -86,7 +93,10 @@ function getCookie() {
                 ? env.getUserVariables()
                 : {};
         let cookie = (vars && vars.neteaseCookie) || "";
-        cookie = String(cookie).trim();
+        cookie = String(cookie)
+            .replace(/^cookie:\s*/i, "")
+            .replace(/[\r\n]+/g, " ")
+            .trim();
         if (!cookie) {
             return "";
         }
@@ -199,8 +209,8 @@ function parsePlaylistResponse(data) {
 async function fetchSongsByIds(ids) {
     const result = {};
     const cookie = getCookie();
-    for (let start = 0; start < ids.length; start += 500) {
-        const chunk = ids.slice(start, start + 500);
+    for (let start = 0; start < ids.length; start += 200) {
+        const chunk = ids.slice(start, start + 200);
         try {
             const headers = {
                 "User-Agent":
@@ -529,7 +539,7 @@ async function importMusicSheet(urlLike) {
 
 module.exports = {
     platform: "网易云音乐（GD 源）",
-    version: "1.1.0",
+    version: "1.1.1",
     srcUrl:
         "https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js",
     description:
@@ -539,14 +549,14 @@ module.exports = {
         {
             key: "neteaseCookie",
             name: "网易云 Cookie（可选，仅私有歌单）",
-            hint: "只用于读取自己账号可见的私有歌单，格式 MUSIC_U=...；公开歌单无需填写。不要填他人 Cookie，不要用于 VIP/付费绕过。",
+            hint: "只用于读取自己账号可见的私有歌单。至少填 MUSIC_U=...；如果仍读不到，粘贴浏览器 music.163.com 的完整 Cookie（含 __csrf）。公开歌单无需填写。不要填他人 Cookie，不要用于 VIP/付费绕过。",
         },
     ],
     hints: {
         importMusicSheet: [
             "粘贴 https://music.163.com/playlist?id=... 或 https://y.music.163.com/m/playlist?id=...",
             "也可以直接输入歌单数字 ID",
-            "私有歌单需要在用户变量里填自己账号的 MUSIC_U",
+            "私有歌单先在用户变量填自己账号的 MUSIC_U；仍失败时改填完整 Cookie（含 __csrf）",
         ],
     },
     search,

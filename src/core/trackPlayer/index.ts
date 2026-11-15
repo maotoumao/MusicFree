@@ -637,7 +637,9 @@ class TrackPlayer extends EventEmitter<{
                 message ===
                 "The player is not initialized. Call setupPlayer first."
             ) {
-                await ReactNativeTrackPlayer.setupPlayer();
+                await ReactNativeTrackPlayer.setupPlayer({
+                    autoHandleInterruptions: true,
+                });
                 this.play(musicItem, forcePlay);
             } else if (message === PlayFailReason.FORBID_CELLUAR_NETWORK_PLAY) {
                 if (getCurrentDialog()?.name !== "SimpleDialog") {
