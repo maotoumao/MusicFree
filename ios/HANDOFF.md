@@ -52,10 +52,10 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
 
 ## 已经做完的改动
 
-1. `ios/Podfile`：App target 最低 iOS 16.1；`post_install` 把所有 Pod 的
+1. `ios/Podfile`：App target 最低 iOS 16.2；`post_install` 把所有 Pod 的
    `IPHONEOS_DEPLOYMENT_TARGET` 留在 15.1，解决 Xcode 27 拒绝低版本 Pod
    （原报错来自 MMKV/RNSVG/RNDeviceInfo 等）。Pod 都不链接 ActivityKit，
-   不影响 App 的 16.1 可用性。
+   不影响 App 的 16.2 可用性。
 2. `ios/MusicFreeNative/`：新增本地 Pod，补齐三个原本只有 Kotlin 实现的原生模块
    - `NativeUtils`：`exitApp`（iOS 上退到后台）、`checkStoragePermission`（沙盒恒 true）、
      `getWindowDimensions`（阻塞式同步方法）
@@ -83,12 +83,9 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
    App 冷启动时 `MFLiveActivity.cleanupOrphans()` 清理上次进程残留的活动。
 10. 设置页新增 iOS 专用的「实时活动歌词」开关（`src/pages/setting/settingTypes/basicSetting.tsx`），
     系统不允许实时活动时显示提示
-11. iOS 最低版本 **16.1**。ActivityKit 从 16.1 可用，但 `ActivityContent`、
-    `request(attributes:content:pushType:)`、`update(_:)`、`end(_:dismissalPolicy:)`
-    是 16.2 API；`MFLiveActivity.swift` 在 16.2+ 走新 API，16.1 走仍可用但已废弃的
-    `request(attributes:contentState:pushType:)`、`update(using:)`、
-    `end(using:dismissalPolicy:)`。App 与 Widget Extension 的
-    `IPHONEOS_DEPLOYMENT_TARGET` 均为 16.1；低于 16.1 的设备不支持实时活动歌词。
+11. iOS 最低版本 **16.2**（ActivityKit 的 `ActivityContent` 要求），App 与 Widget
+    Extension 均为 16.2，低于 16.2 的设备不支持实时活动歌词；代码统一使用
+    `ActivityContent` API，不保留 16.1 降级分支。
 12. `ios/MusicFreeNative/MFMp3Util.mm`：m4a/mp4 的 `setMediaTag` 用
     `AVAssetExportSession` 重写 metadata（title/artist/album/comment/lyric），
     先导出到同目录临时文件再原子替换原文件，失败不会破坏原文件；
@@ -144,21 +141,39 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
 | `--launch` | 安装后启动 `fun.upup.musicfree` |
 | `--check` / `--list` | 只做预检 / 只列身份和设备 |
 
+环境变量覆盖（命令行参数优先）：
+
+| 变量 | 作用 |
+| --- | --- |
+| `MUSICFREE_TEAM_ID`（或 `DEVELOPMENT_TEAM`） | 签名团队，跳过钥匙串解析 |
+| `MUSICFREE_DEVICE` | 设备 UDID 或名称，等同 `--device` |
+| `MUSICFREE_CONFIGURATION` | `Debug` / `Release` |
+| `MUSICFREE_BUNDLE_ID` | `--launch` 使用的 bundle id |
+
 脚本行为：
 
-- 从 `security find-identity -v -p codesigning` 解析 `Apple Development` 身份和 TEAMID；
+- 从 `security find-identity -v -p codesigning` 解析 `Apple Development` 身份和 TEAMID，
+  找不到时提示登录 Apple ID / 生成证书；
 - 用 `xcrun devicectl list devices --json-output` 找设备，并按
   `properties.hardware.reality == "simulated"` 过滤掉模拟器
-  （devicectl 会把模拟器也标成 connected，不能直接信）；
+  （devicectl 会把模拟器也标成 connected，不能直接信）；检测到物理设备但未连接时
+  会列出设备并提示信任/开发者模式；
 - `xcodebuild -workspace ios/MusicFree.xcworkspace -scheme MusicFreeNew
-  -configuration Release -allowProvisioningUpdates -allowProvisioningDeviceRegistration
+  -configuration Release -destination 'generic/platform=iOS'
+  -allowProvisioningUpdates -allowProvisioningDeviceRegistration
   DEVELOPMENT_TEAM=<TEAMID> CODE_SIGN_STYLE=Automatic`；
   App 与 `MusicFreeLiveActivity` Widget Extension 两个 target 都由同一个团队自动签名、
   自动注册 App ID 和描述文件，不需要手工建 Provisioning Profile；
+- 免费账号第一次构建时，generic 目标可能还没有可用的开发描述文件；脚本检测到
+  `No profiles for` / provisioning 错误后，会自动改用已连接设备的
+  `-destination 'id=<UDID>'` 重试，让 Xcode 注册设备并生成描述文件；
 - 构建后检查 `MusicFree.app/PlugIns/MusicFreeLiveActivity.appex` 存在，
   并对 App 和 appex 执行 `codesign --verify --deep --strict`；
-- 用 `xcrun devicectl device install app` 安装，`--launch` 时再
-  `xcrun devicectl device process launch` 启动。
+- 用 `xcrun devicectl device install app --device <UDID>` 安装，`--launch` 时再
+  `xcrun devicectl device process launch --device <UDID> fun.upup.musicfree` 启动；
+- 构建/安装失败时按日志打印分类提示：没登录 Apple ID / 没有开发证书、
+  Bundle ID 冲突、开发者模式未开、设备未连接；完整日志在
+  `build/ios-device/build.log` 和 `build/ios-device/install.log`。
 
 免费账号注意事项：
 
@@ -203,9 +218,7 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
   旧活动消失且不会自动新建；chronod 日志显示 Widget Extension reload 成功
   （activity archive 约 53KB）。改为 16.2 API 后在最终 Debug 构建上复测：
   `start title=MF标签标题`、三行歌词 update、`playing=true/false` 均正常。
-  之后最低版本降到 16.1，`MFLiveActivity` 增加 16.1 降级分支；iOS 27.2 运行时
-  仍走 16.2 分支，16.1 分支只做了编译验证（需要 iOS 16.1 真机才能实际跑到）。
-  降至 16.1 后复测了「实时活动歌词」开关：关闭后配置为 false 且原生 end 无报错，
+  回归时复测了「实时活动歌词」开关：关闭后配置为 false 且原生 end 无报错，
   重新打开后配置为 true、`LyricUtil.showStatusBarLyric` resolve 正常。
   由于 Xcode 27 没带 Simulator.app（只有 headless CoreSimulator），无法锁屏或点击，
   锁屏/灵动岛的视觉效果与播放按钮的点按仍需真机或带 Simulator UI 的环境复核；
@@ -219,13 +232,11 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
   MP3 返回 `Unsupported ... .mp3` 且文件哈希不变；对损坏的 `.m4a` 导出失败（`ExportFailed`）后
   原文件内容与哈希不变、无临时文件残留。
 - 设置页新增「实时活动歌词」开关，截图确认开关、说明文字正常显示，默认关闭。
-- 真机构建：Debug / Release 的 `iphoneos` 无签名编译均通过；上一轮 Release 产物
-  （16.2 时期）内嵌 `MusicFreeLiveActivity.appex`（arm64，MinimumOSVersion 16.2）。
-  本轮把 App 与 Widget Extension 降到 16.1 后，Debug 模拟器构建通过，
-  App 与 appex 的 `MinimumOSVersion` 均为 16.1；ActivityKit 在 App 与
+- 真机构建：Debug / Release 的 `iphoneos` 无签名编译均通过；Release 产物内嵌
+  `MusicFreeLiveActivity.appex`（arm64，MinimumOSVersion 16.2）。最低版本最终定为
+  16.2 后重新构建，App 与 appex 的 `MinimumOSVersion` 均为 16.2；ActivityKit 在 App 与
   扩展二进制中都是 `LC_LOAD_DYLIB`（强链接，不是弱链接）。Pods 保持 15.1，
-  且没有 Pod 链接 ActivityKit。Release 的 16.1 产物由 `scripts/ios-device.sh`
-  在真机签名时构建并复核。
+  且没有 Pod 链接 ActivityKit。真机签名构建由 `scripts/ios-device.sh` 执行。
 - 仍未验证：真机后台播放/锁屏控制/耳机线控/来电打断（等签名与设备）；
   MP3 ID3 写入仍不支持（m4a/mp4 已完成，见上）。
 - 核心使用链路（2026-11-15，iPhone 17 Pro Max 模拟器）：官方插件源
@@ -268,7 +279,7 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
   `NSAllowsLocalNetworking`（Metro/本机测试）与 `NSAllowsArbitraryLoadsForMedia`；
   远程 http 插件 API 仍会失败，遇到只记录、不私自放开，是否允许需用户确认。
 
-## 核心链路结论（2026-11-15，iPhone 17 Pro Max 模拟器，16.1 构建）
+## 核心链路结论（2026-11-15，iPhone 17 Pro Max 模拟器）
 
 完整链路：装插件 → 搜索 → 在线播放 → 歌词 → 音质切换 → 上一首/下一首 →
 加入歌单 → 播放历史。可用插件选用 **Audiomack**（上一轮的 GD 音乐台同样可用），
@@ -294,7 +305,7 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
 结论：iOS 侧「搜索 → 在线播放 → 歌词 → 上下首 → 歌单 → 历史」主链路已通，
 播放可用性主要受插件输出格式和 DRM 限制，App 侧不需要为此改 ATS。
 
-## 回归清单（2026-11-15，16.1 构建，iPhone 17 Pro Max 模拟器）
+## 回归清单（2026-11-15，iPhone 17 Pro Max 模拟器）
 
 | 项目 | 结果 | 证据 / 备注 |
 | --- | --- | --- |
@@ -311,8 +322,8 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
 | 加入歌单 | 通过 | 临时歌单「回归测试」+1 首，删除歌单成功 |
 | 播放历史 | 通过 | 27 条，首两条为青花瓷、七里香.FLAC |
 
-16.1 相关补充：iOS 27.2 运行时始终走 16.2 分支，16.1 的降级 API 只完成了编译验证，
-需要 iOS 16.1 真机才能实际执行；App 与 appex 的 `MinimumOSVersion` 已确认为 16.1。
+版本说明：核心链路和回归清单在 iPhone 17 Pro Max 模拟器上完成；最终 16.2 构建
+重新编译通过，App 与 appex 的 `MinimumOSVersion` 均为 16.2，冷启动已复测。
 
 真机待复核（模拟器无法覆盖）：后台播放、锁屏控制、耳机线控、来电打断、
 Live Activity 锁屏/灵动岛视觉与播放按钮点按、Files 文件选择器、分享/导出。
@@ -330,10 +341,9 @@ Live Activity 锁屏/灵动岛视觉与播放按钮点按、Files 文件选择�
 6. 插件安装/订阅在 iOS 上的文件选择链路
 
 **P2 iOS 独有能力**
-7. 灵动岛/实时活动歌词：已完成（ActivityKit + Widget Extension，iOS 16.1+；
-   16.2+ 走 `ActivityContent`，16.1 走废弃但仍可用的 API；1s 更新限流、暂停状态、
-   三行歌词、播放/暂停 deep link、冷启动孤儿清理）；真机上的锁屏/灵动岛视觉与
-   按钮点按待复核
+7. 灵动岛/实时活动歌词：已完成（ActivityKit + Widget Extension，iOS 16.2+，
+   低于 16.2 的设备不支持；1s 更新限流、暂停状态、三行歌词、播放/暂停 deep link、
+   冷启动孤儿清理）；真机上的锁屏/灵动岛视觉与按钮点按待复核
 8. m4a/mp4 标签写入已实现（`MFMp3Util.mm`，见「已经做完的改动」第 12 条）；
    MP3 的后续方案评估：推荐引入 ID3TagEditor（Swift，中等工作量），
    TagLib 需要 C++ 桥接、成本高，自研 ID3v2 风险高。注意 `setMediaTag`
