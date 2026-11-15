@@ -16,6 +16,7 @@
 		3873F28AB1D0FE518E6ACFBA /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC63DBA4ECEFE8E0F6ABD5A /* ExpoModulesProvider.swift */; };
 		7699B88040F8A987B510C191 /* libPods-MusicFree-MusicFreeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-MusicFree-MusicFreeTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A77B0C012E4F5A6B7C8D9E01 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A77B0C022E4F5A6B7C8D9E01 /* SplashScreen.storyboard */; };
 		B7CC72E634B822AB1917EAAB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-MusicFree.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MusicFree.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MusicFree/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-MusicFree-MusicFreeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicFree-MusicFreeTests.release.xcconfig"; path = "Target Support Files/Pods-MusicFree-MusicFreeTests/Pods-MusicFree-MusicFreeTests.release.xcconfig"; sourceTree = "<group>"; };
+		A77B0C022E4F5A6B7C8D9E01 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = MusicFree/SplashScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -97,6 +99,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+				A77B0C022E4F5A6B7C8D9E01 /* SplashScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
@@ -277,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				A77B0C012E4F5A6B7C8D9E01 /* SplashScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				B7CC72E634B822AB1917EAAB /* PrivacyInfo.xcprivacy in Resources */,
 			);
