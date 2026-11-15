@@ -1,4 +1,5 @@
 #import <React/RCTBridgeModule.h>
+#import <React/RCTUtils.h>
 #import <UIKit/UIKit.h>
 
 @interface NativeUtils : NSObject <RCTBridgeModule>
@@ -39,20 +40,26 @@ RCT_EXPORT_METHOD(requestStoragePermission)
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getWindowDimensions)
 {
-    UIWindow *window = nil;
-    for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
-        if (scene.activationState == UISceneActivationStateForegroundActive &&
-            [scene isKindOfClass:[UIWindowScene class]]) {
-            for (UIWindow *candidate in ((UIWindowScene *)scene).windows) {
-                if (candidate.isKeyWindow) {
-                    window = candidate;
-                    break;
+    // With the new architecture, blocking sync methods run on the JS thread,
+    // so make sure UIKit is only touched from the main queue.
+    __block NSDictionary *dimensions = nil;
+    RCTUnsafeExecuteOnMainQueueSync(^{
+        UIWindow *window = nil;
+        for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+            if (scene.activationState == UISceneActivationStateForegroundActive &&
+                [scene isKindOfClass:[UIWindowScene class]]) {
+                for (UIWindow *candidate in ((UIWindowScene *)scene).windows) {
+                    if (candidate.isKeyWindow) {
+                        window = candidate;
+                        break;
+                    }
                 }
             }
         }
-    }
-    CGRect bounds = window ? window.bounds : UIScreen.mainScreen.bounds;
-    return @{ @"width" : @(bounds.size.width), @"height" : @(bounds.size.height) };
+        CGRect bounds = window ? window.bounds : UIScreen.mainScreen.bounds;
+        dimensions = @{ @"width" : @(bounds.size.width), @"height" : @(bounds.size.height) };
+    });
+    return dimensions;
 }
 
 @end
