@@ -85,7 +85,7 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
     系统不允许实时活动时显示提示
 11. iOS 最低版本 **16.2**（ActivityKit 的 `ActivityContent` 要求），App 与 Widget
     Extension 均为 16.2，低于 16.2 的设备不支持实时活动歌词；代码统一使用
-    `ActivityContent` API，不保留 16.1 降级分支。
+    `ActivityContent` API，不保留旧版本降级分支。
 12. `ios/MusicFreeNative/MFMp3Util.mm`：m4a/mp4 的 `setMediaTag` 用
     `AVAssetExportSession` 重写 metadata（title/artist/album/comment/lyric），
     先导出到同目录临时文件再原子替换原文件，失败不会破坏原文件；
@@ -127,7 +127,7 @@ scripts/ios-device.sh --launch    # 构建 + 安装 + 启动
 cd ~/code/musicfree-ios
 scripts/ios-device.sh --check      # 预检签名证书和物理设备
 scripts/ios-device.sh --list       # 查看签名身份和设备
-scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
+scripts/ios-device.sh              # Release 构建 + 安装 + 启动
 ```
 
 常用参数：
@@ -138,7 +138,7 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
 | `--team <TEAMID>` | 跳过钥匙串解析，手动指定团队 |
 | `--configuration <Debug/Release>` | 默认 Release |
 | `--build-only` / `--install-only` | 只构建 / 只安装（复用 `build/ios-device` 产物） |
-| `--launch` | 安装后启动 `fun.upup.musicfree` |
+| `--no-launch` | 安装后不启动（默认安装完会启动 `fun.upup.musicfree`） |
 | `--check` / `--list` | 只做预检 / 只列身份和设备 |
 
 环境变量覆盖（命令行参数优先）：
@@ -169,8 +169,9 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
   `-destination 'id=<UDID>'` 重试，让 Xcode 注册设备并生成描述文件；
 - 构建后检查 `MusicFree.app/PlugIns/MusicFreeLiveActivity.appex` 存在，
   并对 App 和 appex 执行 `codesign --verify --deep --strict`；
-- 用 `xcrun devicectl device install app --device <UDID>` 安装，`--launch` 时再
-  `xcrun devicectl device process launch --device <UDID> fun.upup.musicfree` 启动；
+- 用 `xcrun devicectl device install app --device <UDID>` 安装，然后默认用
+  `xcrun devicectl device process launch --device <UDID> fun.upup.musicfree` 启动
+  （`--no-launch` 可跳过）；
 - 构建/安装失败时按日志打印分类提示：没登录 Apple ID / 没有开发证书、
   Bundle ID 冲突、开发者模式未开、设备未连接；完整日志在
   `build/ios-device/build.log` 和 `build/ios-device/install.log`。
@@ -288,17 +289,17 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
 | 环节 | 结果 | 分类 |
 | --- | --- | --- |
 | Audiomack 搜索 | 通过，20 条 | — |
-| Audiomack 在线播放 | 通过，`playing`，进度 5.75s / 237.2s | — |
-| Audiomack 歌词 | 插件没有 `getLyric`；App 自动搜索歌词命中「歌词网」，39 行，61.67s 高亮正确 | 插件能力缺失；App 的 fallback 正常 |
+| Audiomack 在线播放 | 通过，`playing`，进度 7.24s → 17.08s / 269.8s（最终 16.2 构建） | — |
+| Audiomack 歌词 | 插件没有 `getLyric`；App 自动搜索歌词命中「歌词网」，22 行，27.65s 行正确 | 插件能力缺失；App 的 fallback 正常 |
 | Audiomack 音质切换 | `changeQuality("high")` 返回 false；插件只接受 `standard`（其他档位返回 null） | 插件接口能力 |
 | bilibili 搜索 | 通过，20 条 | — |
 | bilibili 播放 | 返回 `.m4s`，TrackPlayer 报 `ios_track_unplayable`，状态 `error` | 插件输出与 AVPlayer 不兼容（AVPlayer 不认纯 m4s）；不是 ATS |
 | 猫耳FM 搜索 | 通过，30 条 | — |
 | 猫耳FM 播放 | HLS 源，状态停在 `buffering`、进度 0、时长 185s；源为 SAMPLE-AES/Widevine DRM | 插件/DRM：AVPlayer 无 FairPlay 解密能力；不是 ATS |
-| GD 音乐台 | 上一轮搜索/播放/歌词/上下首全通过；本轮二次 `changeQuality("high")` 遇 503 | 插件服务端限流；重试即可，不是 App |
-| 上一首/下一首 | 通过：青花瓷 → 七里香.FLAC → 青花瓷，均 `playing` | — |
-| 加入歌单 | 通过：新建「回归测试」歌单加入 1 首，随后删除歌单成功 | — |
-| 播放历史 | 通过：历史 27 条，前两条为青花瓷、七里香.FLAC | — |
+| GD 音乐台 | 上一轮搜索/播放/歌词/上下首全通过；二次 `changeQuality("high")` 遇 503 | 插件服务端限流；重试即可，不是 App |
+| 上一首/下一首 | 通过：曲目 id 10921920 → 18955314 → 10921920 | — |
+| 加入歌单 | 通过：新建「16.2回归测试」歌单加入 1 首，随后删除歌单成功 | — |
+| 播放历史 | 通过：历史 29 条，前两条为本轮播放的 Audiomack 曲目 | — |
 | ATS | 未改动；本轮所有请求走 https，失败项均与 ATS 无关 | — |
 | App 逻辑 | RNTP `playback-error` payload 修复后自动跳下一首正常，未发现其他阻塞 | — |
 
@@ -311,16 +312,16 @@ scripts/ios-device.sh --launch     # Release 构建 + 安装 + 启动
 | --- | --- | --- |
 | 冷启动 | 通过 | `simctl terminate` + `launch`，7s 内进入首页；深色主题、歌单保留；无 JS 错误 |
 | 搜索 | 通过 | 搜索页搜索「晴天」；默认「快手」tab 为 0 条，切到「猫耳FM」tab 显示 10 条（默认 tab 无结果是插件数据问题） |
-| 在线播放 | 通过 | Audiomack `playing`，5.75s / 237.2s；GD 音乐台上一轮已通过 |
+| 在线播放 | 通过 | Audiomack `playing`，进度从 7.24s 推进到 17.08s / 269.8s（最终 16.2 构建） |
 | 下载 | 通过 | 7,634,986 bytes，状态 1→2→3，队列完成；文件落 `Documents/download/music` |
 | 本地导入 | 通过 | 对 `Documents/download/music` 执行 `importLocal`，歌单从 1 首恢复到 4 首（青花瓷、晴天、VerifyDownload、DownloadTest17） |
 | 主题切换 | 通过 | 设置 → 主题设置，点「浅色模式」→ `p-light`，点「深色模式」→ `p-dark`，配置持久化 |
 | 插件增删 | 通过 | 卸载 TestPlugin：9→8 且插件管理页消失；从本地文件重新安装：8→9，插件管理页重新出现。headless 环境无法点按，调用的是页面按钮背后的同一个 `pluginManager` 方法 |
 | Live Activity 开关 | 通过 | 基本设置 → 实时活动歌词：关 → `lyric.showStatusBarLyric=false`，开 → `true`；原生 end/show 调用无报错 |
-| 歌词 | 通过 | Audiomack 无歌词源，自动搜索「歌词网」返回 39 行，当前行随进度更新 |
-| 上一首/下一首 | 通过 | 青花瓷 → 七里香.FLAC → 青花瓷，均 `playing` |
-| 加入歌单 | 通过 | 临时歌单「回归测试」+1 首，删除歌单成功 |
-| 播放历史 | 通过 | 27 条，首两条为青花瓷、七里香.FLAC |
+| 歌词 | 通过 | Audiomack 无歌词源，自动搜索「歌词网」返回 22 行，当前行随进度更新 |
+| 上一首/下一首 | 通过 | 曲目 id 10921920 → 18955314 → 10921920 |
+| 加入歌单 | 通过 | 临时歌单「16.2回归测试」+1 首，删除歌单成功 |
+| 播放历史 | 通过 | 29 条，前两条为本轮播放的 Audiomack 曲目 |
 
 版本说明：核心链路和回归清单在 iPhone 17 Pro Max 模拟器上完成；最终 16.2 构建
 重新编译通过，App 与 appex 的 `MinimumOSVersion` 均为 16.2，冷启动已复测。
