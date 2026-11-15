@@ -46,7 +46,7 @@ async function bootstrapImpl() {
         )
         .catch(console.warn); // it's good to explicitly catch and inspect any error
     const logger = perfLogger();
-    // 1. 检查权限
+    // 1. 检查权限（iOS 使用应用沙盒，无需申请存储权限）
     if (Platform.OS === "android" && Platform.Version >= 30) {
         const hasPermission = await NativeUtils.checkStoragePermission();
         if (
@@ -55,7 +55,7 @@ async function bootstrapImpl() {
         ) {
             showDialog("CheckStorage");
         }
-    } else {
+    } else if (Platform.OS === "android") {
         const [readStoragePermission, writeStoragePermission] =
             await Promise.all([
                 check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE),

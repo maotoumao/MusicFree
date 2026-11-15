@@ -17,6 +17,7 @@ end
 
 target 'MusicFree' do
   use_expo_modules!
+  pod 'MusicFreeNative', :path => 'MusicFreeNative'
   post_integrate do |installer|
     begin
       expo_patch_react_imports!(installer)

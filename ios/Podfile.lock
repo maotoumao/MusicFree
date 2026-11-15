@@ -65,6 +65,8 @@ PODS:
   - MMKV (2.4.3):
     - MMKVCore (~> 2.4.3)
   - MMKVCore (2.4.3)
+  - MusicFreeNative (0.1.0):
+    - React-Core
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -2170,6 +2172,7 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - ImageColors (from `../node_modules/react-native-image-colors/ios`)
+  - MusicFreeNative (from `MusicFreeNative`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -2300,6 +2303,8 @@ EXTERNAL SOURCES:
     :tag: hermes-2024-11-12-RNv0.76.2-5b4aa20c719830dcf5684832b89a6edb95ac3d64
   ImageColors:
     :path: "../node_modules/react-native-image-colors/ios"
+  MusicFreeNative:
+    :path: MusicFreeNative
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTDeprecation:
@@ -2482,6 +2487,7 @@ SPEC CHECKSUMS:
   libwebp: af5937a13536ef73f3784d69cc342b98961acf33
   MMKV: 2d6d4dd9205ea86bf9d5f3cf5fe6796d880d4710
   MMKVCore: 065b61d4f942d3b6e1c913c378c120934f315ee4
+  MusicFreeNative: d577eae7eff5c9881ecbbd29ab62f0de523db473
   RCT-Folly: 84578c8756030547307e4572ab1947de1685c599
   RCTDeprecation: fb7d408617e25d7f537940000d766d60149c5fea
   RCTRequired: 9aaf0ffcc1f41f0c671af863970ef25c422a9920
@@ -2568,6 +2574,6 @@ SPEC CHECKSUMS:
   SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
   Yoga: fcc198acd4a55599b3468cfb6ebc526baff5f06e
 
-PODFILE CHECKSUM: f38e013d46c75e37d49cc7ccea5c0f0bc8c48c84
+PODFILE CHECKSUM: 64ae118f636d99a87affafcce18cd7b2d0152d22
 
 COCOAPODS: 1.17.0
