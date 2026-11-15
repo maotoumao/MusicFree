@@ -34,7 +34,7 @@
 3. `hebijunge music.json`（B站）
 
 heb-main 的 6 个插件里有 3 个可播（QQ/酷狗/咪咕），是可用率最高的源。日常使用按下面的
-「最小可用安装集」装 4 个即可，不要把所有源全量导入：同名的插件会互相覆盖，
+「最小可用安装集」装 5 个即可，不要把所有源全量导入：同名的插件会互相覆盖，
 而且搜索页 tab 会变得很长。
 
 ## 四个订阅源
@@ -75,7 +75,7 @@ qwerwhr 这种 76 个的源不要整包订阅；只想要最小集时，用各�
 | 酷我音乐 | 19 条，首条「晴天 / 周杰伦」 | ❌ `error`，position 0 | 插件无歌词；App 兜底 71 行 | 仅可当搜索/歌词源 |
 | 酷狗音乐 | 20 条，首条「晴天（温柔女声版）/ 吉拉朵」 | ✅ `playing`，1.5s → 14.5s / 295.5s | 插件 76 行 | **推荐**。首条是翻唱，找原唱需翻列表；有 3 次瞬时错误后恢复 |
 | 咪咕音乐 | 20 条，首条「晴天 / 周杰伦」 | ✅ `playing`，3.0s → 16.1s / 269.7s | 插件 65 行 | **推荐**。开头 1 次瞬时错误后恢复 |
-| 网易云音乐 | 20 条，首条「晴天（原唱 周杰伦）/ RyaVocal」 | ❌ `error`，position 0 | 插件 64 行 | 仅可当搜索/歌词源 |
+| 网易云音乐 | 20 条，首条「晴天（原唱 周杰伦）/ RyaVocal」 | ❌ `error`，position 0 | 插件 64 行 | 官方取流返回 http CDN，被 ATS 拦；用下方「网易云音乐（GD 源）」可播 |
 | 汽水音乐 | ❌ 搜索失败「汽水源请求失败」 | — | — | 不可用（插件接口报错） |
 
 ### 2. heb-music（`sub/githubio/music.json`）
@@ -108,11 +108,98 @@ qwerwhr 这种 76 个的源不要整包订阅；只想要最小集时，用各�
 | GD音乐台 | 20 条，首条「晴天（原唱 周杰伦）/ RyaVocal」 | ✅ `playing`，2.4s → 15.4s / 268.8s | 插件无歌词；App 兜底 64 行 | **推荐**。内容 hash 与已用的 GD 插件一致；有 2 次瞬时错误后恢复 |
 | 酷我 | 安装首次 10s 超时；重试安装成功，搜索 ❌ `Network Error` | — | — | 不可用（插件本体是 gitee 加载器，网络失败） |
 | 酷狗 | 安装首次 10s 超时；重试安装成功，搜索 ❌ `Network Error` | — | — | 不可用（搜索接口为 `http://mobilecdn.kugou.com`，被 ATS 拦截） |
-| 网易云 | 30 条，首条「晴天（原唱 周杰伦）/ RyaVocal」 | ❌ `error`，position 0 | 插件 30 行 | 仅可当搜索/歌词源 |
+| 网易云 | 30 条，首条「晴天（原唱 周杰伦）/ RyaVocal」 | ❌ `error`，position 0 | 插件 30 行 | 取流 API 返回 429（Cloudflare Workers 每日额度用尽），不是 ATS；详见下方专项 |
 | 汽水音乐 | 20 条，首条「晴天 / 晚风纯音」 | ❌ `PLAY_TIMEOUT` | 插件 23 行 | 仅可当搜索/歌词源 |
 
 注：两个「安装超时」是 jsDelivr 首次拉取超过 10s，重试即成功，属于网络抖动，不是插件损坏。
 不要为此继续调大全局超时。
+
+## 网易云播放专项（2026-11-15 19:20–19:40 补测）
+
+用户点名要解决「网易云源不能播」。结论：**官方 heb 插件的失败原因是 http CDN 被 iOS ATS 拦，
+不是登录/VIP/版权/地区限制；GD 的取流接口返回同一个网易云 CDN 的 https 地址，所以把 GD 的
+取流逻辑做成独立插件即可播放。**
+
+### 官方 heb 网易云（`netease` 1.9.27）
+
+在模拟器用 CDP 直接调用插件方法，抓到完整链路：
+
+| 请求 | 结果 |
+| --- | --- |
+| `GET https://music.163.com/api/cloudsearch/pc`（搜索「晴天」） | 200，20 条结果 |
+| `GET https://music.163.com/api/song/enhance/player/url` | 200 |
+| `POST https://interface3.music.163.com/eapi/api/song/enhance/player/url/v1` | 200（ArrayBuffer） |
+| 插件 `getMediaSource()` 返回值 | `http://m701.music.126.net/2026.../....mp3?...` |
+| 插件自带的 `GET http://m701.music.126.net/...`（`Range: bytes=0-0`，2s 超时） | `AxiosError: Network Error`，请求在 ATS 层就被拦，未到服务器 |
+| 同一个 CDN URL 改成 `https://` 后 `curl` | `HTTP/2 206`，`content-type: audio/mpeg` |
+
+判定：不是 403/404/302；不是 VIP/版权/地区；UA/Referer 已带；没有 Cookie 也能拿到地址。
+唯一的失败点是 **`http://m701.music.126.net` 被 ATS 拦截**。按约定只记录域名，没有修改
+`Info.plist`，App 继续保持 https-only。
+
+### qwerwhr 网易云（`网易云` 0.1.0）
+
+搜索 30 条正常，播放时 `getMediaSource()` 返回 `null`。请求证据：
+
+| 请求 | 结果 |
+| --- | --- |
+| `POST https://api.music.lerd.dpdns.org/mf/wy` | **429**，响应体前 500 字符：`{"type":"https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-1xxx-errors/","title":"Error 1027: This website has been temporarily rate limited","status":429,"detail":"The site owner has exceeded their Workers free tier daily request limit. The limit resets at midnight UTC.","error_code":1027,"error_name":"workers_daily_limit","error_category":"rate_limit"}` |
+| 备用 `https://share.duanx.cn/url/wy/2668397359/128k` | TLS 握手失败（curl exit 35），不是 ATS |
+
+判定：qwerwhr 的失败是**上游 API 429 限流**，不是 Cookie，也不是 ATS。它不能作为稳定播放源。
+
+### GD 的取流实现（可移植的部分）
+
+GD 插件的 `getMediaSource(musicItem, quality)` 只做一件事：
+
+```
+GET https://music-api.gdstudio.xyz/api.php
+    ?types=url&source=netease&id=<网易云数字 id>&br=<128|320|740|999>
+→ { "url": "https://m801.music.126.net/...mp3", "br": 320, "size": 10831725 }
+```
+
+同一个 `id=2668397359` 的实测返回：
+
+```
+{"url":"https://m801.music.126.net/2026.../....mp3","br":320,"size":10831725,"from":"music.gdstudio.xyz"}
+```
+
+对比官方插件：搜索/歌词走 `music.163.com`，取流最终拿到的也是网易云 CDN，但返回的是
+`http://m701...`；GD 返回的是 `https://m801...`。差别只在**取流入口和 scheme**，不需要登录，
+也没有 VIP 绕过。
+
+### 可直接安装的独立插件
+
+已把 GD 的取流逻辑适配成独立网易云插件：
+
+| 项目 | 值 |
+| --- | --- |
+| 文件 | `ios/plugins/netease-gd.plugin.js`（约 8 KB，可读源码） |
+| 插件名 | `网易云音乐（GD 源）` |
+| 安装地址 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js` |
+| 支持 | 搜索（music/album/artist）、播放、歌词、封面；音质 low/standard/high/super → 128/320/740/999 |
+| 不含 | 登录、VIP/付费破解、DRM 破解；接口没返回地址的歌曲就是不能播 |
+
+**复现步骤：**
+
+1. 设置 → 插件管理 → 右下角 `+` → 从网络安装插件。
+2. 粘贴上面的 raw 地址，安装成功后会多出「网易云音乐（GD 源）」。
+3. 搜索「晴天」，点第一首；实测 `playing`，position 从 0 前进到 22.3s / 270.74s，无 `PlaybackError`。
+4. 歌词实测 65 行；封面返回 `https://p2.music.126.net/...jpg?param=500y500`。
+
+**登录 Cookie（`MUSIC_U`）说明：**
+
+本次实测的歌曲不需要 Cookie。如果以后要播放自己账号有权限、但匿名接口不给地址的歌曲，
+可以在 heb 官方插件里填：设置 → 插件管理 → `netease` → 用户变量 → `网易云 Cookie（可选）`，
+粘贴自己账号的 `MUSIC_U=...`。这是可选项，**不要使用他人 Cookie，不要用来绕过 VIP/付费**；
+本独立插件不读取 Cookie。
+
+**差距：**
+
+- 这个插件的搜索/歌词/封面走 GD 的网易云镜像，不是 `music.163.com` 官方接口；曲库和排序
+  与官方基本一致（「晴天」首条相同），但极少数冷门歌/新歌可能搜不到或没有歌词。
+- 官方 heb 插件仍可保留，只用于官方搜索/歌词；它的播放仍会被 http CDN 拦截。
+- 如果 GD 接口本身限流/宕机，本插件也会取不到流；届时换回官方插件搜索，或等 GD 恢复。
 
 ## 最小可用安装集
 
@@ -124,6 +211,7 @@ qwerwhr 这种 76 个的源不要整包订阅；只想要最小集时，用各�
 | 2 | 酷狗音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/kugou-source.plugin.v1.9.24.js` | 备用曲库；首条常是翻唱，选原唱版本即可 |
 | 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
 | 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
+| 5 | 网易云音乐（GD 源） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/ios/port/ios/plugins/netease-gd.plugin.js` | 网易云搜索/播放/歌词；播放地址为 https，避开 ATS |
 
 也可以直接订阅 **heb-main**（`https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json`），
 一次装 6 个：QQ、酷狗、咪咕可播，酷我、网易云可搜，汽水当前搜索失败。
@@ -153,7 +241,9 @@ qwerwhr 这种 76 个的源不要整包订阅；只想要最小集时，用各�
 | Jamendo | 要求 Client ID | 插件设计为自带密钥 | 注册后填设置；否则别装 |
 | heb 聚合 | `PLAY_TIMEOUT` | 聚合取流卡死 | 只当搜索/歌词源 |
 | heb 汽水 | 搜索「汽水源请求失败」 | 插件接口报错 | 暂不可用 |
-| heb 网易云 / 酷我 | 可搜不可播 | 取流接口被平台限制 | 只当搜索/歌词源 |
+| heb 网易云 | 可搜不可播，position 0 | 官方取流返回 `http://m701.music.126.net`，ATS 拦截 | 装上面的「网易云音乐（GD 源）」；官方插件留作搜索/歌词 |
+| heb 酷我 | 可搜不可播 | 取流接口被平台限制 | 只当搜索/歌词源 |
+| qwerwhr 网易云 | 可搜 30 条、播放 error | 取流 API `api.music.lerd.dpdns.org/mf/wy` 返回 429（Cloudflare Workers 每日额度） | 不用；改用「网易云音乐（GD 源）」 |
 | qwerwhr VIP 类插件 | 未测试 | 付费/破解类 | 不推荐、不内置 |
 
 ## 使用建议
