@@ -11,7 +11,7 @@
 | heb-main（订阅） | `https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json` | 一次装 6 个；QQ、酷狗、咪咕能播 |
 | heb-music（订阅） | `https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/music.json` | 一次装 11 个；实测只有 B站能播，嫌多可用下面的 B站单地址 |
 | GD音乐台（单插件） | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 能播；歌词由 App 自动搜索兜底 |
-| 网易云音乐（GD 源，单插件） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/c959986f8e7ed79190cad8f4752d05a55f609b42/ios/plugins/netease-gd.plugin.js` | 能播；网易云搜索/歌词/封面都走 GD 镜像，避开 http 被 ATS 拦 |
+| 网易云音乐（GD 源，单插件） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/62a018ddd779c82b8bdfe987a66323b222410edc/ios/plugins/netease-gd.plugin.js` | 能播、能导入歌单；网易云搜索/歌词/封面都走 GD 镜像，避开 http 被 ATS 拦 |
 
 如果不想一次装 11 个，B站用这个单插件地址：
 
@@ -33,6 +33,8 @@
 完整结果和逐插件说明见 `ios/PLUGIN-SOURCES.md`。
 
 **网易云怎么播：** 官方 heb 网易云插件搜索/歌词正常，但取流返回 `http://m701.music.126.net`，iOS 播放器会被 ATS 拦。装上面的「网易云音乐（GD 源）」即可播放，实测《晴天》连续播放 22 秒无错误、歌词 65 行；不需要登录，不需要填 Cookie。它走 GD 的网易云镜像，极少数冷门歌可能搜不到。
+
+**网易云歌单怎么导：** 设置 → 插件管理 → `网易云音乐（GD 源）` → **导入歌单**，粘贴 `https://music.163.com/playlist?id=...` 或 `https://y.music.163.com/m/playlist?id=...`。实测公开歌单「朗朗晴天」导入 15 首、15 首都能取到播放地址。私有歌单要先在插件的「用户变量」里填自己账号的 `MUSIC_U`；VIP/付费曲目会在标题后标「（VIP）/（付费）」，不保证能播，插件不做绕过。
 
 ## 3. 本地音乐
 

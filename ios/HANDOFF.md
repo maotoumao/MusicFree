@@ -343,7 +343,8 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 官方插件 403 / 503 / 要求登录 / TLS 不可达 | 搜索或取流失败 | 插件服务端/网络问题，换可用插件，不要改 App |
 | 只提供 http 的插件 API | ATS 拦截（https-only） | 只记录；是否放开需用户确认，默认不动 ATS |
 | 官方 heb 网易云取流返回 `http://m701.music.126.net` | 播放 `error`、position 0；插件内 2s Range 探测报 `Network Error` | 不是登录/VIP/版权问题。已提供 `ios/plugins/netease-gd.plugin.js`（GD 取流返回 https），实测可播；不改 ATS |
-| qwerwhr 网易云取流 API 429 | 搜索正常、`getMediaSource` 返回 null | 上游 Cloudflare Workers 每日额度用尽；换「网易云音乐（GD 源）」 |
+| heb 网易云歌单导入返回 0 首 | 底层返回歌单对象（`musicList` 嵌套），App 期望数组；`getMusicSheetInfo` 对纯 ID 报无详情源 | 用「网易云音乐（GD 源）」的导入，不修 App 的插件适配层 |
+| qwerwhr 网易云取流 API 429 | 搜索/导入正常、播放 `error` | 上游 Cloudflare Workers 每日额度用尽；换「网易云音乐（GD 源）」 |
 
 选插件时的优先级：**QQ音乐、酷狗音乐、咪咕音乐、GD音乐台、B站、网易云音乐（GD 源）**已验证可播（详见
 `ios/PLUGIN-SOURCES.md` 的四源 21 插件实测和网易云专项）。官方示例插件（bilibili、猫耳、
@@ -362,6 +363,7 @@ App bug 逐个排查，也不要为了它们放开 ATS：
 | 下载 | 通过 | 7,634,986 bytes，状态 1→2→3，队列完成；文件落 `Documents/download/music`；完成 Toast 带「文件」App 路径 |
 | 插件源实测 | 通过 | 4 个订阅源、21 个代表插件、统一搜「晴天」并试播；结果与最小安装集见 `ios/PLUGIN-SOURCES.md` |
 | 网易云专项 | 通过 | 官方 heb 插件返回 http CDN（ATS 拦）；qwerwhr 取流 429；`ios/plugins/netease-gd.plugin.js` 搜索 20 条、`playing` 0→22.3s/270.74s、歌词 65 行、封面 https |
+| 网易云歌单导入 | 通过 | 公开歌单「朗朗晴天」ID `2678496359`：15 首导入，写入本地歌单 15 首，首曲 `playing` 0→8.96s/21.54s；15/15 取流成功。大歌单「热歌榜」`3778678` 导入 200 首，126 首标 VIP；heb 导入返回 0（返回结构不兼容）、qwerwhr 可导入但取流 429 |
 | 本地导入 | 通过 | `Documents` 根目录的选择器会列出音频文件并隐藏 `.lrc`；直接选中单个 `test-tone.m4a` 导入成功（1 首，标题读为「MF标签标题」）；文件夹递归导入此前已验证 4 首 |
 | 播放失败提示 | 通过 | 在线弹「《晴天》播放失败：网络超时，已暂停」；重复触发同一首歌时 `lastPlayFailToastAt` 不变（30s 节流生效）；离线弹「当前无网络，无法播放《晴天》」 |
 | 冷启动歌词 | 通过 | QQ 歌曲播放后暂停 → 杀进程 → 冷启动，自动恢复当前歌曲并加载 63 行歌词；“启动自动播放”开/关两种配置都复测通过，无需进入播放页 |

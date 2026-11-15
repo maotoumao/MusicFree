@@ -174,11 +174,11 @@ GET https://music-api.gdstudio.xyz/api.php
 
 | 项目 | 值 |
 | --- | --- |
-| 文件 | `ios/plugins/netease-gd.plugin.js`（约 8 KB，可读源码） |
+| 文件 | `ios/plugins/netease-gd.plugin.js`（约 17 KB，可读源码） |
 | 插件名 | `网易云音乐（GD 源）` |
-| 安装地址（固定版本，推荐） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/c959986f8e7ed79190cad8f4752d05a55f609b42/ios/plugins/netease-gd.plugin.js` |
+| 安装地址（固定版本，推荐） | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/62a018ddd779c82b8bdfe987a66323b222410edc/ios/plugins/netease-gd.plugin.js` |
 | 安装地址（跟随分支） | `https://cdn.jsdelivr.net/gh/data-cd-sky/MusicFree@ios/port/ios/plugins/netease-gd.plugin.js` |
-| 支持 | 搜索（music/album/artist）、播放、歌词、封面；音质 low/standard/high/super → 128/320/740/999 |
+| 支持 | 搜索（music/album/artist）、播放、歌词、封面、歌单导入、`getMusicSheetInfo`；音质 low/standard/high/super → 128/320/740/999 |
 | 不含 | 登录、VIP/付费破解、DRM 破解；接口没返回地址的歌曲就是不能播 |
 
 **复现步骤：**
@@ -190,10 +190,13 @@ GET https://music-api.gdstudio.xyz/api.php
 
 **登录 Cookie（`MUSIC_U`）说明：**
 
-本次实测的歌曲不需要 Cookie。如果以后要播放自己账号有权限、但匿名接口不给地址的歌曲，
-可以在 heb 官方插件里填：设置 → 插件管理 → `netease` → 用户变量 → `网易云 Cookie（可选）`，
-粘贴自己账号的 `MUSIC_U=...`。这是可选项，**不要使用他人 Cookie，不要用来绕过 VIP/付费**；
-本独立插件不读取 Cookie。
+本次实测的公开歌单/歌曲不需要 Cookie。如果要导入**自己账号可见的私有歌单**，在
+设置 → 插件管理 → `网易云音乐（GD 源）` → 用户变量 → **网易云 Cookie（可选，仅私有歌单）**
+里粘贴自己账号的 `MUSIC_U=...`。插件只把它用于 `music.163.com` 的歌单详情请求，
+不参与 GD 取流，也不会绕过 VIP/付费。**不要使用他人 Cookie，不要用来绕过付费墙**；
+没有权限的歌单/歌曲仍然会失败，这是预期行为。
+
+官方 heb 插件里的同名 `neteaseCookie` 是它自己的设置项，与本插件互不影响。
 
 **差距：**
 
@@ -201,6 +204,77 @@ GET https://music-api.gdstudio.xyz/api.php
   与官方基本一致（「晴天」首条相同），但极少数冷门歌/新歌可能搜不到或没有歌词。
 - 官方 heb 插件仍可保留，只用于官方搜索/歌词；它的播放仍会被 http CDN 拦截。
 - 如果 GD 接口本身限流/宕机，本插件也会取不到流；届时换回官方插件搜索，或等 GD 恢复。
+
+## 网易云歌单导入专项（2026-11-15 19:40–20:05 补测）
+
+用户要求网易云源同时满足**能搜、能播、能导入网易歌单**。歌单导入走 App 的
+「插件页 → 该插件 → 导入歌单」入口，实际调用 `plugin.methods.importMusicSheet(url)`；
+导入成功后 App 再用 `AddToMusicSheet` 面板写入「我的歌单」。
+
+### 四个插件的导入能力
+
+| 插件 | `importMusicSheet` | `getMusicSheetInfo` | 实测结果 |
+| --- | --- | --- | --- |
+| heb 官方 `netease` 1.9.27 | 已注册 | 已注册 | 底层 `_internal.importMusicSheetImpl` 能拿到「朗朗晴天」15 首，但返回的是**歌单对象**（`{title, musicList, ...}`），不是 App 期望的歌曲数组；`p.methods.importMusicSheet` 实测返回 0。`getMusicSheetInfo({id:"2678496359"})` 报「该条目无可用的歌单详情源」 |
+| qwerwhr `网易云` 0.1.0 | 已注册 | 已注册 | `importMusicSheet` 返回 15 首；`getMusicSheetInfo` 返回「朗朗晴天」15 首、`isEnd=true`。但 `getMediaSource` 取流 API 仍返回 429，导入后不能播 |
+| GD `GD音乐台` 1.0.0 | 无 | 无 | 不支持歌单导入 |
+| 本插件 `网易云音乐（GD 源）` 1.1.0 | 已注册 | 已注册 | 15 首导入成功，写入本地歌单 15 首；15/15 能取到 https 流；首曲实测 `playing` |
+
+结论：**heb/qwerwhr 的导入功能不能直接满足「导入后能播」**。heb 是返回结构不兼容，
+qwerwhr 是能导入但取流 429；GD 根本没有导入。所以由本插件同时实现导入和可播取流。
+
+### 端到端实测
+
+测试歌单：网易云公开歌单 **「朗朗晴天」**，ID `2678496359`，共 15 首。
+
+| 步骤 | 结果 |
+| --- | --- |
+| 粘贴 `https://music.163.com/playlist?id=2678496359` | 识别 ID `2678496359`，导入 15 首 |
+| 粘贴 `https://y.music.163.com/m/playlist?id=2678496359` | 导入 15 首 |
+| 直接粘贴数字 `2678496359` | 导入 15 首 |
+| `getMusicSheetInfo` | 歌单名「朗朗晴天」，`musicList` 15 首，`isEnd=true`，封面 https |
+| 写入本地「我的歌单」（与 `AddToMusicSheet` 面板相同的 `addSheet`/`addMusic`） | 歌单 15 首，平台显示「网易云音乐（GD 源）」 |
+| 播放第一首 | `playing`，position 0 → 8.96s / 21.54s，无 `PlaybackError` |
+| 全部 15 首 `getMediaSource("standard")` | **15/15** 返回 https 地址，0 失败 |
+
+大歌单补充：公开「热歌榜」ID `3778678` 实测导入 **200 首**；按 `fee` 字段标记
+**126 首 VIP、74 首免费**；抽样 5 首 VIP + 5 首免费，GD 均返回 https 地址，未逐首播放。
+歌单详情接口只返回前 10 首时，插件会用 `/api/song/detail` 按 `trackIds` 补齐；
+15 首歌单就是这样拿到全量的。
+
+### VIP / 付费曲目
+
+- 导入时按网易云 `fee` 字段给标题加后缀：`fee=1` → `（VIP）`，`fee=4` → `（付费）`。
+- 同时在 `_rawData._vip` 保留标记，**不做任何绕过**；GD 接口没返回地址的歌曲播放时会
+  走 App 正常的失败提示，不会伪装成功。
+- 标记只代表平台的 VIP/付费属性，不代表一定能播或一定不能播；能否播放取决于接口
+  当时返回的地址。实测抽样的 VIP 曲目 GD 也返回了地址，但本插件不对此作保证。
+
+### 链接解析与失败点
+
+支持的输入：
+
+- `https://music.163.com/playlist?id=...`
+- `https://y.music.163.com/m/playlist?id=...`
+- `https://music.163.com/#/playlist?id=...`
+- `https://music.163.com/playlist/<id>/...`
+- 纯数字歌单 ID
+
+不支持的输入：`163cn.tv` 短链、需要登录才能看的私有歌单在没有 Cookie 时、已删除/违规歌单。
+失败时 `importMusicSheet` 返回空数组，App 弹「导入失败」，不会写入空歌单。
+
+### 私有歌单 Cookie
+
+公开歌单不需要 Cookie。私有歌单需要用户自己账号的 `MUSIC_U`：
+
+1. 设置 → 插件管理 → `网易云音乐（GD 源）` → 用户变量。
+2. 在「网易云 Cookie（可选，仅私有歌单）」里粘贴 `MUSIC_U=...`（只填自己账号的值）。
+3. 回到插件页 → 导入歌单 → 粘贴私有歌单链接。
+
+Cookie 只用于 `music.163.com/api/v6/playlist/detail` 和 `api/song/detail` 请求，
+不参与 GD 取流；不会绕过 VIP/付费。**没有真实私有歌单可测**，这条路径按代码和未登录
+失败表现记录，未做账号实测；如果填了 Cookie 仍失败，说明该歌单还要求别的登录校验，
+插件不会继续绕过。
 
 ## 最小可用安装集
 
@@ -212,7 +286,7 @@ GET https://music-api.gdstudio.xyz/api.php
 | 2 | 酷狗音乐 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/kugou-source.plugin.v1.9.24.js` | 备用曲库；首条常是翻唱，选原唱版本即可 |
 | 3 | GD音乐台 | 单插件 | `https://cdn.jsdelivr.net/gh/qwerwhr/musicfree-plugins@main/GD%E9%9F%B3%E4%B9%90%E5%8F%B0.js` | 聚合音源，可播放；歌词靠 App 兜底 |
 | 4 | B站 | 单插件 | `https://hebijunge.github.io/musicfree-plugins/plugins/bilibili-source.plugin.v1.1.4.js` | 视频/现场/冷门资源，可播放；歌词靠 App 兜底 |
-| 5 | 网易云音乐（GD 源） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/c959986f8e7ed79190cad8f4752d05a55f609b42/ios/plugins/netease-gd.plugin.js` | 网易云搜索/播放/歌词；播放地址为 https，避开 ATS |
+| 5 | 网易云音乐（GD 源） | 单插件 | `https://raw.githubusercontent.com/data-cd-sky/MusicFree/62a018ddd779c82b8bdfe987a66323b222410edc/ios/plugins/netease-gd.plugin.js` | 网易云搜索/播放/歌词/歌单导入；播放地址为 https，避开 ATS |
 
 也可以直接订阅 **heb-main**（`https://raw.githubusercontent.com/hebijunge/musicfree-plugins/master/sub/githubio/main.json`），
 一次装 6 个：QQ、酷狗、咪咕可播，酷我、网易云可搜，汽水当前搜索失败。
@@ -243,14 +317,18 @@ GET https://music-api.gdstudio.xyz/api.php
 | heb 聚合 | `PLAY_TIMEOUT` | 聚合取流卡死 | 只当搜索/歌词源 |
 | heb 汽水 | 搜索「汽水源请求失败」 | 插件接口报错 | 暂不可用 |
 | heb 网易云 | 可搜不可播，position 0 | 官方取流返回 `http://m701.music.126.net`，ATS 拦截 | 装上面的「网易云音乐（GD 源）」；官方插件留作搜索/歌词 |
+| heb 网易云歌单导入 | 导入返回 0 首 | `importMusicSheetImpl` 返回歌单对象（`musicList` 嵌套），App 期望数组；`getMusicSheetInfo` 对纯 ID 报「该条目无可用的歌单详情源」 | 不用 heb 导入；用「网易云音乐（GD 源）」的导入 |
 | heb 酷我 | 可搜不可播 | 取流接口被平台限制 | 只当搜索/歌词源 |
-| qwerwhr 网易云 | 可搜 30 条、播放 error | 取流 API `api.music.lerd.dpdns.org/mf/wy` 返回 429（Cloudflare Workers 每日额度） | 不用；改用「网易云音乐（GD 源）」 |
+| qwerwhr 网易云 | 可搜 30 条、播放 error；歌单可导入 15 首但导入后不能播 | 取流 API `api.music.lerd.dpdns.org/mf/wy` 返回 429（Cloudflare Workers 每日额度） | 不用；改用「网易云音乐（GD 源）」 |
 | qwerwhr VIP 类插件 | 未测试 | 付费/破解类 | 不推荐、不内置 |
 
 ## 使用建议
 
 - 订阅后先在搜索页逐个平台搜「晴天」，能出结果不代表能播，**一定要点第一首听 15 秒**。
 - 播放失败时会弹「《歌名》播放失败：原因，已自动跳到下一首/已暂停」；若连续失败，换上面「最小可用安装集」里的插件。
+- 网易云歌单导入用「网易云音乐（GD 源）」：插件页 → 该插件 → 导入歌单，粘贴
+  `https://music.163.com/playlist?id=...` 或 `y.music.163.com/m/playlist?id=...`；私有歌单先在
+  用户变量填自己的 `MUSIC_U`。
 - 同名插件会互相覆盖。比如 qwerwhr 的 GD音乐台与已有 GD 插件内容相同，装一个即可。
 - 下载完成的提示会给出文件位置：iOS 在「文件」App → 我的 iPhone → MusicFree → `download/music`
   （自定义下载目录时显示相对 Documents 的路径）。
