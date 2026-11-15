@@ -21,7 +21,6 @@ import PersistStatus from "@/utils/persistStatus";
 import Toast from "@/utils/toast";
 import * as SplashScreen from "expo-splash-screen";
 import {  Linking, Platform } from "react-native";
-import { PERMISSIONS, check, request } from "react-native-permissions";
 import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
 import i18n from "@/core/i18n";
 import bootstrapAtom from "./bootstrap.atom";
@@ -56,6 +55,9 @@ async function bootstrapImpl() {
             showDialog("CheckStorage");
         }
     } else if (Platform.OS === "android") {
+        // iOS never takes this branch, and requiring the module eagerly loads
+        // RNPermissions' native constants, which only exist on Android.
+        const { PERMISSIONS, check, request } = require("react-native-permissions") as typeof import("react-native-permissions");
         const [readStoragePermission, writeStoragePermission] =
             await Promise.all([
                 check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE),
