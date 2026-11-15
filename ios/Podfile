@@ -6,6 +6,11 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+# react-native-mmkv 2.x installs its JSI bindings through the legacy bridge,
+# which does not exist in bridgeless (New Architecture) mode. Keep the iOS app
+# on the old architecture until the native dependencies support bridgeless.
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
