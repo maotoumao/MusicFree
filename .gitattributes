@@ -1,0 +1,5 @@
+# CarWith 适配用的两份产物是「逐字节」交付物，禁止 Git 做行尾/编码规范化：
+#   - 补丁文件一旦被改成 CRLF，git apply 就再也对不上上游 LF 源码；
+#   - 重做说明 txt 本身是 UTF-8 BOM + CRLF，交付物 sha256 按原样算。
+patches/*.patch -text
+carwith/*.txt -text
