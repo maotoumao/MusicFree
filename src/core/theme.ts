@@ -72,7 +72,8 @@ interface IBackgroundInfo {
 const themeStore = new GlobalState(darkTheme);
 const backgroundStore = new GlobalState<IBackgroundInfo | null>(null);
 
-function setup() {
+/** 把 Config 里用户自己那档主题装进 store；CarWith 还原主题时走的也是这一份 */
+function applyStoredTheme() {
     const currentTheme = Config.getConfig("theme.selectedTheme") ?? "p-dark";
 
     if (currentTheme === "p-dark") {
@@ -89,6 +90,23 @@ function setup() {
                 darkTheme.colors,
         });
     }
+}
+
+/**
+ * CarWith 车机深浅色：只改内存里的那份主题，**一个字都不写 Config**。
+ * 断开或者关掉跟随后 restoreStoredTheme() 就回到用户自己选的档。
+ * 自定义主题（既不是 p-dark 也不是 p-light）在车机浅色档下会临时落到内置浅色。
+ */
+function applyCarWithTheme(dark: boolean) {
+    themeStore.setValue(dark ? darkTheme : lightTheme);
+}
+
+function restoreStoredTheme() {
+    applyStoredTheme();
+}
+
+function setup() {
+    applyStoredTheme();
 
     const bgUrl = Config.getConfig("theme.background");
     const bgBlur = Config.getConfig("theme.backgroundBlur");
@@ -209,6 +227,8 @@ const configableColorKey: Array<keyof CustomizedColors> = [
 
 const Theme = {
     setup,
+    applyCarWithTheme,
+    restoreStoredTheme,
     setTheme,
     setBackground,
     setColors,

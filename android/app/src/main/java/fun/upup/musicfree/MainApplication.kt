@@ -14,6 +14,8 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
+import `fun`.upup.musicfree.carwith.CarWithState
+import `fun`.upup.musicfree.carwith.CarWithStatePackage
 import `fun`.upup.musicfree.lyricUtil.LyricUtilPackage
 import `fun`.upup.musicfree.mp3Util.Mp3UtilPackage
 import `fun`.upup.musicfree.utils.UtilsPackage
@@ -29,6 +31,7 @@ class MainApplication : Application(), ReactApplication {
               add(UtilsPackage())
               add(Mp3UtilPackage())
               add(LyricUtilPackage())
+              add(CarWithStatePackage())
             }
 
         override fun getJSMainModuleName(): String = "index"
@@ -45,6 +48,8 @@ class MainApplication : Application(), ReactApplication {
   override fun onCreate() {
     super.onCreate()
     SoLoader.init(this, OpenSourceMergedSoMapping)
+    // CarWith：车机翻深浅色时用户可能根本没开着界面，观察者必须在 Application 挂上
+    CarWithState.init(this)
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()

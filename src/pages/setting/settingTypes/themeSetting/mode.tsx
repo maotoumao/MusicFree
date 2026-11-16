@@ -5,12 +5,14 @@ import ThemeText from "@/components/base/themeText";
 import ListItem from "@/components/base/listItem";
 import ThemeSwitch from "@/components/base/switch";
 import Config, { useAppConfig } from "@/core/appConfig";
+import CarWithLyric from "@/core/carWithLyric";
 import Theme from "@/core/theme";
 import { useI18N } from "@/core/i18n";
 
 export default function Mode() {
     const { t } = useI18N();
     const mode = useAppConfig("theme.followSystem") ?? false;
+    const followCarWith = useAppConfig("theme.followCarWith") ?? false;
     return (
         <View>
             <ThemeText
@@ -42,6 +44,23 @@ export default function Mode() {
                         </View>
                     </ListItem.Content>
                 </ListItem>
+                {CarWithLyric.isSupported() ? (
+                    <ListItem withHorizontalPadding>
+                        <ListItem.Content>
+                            <View style={styles.itemRow}>
+                                <ThemeText>
+                                    {t("themeSettings.followCarWithTheme")}
+                                </ThemeText>
+                                <ThemeSwitch
+                                    value={followCarWith}
+                                    onValueChange={e =>
+                                        CarWithLyric.setFollowTheme(e)
+                                    }
+                                />
+                            </View>
+                        </ListItem.Content>
+                    </ListItem>
+                ) : null}
             </View>
         </View>
     );

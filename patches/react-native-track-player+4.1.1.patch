@@ -1,0 +1,537 @@
+diff --git a/android/src/main/java/com/doublesymmetry/trackplayer/carwith/CarWithLyric.kt b/android/src/main/java/com/doublesymmetry/trackplayer/carwith/CarWithLyric.kt
+new file mode 100644
+index 0000000..e43c826
+--- /dev/null
++++ b/android/src/main/java/com/doublesymmetry/trackplayer/carwith/CarWithLyric.kt
+@@ -0,0 +1,430 @@
++package com.doublesymmetry.trackplayer.carwith
++
++import android.os.Handler
++import android.os.Looper
++import android.support.v4.media.MediaMetadataCompat
++import android.support.v4.media.session.MediaSessionCompat
++import android.util.Log
++import com.doublesymmetry.kotlinaudio.players.BaseAudioPlayer
++import com.google.android.exoplayer2.Player
++import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
++import java.lang.reflect.Field
++
++/**
++ * CarWith / Jovi InCar 车机歌词：把整首 LRC 与当前句贴到 MediaSession 的元数据上。
++ *
++ * 键名是车机侧定的（来自 CarWith_4.0.20 反汇编 + 真车实测），一个字都不能改：
++ *   ucar.media.metadata.LYRICS_WHOLE   整首标准 LRC，车机**首选**，它自己按播放位置排行
++ *   ucar.media.metadata.LYRICS_LINE    当前句，只在整首算不出来时兜底
++ *   ucar.media.metadata.LYRICS_STATUS  有词 "0"；1/2/3 会被当「无词」
++ *   android.media.metadata.LYRICS      框架已知键，值与 LYRICS_WHOLE 相同
++ *
++ * 门控总设定：**没连着 CarWith（或开关没勾）时 decorate() 原样交回上游那份 metadata，
++ * 一个键都不动**。只有连着且勾着才改写。
++ *
++ * 清空策略与洛雪那两条 smali 路线不同，原因是这里是**每次新建** Builder
++ * （kotlinaudio 的 NotificationManager.getMediaMetadataCompat() 就是新建的），
++ * 所以「整体省略这两个键」就等于把键删掉了；smali 那条复用同一个 Builder，
++ * 必须显式写空串才洗得掉。不是谁写错了，是两条路的对象生命周期不一样。
++ */
++object CarWithLyric {
++
++    /** 只在适配代码自己失败时打一行；正常运行 logcat 里这一路一行都不该有（见说明九） */
++    const val TAG = "CarWithLyric"
++
++    const val KEY_LINE = "ucar.media.metadata.LYRICS_LINE"
++    const val KEY_WHOLE = "ucar.media.metadata.LYRICS_WHOLE"
++    const val KEY_STATUS = "ucar.media.metadata.LYRICS_STATUS"
++    const val KEY_FRAMEWORK_LYRICS = "android.media.metadata.LYRICS"
++
++    const val STATUS_HAS_LYRIC = 0
++    const val STATUS_NO_LYRIC = 3
++
++    /**
++     * 整首长度上限：车机读的是**一整个** metadata Binder 事务，同一份里还装着封面位图
++     * （400x400 ARGB ≈ 640KB），整包超限丢的是整个 metadata（连封面一起没）。
++     * 超限发空串，不截断 —— 截断出来的半截 LRC 车机会照着排，最后一句永远对不上。
++     */
++    const val MAX_WHOLE_CHARS = 24000
++
++    /** MediaMetadataCompat 认得的全部键，逐键复制时用（类型靠 try 探，不靠硬编码的型别表） */
++    private val ALL_KEYS: Array<String> = arrayOf(
++        MediaMetadataCompat.METADATA_KEY_TITLE,
++        MediaMetadataCompat.METADATA_KEY_ARTIST,
++        MediaMetadataCompat.METADATA_KEY_ALBUM,
++        MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST,
++        MediaMetadataCompat.METADATA_KEY_GENRE,
++        MediaMetadataCompat.METADATA_KEY_COMPOSER,
++        MediaMetadataCompat.METADATA_KEY_WRITER,
++        MediaMetadataCompat.METADATA_KEY_AUTHOR,
++        MediaMetadataCompat.METADATA_KEY_COMPILATION,
++        MediaMetadataCompat.METADATA_KEY_DATE,
++        MediaMetadataCompat.METADATA_KEY_YEAR,
++        MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER,
++        MediaMetadataCompat.METADATA_KEY_NUM_TRACKS,
++        MediaMetadataCompat.METADATA_KEY_DISC_NUMBER,
++        MediaMetadataCompat.METADATA_KEY_DURATION,
++        MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
++        MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
++        MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,
++        MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
++        MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION,
++        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
++        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
++        MediaMetadataCompat.METADATA_KEY_ART,
++        MediaMetadataCompat.METADATA_KEY_ART_URI,
++        MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
++        MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
++        MediaMetadataCompat.METADATA_KEY_RATING,
++        MediaMetadataCompat.METADATA_KEY_USER_RATING,
++    )
++
++    /** 连着车机时不写：CarWith 见 mediaUri 就去扒音频内嵌封面，扒不到不再回到位图 ⇒ 永远空白 */
++    private val URI_KEYS: Set<String> = setOf(
++        MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
++        MediaMetadataCompat.METADATA_KEY_ART_URI,
++        MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
++        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
++    )
++
++    /** 一份 metadata 只带一张位图；两张 400x400 同装是 Binder 超限的头号来源 */
++    private val EXTRA_BITMAPS: Set<String> = setOf(
++        MediaMetadataCompat.METADATA_KEY_ART,
++        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
++    )
++
++    private val LOCK = Any()
++
++    /** provider 被要求交一份元数据、而基值取不到时的兜底（不可变，共用一个就行） */
++    private val EMPTY_METADATA: MediaMetadataCompat = MediaMetadataCompat.Builder().build()
++
++    @Volatile
++    private var player: BaseAudioPlayer? = null
++
++    @Volatile
++    private var session: MediaSessionCompat? = null
++
++    @Volatile
++    private var connector: MediaSessionConnector? = null
++
++    /** 已经贴到 connector 上的那个 provider，用来认出「上游又把自己的设回去了」 */
++    @Volatile
++    private var installedProvider: MediaSessionConnector.MediaMetadataProvider? = null
++
++    /**
++     * 闸门：正在 provider 的回调里时置真。
++     * 正常一路走不到它（provider 里已经不再装 provider 了），留着是给同类
++     * 「回调里再触发回调」的递归当兜底，一踩到就交基值、不再往下绕。
++     */
++    @Volatile
++    private var insideProvider = false
++
++    /**
++     * 这份元数据上到底贴没贴过歌词键。
++     * 没贴过就没必要「洗键」—— 断开/关开关时可以一次 setMetadata 都不发，
++     * 上游自己的发布节奏我们一个字都不改（大多数手机用户永远停在这里）。
++     */
++    @Volatile
++    private var dirty = false
++
++    private val mainHandler = Handler(Looper.getMainLooper())
++
++    /** 车机连接态，由 app 侧 CarWithState 写（虚拟屏屏名 + getType 反射判据） */
++    @Volatile
++    var connected = false
++        private set
++
++    /** 设置里的「车机投屏歌词」开关，由 app 侧 CarWithState.setLyricEnabled 写 */
++    @Volatile
++    var enabled = false
++        private set
++
++    @Volatile
++    private var whole: String? = null
++
++    @Volatile
++    private var line: String? = null
++
++    @Volatile
++    private var status = STATUS_NO_LYRIC
++
++    // ------------------------------------------------------------------ 对外入口
++
++    /** JS 推歌词走这里：换曲推整首 + 当前句，换句只推当前句 */
++    fun update(newWhole: String?, newLine: String?, newStatus: Int) {
++        synchronized(LOCK) {
++            whole = newWhole
++            line = newLine
++            status = newStatus
++        }
++        publish(false)
++    }
++
++    /** 连接态翻了就重发：连上当场补歌词，断开当场把键收回 */
++    fun setConnected(value: Boolean) {
++        if (connected == value) return
++        connected = value
++        publish(true)
++    }
++
++    /** 开关翻了就重发：关掉后车机歌词收掉，不停在最后一句 */
++    fun setEnabled(value: Boolean) {
++        if (enabled == value) return
++        enabled = value
++        publish(true)
++    }
++
++    /** 换曲前、清空队列时把两句收回，避免上一首残留在会话里 */
++    fun clearLyric() {
++        synchronized(LOCK) {
++            whole = null
++            line = null
++            status = STATUS_NO_LYRIC
++        }
++        publish(false)
++    }
++
++    /** 由 MusicService 在播放器建好后调一次；provider 的核对在每次发布里 */
++    fun attach(audioPlayer: BaseAudioPlayer) {
++        player = audioPlayer
++        publish(true)
++    }
++
++    // ------------------------------------------------------------------ 发布
++
++    /**
++     * 两条发布路都汇到 decorate()：
++     *   1) connector 的 provider —— 上游每次自己发元数据（换曲、封面异步到位）时顺带贴键；
++     *   2) 直接 mediaSession.setMetadata() —— 逐句重发用的就是这条，因为上游开了
++     *      setMetadataDeduplicationEnabled(true)（按 mediaId 去重，同一首不会再发第二次），
++     *      只靠 provider 那条路推不动逐句。
++     *
++     * force = 状态翻转那几次（连上 / 断开 / 开关），那时就算 decorate 交回的是上游原对象
++     * 也要再发一次，否则连着时写过的键收不回来。
++     *
++     * ★ dirty 那一位是给「总设定」兜底的：从没贴过键（开关没勾、从没连上车）时这里一次
++     *   setMetadata 都不发 —— 不装 provider、不碰 connector、不抢上游的发布节奏。
++     *   只有真贴过键，才需要那一次「把键洗掉」的重发。上一版没有这一层，attach 一进来就
++     *   装了 provider，于是把下面 installProvider 那个递归坑在所有用户面前踩响了。
++     */
++    private fun publish(force: Boolean) {
++        mainHandler.post {
++            try {
++                val gated = connected && enabled
++                var wash = false
++                if (!gated) {
++                    if (!dirty) return@post      // 干净的：没写过键，也没有键要洗
++                    dirty = false                // 只剩这一次「洗键」的重发
++                    wash = true
++                }
++                val p = player ?: return@post
++                val s = resolveSession(p) ?: return@post
++                if (gated) installProvider(p)    // 装上失败也不要紧，逐句那一路不依赖它
++                val base = baseOf(p) ?: return@post
++                val decorated = decorate(base)
++                if (!force && !wash && decorated === base) return@post
++                s.setMetadata(decorated)
++            } catch (t: Throwable) {
++                // 任何一步失败都只是「这一次车机上没歌词」，不许把播放器带崩
++                Log.w(TAG, "publish 跳过（不影响手机播放）", t)
++            }
++        }
++    }
++
++    /**
++     * 给 connector 用的那条路：每次上游要元数据时顺贴歌词键。
++     * ★ exoplayer 的 MediaMetadataProvider.getMetadata 声明的是**非空**返回值
++     *   （Kotlin 侧写 MediaMetadataCompat? 直接编译不过：Type mismatch），
++     *   基值取不到时交一份空的，不交 null。
++     * ★★ 这里绝不能再走 installProvider：MediaSessionConnector.setMediaMetadataProvider()
++     *    会**当场**回调一次新 provider（字节码实证见 installProvider 注释），provider 里
++     *    再装 provider 就是一帧咬一帧的自我递归 —— 上一版正是这样把主线程栈打爆的
++     *    （现象：什么开关都没勾、本地放歌也闪退，StackOverflowError）。
++     *    insideProvider 这道闸门是同类问题的兜底，正常永远走不到它。
++     */
++    private fun providerMetadata(): MediaMetadataCompat {
++        if (insideProvider) {
++            val p0 = player ?: return EMPTY_METADATA
++            return baseOf(p0) ?: EMPTY_METADATA
++        }
++        insideProvider = true
++        try {
++            val p = player ?: return EMPTY_METADATA
++            return decorate(baseOf(p)) ?: EMPTY_METADATA
++        } catch (t: Throwable) {
++            // 这条是 ExoPlayer 在自己线程上调进来的，异常绝不能往外抛
++            Log.w(TAG, "provider 跳过（不影响手机播放）", t)
++            return EMPTY_METADATA
++        } finally {
++            insideProvider = false
++        }
++    }
++
++    private fun decorate(base: MediaMetadataCompat?): MediaMetadataCompat? {
++        if (base == null) return null
++        // ★ 门控就这一行：没连着或没勾着 ⇒ 原样交回上游那份，元数据逐字不变
++        if (!(connected && enabled)) return base
++
++        val nowWhole: String?
++        val nowLine: String?
++        val nowStatus: Int
++        synchronized(LOCK) {
++            nowWhole = whole
++            nowLine = line
++            nowStatus = status
++        }
++
++        val cappedWhole = when {
++            nowWhole.isNullOrEmpty() -> ""
++            nowWhole.length > MAX_WHOLE_CHARS -> ""   // 超限发空串，不截断
++            else -> nowWhole
++        }
++        val hasArtwork = try {
++            base.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART) != null
++        } catch (ignored: Throwable) {
++            false
++        }
++
++        val b = MediaMetadataCompat.Builder()
++        for (key in ALL_KEYS) {
++            // 连着车机不发布 MEDIA_URI
++            if (key == MediaMetadataCompat.METADATA_KEY_MEDIA_URI) continue
++            // 这一份已带到位图时三个 *_URI 一个都不写：车机取图是 description.getIconUri() 优先，
++            // 而 iconUri 由那三键级联出来，只断一个还有两个顶上
++            if (hasArtwork && key in URI_KEYS) continue
++            copyKey(base, b, key, hasArtwork)
++        }
++
++        b.putString(KEY_WHOLE, cappedWhole)
++        b.putString(KEY_FRAMEWORK_LYRICS, cappedWhole)
++        b.putString(KEY_LINE, nowLine ?: "")
++        // 整首超限发空串时，只要当前句还在就走「有词 + 兜底句」，别让车机按无词把这句抹掉
++        val lyricUsable = nowStatus == STATUS_HAS_LYRIC &&
++            (cappedWhole.isNotEmpty() || !nowLine.isNullOrEmpty())
++        b.putString(KEY_STATUS, if (lyricUsable) "0" else STATUS_NO_LYRIC.toString())
++        // 记一笔「这份元数据上贴过键」—— 之后断开/关开关才需要那一次把键洗掉的重发
++        dirty = true
++        return b.build()
++    }
++
++    private fun copyKey(
++        base: MediaMetadataCompat,
++        b: MediaMetadataCompat.Builder,
++        key: String,
++        hasArtwork: Boolean,
++    ) {
++        if (hasArtwork && key in EXTRA_BITMAPS) return
++        try {
++            val cs = base.getText(key)
++            if (cs != null) {
++                b.putString(key, cs.toString())
++                return
++            }
++        } catch (ignored: Throwable) {
++        }
++        try {
++            val v = base.getLong(key)
++            if (v != 0L) {
++                b.putLong(key, v)
++                return
++            }
++        } catch (ignored: Throwable) {
++        }
++        try {
++            val bmp = base.getBitmap(key)
++            if (bmp != null) {
++                b.putBitmap(key, bmp)
++                return
++            }
++        } catch (ignored: Throwable) {
++        }
++        try {
++            val r = base.getRating(key)
++            if (r != null) {
++                b.putRating(key, r)
++            }
++        } catch (ignored: Throwable) {
++        }
++    }
++
++    // ------------------------------------------------------------------ 反射取 kotlinaudio 私有成员
++
++    /** BaseAudioPlayer.mediaSession（private val）。release 没开 R8（minifyEnabled=false），字段名逐字保留 */
++    private fun resolveSession(p: BaseAudioPlayer): MediaSessionCompat? {
++        session?.let { return it }
++        val found = readPrivate(p, "mediaSession") as? MediaSessionCompat ?: return null
++        session = found
++        return found
++    }
++
++    private fun resolveConnector(p: BaseAudioPlayer): MediaSessionConnector? {
++        connector?.let { return it }
++        val found =
++            readPrivate(p, "mediaSessionConnector") as? MediaSessionConnector ?: return null
++        connector = found
++        return found
++    }
++
++    /** kotlinaudio 那两个成员是 private val，只能反射取；沿父类链找，免得它挪个声明位置就断 */
++    private fun readPrivate(target: Any, name: String): Any? {
++        var c: Class<*>? = target.javaClass
++        while (c != null) {
++            try {
++                val f: Field = c.getDeclaredField(name)
++                f.isAccessible = true
++                return f.get(target)
++            } catch (ignored: Throwable) {
++            }
++            c = c.superclass
++        }
++        return null
++    }
++
++    /**
++     * 取上游那份「干净基值」。
++     * ★★ 这里绝对不装 provider —— 装 provider 是 publish 里 gated 那一支的活。
++     *   provider 的回调又要取基值，一旦这里回头去装 provider 就是自我递归（见 installProvider）。
++     */
++    private fun baseOf(p: BaseAudioPlayer): MediaMetadataCompat? {
++        return try {
++            p.notificationManager.getMediaMetadataCompat()
++        } catch (ignored: Throwable) {
++            null
++        }
++    }
++
++    /**
++     * 上游的 provider 是在 BaseAudioPlayer init 的一个 coroutine 里设的
++     * （mediaSessionConnector.setMediaMetadataProvider { notificationManager.getMediaMetadataCompat() }），
++     * 我们的 attach 可能跑在它前面把它顶掉，所以每次要贴键前核一次身份。
++     *
++     * ★★ 记账必须在调用之前：MediaSessionConnector.setMediaMetadataProvider() 不是单纯赋值，
++     *   字节码是 putfield → invalidateMediaSessionMetadata() → invokeinterface getMetadata(Player)，
++     *   也就是**当场回调一次新 provider**。上一版写成「先 conn.setMediaMetadataProvider(provider)
++     *   再 installedProvider = provider」，那一次同步回调里 installedProvider 还是 null、
++     *   current 也还是旧的，于是又走回装 provider 那一路 —— provider 装 provider，一帧咬一帧，
++     *   直接把主线程栈打爆（StackOverflowError，现象是「什么开关都没勾、本地点一下就闪退」）。
++     *   所以这里先把自己记上、再挂上去；挂失败就立刻把记账抹掉，下次 publish 会重试。
++     */
++    private fun installProvider(p: BaseAudioPlayer): Boolean {
++        val conn = resolveConnector(p) ?: return false
++        val current = try {
++            readPrivate(conn, "mediaMetadataProvider")
++        } catch (ignored: Throwable) {
++            null
++        }
++        if (current != null && current === installedProvider) return true
++        val provider = MediaSessionConnector.MediaMetadataProvider { _: Player ->
++            providerMetadata()
++        }
++        installedProvider = provider
++        return try {
++            conn.setMediaMetadataProvider(provider)
++            true
++        } catch (t: Throwable) {
++            installedProvider = null
++            Log.w(TAG, "provider 装不上（已忽略，逐句那一路不受影响）", t)
++            false
++        }
++    }
++}
+diff --git a/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt b/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt
+index b2409a0..7a78d44 100644
+--- a/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt
++++ b/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt
+@@ -344,12 +344,18 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+                 musicService.updateMetadataForTrack(index, track)
+ 
+                 callback.resolve(null)
+             }
+         }
+ 
++    @ReactMethod
++    fun setCarWithLyric(whole: String?, line: String?, status: Int) {
++        if (!::musicService.isInitialized) return
++        musicService.setCarWithLyric(whole, line, status)
++    }
++
+     @ReactMethod
+     fun updateNowPlayingMetadata(map: ReadableMap?, callback: Promise) = scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         if (musicService.tracks.isEmpty())
+             callback.reject("no_current_item", "There is no current item in the player")
+diff --git a/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt b/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
+index 9d6d869..c006fc7 100644
+--- a/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
++++ b/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
+@@ -16,12 +16,13 @@ import androidx.core.app.NotificationCompat.PRIORITY_LOW
+ import com.doublesymmetry.kotlinaudio.models.*
+ import com.doublesymmetry.kotlinaudio.models.NotificationButton.*
+ import com.doublesymmetry.kotlinaudio.players.QueuedAudioPlayer
+ import com.doublesymmetry.trackplayer.R as TrackPlayerR
+ import com.doublesymmetry.trackplayer.extensions.NumberExt.Companion.toMilliseconds
+ import com.doublesymmetry.trackplayer.extensions.NumberExt.Companion.toSeconds
++import com.doublesymmetry.trackplayer.carwith.CarWithLyric
+ import com.doublesymmetry.trackplayer.extensions.asLibState
+ import com.doublesymmetry.trackplayer.extensions.find
+ import com.doublesymmetry.trackplayer.model.MetadataAdapter
+ import com.doublesymmetry.trackplayer.model.PlaybackMetadata
+ import com.doublesymmetry.trackplayer.model.Track
+ import com.doublesymmetry.trackplayer.model.TrackAudioItem
+@@ -155,12 +156,19 @@ class MusicService : HeadlessJsTaskService() {
+         )
+ 
+         val automaticallyUpdateNotificationMetadata = playerOptions?.getBoolean(AUTO_UPDATE_METADATA, true) ?: true
+ 
+         player = QueuedAudioPlayer(this@MusicService, playerConfig, bufferConfig, cacheConfig)
+         player.automaticallyUpdateNotificationMetadata = automaticallyUpdateNotificationMetadata
++        // CarWith：反射拿 mediaSession / connector，只认得这个播放器，不换宿主
++        // ★ 包起来：适配代码里任何失败都不许把播放器的创建带崩
++        try {
++            CarWithLyric.attach(player)
++        } catch (t: Throwable) {
++            android.util.Log.w("CarWithLyric", "attach 失败（已忽略，不影响播放）", t)
++        }
+         observeEvents()
+         setupForegrounding()
+     }
+ 
+     @MainThread
+     fun updateOptions(options: Bundle) {
+@@ -320,12 +328,17 @@ class MusicService : HeadlessJsTaskService() {
+         player.remove(indexes)
+     }
+ 
+     @MainThread
+     fun clear() {
+         player.clear()
++        try {
++            CarWithLyric.clearLyric()
++        } catch (t: Throwable) {
++            android.util.Log.w("CarWithLyric", "clearLyric 失败（已忽略，不影响播放）", t)
++        }
+     }
+ 
+     @MainThread
+     fun play() {
+         player.play()
+     }
+@@ -438,12 +451,21 @@ class MusicService : HeadlessJsTaskService() {
+ 
+     @MainThread
+     fun clearNotificationMetadata() {
+         player.notificationManager.hideNotification()
+     }
+ 
++    @MainThread
++    fun setCarWithLyric(whole: String?, line: String?, status: Int) {
++        try {
++            CarWithLyric.update(whole, line, status)
++        } catch (t: Throwable) {
++            android.util.Log.w("CarWithLyric", "update 失败（已忽略，不影响播放）", t)
++        }
++    }
++
+     private fun emitPlaybackTrackChangedEvents(
+         index: Int?,
+         previousIndex: Int?,
+         oldPosition: Double
+     ) {
+         val a = Bundle()

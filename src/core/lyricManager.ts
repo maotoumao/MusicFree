@@ -12,6 +12,7 @@ import pathConst from "@/constants/pathConst";
 import LyricUtil from "@/native/lyricUtil";
 import { checkAndCreateDir } from "@/utils/fileUtils";
 import PersistStatus from "@/utils/persistStatus";
+import CarWithLyric from "@/core/carWithLyric";
 import CryptoJs from "crypto-js";
 import { unlink, writeFile } from "react-native-fs";
 import RNTrackPlayer, { Event } from "react-native-track-player";
@@ -87,6 +88,8 @@ class LyricManager implements IInjectable {
             if (currentLyricItem?.lrc !== newLyricItem?.lrc) {
                 // 更新当前歌词状态
                 getDefaultStore().set(currentLyricItemAtom, newLyricItem ?? null);
+                // CarWith：逐句重发（整首走缓存，原样再推一次是必须的）
+                CarWithLyric.pushLyricState(parser, newLyricItem?.lrc ?? "");
 
                 // 更新状态栏歌词
                 const showTranslation = PersistStatus.get("lyric.showTranslation");
@@ -231,6 +234,8 @@ class LyricManager implements IInjectable {
             hasTranslation: false,
         });
         getDefaultStore().set(currentLyricItemAtom, null);
+        // CarWith：取词期间也要收，否则车机停在上一首最后一句
+        CarWithLyric.pushLyricState(null, "");
     }
 
     private setLyricAsNoLyricState() {
@@ -240,6 +245,8 @@ class LyricManager implements IInjectable {
             hasTranslation: false,
         });
         getDefaultStore().set(currentLyricItemAtom, null);
+        // CarWith：STATUS 要显式给「无词」，不能留着上一首的整首
+        CarWithLyric.pushLyricState(null, "");
         if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
             const musicItem = this.trackPlayer.currentMusic;
             LyricUtil.setStatusBarLyricText(musicItem ? `${musicItem.title} - ${musicItem.artist}` : "MusicFree");
@@ -310,6 +317,8 @@ class LyricManager implements IInjectable {
 
             const currentLyric = ignoreProgress ? (this.lyricParser.getLyricItems()?.[0] ?? null) : this.lyricParser.getPosition((await this.trackPlayer.getProgress()).position);
             getDefaultStore().set(currentLyricItemAtom, currentLyric || null);
+            // CarWith：换曲推「整首 + 当前句」，两份一起给，不会出现新歌配旧整首
+            CarWithLyric.pushLyricState(this.lyricParser, currentLyric?.lrc ?? "");
 
             if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
                 if (currentLyric) {

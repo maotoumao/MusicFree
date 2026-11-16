@@ -1,0 +1,2632 @@
+﻿本文档编码：UTF-8（带 BOM）；负载体一律 LF + UTF-8。
+================================================================================
+MusicFree v0.6.2 适配 CarWith 车机歌词 + 车机深浅色跟随 —— 修改重做说明
+================================================================================
+
+本文自包含：所有源码都在文末 @@@FILE 负载里，正文即规格。
+目标是在 Windows 上从官方源码重做出与交付 APK **内部产物逐字节一致**的成品
+（三个 dex + 一个 Hermes bundle 的 sha256 相等；整包 sha256 只在同环境才等，见「七、自检」）。
+
+  上游仓库   ： https://github.com/maotoumao/MusicFree        （AGPL-3.0）
+  基线       ： 上游 commit f82436a7770420f9258b795081120be7cdd5e79c
+               （2026-06-19「修复：稳定性与跨平台优化」，Publish 0.6.2 之后的 master；
+                package.json 里 version 仍是 0.6.2）
+               tarball sha256 = f27b9be744f7820977776300ed2a726464fb2daaf3672dfe1bcb648ffbcb84c8 —— 实测这个 tarball 与
+               `git archive f82436a7` 的输出**逐文件一致**（diff -r 无差异），
+               所以没有 tarball 也能从公开仓库取到同一棵树，见「七、自检」1)
+  应用       ： fun.upup.musicfree  versionName 0.6.2 / versionCode 400011
+  车机       ： CarWith 4.0.20（小米汽车互联，ucar.media.* 那一套）
+  交付 APK   ： app-arm64-v8a-release.apk                     ← 主产物，车机/手机都用这个
+               （交付时这份被改名成 MusicFree-0.6.2-carwith-arm64-v8a.apk 了，
+                 内容一个字节没动，sha256 就是下面那个；重做时构建出来的原名仍是上面这个。）
+               bytes = 18185688   sha256 = c896c3548876d979c163e9cbf76a71339f19afa3bc978f5417742e30f49b1446
+               同一次构建还会出 app-universal-release.apk（29469693 B /
+               ea6a9aa76044af13acc7a269fea90b5b6b086a711cf16ae2ffb350fe8ab05dc6），它是**四个 ABI 全带**的那份（B1/B2 只收了 splits，
+               universal 档不受 splits 约束），别拿它当交付件比对，也别多装一份占地方。
+  播放器栈   ： react-native-track-player 4.1.1 → react-native-kotlin-audio 2.1.0
+               → ExoPlayer 2.19.1，元数据用的是 android.support.v4.media.*（Compat）
+  本文口径   ： 与《MD3Music》《lx-music-mobile》《lx-lxwalnut-music》《时音》四份重做说明
+               同一套骨架，可对照阅读；三份前作改 smali，本文改 RN 源码 + node_modules。
+
+
+配套材料（全部在文末负载，用 restore.py 取出）
+
+  A  rebuild_carwith.py     35 处锚点替换 + 5 个新文件 = 全部改动，一条命令打完
+  B  check_apk.py           成品 APK 自查（解包、探针、公签、badging），跨平台、只要 Python
+  C  check_apk.ps1          同一套断言的 Windows PowerShell 版（期望值与 B 一致）
+  D  5 个新源文件            见「五、改动清单」
+  E  restore.py             只有它是正文内联的：它负责把别的材料取出来，
+                            没法把自己也塞进自己的负载里。存成 restore.py 即可用。
+
+  三步走：
+      python restore.py  本文.txt                       # 取出 A/B/C/D，落在 ./carwith_out/
+      python carwith_out/rebuild_carwith.py  <仓库目录>  本文.txt
+      cd <仓库目录>/android && gradle assembleRelease    # 或 .\gradlew.bat，见「四、构建」
+
+
+--------------------------------------------------------------------------------
+一、功能
+--------------------------------------------------------------------------------
+
+总设定（本文全部改动的第一句，也是验收的第一条）：
+
+      **没连着 CarWith，或者设置里的开关没勾 —— 上游行为逐字不变。**
+
+落到代码上是三处硬门：
+  1) CarWithLyric.decorate() 第一句 `if (!(connected && enabled)) return base;`
+     —— 连着且勾着才新建 Builder 改写；否则把 kotlinaudio 自己那份原样交回。
+  2) CarWithState 的 5 秒心跳只在两把开关至少一把勾着时才排程；全关着时连虚拟屏都不枚举。
+  3) JS 侧 pushLyricState() 开头 `if (!lyricEnabled) return;`，不勾就一个字节都不发。
+  4) Java 侧 publish() 上还有一位 dirty：从没贴过键（没勾开关、也没连过车机）时
+     直接早退 —— 不装 provider、不碰 connector、一次 setMetadata 都不发，
+     播放路径上等于没打过补丁。真贴过键才需要那一次「把键洗掉」的收尾重发。
+  ★ 这条设定是给「万一适配错了」兜底的：门在，最差也只是车机没歌词，不会把手机端播放搞坏。
+     （dirty 是后加的：v1/v2 的 attach 无条件装过 provider，撞上「四、构建」末尾
+       运行期踩坑登记那条 8)，两把门叠在一起才是现在这个行为。）
+
+1.1 车机投屏歌词（设置 → 歌词 → 车机投屏歌词（CarWith））
+
+  键名由车机侧定死（CarWith_4.0.20 反汇编 + 真车实测），一个字符都不能改：
+
+      ucar.media.metadata.LYRICS_WHOLE    整首标准 LRC，车机**首选**，它自己按播放位置排行
+      ucar.media.metadata.LYRICS_LINE     当前句，只在整首解析不出来时兜底
+      ucar.media.metadata.LYRICS_STATUS   "0" = 有词；"1"/"2"/"3" 一律当无词
+      android.media.metadata.LYRICS       框架已知键，值与 LYRICS_WHOLE 相同（顺手给上）
+
+  四条硬规矩（前四份文档踩过的坑，这里逐条落地）：
+
+    (a) **每次换句都要重发整个 metadata。** 车机只在收到新 metadata 时才重读歌词，
+        歌词行自己不会动。MusicFree 这一路是 lyricManager 的进度回调（RNTP 的
+        progressUpdateEventInterval = 1 秒）→ JS → TrackPlayerModule.setCarWithLyric
+        → CarWithLyric.update() → mediaSession.setMetadata()。
+        ★ 逐句这一路必须**绕开** kotlinaudio 的自动更新：它开着
+          setMetadataDeduplicationEnabled(true)，按 mediaId 去重，同一首歌不会再发第二次，
+          所以只挂 provider 是推不动的，必须直接 setMetadata()。
+    (b) **没词要显式清空。** 上一首的歌词留在会话里，车机就一直停在那一句。
+    (c) **整首要算准偏移。** LrcParser.getPosition() 里减了 meta.offset，
+        也就是 item.time 是不含偏移的原始时间；车机拿整首和真实播放位置比，
+        所以推整首时必须 `item.time + offset` 加回去。漏了这条，偏移一开就是满屏对不上。
+    (d) **整首有长度上限。** 车机读的是**一整个** metadata Binder 事务，同一份里还装着封面
+        位图（400×400 ARGB ≈ 640 KB），超了限丢的是整包（连封面一起没）。
+        这里定 MAX_WHOLE_CHARS = 24000（≈ 48 KB UTF-16，两份键共 96 KB，加位图仍在一包里），
+        超限发**空串**而不是截断 —— 截断出来的半截 LRC 车机会照着排，最后一句永远对不上；
+        发空串则退回 LYRICS_LINE，逐句还在走。
+
+    清空策略这里和前作**不一样**，不是谁写错了：
+      · 洛雪那条 smali 路复用同一个 Builder 对象 ⇒ 必须显式 putString("", "") 才洗得掉；
+      · MusicFree 每次发布都 new 一个 Builder（上游 getMediaMetadataCompat() 就是新建的）
+        ⇒ 想要「没有这个键」就不写它，想要「有键但为空」就写空串，两者都洗得掉上一首。
+      本文选「连着且勾着」时重建整份、不写三个 *_URI，断开/关开关时原样交回上游那份。
+
+1.2 封面（连着车机时）
+
+    · 不发布 METADATA_KEY_MEDIA_URI：CarWith 一见 mediaUri 就去扒音频文件内嵌封面，
+      扒不到也不再回落到位图 ⇒ 车机永远空白。
+    · 这一份里已经带到位图时，ART_URI / ALBUM_ART_URI / DISPLAY_ICON_URI **三个一起断**。
+      车机取图优先走 description.getIconUri()，而 iconUri 是这三个键级联出来的，
+      只断一个还有两个顶上。
+    · 一份 metadata 只带**一张**位图：上游同时把同一张图塞进 ALBUM_ART 和 DISPLAY_ICON，
+      两张 400×400 同装是 Binder 超限的头号来源，这里只留 ALBUM_ART。
+    · 全程 Compat → Compat：MediaMetadataCompat 进、MediaMetadataCompat 出，
+      不经 Parcel 往返（前作实测：往返一次 400×400 会被压成 1×1）。
+
+1.3 车机深浅色（设置 → 主题 → 跟随CarWith车机深浅色）
+
+    · 读数：Settings.Global 的 ucar_night_mode，0 浅色 / 1 深色 / 读不到 -1。
+      这个键本就是 CarWith 写给第三方读的，不需要权限，不动清单。
+    · ★ 断开时系统不会把它清零 ⇒ 残值一律不采信：只在 connected 为真时读，
+      断开直接记 -1（代码里 `if (nowConnected) readNight(ctx) else -1`）。
+    · ★ ContentObserver 必须留强引用（挂在字段上）。只存在局部变量里会被 GC 掉，
+      之后系统不再通知，表现是「车机翻灯，手机再也不跟」。
+    · 心跳 5 秒一轮兜底（个别 ROM 不发 onChange），观察者 + 心跳双保险。
+    · 只在**上一次真正应用过**的值翻了才动作（appliedDark 那条判定），不是「本轮开头算一次、
+      结尾再算一次」——那种写法两次现算之间原生状态一变就两边相等，这次翻转谁也报不出去。
+    · ★ 车机深浅色只改内存里的那份主题，**一个字都不写 Config**：断开或关开关后
+      restoreStoredTheme() 就回到用户自己选的档。自定义主题在车机浅色档下临时落到内置浅色。
+
+1.4 连接判据
+
+    同时满足才算连着：
+      1) 手机上有非 DEFAULT_DISPLAY 的虚拟屏，屏名含 com.miui.carlink 或 com.xiaomi.ucar.minimap；
+      2) Display.getType() == 5（虚拟屏）。
+    ★ type 这层必须反射取：getType() 不在公共 android.jar 里，Kotlin 直接引用会
+      Unresolved reference，构建挂在 :app:compileReleaseKotlin；反射被 ROM 拦了就退回只判屏名。
+    ★ 只判屏名会把录屏/投屏/平行视窗的虚拟屏误判成已连接；
+    ★ 屏名里别去匹配 com.autonavi.minimap —— 那是 CarWith 内嵌高德的资源 ID，不是屏名。
+      （check_apk.py / check_apk.ps1 里专门反向断言了这个串不在 dex 里。）
+    任何读数失败一律按「没连着 / 读不到」处理，绝不向调用方抛异常。
+
+1.5 数据来源与能力边界
+
+    · 歌词就是 App 内歌词页那一份：插件 getLyric、自动搜词、本地歌词、歌词偏移全都复用，
+      App 里没词 ⇒ 车机上就是无词，不做第二套取词逻辑。
+    · 只出主行，不带译文（车机一屏一行，带译文会把行高挤掉）。
+    · 熄屏后台可用：逐句靠的是 RNTP 原生定时器发的事件，和状态栏歌词同一条路，
+      上游那条路本来就是熄屏可用的。
+    · 不做标题反推（前作里 lx 那条路要靠曲名去搜词）：MusicFree 的标题就是真曲名，
+      词也是插件给的，没有这一层。
+    · iOS / 鸿蒙上整块不出现：原生模块不存在时 JS 全部空转，设置里两行也不渲染。
+
+
+--------------------------------------------------------------------------------
+二、工具链（Windows）
+--------------------------------------------------------------------------------
+
+  JDK      17（必需）+ JDK 21（可选，Gradle 自己会挑）。
+           ★ RN 0.76 的 gradle 插件给库定了 jvmToolchain(17)。机器上只有 21 时，
+             Gradle 会去 api.foojay.io 拖一个 190 MB 的 OpenJDK17 压缩包 ——
+             实测那条路只有几 KB/s，卡二十分钟不动，日志里一行都不打，
+             看上去像挂死（jstack 一看是 SecureFileDownloader 在读 socket）。
+             直接装个 17 最省事；或者在 %USERPROFILE%\.gradle\gradle.properties 里：
+                 org.gradle.java.installations.auto-download=false
+                 org.gradle.java.installations.paths=<JDK17 路径>,<JDK21 路径>
+  Gradle   8.10+（用仓库的 gradlew.bat 就行；系统 gradle 也可以）
+  Node     20 LTS+，npm 10；node_modules 必须装（改动要写进 node_modules 里的 RNTP）
+  Android  compileSdk 35 / build-tools 35.0.0 / platform 35 / NDK 26.1.10909125 / cmake 3.22.1
+           local.properties 里 sdk.dir 指到位（没有就写一个）
+  Python   3.8+ 跑 rebuild_carwith.py（只用到 pathlib / hashlib / re，无第三方依赖）
+
+  镜像（可选，但直连 Maven Central 很慢时这是唯一能等的办法）：
+    MusicFree 的 root build.gradle 本来就把 aliyun 排在 mavenCentral() 前面，
+    但 node_modules 里各库和 RN 插件注入的仓库仍是 repo1.maven.org（实测 ~75 KB/s，
+    一个 Kotlin 插件阶段能挂 20 分钟）。在 %USERPROFILE%\.gradle\init.d\mirror.gradle 放：
+
+        import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+        def mirror = 'https://maven.aliyun.com/repository/public'
+        def slow = ['repo1.maven.org', 'repo.maven.apache.org',
+                    'maven-central.storage-download.googleapis.com'] as Set
+        def patch = { repos -> repos.all { r ->
+            if (r instanceof MavenArtifactRepository && slow.contains(r.url?.host)) { r.url = mirror }
+        } }
+        settingsEvaluated { s -> patch(s.pluginManagement.repositories)
+                            patch(s.dependencyResolutionManagement.repositories) }
+        allprojects { p -> patch(p.repositories); patch(p.buildscript?.repositories) }
+
+    ★ 是「改 URL」不是「加仓库」：加在后面没用，Gradle 按声明顺序试，先撞上慢的那个。
+    ★ 这一步只影响构建机，不进本文的改动清单，重做产物不受影响。
+
+
+--------------------------------------------------------------------------------
+三、公签
+--------------------------------------------------------------------------------
+
+  本文全部改动都签名用仓库自带的 **android/app/debug.keystore**（Android 标准调试密钥，
+  公开可知、任何人重做都一样）：
+
+      alias            androiddebugkey
+      store/key 密码   android / android
+      证书 SHA-256     fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c
+
+  做法只有一处（改动 B3）：把 signingConfigs.release 那四行 keystoreProperties 换成
+  仓库自带的 debug.keystore。这样：
+      · 不需要 keystore.properties、不需要自己生成密钥库，克隆下来直接能出 release 包；
+      · 重做出来的 APK 与交付 APK 签名一致，可互相覆盖安装；
+      · release 与 debug 同签，装过本包的机器可以直接覆盖本包的 debug 版。
+  代价（装之前要知道）：
+      · applicationId 仍是 fun.upup.musicfree，签名和官方 release 不同 ⇒
+        **手机上装过官方 MusicFree 的要先卸载**，否则 INSTALL_FAILED_UPDATE_INCOMPATIBLE；
+      · 别把本包当正式版分发：公钥是公开的秘密，任何人都能做出同签名的包，
+        覆盖你的安装。自用/研究用，别拿去替换别人的官方 App。
+      · MusicFree 是 **AGPL-3.0**：只自用无所谓，一旦把改后的 APK 给别人（哪怕只发车机群），
+        就要同时提供对应源码 —— 本文 + 负载里的 rebuild_carwith.py 与 5 个新文件 + 上游
+        基线 tarball，正好凑成「对应源码」，随包附上即可，别只丢 APK。
+  验签：
+      keytool -list -v -keystore android\app\debug.keystore -storepass android
+      apksigner verify --print-certs app-arm64-v8a-release.apk
+  ★ debug.keystore 是上游仓库自带的那份（tarball 里就有，sha 不变，本文没动它）；
+    上游原本要你在 android/keystore.properties 里填 RELEASE_STORE_FILE 那一套，
+    B3 之后 release 档不再读它 —— 你本地真有 keystore.properties 也不会被用上，
+    想让 release 用回你自己的密钥，把 B3 的 new 段换回上游四行即可，其余改动不用动。
+
+
+--------------------------------------------------------------------------------
+四、构建
+--------------------------------------------------------------------------------
+
+  1) 取源码（二选一，两条取到的是同一棵树）
+       git clone https://github.com/maotoumao/MusicFree
+       git checkout f82436a7770420f9258b795081120be7cdd5e79c     ← 基线 commit，钉死它
+       （或解基线 tarball：sha256 = f27b9be744f7820977776300ed2a726464fb2daaf3672dfe1bcb648ffbcb84c8。tarball == `git archive` 上面那个 commit 的输出，
+         实测 diff -r 逐文件无差异，所以两者可互换；别 clone 完停在 master 上就打补丁，
+         master 之后每提交一次，锚点命中数就可能变一次）
+  2) 装依赖（**必须先装依赖再打补丁**：CarWithLyric.kt 要写进 node_modules 里）
+       npm install                # 或 npm ci；几百个包，慢的十几分钟
+  3) 打补丁
+       python carwith_out\rebuild_carwith.py  .  ..\MusicFree-CarWith-重做说明.txt
+       期望输出： 锚点替换 35 处（跳过已打 0 处） + 新文件 5 个
+       ★ 重复执行是安全的：锚点已经打过的会 SKIP，不会打第二遍；5 个新文件每次都按负载
+         重写（负载就那一份 sha），所以打两遍和打一遍出来的树是同一份，实测第二遍输出
+         「锚点替换 0 处（跳过已打 35 处）」。
+  4) 构建（在 android 目录里跑，别在外面 —— app/build.gradle 里 getVersion() 读的是
+     相对当前工作目录的 ../package.json，站错位置直接 "No such file or directory"）
+       cd android
+       .\gradlew.bat assembleRelease
+  5) 产物
+       android\app\build\outputs\apk\release\app-arm64-v8a-release.apk
+       bytes = 18185688   sha256 = c896c3548876d979c163e9cbf76a71339f19afa3bc978f5417742e30f49b1446
+       同目录还会有 app-universal-release.apk（四 ABI 全带，29469693 B），
+       本文的交付件和自检期望值都是上面那个 arm64 分包，别比错文件。
+
+  只出 arm64：B1/B2 把 ABI 收到 arm64-v8a（车机全是 arm64，少三个 ABI 少一半构建量）。
+  要恢复上游的四 ABI：把 B1 那行改回 armeabi-v7a,arm64-v8a,x86,x86_64、
+  B2 那行改回 include "armeabi-v7a", "arm64-v8a", "x86", "x86_64" 即可，其余不用动。
+  ★ 注意 B1 只管 reactNativeArchitectures（RN 那几个 .so 编不编），B2 只管 splits 出哪些分包；
+    universal 档两个都不受约束，所以只改 B2 也会出现 universal 带四 ABI 的现象（实测如此）。
+
+  构建期踩坑登记（全是这次实测出来的报错原文，撞到了直接对号入座，别重走）：
+
+    1) `Type mismatch: inferred type is MediaMetadataCompat? but MediaMetadataCompat was
+       expected`（:react-native-track-player:compileReleaseKotlin）
+       —— ExoPlayer 的 MediaSessionConnector.MediaMetadataProvider.getMetadata 签名是**非空**
+       返回，Kotlin SAM 转换会拿可空返回值去对，报的就是这一行。CarWithLyric 里
+       providerMetadata() 因此必须收口成非空（播放器没建好时交 EMPTY_METADATA）。
+    2) `Unresolved reference: id`（CarWithState.kt 枚举虚拟屏那一段）
+       —— android-35 公共桩里 Display 只有 getDisplayId()，**没有 getId()**（javap 实证）；
+       写 `d.id` / `d.getId()` 都会挂。同理 getType() 也不在公共桩里，那一层必须反射。
+    3) `Inconsistent JVM-target compatibility detected for tasks
+       compileReleaseJavaWithJavac (17) and compileReleaseKotlin (21)`
+       —— RN 0.76 的 gradle 插件给库定了 jvmToolchain(17)，而 Gradle daemon 跑在 21 上时
+       Kotlin 侧跟着 daemon 走 21。解法只有一个：让 **daemon 本身跑在 JDK 17**
+       （JAVA_HOME / org.gradle.java.home 指到 17），不要去手改各库的 jvmTarget。
+    4) 构建二十分钟不出一行日志，jstack 里是 SecureFileDownloader 在读 socket
+       —— foojay 在拖 190 MB 的 OpenJDK17。见「二、工具链」。
+    5) `../package.json (No such file or directory)`（app/build.gradle 的 getVersion()）
+       —— 它按**当前工作目录**算相对路径，所以只能在 android/ 里跑，不能用
+         `gradle -p android assembleRelease` 站在仓库根上跑。
+    6) 补丁器在部分机器上报「锚点命中 0 次」
+       —— 十有八九是行尾。上游这棵树里混着 CRLF，实测是这五个：
+         android/app/build.gradle、MainApplication.kt、
+         src/pages/setting/settingTypes/basicSetting.tsx 与 themeSetting/mode.tsx、
+         src/types/core/config.d.ts；其余（gradle.properties、三个 i18n JSON、
+         lyricManager.ts、theme.ts、bootstrap.ts、RNTP 的两个 kt）都是 LF。
+         多行锚点按 LF 写就匹配不上 CRLF 文件。rebuild_carwith.py 已按 CRLF/LF 各试一遍
+         并去重（read_src/write_src 用 newline="" 原样读写，不做行尾转换），
+         自己改锚点时别把这两份合并成一份。
+    7) 补丁打第二遍出现重复插入
+       —— check_edits() 的顺序必须是「先看 new 段在不在 → 在就 SKIP，再看 old 命中几次」，
+         反过来写就会把已经打过的当成没打。想验幂等：连着跑两次，第二次应全是 SKIP
+         （期望输出「跳过已打 35 处」，0 error）。
+
+  运行期踩坑登记（构建是绿的，装车才炸 —— 这种最难查，实证留在下面）：
+
+    8) 现象：什么开关都没勾、也没连车机，本地随便点一首歌就闪退。
+       崩的是 StackOverflowError（主线程），不是歌词键贴错，也不是 Binder 超限。
+       根因（javap 实证，extension-mediasession-2.19.0 的 MediaSessionConnector）：
+           setMediaMetadataProvider() 的字节码是
+               putfield mediaMetadataProvider
+               invokevirtual invalidateMediaSessionMetadata()
+           而 invalidateMediaSessionMetadata() 里
+               invokeinterface MediaMetadataProvider.getMetadata(Player)
+           —— 也就是**设 provider 的那一次调用会当场回调新 provider**，不是「挂上去等以后调」。
+       于是「在 provider 的取数路径里装 provider」就是一帧咬一帧的自我递归：
+           providerMetadata() → 取基值 → 装 provider → 当场回调 providerMetadata() → …
+       两个坑叠在一起才会炸：① 递归本身；② 记账写在调用之后
+           （conn.setMediaMetadataProvider(p); installedProvider = p）——
+           那一次同步回调里 installedProvider 还是 null，「已经装过了」的判断救不了它。
+       三条一起才修好，缺一不可：
+           a) installProvider() 先 installedProvider = provider 再 conn.setMediaMetadataProvider()，
+              挂失败立刻把记账抹掉（下次 publish 重试）；
+           b) provider 的回调（providerMetadata/baseOf）里绝不装 provider，只取基值；
+              另加 insideProvider 闸门兜同类递归；
+           c) publish() 加 dirty 位：从没贴过键（没勾开关、没连过车机）时一次 setMetadata
+              都不发、provider 也不装 —— 门控为假时播放路径上**完全不留适配代码的痕迹**，
+              只有真贴过键才需要那一次「把键洗掉」的重发。
+       ★ 通用教训：凡是「set 一个回调 / provider / listener」的代码，都要先假设它会
+         **当场回调一次**。回调里会再次触发 set 的，记账必须在 set 之前；而且加固用的
+         try/catch 挡不住 StackOverflowError 之外还有一层——它其实能被 catch（Error 也是
+         Throwable），但栈已经快爆了，catch 到的那次只是把崩溃推到更深的递归，别指望它兜底。
+
+  本文**没有**动的东西（前作里有、这里用不上，写清楚免得去找）：
+      · 没有动 minifyEnabled（release 本来就没开 R8）——所以反射拿 private 字段是可行的，
+        但也正因为如此，哪天有人给这个仓库开了 R8/代码混淆，CarWithLyric 的反射会静默失效
+        （表现为「车机永远没歌词」而不是崩）。真要上 R8，至少加：
+            -keepclassmembers class com.doublesymmetry.kotlinaudio.players.BaseAudioPlayer {
+                * mediaSession; * mediaSessionConnector; }
+            -keepclassmembers class com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector {
+                * mediaMetadataProvider; }
+        （本文把这段以「脆弱点」形式登记，不当作改动。）
+      · 没有加任何权限、没有动清单、没有加依赖、没有动 kotlinaudio 的 AAR（它是二进制依赖）。
+
+
+--------------------------------------------------------------------------------
+五、改动清单
+--------------------------------------------------------------------------------
+
+  锚点替换 35 处（rebuild_carwith.py 的 EDITS，一条 = 一个锚点，必须命中一次）：
+
+  B1 abi         android/gradle.properties                                                                                            ABI 收到只留 arm64-v8a（车机侧都是 arm64；少三个 ABI 少一半构建量）
+  B2 splits      android/app/build.gradle                                                                                             splits.abi.include 同步只留 arm64-v8a
+  B3 公签          android/app/build.gradle                                                                                             release 档签名改成仓库自带的 debug.keystore（公签，见三）
+  N1 import      node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt  RNTP MusicService 引 CarWithLyric
+  N2 attach      node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt  播放器建好后挂一次 attach：反射认下 mediaSession / connector（包在 try/catch 里，失败只打一行 log，不许带崩播放器）
+  N3 clear       node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt  清空队列时把歌词键收掉，不让上一首留在会话里（同样包起来）
+  N4 入口方法        node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt  MusicService 新增 setCarWithLyric 入口（转发给 CarWithLyric.update；异常吞掉 + Log.w）
+  N5 JS 方法       node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt    MusicModule 暴露 @ReactMethod setCarWithLyric；服务没绑上就直接丢
+  A1 import      android/app/src/main/java/fun/upup/musicfree/MainApplication.kt                                                      MainApplication 引 CarWithState / CarWithStatePackage
+  A2 package     android/app/src/main/java/fun/upup/musicfree/MainApplication.kt                                                      注册原生模块包
+  A3 init        android/app/src/main/java/fun/upup/musicfree/MainApplication.kt                                                      Application.onCreate 里挂上下文（车机翻灯时可能没开着界面）
+  J1 import      src/core/lyricManager.ts                                                                                             lyricManager 引 carWithLyric
+  J2 逐句          src/core/lyricManager.ts                                                                                             换句那一路：文本真的翻了才重发（整首 + 当前句一起给）
+  J3 换曲          src/core/lyricManager.ts                                                                                             换曲取到词后：整首 + 首句/当前句，两份一起推
+  J4 加载中清空       src/core/lyricManager.ts                                                                                             取词期间收键
+  J5 无词清空        src/core/lyricManager.ts                                                                                             无词时显式给 STATUS=3 并清空整首/当前句
+  J6 import      src/entry/bootstrap/bootstrap.ts                                                                                     bootstrap 引 carWithLyric
+  J7 setup       src/entry/bootstrap/bootstrap.ts                                                                                     lyricManager.setup() 之后挂 CarWith（只推开关位 + 挂监听）
+  T1 setup 拆分    src/core/theme.ts                                                                                                    theme.setup() 拆出 applyStoredTheme()，新增 applyCarWithTheme / restoreStoredTheme（不写 Config）
+  T2 导出          src/core/theme.ts                                                                                                    Theme 对象导出这两个新方法
+  C1 配置键         src/types/core/config.d.ts                                                                                           IAppConfigProperties 加 lyric.showCarWithLyric
+  C2 配置键         src/types/core/config.d.ts                                                                                           IAppConfigProperties 加 theme.followCarWith
+  S1 import      src/pages/setting/settingTypes/basicSetting.tsx                                                                      设置页引 carWithLyric
+  S2 开关值         src/pages/setting/settingTypes/basicSetting.tsx                                                                      读 lyric.showCarWithLyric
+  S3 开关          src/pages/setting/settingTypes/basicSetting.tsx                                                                      新建 openCarWithLyric 开关（走 setLyricEnabled，落 Config + 原生）
+  S4 渲染          src/pages/setting/settingTypes/basicSetting.tsx                                                                      歌词设置里渲染该开关（非 Android 不渲染）
+  M1 import      src/pages/setting/settingTypes/themeSetting/mode.tsx                                                                 主题设置页引 carWithLyric
+  M2 开关值         src/pages/setting/settingTypes/themeSetting/mode.tsx                                                                 读 theme.followCarWith
+  M3 行           src/pages/setting/settingTypes/themeSetting/mode.tsx                                                                 「显示样式」里加「跟随CarWith车机深浅色」一行
+  I18n zh-cn     src/core/i18n/languages/zh-cn.json                                                                                   zh-cn：车机投屏歌词（CarWith）
+  I18n zh-cn theme src/core/i18n/languages/zh-cn.json                                                                                   zh-cn：跟随CarWith车机深浅色
+  I18n zh-tw     src/core/i18n/languages/zh-tw.json                                                                                   zh-tw：車機投屏歌詞（CarWith）
+  I18n zh-tw theme src/core/i18n/languages/zh-tw.json                                                                                   zh-tw：跟隨CarWith車機深淺色
+  I18n en-us     src/core/i18n/languages/en-us.json                                                                                   en-us：Car head-unit lyrics (CarWith)
+  I18n en-us theme src/core/i18n/languages/en-us.json                                                                                   en-us：Follow CarWith night mode
+
+  新增文件 5 个（在本文负载里，restore.py / rebuild_carwith.py 直接按目标路径落盘）：
+
+  android/app/src/main/java/fun/upup/musicfree/carwith/CarWithState.kt                                                 连接判据（虚拟屏名 + Display.getType 反射）+ ucar_night_mode + 心跳 + ContentObserver + JS 门
+  android/app/src/main/java/fun/upup/musicfree/carwith/CarWithStatePackage.kt                                          ReactPackage，照着上游 LyricUtilPackage.kt 抄
+  node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/carwith/CarWithLyric.kt  门控 + 把歌词键贴到 MediaSession 元数据（键名、封面、上限、清空全在这一个文件；provider 只在门控为真时懒装、记账在调用之前，见「四、构建」运行期踩坑 8)）
+  src/native/carWithState/index.ts                                                                                     原生门的 JS 包装（拿不到模块时整体空转）
+  src/core/carWithLyric.ts                                                                                             JS 那一半：开关持久化、整首 LRC 组装（带偏移）、推送、主题跟随判定
+
+  合计 40 处改动，落在 14 个已有文件 + 5 个新文件上。
+
+  数据流（一次换句）：
+
+      ExoPlayer 1s 定时器 → RNTP Event.PlaybackProgressUpdated
+        → lyricManager.setup() 里的进度回调（文本翻了才往下走）
+        → CarWithLyric.pushLyricState(parser, line)        [src/core/carWithLyric.ts]
+        → NativeModules.TrackPlayerModule.setCarWithLyric(whole, line, 0|3)
+        → MusicModule.setCarWithLyric → MusicService.setCarWithLyric
+        → CarWithLyric.update() → publish() → main looper → decorate(base)
+        → MediaSessionCompat.setMetadata(decorated) → CarWith 读 LYRICS_WHOLE 排行
+
+  数据流（连接态/深浅色）：
+
+      DisplayManager 枚举 + 屏名 + getType 反射 + Settings.Global.ucar_night_mode
+        → CarWithState.refresh() → CarWithLyric.setConnected()  （★ 断开时这一步就把键收回来）
+        → JS onCarWithStateChange → applyTheme()（appliedDark 翻了才动主题）
+
+
+--------------------------------------------------------------------------------
+六、验收（不用装车）
+--------------------------------------------------------------------------------
+
+  两个版本，断言同源，任选（Windows 上没有 Python 就用 ps1）：
+
+      python carwith_out\check_apk.py app-arm64-v8a-release.apk
+      powershell -ExecutionPolicy Bypass -File carwith_out\check_apk.ps1 -Apk app-arm64-v8a-release.apk
+
+  py 版九组、ps1 版七组（ps1 少了 [8] 里的 versionCode 断言和 [9] 的 INFO 行，其余一致）：
+    [1] 解包：classes*.dex、assets/index.android.bundle 在不在
+    [2] 四个车机键名（LYRICS_WHOLE / LYRICS_LINE / LYRICS_STATUS / android.media.metadata.LYRICS）
+    [3] ucar_night_mode + 两个屏名 marker，并**反向**断言 com.autonavi.minimap 不在 dex 里
+    [4] 类名/方法名/事件名（CarWithLyric、CarWithState、CarWithStateModule、
+        setCarWithLyric、setLyricEnabled、setFollowTheme、onCarWithStateChange）
+        + 七条「加固提示串」（attach/clearLyric/update/publish/provider/setConnected/
+        setEnabled 那七句 Log 文案）—— 它们在，才证明「适配出错不许冒到播放路径」真的进了包
+    [5] JS 侧配置键（lyric.showCarWithLyric / theme.followCarWith / 两条 i18n key）
+    [6] 中英文文案（zh-cn / zh-tw / en-us 四条整串，不是片段）
+    [7] apksigner：签名有效 + 证书就是公签那把
+    [8] aapt2 badging：applicationId、versionCode/Name、native-code 只有 arm64-v8a
+    [9] 内部产物 sha256（按长度挑出最大的那个 dex + bundle；三个 dex 的全量值在「八」）
+
+  ★ 字符串编码 —— 这一条前作帮不上忙，照抄必错，实测结论：
+      · classes*.dex 里是 MUTF-8 ⇒ 键名、类名、方法名按 UTF-8 找，一次命中。
+      · assets/index.android.bundle 是 Hermes 字节码，它的字符串表**按字符集分档**：
+        纯 ASCII 的串存 UTF-8，**含任何非 ASCII 的串存 UTF-16LE**。
+        ⇒ 配置键（ASCII）按 UTF-8 找，中文文案必须按 UTF-16LE 找。
+        这次第一版探针全按 UTF-8 写，结果凡是含中文的 needle 一律 FAIL、纯 ASCII 的照常
+        PASS（实测口径：`车机投屏歌词（CarWith）` UTF-8 无 / UTF-16LE 有；
+        `Car head-unit lyrics (CarWith)` 反过来）；改成两段式后全 PASS。
+        py/ps1 现在都是「同一 needle 先试 UTF-8 再试 UTF-16LE，命中就报口径」。
+      · 本文没加任何 Android 资源字符串（strings.xml 一行没动），所以不涉及
+        resources.arsc 那套；前作里的 arsc 补丁在本文**没有对应物**。
+      （ps1 用 Latin1 把整个文件读成「一字节一字符」的串再 IndexOf，等价于精确的
+        子节匹配，比逐字节循环快两个数量级；py 直接对 bytes 做 `in`。）
+  ★ 本文的实跑验证环境是 Linux 构建沙箱，里面没有 PowerShell，所以「九组全 PASS」那份
+    输出是 check_apk.py 跑出来的（见下面期望值）；ps1 是同一套断言的逐条移植，
+    两边的 needle 与期望值一致。在 Windows 上跑出差异时以 py 为准，并核对 [6] 的口径列。
+
+  本地跑一遍的期望值（本文生成时实测，app-arm64-v8a-release.apk）：
+      ALL PASS   sha256=c896c3548876d979c163e9cbf76a71339f19afa3bc978f5417742e30f49b1446   bytes=18185688
+      versionCode=400011 versionName=0.6.2 / native-code: 'arm64-v8a' / 包名 fun.upup.musicfree
+      classes.dex            bytes 8996740  sha256 9203be8604e46c28b05c0cc21bc42a60cda35a725c879a3088d063b93307cb01
+      index.android.bundle   bytes 3967616  sha256 af6475c530f4a0a8dd19394a6ec851b04b068db20a3e3268cb44eae686127e30
+
+  装上之后「一点播放就闪」怎么查（按这三步分诊，别猜）：
+
+      adb logcat -b crash -d > crash.txt                       ← 先看这段，最值钱
+      adb logcat -d | grep -B2 -A40 "FATAL EXCEPTION"
+      adb logcat -s CarWithLyric:W CarWithState:W AndroidRuntime:E ReactNative:V
+
+      另外手机里还有一份 JS 侧日志：
+      Android/data/fun.upup.musicfree/files/logs/error-log-*.log
+      （MusicFree 在 bootstrap 末尾挂了 ErrorUtils.setGlobalHandler，JS 报错只写这个文件、
+        不会闪退 ⇒ 闪退基本等于 Java 侧，先查 crash buffer，查 error-log 是浪费时间。）
+
+      a) 从没勾过「车机投屏歌词」、也没连车机：这一版在播放路径上**连一行都不该跑**——
+         门控为假时 publish() 在 dirty 那一位就早退，不装 provider、不碰 connector、
+         不发 setMetadata；MusicService 里剩的 attach() / clearLyric() / update() 三处
+         也都包在 try/catch 里、失败只打一行 Log.w("CarWithLyric")。
+         ⇒ 期望现象就是「CarWithLyric:W CarWithState:W 一行都没有」；这种情况还闪，
+           与本文无关，去比官方包（同一个 0.6.2），别在适配代码里找。
+         ★ 上一版（v1/v2）在这条上是**真闪**的：attach() 走的 force 分支无条件装 provider，
+           撞上了「四、构建」运行期踩坑 8) 的递归，把主线程栈打爆。所以「开关没勾也闪」在这一版
+           是已修项，不是「不该再出现但先怀疑官方包」。
+      b) 勾了开关、连着车机才闪：先看 crash.txt 里是不是 TransactionTooLargeException
+         （整首 + 封面装一整个 Binder 事务，本文上限 24000 字符，见 1.1(d)）或者 ANR；
+         再确认不是 StackOverflowError —— 那就是有「回调里再 set 回调」的路径没走
+         insideProvider/installProvider 的规矩，照「四、构建」运行期踩坑 8) 逐条查。
+      c) logcat 里出现「…（已忽略，不影响播放）」「publish 跳过」「provider 跳过」
+         「provider 装不上」这类行 ⇒ 适配没生效但没崩，那是功能问题，按「一、功能」
+         逐条回看，不用查崩溃；这几行本来就是给「崩不了但可能不干活」留的哨兵。
+
+
+--------------------------------------------------------------------------------
+七、自检（重做一致性）
+--------------------------------------------------------------------------------
+
+  本文承诺的是「照做能做出同一个 APK」，不是「大概是这个」。核对方法：
+
+      1) 取 pristine（二选一，实测两者逐文件一致）
+         a. `git archive` 基线 commit：
+              git clone https://github.com/maotoumao/MusicFree && cd MusicFree
+              git checkout f82436a7770420f9258b795081120be7cdd5e79c
+              （要和 tarball 一样只留工作树：git archive HEAD | tar x）
+         b. 解出 tarball（sha256 = f27b9be744f7820977776300ed2a726464fb2daaf3672dfe1bcb648ffbcb84c8，7020351 B）
+         这一步是本文能被公开复现的关键：commit id 钉住了，谁都能取到同一棵树，
+         不必依赖我手上那个 tarball 文件。
+      2) pristine 里 npm install（node_modules 里的 RNTP 必须是 4.1.1，
+         即 package.json 里 "^4.1.1" 实际解析到的那份；解析到别的版本就别谈一致性）
+      3) python carwith_out\rebuild_carwith.py  pristine  本文.txt
+         期望「锚点替换 35 处（跳过已打 0 处）+ 新文件 5 个」；
+         同一条命令**再跑一遍**应变成「锚点替换 0 处（跳过已打 35 处）」——
+         这一步同时验了幂等，跑第二遍时若出现任何 FAIL 就是锚点被改坏了。
+      4) 和交付树逐文件比：本文 40 处改动涉及的 19 个文件（14 个已有 + 5 个新增）应全部一致
+      5) cd pristine\android && .\gradlew.bat assembleRelease
+         先比**内容**再比包：app-arm64-v8a-release.apk 里 classes*.dex 与 assets/index.android.bundle
+         的 sha256 必须分别等于「八、登记值」里那四个。取值命令（Linux/macOS）：
+             for n in classes.dex classes2.dex classes3.dex assets/index.android.bundle; do
+                 echo -n "$n  "; unzip -p app-arm64-v8a-release.apk $n | sha256sum; done
+         Windows 上用 7-Zip 解出这四个文件再 Get-FileHash；check_apk.py 的 [9] 只顺手打
+         「最大的那个 dex + bundle」两条，不够核全部四个。
+         APK 整体 sha256 = c896c3548876d979c163e9cbf76a71339f19afa3bc978f5417742e30f49b1446 只在同机、同 SDK、同一天重打时才会完全相等。
+
+  6) 这份改动另有 git 形态（不是必需，只是方便往 GitHub 上同步）：
+         基线 commit 上开分支，按「一、功能」的语义分 6 个提交（构建档 / 原生模块 /
+         RNTP 补丁与落地脚本 / JS 推送 / 设置与文案 / 文档与校验脚本），
+         node_modules 里那 5 个锚点 + 新增的 CarWithLyric.kt 做成
+         `patches/react-native-track-player+4.1.1.patch`（patch-package 命名与格式），
+         由 `carwith/tools/apply-rntp-carwith.js` 在装完依赖后落地——脚本按 sha256 认
+         「基线 / 已打 / 漂移」三态，幂等，漂移就 FAIL 退出 1，绝不半打进去。
+       ★ 用 `git am` 贴这种补丁系列**必须带 --keep-cr**：上游那五个 CRLF 文件
+         （android/app/build.gradle、MainApplication.kt、basicSetting.tsx、
+         themeSetting/mode.tsx、src/types/core/config.d.ts）的上下文行尾带 ，
+         默认的 git am 会把  当邮件格式吃掉，第一个补丁直接
+         「error: android/app/build.gradle: patch does not apply」。
+         加 --keep-cr 后六个补丁全绿，且两个分支的 tree 对象哈希
+         （`git rev-parse <branch>^` 再取 tree）完全相同（实测）。git apply / git checkout 没这个坑，只有 git am 有。
+       验证过：从分支重打 release，三个 dex 与 Hermes bundle 的 sha256 与「八」里那四个
+       **逐字相同**，整包 sha256 只因 zip 条目时间与签名块时间戳不同而不同（属正常）。
+
+  ★ 为什么第 5 步不等于 APK 逐字节：RN 的 dex/Hermes 产物不带时间戳，可复现；
+    但 zip 条目时间、签名块里的时间戳和 SDK build-tools 小版本会让整包字节不同。
+    所以「逐字节一致」的正确说法是：**内部产物逐字节一致**，整包 sha256 是同环境附加指标。
+  ★ pristine 与交付树比对时记得排除 node_modules 里 RNTP 之外的一切（npm 解析出来的
+    别的库本文一行没动），以及 android/local.properties、build/、.gradle/。
+
+  上面 1)–4) 这条链，本文生成时已经在构建沙箱里照着走通一遍（不是设想，是跑过的）：
+      本文.txt --restore.py--> 8 个负载文件（bytes/sha256 全对）
+               --取出的 rebuild_carwith.py--> pristine 的 14 个文件：35 处全中、5 个新文件落盘
+               --比对--> 19 个文件与出包那棵树逐字节相同（14/14 + 5/5）
+               --再跑一遍--> 0 替换 / 35 跳过
+  第 5 步（重打包）也在同一棵出包的树上跑过：BUILD SUCCESSFUL，产物就是「八」里那个 sha256。
+  换个机器重做时唯一要先确认的是 npm 解析出来的 RNTP 仍是 4.1.1 —— 不是的话锚点会 FAIL，
+  那是版本差异，不是本文的锚点写错了。
+
+
+--------------------------------------------------------------------------------
+八、登记值
+--------------------------------------------------------------------------------
+
+  交付 APK          app-arm64-v8a-release.apk
+      bytes    18185688
+      sha256   c896c3548876d979c163e9cbf76a71339f19afa3bc978f5417742e30f49b1446
+  同批的 universal 包（四 ABI，仅供对照，不是交付件）
+      bytes    29469693
+      sha256   ea6a9aa76044af13acc7a269fea90b5b6b086a711cf16ae2ffb350fe8ab05dc6
+
+  APK 内部产物（重做一致性看这四个：三个 dex + 一个 bundle，解包后单独算）
+      classes.dex                    bytes 8996740    sha256 9203be8604e46c28b05c0cc21bc42a60cda35a725c879a3088d063b93307cb01
+      classes2.dex                   bytes 8797720   sha256 8797cb016b111afbd1513602b444f8e0169040baee7660ae66921eacf8754b34
+      classes3.dex                   bytes 7446256   sha256 a4dc311ca3acae23b8b218190a55de85d9c42da0809f63eea276011055051011
+      assets/index.android.bundle    bytes 3967616   sha256 af6475c530f4a0a8dd19394a6ec851b04b068db20a3e3268cb44eae686127e30
+
+  签名           apksigner verify --print-certs → 证书 SHA-256
+                 fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c
+                 （CN=Android Debug，即仓库自带 android/app/debug.keystore，见三）
+
+  负载文件（restore.py 落盘时就按这个校验，bytes/sha 都是 UTF-8、LF 口径）
+
+      rebuild_carwith.py                                                                                                   bytes   22227  sha256 298385e574853e6b
+      check_apk.py                                                                                                         bytes    7310  sha256 7a2caab735076b6c
+      check_apk.ps1                                                                                                        bytes    6734  sha256 04bf53893ed42c1f
+      android/app/src/main/java/fun/upup/musicfree/carwith/CarWithState.kt                                                 bytes   11788  sha256 426a0f55adea2174
+      android/app/src/main/java/fun/upup/musicfree/carwith/CarWithStatePackage.kt                                          bytes     688  sha256 7f884783d1c6a394
+      node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/carwith/CarWithLyric.kt  bytes   18626  sha256 b6fcfbf8f2c976f1
+      src/native/carWithState/index.ts                                                                                     bytes    2867  sha256 6db4a5372e570320
+      src/core/carWithLyric.ts                                                                                             bytes    6776  sha256 3a0713d424eaa66a
+
+  上游基线
+      MusicFree commit    f82436a7770420f9258b795081120be7cdd5e79c   （= 下面 tarball 那棵树）
+      MusicFree tarball   sha256 f27b9be744f7820977776300ed2a726464fb2daaf3672dfe1bcb648ffbcb84c8   bytes 7020351
+      react-native-track-player  4.1.1（node_modules，改动 N1–N5 落在这里）
+          npm 上那个包解出来，两个被改的文件基线必须是：
+              MusicService.kt  sha256 1dcc1bb6b05ccce802c24b4e0945e565ceeed288e2b84b561a9570e3a699ada7
+              MusicModule.kt   sha256 be0de3b03f164def4a4c42bd793babd75cf3aa18af1fef76abc42ef6864a808b
+          （N1–N5 五个锚点、含新增 CarWithLyric.kt 也单独做成了一份
+            patches/react-native-track-player+4.1.1.patch，git 形态交付时用，见七）
+      react-native-kotlin-audio  2.1.0（AAR 二进制，本文一行没动）
+      RN 0.76.5 / newArchEnabled=false / hermesEnabled=true / minifyEnabled=false
+
+
+--------------------------------------------------------------------------------
+九、装车复验点（只有真车能给的答案）
+--------------------------------------------------------------------------------
+
+  0) 先卸载官方 MusicFree（签名不同装不上，见三），再装本包。
+     ★ 下面这 10 条**一条都没在真车上跑过**：手边没有 CarWith 车机，本文的验证做到
+       「编译通过 + APK 九组断言 ALL PASS + 源码级逐条对照 CarWith 契约」为止，
+       车机侧行为全部是前四份文档（真车实测）的结论。装上去任何一条对不上，
+       按条目回本文「一、功能」找是哪条规矩没落地，别先改车机侧读法。
+  1) 连上 CarWith → 播放任意带词的歌：车机歌词页应逐行跟随，误差与手机内歌词页一致。
+  2) 换一首**无词**的歌：车机要显示「暂无歌词」，不能停在上一首最后一句。
+     再换回有词的：要立刻有词（LYRICS_STATUS 从 3 翻回 0）。
+  3) 换一首超长歌词（> 24000 字符）：车机应走「当前句」而不是满屏乱行；封面仍在。
+  4) 封面：连着车机时车机封面应是 App 里那张（不是从音频文件扒的），
+     熄屏/锁屏的媒体卡片封面也要正常（那是 kotlinaudio 自己那份，本文没改）。
+  5) 歌词偏移：在手机端把偏移拉 ±5 s，车机整首要跟着偏（这条最容易漏，见 1.1(c)）。
+  6) 后台熄屏 10 分钟再亮屏：歌词还在跟（靠 RNTP 原生定时器）。
+  7) 车机切深色/浅色：手机主题应在 5 秒内跟着翻；**断开后回到用户自己那档**，
+     且 Config 里 theme.selectedTheme 不应被车机改掉（设置页仍然显示用户原来的选择）。
+  8) 关掉「车机投屏歌词」：车机歌词当场收掉；再打开：下一句就回来。
+  9) 全程不连车机（普通使用）：手机内歌词页、状态栏歌词、通知栏、锁屏卡片与上游一致；
+     并且**本地随便点一首歌不许闪退**（v1/v2 在这条上会 StackOverflowError，
+     根因与修法见「四、构建」末尾运行期踩坑 8)，v3 起已修）；
+     「没勾开关时连读数都不做」这条可以用 logcat 反向验：
+         adb logcat -s CarWithLyric:W CarWithState:W   应当一行都没有
+     （本文不打进度日志，只有适配代码自己失败时才打一行 Log.w；真出现
+       「…（已忽略，不影响播放）」就是适配没生效但没崩，按「六、验收」末尾三步分诊走。）
+ 10) 断连再连：连上的那一刻就该有当前句（本文在连接态翻回 true 时会把最后一份原样补推）。
+
+================================================================================
+（完 —— 下面开始是 @@@FILE 负载，restore.py 从这里取）
+================================================================================
+
+
+
+下面是 restore.py 的全部内容，存成 restore.py（和本文放一起最省事）。
+它只干一件事：把 @@@FILE 负载按登记的 bytes/sha256 校验后落成文件。
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""python restore.py <本文.txt> [输出目录]   默认 ./carwith_out"""
+import hashlib, re, sys
+from pathlib import Path
+
+doc = Path(sys.argv[1]).read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+out = Path(sys.argv[2] if len(sys.argv) > 2 else "carwith_out")
+FENCE = "@" * 3 + "FILE"
+END = "@" * 3 + "ENDFILE"
+pat = re.compile(FENCE + r" (\S+) \| bytes=(\d+) \| sha256=(\w{16})\n(.*?)\n" + END, re.S)
+
+n = 0
+for rel, size, sha, body in pat.findall(doc):
+    raw = body.encode("utf-8")
+    if len(raw) != int(size) or hashlib.sha256(raw).hexdigest()[:16] != sha:
+        sys.exit("FAIL %s：bytes/sha256 对不上（传输过程被改过了）" % rel)
+    dst = out / rel
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    with dst.open("wb") as f:
+        f.write(raw)
+    print("OK   %7d  %s" % (len(raw), rel))
+    n += 1
+print("%d 个文件 -> %s" % (n, out.resolve()))
+if n == 0:
+    sys.exit("没找到负载：确认本文是完整的那份（文末应有 @@@FILE）")
+```
+
+
+@@@FILE rebuild_carwith.py | bytes=22227 | sha256=298385e574853e6b
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+MusicFree v0.6.2 适配 CarWith 车机歌词 / 车机深浅色 —— 重做脚本
+
+用法（在仓库根目录的**上层**，即 <repo>/MusicFree 之外都行）：
+    python rebuild_carwith.py <仓库根目录> <重做说明.txt>
+    python rebuild_carwith.py ./MusicFree ./MusicFree-CarWith-重做说明.txt
+
+做两件事：
+  1) EDITS：按锚点做精确字符串替换（锚点必须命中一次；已经打过的会 SKIP 而不是打两遍）
+  2) NEWFILES：从说明 txt 的 @@@FILE 负载里取出新文件，校验 bytes+sha256 后写入
+     （两处数量都由脚本自己算，跑完最后一行会给；本改版实测 35 + 5）
+
+任何一步失败就整体不写盘（先全部试算，再落盘），并且打印失败的锚点名。
+"""
+
+import hashlib
+import re
+import sys
+from pathlib import Path
+
+# ---------------------------------------------------------------- 负载格式
+FENCE = "@" * 3 + "FILE"
+ENDFENCE = "@" * 3 + "ENDFILE"
+BLOCK_RE = re.compile(
+    FENCE + r" (\S+) \| bytes=(\d+) \| sha256=(\w{16})\n(.*?)\n" + ENDFENCE,
+    re.S,
+)
+
+
+def load_payload(doc_path: Path):
+    # utf-8-sig：文档带 BOM 也能读；记事本另存成 CRLF 时负载先归回 LF 再校验
+    text = doc_path.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+    out = {}
+    for rel, size, sha, body in BLOCK_RE.findall(text):
+        raw = body.encode("utf-8")
+        if len(raw) != int(size):
+            raise SystemExit(
+                "负载 %s 字节数不符：文档 %s，实际 %d" % (rel, size, len(raw))
+            )
+        if hashlib.sha256(raw).hexdigest()[:16] != sha:
+            raise SystemExit("负载 %s sha256 不符" % rel)
+        out[rel] = body
+    return out
+
+
+# ---------------------------------------------------------------- 新文件
+# 说明 txt 里 @@@FILE 的相对路径就是仓库里的目标路径
+NEWFILES = [
+    "android/app/src/main/java/fun/upup/musicfree/carwith/CarWithState.kt",
+    "android/app/src/main/java/fun/upup/musicfree/carwith/CarWithStatePackage.kt",
+    "node_modules/react-native-track-player/android/src/main/java/"
+    "com/doublesymmetry/trackplayer/carwith/CarWithLyric.kt",
+    "src/native/carWithState/index.ts",
+    "src/core/carWithLyric.ts",
+]
+
+# ---------------------------------------------------------------- 锚点替换
+RNSTP = ("node_modules/react-native-track-player/android/src/main/java/"
+         "com/doublesymmetry/trackplayer")
+
+# (标号, 相对路径, 旧, 新)
+EDITS = [
+    # === 构建：只出 arm64，公签 ===================================================
+    (
+        "B1 abi",
+        "android/gradle.properties",
+        "reactNativeArchitectures=armeabi-v7a,arm64-v8a,x86,x86_64",
+        "reactNativeArchitectures=arm64-v8a",
+    ),
+    (
+        "B2 splits",
+        "android/app/build.gradle",
+        '                include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"',
+        '                include "arm64-v8a"',
+    ),
+    (
+        # release 档改成仓库自带的公共调试签：没有 keystore.properties 也能构建，
+        # 而且任何人重做出来签名一致（可以和 debug 包互相覆盖安装）
+        "B3 公签",
+        "android/app/build.gradle",
+        """         release {
+            storeFile file(keystoreProperties['RELEASE_STORE_FILE'])
+            storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
+            keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
+            keyPassword keystoreProperties['RELEASE_KEY_PASSWORD']
+        }""",
+        """         release {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }""",
+    ),
+
+    # === RNTP：MusicService ========================================================
+    (
+        "N1 import",
+        RNSTP + "/service/MusicService.kt",
+        "import com.doublesymmetry.trackplayer.extensions.asLibState",
+        "import com.doublesymmetry.trackplayer.carwith.CarWithLyric\n"
+        "import com.doublesymmetry.trackplayer.extensions.asLibState",
+    ),
+    (
+        "N2 attach",
+        RNSTP + "/service/MusicService.kt",
+        """        player = QueuedAudioPlayer(this@MusicService, playerConfig, bufferConfig, cacheConfig)
+        player.automaticallyUpdateNotificationMetadata = automaticallyUpdateNotificationMetadata""",
+        """        player = QueuedAudioPlayer(this@MusicService, playerConfig, bufferConfig, cacheConfig)
+        player.automaticallyUpdateNotificationMetadata = automaticallyUpdateNotificationMetadata
+        // CarWith：反射拿 mediaSession / connector，只认得这个播放器，不换宿主
+        // ★ 包起来：适配代码里任何失败都不许把播放器的创建带崩
+        try {
+            CarWithLyric.attach(player)
+        } catch (t: Throwable) {
+            android.util.Log.w("CarWithLyric", "attach 失败（已忽略，不影响播放）", t)
+        }""",
+    ),
+    (
+        "N3 clear",
+        RNSTP + "/service/MusicService.kt",
+        """    @MainThread
+    fun clear() {
+        player.clear()
+    }""",
+        """    @MainThread
+    fun clear() {
+        player.clear()
+        try {
+            CarWithLyric.clearLyric()
+        } catch (t: Throwable) {
+            android.util.Log.w("CarWithLyric", "clearLyric 失败（已忽略，不影响播放）", t)
+        }
+    }""",
+    ),
+    (
+        "N4 入口方法",
+        RNSTP + "/service/MusicService.kt",
+        """    @MainThread
+    fun clearNotificationMetadata() {
+        player.notificationManager.hideNotification()
+    }""",
+        """    @MainThread
+    fun clearNotificationMetadata() {
+        player.notificationManager.hideNotification()
+    }
+
+    @MainThread
+    fun setCarWithLyric(whole: String?, line: String?, status: Int) {
+        try {
+            CarWithLyric.update(whole, line, status)
+        } catch (t: Throwable) {
+            android.util.Log.w("CarWithLyric", "update 失败（已忽略，不影响播放）", t)
+        }
+    }""",
+    ),
+
+    # === RNTP：MusicModule（JS 的入口） ============================================
+    (
+        # 这条路每秒最多走一次，不带 Promise：服务没绑上就直接丢，下一句还会再来
+        "N5 JS 方法",
+        RNSTP + "/module/MusicModule.kt",
+        '''    @ReactMethod
+    fun updateNowPlayingMetadata(map: ReadableMap?, callback: Promise) = scope.launch {''',
+        '''    @ReactMethod
+    fun setCarWithLyric(whole: String?, line: String?, status: Int) {
+        if (!::musicService.isInitialized) return
+        musicService.setCarWithLyric(whole, line, status)
+    }
+
+    @ReactMethod
+    fun updateNowPlayingMetadata(map: ReadableMap?, callback: Promise) = scope.launch {''',
+    ),
+
+    # === app：注册原生模块 =========================================================
+    (
+        "A1 import",
+        "android/app/src/main/java/fun/upup/musicfree/MainApplication.kt",
+        "import `fun`.upup.musicfree.lyricUtil.LyricUtilPackage",
+        "import `fun`.upup.musicfree.carwith.CarWithState\n"
+        "import `fun`.upup.musicfree.carwith.CarWithStatePackage\n"
+        "import `fun`.upup.musicfree.lyricUtil.LyricUtilPackage",
+    ),
+    (
+        "A2 package",
+        "android/app/src/main/java/fun/upup/musicfree/MainApplication.kt",
+        "              add(LyricUtilPackage())",
+        "              add(LyricUtilPackage())\n              add(CarWithStatePackage())",
+    ),
+    (
+        "A3 init",
+        "android/app/src/main/java/fun/upup/musicfree/MainApplication.kt",
+        """    super.onCreate()
+    SoLoader.init(this, OpenSourceMergedSoMapping)""",
+        """    super.onCreate()
+    SoLoader.init(this, OpenSourceMergedSoMapping)
+    // CarWith：车机翻深浅色时用户可能根本没开着界面，观察者必须在 Application 挂上
+    CarWithState.init(this)""",
+    ),
+
+    # === JS：歌词数据源 ============================================================
+    (
+        "J1 import",
+        "src/core/lyricManager.ts",
+        'import CryptoJs from "crypto-js";',
+        'import CarWithLyric from "@/core/carWithLyric";\nimport CryptoJs from "crypto-js";',
+    ),
+    (
+        # 换句：这一路每秒最多一次，且只在文本真的翻了才重发（上游的 if 已经保证了）
+        "J2 逐句",
+        "src/core/lyricManager.ts",
+        """            if (currentLyricItem?.lrc !== newLyricItem?.lrc) {
+                // 更新当前歌词状态
+                getDefaultStore().set(currentLyricItemAtom, newLyricItem ?? null);""",
+        """            if (currentLyricItem?.lrc !== newLyricItem?.lrc) {
+                // 更新当前歌词状态
+                getDefaultStore().set(currentLyricItemAtom, newLyricItem ?? null);
+                // CarWith：逐句重发（整首走缓存，原样再推一次是必须的）
+                CarWithLyric.pushLyricState(parser, newLyricItem?.lrc ?? "");""",
+    ),
+    (
+        "J3 换曲",
+        "src/core/lyricManager.ts",
+        """            const currentLyric = ignoreProgress ? (this.lyricParser.getLyricItems()?.[0] ?? null) : this.lyricParser.getPosition((await this.trackPlayer.getProgress()).position);
+            getDefaultStore().set(currentLyricItemAtom, currentLyric || null);""",
+        """            const currentLyric = ignoreProgress ? (this.lyricParser.getLyricItems()?.[0] ?? null) : this.lyricParser.getPosition((await this.trackPlayer.getProgress()).position);
+            getDefaultStore().set(currentLyricItemAtom, currentLyric || null);
+            // CarWith：换曲推「整首 + 当前句」，两份一起给，不会出现新歌配旧整首
+            CarWithLyric.pushLyricState(this.lyricParser, currentLyric?.lrc ?? "");""",
+    ),
+    (
+        "J4 加载中清空",
+        "src/core/lyricManager.ts",
+        """        getDefaultStore().set(currentLyricItemAtom, null);
+    }
+
+    private setLyricAsNoLyricState() {""",
+        """        getDefaultStore().set(currentLyricItemAtom, null);
+        // CarWith：取词期间也要收，否则车机停在上一首最后一句
+        CarWithLyric.pushLyricState(null, "");
+    }
+
+    private setLyricAsNoLyricState() {""",
+    ),
+    (
+        "J5 无词清空",
+        "src/core/lyricManager.ts",
+        """        getDefaultStore().set(currentLyricItemAtom, null);
+        if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
+            const musicItem = this.trackPlayer.currentMusic;""",
+        """        getDefaultStore().set(currentLyricItemAtom, null);
+        // CarWith：STATUS 要显式给「无词」，不能留着上一首的整首
+        CarWithLyric.pushLyricState(null, "");
+        if (this.appConfig.getConfig("lyric.showStatusBarLyric")) {
+            const musicItem = this.trackPlayer.currentMusic;""",
+    ),
+
+    # === JS：启动挂上 =============================================================
+    (
+        "J6 import",
+        "src/entry/bootstrap/bootstrap.ts",
+        'import Config from "@/core/appConfig";',
+        'import Config from "@/core/appConfig";\nimport CarWithLyric from "@/core/carWithLyric";',
+    ),
+    (
+        "J7 setup",
+        "src/entry/bootstrap/bootstrap.ts",
+        """    await lyricManager.setup();
+
+    logger?.mark("歌词初始化完成");""",
+        """    await lyricManager.setup();
+    // CarWith：必须在 lyricManager 之后 —— 这里只推开关位、挂监听，不抢歌词首帧
+    CarWithLyric.setup();
+
+    logger?.mark("歌词初始化完成");""",
+    ),
+
+    # === JS：主题 ================================================================
+    (
+        "T1 setup 拆分",
+        "src/core/theme.ts",
+        """function setup() {
+    const currentTheme = Config.getConfig("theme.selectedTheme") ?? "p-dark";
+
+    if (currentTheme === "p-dark") {
+        themeStore.setValue(darkTheme);
+    } else if (currentTheme === "p-light") {
+        themeStore.setValue(lightTheme);
+    } else {
+        themeStore.setValue({
+            id: currentTheme,
+            dark: true,
+            // @ts-ignore
+            colors:
+                (Config.getConfig("theme.colors") as CustomizedColors) ??
+                darkTheme.colors,
+        });
+    }
+
+    const bgUrl""",
+        """/** 把 Config 里用户自己那档主题装进 store；CarWith 还原主题时走的也是这一份 */
+function applyStoredTheme() {
+    const currentTheme = Config.getConfig("theme.selectedTheme") ?? "p-dark";
+
+    if (currentTheme === "p-dark") {
+        themeStore.setValue(darkTheme);
+    } else if (currentTheme === "p-light") {
+        themeStore.setValue(lightTheme);
+    } else {
+        themeStore.setValue({
+            id: currentTheme,
+            dark: true,
+            // @ts-ignore
+            colors:
+                (Config.getConfig("theme.colors") as CustomizedColors) ??
+                darkTheme.colors,
+        });
+    }
+}
+
+/**
+ * CarWith 车机深浅色：只改内存里的那份主题，**一个字都不写 Config**。
+ * 断开或者关掉跟随后 restoreStoredTheme() 就回到用户自己选的档。
+ * 自定义主题（既不是 p-dark 也不是 p-light）在车机浅色档下会临时落到内置浅色。
+ */
+function applyCarWithTheme(dark: boolean) {
+    themeStore.setValue(dark ? darkTheme : lightTheme);
+}
+
+function restoreStoredTheme() {
+    applyStoredTheme();
+}
+
+function setup() {
+    applyStoredTheme();
+
+    const bgUrl""",
+    ),
+    (
+        "T2 导出",
+        "src/core/theme.ts",
+        """const Theme = {
+    setup,
+    setTheme,""",
+        """const Theme = {
+    setup,
+    applyCarWithTheme,
+    restoreStoredTheme,
+    setTheme,""",
+    ),
+    (
+        "C1 配置键",
+        "src/types/core/config.d.ts",
+        '    "lyric.autoSearchLyric": boolean;',
+        '    "lyric.autoSearchLyric": boolean;\n    "lyric.showCarWithLyric": boolean;',
+    ),
+    (
+        "C2 配置键",
+        "src/types/core/config.d.ts",
+        '    "theme.followSystem": boolean;',
+        '    "theme.followSystem": boolean;\n    "theme.followCarWith": boolean;',
+    ),
+
+    # === JS：设置页 ===============================================================
+    (
+        "S1 import",
+        "src/pages/setting/settingTypes/basicSetting.tsx",
+        "import { useI18N } from \"@/core/i18n\";",
+        "import { useI18N } from \"@/core/i18n\";\nimport CarWithLyric from \"@/core/carWithLyric\";",
+    ),
+    (
+        "S2 开关值",
+        "src/pages/setting/settingTypes/basicSetting.tsx",
+        '    const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");',
+        '    const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");\n'
+        '    const showCarWithLyric = useAppConfig("lyric.showCarWithLyric");',
+    ),
+    (
+        "S3 开关",
+        "src/pages/setting/settingTypes/basicSetting.tsx",
+        """    const openStatusBarLyric = createSwitch(""",
+        """    const openCarWithLyric = createSwitch(
+        t("basicSettings.lyric.showCarWithLyric"),
+        "lyric.showCarWithLyric",
+        showCarWithLyric ?? false,
+        newValue => {
+            CarWithLyric.setLyricEnabled(newValue);
+        },
+    );
+
+    const openStatusBarLyric = createSwitch(""",
+    ),
+    (
+        "S4 渲染",
+        "src/pages/setting/settingTypes/basicSetting.tsx",
+        """            <ListItem
+                withHorizontalPadding
+                heightType="small"
+                onPress={openStatusBarLyric.onPress}>""",
+        """            {CarWithLyric.isSupported() ? (
+                <ListItem
+                    withHorizontalPadding
+                    heightType="small"
+                    onPress={openCarWithLyric.onPress}>
+                    <ListItem.Content title={openCarWithLyric.title} />
+                    {openCarWithLyric.right}
+                </ListItem>
+            ) : null}
+            <ListItem
+                withHorizontalPadding
+                heightType="small"
+                onPress={openStatusBarLyric.onPress}>""",
+    ),
+    (
+        "M1 import",
+        "src/pages/setting/settingTypes/themeSetting/mode.tsx",
+        'import Theme from "@/core/theme";',
+        'import CarWithLyric from "@/core/carWithLyric";\nimport Theme from "@/core/theme";',
+    ),
+    (
+        "M2 开关值",
+        "src/pages/setting/settingTypes/themeSetting/mode.tsx",
+        '    const mode = useAppConfig("theme.followSystem") ?? false;',
+        '    const mode = useAppConfig("theme.followSystem") ?? false;\n'
+        '    const followCarWith = useAppConfig("theme.followCarWith") ?? false;',
+    ),
+    (
+        "M3 行",
+        "src/pages/setting/settingTypes/themeSetting/mode.tsx",
+        """                    </ListItem.Content>
+                </ListItem>
+            </View>""",
+        """                    </ListItem.Content>
+                </ListItem>
+                {CarWithLyric.isSupported() ? (
+                    <ListItem withHorizontalPadding>
+                        <ListItem.Content>
+                            <View style={styles.itemRow}>
+                                <ThemeText>
+                                    {t("themeSettings.followCarWithTheme")}
+                                </ThemeText>
+                                <ThemeSwitch
+                                    value={followCarWith}
+                                    onValueChange={e =>
+                                        CarWithLyric.setFollowTheme(e)
+                                    }
+                                />
+                            </View>
+                        </ListItem.Content>
+                    </ListItem>
+                ) : null}
+            </View>""",
+    ),
+]
+
+# === 三个语言包：每个加两个键 ======================================================
+for _loc, _car, _theme in [
+    ("zh-cn", "车机投屏歌词（CarWith）", "跟随CarWith车机深浅色"),
+    ("zh-tw", "車機投屏歌詞（CarWith）", "跟隨CarWith車機深淺色"),
+    ("en-us", "Car head-unit lyrics (CarWith)", "Follow CarWith night mode"),
+]:
+    EDITS.append(
+        (
+            "I18n " + _loc,
+            "src/core/i18n/languages/%s.json" % _loc,
+            '    "basicSettings.lyric.showStatusBarLyric": ',
+            '    "basicSettings.lyric.showCarWithLyric": "%s",\n'
+            '    "basicSettings.lyric.showStatusBarLyric": ' % _car,
+        )
+    )
+    EDITS.append(
+        (
+            "I18n " + _loc + " theme",
+            "src/core/i18n/languages/%s.json" % _loc,
+            '    "themeSettings.followSystemTheme": ',
+            '    "themeSettings.followCarWithTheme": "%s",\n'
+            '    "themeSettings.followSystemTheme": ' % _theme,
+        )
+    )
+
+
+# ---------------------------------------------------------------- 落盘
+def read_src(path: Path) -> str:
+    # newline="" 是为了保住仓库原本的换行符（CRLF/LF 混着），别让它被 universal newlines 改掉
+    with path.open("r", encoding="utf-8", newline="") as f:
+        return f.read()
+
+
+def write_src(path: Path, text: str):
+    with path.open("w", encoding="utf-8", newline="") as f:
+        f.write(text)
+
+
+def check_edits(root: Path):
+    """先全部试算：返回 ({rel: 新文本}, 错误列表)。锚点必须命中一次；已经打过的跳过。"""
+    plan, texts, errors, skipped = {}, {}, [], 0
+    for tag, rel, old, new in EDITS:
+        path = root / rel
+        if not path.is_file():
+            errors.append("%s：%s 不存在" % (tag, rel))
+            continue
+        if rel not in texts:
+            texts[rel] = read_src(path)
+        cur = texts[rel]
+        crlf = "\r\n" in cur
+        # 换行符跟着仓库走：android/ 那批是 CRLF，src/ 这批是 LF
+        pairs = [(old, new)]
+        if crlf:
+            pair = (old.replace("\r\n", "\n").replace("\n", "\r\n"),
+                    new.replace("\r\n", "\n").replace("\n", "\r\n"))
+            if pair not in pairs:  # 单行锚点两种写法是一样的，别算两次
+                pairs.append(pair)
+        # 先认「新文本」：追加式锚点里 old 也是 new 的子串，反过来判会重复打
+        if any(cur.count(n) >= 1 for _, n in pairs):
+            print("  SKIP %-14s %s" % (tag, rel))
+            skipped += 1
+            continue
+        # 同一段 old 在 CRLF 文件里有两种写法，后者（CRLF）覆盖前者
+        uniq = {}
+        for o, n in pairs:
+            uniq[o] = n
+        hit = [(o, n) for o, n in uniq.items() if cur.count(o) == 1]
+        if len(hit) == 1:
+            o, n = hit[0]
+            texts[rel] = cur.replace(o, n, 1)
+            plan[rel] = path
+        else:
+            errors.append(
+                "%s：%s 锚点命中 %d 次（要求 1 次，CRLF=%s）"
+                % (tag, rel, max(cur.count(o) for o in uniq), crlf)
+            )
+    return texts, errors, skipped
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        return 2
+    root = Path(sys.argv[1]).resolve()
+    doc = Path(sys.argv[2]).resolve() if len(sys.argv) > 2 else None
+
+    if not root.is_dir():
+        raise SystemExit("仓库目录不存在：%s" % root)
+    print("仓库：%s" % root)
+
+    payload = load_payload(doc) if doc else {}
+    missing = [rel for rel in NEWFILES if rel not in payload]
+    if doc and missing:
+        raise SystemExit("文档里缺少负载：%s" % ", ".join(missing))
+
+    texts, errors, skipped = check_edits(root)
+    if errors:
+        print("\n".join("FAIL " + e for e in errors))
+        raise SystemExit("锚点校验未过，未写入任何文件")
+
+    for rel, text in texts.items():
+        write_src(root / rel, text)
+    print("锚点替换：%d 处（跳过已打 %d 处）" % (len(EDITS) - skipped, skipped))
+
+    m = 0
+    for rel in NEWFILES:
+        if not doc:
+            continue
+        target = root / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        write_src(target, payload[rel])
+        m += 1
+        print("  NEW  %s" % rel)
+    print("新文件：%d 个" % m)
+    print("完成。")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+@@@ENDFILE
+@@@FILE check_apk.py | bytes=7310 | sha256=7a2caab735076b6c
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""MusicFree CarWith 成品 APK 自查（只读；全部 PASS 才谈装车）
+
+用法： python check_apk.py <apk 路径>
+同一套断言的 PowerShell 版是 check_apk.ps1（Windows 上顺手），两者的期望值应当一致。
+
+两段式探针：
+  · classes*.dex 里是 MUTF-8    ⇒ 键名、类名、方法名按 UTF-8 找
+  · Hermes 字节码的字符串表里 ASCII 走 UTF-8、**含非 ASCII 的串走 UTF-16LE**
+    ⇒ 中文文案必须按 UTF-16LE 找（按 UTF-8 找必然 FAIL，这是最容易抄错的一条）
+"""
+
+import glob
+import hashlib
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import zipfile
+from pathlib import Path
+
+DEBUG_CERT = "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
+FAILS = []
+INFO = []
+
+
+def check(name, ok, detail=""):
+    print(("  PASS  %-46s %s" % (name, detail)) if ok
+          else ("  FAIL  %-46s %s" % (name, detail)))
+    if not ok:
+        FAILS.append(name)
+
+
+def find(hay, needle):
+    """按 UTF-8 与 UTF-16LE 各找一遍，命中就报口径。"""
+    for enc, tag in (("utf-8", "UTF-8"), ("utf-16-le", "UTF-16LE")):
+        if needle.encode(enc) in hay:
+            return tag
+    return None
+
+
+def run(cmd):
+    try:
+        p = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+        return (p.stdout or "") + (p.stderr or ""), p.returncode
+    except Exception as e:                      # 工具没装：不算 FAIL，算 SKIP
+        return "%s" % e, 99
+
+
+def tool(name):
+    for base in (os.environ.get("ANDROID_HOME"), os.environ.get("ANDROID_SDK_ROOT")):
+        if not base:
+            continue
+        hit = glob.glob(os.path.join(base, "**", name), recursive=True)
+        if hit:
+            return hit[0]
+    return shutil.which(name) or shutil.which(name + ".bat")
+
+
+def main():
+    apk = Path(sys.argv[1] if len(sys.argv) > 1 else "")
+    if not apk.is_file():
+        print(__doc__)
+        return 2
+    print("APK：%s" % apk)
+    raw = apk.read_bytes()
+    print("     bytes=%d sha256=%s" % (len(raw), hashlib.sha256(raw).hexdigest()))
+
+    work = Path(tempfile.mkdtemp(prefix="mf_carwith_"))
+    try:
+        with zipfile.ZipFile(apk) as z:
+            names = [n for n in z.namelist()
+                     if re.match(r"classes\d*\.dex$", n) or n.endswith(".bundle")]
+            for n in names:
+                z.extract(n, work)
+        dex = sorted(work.glob("classes*.dex"))
+        bundles = list(work.glob("*.bundle")) + list(work.glob("**/*.bundle"))
+        bundles = sorted(set(bundles))
+
+        print("\n[1] 解包")
+        check("classes*.dex", len(dex) >= 1, "共 %d 个" % len(dex))
+        check("JS bundle", bool(bundles), bundles[0].name if bundles else "")
+        if not dex or not bundles:
+            raise SystemExit("解包不完整")
+
+        dex_b = [d.read_bytes() for d in dex]
+        bun_b = [b.read_bytes() for b in bundles]
+
+        print("\n[2] 车机侧键名（dex）—— 改一个字车机就读不到")
+        for k in ["ucar.media.metadata.LYRICS_WHOLE", "ucar.media.metadata.LYRICS_LINE",
+                  "ucar.media.metadata.LYRICS_STATUS", "android.media.metadata.LYRICS"]:
+            hit = [find(b, k) for b in dex_b]
+            check(k, any(hit), next((h for h in hit if h), ""))
+
+        print("\n[3] 连接判据与车机深浅键（dex）")
+        for k in ["ucar_night_mode", "com.miui.carlink", "com.xiaomi.ucar.minimap"]:
+            check(k, any(find(b, k) for b in dex_b))
+        check("反向：com.autonavi.minimap 不在 dex 里",
+              not any(find(b, "com.autonavi.minimap") for b in dex_b))
+
+        print("\n[4] 类名 / 方法名 / 事件名 + 加固提示串（dex）")
+        for k in ["CarWithLyric", "CarWithState", "CarWithStateModule",
+                  "setCarWithLyric", "setLyricEnabled", "setFollowTheme",
+                  "onCarWithStateChange"]:
+            check(k, any(find(b, k) for b in dex_b))
+        # 这八条在，说明「适配代码出错就吞掉并留一行 log」的加固真的进了包
+        # 最后一条同时是递归修复的凭证：provider 只能在 publish 的 gated 分支里装
+        for k in ["attach 失败（已忽略，不影响播放）",
+                  "clearLyric 失败（已忽略，不影响播放）",
+                  "update 失败（已忽略，不影响播放）",
+                  "publish 跳过（不影响手机播放）",
+                  "provider 跳过（不影响手机播放）",
+                  "setConnected 失败（已忽略）",
+                  "setEnabled 失败（已忽略）",
+                  "provider 装不上（已忽略，逐句那一路不受影响）"]:
+            check("加固 " + k, any(find(b, k) for b in dex_b))
+
+        print("\n[5] JS 侧配置键（bundle，ASCII ⇒ UTF-8）")
+        for k in ["lyric.showCarWithLyric", "theme.followCarWith",
+                  "basicSettings.lyric.showCarWithLyric", "themeSettings.followCarWithTheme"]:
+            check(k, any(find(b, k) for b in bun_b))
+
+        print("\n[6] 中文文案（bundle，非 ASCII ⇒ UTF-16LE）")
+        for k in ["车机投屏歌词（CarWith）", "跟随CarWith车机深浅色",
+                  "車機投屏歌詞（CarWith）", "Car head-unit lyrics (CarWith)"]:
+            hit = [find(b, k) for b in bun_b]
+            check(k, any(hit), next((h for h in hit if h), ""))
+
+        print("\n[7] 签名")
+        apksigner = tool("apksigner")
+        if apksigner:
+            out, _ = run([apksigner, "verify", "--print-certs", str(apk)])
+            check("签名有效", "DOES NOT VERIFY" not in out)
+            check("公签 = 仓库自带 debug.keystore", DEBUG_CERT in out.replace(" ", ""),
+                  out.splitlines()[2].strip() if len(out.splitlines()) > 2 else "")
+        else:
+            print("  SKIP  没找到 apksigner")
+
+        print("\n[8] 清单")
+        aapt2 = tool("aapt2")
+        if aapt2:
+            out, _ = run([aapt2, "dump", "badging", str(apk)])
+            check("applicationId = fun.upup.musicfree",
+                  "package: name='fun.upup.musicfree'" in out)
+            m = re.search(r"versionCode='(\d+)' versionName='([^']+)'", out)
+            check("versionName / versionCode", bool(m), m.group(0) if m else "")
+            nc = re.search(r"native-code: [^\n]*", out)
+            check("native-code 只有 arm64-v8a",
+                  (nc.group(0) if nc else "") == "native-code: 'arm64-v8a'",
+                  nc.group(0) if nc else "(没有 native-code 行)")
+        else:
+            print("  SKIP  没找到 aapt2")
+
+        print("\n[9] 内部产物（重做一致性就看这两个）")
+        main_dex = max(dex_b, key=len)
+        INFO.append(("classes.dex(最大)", len(main_dex), hashlib.sha256(main_dex).hexdigest()))
+        INFO.append((bundles[0].name, len(bun_b[0]), hashlib.sha256(bun_b[0]).hexdigest()))
+        for name, size, sha in INFO:
+            print("  INFO  %-26s bytes %9d  sha256 %s" % (name, size, sha))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+    print()
+    if FAILS:
+        print("FAIL x %d：%s" % (len(FAILS), ", ".join(FAILS)))
+        return 1
+    print("ALL PASS")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+@@@ENDFILE
+@@@FILE check_apk.ps1 | bytes=6734 | sha256=04bf53893ed42c1f
+# MusicFree CarWith 成品 APK 自查（只读，不改 APK；全部 PASS 才谈装车）
+# 用法： powershell -ExecutionPolicy Bypass -File check_apk.ps1 -Apk app-arm64-v8a-release.apk
+
+param(
+    [Parameter(Mandatory = $true)][string]$Apk,
+    [string]$Work = "",
+    [string]$DebugCert = "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
+)
+$ErrorActionPreference = "Stop"
+if (-not (Test-Path -LiteralPath $Apk)) { throw "APK 不存在：$Apk" }
+if (-not $Work) { $Work = Join-Path $env:TEMP ("mf_carwith_" + [guid]::NewGuid().ToString("N").Substring(0, 8)) }
+New-Item -ItemType Directory -Force -Path $Work | Out-Null
+
+$script:fails = 0
+function Check([string]$name, $ok, [string]$detail = "") {
+    if ($ok) {
+        Write-Host ("  PASS  {0}{1}" -f $name, $(if ($detail) { "   " + $detail } else { "" }))
+    } else {
+        $script:fails++
+        Write-Host ("  FAIL  {0}   {1}" -f $name, $detail) -ForegroundColor Red
+    }
+}
+function Find-Tool([string]$name) {
+    foreach ($r in @($env:ANDROID_HOME, $env:ANDROID_SDK_ROOT) | Where-Object { $_ }) {
+        $hit = Get-ChildItem -Path $r -Recurse -Filter $name -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($hit) { return $hit.FullName }
+    }
+    $cmd = Get-Command $name -ErrorAction SilentlyContinue
+    if ($cmd) { return $cmd.Source }
+    return $null
+}
+
+# 两段式：dex 里是 MUTF-8，Hermes 字节码的字符串表 ASCII 走 UTF-8、含非 ASCII 的串走 **UTF-16LE**
+# —— 中文文案按 UTF-8 找必然 FAIL，这一条是本文最容易抄错的探针。
+$Latin1 = [System.Text.Encoding]::GetEncoding(28591)
+$hayCache = @{}
+function Find-Pattern([string]$pattern, $files) {
+    $needles = @($Latin1.GetString([System.Text.Encoding]::UTF8.GetBytes($pattern)),
+                 $Latin1.GetString([System.Text.Encoding]::Unicode.GetBytes($pattern)))
+    foreach ($f in $files) {
+        if (-not $hayCache.ContainsKey($f.FullName)) {
+            $hayCache[$f.FullName] = $Latin1.GetString([System.IO.File]::ReadAllBytes($f.FullName))
+        }
+        $hay = $hayCache[$f.FullName]
+        for ($i = 0; $i -lt 2; $i++) {
+            if ($hay.IndexOf($needles[$i], [System StringComparison]::Ordinal) -ge 0) {
+                return $f.Name + "|" + $(if ($i -eq 0) { "UTF-8" } else { "UTF-16LE" })
+            }
+        }
+    }
+    return $null
+}
+
+Write-Host "`n[1] 解包"
+$zip = Join-Path $Work "apk.zip"
+Copy-Item -LiteralPath $Apk -Destination $zip -Force
+$out = Join-Path $Work "x"
+if (Test-Path $out) { Remove-Item -Recurse -Force $out }
+Expand-Archive -LiteralPath $zip -DestinationPath $out
+$dex = @(Get-ChildItem -Path $out -Filter "classes*.dex" -Recurse)
+$bundle = @(Get-ChildItem -Path $out -Recurse | Where-Object { $_.Name -like "*.bundle" })
+Check "classes*.dex" ($dex.Count -ge 1) ("共 " + $dex.Count + " 个")
+Check "JS bundle" ($bundle.Count -ge 1) $(if ($bundle.Count) { $bundle[0].Name + " " + [math]::Round($bundle[0].Length / 1MB, 2) + " MB" } else { "" })
+
+Write-Host "`n[2] 车机侧键名（classes*.dex）—— 这 4 个是 CarWith 反汇编定的，改一个字车机就读不到"
+foreach ($k in @(
+        "ucar.media.metadata.LYRICS_WHOLE",
+        "ucar.media.metadata.LYRICS_LINE",
+        "ucar.media.metadata.LYRICS_STATUS",
+        "android.media.metadata.LYRICS")) {
+    $hit = Find-Pattern $k $dex
+    Check $k ($null -ne $hit) $hit
+}
+
+Write-Host "`n[3] 连接判据与车机深浅键（classes*.dex）"
+foreach ($k in @("ucar_night_mode", "com.miui.carlink", "com.xiaomi.ucar.minimap")) {
+    $hit = Find-Pattern $k $dex
+    Check $k ($null -ne $hit) $hit
+}
+Check "没有拿 autonavi 当屏名（应当找不到该常量）" ($null -eq (Find-Pattern "com.autonavi.minimap" $dex))
+
+Write-Host "`n[4] 类名 / 方法名 / 事件名 + 加固提示串（classes*.dex）"
+foreach ($n in @("CarWithLyric", "CarWithState", "CarWithStateModule", "setCarWithLyric", "setLyricEnabled", "setFollowTheme", "onCarWithStateChange")) {
+    Check $n ($null -ne (Find-Pattern $n $dex))
+}
+# 这八条在，说明「适配代码出错就吞掉并留一行 log」的加固真的进了包
+# 最后一条同时是递归修复的凭证：provider 只在 publish 的 gated 分支里装
+foreach ($n in @(
+        "attach 失败（已忽略，不影响播放）",
+        "clearLyric 失败（已忽略，不影响播放）",
+        "update 失败（已忽略，不影响播放）",
+        "publish 跳过（不影响手机播放）",
+        "provider 跳过（不影响手机播放）",
+        "setConnected 失败（已忽略）",
+        "setEnabled 失败（已忽略）",
+        "provider 装不上（已忽略，逐句那一路不受影响）")) {
+    Check ("加固 " + $n) ($null -ne (Find-Pattern $n $dex))
+}
+
+Write-Host "`n[5] JS 侧配置键（assets/*.bundle，纯 ASCII ⇒ UTF-8）"
+foreach ($s in @("lyric.showCarWithLyric", "theme.followCarWith", "basicSettings.lyric.showCarWithLyric", "themeSettings.followCarWithTheme")) {
+    Check $s ($null -ne (Find-Pattern $s $bundle))
+}
+foreach ($s in @("车机投屏歌词（CarWith）", "跟随CarWith车机深浅色", "車機投屏歌詞（CarWith）", "Car head-unit lyrics (CarWith)")) {
+    $hit = Find-Pattern $s $bundle
+    Check ("文案 " + $s) ($null -ne $hit) $hit
+}
+
+Write-Host "`n[6] 签名"
+$apksigner = Find-Tool "apksigner.bat"
+if (-not $apksigner) { $apksigner = Find-Tool "apksigner" }
+if ($apksigner) {
+    $sig = (& $apksigner verify --print-certs $Apk 2>&1) | Out-String
+    Check "签名有效" ($sig -notmatch "DOES NOT VERIFY")
+    Check ("公签 = 仓库自带 debug.keystore（" + $DebugCert.Substring(0, 16) + "…）") ($sig -match [regex]::Escape($DebugCert))
+} else { Write-Host "  SKIP  没找到 apksigner（装 build-tools 后重跑）" -ForegroundColor Yellow }
+
+Write-Host "`n[7] 清单"
+$aapt2 = Find-Tool "aapt2.exe"
+if (-not $aapt2) { $aapt2 = Find-Tool "aapt2" }
+if ($aapt2) {
+    $bad = (& $aapt2 dump badging $Apk 2>&1) | Out-String
+    Check "applicationId = fun.upup.musicfree" ($bad -match "package: name='fun\.upup\.musicfree'")
+    Check "native-code 只有 arm64-v8a" ($bad -match "native-code: 'arm64-v8a'")
+    Write-Host ("  INFO  " + ([regex]::Match($bad, "package: name='[^']*' versionCode='([^']*)' versionName='([^']*)'")).Value)
+} else { Write-Host "  SKIP  没找到 aapt2" -ForegroundColor Yellow }
+
+Write-Host ""
+if ($script:fails -eq 0) {
+    $h = (Get-FileHash -Algorithm SHA256 $Apk).Hash.ToLower()
+    Write-Host ("ALL PASS   sha256=" + $h + "   bytes=" + (Get-Item $Apk).Length)
+    Write-Host ("临时目录：" + $Work + "   清理： Remove-Item -Recurse -Force '" + $Work + "'")
+    exit 0
+} else {
+    Write-Host ("FAIL x " + $script:fails) -ForegroundColor Red
+    exit 1
+}
+
+@@@ENDFILE
+@@@FILE android/app/src/main/java/fun/upup/musicfree/carwith/CarWithState.kt | bytes=11788 | sha256=426a0f55adea2174
+package `fun`.upup.musicfree.carwith
+
+import android.app.Application
+import android.content.Context
+import android.database.ContentObserver
+import android.hardware.display.DisplayManager
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
+import android.util.Log
+import android.view.Display
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.doublesymmetry.trackplayer.carwith.CarWithLyric
+import java.lang.reflect.Method
+
+/**
+ * CarWith（小米汽车互联）连接态与车机深浅色的读数持有者 + JS 那一侧的门。
+ *
+ * 连接判据（两条都要成立，口径来自 CarWith_4.0.20 反汇编 + 真车实测）：
+ *   1) 手机上有 CarWith 建出来的虚拟屏，屏名含 com.miui.carlink 或 com.xiaomi.ucar.minimap；
+ *   2) Display.getType() == 5。type 这层**必须反射取** —— 它不在公共 android.jar 里，
+ *      Kotlin 直接引用会 Unresolved reference、构建挂在 :app:compileReleaseKotlin；
+ *      反射拿不到（个别 ROM 把它当非 SDK 接口拦了）时退回只判屏名。
+ *   ★ 只判屏名会把别的虚拟屏（录屏、投屏、平行视窗）误判成已连接。
+ *   ★ 屏名里别去匹配 com.autonavi.minimap —— 那是 CarWith 内嵌高德的资源 ID，不是屏名。
+ *
+ * 车机深浅：Settings.Global 的 ucar_night_mode（0 浅色 / 1 深色 / 读不到 -1）。
+ *   这个键本就是 CarWith 写给第三方读的，无需权限、不动清单。
+ *   ★ 断开时系统不会把它清零，所以那个残值一律不采信 —— 只在连着时读，断开直接记 -1。
+ *
+ * 任何读数失败一律按「没连着 / 读不到」返回，绝不向调用方抛。
+ *
+ * 心跳只在两把开关至少一把勾着时存在（5 秒一轮），关着时连屏都不去枚举 ——
+ * 「没连着 CarWith 时上游行为逐字不变」这条要落到「没勾时连读数都不做」。
+ */
+object CarWithState {
+
+    private const val KEY_NIGHT = "ucar_night_mode"
+    private const val TYPE_VIRTUAL = 5
+    private const val POLL_MS = 5000L
+
+    private val MARKERS = arrayOf("com.miui.carlink", "com.xiaomi.ucar.minimap")
+
+    @Volatile
+    var connected = false
+        private set
+
+    /** -1 读不到 / 0 车机浅色 / 1 车机深色 */
+    @Volatile
+    var nightMode = -1
+        private set
+
+    /** 车机在深色档：断开时恒假（残值不采信） */
+    val headUnitDark: Boolean
+        get() = connected && nightMode == 1
+
+    private var appContext: Context? = null
+
+    @Volatile
+    private var lyricEnabled = false
+
+    @Volatile
+    private var followThemeEnabled = false
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val ticker = Runnable {
+        refresh(false)
+        scheduleLoop()
+    }
+
+    /** Display.getType() 的反射句柄，只解析一次 */
+    private var typeMethod: Method? = null
+    private var typeMethodResolved = false
+
+    /**
+     * ★ ContentObserver 必须留强引用：只存在局部变量里会被 GC 掉，之后系统就不再通知，
+     *   表现是「车机翻深浅色，手机这边再也不跟」。
+     */
+    private var observer: ContentObserver? = null
+
+    /** 由 MainApplication.onCreate() 调：车机翻灯时用户可能根本没开着界面 */
+    fun init(app: Application) {
+        appContext = app.applicationContext
+    }
+
+    private fun isActive(): Boolean = lyricEnabled || followThemeEnabled
+
+    fun setLyricEnabled(value: Boolean) {
+        if (lyricEnabled == value) return
+        lyricEnabled = value
+        // 开关翻了当场重发一次元数据：关掉后车机歌词要收掉，不能停在最后一句
+        try {
+            CarWithLyric.setEnabled(value)
+        } catch (t: Throwable) {
+            Log.w(CarWithLyric.TAG, "setEnabled 失败（已忽略）", t)
+        }
+        updateLoop()
+        if (value) refresh(true)
+    }
+
+    fun setFollowTheme(value: Boolean) {
+        if (followThemeEnabled == value) return
+        followThemeEnabled = value
+        updateLoop()
+        if (value) refresh(true)
+    }
+
+    fun snapshot(): Map<String, Any> {
+        return mapOf(
+            "connected" to connected,
+            "nightMode" to nightMode,
+            "lyricEnabled" to lyricEnabled,
+            "followTheme" to followThemeEnabled,
+        )
+    }
+
+    private fun updateLoop() {
+        handler.removeCallbacks(ticker)
+        if (isActive()) {
+            registerObserver()
+            scheduleLoop()
+        } else {
+            unregisterObserver()
+        }
+    }
+
+    /** 心跳只在还开着开关时续期；handler.postDelayed 配 Runnable，别用 what 消息那套 */
+    private fun scheduleLoop() {
+        if (!isActive()) return
+        if (handler.hasCallbacks(ticker)) return
+        handler.postDelayed(ticker, POLL_MS)
+    }
+
+    /**
+     * 现读一轮。force = 刚勾开关 / 回前台那两次：那时连接态可能是冷的（心跳之前没跑过），
+     * 就算算出来的值和上次一样也要把「当前该不该贴键」再交给发布一次。
+     * 心跳那一轮（force = false）只在真的翻了才上报，5 秒一条会把诊断缓存刷满。
+     */
+    fun refresh(force: Boolean) {
+        val ctx = appContext ?: return
+        val nowConnected = readConnected(ctx)
+        val nowNight = if (nowConnected) readNight(ctx) else -1
+        val changed = nowConnected != connected || nowNight != nightMode
+        connected = nowConnected
+        nightMode = nowNight
+        if (!changed && !force) return
+
+        // 歌词的门控位就地更新：连着才贴键，断开当场把键收回
+        // ★ 这道调用要包起来：CarWithLyric 是 RNTP 里的类，万一它初始化失败（类加载、
+        //   依赖版本对不上），崩的应该是「车机没歌词」而不是手机播放/这条心跳本身
+        try {
+            CarWithLyric.setConnected(nowConnected)
+        } catch (t: Throwable) {
+            Log.w(CarWithLyric.TAG, "setConnected 失败（已忽略）", t)
+        }
+        emit()
+    }
+
+    // ------------------------------------------------------------------ 读数
+
+    private fun readConnected(ctx: Context): Boolean {
+        return try {
+            val dm = ctx.getSystemService(Context.DISPLAY_SERVICE) as? DisplayManager
+                ?: return false
+            for (d in dm.displays) {
+                // ★ 公开桩里 Display 只有 getDisplayId()，没有 getId()（写 d.id 直接
+                //   Unresolved reference: id，挂在 :app:compileReleaseKotlin）
+                if (d.displayId == Display.DEFAULT_DISPLAY) continue
+                val name = try {
+                    d.name
+                } catch (ignored: Throwable) {
+                    null
+                } ?: continue
+                if (MARKERS.none { name.contains(it, ignoreCase = true) }) continue
+                val t = readType(d)
+                // type 读不到时退回只认屏名；读得到就必须是虚拟屏
+                if (t == null || t == TYPE_VIRTUAL) return true
+            }
+            false
+        } catch (ignored: Throwable) {
+            false
+        }
+    }
+
+    private fun readType(d: Display): Int? {
+        if (!typeMethodResolved) {
+            typeMethodResolved = true
+            typeMethod = try {
+                Display::class.java.getMethod("getType")
+            } catch (ignored: Throwable) {
+                null
+            }
+        }
+        val m = typeMethod ?: return null
+        return try {
+            m.invoke(d) as? Int
+        } catch (ignored: Throwable) {
+            null
+        }
+    }
+
+    private fun readNight(ctx: Context): Int {
+        return try {
+            Settings.Global.getInt(ctx.contentResolver, KEY_NIGHT, -1)
+        } catch (ignored: Throwable) {
+            -1
+        }
+    }
+
+    // ------------------------------------------------------------------ 车机翻灯时的通知
+
+    private fun registerObserver() {
+        if (observer != null) return
+        val ctx = appContext ?: return
+        val o = object : ContentObserver(handler) {
+            override fun onChange(selfChange: Boolean) {
+                refresh(true)
+            }
+        }
+        try {
+            ctx.contentResolver.registerContentObserver(
+                Settings.Global.getUriFor(KEY_NIGHT),
+                false,
+                o,
+            )
+            observer = o
+        } catch (ignored: Throwable) {
+        }
+    }
+
+    private fun unregisterObserver() {
+        val o = observer ?: return
+        observer = null
+        try {
+            appContext?.contentResolver?.unregisterContentObserver(o)
+        } catch (ignored: Throwable) {
+        }
+    }
+
+    // ------------------------------------------------------------------ 上报给 JS
+
+    private var reporter: ((Map<String, Any>) -> Unit)? = null
+
+    fun attachReporter(fn: (Map<String, Any>) -> Unit) {
+        reporter = fn
+    }
+
+    fun detachReporter(fn: (Map<String, Any>) -> Unit) {
+        if (reporter === fn) reporter = null
+    }
+
+    private fun emit() {
+        val fn = reporter ?: return
+        try {
+            fn(snapshot())
+        } catch (ignored: Throwable) {
+        }
+    }
+}
+
+/**
+ * JS 侧的门：NativeModules.CarWithState
+ *   getState(promise)              现值快照（读内存，这条路上不做任何 IPC）
+ *   refresh(promise)               回前台 / 刚勾开关当场补一轮
+ *   setLyricEnabled(bool, promise) 设置里的「车机投屏歌词」
+ *   setFollowTheme(bool, promise)  设置里的「跟随CarWith切换主题」
+ * 事件 onCarWithStateChange：{connected, nightMode, lyricEnabled, followTheme}
+ */
+class CarWithStateModule(reactContext: ReactApplicationContext) :
+    ReactContextBaseJavaModule(reactContext) {
+
+    override fun getName(): String = "CarWithState"
+
+    private val reporter: (Map<String, Any>) -> Unit = { snap ->
+        val ctx = reactApplicationContext
+        if (ctx.hasActiveReactInstance()) {
+            ctx.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                .emit("onCarWithStateChange", toMap(snap))
+        }
+    }
+
+    init {
+        CarWithState.attachReporter(reporter)
+    }
+
+    override fun invalidate() {
+        CarWithState.detachReporter(reporter)
+        super.invalidate()
+    }
+
+    // NativeEventEmitter 要求模块带这两个空方法，否则 JS 侧报 "has no listeners"
+    @ReactMethod
+    fun addListener(eventType: String?) {
+    }
+
+    @ReactMethod
+    fun removeListeners(count: Int) {
+    }
+
+    @ReactMethod
+    fun getState(promise: Promise) {
+        promise.resolve(toMap(CarWithState.snapshot()))
+    }
+
+    @ReactMethod
+    fun refresh(promise: Promise) {
+        CarWithState.refresh(true)
+        promise.resolve(toMap(CarWithState.snapshot()))
+    }
+
+    @ReactMethod
+    fun setLyricEnabled(enabled: Boolean, promise: Promise) {
+        CarWithState.setLyricEnabled(enabled)
+        promise.resolve(null)
+    }
+
+    @ReactMethod
+    fun setFollowTheme(follow: Boolean, promise: Promise) {
+        CarWithState.setFollowTheme(follow)
+        promise.resolve(null)
+    }
+
+    private fun toMap(snap: Map<String, Any>): WritableMap {
+        val map = Arguments.createMap()
+        for ((k, v) in snap) {
+            when (v) {
+                is Boolean -> map.putBoolean(k, v)
+                is Int -> map.putInt(k, v)
+            }
+        }
+        return map
+    }
+}
+
+@@@ENDFILE
+@@@FILE android/app/src/main/java/fun/upup/musicfree/carwith/CarWithStatePackage.kt | bytes=688 | sha256=7f884783d1c6a394
+package `fun`.upup.musicfree.carwith
+
+import android.view.View
+import com.facebook.react.ReactPackage
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.uimanager.ReactShadowNode
+import com.facebook.react.uimanager.ViewManager
+
+class CarWithStatePackage : ReactPackage {
+
+    override fun createViewManagers(
+        reactContext: ReactApplicationContext
+    ): MutableList<ViewManager<View, ReactShadowNode<*>>> = mutableListOf()
+
+    override fun createNativeModules(
+        reactContext: ReactApplicationContext
+    ): MutableList<NativeModule> = listOf(CarWithStateModule(reactContext)).toMutableList()
+}
+
+@@@ENDFILE
+@@@FILE node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/carwith/CarWithLyric.kt | bytes=18626 | sha256=b6fcfbf8f2c976f1
+package com.doublesymmetry.trackplayer.carwith
+
+import android.os.Handler
+import android.os.Looper
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
+import com.doublesymmetry.kotlinaudio.players.BaseAudioPlayer
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import java.lang.reflect.Field
+
+/**
+ * CarWith / Jovi InCar 车机歌词：把整首 LRC 与当前句贴到 MediaSession 的元数据上。
+ *
+ * 键名是车机侧定的（来自 CarWith_4.0.20 反汇编 + 真车实测），一个字都不能改：
+ *   ucar.media.metadata.LYRICS_WHOLE   整首标准 LRC，车机**首选**，它自己按播放位置排行
+ *   ucar.media.metadata.LYRICS_LINE    当前句，只在整首算不出来时兜底
+ *   ucar.media.metadata.LYRICS_STATUS  有词 "0"；1/2/3 会被当「无词」
+ *   android.media.metadata.LYRICS      框架已知键，值与 LYRICS_WHOLE 相同
+ *
+ * 门控总设定：**没连着 CarWith（或开关没勾）时 decorate() 原样交回上游那份 metadata，
+ * 一个键都不动**。只有连着且勾着才改写。
+ *
+ * 清空策略与洛雪那两条 smali 路线不同，原因是这里是**每次新建** Builder
+ * （kotlinaudio 的 NotificationManager.getMediaMetadataCompat() 就是新建的），
+ * 所以「整体省略这两个键」就等于把键删掉了；smali 那条复用同一个 Builder，
+ * 必须显式写空串才洗得掉。不是谁写错了，是两条路的对象生命周期不一样。
+ */
+object CarWithLyric {
+
+    /** 只在适配代码自己失败时打一行；正常运行 logcat 里这一路一行都不该有（见说明九） */
+    const val TAG = "CarWithLyric"
+
+    const val KEY_LINE = "ucar.media.metadata.LYRICS_LINE"
+    const val KEY_WHOLE = "ucar.media.metadata.LYRICS_WHOLE"
+    const val KEY_STATUS = "ucar.media.metadata.LYRICS_STATUS"
+    const val KEY_FRAMEWORK_LYRICS = "android.media.metadata.LYRICS"
+
+    const val STATUS_HAS_LYRIC = 0
+    const val STATUS_NO_LYRIC = 3
+
+    /**
+     * 整首长度上限：车机读的是**一整个** metadata Binder 事务，同一份里还装着封面位图
+     * （400x400 ARGB ≈ 640KB），整包超限丢的是整个 metadata（连封面一起没）。
+     * 超限发空串，不截断 —— 截断出来的半截 LRC 车机会照着排，最后一句永远对不上。
+     */
+    const val MAX_WHOLE_CHARS = 24000
+
+    /** MediaMetadataCompat 认得的全部键，逐键复制时用（类型靠 try 探，不靠硬编码的型别表） */
+    private val ALL_KEYS: Array<String> = arrayOf(
+        MediaMetadataCompat.METADATA_KEY_TITLE,
+        MediaMetadataCompat.METADATA_KEY_ARTIST,
+        MediaMetadataCompat.METADATA_KEY_ALBUM,
+        MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST,
+        MediaMetadataCompat.METADATA_KEY_GENRE,
+        MediaMetadataCompat.METADATA_KEY_COMPOSER,
+        MediaMetadataCompat.METADATA_KEY_WRITER,
+        MediaMetadataCompat.METADATA_KEY_AUTHOR,
+        MediaMetadataCompat.METADATA_KEY_COMPILATION,
+        MediaMetadataCompat.METADATA_KEY_DATE,
+        MediaMetadataCompat.METADATA_KEY_YEAR,
+        MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER,
+        MediaMetadataCompat.METADATA_KEY_NUM_TRACKS,
+        MediaMetadataCompat.METADATA_KEY_DISC_NUMBER,
+        MediaMetadataCompat.METADATA_KEY_DURATION,
+        MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
+        MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
+        MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,
+        MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
+        MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION,
+        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
+        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
+        MediaMetadataCompat.METADATA_KEY_ART,
+        MediaMetadataCompat.METADATA_KEY_ART_URI,
+        MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
+        MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
+        MediaMetadataCompat.METADATA_KEY_RATING,
+        MediaMetadataCompat.METADATA_KEY_USER_RATING,
+    )
+
+    /** 连着车机时不写：CarWith 见 mediaUri 就去扒音频内嵌封面，扒不到不再回到位图 ⇒ 永远空白 */
+    private val URI_KEYS: Set<String> = setOf(
+        MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
+        MediaMetadataCompat.METADATA_KEY_ART_URI,
+        MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
+        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
+    )
+
+    /** 一份 metadata 只带一张位图；两张 400x400 同装是 Binder 超限的头号来源 */
+    private val EXTRA_BITMAPS: Set<String> = setOf(
+        MediaMetadataCompat.METADATA_KEY_ART,
+        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
+    )
+
+    private val LOCK = Any()
+
+    /** provider 被要求交一份元数据、而基值取不到时的兜底（不可变，共用一个就行） */
+    private val EMPTY_METADATA: MediaMetadataCompat = MediaMetadataCompat.Builder().build()
+
+    @Volatile
+    private var player: BaseAudioPlayer? = null
+
+    @Volatile
+    private var session: MediaSessionCompat? = null
+
+    @Volatile
+    private var connector: MediaSessionConnector? = null
+
+    /** 已经贴到 connector 上的那个 provider，用来认出「上游又把自己的设回去了」 */
+    @Volatile
+    private var installedProvider: MediaSessionConnector.MediaMetadataProvider? = null
+
+    /**
+     * 闸门：正在 provider 的回调里时置真。
+     * 正常一路走不到它（provider 里已经不再装 provider 了），留着是给同类
+     * 「回调里再触发回调」的递归当兜底，一踩到就交基值、不再往下绕。
+     */
+    @Volatile
+    private var insideProvider = false
+
+    /**
+     * 这份元数据上到底贴没贴过歌词键。
+     * 没贴过就没必要「洗键」—— 断开/关开关时可以一次 setMetadata 都不发，
+     * 上游自己的发布节奏我们一个字都不改（大多数手机用户永远停在这里）。
+     */
+    @Volatile
+    private var dirty = false
+
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    /** 车机连接态，由 app 侧 CarWithState 写（虚拟屏屏名 + getType 反射判据） */
+    @Volatile
+    var connected = false
+        private set
+
+    /** 设置里的「车机投屏歌词」开关，由 app 侧 CarWithState.setLyricEnabled 写 */
+    @Volatile
+    var enabled = false
+        private set
+
+    @Volatile
+    private var whole: String? = null
+
+    @Volatile
+    private var line: String? = null
+
+    @Volatile
+    private var status = STATUS_NO_LYRIC
+
+    // ------------------------------------------------------------------ 对外入口
+
+    /** JS 推歌词走这里：换曲推整首 + 当前句，换句只推当前句 */
+    fun update(newWhole: String?, newLine: String?, newStatus: Int) {
+        synchronized(LOCK) {
+            whole = newWhole
+            line = newLine
+            status = newStatus
+        }
+        publish(false)
+    }
+
+    /** 连接态翻了就重发：连上当场补歌词，断开当场把键收回 */
+    fun setConnected(value: Boolean) {
+        if (connected == value) return
+        connected = value
+        publish(true)
+    }
+
+    /** 开关翻了就重发：关掉后车机歌词收掉，不停在最后一句 */
+    fun setEnabled(value: Boolean) {
+        if (enabled == value) return
+        enabled = value
+        publish(true)
+    }
+
+    /** 换曲前、清空队列时把两句收回，避免上一首残留在会话里 */
+    fun clearLyric() {
+        synchronized(LOCK) {
+            whole = null
+            line = null
+            status = STATUS_NO_LYRIC
+        }
+        publish(false)
+    }
+
+    /** 由 MusicService 在播放器建好后调一次；provider 的核对在每次发布里 */
+    fun attach(audioPlayer: BaseAudioPlayer) {
+        player = audioPlayer
+        publish(true)
+    }
+
+    // ------------------------------------------------------------------ 发布
+
+    /**
+     * 两条发布路都汇到 decorate()：
+     *   1) connector 的 provider —— 上游每次自己发元数据（换曲、封面异步到位）时顺带贴键；
+     *   2) 直接 mediaSession.setMetadata() —— 逐句重发用的就是这条，因为上游开了
+     *      setMetadataDeduplicationEnabled(true)（按 mediaId 去重，同一首不会再发第二次），
+     *      只靠 provider 那条路推不动逐句。
+     *
+     * force = 状态翻转那几次（连上 / 断开 / 开关），那时就算 decorate 交回的是上游原对象
+     * 也要再发一次，否则连着时写过的键收不回来。
+     *
+     * ★ dirty 那一位是给「总设定」兜底的：从没贴过键（开关没勾、从没连上车）时这里一次
+     *   setMetadata 都不发 —— 不装 provider、不碰 connector、不抢上游的发布节奏。
+     *   只有真贴过键，才需要那一次「把键洗掉」的重发。上一版没有这一层，attach 一进来就
+     *   装了 provider，于是把下面 installProvider 那个递归坑在所有用户面前踩响了。
+     */
+    private fun publish(force: Boolean) {
+        mainHandler.post {
+            try {
+                val gated = connected && enabled
+                var wash = false
+                if (!gated) {
+                    if (!dirty) return@post      // 干净的：没写过键，也没有键要洗
+                    dirty = false                // 只剩这一次「洗键」的重发
+                    wash = true
+                }
+                val p = player ?: return@post
+                val s = resolveSession(p) ?: return@post
+                if (gated) installProvider(p)    // 装上失败也不要紧，逐句那一路不依赖它
+                val base = baseOf(p) ?: return@post
+                val decorated = decorate(base)
+                if (!force && !wash && decorated === base) return@post
+                s.setMetadata(decorated)
+            } catch (t: Throwable) {
+                // 任何一步失败都只是「这一次车机上没歌词」，不许把播放器带崩
+                Log.w(TAG, "publish 跳过（不影响手机播放）", t)
+            }
+        }
+    }
+
+    /**
+     * 给 connector 用的那条路：每次上游要元数据时顺贴歌词键。
+     * ★ exoplayer 的 MediaMetadataProvider.getMetadata 声明的是**非空**返回值
+     *   （Kotlin 侧写 MediaMetadataCompat? 直接编译不过：Type mismatch），
+     *   基值取不到时交一份空的，不交 null。
+     * ★★ 这里绝不能再走 installProvider：MediaSessionConnector.setMediaMetadataProvider()
+     *    会**当场**回调一次新 provider（字节码实证见 installProvider 注释），provider 里
+     *    再装 provider 就是一帧咬一帧的自我递归 —— 上一版正是这样把主线程栈打爆的
+     *    （现象：什么开关都没勾、本地放歌也闪退，StackOverflowError）。
+     *    insideProvider 这道闸门是同类问题的兜底，正常永远走不到它。
+     */
+    private fun providerMetadata(): MediaMetadataCompat {
+        if (insideProvider) {
+            val p0 = player ?: return EMPTY_METADATA
+            return baseOf(p0) ?: EMPTY_METADATA
+        }
+        insideProvider = true
+        try {
+            val p = player ?: return EMPTY_METADATA
+            return decorate(baseOf(p)) ?: EMPTY_METADATA
+        } catch (t: Throwable) {
+            // 这条是 ExoPlayer 在自己线程上调进来的，异常绝不能往外抛
+            Log.w(TAG, "provider 跳过（不影响手机播放）", t)
+            return EMPTY_METADATA
+        } finally {
+            insideProvider = false
+        }
+    }
+
+    private fun decorate(base: MediaMetadataCompat?): MediaMetadataCompat? {
+        if (base == null) return null
+        // ★ 门控就这一行：没连着或没勾着 ⇒ 原样交回上游那份，元数据逐字不变
+        if (!(connected && enabled)) return base
+
+        val nowWhole: String?
+        val nowLine: String?
+        val nowStatus: Int
+        synchronized(LOCK) {
+            nowWhole = whole
+            nowLine = line
+            nowStatus = status
+        }
+
+        val cappedWhole = when {
+            nowWhole.isNullOrEmpty() -> ""
+            nowWhole.length > MAX_WHOLE_CHARS -> ""   // 超限发空串，不截断
+            else -> nowWhole
+        }
+        val hasArtwork = try {
+            base.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART) != null
+        } catch (ignored: Throwable) {
+            false
+        }
+
+        val b = MediaMetadataCompat.Builder()
+        for (key in ALL_KEYS) {
+            // 连着车机不发布 MEDIA_URI
+            if (key == MediaMetadataCompat.METADATA_KEY_MEDIA_URI) continue
+            // 这一份已带到位图时三个 *_URI 一个都不写：车机取图是 description.getIconUri() 优先，
+            // 而 iconUri 由那三键级联出来，只断一个还有两个顶上
+            if (hasArtwork && key in URI_KEYS) continue
+            copyKey(base, b, key, hasArtwork)
+        }
+
+        b.putString(KEY_WHOLE, cappedWhole)
+        b.putString(KEY_FRAMEWORK_LYRICS, cappedWhole)
+        b.putString(KEY_LINE, nowLine ?: "")
+        // 整首超限发空串时，只要当前句还在就走「有词 + 兜底句」，别让车机按无词把这句抹掉
+        val lyricUsable = nowStatus == STATUS_HAS_LYRIC &&
+            (cappedWhole.isNotEmpty() || !nowLine.isNullOrEmpty())
+        b.putString(KEY_STATUS, if (lyricUsable) "0" else STATUS_NO_LYRIC.toString())
+        // 记一笔「这份元数据上贴过键」—— 之后断开/关开关才需要那一次把键洗掉的重发
+        dirty = true
+        return b.build()
+    }
+
+    private fun copyKey(
+        base: MediaMetadataCompat,
+        b: MediaMetadataCompat.Builder,
+        key: String,
+        hasArtwork: Boolean,
+    ) {
+        if (hasArtwork && key in EXTRA_BITMAPS) return
+        try {
+            val cs = base.getText(key)
+            if (cs != null) {
+                b.putString(key, cs.toString())
+                return
+            }
+        } catch (ignored: Throwable) {
+        }
+        try {
+            val v = base.getLong(key)
+            if (v != 0L) {
+                b.putLong(key, v)
+                return
+            }
+        } catch (ignored: Throwable) {
+        }
+        try {
+            val bmp = base.getBitmap(key)
+            if (bmp != null) {
+                b.putBitmap(key, bmp)
+                return
+            }
+        } catch (ignored: Throwable) {
+        }
+        try {
+            val r = base.getRating(key)
+            if (r != null) {
+                b.putRating(key, r)
+            }
+        } catch (ignored: Throwable) {
+        }
+    }
+
+    // ------------------------------------------------------------------ 反射取 kotlinaudio 私有成员
+
+    /** BaseAudioPlayer.mediaSession（private val）。release 没开 R8（minifyEnabled=false），字段名逐字保留 */
+    private fun resolveSession(p: BaseAudioPlayer): MediaSessionCompat? {
+        session?.let { return it }
+        val found = readPrivate(p, "mediaSession") as? MediaSessionCompat ?: return null
+        session = found
+        return found
+    }
+
+    private fun resolveConnector(p: BaseAudioPlayer): MediaSessionConnector? {
+        connector?.let { return it }
+        val found =
+            readPrivate(p, "mediaSessionConnector") as? MediaSessionConnector ?: return null
+        connector = found
+        return found
+    }
+
+    /** kotlinaudio 那两个成员是 private val，只能反射取；沿父类链找，免得它挪个声明位置就断 */
+    private fun readPrivate(target: Any, name: String): Any? {
+        var c: Class<*>? = target.javaClass
+        while (c != null) {
+            try {
+                val f: Field = c.getDeclaredField(name)
+                f.isAccessible = true
+                return f.get(target)
+            } catch (ignored: Throwable) {
+            }
+            c = c.superclass
+        }
+        return null
+    }
+
+    /**
+     * 取上游那份「干净基值」。
+     * ★★ 这里绝对不装 provider —— 装 provider 是 publish 里 gated 那一支的活。
+     *   provider 的回调又要取基值，一旦这里回头去装 provider 就是自我递归（见 installProvider）。
+     */
+    private fun baseOf(p: BaseAudioPlayer): MediaMetadataCompat? {
+        return try {
+            p.notificationManager.getMediaMetadataCompat()
+        } catch (ignored: Throwable) {
+            null
+        }
+    }
+
+    /**
+     * 上游的 provider 是在 BaseAudioPlayer init 的一个 coroutine 里设的
+     * （mediaSessionConnector.setMediaMetadataProvider { notificationManager.getMediaMetadataCompat() }），
+     * 我们的 attach 可能跑在它前面把它顶掉，所以每次要贴键前核一次身份。
+     *
+     * ★★ 记账必须在调用之前：MediaSessionConnector.setMediaMetadataProvider() 不是单纯赋值，
+     *   字节码是 putfield → invalidateMediaSessionMetadata() → invokeinterface getMetadata(Player)，
+     *   也就是**当场回调一次新 provider**。上一版写成「先 conn.setMediaMetadataProvider(provider)
+     *   再 installedProvider = provider」，那一次同步回调里 installedProvider 还是 null、
+     *   current 也还是旧的，于是又走回装 provider 那一路 —— provider 装 provider，一帧咬一帧，
+     *   直接把主线程栈打爆（StackOverflowError，现象是「什么开关都没勾、本地点一下就闪退」）。
+     *   所以这里先把自己记上、再挂上去；挂失败就立刻把记账抹掉，下次 publish 会重试。
+     */
+    private fun installProvider(p: BaseAudioPlayer): Boolean {
+        val conn = resolveConnector(p) ?: return false
+        val current = try {
+            readPrivate(conn, "mediaMetadataProvider")
+        } catch (ignored: Throwable) {
+            null
+        }
+        if (current != null && current === installedProvider) return true
+        val provider = MediaSessionConnector.MediaMetadataProvider { _: Player ->
+            providerMetadata()
+        }
+        installedProvider = provider
+        return try {
+            conn.setMediaMetadataProvider(provider)
+            true
+        } catch (t: Throwable) {
+            installedProvider = null
+            Log.w(TAG, "provider 装不上（已忽略，逐句那一路不受影响）", t)
+            false
+        }
+    }
+}
+
+@@@ENDFILE
+@@@FILE src/native/carWithState/index.ts | bytes=2867 | sha256=6db4a5372e570320
+import { NativeEventEmitter, NativeModules, Platform } from "react-native";
+
+/**
+ * CarWith 原生门的 JS 包装。
+ * 原生侧：android/app/src/main/java/fun/upup/musicfree/carwith/CarWithState.kt
+ * 歌词那一半走的是 react-native-track-player 的 TrackPlayerModule.setCarWithLyric，
+ * 不经过这里（这里只管连接态与两把开关）。
+ */
+
+export interface ICarWithState {
+    /** 车机是否连着 */
+    connected: boolean;
+    /** -1 读不到 / 0 车机浅色 / 1 车机深色 */
+    nightMode: number;
+    lyricEnabled: boolean;
+    followTheme: boolean;
+}
+
+const defaultState: ICarWithState = {
+    connected: false,
+    nightMode: -1,
+    lyricEnabled: false,
+    followTheme: false,
+};
+
+const nativeModule: any = (NativeModules as any).CarWithState;
+const trackPlayerModule: any = (NativeModules as any).TrackPlayerModule;
+
+/** 鸿蒙那一侧没有这个原生模块，所有调用点都要能空转 */
+const supported = Platform.OS === "android" && !!nativeModule;
+
+export function isCarWithSupported() {
+    return supported;
+}
+
+/** refresh = true 时现读一轮（回前台、刚勾开关那两处用） */
+export async function getState(refresh?: boolean): Promise<ICarWithState> {
+    if (!supported) {
+        return { ...defaultState };
+    }
+    try {
+        const snap = refresh ? await nativeModule.refresh() : await nativeModule.getState();
+        return { ...defaultState, ...(snap ?? {}) };
+    } catch {
+        return { ...defaultState };
+    }
+}
+
+export function setLyricEnabled(enabled: boolean) {
+    if (!supported) return;
+    try {
+        nativeModule.setLyricEnabled?.(enabled);
+    } catch {}
+}
+
+export function setFollowTheme(follow: boolean) {
+    if (!supported) return;
+    try {
+        nativeModule.setFollowTheme?.(follow);
+    } catch {}
+}
+
+export function addStateListener(
+    callback: (state: ICarWithState) => void,
+): () => void {
+    if (!supported) return () => {};
+    try {
+        const emitter = new NativeEventEmitter(nativeModule);
+        const subscription = emitter.addListener(
+            "onCarWithStateChange",
+            (payload: ICarWithState) => {
+                callback({ ...defaultState, ...(payload ?? {}) });
+            },
+        );
+        return () => subscription.remove();
+    } catch {
+        return () => {};
+    }
+}
+
+/**
+ * 贴到 MediaSession 元数据上。三个参数一次给全，别凑「新歌整首 + 旧歌当前句」。
+ * whole / line 给空串就是「这首歌没词」，原生会照写空串把上一首洗掉；超限由原生发空串。
+ */
+export function pushLyric(whole: string, line: string, hasLyric: boolean) {
+    if (!trackPlayerModule?.setCarWithLyric) return;
+    try {
+        trackPlayerModule.setCarWithLyric(
+            whole || null,
+            line || null,
+            hasLyric ? 0 : 3,
+        );
+    } catch {}
+}
+
+@@@ENDFILE
+@@@FILE src/core/carWithLyric.ts | bytes=6776 | sha256=3a0713d424eaa66a
+import Config from "@/core/appConfig";
+import Theme from "@/core/theme";
+import LyricParser from "@/utils/lrcParser";
+import {
+    addStateListener,
+    getState,
+    isCarWithSupported,
+    pushLyric,
+    setFollowTheme as nativeSetFollowTheme,
+    setLyricEnabled as nativeSetLyricEnabled,
+    type ICarWithState,
+} from "@/native/carWithState";
+import { AppState } from "react-native";
+
+/**
+ * CarWith（小米汽车互联）/ Jovi InCar 适配的 JS 那一半。
+ *
+ * 总设定：**没连着 CarWith 时上游行为逐字不变；连着才为车机改写媒体会话元数据与主题。**
+ *
+ * 分工：
+ *   原生 CarWithState  —— 连接判据（虚拟屏屏名 + Display.getType 反射）+ ucar_night_mode
+ *   原生 CarWithLyric  —— 门控 + 把整首/当前句贴到 MediaSession 元数据（键名、封面那几条规矩）
+ *   本文件             —— 两把开关的持久化、歌词数据的取数与推送、主题跟随的判定与翻转上报
+ *
+ * 歌词数据从 lyricManager 来：换曲推「整首 + 当前句」，换句时把同一份整首原样再推一次。
+ * 这里不按「连没连着」拦推送 —— 关着（开关没勾）才真的不推。连着与否由原生门控，
+ * 这样连上车的那一刻原生手里就已经有这一首的歌词，不用等下一句切换。
+ */
+
+let connected = false;
+let nightMode = -1;
+let lyricEnabled = false;
+let followTheme = false;
+
+/** 最后一次推过去的两份，连接态翻回 true 时原样补推一次 */
+let lastWhole = "";
+let lastLine = "";
+let lastHasLyric = false;
+
+/**
+ * ★ 最容易做错的一条：翻转上报只跟「上一次真正报给界面的值」比。
+ *   不许拿「本轮开头现算一次、本轮结尾再算一次」代替 —— wantDark 是现算的，
+ *   两次现算之间原生状态变了就两边相等，这次翻转谁也报不出去。
+ */
+let appliedDark: boolean | null = null;
+
+/** 两把开关至少勾一把才值得去读数，全关着时连虚拟屏都不枚举 */
+function active() {
+    return lyricEnabled || followTheme;
+}
+
+/** [mm:ss.xx] —— 车机侧 LRC 解析只认这个格式 */
+function timeToLrctime(sec: number): string {
+    const totalCs = Math.max(0, Math.round(sec * 100));
+    const mm = Math.floor(totalCs / 6000);
+    const ss = Math.floor((totalCs % 6000) / 100);
+    const cs = totalCs % 100;
+    return `[${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}.${String(
+        cs,
+    ).padStart(2, "0")}]`;
+}
+
+/**
+ * 整首标准 LRC。
+ * 时间戳要**带上歌词偏移**：parser.getPosition 里是 `position - meta.offset`，
+ * 也就是说 item.time 是「不含偏移」的原始时间，车机拿去和真实播放位置比要加回去。
+ * 只出主行，不带译文（车机一屏一行，带译文会把行高挤掉）。
+ *
+ * 整首按 parser 缓存：逐句那一路每秒来一次，几百行 join 一次是白烧 CPU
+ * （偏移一改 lyricManager 就 new 一个新 parser，缓存自然失效，不用另设 invalidate）。
+ */
+let wholeCacheParser: LyricParser | null = null;
+let wholeCache = "";
+
+function buildWholeLyric(parser: LyricParser | null | undefined): string {
+    if (!parser) return "";
+    if (parser === wholeCacheParser) return wholeCache;
+    const items = parser.getLyricItems?.() ?? [];
+    const offset = Number(parser.getMeta?.()?.offset ?? 0) || 0;
+    const whole = items.length
+        ? items
+            .map(item => `${timeToLrctime(item.time + offset)} ${item.lrc ?? ""}`)
+            .join("\r\n")
+        : "";
+    wholeCacheParser = parser;
+    wholeCache = whole;
+    return whole;
+}
+
+function pushInternal(whole: string, line: string) {
+    lastWhole = whole;
+    lastLine = line;
+    lastHasLyric = !!whole || !!line;
+    pushLyric(whole, line, lastHasLyric);
+}
+
+/**
+ * 推一份歌词：换曲推「整首 + 当前句」，换句也是这一个入口（整首走缓存）。
+ * parser 为 null（没词、正在加载、换曲那一下）就是清空 —— 整首为空也要写，不能跳过：
+ * 跳过等于把上一首留在会话里，车机就一直停在最后一句。
+ */
+export function pushLyricState(
+    parser: LyricParser | null | undefined,
+    currentLine?: string,
+) {
+    if (!lyricEnabled) return;
+    pushInternal(buildWholeLyric(parser), currentLine ?? "");
+}
+
+function applyTheme() {
+    // 判定：勾了 && 连着 && 车机真报了深浅（-1 读不到不覆盖）⇒ 覆盖；其余一律回到用户自己那档
+    const wantDark =
+        followTheme && connected && nightMode >= 0 ? nightMode === 1 : null;
+    if (wantDark === appliedDark) return;
+    appliedDark = wantDark;
+    if (wantDark === null) {
+        Theme.restoreStoredTheme();
+    } else {
+        Theme.applyCarWithTheme(wantDark);
+    }
+}
+
+function onStateChange(state: ICarWithState) {
+    const changedConnected = state.connected !== connected;
+    connected = !!state.connected;
+    nightMode = typeof state.nightMode === "number" ? state.nightMode : -1;
+    applyTheme();
+    // 连上来回补推一次：开关是冷的（没推过）就不动
+    if (changedConnected && connected && lyricEnabled && (lastWhole || lastLine)) {
+        pushLyric(lastWhole, lastLine, lastHasLyric);
+    }
+}
+
+function refreshNow() {
+    if (!isCarWithSupported() || !active()) return;
+    getState(true).then(onStateChange);
+}
+
+/** 两把开关的初始值 + 连接态首轮；由 bootstrap 在 lyricManager.setup() 之后调 */
+export function setup() {
+    if (!isCarWithSupported()) return;
+    lyricEnabled = !!Config.getConfig("lyric.showCarWithLyric");
+    followTheme = !!Config.getConfig("theme.followCarWith");
+    nativeSetLyricEnabled(lyricEnabled);
+    nativeSetFollowTheme(followTheme);
+    addStateListener(onStateChange);
+    // 冷启动去坐车：不该等用户进设置碰一下开关才开始跟随，开局就现读一轮
+    refreshNow();
+    AppState.addEventListener("change", next => {
+        if (next === "active") {
+            refreshNow();
+        }
+    });
+}
+
+export function setLyricEnabled(value: boolean) {
+    lyricEnabled = value;
+    Config.setConfig("lyric.showCarWithLyric", value);
+    nativeSetLyricEnabled(value);
+    if (value) {
+        refreshNow();
+    } else {
+        // 关掉当场把整首与当前句收掉，车机不停在最后一句
+        pushInternal("", "");
+    }
+}
+
+export function setFollowTheme(value: boolean) {
+    followTheme = value;
+    Config.setConfig("theme.followCarWith", value);
+    nativeSetFollowTheme(value);
+    if (value) {
+        refreshNow();
+    } else {
+        applyTheme();
+    }
+}
+
+const CarWithLyric = {
+    setup,
+    pushLyricState,
+    setLyricEnabled,
+    setFollowTheme,
+    isSupported: isCarWithSupported,
+};
+
+export default CarWithLyric;
+
+@@@ENDFILE

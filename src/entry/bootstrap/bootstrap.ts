@@ -5,6 +5,7 @@ import { ImgAsset } from "@/constants/assetsConst";
 import { emptyFunction, localPluginHash, supportLocalMediaType } from "@/constants/commonConst";
 import pathConst from "@/constants/pathConst";
 import Config from "@/core/appConfig";
+import CarWithLyric from "@/core/carWithLyric";
 import downloader, { DownloadFailReason, DownloaderEvent } from "@/core/downloader";
 import LocalMusicSheet from "@/core/localMusicSheet";
 import lyricManager from "@/core/lyricManager";
@@ -197,6 +198,8 @@ export async function initTrackPlayer(logger?: IPerfLogger) {
     logger?.mark("播放列表初始化完成");
 
     await lyricManager.setup();
+    // CarWith：必须在 lyricManager 之后 —— 这里只推开关位、挂监听，不抢歌词首帧
+    CarWithLyric.setup();
 
     logger?.mark("歌词初始化完成");
 }
