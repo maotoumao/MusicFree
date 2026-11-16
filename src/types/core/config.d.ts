@@ -43,6 +43,7 @@ export interface IAppConfigProperties {
     "lyric.fontSize": number;
     "lyric.detailFontSize": number;
     "lyric.autoSearchLyric": boolean;
+    "lyric.showCarWithLyric": boolean;
 
     // Theme
     "theme.background": string;
@@ -51,6 +52,7 @@ export interface IAppConfigProperties {
     "theme.colors": CustomizedColors;
     "theme.customColors"?: CustomizedColors;
     "theme.followSystem": boolean;
+    "theme.followCarWith": boolean;
     "theme.selectedTheme": string;
 
     // Backup

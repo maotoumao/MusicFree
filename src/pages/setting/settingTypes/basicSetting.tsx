@@ -9,6 +9,7 @@ import { SortType } from "@/constants/commonConst.ts";
 import pathConst from "@/constants/pathConst";
 import Config, { useAppConfig } from "@/core/appConfig";
 import { useI18N } from "@/core/i18n";
+import CarWithLyric from "@/core/carWithLyric";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
 import useColors from "@/hooks/useColors";
 import LyricUtil, { NativeTextAlignment } from "@/native/lyricUtil";
@@ -683,6 +684,7 @@ function LyricSetting() {
     const widthPercent = useAppConfig("lyric.widthPercent");
     const fontSize = useAppConfig("lyric.fontSize");
     const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");
+    const showCarWithLyric = useAppConfig("lyric.showCarWithLyric");
 
 
 
@@ -694,6 +696,15 @@ function LyricSetting() {
         t("basicSettings.lyric.autoSearchLyric"),
         "lyric.autoSearchLyric",
         enableAutoSearchLyric ?? false,
+    );
+
+    const openCarWithLyric = createSwitch(
+        t("basicSettings.lyric.showCarWithLyric"),
+        "lyric.showCarWithLyric",
+        showCarWithLyric ?? false,
+        newValue => {
+            CarWithLyric.setLyricEnabled(newValue);
+        },
     );
 
     const openStatusBarLyric = createSwitch(
@@ -764,6 +775,15 @@ function LyricSetting() {
                 <ListItem.Content title={autoSearchLyric.title} />
                 {autoSearchLyric.right}
             </ListItem>
+            {CarWithLyric.isSupported() ? (
+                <ListItem
+                    withHorizontalPadding
+                    heightType="small"
+                    onPress={openCarWithLyric.onPress}>
+                    <ListItem.Content title={openCarWithLyric.title} />
+                    {openCarWithLyric.right}
+                </ListItem>
+            ) : null}
             <ListItem
                 withHorizontalPadding
                 heightType="small"
