@@ -1,6 +1,9 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useOrientation from "@/hooks/useOrientation";
+import FastImage from "@/components/base/fastImage";
+import { ImgAsset } from "@/constants/assetsConst";
 import rpx from "@/utils/rpx";
 import Icon from "@/components/base/icon.tsx";
 import ThemeText from "@/components/base/themeText";
@@ -13,9 +16,19 @@ export default function NavBar() {
     const musicItem = useCurrentMusic();
     const isFavorite = useFavorite(musicItem);
     const safeAreaInsets = useSafeAreaInsets();
+    const orientation = useOrientation();
+    const isLandscape = orientation === "horizontal";
 
     return (
         <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
+            {isLandscape ? (
+                <FastImage
+                    style={styles.coverThumb}
+                    resizeMode="cover"
+                    source={musicItem?.artwork}
+                    placeholderSource={ImgAsset.albumDefault}
+                />
+            ) : null}
             <View style={styles.titleMain}>
                 <ThemeText
                     fontSize="title"
@@ -64,7 +77,7 @@ export default function NavBar() {
 const styles = StyleSheet.create({
     container: {
         width: "100%",
-        height: rpx(120),
+        height: rpx(200),
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: rpx(52),
@@ -84,5 +97,11 @@ const styles = StyleSheet.create({
     },
     favoriteButton: {
         padding: rpx(8),
+    },
+    coverThumb: {
+        width: rpx(100),
+        height: rpx(100),
+        borderRadius: rpx(12),
+        marginRight: rpx(20),
     },
 });
