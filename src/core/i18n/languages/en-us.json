@@ -229,6 +229,8 @@
     "basicSettings.musicDetailDefault.album": "Show album cover by default",
     "basicSettings.musicDetailDefault.lyric": "Show lyrics page by default",
     "basicSettings.musicDetailAwake": "Keep screen on when in song detail page",
+    "basicSettings.bluetoothLyric": "Bluetooth Lyrics (sync lyric to car screen)",
+    "basicSettings.lyricBlur": "Lyric Blur (blur non-active lines)",
     "basicSettings.associateLyricType": "Associate Lyrics Method",
     "basicSettings.associateLyricType.input": "Input Song ID",
     "basicSettings.associateLyricType.search": "Search Lyrics",

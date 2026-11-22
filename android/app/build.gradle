@@ -159,6 +159,8 @@ android {
 
     buildTypes {
         debug {
+            // 独立包名, 与手机上已安装的正式版共存互不影响
+            applicationIdSuffix ".debug"
             signingConfig signingConfigs.debug
         }
         release {

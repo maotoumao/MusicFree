@@ -229,6 +229,8 @@
     "basicSettings.musicDetailDefault.album": "默认展示歌曲封面",
     "basicSettings.musicDetailDefault.lyric": "默认展示歌词页",
     "basicSettings.musicDetailAwake": "处于歌曲详情页时常亮",
+    "basicSettings.bluetoothLyric": "蓝牙歌词 (车机同步歌词行)",
+    "basicSettings.lyricBlur": "歌词模糊 (非当前行虚化)",
     "basicSettings.associateLyricType": "关联歌词方式",
     "basicSettings.associateLyricType.input": "输入歌曲ID",
     "basicSettings.associateLyricType.search": "搜索歌词",

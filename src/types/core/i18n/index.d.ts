@@ -285,7 +285,9 @@ export interface ILanguageData {
     "basicSettings.musicDetailDefault": string; // 音乐详情默认
     "basicSettings.musicDetailDefault.album": string; // 专辑
     "basicSettings.musicDetailDefault.lyric": string; // 歌词
-    "basicSettings.musicDetailAwake": string; // 唤醒音乐详情
+    "basicSettings.musicDetailAwake": string;
+    "basicSettings.bluetoothLyric": string;
+    "basicSettings.lyricBlur": string; // 歌词模糊 // 蓝牙歌词
     "basicSettings.associateLyricType": string; // 关联歌词类型
     "basicSettings.associateLyricType.input": string; // 输入
     "basicSettings.associateLyricType.search": string; // 搜索
