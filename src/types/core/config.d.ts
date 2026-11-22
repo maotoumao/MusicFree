@@ -24,6 +24,7 @@ export interface IAppConfigProperties {
     "basic.musicDetailDefault": "album" | "lyric";
     "basic.musicDetailAwake": boolean;
     "basic.bluetoothLyric": boolean;
+    "basic.lyricBlur": boolean;
     "basic.maxHistoryLen": number;
     "basic.autoUpdatePlugin": boolean;
     "basic.notCheckPluginVersion": boolean;

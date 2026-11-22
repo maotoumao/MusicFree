@@ -61,6 +61,7 @@ class AppConfig implements IAppConfig {
                 ["setting.basic.musicDetailDefault", "basic.musicDetailDefault"],
                 ["setting.basic.musicDetailAwake", "basic.musicDetailAwake"],
                 ["setting.basic.bluetoothLyric", "basic.bluetoothLyric"],
+                ["setting.basic.lyricBlur", "basic.lyricBlur"],
                 ["setting.basic.debug.errorLog", "debug.errorLog"],
                 ["setting.basic.debug.traceLog", "debug.traceLog"],
                 ["setting.basic.debug.devLog", "debug.devLog"],
