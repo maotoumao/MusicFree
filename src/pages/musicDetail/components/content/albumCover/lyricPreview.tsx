@@ -40,7 +40,7 @@ export default function LyricPreview(props: ILyricPreviewProps) {
             accessible
             accessibilityLabel={"歌词预览, 点击查看完整歌词"}
             onPress={onPress}>
-            <Text style={[styles.line, styles.dim, ]} numberOfLines={1}>
+            <Text style={[styles.line, styles.dim ]} numberOfLines={1}>
                 {lines.prev ?? ""}
             </Text>
             <Text
@@ -52,7 +52,7 @@ export default function LyricPreview(props: ILyricPreviewProps) {
                 numberOfLines={1}>
                 {lines.current}
             </Text>
-            <Text style={[styles.line, styles.dim, ]} numberOfLines={1}>
+            <Text style={[styles.line, styles.dim ]} numberOfLines={1}>
                 {lines.next ?? ""}
             </Text>
         </TouchableOpacity>

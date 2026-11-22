@@ -54,6 +54,11 @@ export default function AlbumCover(props: IProps) {
 
     const combineGesture = Gesture.Race(tap, longPress);
 
+    if (orientation === "horizontal") {
+        // 横屏封面缩略图已并入顶栏, 不再单独占位
+        return null;
+    }
+
     return (
         <>
             <GestureDetector gesture={combineGesture}>
