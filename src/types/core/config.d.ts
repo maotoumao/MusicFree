@@ -23,6 +23,7 @@ export interface IAppConfigProperties {
     "basic.downloadQualityOrder": "asc" | "desc";
     "basic.musicDetailDefault": "album" | "lyric";
     "basic.musicDetailAwake": boolean;
+    "basic.bluetoothLyric": boolean;
     "basic.maxHistoryLen": number;
     "basic.autoUpdatePlugin": boolean;
     "basic.notCheckPluginVersion": boolean;
