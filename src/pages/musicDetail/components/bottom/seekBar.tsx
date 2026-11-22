@@ -61,7 +61,7 @@ export default function SeekBar() {
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        paddingHorizontal: rpx(28),
+        paddingHorizontal: rpx(24),
         paddingTop: rpx(8),
     },
     slider: {
@@ -72,7 +72,7 @@ const style = StyleSheet.create({
         width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingHorizontal: rpx(24),
+        paddingHorizontal: rpx(30),
         paddingTop: rpx(2),
         paddingBottom: rpx(8),
     },

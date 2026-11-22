@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LayoutRectangle, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { LayoutRectangle, StyleSheet, Text, View } from "react-native";
 import rpx from "@/utils/rpx";
 import useDelayFalsy from "@/hooks/useDelayFalsy";
 import { FlatList, Gesture, GestureDetector, TapGestureHandler } from "react-native-gesture-handler";
@@ -7,7 +7,7 @@ import { fontSizeConst } from "@/constants/uiConst";
 import Loading from "@/components/base/loading";
 import globalStyle from "@/constants/globalStyle";
 import { showPanel } from "@/components/panels/usePanel";
-import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
+import TrackPlayer, { useMusicState } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
 import DraggingTime from "./draggingTime";
@@ -15,7 +15,6 @@ import LyricItemComponent from "./lyricItem";
 import PersistStatus from "@/utils/persistStatus";
 import { IParsedLrcItem } from "@/utils/lrcParser";
 import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
-import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager, { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
 import { useI18N } from "@/core/i18n";
 
@@ -64,8 +63,6 @@ export default function Lyric(props: IProps) {
 
     const listRef = useRef<FlatList<IParsedLrcItem> | null>();
 
-    const currentMusicItem = useCurrentMusic();
-    const associateMusicItem = getMediaExtraProperty(currentMusicItem, "associatedLrc");
 
     // 是否展示拖拽
     const dragShownRef = useRef(false);
@@ -218,14 +215,6 @@ export default function Lyric(props: IProps) {
         })
         .runOnJS(true);
 
-    const unlinkTapGesture = Gesture.Tap()
-        .onStart(() => {
-            if (currentMusicItem) {
-                lyricManager.unassociateLyric(currentMusicItem);
-            }
-        })
-        .runOnJS(true);
-
     return (
         <>
             <GestureDetector gesture={tapGesture}>
@@ -255,41 +244,7 @@ export default function Lyric(props: IProps) {
                                 });
                             }}
                             fadingEdgeLength={120}
-                            ListHeaderComponent={
-                                <>
-                                    {blankComponent}
-                                    <View style={styles.lyricMeta}>
-                                        {associateMusicItem ? (
-                                            <>
-                                                <Text
-                                                    style={[
-                                                        styles.lyricMetaText,
-                                                        fontSizeStyle,
-                                                    ]}
-                                                    ellipsizeMode="middle"
-                                                    numberOfLines={1}>
-                                                    {t("lyric.lyricLinkedFrom", {
-                                                        platform: associateMusicItem.platform,
-                                                        title: associateMusicItem.title || "",
-                                                    })}
-
-                                                </Text>
-
-                                                <GestureDetector
-                                                    gesture={unlinkTapGesture}>
-                                                    <Text
-                                                        style={[
-                                                            styles.linkText,
-                                                            fontSizeStyle,
-                                                        ]}>
-                                                        {t("lyric.unlinkLyric")}
-                                                    </Text>
-                                                </GestureDetector>
-                                            </>
-                                        ) : null}
-                                    </View>
-                                </>
-                            }
+                            ListHeaderComponent={blankComponent}
                             ListFooterComponent={blankComponent}
                             onScrollBeginDrag={onScrollBeginDrag}
                             onMomentumScrollEnd={onScrollEndDrag}
