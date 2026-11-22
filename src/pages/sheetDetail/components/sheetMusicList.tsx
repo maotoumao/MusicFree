@@ -7,8 +7,10 @@ import globalStyle from "@/constants/globalStyle";
 import { useSheetItem } from "@/core/musicSheet";
 import { RequestStateCode } from "@/constants/commonConst";
 import { useCurrentMusic } from "@/core/trackPlayer";
+import type { SharedValue } from "react-native-reanimated";
 
-export default function SheetMusicList() {
+export default function SheetMusicList(props: { scrollYShared?: SharedValue<number> }) {
+    const { scrollYShared } = props;
     const { id = "favorite" } = useParams<"local-sheet-detail">();
     const musicSheet = useSheetItem(id);
     const currentMusic = useCurrentMusic();
@@ -16,6 +18,7 @@ export default function SheetMusicList() {
     return (
         <HorizontalSafeAreaView style={globalStyle.flex1}>
             <MusicList
+                scrollYShared={scrollYShared}
                 Header={<Header />}
                 musicList={musicSheet?.musicList}
                 musicSheet={musicSheet}

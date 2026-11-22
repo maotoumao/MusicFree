@@ -8,19 +8,22 @@ import Config from "@/core/appConfig";
 import globalStyle from "@/constants/globalStyle";
 import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
 import TrackPlayer from "@/core/trackPlayer";
+import type { SharedValue } from "react-native-reanimated";
 import { RequestStateCode } from "@/constants/commonConst";
 
 interface IMusicListProps {
     sheetInfo: IMusic.IMusicSheetItem | null;
     musicList?: IMusic.IMusicItem[] | null;
     navTitle: string;
+    // 滚动偏移共享值
+    scrollYShared?: SharedValue<number>;
     // 状态
     state: RequestStateCode;
     onRetry?: () => void;
     onLoadMore?: () => void;
 }
 export default function SheetMusicList(props: IMusicListProps) {
-    const { sheetInfo, musicList, navTitle, state, onRetry, onLoadMore } = props;
+    const { sheetInfo, musicList, navTitle, scrollYShared, state, onRetry, onLoadMore } = props;
 
     return (
         <View style={globalStyle.fwflex1}>
@@ -30,6 +33,7 @@ export default function SheetMusicList(props: IMusicListProps) {
                 <HorizontalSafeAreaView style={globalStyle.fwflex1}>
                     <MusicList
                         showIndex
+                        scrollYShared={scrollYShared}
                         Header={
                             <Header
                                 navTitle={navTitle}

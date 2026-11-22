@@ -4,8 +4,11 @@ import MusicBar from "@/components/musicBar";
 import SheetMusicList from "./components/sheetMusicList";
 import StatusBar from "@/components/base/statusBar";
 import globalStyle from "@/constants/globalStyle";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { PixelRatio, StyleSheet } from "react-native";
+import rpx from "@/utils/rpx";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import LinearGradient from "react-native-linear-gradient";
 import { RequestStateCode } from "@/constants/commonConst";
 import useDarkDominantColor from "@/hooks/useDarkDominantColor";
 
@@ -27,11 +30,20 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
 
     const cover = sheetInfo?.artwork ?? sheetInfo?.coverImg;
     const bgColor = useDarkDominantColor(cover);
+    const scrollY = useSharedValue(0);
+    // 100dp 对应的像素值 (JS 线程预算, worklet 内不可调用 PixelRatio)
+    const scrollThreshold = 100 * PixelRatio.get();
+    const safeAreaInsets = useSafeAreaInsets();
+    // 顶部黑色渐变遮罩: 未滚动完全透明, 滚动 100dp 后完全不透明
+    const scrimStyle = useAnimatedStyle(() => ({
+        opacity: Math.min(1, scrollY.value / scrollThreshold),
+    }));
+    const scrimHeight = safeAreaInsets.top + rpx(160);
 
     return (
         <SafeAreaView
             edges={["bottom"]}
-            style={[globalStyle.fwflex1, styles.pageBg,]}>
+            style={[globalStyle.fwflex1, styles.pageBg]}>
             <StatusBar backgroundColor={"transparent"} />
             <NavBar
                 musicList={musicList ?? sheetInfo?.musicList ?? []}
@@ -39,7 +51,17 @@ export default function MusicSheetPage(props: IMusicSheetPageProps) {
                 sheetInfo={sheetInfo as any}
                 canStar={canStar}
             />
+            {/* 滚动渐显的顶部黑色渐变 */}
+            <Animated.View
+                pointerEvents="none"
+                style={[styles.scrollScrim, { height: scrimHeight }, scrimStyle]}>
+                <LinearGradient
+                    style={StyleSheet.absoluteFill}
+                    colors={["#000000", "rgba(0,0,0,0)"]}
+                />
+            </Animated.View>
             <SheetMusicList
+                scrollYShared={scrollY}
                 navTitle={navTitle}
                 sheetInfo={sheetInfo as any}
                 musicList={musicList ?? sheetInfo?.musicList}
@@ -60,14 +82,11 @@ const styles = StyleSheet.create({
         borderWidth: 6,
         borderColor: "red",
     },
-    artworkBg: {
+    scrollScrim: {
         position: "absolute",
-        width: "100%",
-        height: "100%",
         top: 0,
         left: 0,
         right: 0,
-        bottom: 0,
-        opacity: 0.25,
+        zIndex: 90,
     },
 });

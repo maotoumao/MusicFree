@@ -66,7 +66,7 @@ export default function Header(props: IHeaderProps) {
                         style={styles.title}
                         fontWeight="bold"
                         numberOfLines={2}>
-                        {"[NEW] "}{musicSheet?.title ?? navTitle}
+                        {musicSheet?.title ?? navTitle}
                     </ThemeText>
                     <Text style={styles.subtitle} numberOfLines={1}>
                         {musicSheet?.artist ?? `共${worksNum}首`}
