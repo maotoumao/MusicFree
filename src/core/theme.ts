@@ -47,7 +47,7 @@ export const darkTheme = {
         shadow: "#999",
         appBar: "#000000",
         appBarText: "#FFFFFF",
-        musicBar: "#1C1C1E",
+        musicBar: "#222223",
         musicBarText: "#FFFFFF",
         divider: "#38383A",
         listActive: "rgba(255,255,255,0.1)", // 在手机上表现是ripple

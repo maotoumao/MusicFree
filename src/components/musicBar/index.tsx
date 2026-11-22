@@ -62,6 +62,7 @@ function MusicBar() {
 
     const colors = useColors();
     const safeAreaInsets = useSafeAreaInsets();
+    const safeAreaBottom = safeAreaInsets.bottom;
 
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -86,6 +87,7 @@ function MusicBar() {
                         {
                             backgroundColor: colors.musicBar,
                             paddingRight: safeAreaInsets.right + rpx(24),
+                            bottom: safeAreaInsets.bottom + rpx(12),
                         },
                     ]}
                     accessible
@@ -121,14 +123,15 @@ export default memo(MusicBar, () => true);
 
 const style = StyleSheet.create({
     wrapper: {
-        alignSelf: "stretch",
+        position: "absolute",
+        left: rpx(22),
+        right: rpx(22),
         height: rpx(128),
         flexDirection: "row",
         alignItems: "center",
         paddingRight: rpx(24),
-        marginHorizontal: rpx(20),
-        marginBottom: rpx(12),
         borderRadius: rpx(24),
+        zIndex: 100,
         shadowColor: "#000",
         shadowOpacity: 0.35,
         shadowRadius: 12,
