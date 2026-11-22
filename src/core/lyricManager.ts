@@ -1,3 +1,4 @@
+import { buildLyricSearchVariants } from "@/utils/lyricSearchQuery";
 import { IAppConfig } from "@/types/core/config";
 import { ITrackPlayer } from "@/types/core/trackPlayer";
 import { IInjectable } from "@/types/infra";
@@ -33,7 +34,7 @@ const defaultLyricState = {
 };
 
 const lyricStateAtom = atom<ILyricState>(defaultLyricState);
-const currentLyricItemAtom = atom<IParsedLrcItem | null>(null);
+export const currentLyricItemAtom = atom<IParsedLrcItem | null>(null);
 
 
 class LyricManager implements IInjectable {
@@ -338,51 +339,59 @@ class LyricManager implements IInjectable {
      * @returns 
      */
     private async searchSimilarLyric(musicItem: IMusic.IMusicItem) {
-        const keyword = musicItem.alias || musicItem.title;
+        const { queries, targetTitle } = buildLyricSearchVariants(
+            musicItem.alias || musicItem.title,
+        );
         const plugins = this.pluginManager.getSearchablePlugins("lyric");
 
         let distance = Infinity;
         let minDistanceMusicItem;
         let targetPlugin: Plugin | null = null;
 
-        for (let plugin of plugins) {
-            // 如果插件不是当前音乐的插件，或者当前音乐不是正在播放的音乐，则跳过
-            if (
-                !this.trackPlayer.isCurrentMusic(musicItem)
-            ) {
-                return null;
-            }
-
-            if (plugin.name === musicItem.platform) {
-                // 如果插件是当前音乐的插件，则跳过
-                continue;
-            }
-
-            const results = await plugin.methods
-                .search(keyword, 1, "lyric")
-                .catch(() => null);
-
-            // 取前两个
-            const firstTwo = results?.data?.slice(0, 2) || [];
-
-            for (let item of firstTwo) {
+        for (const keyword of queries) {
+            for (let plugin of plugins) {
+                // 如果插件不是当前音乐的插件，或者当前音乐不是正在播放的音乐，则跳过
                 if (
-                    item.title === keyword &&
-                    item.artist === musicItem.artist
+                    !this.trackPlayer.isCurrentMusic(musicItem)
                 ) {
-                    distance = 0;
-                    minDistanceMusicItem = item;
-                    targetPlugin = plugin;
-                    break;
-                } else {
-                    const dist =
-                        minDistance(keyword, musicItem.title) +
-                        minDistance(item.artist, musicItem.artist);
-                    if (dist < distance) {
-                        distance = dist;
+                    return null;
+                }
+
+                if (plugin.name === musicItem.platform) {
+                    // 如果插件是当前音乐的插件，则跳过
+                    continue;
+                }
+
+                const results = await plugin.methods
+                    .search(keyword, 1, "lyric")
+                    .catch(() => null);
+
+                // 取前两个
+                const firstTwo = results?.data?.slice(0, 2) || [];
+
+                for (let item of firstTwo) {
+                    if (
+                        item.title === targetTitle &&
+                        item.artist === musicItem.artist
+                    ) {
+                        distance = 0;
                         minDistanceMusicItem = item;
                         targetPlugin = plugin;
+                        break;
+                    } else {
+                        const dist =
+                            minDistance(item.title, targetTitle) +
+                            minDistance(item.artist, musicItem.artist);
+                        if (dist < distance) {
+                            distance = dist;
+                            minDistanceMusicItem = item;
+                            targetPlugin = plugin;
+                        }
                     }
+                }
+
+                if (distance === 0) {
+                    break;
                 }
             }
 

@@ -31,10 +31,10 @@ interface IProps {
 }
 
 const fontSizeMap = {
-    0: rpx(44),
-    1: rpx(56),
-    2: rpx(68),
-    3: rpx(80),
+    0: rpx(31),
+    1: rpx(39),
+    2: rpx(48),
+    3: rpx(56),
 } as Record<number, number>;
 
 export default function Lyric(props: IProps) {
@@ -230,7 +230,7 @@ export default function Lyric(props: IProps) {
         <>
             <GestureDetector gesture={tapGesture}>
                 <View style={globalStyle.fwflex1}>
-                        {loading ? (
+                    {loading ? (
                         <Loading color="white" />
                     ) : lyrics?.length ? (
                         <FlatList
@@ -315,6 +315,15 @@ export default function Lyric(props: IProps) {
                                         light={draggingIndex === index}
                                         highlight={
                                             currentLrcItem?.index === index
+                                        }
+                                        distance={
+                                            currentLrcItem &&
+                                            currentLrcItem.index >= 0
+                                                ? Math.abs(
+                                                    currentLrcItem.index -
+                                                          index,
+                                                )
+                                                : undefined
                                         }
                                     />
                                 );
