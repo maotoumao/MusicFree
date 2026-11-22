@@ -5,8 +5,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
     BackHandler,
     DeviceEventEmitter,
+    Keyboard,
     KeyboardAvoidingView,
     NativeEventSubscription,
+    Platform,
     Pressable,
     StyleSheet,
 } from "react-native";
@@ -57,6 +59,25 @@ export default function (props: IPanelBaseProps) {
         () => (orientation === "horizontal" ? rpx(750) : height),
         [orientation],
     );
+
+    // Android 15+ edge-to-edge 下窗口不自动避让键盘, 手动监听键盘高度抬升面板
+    const [androidKeyboardHeight, setAndroidKeyboardHeight] = useState(0);
+    useEffect(() => {
+        if (Platform.OS !== "android") {
+            return;
+        }
+        const showSubscription = Keyboard.addListener("keyboardDidShow", e => {
+            setAndroidKeyboardHeight(e.endCoordinates.height);
+        });
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+            setAndroidKeyboardHeight(0);
+        });
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+    }, []);
+    const isAndroid = Platform.OS === "android";
 
     const backHandlerRef = useRef<NativeEventSubscription>();
 
@@ -165,7 +186,12 @@ export default function (props: IPanelBaseProps) {
                     bottom: 0,
                 } : {
                     top: positionMethod === "top" ? (NativeUtils.getWindowDimensions().height + safeAreaInsets.top) - height - safeAreaInsets.bottom : undefined,
-                    bottom: positionMethod === "bottom" ? 0 : undefined,
+                    bottom:
+                        positionMethod === "bottom"
+                            ? isAndroid
+                                ? androidKeyboardHeight
+                                : 0
+                            : undefined,
                     height: height,
                 },
                 {
@@ -188,7 +214,7 @@ export default function (props: IPanelBaseProps) {
                     style={[style.maskWrapper, style.mask, maskAnimated]}
                 />
             </Pressable>
-            {keyboardAvoidBehavior === "none" ? (
+            {keyboardAvoidBehavior === "none" || isAndroid ? (
                 panelBody
             ) : (
                 <KeyboardAvoidingView

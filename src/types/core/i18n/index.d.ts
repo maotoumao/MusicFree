@@ -72,6 +72,7 @@ export interface ILanguageData {
     "home.starredPlaylistsCount.a11y": string; // 我喜欢的歌单数量
     "home.songCount": string; // 歌曲数量
     "home.clickToSearch": string; // 点击搜索
+    "home.title": string; // 首页大标题
 
     // 对话框相关
     "dialog.deleteSheetTitle": string; // 删除歌单
@@ -284,7 +285,9 @@ export interface ILanguageData {
     "basicSettings.musicDetailDefault": string; // 音乐详情默认
     "basicSettings.musicDetailDefault.album": string; // 专辑
     "basicSettings.musicDetailDefault.lyric": string; // 歌词
-    "basicSettings.musicDetailAwake": string; // 唤醒音乐详情
+    "basicSettings.musicDetailAwake": string;
+    "basicSettings.bluetoothLyric": string;
+    "basicSettings.lyricBlur": string; // 歌词模糊 // 蓝牙歌词
     "basicSettings.associateLyricType": string; // 关联歌词类型
     "basicSettings.associateLyricType.input": string; // 输入
     "basicSettings.associateLyricType.search": string; // 搜索
@@ -468,6 +471,11 @@ export interface ILanguageData {
     "panel.musicItemLyricOptions.enableDesktopLyric": string; // 开启
     "panel.musicItemLyricOptions.disableDesktopLyric": string; // 关闭
     "panel.musicItemLyricOptions.desktopLyricPermissionError": string; // 桌面歌词权限错误
+    "panel.musicItemLyricOptions.fontSize": string; // 字号大小
+    "panel.musicItemLyricOptions.lyricOffset": string; // 歌词偏移
+    "panel.musicItemLyricOptions.searchLyric": string; // 搜索歌词
+    "panel.musicItemLyricOptions.showTranslation": string; // 显示翻译
+    "panel.musicItemLyricOptions.hideTranslation": string; // 隐藏翻译
     "panel.musicItemLyricOptions.uploadLocalLyric": string; // 上传本地歌词
     "panel.musicItemLyricOptions.uploadLocalLyricTranslation": string; // 上传本地歌词翻译
     "panel.musicItemLyricOptions.deleteLocalLyric": string; // 删除本地歌词
@@ -486,6 +494,11 @@ export interface ILanguageData {
     "panel.musicItemOptions.unassociateLyric": string; // 解除关联歌词    
     "panel.musicItemOptions.unassociateLyricSuccess": string; // 已解除关联歌词
     "panel.musicItemOptions.timingClose": string; // 定时关闭
+    "panel.musicItemOptions.favorite": string; // 收藏到我喜欢
+    "panel.musicItemOptions.unfavorite": string; // 从我喜欢中移除
+    "panel.musicItemOptions.quality": string; // 音质选择
+    "panel.musicItemOptions.playRate": string; // 倍速播放
+    "panel.musicItemOptions.share": string; // 分享歌曲
     "panel.musicItemOptions.clearPluginCache": string; // 清除插件缓存
     "panel.musicItemOptions.cacheCleared": string; // 缓存已清除
     "panel.musicItemOptions.deleteFailed": string; // 删除失败

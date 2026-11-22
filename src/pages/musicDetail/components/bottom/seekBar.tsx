@@ -21,14 +21,15 @@ export default function SeekBar() {
     const [tmpProgress, setTmpProgress] = useState<number | null>(null);
     const slidingRef = useRef(false);
 
+    const currentTime = tmpProgress ?? progress.position;
+
     return (
         <View style={style.wrapper}>
-            <TimeLabel time={tmpProgress ?? progress.position} />
             <Slider
                 style={style.slider}
-                minimumTrackTintColor={"#cccccc"}
-                maximumTrackTintColor={"#999999"}
-                thumbTintColor={"#dddddd"}
+                minimumTrackTintColor={"#ffffff"}
+                maximumTrackTintColor={"rgba(255,255,255,0.3)"}
+                thumbTintColor={"#ffffff00"}
                 minimumValue={0}
                 maximumValue={progress.duration}
                 onSlidingStart={() => {
@@ -49,7 +50,10 @@ export default function SeekBar() {
                 }}
                 value={progress.position}
             />
-            <TimeLabel time={progress.duration} />
+            <View style={style.timeWrapper}>
+                <TimeLabel time={currentTime} />
+                <TimeLabel time={progress.duration} />
+            </View>
         </View>
     );
 }
@@ -57,18 +61,24 @@ export default function SeekBar() {
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        height: rpx(40),
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "row",
+        paddingHorizontal: rpx(24),
+        paddingTop: rpx(8),
     },
     slider: {
-        width: "73%",
+        width: "100%",
         height: rpx(40),
     },
+    timeWrapper: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingHorizontal: rpx(30),
+        paddingTop: rpx(2),
+        paddingBottom: rpx(8),
+    },
     text: {
-        fontSize: fontSizeConst.description,
+        fontSize: fontSizeConst.tag,
         includeFontPadding: false,
-        color: "#cccccc",
+        color: "rgba(255,255,255,0.4)",
     },
 });

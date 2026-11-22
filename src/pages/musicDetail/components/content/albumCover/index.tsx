@@ -6,9 +6,9 @@ import useOrientation from "@/hooks/useOrientation";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useCurrentMusic } from "@/core/trackPlayer";
 import globalStyle from "@/constants/globalStyle";
-import { View } from "react-native";
-import Operations from "./operations";
+import { StyleSheet, View } from "react-native";
 import { showPanel } from "@/components/panels/usePanel.ts";
+import LyricPreview from "./lyricPreview";
 
 interface IProps {
     onTurnPageClick?: () => void;
@@ -23,13 +23,15 @@ export default function AlbumCover(props: IProps) {
     const artworkStyle = useMemo(() => {
         if (orientation === "vertical") {
             return {
-                width: rpx(500),
-                height: rpx(500),
+                width: rpx(646),
+                height: rpx(646),
+                borderRadius: rpx(16),
             };
         } else {
             return {
-                width: rpx(260),
-                height: rpx(260),
+                width: rpx(160),
+                height: rpx(160),
+                borderRadius: rpx(16),
             };
         }
     }, [orientation]);
@@ -52,10 +54,15 @@ export default function AlbumCover(props: IProps) {
 
     const combineGesture = Gesture.Race(tap, longPress);
 
+    if (orientation === "horizontal") {
+        // 横屏封面缩略图已并入顶栏, 不再单独占位
+        return null;
+    }
+
     return (
         <>
             <GestureDetector gesture={combineGesture}>
-                <View style={globalStyle.fullCenter}>
+                <View style={styles.artworkContainer}>
                     <FastImage
                         style={artworkStyle}
                         source={musicItem?.artwork}
@@ -63,7 +70,23 @@ export default function AlbumCover(props: IProps) {
                     />
                 </View>
             </GestureDetector>
-            <Operations />
+            {orientation === "vertical" ? (
+                <LyricPreview onPress={onTurnPageClick} />
+            ) : null}
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    artworkContainer: {
+        ...globalStyle.fullCenter,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 10,
+        },
+        shadowOpacity: 0.55,
+        shadowRadius: 18,
+        elevation: 16,
+    },
+});

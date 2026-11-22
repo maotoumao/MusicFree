@@ -7,16 +7,14 @@ import { fontSizeConst } from "@/constants/uiConst";
 import Loading from "@/components/base/loading";
 import globalStyle from "@/constants/globalStyle";
 import { showPanel } from "@/components/panels/usePanel";
-import TrackPlayer, { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
+import TrackPlayer, { useMusicState } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import delay from "@/utils/delay";
 import DraggingTime from "./draggingTime";
 import LyricItemComponent from "./lyricItem";
 import PersistStatus from "@/utils/persistStatus";
-import LyricOperations from "./lyricOperations";
 import { IParsedLrcItem } from "@/utils/lrcParser";
 import { IconButtonWithGesture } from "@/components/base/iconButton.tsx";
-import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager, { useCurrentLyricItem, useLyricState } from "@/core/lyricManager";
 import { useI18N } from "@/core/i18n";
 
@@ -32,10 +30,10 @@ interface IProps {
 }
 
 const fontSizeMap = {
-    0: rpx(24),
-    1: rpx(30),
-    2: rpx(36),
-    3: rpx(42),
+    0: rpx(31),
+    1: rpx(39),
+    2: rpx(48),
+    3: rpx(56),
 } as Record<number, number>;
 
 export default function Lyric(props: IProps) {
@@ -65,8 +63,6 @@ export default function Lyric(props: IProps) {
 
     const listRef = useRef<FlatList<IParsedLrcItem> | null>();
 
-    const currentMusicItem = useCurrentMusic();
-    const associateMusicItem = getMediaExtraProperty(currentMusicItem, "associatedLrc");
 
     // 是否展示拖拽
     const dragShownRef = useRef(false);
@@ -131,6 +127,11 @@ export default function Lyric(props: IProps) {
             }, 200) as any;
         };
     }, []);
+
+    // 字号/翻译切换后行高变化, 延迟重新定位到当前行
+    useEffect(() => {
+        delayedScrollToCurrentLrcItem();
+    }, [fontSizeKey, showTranslation, delayedScrollToCurrentLrcItem]);
 
     useEffect(() => {
         // 暂停且拖拽才返回
@@ -214,14 +215,6 @@ export default function Lyric(props: IProps) {
         })
         .runOnJS(true);
 
-    const unlinkTapGesture = Gesture.Tap()
-        .onStart(() => {
-            if (currentMusicItem) {
-                lyricManager.unassociateLyric(currentMusicItem);
-            }
-        })
-        .runOnJS(true);
-
     return (
         <>
             <GestureDetector gesture={tapGesture}>
@@ -251,41 +244,7 @@ export default function Lyric(props: IProps) {
                                 });
                             }}
                             fadingEdgeLength={120}
-                            ListHeaderComponent={
-                                <>
-                                    {blankComponent}
-                                    <View style={styles.lyricMeta}>
-                                        {associateMusicItem ? (
-                                            <>
-                                                <Text
-                                                    style={[
-                                                        styles.lyricMetaText,
-                                                        fontSizeStyle,
-                                                    ]}
-                                                    ellipsizeMode="middle"
-                                                    numberOfLines={1}>
-                                                    {t("lyric.lyricLinkedFrom", {
-                                                        platform: associateMusicItem.platform,
-                                                        title: associateMusicItem.title || "",
-                                                    })}
-
-                                                </Text>
-
-                                                <GestureDetector
-                                                    gesture={unlinkTapGesture}>
-                                                    <Text
-                                                        style={[
-                                                            styles.linkText,
-                                                            fontSizeStyle,
-                                                        ]}>
-                                                        {t("lyric.unlinkLyric")}
-                                                    </Text>
-                                                </GestureDetector>
-                                            </>
-                                        ) : null}
-                                    </View>
-                                </>
-                            }
+                            ListHeaderComponent={blankComponent}
                             ListFooterComponent={blankComponent}
                             onScrollBeginDrag={onScrollBeginDrag}
                             onMomentumScrollEnd={onScrollEndDrag}
@@ -311,6 +270,15 @@ export default function Lyric(props: IProps) {
                                         light={draggingIndex === index}
                                         highlight={
                                             currentLrcItem?.index === index
+                                        }
+                                        distance={
+                                            currentLrcItem &&
+                                            currentLrcItem.index >= 0
+                                                ? Math.abs(
+                                                    currentLrcItem.index -
+                                                          index,
+                                                )
+                                                : undefined
                                         }
                                     />
                                 );
@@ -364,9 +332,6 @@ export default function Lyric(props: IProps) {
                     )}
                 </View>
             </GestureDetector>
-            <LyricOperations
-                scrollToCurrentLrcItem={delayedScrollToCurrentLrcItem}
-            />
         </>
     );
 }
@@ -374,7 +339,7 @@ export default function Lyric(props: IProps) {
 const styles = StyleSheet.create({
     wrapper: {
         width: "100%",
-        marginVertical: rpx(48),
+        marginVertical: rpx(24),
         flex: 1,
     },
     empty: {
@@ -399,7 +364,7 @@ const styles = StyleSheet.create({
         maxWidth: "80%",
     },
     linkText: {
-        color: "#66ccff",
+        color: "#ea419e",
         textDecorationLine: "underline",
     },
     draggingTime: {
@@ -423,7 +388,7 @@ const styles = StyleSheet.create({
         width: "67%",
         height: 1,
         backgroundColor: "#cccccc",
-        opacity: 0.4,
+        opacity: 0.2,
     },
     playIcon: {
         width: rpx(100),
@@ -436,7 +401,7 @@ const styles = StyleSheet.create({
         paddingVertical: rpx(10),
         textAlign: "center",
         alignSelf: "center",
-        color: "#66eeff",
+        color: "#66a8ff",
         textDecorationLine: "underline",
     },
 });

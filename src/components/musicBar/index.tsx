@@ -4,19 +4,17 @@ import rpx from "@/utils/rpx";
 import { CircularProgressBase } from "react-native-circular-progress-indicator";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { showPanel } from "../panels/usePanel";
+import { showPanel } from "@/components/panels/usePanel";
 import useColors from "@/hooks/useColors";
 import IconButton from "../base/iconButton";
 import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from "@/core/trackPlayer";
 import { musicIsPaused } from "@/utils/trackUtils";
 import MusicInfo from "./musicInfo";
-import Icon from "@/components/base/icon.tsx";
 
 function CircularPlayBtn() {
     const progress = useProgress();
     const musicState = useMusicState();
     const colors = useColors();
-
     const isPaused = musicIsPaused(musicState);
 
     return (
@@ -30,7 +28,7 @@ function CircularPlayBtn() {
                     : 0
             }
             duration={100}
-            radius={rpx(36)}
+            radius={rpx(34)}
             activeStrokeColor={colors.musicBarText}
             inActiveStrokeColor={colors.textSecondary}>
             <IconButton
@@ -55,13 +53,16 @@ function CircularPlayBtn() {
         </CircularProgressBase>
     );
 }
+
 function MusicBar() {
     const musicItem = useCurrentMusic();
+    const musicState = useMusicState();
 
     const [showKeyboard, setKeyboardStatus] = useState(false);
 
     const colors = useColors();
     const safeAreaInsets = useSafeAreaInsets();
+    const safeAreaBottom = safeAreaInsets.bottom;
 
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -86,26 +87,29 @@ function MusicBar() {
                         {
                             backgroundColor: colors.musicBar,
                             paddingRight: safeAreaInsets.right + rpx(24),
+                            bottom: safeAreaInsets.bottom + rpx(12),
                         },
                     ]}
                     accessible
                     accessibilityLabel={`歌曲: ${musicItem.title} 歌手: ${musicItem.artist}`}
-                    // onPress={() => {
-                    //     navigate(ROUTE_PATH.MUSIC_DETAIL);
-                    // }}
                 >
                     <MusicInfo musicItem={musicItem} />
                     <View style={style.actionGroup}>
                         <CircularPlayBtn />
-                        <Icon
-                            accessible
-                            accessibilityLabel="播放列表"
+                        <IconButton
+                            accessibilityLabel={"播放列表"}
                             name="playlist"
-                            size={rpx(56)}
+                            sizeType={"normal"}
+                            hitSlop={{
+                                top: 12,
+                                left: 12,
+                                right: 12,
+                                bottom: 12,
+                            }}
+                            color={colors.musicBarText}
                             onPress={() => {
                                 showPanel("PlayList");
                             }}
-                            color={colors.musicBarText}
                             style={[style.actionIcon]}
                         />
                     </View>
@@ -119,19 +123,32 @@ export default memo(MusicBar, () => true);
 
 const style = StyleSheet.create({
     wrapper: {
-        width: "100%",
-        height: rpx(132),
+        position: "absolute",
+        left: rpx(22),
+        right: rpx(22),
+        height: rpx(128),
         flexDirection: "row",
         alignItems: "center",
         paddingRight: rpx(24),
+        borderRadius: rpx(24),
+        zIndex: 100,
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 12,
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        elevation: 10,
     },
     actionGroup: {
-        width: rpx(200),
+        width: rpx(160),
         justifyContent: "flex-end",
         flexDirection: "row",
         alignItems: "center",
     },
     actionIcon: {
-        marginLeft: rpx(36),
+        marginLeft: rpx(32),
+        marginRight: rpx(12),
     },
 });

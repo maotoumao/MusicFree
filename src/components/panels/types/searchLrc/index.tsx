@@ -8,6 +8,7 @@ import useColors from "@/hooks/useColors";
 import PanelBase from "../../base/panelBase";
 import { TextInput } from "react-native-gesture-handler";
 import useSearchLrc from "./useSearchLrc";
+import { buildLyricSearchVariants } from "@/utils/lyricSearchQuery";
 import PluginManager from "@/core/pluginManager";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import LyricList from "./LyricList";
@@ -31,7 +32,11 @@ export default function SearchLrc(props: INewMusicSheetProps) {
 
     useEffect(() => {
         if (musicItem) {
-            searchLrc(musicItem.alias || musicItem.title, 1);
+            // 初始搜索词使用去序号/拆分后的期望歌名, 命中率更高
+            const { targetTitle } = buildLyricSearchVariants(
+                musicItem.alias || musicItem.title,
+            );
+            searchLrc(targetTitle || musicItem.title, 1);
         }
     }, []);
 

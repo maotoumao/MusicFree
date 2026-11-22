@@ -10,11 +10,11 @@ export enum MusicRepeatMode {
 
 export default {
     [MusicRepeatMode.QUEUE]: {
-        icon: "repeat-song-1",
+        icon: "repeat-song",
         text: "列表循环",
     },
     [MusicRepeatMode.SINGLE]: {
-        icon: "repeat-song",
+        icon: "repeat-song-1",
         text: "单曲循环",
     },
     [MusicRepeatMode.SHUFFLE]: {

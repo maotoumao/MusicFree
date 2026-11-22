@@ -11,6 +11,8 @@ import { isSameMediaItem } from "@/utils/mediaUtils";
 import Icon from "../base/icon";
 import { iconSizeConst } from "@/constants/uiConst";
 import useColors from "@/hooks/useColors";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import type { SharedValue } from "react-native-reanimated";
 
 interface IMusicListProps {
     /** 顶部 */
@@ -30,6 +32,8 @@ interface IMusicListProps {
     state: RequestStateCode;
     /** 高亮的音乐 */
     highlightMusicItem?: IMusic.IMusicItem | null;
+    /** 滚动偏移共享值 (页面滚动渐变遮罩用) */
+    scrollYShared?: SharedValue<number>;
     onRetry?: () => void;
     onLoadMore?: () => void;
 }
@@ -49,6 +53,7 @@ export default function MusicList(props: IMusicListProps) {
         highlightMusicItem,
     } = props;    
     const colors = useColors();
+    const safeAreaInsets = useSafeAreaInsets();
     const flashListRef = useRef<FlashList<IMusic.IMusicItem>>(null);
     const [showBadge, setShowBadge] = useState(false);
     const hideTimeoutRef = useRef<NodeJS.Timeout>();
@@ -109,6 +114,9 @@ export default function MusicList(props: IMusicListProps) {
         <View style={styles.container}>
             <FlashList
                 ref={flashListRef}
+                contentContainerStyle={{
+                    paddingBottom: rpx(200) + safeAreaInsets.bottom,
+                }}
                 ListHeaderComponent={Header}
                 ListEmptyComponent={<ListEmpty state={state} onRetry={onRetry} />}
                 ListFooterComponent={

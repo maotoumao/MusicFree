@@ -3,17 +3,19 @@ import rpx from "@/utils/rpx";
 
 const fontSizeConst = {
     /** 标签 */
-    tag: rpx(20),
+    tag: rpx(24),
     /** 描述文本等字体 */
-    description: rpx(22),
+    description: rpx(20),
     /** 副标题 */
-    subTitle: rpx(26),
+    subTitle: rpx(24),
     /** 正文字体 */
     content: rpx(28),
     /** 标题字体 */
-    title: rpx(32),
+    title: rpx(36),
     /** appbar的字体 */
-    appbar: rpx(36),
+    appbar: rpx(32),
+    /** 页面大标题 */
+    pageTitle: rpx(40),
 };
 
 const fontWeightConst = {
@@ -27,7 +29,7 @@ const fontWeightConst = {
 const iconSizeConst = {
     small: rpx(30),
     light: rpx(36),
-    normal: rpx(42),
+    normal: rpx(48),
     big: rpx(60),
     large: rpx(72),
 };

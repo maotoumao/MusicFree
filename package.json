@@ -12,6 +12,8 @@
     "ios": "react-native run-ios",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx src --fix",
     "start": "react-native start",
+    "reset:debug": "lsof -ti :8081 | xargs kill 2>/dev/null; (npx react-native start --port 8081 > /tmp/metro.log 2>&1 &); adb -s emulator-5554 reverse tcp:8081 tcp:8081; adb -s emulator-5554 shell am force-stop fun.upup.musicfree; for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do curl -s http://localhost:8081/status >/dev/null && break; sleep 1; done; adb -s emulator-5554 shell monkey -p fun.upup.musicfree -c android.intent.category.LAUNCHER 1 && echo \"\\n✅ Metro + 应用已就绪 — VS Code 按 F5 附加调试器\\n\"",
+    "install:debug": "cd android && ./gradlew assembleDebug -x lint && cd .. && adb -s emulator-5554 install -r android/app/build/outputs/apk/debug/app-arm64-v8a-debug.apk && adb -s emulator-5554 reverse tcp:8081 tcp:8081",
     "clean": "cd ./android && ./gradlew clean",
     "test": "jest",
     "commit-lint": "commitlint --edit",

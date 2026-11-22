@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import rpx from "@/utils/rpx";
+import rpx, { vh } from "@/utils/rpx";
 import ListItem from "@/components/base/listItem";
 import ThemeText from "@/components/base/themeText";
 import { ImgAsset } from "@/constants/assetsConst";
@@ -25,12 +25,19 @@ import Config from "@/core/appConfig";
 import TrackPlayer from "@/core/trackPlayer";
 import mediaCache from "@/core/mediaCache";
 import { IIconName } from "@/components/base/icon.tsx";
-import MusicSheet from "@/core/musicSheet";
+import MusicSheet, { useFavorite } from "@/core/musicSheet";
 import downloader from "@/core/downloader";
 import { getMediaExtraProperty } from "@/utils/mediaExtra";
-import lyricManager from "@/core/lyricManager";
+import lyricManager, { useLyricState } from "@/core/lyricManager";
+import LyricUtil from "@/native/lyricUtil";
+import { getDocumentAsync } from "expo-document-picker";
+import { readAsStringAsync } from "expo-file-system";
 import { useI18N } from "@/core/i18n";
 import pluginManager from "@/core/pluginManager";
+import PersistStatus from "@/utils/persistStatus";
+import i18n from "@/core/i18n";
+import Share from "react-native-share";
+import { B64Asset } from "@/constants/assetsConst";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -58,8 +65,36 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
 
     const downloaded = LocalMusicSheet.isLocalMusic(musicItem);
     const associatedLrc = getMediaExtraProperty(musicItem, "associatedLrc");
+    const isFavorite = useFavorite(musicItem);
+    const rate = PersistStatus.useValue("music.rate", 100);
+    const { hasTranslation } = useLyricState();
+    const showTranslation = PersistStatus.useValue(
+        "lyric.showTranslation",
+        false,
+    );
+    const isFromMusicDetail = from === ROUTE_PATH.MUSIC_DETAIL;
 
     const options: IOption[] = [
+        {
+            icon: isFavorite ? "heart" : "heart-outline",
+            title: isFavorite
+                ? t("panel.musicItemOptions.unfavorite")
+                : t("panel.musicItemOptions.favorite"),
+            show: isFromMusicDetail,
+            onPress: () => {
+                if (!musicItem) {
+                    return;
+                }
+                if (isFavorite) {
+                    MusicSheet.removeMusic(
+                        MusicSheet.defaultSheet.id,
+                        musicItem,
+                    );
+                } else {
+                    MusicSheet.addMusic(MusicSheet.defaultSheet.id, musicItem);
+                }
+            },
+        },
         {
             icon: "identification",
             title: `ID: ${getMediaUniqueKey(musicItem)}`,
@@ -116,6 +151,47 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             title: t("musicListEditor.addToSheet"),
             onPress: () => {
                 showPanel("AddToMusicSheet", { musicItem });
+            },
+        },
+        {
+            icon: "equalizer",
+            title: t("panel.musicItemOptions.quality"),
+            show: isFromMusicDetail,
+            onPress: () => {
+                if (!musicItem) {
+                    return;
+                }
+                showPanel("MusicQuality", {
+                    musicItem,
+                    async onQualityPress(quality) {
+                        const changeResult =
+                            await TrackPlayer.changeQuality(quality);
+                        if (!changeResult) {
+                            Toast.warn(
+                                i18n.t(
+                                    "toast.currentQualityNotAvailableForCurrentMusic",
+                                ),
+                            );
+                        }
+                    },
+                });
+            },
+        },
+        {
+            icon: "speed",
+            title: t("panel.musicItemOptions.playRate"),
+            show: isFromMusicDetail,
+            onPress: () => {
+                showPanel("PlayRate", {
+                    async onRatePress(newRate) {
+                        if (rate !== newRate) {
+                            try {
+                                await TrackPlayer.setRate(newRate / 100);
+                                PersistStatus.set("music.rate", newRate);
+                            } catch {}
+                        }
+                    },
+                });
             },
         },
         {
@@ -187,6 +263,22 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
+            icon: "share",
+            title: t("panel.musicItemOptions.share"),
+            show: isFromMusicDetail,
+            onPress: async () => {
+                try {
+                    await Share.open({
+                        type: "image/jpeg",
+                        title: "MusicFree-一个插件化的免费音乐播放器",
+                        message: "MusicFree-一个插件化的免费音乐播放器",
+                        url: B64Asset.share,
+                        subject: "MusicFree分享",
+                    });
+                } catch {}
+            },
+        },
+        {
             icon: "link",
             title: associatedLrc
                 ? t("panel.musicItemOptions.associatedLyric", { platform: associatedLrc.platform, id: associatedLrc.id })
@@ -216,6 +308,166 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             },
         },
         {
+            icon: "font-size",
+            title: t("panel.musicItemLyricOptions.fontSize"),
+            show: isFromMusicDetail,
+            onPress: () => {
+                showPanel("SetFontSize", {
+                    defaultSelect: Config.getConfig("lyric.detailFontSize") ?? 1,
+                    onSelectChange(value) {
+                        PersistStatus.set("lyric.detailFontSize", value);
+                    },
+                });
+            },
+        },
+        {
+            icon: "arrows-left-right",
+            title: t("panel.musicItemLyricOptions.lyricOffset"),
+            show: isFromMusicDetail,
+            onPress: () => {
+                showPanel("SetLyricOffset", {
+                    musicItem,
+                    onSubmit(offset) {
+                        lyricManager.updateLyricOffset(musicItem, offset);
+                        hidePanel();
+                    },
+                });
+            },
+        },
+        {
+            icon: "translation",
+            title: showTranslation
+                ? t("panel.musicItemLyricOptions.hideTranslation")
+                : t("panel.musicItemLyricOptions.showTranslation"),
+            show: isFromMusicDetail && !!hasTranslation,
+            onPress: () => {
+                PersistStatus.set("lyric.showTranslation", !showTranslation);
+            },
+        },
+        {
+            icon: "lyric",
+            title: t("panel.musicItemLyricOptions.toggleDesktopLyric", {
+                status: Config.getConfig("lyric.showStatusBarLyric")
+                    ? t("panel.musicItemLyricOptions.disableDesktopLyric")
+                    : t("panel.musicItemLyricOptions.enableDesktopLyric"),
+            }),
+            show: isFromMusicDetail,
+            async onPress() {
+                const showStatusBarLyric = Config.getConfig(
+                    "lyric.showStatusBarLyric",
+                );
+                if (!showStatusBarLyric) {
+                    const hasPermission =
+                        await LyricUtil.checkSystemAlertPermission();
+                    if (hasPermission) {
+                        const statusBarLyricConfig = {
+                            topPercent: Config.getConfig("lyric.topPercent"),
+                            leftPercent: Config.getConfig("lyric.leftPercent"),
+                            align: Config.getConfig("lyric.align"),
+                            color: Config.getConfig("lyric.color"),
+                            backgroundColor: Config.getConfig(
+                                "lyric.backgroundColor",
+                            ),
+                            widthPercent: Config.getConfig("lyric.widthPercent"),
+                            fontSize: Config.getConfig("lyric.fontSize"),
+                        };
+                        LyricUtil.showStatusBarLyric(
+                            "MusicFree",
+                            statusBarLyricConfig ?? {},
+                        );
+                        Config.setConfig("lyric.showStatusBarLyric", true);
+                    } else {
+                        LyricUtil.requestSystemAlertPermission().finally(() => {
+                            Toast.warn(
+                                t("panel.musicItemLyricOptions.desktopLyricPermissionError"),
+                            );
+                        });
+                    }
+                } else {
+                    LyricUtil.hideStatusBarLyric();
+                    Config.setConfig("lyric.showStatusBarLyric", false);
+                }
+                hidePanel();
+            },
+        },
+        {
+            icon: "arrow-up-tray",
+            title: t("panel.musicItemLyricOptions.uploadLocalLyric"),
+            show: isFromMusicDetail,
+            async onPress() {
+                try {
+                    const result = await getDocumentAsync({
+                        copyToCacheDirectory: true,
+                    });
+                    if (result.canceled) {
+                        return;
+                    }
+                    const pickedDoc = result.assets[0].uri;
+                    const lyricContent = await readAsStringAsync(pickedDoc, {
+                        encoding: "utf8",
+                    });
+                    await lyricManager.uploadLocalLyric(musicItem, lyricContent);
+                    Toast.success(t("toast.settingSuccess"));
+                    hidePanel();
+                } catch (e: any) {
+                    Toast.warn(
+                        t("panel.musicItemLyricOptions.settingFail", {
+                            reason: e?.message,
+                        }),
+                    );
+                }
+            },
+        },
+        {
+            icon: "arrow-up-tray",
+            title: t("panel.musicItemLyricOptions.uploadLocalLyricTranslation"),
+            show: isFromMusicDetail,
+            async onPress() {
+                try {
+                    const result = await getDocumentAsync({
+                        copyToCacheDirectory: true,
+                    });
+                    if (result.canceled) {
+                        return;
+                    }
+                    const pickedDoc = result.assets[0].uri;
+                    const lyricContent = await readAsStringAsync(pickedDoc, {
+                        encoding: "utf8",
+                    });
+                    await lyricManager.uploadLocalLyric(
+                        musicItem,
+                        lyricContent,
+                        "translation",
+                    );
+                    Toast.success(t("toast.settingSuccess"));
+                    hidePanel();
+                } catch (e: any) {
+                    Toast.warn(
+                        t("panel.musicItemLyricOptions.settingFail", {
+                            reason: e?.message,
+                        }),
+                    );
+                }
+            },
+        },
+        {
+            icon: "trash-outline",
+            title: t("panel.musicItemLyricOptions.deleteLocalLyric"),
+            show: isFromMusicDetail,
+            async onPress() {
+                try {
+                    lyricManager.removeLocalLyric(musicItem);
+                    hidePanel();
+                } catch (e: any) {
+                    Toast.warn(
+                        t("panel.musicItemLyricOptions.deleteFail", {
+                            reason: e?.message,
+                        }),
+                    );
+                }
+            },
+        },
+        {
             icon: "alarm-outline",
             title: t("panel.musicItemOptions.timingClose"),
             show: from === ROUTE_PATH.MUSIC_DETAIL,
@@ -235,6 +487,7 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
 
     return (
         <PanelBase
+            height={vh(70)}
             renderBody={() => (
                 <>
                     <View style={style.header}>

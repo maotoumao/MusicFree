@@ -1,4 +1,1 @@
-<svg width="24.000000" height="24.000000" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<path id="Vector 149" d="M3 17L5.73524 17C7.14029 17 8.44231 16.2628 9.16521 15.058L12.8348 8.94202C13.5577 7.73718 14.8597 7 16.2648 7L21 7M19 5L21 7L19 9" stroke="currentColor" stroke-width="1.500000" stroke-linejoin="round"/>
-	<path id="Vector" d="M2.99994 7L5.73518 7C6.82978 7 7.86186 7.44739 8.6063 8.21484M13.3936 15.7852C14.138 16.5526 15.1701 17 16.2647 17L20.9999 17M18.9999 19L20.9999 17L18.9999 15" stroke="currentColor" stroke-width="1.500000" stroke-linejoin="round"/>
-</svg>
+<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10.59 9.17 6.12 4.7a.996.996 0 1 0-1.41 1.41l4.46 4.46 1.42-1.4zm4.76-4.32 1.19 1.19L4.7 17.88a.996.996 0 1 0 1.41 1.41L17.96 7.46l1.19 1.19a.5.5 0 0 0 .85-.36V4.5c0-.28-.22-.5-.5-.5h-3.79a.5.5 0 0 0-.36.85zm-.52 8.56-1.41 1.41 3.13 3.13-1.2 1.2a.5.5 0 0 0 .36.85h3.79c.28 0 .5-.22.5-.5v-3.79c0-.45-.54-.67-.85-.35l-1.19 1.19-3.13-3.14z"/></svg>

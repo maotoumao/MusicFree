@@ -122,6 +122,8 @@ export default function BasicSetting() {
     const downloadQualityOrder = useAppConfig("basic.downloadQualityOrder");
     const musicDetailDefault = useAppConfig("basic.musicDetailDefault");
     const musicDetailAwake = useAppConfig("basic.musicDetailAwake");
+    const bluetoothLyric = useAppConfig("basic.bluetoothLyric");
+    const lyricBlur = useAppConfig("basic.lyricBlur");
     const maxHistoryLen = useAppConfig("basic.maxHistoryLen");
     const autoUpdatePlugin = useAppConfig("basic.autoUpdatePlugin");
     const notCheckPluginVersion = useAppConfig("basic.notCheckPluginVersion");
@@ -172,6 +174,16 @@ export default function BasicSetting() {
                     t("basicSettings.musicDetailAwake"),
                     "basic.musicDetailAwake",
                     musicDetailAwake ?? false,
+                ),
+                createSwitch(
+                    t("basicSettings.bluetoothLyric"),
+                    "basic.bluetoothLyric",
+                    bluetoothLyric ?? true,
+                ),
+                createSwitch(
+                    t("basicSettings.lyricBlur"),
+                    "basic.lyricBlur",
+                    lyricBlur ?? true,
                 ),
                 createRadio(
                     t("basicSettings.associateLyricType"),

@@ -26,6 +26,7 @@ import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-nati
 import i18n from "@/core/i18n";
 import bootstrapAtom from "./bootstrap.atom";
 import { getDefaultStore } from "jotai";
+import { setupBluetoothLyric } from "@/core/bluetoothLyric";
 
 
 // 依赖管理
@@ -199,6 +200,9 @@ export async function initTrackPlayer(logger?: IPerfLogger) {
     await lyricManager.setup();
 
     logger?.mark("歌词初始化完成");
+
+    // 蓝牙歌词协议: 歌词行变化时写入媒体会话元数据 (AVRCP 同步到蓝牙设备)
+    setupBluetoothLyric();
 }
 
 

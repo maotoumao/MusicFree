@@ -46,17 +46,14 @@ export default function NavBar() {
     return (
         <AppBar containerStyle={style.appbar} contentStyle={style.appbar}>
             <View style={style.searchBarContainer}>
-                <Icon
-                    name="magnifying-glass"
-                    color={hintTextColor}
-                    size={iconSizeConst.small}
-                    style={style.magnify}
-                />
+               
                 <Input
                     autoFocus
+                    
                     style={[
                         style.searchBar,
                         {
+                            fontSize: rpx(36),
                             color: colors.text,
                             backgroundColor: colors.pageBackground,
                         },
@@ -112,6 +109,7 @@ const style = StyleSheet.create({
         justifyContent: "center",
         flexDirection: "row",
         alignItems: "center",
+        fontSize: rpx(22),
     },
     searchBarContainer: {
         flex: 1,

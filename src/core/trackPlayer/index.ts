@@ -29,6 +29,7 @@ import ReactNativeTrackPlayer, {
     usePlaybackState,
     useProgress,
 } from "react-native-track-player";
+export { ReactNativeTrackPlayer as RNTrackPlayer };
 import LocalMusicSheet from "../localMusicSheet";
 
 import { TrackPlayerEvents } from "@/core.defination/trackPlayer";

@@ -1,64 +1,75 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useOrientation from "@/hooks/useOrientation";
+import FastImage from "@/components/base/fastImage";
+import { ImgAsset } from "@/constants/assetsConst";
 import rpx from "@/utils/rpx";
-import { useNavigation } from "@react-navigation/native";
-import Tag from "@/components/base/tag";
-import { fontSizeConst, fontWeightConst } from "@/constants/uiConst";
-import Share from "react-native-share";
-import { B64Asset } from "@/constants/assetsConst";
-import IconButton from "@/components/base/iconButton";
+import Icon from "@/components/base/icon.tsx";
+import ThemeText from "@/components/base/themeText";
+import useColors from "@/hooks/useColors";
 import { useCurrentMusic } from "@/core/trackPlayer";
+import MusicSheet, { useFavorite } from "@/core/musicSheet";
 
 export default function NavBar() {
-    const navigation = useNavigation();
+    const colors = useColors();
     const musicItem = useCurrentMusic();
-    // const {showShare} = useShare();
+    const isFavorite = useFavorite(musicItem);
+    const safeAreaInsets = useSafeAreaInsets();
+    const orientation = useOrientation();
+    const isLandscape = orientation === "horizontal";
 
     return (
-        <View style={styles.container}>
-            <IconButton
-                name="arrow-left"
-                sizeType={"normal"}
-                color="white"
-                style={styles.button}
-                onPress={() => {
-                    navigation.goBack();
-                }}
-            />
-            <View style={styles.headerContent}>
-                <Text numberOfLines={1} style={styles.headerTitleText}>
+        <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
+            {isLandscape ? (
+                <FastImage
+                    style={styles.coverThumb}
+                    resizeMode="cover"
+                    source={musicItem?.artwork}
+                    placeholderSource={ImgAsset.albumDefault}
+                />
+            ) : null}
+            <View style={styles.titleMain}>
+                <ThemeText
+                    fontSize="title"
+                    fontWeight="bold"
+                    numberOfLines={1}
+                    style={styles.titleText}>
                     {musicItem?.title ?? "--"}
-                </Text>
-                <View style={styles.headerDesc}>
-                    <Text style={styles.headerArtistText} numberOfLines={1}>
-                        {musicItem?.artist}
-                    </Text>
-                    {musicItem?.platform ? (
-                        <Tag
-                            tagName={musicItem.platform}
-                            containerStyle={styles.tagBg}
-                            style={styles.tagText}
-                        />
-                    ) : null}
-                </View>
+                </ThemeText>
+                <ThemeText
+                    fontSize="subTitle"
+                    numberOfLines={1}
+                    style={styles.artistText}>
+                    {musicItem?.artist}
+                </ThemeText>
             </View>
-            <IconButton
-                name="share"
-                color="white"
-                sizeType="normal"
-                style={styles.button}
-                onPress={async () => {
-                    try {
-                        await Share.open({
-                            type: "image/jpeg",
-                            title: "MusicFree-一个插件化的免费音乐播放器",
-                            message: "MusicFree-一个插件化的免费音乐播放器",
-                            url: B64Asset.share,
-                            subject: "MusicFree分享",
-                        });
-                    } catch {}
-                }}
-            />
+            <TouchableOpacity
+                style={styles.favoriteButton}
+                accessible
+                accessibilityLabel={"收藏或取消收藏歌曲"}
+                onPress={() => {
+                    if (!musicItem) {
+                        return;
+                    }
+                    if (isFavorite) {
+                        MusicSheet.removeMusic(
+                            MusicSheet.defaultSheet.id,
+                            musicItem,
+                        );
+                    } else {
+                        MusicSheet.addMusic(
+                            MusicSheet.defaultSheet.id,
+                            musicItem,
+                        );
+                    }
+                }}>
+                <Icon
+                    name={isFavorite ? "heart" : "heart-outline"}
+                    size={rpx(48)}
+                    color={isFavorite ? colors.primary : "white"}
+                />
+            </TouchableOpacity>
         </View>
     );
 }
@@ -66,42 +77,31 @@ export default function NavBar() {
 const styles = StyleSheet.create({
     container: {
         width: "100%",
-        height: rpx(150),
+        height: rpx(200),
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
+        paddingHorizontal: rpx(52),
     },
-    button: {
-        marginHorizontal: rpx(24),
-    },
-    headerContent: {
+    titleMain: {
         flex: 1,
-        height: rpx(150),
-        justifyContent: "center",
-        alignItems: "center",
+        marginRight: rpx(16),
     },
-    headerTitleText: {
+    titleText: {
         color: "white",
-        fontWeight: fontWeightConst.semibold,
-        fontSize: fontSizeConst.title,
-        marginBottom: rpx(12),
         includeFontPadding: false,
     },
-    headerDesc: {
-        height: rpx(32),
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: rpx(40),
-    },
-    headerArtistText: {
-        color: "white",
-        fontSize: fontSizeConst.subTitle,
+    artistText: {
+        color: "rgba(255, 255, 255, 0.36)",
         includeFontPadding: false,
+        marginTop: rpx(4),
     },
-    tagBg: {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
+    favoriteButton: {
+        padding: rpx(8),
     },
-    tagText: {
-        color: "white",
+    coverThumb: {
+        width: rpx(100),
+        height: rpx(100),
+        borderRadius: rpx(12),
+        marginRight: rpx(20),
     },
 });
