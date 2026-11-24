@@ -39,6 +39,7 @@ import minDistance from "@/utils/minDistance";
 import { IPluginManager } from "@/types/core/pluginManager";
 import { ImgAsset } from "@/constants/assetsConst";
 import { resolveImportedAssetOrPath } from "@/utils/fileUtils";
+import { getPlaybackErrorMessage } from "@/utils/playbackError";
 
 
 
@@ -46,7 +47,6 @@ const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
 const qualityAtom = atom<IMusic.IQualityKey>("standard");
 const playListAtom = atom<IMusic.IMusicItem[]>([]);
-
 
 class TrackPlayer extends EventEmitter<{
     [TrackPlayerEvents.PlayEnd]: () => void;
@@ -211,7 +211,14 @@ class TrackPlayer extends EventEmitter<{
             ReactNativeTrackPlayer.addEventListener(
                 Event.PlaybackError,
                 async e => {
-                    errorLog("播放出错", e.message);
+                    // iOS 的事件只有 error 字段（SwiftAudioEx 的报错文案），
+                    // 没有 message/code；Android 则直接给 message/code。
+                    const errorMessage = getPlaybackErrorMessage(
+                        e as typeof e & { error?: string },
+                    );
+                    const errorCode = e.code;
+
+                    errorLog("播放出错", errorMessage);
                     // WARNING: 不稳定，报错的时候有可能track已经变到下一首歌去了
                     const currentTrack =
                         await ReactNativeTrackPlayer.getActiveTrack();
@@ -228,12 +235,12 @@ class TrackPlayer extends EventEmitter<{
                     if (
                         currentTrack?.url !== TrackPlayer.fakeAudioUrl && currentTrack?.url !== TrackPlayer.proposedAudioUrl &&
                         (await ReactNativeTrackPlayer.getActiveTrackIndex()) === 0 &&
-                        e.message &&
-                        e.message !== "android-io-file-not-found"
+                        errorMessage &&
+                        errorMessage !== "android-io-file-not-found"
                     ) {
                         trace("播放出错", {
-                            message: e.message,
-                            code: e.code,
+                            message: errorMessage,
+                            code: errorCode,
                         });
 
                         this.handlePlayFail();
