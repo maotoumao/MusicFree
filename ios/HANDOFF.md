@@ -239,6 +239,27 @@ launchctl load ~/Library/LaunchAgents/fun.upup.musicfree.refresh.plist
   `worksNum=1001`，删除成功；确认「我的歌单」没有 1000 首上限。导入面板的
   `maxLength: 1000` 只是输入框文本长度，不是歌曲数量。
 
+### 2026-11-23 续签与跨端验证状态
+
+- `scripts/ios-refresh.sh` 构建、覆盖安装成功；新 profile 到期
+  `2026-11-29T16:56:28Z`（本地 Nov 30 00:56），设备 `sky_17pm`。
+  安装后首次启动被 iOS 以「profile has not been explicitly trusted」拒绝；
+  在手机「设置 → 通用 → VPN 与设备管理 → 开发者 App」信任
+  `Apple Development: 739686898@qq.com` 后启动成功。
+  同一证书后续续签通常不需要重复信任。
+- 跨端说明：桌面端是独立仓库 `maotoumao/MusicFreeDesktop`，本分支改动不参与
+  桌面构建，Windows/Linux 桌面无需验证；`android/` 原生目录未改动。
+- Android 共享 JS 静态验证：`npx tsc --noEmit` 通过；Android Metro bundle
+  成功（4.2 MB）；`npx eslint src` 0 errors（108 个既有 warning）。
+  Android 真机回归仍待做（当前 Mac 没有 JDK/Android SDK，后续在 Ubuntu 环境补）。
+- Android 可感知的共享改动：插件超时 2s→10s、`autoHandleInterruptions: true`、
+  网易云 `m*.music.126.net` 播放地址升级 https、播放失败 Toast/原因/去重、
+  本地音乐可选单个音频文件、搜索页插件 tab 实时刷新、下载完成 Toast 带路径。
+  均非 `android/` 原生改动；若上游 PR 要求把 `autoHandleInterruptions` 或
+  `normalizeMediaUrl` 收窄到 iOS，可在 PR 分支再改。
+- 分支状态：`ios/port` 基于上游 `master` `d118b18`，60 个提交，无 merge commit；
+  上游无新提交，无需 rebase；`origin/ios/port` 已同步（HEAD `810cab3`）。
+
 ## 当前卡点（不是代码问题）
 
 - **签名**：已登录 Apple ID，`security find-identity -v -p codesigning` 有 1 个有效
