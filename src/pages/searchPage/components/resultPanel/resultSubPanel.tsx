@@ -85,13 +85,15 @@ function ResultSubPanel(props: IResultSubPanelProps) {
         [props.tab, routes],
     );
 
+    // 卸载当前 tab 对应的插件后，把选中项收回到仍然存在的 tab。
+    // 先算出安全索引再渲染，避免 routes 变短时 TabView 拿到越界的 index。
+    const safeIndex = clampTabIndex(index, routes.length);
+
     useEffect(() => {
-        // 卸载当前 tab 对应的插件后，把选中项收回到仍然存在的 tab
-        const nextIndex = clampTabIndex(index, routes.length);
-        if (nextIndex !== null) {
-            setIndex(nextIndex);
+        if (safeIndex !== null) {
+            setIndex(safeIndex);
         }
-    }, [routes.length, index]);
+    }, [safeIndex]);
 
     if (!routes.length) {
         return <Empty />;
@@ -101,7 +103,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
         <TabView
             lazy
             navigationState={{
-                index,
+                index: safeIndex ?? index,
                 routes,
             }}
             renderTabBar={_ => (
