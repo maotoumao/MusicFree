@@ -3,6 +3,7 @@ import { fontWeightConst } from "@/constants/uiConst";
 import { useI18N } from "@/core/i18n";
 import PluginManager, { usePlugins } from "@/core/pluginManager";
 import useColors from "@/hooks/useColors";
+import { clampTabIndex } from "@/utils/tabIndex";
 import rpx, { vw } from "@/utils/rpx";
 import { useAtomValue } from "jotai";
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -75,6 +76,8 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                 key: _.hash,
                 title: _.name,
             })),
+        // plugins 依赖仅用于在插件列表变化时触发重算
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [props.tab, plugins],
     );
     const renderScene = useMemo(
@@ -84,8 +87,9 @@ function ResultSubPanel(props: IResultSubPanelProps) {
 
     useEffect(() => {
         // 卸载当前 tab 对应的插件后，把选中项收回到仍然存在的 tab
-        if (routes.length && index >= routes.length) {
-            setIndex(routes.length - 1);
+        const nextIndex = clampTabIndex(index, routes.length);
+        if (nextIndex !== null) {
+            setIndex(nextIndex);
         }
     }, [routes.length, index]);
 
