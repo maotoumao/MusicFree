@@ -7,7 +7,11 @@ import pathConst from "@/constants/pathConst";
 import Mp3Util from "@/native/mp3Util";
 import Base64 from "@/utils/base64";
 import delay from "@/utils/delay";
-import { addFileScheme, getFileName } from "@/utils/fileUtils";
+import {
+    addFileScheme,
+    getFileName,
+    normalizeLocalFilePath,
+} from "@/utils/fileUtils";
 import { getMediaExtraProperty, patchMediaExtra } from "@/utils/mediaExtra";
 import { getLocalPath, isSameMediaItem, resetMediaItem } from "@/utils/mediaUtils";
 import notImplementedFunction from "@/utils/notImplementedFunction.ts";
@@ -1075,6 +1079,8 @@ const localFilePluginDefine: IPlugin.IPluginDefine = {
             : null;
     },
     async importMusicItem(urlLike) { // 绝对路径
+        // 深链接/文件选择可能带 file:// 前缀，先归一化，保证 id 与扫描导入一致
+        urlLike = normalizeLocalFilePath(urlLike);
         let meta: any = {};
         let id: string;
 
