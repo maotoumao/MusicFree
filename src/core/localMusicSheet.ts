@@ -115,8 +115,10 @@ function parseFilename(fn: string): Partial<IMusic.IMusicItem> | null {
     };
 }
 
-function localMediaFilter(filename: string) {
-    return supportLocalMediaType.some(ext => filename.toLowerCase().endsWith(ext));
+export function isLocalMediaFile(filePath: string) {
+    return supportLocalMediaType.some(ext =>
+        filePath.toLowerCase().endsWith(ext),
+    );
 }
 
 let importToken: string | null = null;
@@ -132,6 +134,12 @@ async function getMusicStats(folderPaths: string[]) {
             throw new Error("Import Broken");
         }
         peek = folderPaths.shift() as string;
+        // 用户可以直接选中单个音频文件；readDir 对文件路径会失败，
+        // 这里先按后缀判断，避免把文件当成目录扫描。
+        if (isLocalMediaFile(peek)) {
+            musicList.push(peek);
+            continue;
+        }
         try {
             dirFiles = await readDir(peek);
         } catch {
@@ -141,7 +149,7 @@ async function getMusicStats(folderPaths: string[]) {
         dirFiles.forEach(item => {
             if (item.isDirectory() && !folderPaths.includes(item.path)) {
                 folderPaths.push(item.path);
-            } else if (localMediaFilter(item.path)) {
+            } else if (isLocalMediaFile(item.path)) {
                 musicList.push(item.path);
             }
         });
