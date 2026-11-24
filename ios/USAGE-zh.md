@@ -68,7 +68,10 @@
 - **锁屏/灵动岛视觉待真机确认**：模拟器只能验证 ActivityKit 调用，最终排版、字号、刷新效果需要在 iPhone 上看。
 - 官方 bilibili 插件的 `.m4s` 不能播；请用上面的 B站插件。
 
-## 7. 装到真机（手机连上 Mac 后）
+## 7. 装到真机（自签安装）
+
+完整编译、签名、信任和续签说明见 **[INSTALL-zh.md](./INSTALL-zh.md)**。
+简要版（Mac 已装好环境，手机已连接）：
 
 ```bash
 cd ~/code/musicfree-ios
@@ -77,7 +80,9 @@ scripts/ios-device.sh           # Release 构建 + 安装 + 启动
 scripts/ios-refresh.sh          # 每周续签：自动换 profile + 覆盖安装 + 尝试打开
 ```
 
-需要：Xcode 已登录 Apple ID、手机与 Mac 在同一 Wi-Fi（或插线）并在手机上点「信任」、打开「开发者模式」。免费账号的 profile 7 天过期；建议每周跑一次 `scripts/ios-refresh.sh`。
+需要：Xcode 已登录 Apple ID、手机与 Mac 在同一 Wi-Fi（或插线）并在手机上点「信任」、打开「开发者模式」。
+免费账号 profile 7 天过期，到期后重签；付费 Apple Developer Program 的开发描述文件约 1 年有效。
+本项目不使用 TestFlight（TestFlight 同样需要付费开发者账号）。
 
 `ios-refresh.sh` 成功时只输出一行结果，例如：
 

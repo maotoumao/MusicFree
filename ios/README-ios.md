@@ -4,6 +4,8 @@
 Android / HarmonyOS，iOS 目录原本只是 React Native 脚手架，从未编译通过。这里记录当前状态
 和后续工作，方便继续开发。
 
+**安装 / 签名 / 免费 7 天与付费 1 年版说明见 [INSTALL-zh.md](./INSTALL-zh.md)。**
+
 ## 环境要求
 
 - macOS + Xcode（当前验证：Xcode 27.2 / iOS 27.2 SDK）
