@@ -58,7 +58,7 @@
 
 - **DRM 源不能播**：猫耳FM 等 SAMPLE-AES/Widevine 源，AVPlayer 没有 FairPlay 解密能力。
 - **http 接口被 ATS 拦**：只提供 `http://` 的插件（如 Z 系列、qwerwhr 酷狗）在 iOS 上不可用；官方 heb 网易云的播放地址也是 `http://m701.music.126.net`。开源增强插件的网易云取流同样返回 http，App 会在播放器入口把 `m*.music.126.net` 升级为 https（不改 ATS、不放开任意 HTTP）。
-- **锁屏/灵动岛视觉待真机确认**：模拟器只能验证 ActivityKit 调用，最终排版、字号、刷新效果需要在 iPhone 上看。
+- **锁屏/灵动岛**：已在 iPhone 真机验证，锁屏歌词、灵动岛布局和播放/暂停按钮正常。
 - 官方 bilibili 插件的 `.m4s` 不能播；请用上面的 B站插件。
 
 ## 7. 装到真机（自签安装）
