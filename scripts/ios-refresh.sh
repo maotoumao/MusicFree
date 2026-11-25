@@ -13,8 +13,8 @@
 #
 # Usage:
 #   scripts/ios-refresh.sh
-#   scripts/ios-refresh.sh --device sky_17pm
-#   scripts/ios-refresh.sh --team 83Q9ZCWJQ4
+#   scripts/ios-refresh.sh --device "My iPhone"
+#   scripts/ios-refresh.sh --team ABCDE12345
 #   scripts/ios-refresh.sh --configuration Release
 #
 # Environment overrides:

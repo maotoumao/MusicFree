@@ -147,7 +147,7 @@ find_team() {
     fi
 
     # 1. Team ID is the certificate subject's OU field. The value in the
-    #    CN parentheses (e.g. "(7C4Q7824B6)") is the certificate ID, not
+    #    CN parentheses (e.g. "(ABCDE12345)") is the certificate ID, not
     #    a team ID; never use it for DEVELOPMENT_TEAM.
     subject="$(security find-certificate -c "$identity" -p 2>/dev/null \
         | openssl x509 -noout -subject -nameopt RFC2253 2>/dev/null || true)"

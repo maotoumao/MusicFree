@@ -57,7 +57,7 @@
 ## 6. 已知限制
 
 - **DRM 源不能播**：猫耳FM 等 SAMPLE-AES/Widevine 源，AVPlayer 没有 FairPlay 解密能力。
-- **http 接口被 ATS 拦**：只提供 `http://` 的插件（如 Z 系列、qwerwhr 酷狗）在 iOS 上不可用；官方 heb 网易云的播放地址也是 `http://m701.music.126.net`。开源增强插件的网易云取流同样返回 http，App 会在播放器入口把 `m*.music.126.net` 升级为 https（不改 ATS、不放开任意 HTTP）；GD 源备用插件则直接返回 https。
+- **http 接口被 ATS 拦**：只提供 `http://` 的插件（如 Z 系列、qwerwhr 酷狗）在 iOS 上不可用；官方 heb 网易云的播放地址也是 `http://m701.music.126.net`。开源增强插件的网易云取流同样返回 http，App 会在播放器入口把 `m*.music.126.net` 升级为 https（不改 ATS、不放开任意 HTTP）。
 - **锁屏/灵动岛视觉待真机确认**：模拟器只能验证 ActivityKit 调用，最终排版、字号、刷新效果需要在 iPhone 上看。
 - 官方 bilibili 插件的 `.m4s` 不能播；请用上面的 B站插件。
 
@@ -67,7 +67,7 @@
 简要版（Mac 已装好环境，手机已连接）：
 
 ```bash
-cd ~/code/musicfree-ios
+cd ~/code/MusicFree
 scripts/ios-device.sh --check   # 检查签名团队、证书和已连接 iPhone
 scripts/ios-device.sh           # Release 构建 + 安装 + 启动
 scripts/ios-refresh.sh          # 每周续签：自动换 profile + 覆盖安装 + 尝试打开
@@ -79,7 +79,7 @@ scripts/ios-refresh.sh          # 每周续签：自动换 profile + 覆盖安�
 
 `ios-refresh.sh` 成功时只输出一行结果，例如：
 
-`续签成功 team=83Q9ZCWJQ4 device=sky_17pm 耗时 3m12s 新到期 Nov 22 20:48`
+`续签成功 team=<你的 TeamID> device=<你的 iPhone 名称> 耗时 3m12s 新到期 <日期>`
 
 Xcode 默认不会主动延长仍然有效的 profile，所以脚本会先把本 App 的两个旧 profile 移到 `build/ios-profile-backup-*`，强制换新；构建失败会自动恢复。只想普通重装、不换 profile 时加 `--no-force-profile`。
 
