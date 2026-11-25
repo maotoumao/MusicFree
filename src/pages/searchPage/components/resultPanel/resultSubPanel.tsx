@@ -3,6 +3,7 @@ import { fontWeightConst } from "@/constants/uiConst";
 import { useI18N } from "@/core/i18n";
 import PluginManager, { usePlugins } from "@/core/pluginManager";
 import useColors from "@/hooks/useColors";
+import { clampTabIndex } from "@/utils/tabIndex";
 import rpx, { vw } from "@/utils/rpx";
 import { useAtomValue } from "jotai";
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -75,6 +76,8 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                 key: _.hash,
                 title: _.name,
             })),
+        // plugins 依赖仅用于在插件列表变化时触发重算
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [props.tab, plugins],
     );
     const renderScene = useMemo(
@@ -82,12 +85,15 @@ function ResultSubPanel(props: IResultSubPanelProps) {
         [props.tab, routes],
     );
 
+    // 卸载当前 tab 对应的插件后，把选中项收回到仍然存在的 tab。
+    // 先算出安全索引再渲染，避免 routes 变短时 TabView 拿到越界的 index。
+    const safeIndex = clampTabIndex(index, routes.length);
+
     useEffect(() => {
-        // 卸载当前 tab 对应的插件后，把选中项收回到仍然存在的 tab
-        if (routes.length && index >= routes.length) {
-            setIndex(routes.length - 1);
+        if (safeIndex !== null) {
+            setIndex(safeIndex);
         }
-    }, [routes.length, index]);
+    }, [safeIndex]);
 
     if (!routes.length) {
         return <Empty />;
@@ -97,7 +103,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
         <TabView
             lazy
             navigationState={{
-                index,
+                index: safeIndex ?? index,
                 routes,
             }}
             renderTabBar={_ => (
