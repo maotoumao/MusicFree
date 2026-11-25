@@ -23,6 +23,7 @@ import EventEmitter from "eventemitter3";
 import { produce } from "immer";
 import { atom, getDefaultStore, useAtomValue } from "jotai";
 import shuffle from "lodash.shuffle";
+import { Platform } from "react-native";
 import ReactNativeTrackPlayer, {
     Event,
     State,
@@ -57,7 +58,7 @@ const playListAtom = atom<IMusic.IMusicItem[]>([]);
  * 所以只在进入播放器前把这一个 CDN 域名升级为 https，不动其他 http 源。
  */
 function normalizeMediaUrl(url: string) {
-    if (typeof url !== "string") {
+    if (Platform.OS !== "ios" || typeof url !== "string") {
         return url;
     }
     return url.replace(/^http:\/\/([^/]+\.music\.126\.net)\//i, "https://$1/");
