@@ -35,9 +35,9 @@ TestFlight 本身也要求付费 Apple Developer Program，免费 Apple ID 不�
 ### 1. 拉代码并安装依赖
 
 ```bash
-git clone https://github.com/data-cd-sky/MusicFree.git
+git clone https://github.com/maotoumao/MusicFree.git
 cd MusicFree
-git switch ios/port
+git switch feat/ios-port
 
 npm ci
 cd ios
@@ -87,7 +87,7 @@ open ios/MusicFree.xcworkspace
 
 ```bash
 cd ~/code/MusicFree
-git switch ios/port
+git switch feat/ios-port
 # 确认手机已连接/解锁
 scripts/ios-device.sh --check
 scripts/ios-device.sh
@@ -108,7 +108,7 @@ scripts/ios-device.sh
 
 ```bash
 cd ~/code/MusicFree
-git switch ios/port
+git switch feat/ios-port
 scripts/ios-device.sh --check   # 检查证书、团队和设备
 scripts/ios-device.sh           # 构建 + 安装 + 启动
 ```

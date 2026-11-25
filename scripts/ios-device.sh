@@ -342,7 +342,7 @@ if [[ "$BUILD" == true ]]; then
             echo "未找到 Apple Development 签名证书。" >&2
             echo "请先在 Xcode -> Settings -> Accounts 登录 Apple ID，并让 Xcode 生成证书。" >&2
             echo "也可以用 MUSICFREE_TEAM_ID 或 --team 显式指定团队。" >&2
-            echo "详见 ios/HANDOFF.md 的「真机调试步骤」。" >&2
+            echo "检查 Xcode 登录账号、设备信任与开发者模式。" >&2
             exit 1
         fi
     fi
