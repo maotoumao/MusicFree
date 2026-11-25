@@ -21,8 +21,7 @@ import PersistStatus from "@/utils/persistStatus";
 import Toast from "@/utils/toast";
 import * as SplashScreen from "expo-splash-screen";
 import {  Linking, Platform } from "react-native";
-import { PERMISSIONS, check, request } from "react-native-permissions";
-import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
+import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability, State } from "react-native-track-player";
 import i18n from "@/core/i18n";
 import bootstrapAtom from "./bootstrap.atom";
 import { getDefaultStore } from "jotai";
@@ -46,7 +45,7 @@ async function bootstrapImpl() {
         )
         .catch(console.warn); // it's good to explicitly catch and inspect any error
     const logger = perfLogger();
-    // 1. 检查权限
+    // 1. 检查权限（iOS 使用应用沙盒，无需申请存储权限）
     if (Platform.OS === "android" && Platform.Version >= 30) {
         const hasPermission = await NativeUtils.checkStoragePermission();
         if (
@@ -55,7 +54,10 @@ async function bootstrapImpl() {
         ) {
             showDialog("CheckStorage");
         }
-    } else {
+    } else if (Platform.OS === "android") {
+        // iOS never takes this branch, and requiring the module eagerly loads
+        // RNPermissions' native constants, which only exist on Android.
+        const { PERMISSIONS, check, request } = require("react-native-permissions") as typeof import("react-native-permissions");
         const [readStoragePermission, writeStoragePermission] =
             await Promise.all([
                 check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE),
@@ -152,6 +154,7 @@ export async function initTrackPlayer(logger?: IPerfLogger) {
         await RNTrackPlayer.setupPlayer({
             maxCacheSize:
                 Config.getConfig("basic.maxCacheSize") ?? 1024 * 1024 * 512,
+            autoHandleInterruptions: true,
         });
     } catch (e: any) {
         if (
@@ -237,6 +240,14 @@ async function extraMakeup() {
                     ),
                 );
                 Toast.success("安装成功~");
+            } else if (url === "musicfree://toggle-play") {
+                // Live Activity 的播放/暂停按钮
+                const { state } = await RNTrackPlayer.getPlaybackState();
+                if (state === State.Playing || state === State.Buffering) {
+                    await TrackPlayer.pause();
+                } else {
+                    await TrackPlayer.play();
+                }
             } else if (url.endsWith(".js")) {
                 PluginManager.installPluginFromLocalFile(url, {
                     notCheckVersion: Config.getConfig(
@@ -284,6 +295,20 @@ async function extraMakeup() {
 }
 
 
+function getDownloadFolderHint() {
+    const downloadPath =
+        Config.getConfig("basic.downloadPath") ?? pathConst.downloadMusicPath;
+    if (downloadPath.startsWith(pathConst.basePath)) {
+        // iOS 的 Documents 目录会映射到「文件」App 里的 MusicFree
+        return (
+            downloadPath
+                .slice(pathConst.basePath.length)
+                .replace(/^\/+|\/+$/g, "") || "download/music"
+        );
+    }
+    return downloadPath;
+}
+
 function bindEvents() {
     // 下载事件
     downloader.on(DownloaderEvent.DownloadError, (reason) => {
@@ -300,7 +325,14 @@ function bindEvents() {
     });
 
     downloader.on(DownloaderEvent.DownloadQueueCompleted, () => {
-        Toast.success("下载任务已完成");
+        const args = { path: getDownloadFolderHint() };
+        // 路径提示稍长，展示时间放宽一点
+        Toast.success(
+            Platform.OS === "ios"
+                ? i18n.t("toast.downloadCompletedIos", args)
+                : i18n.t("toast.downloadCompleted", args),
+            { duration: 4000 },
+        );
     });
 }
 

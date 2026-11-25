@@ -81,6 +81,20 @@ export interface ILanguageData {
 
     // 提示消息相关
     "toast.deleteSuccess": string; // 删除成功
+    "toast.playErrorAndSkipped": string; // 播放失败，已自动跳到下一首
+    "toast.playErrorStopped": string; // 播放失败，已暂停
+    "toast.playFailWithReason": string; // 《歌名》播放失败：原因，已自动跳到下一首
+    "toast.playFailWithReasonStopped": string; // 《歌名》播放失败：原因，已暂停
+    "toast.playFailOffline": string; // 当前无网络，无法播放《歌名》
+    "toast.playFailReasonNetwork": string; // 网络错误
+    "toast.playFailReasonTimeout": string; // 网络超时
+    "toast.playFailReasonForbidden": string; // 音源被拒绝（403）
+    "toast.playFailReasonNotFound": string; // 音源不存在（404）
+    "toast.playFailReasonDrm": string; // 版权保护（DRM）
+    "toast.playFailReasonFormat": string; // 音频格式不支持
+    "toast.playFailReasonInvalidSource": string; // 音源无效
+    "toast.playFailReasonUnknown": string; // 音源不可用
+    "toast.networkUnavailable": string; // 网络不可用，请检查网络连接
     "toast.hasStarred": string; // 已收藏歌单
     "toast.hasUnstarred": string; // 已取消收藏歌单
     "toast.importSuccess": string; // 导入成功
@@ -90,6 +104,8 @@ export interface ILanguageData {
     "toast.commmentNotAvaliableForCurrentMusic": string; // 当前音乐无法进行评论
     "toast.addToNextPlay": string; // 添加到下一曲
     "toast.beginDownload": string; // 开始下载
+    "toast.downloadCompletedIos": string; // 下载完成，文件在「文件」App的路径
+    "toast.downloadCompleted": string; // 下载完成，文件保存目录
     "toast.rememberToSave": string; // 请记得保存
 
     // 本地音乐相关
@@ -339,6 +355,8 @@ export interface ILanguageData {
     "basicSettings.lyric": string; // 歌词
     "basicSettings.lyric.autoSearchLyric": string; // 歌词缺失时自动搜索歌词
     "basicSettings.lyric.showStatusBarLyric": string; // 开启桌面歌词
+    "basicSettings.lyric.liveActivity": string; // 实时活动歌词
+    "basicSettings.lyric.liveActivityDescription": string; // 实时活动歌词说明
     "basicSettings.lyric.align": string; // 对齐方式
     "basicSettings.lyric.align.left": string; // 左对齐
     "basicSettings.lyric.align.center": string; // 居中对齐
@@ -388,6 +406,7 @@ export interface ILanguageData {
     "toast.imageCacheCleared": string; // 已清除图片缓存
     "toast.logCleared": string; // 日志已清空
     "toast.noFloatWindowPermission": string; // 无悬浮窗权限
+    "toast.liveActivityDisabled": string; // 实时活动未开启
     "toast.folderNotExistOrNoPermission": string; // 文件夹不存在或无权限
     
     // 音质相关

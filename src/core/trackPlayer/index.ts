@@ -1,4 +1,6 @@
 import { getCurrentDialog, showDialog } from "@/components/dialogs/useDialog";
+import i18n from "@/core/i18n";
+import Toast from "@/utils/toast";
 import {
     internalFakeSoundKey,
     sortIndexSymbol,
@@ -21,6 +23,7 @@ import EventEmitter from "eventemitter3";
 import { produce } from "immer";
 import { atom, getDefaultStore, useAtomValue } from "jotai";
 import shuffle from "lodash.shuffle";
+import { Platform } from "react-native";
 import ReactNativeTrackPlayer, {
     Event,
     State,
@@ -39,6 +42,7 @@ import minDistance from "@/utils/minDistance";
 import { IPluginManager } from "@/types/core/pluginManager";
 import { ImgAsset } from "@/constants/assetsConst";
 import { resolveImportedAssetOrPath } from "@/utils/fileUtils";
+import { getPlaybackErrorMessage } from "@/utils/playbackError";
 
 
 
@@ -46,6 +50,20 @@ const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
 const qualityAtom = atom<IMusic.IQualityKey>("standard");
 const playListAtom = atom<IMusic.IMusicItem[]>([]);
+
+/**
+ * 网易云取流接口经常返回 http://m*.music.126.net/...。
+ * iOS 的播放器路径会被 ATS 拦成 ios_failed_to_load_resource；
+ * 同一个地址换成 https 可以正常播放（实测 206 audio/mpeg），
+ * 所以只在进入播放器前把这一个 CDN 域名升级为 https，不动其他 http 源。
+ */
+function normalizeMediaUrl(url: string) {
+    if (Platform.OS !== "ios" || typeof url !== "string") {
+        return url;
+    }
+    return url.replace(/^http:\/\/([^/]+\.music\.126\.net)\//i, "https://$1/");
+}
+
 
 
 class TrackPlayer extends EventEmitter<{
@@ -67,6 +85,14 @@ class TrackPlayer extends EventEmitter<{
     private serviceInited = false;
     // 播放队列索引map
     private playListIndexMap = createMediaIndexMap([] as IMusic.IMusicItem[]);
+    // 播放失败提示：同一首歌 30s 内不重复；普通失败再加 2s 全局节流
+    private lastOfflineToastAt = 0;
+    private lastPlayErrorToastAt = 0;
+    private lastPlayFailKey = "";
+    private lastPlayFailToastAt = 0;
+    // 同一首歌的失败只处理一次，避免连续 PlaybackError 触发多次自动切歌
+    private lastHandledFailKey = "";
+    private lastHandledFailAt = 0;
 
 
     private static maxMusicQueueLength = 10000;
@@ -211,7 +237,14 @@ class TrackPlayer extends EventEmitter<{
             ReactNativeTrackPlayer.addEventListener(
                 Event.PlaybackError,
                 async e => {
-                    errorLog("播放出错", e.message);
+                    // iOS 的事件只有 error 字段（SwiftAudioEx 的报错文案），
+                    // 没有 message/code；Android 则直接给 message/code。
+                    const errorMessage = getPlaybackErrorMessage(
+                        e as typeof e & { error?: string },
+                    );
+                    const errorCode = e.code;
+
+                    errorLog("播放出错", errorMessage);
                     // WARNING: 不稳定，报错的时候有可能track已经变到下一首歌去了
                     const currentTrack =
                         await ReactNativeTrackPlayer.getActiveTrack();
@@ -228,15 +261,15 @@ class TrackPlayer extends EventEmitter<{
                     if (
                         currentTrack?.url !== TrackPlayer.fakeAudioUrl && currentTrack?.url !== TrackPlayer.proposedAudioUrl &&
                         (await ReactNativeTrackPlayer.getActiveTrackIndex()) === 0 &&
-                        e.message &&
-                        e.message !== "android-io-file-not-found"
+                        errorMessage &&
+                        errorMessage !== "android-io-file-not-found"
                     ) {
                         trace("播放出错", {
-                            message: e.message,
-                            code: e.code,
+                            message: errorMessage,
+                            code: errorCode,
                         });
 
-                        this.handlePlayFail();
+                        this.handlePlayFail(errorMessage);
                     }
                 },
             );
@@ -605,7 +638,9 @@ class TrackPlayer extends EventEmitter<{
                 message ===
                 "The player is not initialized. Call setupPlayer first."
             ) {
-                await ReactNativeTrackPlayer.setupPlayer();
+                await ReactNativeTrackPlayer.setupPlayer({
+                    autoHandleInterruptions: true,
+                });
                 this.play(musicItem, forcePlay);
             } else if (message === PlayFailReason.FORBID_CELLUAR_NETWORK_PLAY) {
                 if (getCurrentDialog()?.name !== "SimpleDialog") {
@@ -903,7 +938,114 @@ class TrackPlayer extends EventEmitter<{
     }
 
 
-    private async handlePlayFail() {
+    private getPlayFailReason(errorMessage?: string) {
+        if (!errorMessage) {
+            return i18n.t("toast.playFailReasonInvalidSource");
+        }
+        if (/timeout|timed out|超时/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonTimeout");
+        }
+        if (/403|forbidden/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonForbidden");
+        }
+        if (/404|not found/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonNotFound");
+        }
+        if (/drm|decrypt|fairplay|sample-aes/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonDrm");
+        }
+        if (/network|offline|internet|not connected|连接/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonNetwork");
+        }
+        if (/format|codec|unplayable|not supported|mime|m4s/i.test(errorMessage)) {
+            return i18n.t("toast.playFailReasonFormat");
+        }
+        // 原生报错文案通常是英文技术信息，不直接展示给用户
+        return i18n.t("toast.playFailReasonUnknown");
+    }
+
+    private showPlayFailToast(errorMessage?: string) {
+        const now = Date.now();
+        const musicItem = this.currentMusic;
+        const title = musicItem?.title;
+        const key = musicItem
+            ? `${musicItem.platform}@@${musicItem.id}`
+            : "";
+
+        if (Network.isOffline) {
+            // 断网时 60s 内只提示一次，避免每首歌失败都弹一次
+            if (now - this.lastOfflineToastAt < 60000) {
+                return;
+            }
+            this.lastOfflineToastAt = now;
+            Toast.warn(
+                title
+                    ? i18n.t("toast.playFailOffline", { title })
+                    : i18n.t("toast.networkUnavailable"),
+                { duration: 3500 },
+            );
+            return;
+        }
+
+        // 同一首歌 30s 内不重复提示；连续切歌时 2s 内也只提示一次
+        if (
+            key &&
+            key === this.lastPlayFailKey &&
+            now - this.lastPlayFailToastAt < 30000
+        ) {
+            return;
+        }
+        if (now - this.lastPlayErrorToastAt < 2000) {
+            return;
+        }
+        this.lastPlayFailKey = key;
+        this.lastPlayFailToastAt = now;
+        this.lastPlayErrorToastAt = now;
+
+        const stopped = this.configService.getConfig(
+            "basic.autoStopWhenError",
+        );
+        if (!title) {
+            Toast.warn(
+                stopped
+                    ? i18n.t("toast.playErrorStopped")
+                    : i18n.t("toast.playErrorAndSkipped"),
+                { duration: 3500 },
+            );
+            return;
+        }
+        Toast.warn(
+            i18n.t(
+                stopped
+                    ? "toast.playFailWithReasonStopped"
+                    : "toast.playFailWithReason",
+                {
+                    title,
+                    reason: this.getPlayFailReason(errorMessage),
+                },
+            ),
+            { duration: 3500 },
+        );
+    }
+
+    private async handlePlayFail(errorMessage?: string) {
+        const now = Date.now();
+        const musicItem = this.currentMusic;
+        const key = musicItem
+            ? `${musicItem.platform}@@${musicItem.id}`
+            : "";
+        // 连续 PlaybackError 只处理一次，避免同一首歌触发多次 skipToNext
+        if (
+            key &&
+            key === this.lastHandledFailKey &&
+            now - this.lastHandledFailAt < 1000
+        ) {
+            return;
+        }
+        this.lastHandledFailKey = key;
+        this.lastHandledFailAt = now;
+
+        this.showPlayFailToast(errorMessage);
         // 如果自动跳转下一曲, 500s后自动跳转
         if (!this.configService.getConfig("basic.autoStopWhenError")) {
             await delay(500);
@@ -984,6 +1126,7 @@ class TrackPlayer extends EventEmitter<{
         }
         return {
             ...track,
+            url: normalizeMediaUrl(track.url),
             artwork: resolveImportedAssetOrPath(
                 track.artwork?.trim?.()?.length ? track.artwork : ImgAsset.albumDefault,
             ) as unknown as any,

@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
     BackHandler,
     DeviceEventEmitter,
+    Dimensions,
     KeyboardAvoidingView,
     NativeEventSubscription,
     Pressable,
@@ -25,6 +26,17 @@ import NativeUtils from "@/native/utils";
 
 const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
 const ANIMATION_DURATION = 250;
+
+/** iOS 模块缺失时退回 RN 自带的窗口尺寸，避免启动即崩溃 */
+function getWindowHeight() {
+    try {
+        const size = NativeUtils?.getWindowDimensions?.();
+        if (size?.height) {
+            return size.height;
+        }
+    } catch { }
+    return Dimensions.get("window").height;
+}
 
 const timingConfig = {
     duration: ANIMATION_DURATION,
@@ -164,7 +176,7 @@ export default function (props: IPanelBaseProps) {
                     height: vh(100) - safeAreaInsets.top,
                     bottom: 0,
                 } : {
-                    top: positionMethod === "top" ? (NativeUtils.getWindowDimensions().height + safeAreaInsets.top) - height - safeAreaInsets.bottom : undefined,
+                    top: positionMethod === "top" ? (getWindowHeight() + safeAreaInsets.top) - height - safeAreaInsets.bottom : undefined,
                     bottom: positionMethod === "bottom" ? 0 : undefined,
                     height: height,
                 },

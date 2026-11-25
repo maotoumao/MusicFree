@@ -1,5 +1,7 @@
 import React from "react";
-import LocalMusicSheet from "@/core/localMusicSheet";
+import LocalMusicSheet, {
+    isLocalMediaFile,
+} from "@/core/localMusicSheet";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
 import LocalMusicList from "./localMusicList";
 import MusicBar from "@/components/musicBar";
@@ -33,7 +35,8 @@ export default function MainPage() {
                         title: t("localMusic.scanLocalMusic"),
                         async onPress() {
                             navigate(ROUTE_PATH.FILE_SELECTOR, {
-                                fileType: "folder",
+                                fileType: "file-and-folder",
+                                matchExtension: isLocalMediaFile,
                                 multi: true,
                                 actionText: t("localMusic.beginScan"),
                                 async onAction(selectedFiles) {

@@ -8,23 +8,60 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* MusicFreeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MusicFreeTests.m */; };
+		0B2092A4623794B8B04B99D9 /* MusicFreeActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A9B7C67D1C1B7D8BCD7868 /* MusicFreeActivityAttributes.swift */; };
 		0C80B921A6F3F58F76C31292 /* libPods-MusicFree.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-MusicFree.a */; };
+		13987B7EF963153A3CE4CA0E /* MusicFreeLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C32269D64466760FA0EB6 /* MusicFreeLiveActivityBundle.swift */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		2759178668413A5C43A0B098 /* MFLyricUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF9B8207BF55BC40E0E0569 /* MFLyricUtil.swift */; };
+		2FCD23B34BE91D71BF2E2495 /* MFLyricUtil.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6AF0DC61EA2C69D0DC5E51F9 /* MFLyricUtil.mm */; };
+		35F35DE87AFC98CFF98DD53C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C2BCBA3C4C9364CD99EE39 /* ExpoModulesProvider.swift */; };
+		3873F28AB1D0FE518E6ACFBA /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC63DBA4ECEFE8E0F6ABD5A /* ExpoModulesProvider.swift */; };
+		3FC238721C3B9DA10E27B5D8 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B3B106538147F092138CD4 /* SwiftUI.framework */; };
 		7699B88040F8A987B510C191 /* libPods-MusicFree-MusicFreeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-MusicFree-MusicFreeTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A77B0C012E4F5A6B7C8D9E01 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A77B0C022E4F5A6B7C8D9E01 /* SplashScreen.storyboard */; };
+		B7CC72E634B822AB1917EAAB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		C01D760543C6A5778BA73A90 /* MusicFreeLiveActivity.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 2D9ACB844582E7C379BD4FE3 /* MusicFreeLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
+		C3F7103D4E9FEF3473A4BD5A /* MFLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0144E1203DD8D95883582B /* MFLiveActivity.swift */; };
+		C3FFB5FC6C2F3020DDF1D1FC /* MusicFreeActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A9B7C67D1C1B7D8BCD7868 /* MusicFreeActivityAttributes.swift */; };
+		E8E56D6DEC725180E8901851 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F690A57A9BC94936D2FD31 /* MediaPlayer.framework */; };
+		EB4A55D2D7E1DA24DEC8222A /* MusicFreeLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378A05B811D6A9A8D53BAAFD /* MusicFreeLiveActivityWidget.swift */; };
+		F40D3C9BB65EEF29ECB33ECC /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFCCB90C4688E002953AF8C0 /* WidgetKit.framework */; };
+		F4F1250A5EA2B8CF1EF980D7 /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B03665382F761E5043C809D8 /* ActivityKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = MusicFree;
 		};
+		203CDB32B38DBEEEA1546211 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E5975A9BA2F579009FFD4731;
+			remoteInfo = MusicFreeLiveActivity;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D6E4ED54C7311932A87BE1C5 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C01D760543C6A5778BA73A90 /* MusicFreeLiveActivity.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00E356EE1AD99517003FC87E /* MusicFreeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MusicFreeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -38,13 +75,28 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MusicFree/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = MusicFree/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-MusicFree-MusicFreeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MusicFree-MusicFreeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		22C2BCBA3C4C9364CD99EE39 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-MusicFree-MusicFreeTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		2D9ACB844582E7C379BD4FE3 /* MusicFreeLiveActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MusicFreeLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DC63DBA4ECEFE8E0F6ABD5A /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-MusicFree/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		378A05B811D6A9A8D53BAAFD /* MusicFreeLiveActivityWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MusicFreeLiveActivityWidget.swift; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-MusicFree.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicFree.debug.xcconfig"; path = "Target Support Files/Pods-MusicFree/Pods-MusicFree.debug.xcconfig"; sourceTree = "<group>"; };
+		41F690A57A9BC94936D2FD31 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		5709B34CF0A7D63546082F79 /* Pods-MusicFree.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicFree.release.xcconfig"; path = "Target Support Files/Pods-MusicFree/Pods-MusicFree.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-MusicFree-MusicFreeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicFree-MusicFreeTests.debug.xcconfig"; path = "Target Support Files/Pods-MusicFree-MusicFreeTests/Pods-MusicFree-MusicFreeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-MusicFree.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MusicFree.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6AF0DC61EA2C69D0DC5E51F9 /* MFLyricUtil.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = MFLyricUtil.mm; path = MusicFree/MFLyricUtil.mm; sourceTree = "<group>"; };
+		70B3B106538147F092138CD4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		7C0144E1203DD8D95883582B /* MFLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MFLiveActivity.swift; path = MusicFree/MFLiveActivity.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MusicFree/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8912D640A19CAC918C6295A2 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-MusicFree-MusicFreeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicFree-MusicFreeTests.release.xcconfig"; path = "Target Support Files/Pods-MusicFree-MusicFreeTests/Pods-MusicFree-MusicFreeTests.release.xcconfig"; sourceTree = "<group>"; };
+		9FF9B8207BF55BC40E0E0569 /* MFLyricUtil.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MFLyricUtil.swift; path = MusicFree/MFLyricUtil.swift; sourceTree = "<group>"; };
+		A77B0C022E4F5A6B7C8D9E01 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = MusicFree/SplashScreen.storyboard; sourceTree = "<group>"; };
+		B03665382F761E5043C809D8 /* ActivityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActivityKit.framework; path = System/Library/Frameworks/ActivityKit.framework; sourceTree = SDKROOT; };
+		C7A9B7C67D1C1B7D8BCD7868 /* MusicFreeActivityAttributes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MusicFreeActivityAttributes.swift; path = MusicFree/MusicFreeActivityAttributes.swift; sourceTree = "<group>"; };
+		D68C32269D64466760FA0EB6 /* MusicFreeLiveActivityBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MusicFreeLiveActivityBundle.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		EFCCB90C4688E002953AF8C0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +113,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-MusicFree.a in Frameworks */,
+				F4F1250A5EA2B8CF1EF980D7 /* ActivityKit.framework in Frameworks */,
+				E8E56D6DEC725180E8901851 /* MediaPlayer.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF06B6655C8E742521B02B1D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F40D3C9BB65EEF29ECB33ECC /* WidgetKit.framework in Frameworks */,
+				3FC238721C3B9DA10E27B5D8 /* SwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,10 +155,24 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+				A77B0C022E4F5A6B7C8D9E01 /* SplashScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				6AF0DC61EA2C69D0DC5E51F9 /* MFLyricUtil.mm */,
+				7C0144E1203DD8D95883582B /* MFLiveActivity.swift */,
+				C7A9B7C67D1C1B7D8BCD7868 /* MusicFreeActivityAttributes.swift */,
+				9FF9B8207BF55BC40E0E0569 /* MFLyricUtil.swift */,
 			);
 			name = MusicFree;
+			sourceTree = "<group>";
+		};
+		25F65C7CF2FEB59F9264CB0C /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				EC874F59652A6E4715BF33C0 /* MusicFree */,
+				A46E20349BA6FC06570E5C9F /* MusicFreeTests */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -104,6 +181,7 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-MusicFree.a */,
 				19F6CBCC0A4E27FBF8BF4A61 /* libPods-MusicFree-MusicFreeTests.a */,
+				8D5FE5FE96923694594003C2 /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -115,7 +193,7 @@
 			name = Libraries;
 			sourceTree = "<group>";
 		};
-		83CBB9F61A601CBA00E9B192 /* PBXGroup */ = {
+		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
 				13B07FAE1A68108700A75B9A /* MusicFree */,
@@ -124,6 +202,8 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				25F65C7CF2FEB59F9264CB0C /* ExpoModulesProviders */,
+				9C8B66A2A553EFE5AF0FA4E0 /* MusicFreeLiveActivity */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -135,8 +215,39 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* MusicFree.app */,
 				00E356EE1AD99517003FC87E /* MusicFreeTests.xctest */,
+				2D9ACB844582E7C379BD4FE3 /* MusicFreeLiveActivity.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8D5FE5FE96923694594003C2 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				B03665382F761E5043C809D8 /* ActivityKit.framework */,
+				41F690A57A9BC94936D2FD31 /* MediaPlayer.framework */,
+				EFCCB90C4688E002953AF8C0 /* WidgetKit.framework */,
+				70B3B106538147F092138CD4 /* SwiftUI.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		9C8B66A2A553EFE5AF0FA4E0 /* MusicFreeLiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				8912D640A19CAC918C6295A2 /* Info.plist */,
+				D68C32269D64466760FA0EB6 /* MusicFreeLiveActivityBundle.swift */,
+				378A05B811D6A9A8D53BAAFD /* MusicFreeLiveActivityWidget.swift */,
+			);
+			name = MusicFreeLiveActivity;
+			path = MusicFreeLiveActivity;
+			sourceTree = "<group>";
+		};
+		A46E20349BA6FC06570E5C9F /* MusicFreeTests */ = {
+			isa = PBXGroup;
+			children = (
+				22C2BCBA3C4C9364CD99EE39 /* ExpoModulesProvider.swift */,
+			);
+			name = MusicFreeTests;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -150,6 +261,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		EC874F59652A6E4715BF33C0 /* MusicFree */ = {
+			isa = PBXGroup;
+			children = (
+				2DC63DBA4ECEFE8E0F6ABD5A /* ExpoModulesProvider.swift */,
+			);
+			name = MusicFree;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -158,6 +277,7 @@
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "MusicFreeTests" */;
 			buildPhases = (
 				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
+				F3EE36C079232A39B57DA85D /* [Expo] Configure project */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
@@ -179,33 +299,53 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MusicFree" */;
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
+				74BF3E8E1DA02C0AD4EA7763 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
 				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
+				D6E4ED54C7311932A87BE1C5 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D484AC6E3C51C652476C533B /* PBXTargetDependency */,
 			);
 			name = MusicFree;
 			productName = MusicFree;
 			productReference = 13B07F961A680F5B00A75B9A /* MusicFree.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E5975A9BA2F579009FFD4731 /* MusicFreeLiveActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EEDC67F40E642F86FA1116E8 /* Build configuration list for PBXNativeTarget "MusicFreeLiveActivity" */;
+			buildPhases = (
+				F96726A96B8D648F7B7FF98D /* Sources */,
+				DF06B6655C8E742521B02B1D /* Frameworks */,
+				4FA989538AA541D559510337 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MusicFreeLiveActivity;
+			productName = MusicFreeLiveActivity;
+			productReference = 2D9ACB844582E7C379BD4FE3 /* MusicFreeLiveActivity.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		83CBB9F71A601CBA00E9B192 = {
+		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						TestTargetID = 13B07F861A680F5B00A75B9A /* MusicFree */;
+						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1120;
@@ -220,13 +360,14 @@
 				en,
 				Base,
 			);
-			mainGroup = 83CBB9F61A601CBA00E9B192 /* PBXGroup */;
+			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* MusicFree */,
 				00E356ED1AD99517003FC87E /* MusicFreeTests */,
+				E5975A9BA2F579009FFD4731 /* MusicFreeLiveActivity */,
 			);
 		};
 /* End PBXProject section */
@@ -244,7 +385,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				A77B0C012E4F5A6B7C8D9E01 /* SplashScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				B7CC72E634B822AB1917EAAB /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA989538AA541D559510337 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,6 +433,25 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MusicFree/Pods-MusicFree-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		74BF3E8E1DA02C0AD4EA7763 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-MusicFree/expo-configure-project.sh\"\n";
 		};
 		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -362,6 +531,25 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MusicFree/Pods-MusicFree-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F3EE36C079232A39B57DA85D /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-MusicFree-MusicFreeTests/expo-configure-project.sh\"\n";
+		};
 		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -387,6 +575,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00E356F31AD99517003FC87E /* MusicFreeTests.m in Sources */,
+				35F35DE87AFC98CFF98DD53C /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +585,21 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				3873F28AB1D0FE518E6ACFBA /* ExpoModulesProvider.swift in Sources */,
+				2FCD23B34BE91D71BF2E2495 /* MFLyricUtil.mm in Sources */,
+				C3F7103D4E9FEF3473A4BD5A /* MFLiveActivity.swift in Sources */,
+				0B2092A4623794B8B04B99D9 /* MusicFreeActivityAttributes.swift in Sources */,
+				2759178668413A5C43A0B098 /* MFLyricUtil.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F96726A96B8D648F7B7FF98D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13987B7EF963153A3CE4CA0E /* MusicFreeLiveActivityBundle.swift in Sources */,
+				EB4A55D2D7E1DA24DEC8222A /* MusicFreeLiveActivityWidget.swift in Sources */,
+				C3FFB5FC6C2F3020DDF1D1FC /* MusicFreeActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +610,12 @@
 			isa = PBXTargetDependency;
 			target = 13B07F861A680F5B00A75B9A /* MusicFree */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
+		};
+		D484AC6E3C51C652476C533B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MusicFreeLiveActivity;
+			target = E5975A9BA2F579009FFD4731 /* MusicFreeLiveActivity */;
+			targetProxy = 203CDB32B38DBEEEA1546211 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -420,7 +630,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = MusicFreeTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -431,10 +641,11 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = fun.upup.musicfree;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MusicFree.app/MusicFree";
 				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MusicFree.app/MusicFree";
 			};
 			name = Debug;
 		};
@@ -445,7 +656,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = MusicFreeTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -456,10 +667,11 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = fun.upup.musicfree;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MusicFree.app/MusicFree";
 				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MusicFree.app/MusicFree";
 			};
 			name = Release;
 		};
@@ -472,7 +684,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = MusicFree/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -483,7 +695,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = fun.upup.musicfree;
 				PRODUCT_NAME = MusicFree;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -499,7 +712,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = MusicFree/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -510,10 +723,64 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = fun.upup.musicfree;
 				PRODUCT_NAME = MusicFree;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		78B1E25FB202004DC71C733E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MusicFreeLiveActivity/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = fun.upup.musicfree.liveactivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7EC897DB29B12A3023DB492B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MusicFreeLiveActivity/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = fun.upup.musicfree.liveactivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -566,7 +833,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -586,8 +853,15 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_VERSION = 5.0;
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -633,7 +907,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -652,9 +926,15 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
-				VALIDATE_PRODUCT = YES;
 				SWIFT_VERSION = 5.0;
+				USE_HERMES = true;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -688,7 +968,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		EEDC67F40E642F86FA1116E8 /* Build configuration list for PBXNativeTarget "MusicFreeLiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7EC897DB29B12A3023DB492B /* Release */,
+				78B1E25FB202004DC71C733E /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 83CBB9F71A601CBA00E9B192;
+	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

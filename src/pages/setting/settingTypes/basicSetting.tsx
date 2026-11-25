@@ -21,7 +21,7 @@ import Toast from "@/utils/toast";
 import Clipboard from "@react-native-clipboard/clipboard";
 import Slider from "@react-native-community/slider";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, SectionList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { readdir } from "react-native-fs";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 
@@ -418,7 +418,12 @@ export default function BasicSetting() {
         {
             title: t("basicSettings.lyric"),
             data: [],
-            footer: <LyricSetting />,
+            footer:
+                Platform.OS === "ios" ? (
+                    <LiveActivityLyricSetting />
+                ) : (
+                    <LyricSetting />
+                ),
         },
         {
             title: t("basicSettings.cache"),
@@ -659,6 +664,83 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 });
+
+function LiveActivityLyricSetting() {
+    const showStatusBarLyric = useAppConfig("lyric.showStatusBarLyric");
+    const enableAutoSearchLyric = useAppConfig("lyric.autoSearchLyric");
+    const [liveActivitySupported, setLiveActivitySupported] = useState(true);
+
+    const { t } = useI18N();
+
+    useEffect(() => {
+        LyricUtil.checkSystemAlertPermission()
+            .then(setLiveActivitySupported)
+            .catch(() => setLiveActivitySupported(false));
+    }, []);
+
+    const autoSearchLyric = createSwitch(
+        t("basicSettings.lyric.autoSearchLyric"),
+        "lyric.autoSearchLyric",
+        enableAutoSearchLyric ?? false,
+    );
+
+    const liveActivityLyric = createSwitch(
+        t("basicSettings.lyric.liveActivity"),
+        "lyric.showStatusBarLyric",
+        showStatusBarLyric ?? false,
+        async newValue => {
+            if (newValue) {
+                const hasPermission = await LyricUtil.checkSystemAlertPermission().catch(
+                    () => false,
+                );
+                if (!hasPermission) {
+                    setLiveActivitySupported(false);
+                    Toast.warn(t("toast.liveActivityDisabled"));
+                    return;
+                }
+                setLiveActivitySupported(true);
+                Config.setConfig("lyric.showStatusBarLyric", true);
+                LyricUtil.showStatusBarLyric("MusicFree", {}).catch(() => {});
+            } else {
+                LyricUtil.hideStatusBarLyric().catch(() => {});
+                Config.setConfig("lyric.showStatusBarLyric", false);
+            }
+        },
+    );
+
+    return (
+        <View>
+            <ListItem
+                withHorizontalPadding
+                heightType="small"
+                onPress={autoSearchLyric.onPress}>
+                <ListItem.Content title={autoSearchLyric.title} />
+                {autoSearchLyric.right}
+            </ListItem>
+            <ListItem
+                withHorizontalPadding
+                heightType="small"
+                onPress={liveActivityLyric.onPress}>
+                <ListItem.Content title={liveActivityLyric.title} />
+                {liveActivityLyric.right}
+            </ListItem>
+            <ThemeText
+                fontSize="subTitle"
+                fontColor="textSecondary"
+                style={lyricStyles.description}>
+                {t("basicSettings.lyric.liveActivityDescription")}
+            </ThemeText>
+            {liveActivitySupported ? null : (
+                <ThemeText
+                    fontSize="subTitle"
+                    fontColor="textSecondary"
+                    style={lyricStyles.description}>
+                    {t("toast.liveActivityDisabled")}
+                </ThemeText>
+            )}
+        </View>
+    );
+}
 
 function LyricSetting() {
     /**
@@ -921,5 +1003,9 @@ const lyricStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: rpx(24),
+    },
+    description: {
+        paddingHorizontal: rpx(24),
+        paddingBottom: rpx(16),
     },
 });

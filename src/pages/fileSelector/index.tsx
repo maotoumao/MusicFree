@@ -13,8 +13,9 @@ import useHardwareBack from "@/hooks/useHardwareBack";
 import rpx from "@/utils/rpx";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Platform, Pressable, StyleSheet, View } from "react-native";
 import {
+    DocumentDirectoryPath,
     ExternalStorageDirectoryPath,
     exists,
     getAllExternalFilesDirs,
@@ -45,7 +46,8 @@ export default function FileSelector() {
     } = useParams<"file-selector">() ?? {};
 
     const [currentPath, setCurrentPath] = useState<IPathItem>({
-        path: "/",
+        // iOS 应用只能访问自己的沙盒目录，Android 可以从根目录开始浏览
+        path: Platform.OS === "ios" ? DocumentDirectoryPath : "/",
         parent: null,
     });
     const currentPathRef = useRef<IPathItem>(currentPath);

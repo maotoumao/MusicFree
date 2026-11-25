@@ -80,9 +80,15 @@ keystore.properties
 .vscode/
 tmp/
 scripts/
+!scripts/
+!scripts/ios-device.sh
+!scripts/apply-react-native-patches.js
 
 *.log
 # Expo
 .expo
 dist/
 web-build/
+# iOS build artifacts
+ios/MusicFree.xcworkspace/
+ios/build-sim/

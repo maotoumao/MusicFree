@@ -1,8 +1,9 @@
 import Empty from "@/components/base/empty";
 import { fontWeightConst } from "@/constants/uiConst";
 import { useI18N } from "@/core/i18n";
-import PluginManager from "@/core/pluginManager";
+import PluginManager, { usePlugins } from "@/core/pluginManager";
 import useColors from "@/hooks/useColors";
+import { clampTabIndex } from "@/utils/tabIndex";
 import rpx, { vw } from "@/utils/rpx";
 import { useAtomValue } from "jotai";
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -66,17 +67,33 @@ function ResultSubPanel(props: IResultSubPanelProps) {
     const [index, setIndex] = useState(0);
     const colors = useColors();
     const { t } = useI18N();
+    // 订阅插件列表：搜索页打开期间安装/卸载插件后，tab 立即刷新
+    const plugins = usePlugins();
 
-    const routes = PluginManager.getSortedSearchablePlugins(props.tab).map(
-        _ => ({
-            key: _.hash,
-            title: _.name,
-        }),
+    const routes = useMemo(
+        () =>
+            PluginManager.getSortedSearchablePlugins(props.tab).map(_ => ({
+                key: _.hash,
+                title: _.name,
+            })),
+        // plugins 依赖仅用于在插件列表变化时触发重算
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [props.tab, plugins],
     );
     const renderScene = useMemo(
         () => getSubRouterScene(props.tab, routes),
-        [props.tab],
+        [props.tab, routes],
     );
+
+    // 卸载当前 tab 对应的插件后，把选中项收回到仍然存在的 tab。
+    // 先算出安全索引再渲染，避免 routes 变短时 TabView 拿到越界的 index。
+    const safeIndex = clampTabIndex(index, routes.length);
+
+    useEffect(() => {
+        if (safeIndex !== null) {
+            setIndex(safeIndex);
+        }
+    }, [safeIndex]);
 
     if (!routes.length) {
         return <Empty />;
@@ -86,7 +103,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
         <TabView
             lazy
             navigationState={{
-                index,
+                index: safeIndex ?? index,
                 routes,
             }}
             renderTabBar={_ => (

@@ -7,7 +7,11 @@ import pathConst from "@/constants/pathConst";
 import Mp3Util from "@/native/mp3Util";
 import Base64 from "@/utils/base64";
 import delay from "@/utils/delay";
-import { addFileScheme, getFileName } from "@/utils/fileUtils";
+import {
+    addFileScheme,
+    getFileName,
+    normalizeLocalFilePath,
+} from "@/utils/fileUtils";
 import { getMediaExtraProperty, patchMediaExtra } from "@/utils/mediaExtra";
 import { getLocalPath, isSameMediaItem, resetMediaItem } from "@/utils/mediaUtils";
 import notImplementedFunction from "@/utils/notImplementedFunction.ts";
@@ -33,7 +37,8 @@ import _internalPluginMeta from "./meta";
 import { IPluginManager } from "@/types/core/pluginManager";
 
 
-axios.defaults.timeout = 2000;
+// 插件可能请求境外接口，2s 会让搜索、插件安装等请求被误判为超时
+axios.defaults.timeout = 10000;
 axios.interceptors.response.use((response) => {
     // 统一setcookie格式，nodejs环境是数组，移动端环境都放在第一个元素
     const setCookie = response.headers["set-cookie"];
@@ -918,6 +923,20 @@ export class Plugin {
                             _internalPluginMeta.getUserVariables(this.name)
                         );
                     },
+                    /**
+                     * 允许插件把运行期得到的数据写回自己的用户变量。
+                     * 典型场景：网易云插件扫码登录成功后，把服务端下发的
+                     * MUSIC_U / __csrf 存下来，否则只存在内存里，App 重启就丢。
+                     * 写入的是插件自己的 userVariables，不会和其他插件串。
+                     */
+                    setUserVariables: (
+                        userVariables: Record<string, string>,
+                    ) => {
+                        _internalPluginMeta.setUserVariables(
+                            this.name,
+                            userVariables,
+                        );
+                    },
                     get userVariables() {
                         return this.getUserVariables() ?? {};
                     },
@@ -1075,6 +1094,8 @@ const localFilePluginDefine: IPlugin.IPluginDefine = {
             : null;
     },
     async importMusicItem(urlLike) { // 绝对路径
+        // 深链接/文件选择可能带 file:// 前缀，先归一化，保证 id 与扫描导入一致
+        urlLike = normalizeLocalFilePath(urlLike);
         let meta: any = {};
         let id: string;
 
