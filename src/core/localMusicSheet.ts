@@ -4,7 +4,11 @@ import {
     supportLocalMediaType,
 } from "@/constants/commonConst";
 import mp3Util, { IBasicMeta } from "@/native/mp3Util";
-import { addFileScheme, getFileName } from "@/utils/fileUtils.ts";
+import {
+    addFileScheme,
+    getFileName,
+    normalizeLocalFilePath,
+} from "@/utils/fileUtils.ts";
 import {
     getLocalPath,
     isSameMediaItem,
@@ -14,7 +18,7 @@ import { getStorage, setStorage } from "@/utils/storage";
 import CryptoJs from "crypto-js";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
-import { ReadDirItem, exists, readDir, unlink } from "react-native-fs";
+import { ReadDirItem, exists, readDir, stat, unlink } from "react-native-fs";
 
 let localSheet: IMusic.IMusicItem[] = [];
 const localSheetStateMapper = new StateMapper(() => localSheet);
@@ -127,6 +131,7 @@ async function getMusicStats(folderPaths: string[]) {
     const _importToken = nanoid();
     importToken = _importToken;
     const musicList: string[] = [];
+    const musicPathSet = new Set<string>();
     let peek: string | undefined;
     let dirFiles: ReadDirItem[] = [];
     while (folderPaths.length !== 0) {
@@ -137,8 +142,19 @@ async function getMusicStats(folderPaths: string[]) {
         // 用户可以直接选中单个音频文件；readDir 对文件路径会失败，
         // 这里先按后缀判断，避免把文件当成目录扫描。
         if (isLocalMediaFile(peek)) {
-            musicList.push(peek);
-            continue;
+            let isFile = true;
+            try {
+                // 排除恰好以音频后缀命名的文件夹
+                isFile = (await stat(peek)).isFile();
+            } catch {}
+            if (isFile) {
+                const localPath = normalizeLocalFilePath(peek);
+                if (!musicPathSet.has(localPath)) {
+                    musicPathSet.add(localPath);
+                    musicList.push(localPath);
+                }
+                continue;
+            }
         }
         try {
             dirFiles = await readDir(peek);
@@ -150,7 +166,11 @@ async function getMusicStats(folderPaths: string[]) {
             if (item.isDirectory() && !folderPaths.includes(item.path)) {
                 folderPaths.push(item.path);
             } else if (isLocalMediaFile(item.path)) {
-                musicList.push(item.path);
+                const localPath = normalizeLocalFilePath(item.path);
+                if (!musicPathSet.has(localPath)) {
+                    musicPathSet.add(localPath);
+                    musicList.push(localPath);
+                }
             }
         });
     }

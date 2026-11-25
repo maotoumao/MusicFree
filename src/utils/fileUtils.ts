@@ -126,6 +126,18 @@ export function addFileScheme(fileName: string) {
     return fileName;
 }
 
+/**
+ * 归一化本地文件路径为绝对路径。
+ * 文件夹扫描得到的是绝对路径，而直接选中的单文件可能带 `file://` 前缀；
+ * 统一格式后才能保证同一个文件生成相同的 id，避免重复导入。
+ */
+export function normalizeLocalFilePath(filePath: string) {
+    if (filePath.startsWith("file://")) {
+        return filePath.slice("file://".length);
+    }
+    return filePath;
+}
+
 export function addRandomHash(url: string) {
     if (url.indexOf("#") === -1) {
         return `${url}#${Date.now()}`;
