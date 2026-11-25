@@ -41,6 +41,7 @@ import minDistance from "@/utils/minDistance";
 import { IPluginManager } from "@/types/core/pluginManager";
 import { ImgAsset } from "@/constants/assetsConst";
 import { resolveImportedAssetOrPath } from "@/utils/fileUtils";
+import { getPlaybackErrorMessage } from "@/utils/playbackError";
 
 
 
@@ -237,10 +238,9 @@ class TrackPlayer extends EventEmitter<{
                 async e => {
                     // iOS 的事件只有 error 字段（SwiftAudioEx 的报错文案），
                     // 没有 message/code；Android 则直接给 message/code。
-                    const nativeError = (
-                        e as typeof e & { error?: string }
-                    ).error;
-                    const errorMessage = e.message || nativeError || "";
+                    const errorMessage = getPlaybackErrorMessage(
+                        e as typeof e & { error?: string },
+                    );
                     const errorCode = e.code;
 
                     errorLog("播放出错", errorMessage);
