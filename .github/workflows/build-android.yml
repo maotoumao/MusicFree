@@ -1,0 +1,100 @@
+name: Build Android
+
+# 手动触发构建 Android APK 并上传为 Artifact（保留 30 天），不直接对外发版。
+# 下载真机冒烟测试通过后，再通过 "Publish Release" 工作流按 run_id 发布 GitHub Release。
+#
+# 权限与安全：
+#   - 仅仓库拥有者（github.repository_owner）可执行。
+#   - release 构建绑定 android-release 环境（存放签名密钥，可在 GitHub 后台配置审批门与分支限制）。
+#   - debug 构建不绑定环境、无需签名密钥。
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: '构建类型（release 正式签名 / debug 调试签名）'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - debug
+      abi:
+        description: '目标架构（all = 全 ABI 分包 + universal；arm64-v8a = 仅 64 位真机，构建更快）'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - arm64-v8a
+
+permissions:
+  contents: read
+
+jobs:
+  build-release:
+    name: Build Android (release / ${{ inputs.abi }})
+    if: github.actor == github.repository_owner && inputs.build_type == 'release'
+    runs-on: ubuntu-latest
+    environment: android-release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          # 拉取 cpp/taglib-engine/third_party/taglib 及其嵌套子模块
+          submodules: recursive
+
+      - name: Prepare release signing config
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          for var in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            if [ -z "${!var}" ]; then
+              echo "::error::Missing required secret ${var} in environment 'android-release'."
+              exit 1
+            fi
+          done
+
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '\r\n' | base64 -d > android/app/release.keystore
+          chmod 600 android/app/release.keystore
+
+          {
+            printf 'RELEASE_STORE_FILE=%s\n' 'release.keystore'
+            printf 'RELEASE_STORE_PASSWORD=%s\n' "$ANDROID_KEYSTORE_PASSWORD"
+            printf 'RELEASE_KEY_ALIAS=%s\n' "$ANDROID_KEY_ALIAS"
+            printf 'RELEASE_KEY_PASSWORD=%s\n' "$ANDROID_KEY_PASSWORD"
+          } > android/keystore.properties
+          chmod 600 android/keystore.properties
+
+      - name: Build and upload Android release APKs
+        uses: ./.github/actions/build-android
+        with:
+          build_type: release
+          abi: ${{ inputs.abi }}
+
+      - name: Clean up signing files
+        if: always()
+        run: |
+          rm -f android/app/release.keystore android/keystore.properties
+
+  build-debug:
+    name: Build Android (debug / ${{ inputs.abi }})
+    if: github.actor == github.repository_owner && inputs.build_type == 'debug'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          # 拉取 cpp/taglib-engine/third_party/taglib 及其嵌套子模块
+          submodules: recursive
+
+      - name: Build and upload Android debug APKs
+        uses: ./.github/actions/build-android
+        with:
+          build_type: debug
+          abi: ${{ inputs.abi }}

@@ -1,0 +1,174 @@
+name: Publish Release
+
+# 从已通过验证的 "Build Android" 运行中拉取 release APK 产物，并发布到 GitHub Release。
+# 与构建解耦，确保发布的二进制与本地冒烟测试过的是完全同一份签名产物。
+#
+# 权限与安全：
+#   - 仅仓库拥有者（github.repository_owner）可执行。
+#   - 固定只下载 musicfree-android-release 产物，避免误发 debug 包。
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Build Android 工作流的 run ID（运行页面 URL 末尾的数字）'
+        required: true
+        type: string
+      tag:
+        description: 'Release tag（例如 v1.0.0-beta.4），不存在时会自动创建'
+        required: true
+        type: string
+      name:
+        description: 'Release 标题（留空默认使用 tag）'
+        required: false
+        type: string
+      prerelease:
+        description: '标记为预发布（Pre-release）'
+        required: false
+        default: false
+        type: boolean
+      draft:
+        description: '创建为草稿（不立即公开）'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    name: Publish GitHub Release
+    if: github.actor == github.repository_owner
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify build run metadata
+        id: build_run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ inputs.run_id }}
+          REPO: ${{ github.repository }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "::error::run_id must be a numeric workflow run ID, got: ${RUN_ID}"
+            exit 1
+          fi
+
+          run_json=$(gh api "repos/${REPO}/actions/runs/${RUN_ID}")
+          wf_path=$(printf '%s' "$run_json" | jq -r '.path')
+          event=$(printf '%s' "$run_json" | jq -r '.event')
+          status=$(printf '%s' "$run_json" | jq -r '.status')
+          conclusion=$(printf '%s' "$run_json" | jq -r '.conclusion')
+          actor=$(printf '%s' "$run_json" | jq -r '.actor.login')
+          head_sha=$(printf '%s' "$run_json" | jq -r '.head_sha')
+
+          if [ "$wf_path" != ".github/workflows/build-android.yml" ]; then
+            echo "::error::Run ${RUN_ID} belongs to '${wf_path}', expected '.github/workflows/build-android.yml'."
+            exit 1
+          fi
+          if [ "$event" != "workflow_dispatch" ]; then
+            echo "::error::Run ${RUN_ID} event is '${event}', expected 'workflow_dispatch'."
+            exit 1
+          fi
+          if [ "$status" != "completed" ] || [ "$conclusion" != "success" ]; then
+            echo "::error::Run ${RUN_ID} is not a successful completed run (status=${status}, conclusion=${conclusion})."
+            exit 1
+          fi
+          if [ "$actor" != "$OWNER" ]; then
+            echo "::error::Run ${RUN_ID} was triggered by '${actor}', expected repository owner '${OWNER}'."
+            exit 1
+          fi
+          if [ -z "$head_sha" ] || [ "$head_sha" = "null" ]; then
+            echo "::error::Could not resolve head_sha for run ${RUN_ID}."
+            exit 1
+          fi
+
+          echo "head_sha=${head_sha}" >> "$GITHUB_OUTPUT"
+          echo "Verified Build Android run ${RUN_ID} at commit ${head_sha}"
+
+      - name: Checkout build commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.build_run.outputs.head_sha }}
+
+      - name: Verify existing tag points to build commit
+        env:
+          TAG: ${{ inputs.tag }}
+          HEAD_SHA: ${{ steps.build_run.outputs.head_sha }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" > /dev/null 2>&1; then
+            git fetch --no-tags origin "refs/tags/${TAG}:refs/tags/${TAG}"
+            tag_commit=$(git rev-parse "${TAG}^{commit}")
+            if [ "$tag_commit" != "$HEAD_SHA" ]; then
+              echo "::error::Tag '${TAG}' already exists and points to ${tag_commit}, which does not match build commit ${HEAD_SHA}."
+              exit 1
+            fi
+            echo "Existing tag '${TAG}' matches build commit ${HEAD_SHA}."
+          else
+            echo "Tag '${TAG}' does not exist yet; will be created at ${HEAD_SHA}."
+          fi
+
+      - name: Download Android release artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: musicfree-android-release
+          path: dist/apk
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify downloaded artifacts
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          apks=(dist/apk/*.apk)
+          if [ "${#apks[@]}" -eq 0 ]; then
+            echo "::error::No APK files found in downloaded artifact musicfree-android-release"
+            exit 1
+          fi
+          ls -lh dist/apk
+
+      - name: Extract release notes from CHANGELOG
+        id: notes
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          # 兼容 Keep a Changelog 的 "## [1.0.0-beta.4] - YYYY-MM-DD" 与无括号的 "## 1.0.0-beta.4"
+          # 使用字面量前缀匹配，避免版本中的 "-" / "." / "+" 触发正则元字符问题
+          notes=$(awk -v h1="## [${version}]" -v h2="## ${version}" '
+            ($0 == h1 || index($0, h1 " ") == 1 || $0 == h2 || index($0, h2 " ") == 1) { capture = 1; next }
+            capture && /^## / { exit }
+            capture { print }
+          ' CHANGELOG.md | sed '/./,$!d' | sed -e :a -e '/^\n*$/{$d;N;ba}')
+
+          if [ -n "$notes" ]; then
+            printf '%s\n' "$notes" > release-notes.md
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "Extracted release notes for ${version} from CHANGELOG.md:"
+            echo "----"
+            cat release-notes.md
+            echo "----"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No CHANGELOG.md section found for ${version}; will fall back to auto-generated notes."
+          fi
+
+      - name: Create or update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          target_commitish: ${{ steps.build_run.outputs.head_sha }}
+          name: ${{ inputs.name || inputs.tag }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          body_path: ${{ steps.notes.outputs.found == 'true' && 'release-notes.md' || '' }}
+          generate_release_notes: ${{ steps.notes.outputs.found != 'true' }}
+          fail_on_unmatched_files: true
+          files: |
+            dist/apk/*.apk
+            dist/apk/SHA256SUMS.txt

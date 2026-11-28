@@ -117,18 +117,27 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file(keystoreProperties['RELEASE_STORE_FILE'])
-            storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
-            keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
-            keyPassword keystoreProperties['RELEASE_KEY_PASSWORD']
+            if (keystoreProperties['RELEASE_STORE_FILE']) {
+                storeFile file(keystoreProperties['RELEASE_STORE_FILE'])
+                storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
+                keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
+                keyPassword keystoreProperties['RELEASE_KEY_PASSWORD']
+            }
         }
     }
+    def enabledAbis = (findProperty('reactNativeArchitectures') ?: 'armeabi-v7a,arm64-v8a,x86,x86_64')
+        .toString()
+        .split(',')
+        .collect { it.trim() }
+        .findAll { !it.isEmpty() }
+
     splits {
         abi {
             reset()
             enable true
-            universalApk true
-            include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            // 仅多 ABI 构建时生成 universal APK，单 ABI 构建避免产出两份相同包
+            universalApk enabledAbis.size() > 1
+            include(*enabledAbis)
         }
     }
     buildTypes {

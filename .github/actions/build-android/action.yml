@@ -1,0 +1,111 @@
+name: Build Android APK
+description: Setup toolchain, build Android APK, rename with version/ABI, generate SHA256SUMS, and upload Artifact.
+
+inputs:
+  build_type:
+    description: 'release or debug'
+    required: true
+  abi:
+    description: 'all or arm64-v8a'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: '22'
+        cache: 'npm'
+
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Setup Android SDK components
+      shell: bash
+      run: |
+        set -euo pipefail
+        yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+        "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+          "platforms;android-36" \
+          "build-tools;36.0.0" \
+          "ndk;27.1.12297006" \
+          "cmake;3.31.6"
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: '9.3.1'
+
+    - name: Install JS dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Build Android APK
+      shell: bash
+      working-directory: android
+      env:
+        BUILD_TYPE: ${{ inputs.build_type }}
+        TARGET_ABI: ${{ inputs.abi }}
+      run: |
+        set -euo pipefail
+        if [ "$BUILD_TYPE" = "release" ]; then
+          task="assembleRelease"
+        else
+          task="assembleDebug"
+        fi
+
+        args=("$task" "--no-daemon")
+        if [ "$TARGET_ABI" != "all" ]; then
+          args+=("-PreactNativeArchitectures=${TARGET_ABI}")
+        fi
+
+        gradle "${args[@]}"
+
+    - name: Collect and rename APKs
+      shell: bash
+      env:
+        BUILD_TYPE: ${{ inputs.build_type }}
+      run: |
+        set -euo pipefail
+        version=$(node -p "require('./package.json').version")
+        src_dir="android/app/build/outputs/apk/${BUILD_TYPE}"
+        out_dir="dist/apk"
+        mkdir -p "$out_dir"
+
+        shopt -s nullglob
+        apks=("${src_dir}"/*.apk)
+        if [ "${#apks[@]}" -eq 0 ]; then
+          echo "::error::No APK files found in ${src_dir}"
+          exit 1
+        fi
+
+        for apk in "${apks[@]}"; do
+          base="$(basename "$apk")"
+          # 期望文件名形如 app-<abi>-<build_type>.apk（或 app-<build_type>.apk）
+          abi="${base#app-}"
+          abi="${abi%-${BUILD_TYPE}.apk}"
+          if [ "$abi" = "$base" ] || [ -z "$abi" ]; then
+            target="MusicFree-v${version}-${base}"
+          elif [ "$BUILD_TYPE" = "release" ]; then
+            target="MusicFree-v${version}-${abi}.apk"
+          else
+            target="MusicFree-v${version}-${abi}-debug.apk"
+          fi
+          cp "$apk" "${out_dir}/${target}"
+        done
+
+        (cd "$out_dir" && sha256sum *.apk > SHA256SUMS.txt)
+        ls -lh "$out_dir"
+        cat "${out_dir}/SHA256SUMS.txt"
+
+    - name: Upload APK artifacts
+      uses: actions/upload-artifact@v5
+      with:
+        name: musicfree-android-${{ inputs.build_type }}
+        path: dist/apk/*
+        retention-days: 30
+        if-no-files-found: error

@@ -24,8 +24,13 @@ android {
                           "-DANDROID_STL=c++_shared"
             }
         }
+        def enabledAbis = (findProperty('reactNativeArchitectures') ?: 'armeabi-v7a,arm64-v8a,x86,x86_64')
+            .toString()
+            .split(',')
+            .collect { it.trim() }
+            .findAll { !it.isEmpty() }
         ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            abiFilters(*enabledAbis)
         }
     }
 
