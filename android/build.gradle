@@ -1,14 +1,18 @@
 buildscript {
     ext {
-        buildToolsVersion = "35.0.0"
+        buildToolsVersion = "36.0.0"
         minSdkVersion = 24
-        compileSdkVersion = 35
-        targetSdkVersion = 30
-        ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.24"
+        compileSdkVersion = 36
+        targetSdkVersion = 36
+        ndkVersion = "27.1.12297006"
+        kotlinVersion = "2.1.20"
+        // 需 >= 3.31：其自带 ninja >= 1.11，会在 Windows 启用长路径（注册表
+        // LongPathsEnabled=1）时跳过 260 字符硬限制。3.22.1 自带的 ninja 1.10.2 无此判断，
+        // Windows 上 release 构建会因部分三方库 codegen 源码的超长对象路径直接失败。
+        cmakeVersion = "3.31.6"
     }
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/central'}
+        maven { url 'https://maven.aliyun.com/repository/central' }
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
         google()
@@ -21,4 +25,5 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
     }
 }
+
 apply plugin: "com.facebook.react.rootproject"

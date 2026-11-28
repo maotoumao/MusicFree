@@ -1,0 +1,1615 @@
+{
+    "common": {
+        "cancel": "取消",
+        "confirm": "确认",
+        "save": "保存",
+        "delete": "删除",
+        "edit": "编辑",
+        "add": "添加",
+        "create": "新建",
+        "close": "关闭",
+        "done": "完成",
+        "open": "打开",
+        "loading": "加载中",
+        "search": "搜索",
+        "play": "播放",
+        "download": "下载",
+        "share": "分享",
+        "selectAll": "全选",
+        "unselectAll": "取消全选",
+        "about": "关于",
+        "gotIt": "知道了",
+        "clear": "清除",
+        "more": "更多",
+        "reset": "重置",
+        "retry": "重试",
+        "back": "返回",
+        "managePlugins": "管理插件",
+        "countUnit": {
+            "thousand": "{value}千",
+            "tenThousand": "{value}万",
+            "million": "{value}百万",
+            "hundredMillion": "{value}亿"
+        }
+    },
+    "colorPicker": {
+        "hex": "Hex",
+        "hue": "色相",
+        "alpha": "透明度",
+        "a11y": {
+            "preview": "颜色预览",
+            "hexValue": "Hex 颜色值"
+        }
+    },
+    "colorPickerPanel": {
+        "restoreDefault": "恢复默认"
+    },
+    "mediaList": {
+        "a11y": {
+            "locate": "定位到正在播放的歌曲"
+        }
+    },
+    "media": {
+        "playbackRate": "倍速",
+        "type": {
+            "music": "单曲",
+            "album": "专辑",
+            "artist": "歌手",
+            "playlist": "歌单",
+            "lyric": "歌词"
+        },
+        "quality": {
+            "low": "低音质",
+            "standard": "标准",
+            "high": "高音质",
+            "super": "超高音质"
+        },
+        "repeatMode": {
+            "loop": "单曲循环",
+            "queue": "列表循环",
+            "shuffle": "随机播放"
+        },
+        "sort": "排序",
+        "sortOption": {
+            "manual": "手动排序",
+            "title": "按标题 · 正序",
+            "titleDesc": "按标题 · 倒序",
+            "artist": "按歌手 · 正序",
+            "artistDesc": "按歌手 · 倒序",
+            "album": "按专辑 · 正序",
+            "albumDesc": "按专辑 · 倒序",
+            "addedAt": "按加入时间 · 最早在前",
+            "addedAtDesc": "按加入时间 · 最新在前",
+            "duration": "按时长 · 从短到长",
+            "durationDesc": "按时长 · 从长到短"
+        },
+        "unknownTitle": "未命名",
+        "unknownArtist": "未知歌手",
+        "unknownAlbum": "未知专辑",
+        "favoritePlaylist": "我喜欢",
+        "songCount": {
+            "other": "{count} 首"
+        }
+    },
+    "feedback": {
+        "networkError": "网络错误",
+        "networkErrorStatus": "网络错误 · HTTP {status}",
+        "networkErrorTimedOut": "网络错误 · 超时",
+        "unknownError": "未知错误",
+        "loadFailed": "加载失败",
+        "saved": "已保存",
+        "copied": "已复制到剪贴板",
+        "deleted": "已删除",
+        "openLinkFailed": "打不开这个链接",
+        "operationSuccess": "操作成功",
+        "operationFailed": "操作失败",
+        "playback": {
+            "invalidItem": "无法播放此歌曲",
+            "cellularBlocked": "已关闭移动网络播放"
+        },
+        "download": {
+            "addedToQueue": "已加入下载队列",
+            "alreadyDownloaded": "已下载",
+            "inQueue": "已在下载队列中"
+        },
+        "a11y": {
+            "info": "信息",
+            "success": "成功",
+            "warning": "警告",
+            "error": "错误"
+        }
+    },
+    "musicDetail": {
+        "cover": "封面",
+        "lyric": "歌词",
+        "quality": "音质",
+        "playbackRate": "倍速",
+        "noLyric": "暂无歌词",
+        "searchLyric": "搜索歌词",
+        "copyLyric": "复制歌词",
+        "editLyric": "编辑歌词",
+        "restoreDefaultLyric": "恢复默认歌词",
+        "restoreDefaultLyricSuccess": "已恢复默认歌词",
+        "tools": {
+            "favorite": "收藏",
+            "downloaded": "已下载",
+            "comment": "评论"
+        },
+        "lyricTools": {
+            "offset": "时间偏移",
+            "fontSize": "字体大小",
+            "translate": "翻译",
+            "floatingLyric": "悬浮歌词",
+            "floatingLyricSettings": "悬浮歌词设置"
+        },
+        "a11y": {
+            "previous": "上一首",
+            "next": "下一首",
+            "queue": "播放队列",
+            "play": "播放",
+            "pause": "暂停",
+            "progress": "播放进度",
+            "quality": "音质：{value}",
+            "playbackRate": "倍速：{value}",
+            "seekToLine": "跳到此处"
+        }
+    },
+    "lyricFontSizePanel": {
+        "title": "字体大小",
+        "levels": {
+            "small": "小",
+            "standard": "标准",
+            "large": "大",
+            "xlarge": "特大"
+        },
+        "a11y": {
+            "group": "歌词字体大小"
+        }
+    },
+    "lyricOffsetPanel": {
+        "title": "时间偏移",
+        "none": "无偏移",
+        "advance": "歌词提前 {seconds} 秒",
+        "delay": "歌词延迟 {seconds} 秒",
+        "reset": "重置",
+        "a11y": {
+            "advanceStep": "歌词提前 0.1 秒",
+            "delayStep": "歌词延迟 0.1 秒",
+            "reset": "重置歌词时间偏移"
+        }
+    },
+    "lyricSearchPanel": {
+        "title": "搜索歌词",
+        "targetHint": "为「{title}」查找更合适的歌词",
+        "placeholder": "输入歌名或歌手",
+        "idle": "输入歌名或歌手开始搜索",
+        "noResults": "没有找到相关歌词",
+        "noResultsHint": "试试调整关键词或切换来源",
+        "sourceError": "此来源暂时无法搜索",
+        "sourceErrorHint": "请稍后重试，或切换其他来源",
+        "noSource": "没有可用的歌词来源",
+        "noSourceHint": "启用支持歌词搜索的插件后再试",
+        "associateSuccess": "已关联歌词",
+        "associateFailed": "关联失败，请重试",
+        "associateSelf": "不能将歌曲关联到自身",
+        "a11y": {
+            "input": "歌词搜索关键词",
+            "result": "关联歌词：{fields}"
+        }
+    },
+    "editLyric": {
+        "title": "编辑歌词",
+        "lyricTab": "正文",
+        "translationTab": "译文",
+        "emptyHint": "输入或粘贴歌词",
+        "emptyHintDetail": "带 [00:00.00] 时间轴的歌词会随播放滚动",
+        "importFile": "从文件导入",
+        "translationPlaceholder": "逐行译文，与正文一一对应",
+        "addTranslation": "添加译文",
+        "removeTranslation": "移除译文",
+        "restoreDefault": "恢复默认歌词",
+        "statusEmpty": "未输入歌词",
+        "statusWillRestore": "清空并保存将恢复默认歌词",
+        "statusTimed": { "other": "{count} 行 · 有时间轴" },
+        "statusPlain": { "other": "{count} 行 · 纯文本，不会随播放滚动" },
+        "statusMaxLength": { "other": "{count} 行 · 已达长度上限" },
+        "statusTranslationTimed": { "other": "译文 {count} 行 · 按时间戳对齐" },
+        "statusTranslationByLine": { "other": "译文 {count} 行 · 按行号对齐" },
+        "statusTranslationMismatch": {
+            "other": "译文 {count} 行、正文 {total} 行，行数不一致可能错位"
+        },
+        "overwriteTitle": "覆盖现有内容？",
+        "overwriteMessage": "当前输入的内容将被替换。",
+        "removeTranslationTitle": "移除译文？",
+        "removeTranslationMessage": "已输入的译文会被移除。",
+        "restoreDefaultTitle": "恢复默认歌词？",
+        "restoreDefaultMessage": "将丢弃你编辑的歌词，还原为插件自带的原始版本。",
+        "discardTitle": "放弃未保存的更改？",
+        "discardMessage": "你尚未保存的编辑将全部丢失。",
+        "continueEditing": "继续编辑",
+        "discardChanges": "放弃更改",
+        "saved": "歌词已保存",
+        "saveFailed": "保存失败，请稍后再试",
+        "loadCurrentFailed": "无法读取当前歌词，可直接输入新内容",
+        "readFileFailed": "无法读取该文件，请检查文件是否损坏",
+        "encodingFailed": "暂不支持该文件编码，请直接粘贴歌词文本",
+        "a11y": {
+            "editor": "歌词正文",
+            "translationEditor": "歌词译文",
+            "more": "更多歌词操作"
+        }
+    },
+    "floatingLyricSettingsPanel": {
+        "title": "悬浮歌词",
+        "preview": {
+            "original": "示例歌词",
+            "translation": "示例译文"
+        },
+        "group": {
+            "display": "显示",
+            "mode": "显示方式",
+            "position": "位置",
+            "appearance": "外观"
+        },
+        "enabled": "显示悬浮歌词",
+        "mode": {
+            "desktop": "桌面歌词",
+            "statusBar": "状态栏歌词"
+        },
+        "locked": "锁定",
+        "quickPosition": "快捷位置",
+        "position": {
+            "top": "顶部",
+            "middle": "中部",
+            "bottom": "底部"
+        },
+        "positionFine": "纵向微调",
+        "fontSize": "字号",
+        "textColor": "文字颜色",
+        "backgroundOpacity": "背景透明度"
+    },
+    "playbackNotification": {
+        "favorite": "收藏",
+        "unfavorite": "取消收藏",
+        "showLyricCard": "开启桌面歌词卡",
+        "hideLyricCard": "关闭桌面歌词卡",
+        "unlockLyricCard": "解锁桌面歌词卡"
+    },
+    "floatingLyricOverlay": {
+        "textColor": "颜色",
+        "fontSize": "字号",
+        "lockedHint": "已锁定，可在悬浮歌词设置中解锁",
+        "a11y": {
+            "openApp": "打开 MusicFree",
+            "close": "关闭悬浮歌词",
+            "lock": "锁定歌词卡",
+            "settings": "悬浮歌词设置",
+            "play": "播放",
+            "pause": "暂停",
+            "previous": "上一首",
+            "next": "下一首",
+            "fontSmaller": "减小字号",
+            "fontLarger": "增大字号"
+        }
+    },
+    "floatingLyricPermissionDialog": {
+        "title": "需要悬浮窗权限",
+        "message": "悬浮歌词需显示在其他应用上层，请在系统设置中授予悬浮窗权限。",
+        "confirm": "去设置",
+        "backgroundHint": "需要悬浮窗权限，请打开 MusicFree 后重试",
+        "openSettingsFailed": "无法打开系统设置，请手动前往「显示在其他应用上层」授予权限"
+    },
+    "equalizerPanel": {
+        "title": "音效",
+        "scope": "全局音效",
+        "presetLabel": "预设",
+        "custom": "自定义",
+        "off": "已关闭",
+        "reset": "重置",
+        "unavailable": "此设备不支持均衡器",
+        "presets": {
+            "normal": "标准",
+            "classical": "古典",
+            "dance": "舞曲",
+            "folk": "民谣",
+            "heavyMetal": "重金属",
+            "hipHop": "嘻哈",
+            "jazz": "爵士",
+            "pop": "流行",
+            "rock": "摇滚"
+        },
+        "a11y": {
+            "toggle": "均衡器",
+            "curveGroup": "均衡器曲线",
+            "band": "{freq} 频段",
+            "reset": "重置所有频段为 0 dB"
+        }
+    },
+    "sleepTimerPanel": {
+        "title": "定时关闭",
+        "subtitle": "选择时长，到点自动停止播放",
+        "off": "不开启",
+        "minutes": { "other": "{count} 分钟" },
+        "hours": { "other": "{count} 小时" },
+        "hoursMinutes": "{hours} 小时 {minutes} 分钟",
+        "custom": "自定义…",
+        "lastCustom": "上次 {duration}",
+        "stopsIn": "<time>{time}</time> 后停止",
+        "expiredTitle": "定时已到",
+        "expiredHint": "正在等待当前歌曲播放结束",
+        "extend": "+{count} 分钟",
+        "waitForCurrentEnd": "播完整首歌后再停止",
+        "waitForCurrentEndHint": "倒计时结束后如果正在播放歌曲，播放完成后再停止",
+        "customTitle": "自定义时长",
+        "customMessage": "{min} – {max} 分钟（最长 {maxHours} 小时）",
+        "customPlaceholder": "时长（分钟）",
+        "customInvalid": "请输入 {min} – {max} 分钟",
+        "extendCapped": "已是最长 {duration}，不能再延长",
+        "a11y": {
+            "durationGroup": "何时停止播放"
+        }
+    },
+    "addToPlaylistPanel": {
+        "title": "添加到歌单",
+        "createNew": "新建歌单",
+        "playlistName": "歌单名称",
+        "added": { "other": "已加入 {count} 首" },
+        "addedPartial": {
+            "other": "已加入 {count} 首，已跳过信息不完整的歌曲"
+        },
+        "allExist": "所选歌曲已全部在歌单中",
+        "createdAddFailed": "歌单已创建，但歌曲加入失败"
+    },
+    "recommendTagPanel": {
+        "title": "选择分类",
+        "pinned": "精选",
+        "all": "全部",
+        "a11y": { "tag": "分类，{title}" }
+    },
+    "musicCollectionDetail": {
+        "addToPlaylist": "添加到歌单",
+        "batchManage": "批量管理",
+        "emptyTitle": "暂无歌曲",
+        "a11y": {
+            "star": "收藏"
+        }
+    },
+    "playAllBar": {
+        "playAll": "全部播放",
+        "a11y": {
+            "sort": "排序歌曲",
+            "batchManage": "批量管理歌曲"
+        }
+    },
+    "playlistDetail": {
+        "createdAt": "创建于 {date}",
+        "notFound": "歌单不存在",
+        "degraded": "歌单存储异常，暂时无法编辑",
+        "edit": "编辑信息",
+        "delete": "删除歌单",
+        "deleteConfirm": "确定删除歌单「{name}」吗？"
+    },
+    "musicSelection": {
+        "selectedCount": {
+            "other": "已选择 {count} 首"
+        },
+        "empty": "这里还没有歌曲",
+        "enqueuedNext": "所选歌曲将接着播放",
+        "downloadEnqueued": { "other": "{count} 首歌曲已加入下载队列" },
+        "downloadPartlyEnqueued": {
+            "other": "{count} 首歌曲已加入下载队列，其余歌曲未能加入"
+        },
+        "downloadNoneEnqueued": "没有可加入下载队列的歌曲",
+        "removeFromPlaylist": {
+            "title": "从歌单移除",
+            "message": {
+                "other": "是否将选中的 {count} 首歌曲移出该歌单？"
+            }
+        },
+        "removeFromHistory": {
+            "title": "从播放记录移除",
+            "message": {
+                "other": "是否将选中的 {count} 首歌曲移出播放记录？"
+            }
+        },
+        "removeFromLibrary": {
+            "title": "从本地库移除",
+            "message": {
+                "other": "是否将选中的 {count} 首歌曲移出本地库？"
+            }
+        },
+        "actions": {
+            "playNext": "下一首播放",
+            "addToPlaylist": "添加到歌单",
+            "remove": "移除"
+        }
+    },
+    "playlistEditor": {
+        "title": "管理歌单",
+        "selectedCount": {
+            "other": "已选择 {count} 个"
+        },
+        "emptyLocal": "还没有创建歌单",
+        "emptyStarred": "还没有收藏的歌单",
+        "deletePlaylist": "删除歌单",
+        "deletePlaylists": {
+            "title": "删除歌单",
+            "message": {
+                "other": "是否删除选中的 {count} 个歌单？"
+            }
+        },
+        "unstar": "取消收藏",
+        "unstarPlaylists": {
+            "title": "取消收藏",
+            "message": {
+                "other": "是否取消收藏选中的 {count} 个歌单？"
+            }
+        }
+    },
+    "editPlaylistInfo": {
+        "title": "编辑信息",
+        "saveChanges": "保存更改",
+        "artwork": "封面",
+        "changeArtwork": "更换封面",
+        "restoreAutoArtwork": "恢复自动封面",
+        "customArtwork": "当前使用自定义封面",
+        "autoArtwork": "当前使用自动封面",
+        "pendingArtwork": "新封面将在保存后生效",
+        "pendingAutoArtwork": "将恢复自动封面",
+        "name": "歌单名称",
+        "nameRequired": "请输入歌单名称",
+        "favoriteNameHint": "默认歌单，名称不可修改",
+        "description": "简介",
+        "descriptionPlaceholder": "写一点关于这个歌单的介绍",
+        "storageReadOnly": "存储异常，暂时无法保存修改",
+        "discardTitle": "放弃未保存的更改？",
+        "discardMessage": "你尚未保存的编辑将全部丢失。",
+        "continueEditing": "继续编辑",
+        "discardChanges": "放弃更改",
+        "saveFailed": "保存失败，请稍后重试",
+        "pickArtworkFailed": "无法使用这张图片，请换一张试试",
+        "a11y": {
+            "artwork": "当前歌单封面",
+            "artworkEmpty": "未设置歌单封面",
+            "changeArtwork": "更换歌单封面",
+            "restoreAutoArtwork": "清除自定义封面并恢复自动封面"
+        }
+    },
+    "musicComments": {
+        "title": "评论",
+        "empty": "还没有评论",
+        "emptyDesc": "这首歌暂时没有人留下评论",
+        "unsupported": "暂不支持评论",
+        "unsupportedDesc": "当前歌曲来源不支持评论",
+        "loadFailed": "评论加载失败",
+        "end": "没有更多评论了",
+        "expand": "展开全文",
+        "collapse": "收起",
+        "showReplies": {
+            "other": "查看 {count} 条回复"
+        },
+        "hideReplies": {
+            "other": "收起回复"
+        },
+        "moreRepliesOmitted": {
+            "other": "还有 {count} 条回复未展示"
+        },
+        "a11y": {
+            "likes": {
+                "other": "{count} 个赞"
+            },
+            "comment": "{nickName} 的评论",
+            "reply": "{nickName} 的回复"
+        }
+    },
+    "musicItemOptionsPanel": {
+        "commentUnsupported": "当前插件不支持评论",
+        "actions": {
+            "favorite": "收藏",
+            "favorited": "已收藏",
+            "addToPlaylist": "添加到歌单",
+            "playNext": "下一首播放",
+            "addToQueue": "加入播放队列",
+            "viewComment": "查看评论",
+            "searchLyric": "搜索歌词",
+            "editLyric": "编辑歌词",
+            "sleepTimer": "定时关闭",
+            "removeFromHistory": "从历史移除",
+            "removeFromPlaylist": "从歌单移除",
+            "removeFromLibrary": "从本地库移除",
+            "forgetDownload": "移除下载记录",
+            "deleteFile": "删除文件"
+        },
+        "info": {
+            "id": "ID：{value}",
+            "artist": "歌手：{value}",
+            "album": "专辑：{value}",
+            "source": "来源：{value}"
+        },
+        "download": {
+            "downloaded": "已下载"
+        },
+        "removedFromLibrary": "已从本地库中移除",
+        "forgotDownload": "已移除下载记录",
+        "fileDeleted": "已删除文件",
+        "deleteFileConfirm": {
+            "title": "删除本地文件",
+            "message": "确定删除「{title}」吗？\n文件将从设备中永久删除，且无法恢复"
+        },
+        "deleteFailed": {
+            "notFound": "文件不存在，可能已被删除",
+            "permission": "没有写入权限，无法删除文件",
+            "io": "删除失败，文件可能被占用或只读",
+            "unknown": "删除失败"
+        },
+        "writePermission": {
+            "title": "需要写入权限",
+            "message": "删除文件需要写入权限，请在系统设置中授予",
+            "openSettings": "去设置",
+            "denied": "需要写入权限才能删除文件"
+        },
+        "a11y": {
+            "unfavorite": "取消收藏",
+            "copyHint": "点按两次即可复制"
+        }
+    },
+    "sharePosterPanel": {
+        "saveImage": "保存图片",
+        "shareImage": "分享",
+        "writePermission": {
+            "title": "需要相册权限",
+            "message": "保存图片到相册需要相册权限，请在系统设置中授予",
+            "openSettings": "去设置",
+            "denied": "未获得相册权限，无法保存图片"
+        }
+    },
+    "playQueuePanel": {
+        "title": "播放队列",
+        "clear": "清空",
+        "empty": {
+            "title": "播放队列为空",
+            "description": "添加歌曲后会显示在这里"
+        },
+        "a11y": {
+            "remove": "移除 {title}"
+        }
+    },
+    "musicRow": {
+        "a11y": {
+            "more": "更多操作：{title}",
+            "downloaded": "已下载"
+        }
+    },
+    "markdown": {
+        "clickToShowImage": "点击查看图片"
+    },
+    "search": {
+        "prompt": "搜索歌曲、专辑、歌手或歌单",
+        "history": "搜索历史",
+        "sources": "来源",
+        "noResults": "没有找到相关结果",
+        "noSource": "没有可用的搜索来源",
+        "noSourceHint": "启用支持当前类型的插件后再试",
+        "clearHistoryConfirm": {
+            "title": "清空搜索历史",
+            "message": "确定清空搜索历史吗？"
+        },
+        "a11y": {
+            "searchField": "搜索输入框",
+            "searchHistory": "搜索历史 {query}",
+            "removeSearchHistory": "删除搜索记录「{query}」"
+        }
+    },
+    "searchInList": {
+        "prompt": "搜索歌曲",
+        "promptNamed": "在「{name}」中搜索",
+        "noResults": "没有找到匹配的歌曲",
+        "a11y": {
+            "searchField": "在列表内搜索歌曲"
+        }
+    },
+    "errorScreen": {
+        "title": "应用遇到了问题",
+        "description": "可以复制错误详情反馈给开发者，帮助定位原因。",
+        "copy": "复制错误详情",
+        "privacyHint": "错误详情可能包含设备、页面、插件及敏感信息，请确认后再发送。",
+        "goHome": "返回首页",
+        "restart": "退出应用",
+        "copied": "已复制，可粘贴发送给开发者"
+    },
+    "errorLog": {
+        "title": "错误日志",
+        "entry": "错误日志",
+        "empty": "暂无记录",
+        "count": {
+            "other": "{count} 条记录"
+        },
+        "clear": "清空",
+        "clearTitle": "清空错误日志？",
+        "copyOne": "复制这条",
+        "repeat": "发生 {count} 次",
+        "sourceRender": "渲染异常",
+        "sourceUncaught": "未捕获异常",
+        "sourceLocalData": "本地数据异常",
+        "toastUncaught": "出错了，可在「关于 → 错误日志」查看详情"
+    },
+    "home": {
+        "searchPrompt": "搜索音乐",
+        "playlists": {
+            "local": "我的",
+            "starred": "收藏",
+            "empty": "暂无歌单",
+            "createPlaylist": "新建歌单",
+            "playlistName": "歌单名称",
+            "batchManage": "批量管理"
+        },
+        "drawer": {
+            "theme": "主题",
+            "language": "语言",
+            "settings": "设置",
+            "backupRestore": "备份与恢复",
+            "exitApp": "退出应用"
+        },
+        "a11y": {
+            "closeDrawer": "关闭菜单",
+            "openDrawer": "打开菜单",
+            "createPlaylist": "新建歌单",
+            "openHistory": "打开播放历史",
+            "openLocalMusic": "打开本地音乐",
+            "openDownloadManager": "打开下载管理",
+            "openTopList": "打开榜单",
+            "openRecommendPlaylists": "打开推荐歌单"
+        }
+    },
+    "importMedia": {
+        "music": "导入单曲",
+        "playlist": "导入歌单",
+        "placeholder": "粘贴分享链接或 ID",
+        "failed": "解析失败，请检查链接或 ID",
+        "empty": "未找到可导入的内容",
+        "noPlugin": "没有支持导入的插件",
+        "selectPlugin": "选择插件",
+        "pluginUnavailable": "该插件暂时无法使用"
+    },
+    "history": {
+        "title": "最近播放",
+        "clear": "清空",
+        "batchManage": "批量管理",
+        "clearAll": "清空播放记录",
+        "clearConfirm": {
+            "title": "清空播放记录",
+            "message": "确定清空全部播放记录吗？此操作不可撤销"
+        },
+        "empty": "还没有播放记录"
+    },
+    "downloadManager": {
+        "title": "下载管理",
+        "filter": {
+            "inProgress": "进行中 {count}",
+            "queued": "排队中 {count}",
+            "failed": "失败 {count}",
+            "completed": "已完成 {count}"
+        },
+        "status": {
+            "queued": "排队中",
+            "resolvingSource": "正在准备下载",
+            "waitingInterval": "稍后开始下载",
+            "waitingWifi": "等待 Wi-Fi",
+            "waitingWifiHint": "连接 Wi-Fi 后自动继续",
+            "paused": "已暂停"
+        },
+        "failure": {
+            "network": "网络错误",
+            "server": "服务器返回错误",
+            "sourceUnavailable": "音源不可用",
+            "diskFull": "存储空间不足",
+            "permission": "无写入权限",
+            "unknown": "下载失败"
+        },
+        "progress": {
+            "determinate": "{percent}% · {downloaded} / {total}",
+            "unknownTotal": "已下载 {downloaded} · 正在获取文件大小"
+        },
+        "empty": {
+            "inProgress": "没有进行中的下载任务",
+            "queued": "没有排队中的下载任务",
+            "failed": "没有失败的下载任务",
+            "completed": "还没有下载过歌曲"
+        },
+        "pauseAll": "全部暂停",
+        "resumeAll": "全部继续",
+        "cancelAll": "全部取消",
+        "cancelAllConfirm": {
+            "title": "取消全部下载？",
+            "message": "进行中和排队中的下载任务都会被取消，已下完的文件不受影响。"
+        },
+        "a11y": {
+            "pause": "暂停下载 {title}",
+            "resume": "继续下载 {title}",
+            "retry": "重试下载 {title}",
+            "cancel": "取消下载 {title}",
+            "remove": "移除 {title}",
+            "progress": "{title}，{status}"
+        }
+    },
+    "localMusic": {
+        "title": "本地音乐",
+        "openFileFailed": "无法打开这个文件",
+        "tabs": {
+            "all": "全部",
+            "folders": "文件夹",
+            "albums": "专辑",
+            "artists": "歌手"
+        },
+        "permission": {
+            "title": "扫描本机音乐",
+            "description": "允许访问所有文件后，才能扫描设备中的音乐，包括其他应用的下载目录和系统媒体库未收录的文件。",
+            "grant": "前往设置",
+            "dismiss": "暂不授权",
+            "openSettingsFailed": "无法打开系统设置，请手动前往「所有文件访问」授予权限"
+        },
+        "scanGate": {
+            "title": "扫描设备中的音乐",
+            "description": "开始后会按照当前扫描范围查找可播放的音频。你可以随时取消。",
+            "start": "开始扫描",
+            "rescanCurrent": { "other": "当前 {count} 首" },
+            "a11y": { "start": "开始扫描设备中的音乐" }
+        },
+        "scan": {
+            "enumerating": "正在获取文件列表…",
+            "scanningTitle": "正在扫描音乐",
+            "found": { "other": "已找到 {count} 首" },
+            "cancel": "取消扫描",
+            "cancelConfirm": {
+                "title": "取消扫描？",
+                "message": "已扫到的结果会保留。"
+            },
+            "cancelled": "扫描已取消",
+            "cancelledDescription": "扫描未完成，可随时重新开始。",
+            "libraryUpdated": "音乐库已更新",
+            "notUpdated": "音乐库未更新",
+            "failedTitle": "扫描未完成",
+            "failedDescription": "未能更新本地音乐库，请检查扫描范围后重试。",
+            "rescan": "重新扫描",
+            "retry": "重试扫描"
+        },
+        "empty": {
+            "title": "未发现本地音乐",
+            "description": "当前扫描范围内没有可播放的音频文件。",
+            "manageScanRange": "管理扫描范围"
+        },
+        "panes": {
+            "pickCollection": {
+                "title": "选一个查看歌曲",
+                "description": "左侧选中文件夹、专辑或艺术家，这里显示它的歌曲。"
+            }
+        },
+        "menu": {
+            "clearLibrary": "清空本地音乐库",
+            "clearConfirm": {
+                "title": "清空本地音乐库？",
+                "message": {
+                    "other": "将移除已扫描的 {count} 首本地音乐记录，原文件和扫描设置会保留。"
+                }
+            }
+        },
+        "collections": {
+            "albumCount": { "other": "{count} 张专辑" },
+            "a11y": {
+                "folder": "文件夹 {name}",
+                "album": "专辑 {name} · {artist}",
+                "artist": "歌手 {name}"
+            }
+        },
+        "a11y": {
+            "scanStarted": "开始扫描音乐",
+            "scanEnumerating": "正在统计文件",
+            "scanProgress": "扫描进度"
+        }
+    },
+    "musicBar": {
+        "a11y": {
+            "playing": "正在播放：{title}，打开播放器",
+            "paused": "已暂停：{title}，打开播放器",
+            "buffering": "正在缓冲：{title}，打开播放器",
+            "current": "当前曲目：{title}，打开播放器",
+            "openPlayer": "打开播放器",
+            "pause": "暂停",
+            "next": "下一首",
+            "previous": "上一首",
+            "queue": "播放队列"
+        }
+    },
+    "pluginVariablesPanel": {
+        "title": "编辑变量 · {platform}",
+        "noVariables": "该插件未提供可配置变量"
+    },
+    "pluginAlternativePanel": {
+        "title": "音源重定向 · {platform}",
+        "noAlternative": "不使用音源重定向",
+        "notInstalled": "{platform}（未安装）"
+    },
+    "pluginDetailsPanel": {
+        "group": {
+            "features": "功能",
+            "config": "配置",
+            "actions": "操作"
+        },
+        "usage": "使用说明",
+        "alternative": {
+            "label": "音源重定向",
+            "none": "未设置"
+        },
+        "variables": {
+            "label": "变量"
+        },
+        "actions": {
+            "checkUpdate": "检查更新",
+            "shareSource": "分享源地址",
+            "uninstall": "卸载插件"
+        },
+        "uninstallConfirm": {
+            "title": "卸载插件",
+            "message": "确定卸载「{platform}」吗？此操作不可撤销"
+        }
+    },
+    "pluginDescriptionPanel": {
+        "title": "{platform} 使用说明",
+        "linkFailed": "无法打开链接",
+        "openLinkConfirm": {
+            "title": "打开外部链接",
+            "message": "即将在浏览器中打开：\n{url}\n\n请注意安全，谨防钓鱼网站。"
+        },
+        "a11y": {
+            "close": "关闭使用说明"
+        }
+    },
+    "appearance": {
+        "title": "外观与主题",
+        "theme": {
+            "section": "主题",
+            "builtinLight": "浅色",
+            "builtinDark": "深色",
+            "create": "新建主题",
+            "createTitle": "新建主题",
+            "defaultName": "我的主题",
+            "copyName": "{name} 副本",
+            "namePlaceholder": "主题名称",
+            "edit": "编辑主题",
+            "duplicate": "创建副本",
+            "rename": "重命名",
+            "renameTitle": "重命名主题",
+            "delete": "删除主题",
+            "deleteTitle": "删除主题",
+            "deleteConfirm": "删除「{name}」？它的背景图片会一并删除。",
+            "limitReached": "最多只能创建 {count} 个主题",
+            "nameRequired": "主题名称不能为空"
+        },
+        "mode": {
+            "section": "模式",
+            "followSystem": "跟随系统",
+            "followSystemHint": "日间与夜间自动切换到各自绑定的主题",
+            "dayTheme": "日间主题",
+            "nightTheme": "夜间主题"
+        },
+        "a11y": {
+            "themePack": "主题 {name}{binding}，长按查看更多操作",
+            "bindingCurrent": "，当前使用",
+            "bindingDay": "，日间使用",
+            "bindingNight": "，夜间使用",
+            "bindingBoth": "，日间与夜间都使用",
+            "pickSlotTheme": "选择该时段使用的主题"
+        }
+    },
+    "themeEditor": {
+        "title": "编辑主题",
+        "sample": {
+            "card": "示例卡片",
+            "title": "示例歌曲",
+            "artist": "示例歌手",
+            "playing": "正在播放"
+        },
+        "tab": {
+            "background": "背景",
+            "color": "配色"
+        },
+        "background": {
+            "select": "选择图片",
+            "replace": "更换图片",
+            "remove": "移除背景",
+            "empty": "选一张图片作为全局背景",
+            "blur": "模糊",
+            "visibility": "背景可见度",
+            "surfaceOpacity": "控件不透明度",
+            "scale": "缩放",
+            "positionHint": "在上方预览区拖动可调整位置",
+            "pickFailed": "无法使用这张图片，请重试",
+            "saveFailed": "背景保存失败"
+        },
+        "color": {
+            "main": "主要",
+            "status": "状态色",
+            "derived": "其他颜色",
+            "advanced": "高级",
+            "reset": "恢复默认配色",
+            "resetTitle": "恢复默认配色",
+            "resetConfirm": "该主题的全部颜色改动都会清空。",
+            "auto": "自动",
+            "role": {
+                "background": "页面背景",
+                "surface": "卡片与顶栏",
+                "surfaceVariant": "次级背景",
+                "text": "正文",
+                "textSecondary": "次要文字",
+                "textDisabled": "禁用文字",
+                "primary": "强调色",
+                "border": "分割线",
+                "danger": "危险",
+                "success": "成功",
+                "warning": "警告",
+                "info": "信息",
+                "onPrimary": "强调色上的文字",
+                "primarySoft": "浅色强调背景",
+                "onPrimarySoft": "浅色强调背景上的文字",
+                "coverAccent": "播放页强调色",
+                "coverAccentStrong": "播放页填充强调色",
+                "mask": "遮罩",
+                "shadow": "阴影",
+                "ripple": "按压高亮",
+                "knob": "开关把手",
+                "onDanger": "危险色上的文字",
+                "onSuccess": "成功色上的文字",
+                "onWarning": "警告色上的文字",
+                "onInfo": "信息色上的文字",
+                "warningSoft": "浅色警告背景"
+            }
+        },
+        "contrast": {
+            "title": "正文对比度",
+            "value": "{ratio}:1",
+            "low": "偏低"
+        },
+        "autoContrast": "文字自动适配背景",
+        "autoContrastHint": "对比度不足时给文字加一层轻微阴影",
+        "a11y": {
+            "editColorRole": "编辑 {role}，当前 {color}",
+            "backgroundStage": "背景预览，可拖动与缩放"
+        }
+    },
+    "scanSettings": {
+        "title": "管理扫描范围",
+        "filter": {
+            "section": "音乐过滤",
+            "shortAudio": "过滤小于 60 秒的音频",
+            "shortAudioHint": "扫描时过滤铃声、通知等短音频",
+            "minSize": "最小文件大小",
+            "minSizeHint": "扫描时过滤体积过小的文件",
+            "sizeUnlimited": "不限",
+            "sizeMb": "{size} MB"
+        },
+        "scope": {
+            "section": "扫描范围",
+            "all": "扫描所有位置",
+            "allHint": "扫描设备所有可访问位置",
+            "custom": "扫描指定文件夹",
+            "customHint": { "other": "已添加 {count} 个文件夹" },
+            "customEmptyHint": "尚未添加文件夹",
+            "addDir": "添加扫描目录"
+        },
+        "excluded": {
+            "section": "排除目录",
+            "itemHint": "扫描时跳过",
+            "addDir": "添加排除目录",
+            "empty": "未排除任何目录"
+        },
+        "conflict": "「{name}」不能同时设为扫描目录和排除目录，请移除一项",
+        "discardConfirm": {
+            "title": "放弃更改？",
+            "message": "你对扫描设置的修改尚未保存。"
+        },
+        "a11y": {
+            "removeDir": "移除目录 {name}",
+            "minSizeValue": "最小文件大小，当前 {value}"
+        },
+        "picker": {
+            "title": "选择目录",
+            "commonLocations": "常用位置",
+            "internalStorage": "内部存储",
+            "externalStorage": "外部存储",
+            "externalStorageNamed": "外部存储 {id}",
+            "selectThisFolder": "选择此文件夹",
+            "empty": "没有子文件夹",
+            "a11y": {
+                "enterFolder": "进入文件夹 {name}",
+                "currentFolder": "当前目录：{name}"
+            }
+        }
+    },
+    "topList": {
+        "title": "榜单",
+        "loadError": "榜单加载失败",
+        "empty": "暂无榜单"
+    },
+    "recommendPlaylists": {
+        "title": "推荐歌单",
+        "empty": "这个分类暂无推荐歌单",
+        "allCategories": "全部",
+        "currentTag": "当前：{title}",
+        "tagLoadError": "分类加载失败",
+        "noTags": "暂无可用分类",
+        "loadError": "推荐加载失败"
+    },
+    "artistDetail": {
+        "fansCount": {
+            "other": "{count} 位粉丝"
+        },
+        "worksCount": {
+            "other": "{count} 部作品"
+        },
+        "empty": {
+            "music": "该歌手暂无单曲",
+            "album": "该歌手暂无专辑"
+        },
+        "nothingHere": "暂无内容",
+        "sourceMissing": "来源不可用",
+        "sourceMissingHint": "提供该内容的插件已被移除或停用",
+        "unsupported": "该音源不支持查看歌手作品",
+        "emptyWorks": "这位歌手暂无作品",
+        "a11y": {
+            "expandDescription": "展开 {name} 的简介"
+        }
+    },
+    "pluginSourcePager": {
+        "noSource": "暂无可用音源",
+        "noSourceHint": "启用相关插件后，内容会显示在这里"
+    },
+    "pluginManager": {
+        "capability": {
+            "search": "搜索",
+            "play": "播放",
+            "lyric": "歌词",
+            "topList": "榜单",
+            "recommend": "推荐",
+            "album": "专辑",
+            "artist": "歌手",
+            "playlist": "歌单",
+            "comment": "评论",
+            "musicInfo": "单曲信息",
+            "importMusic": "导入单曲",
+            "importPlaylist": "导入歌单"
+        },
+        "add": {
+            "title": "添加插件",
+            "fromUrl": "从网络地址安装",
+            "fromFile": "从本地文件安装",
+            "enterUrl": "输入插件地址",
+            "urlExample": "https://…",
+            "invalidUrl": "请输入有效的网络地址",
+            "installing": "正在安装插件…"
+        },
+        "installResult": {
+            "updateSuccess": "已更新到最新版本",
+            "alreadyLatest": "已是最新版本",
+            "olderVersion": "可用版本低于当前版本",
+            "versionMismatch": "与当前 App 版本不兼容",
+            "parseError": "插件解析失败",
+            "invalid": "无效的插件文件",
+            "notPluginSource": "返回了网页，请使用原始文件直链",
+            "installedOne": "已安装「{platform}」",
+            "installedMany": {
+                "other": "已安装 {count} 个插件"
+            },
+            "alreadyInstalledOne": "「{platform}」已安装",
+            "alreadyInstalledMany": {
+                "other": "{count} 个插件已安装"
+            },
+            "partial": "已安装 {installed} 个，{failed} 个失败",
+            "allFailed": "安装失败"
+        },
+        "menu": {
+            "updateAll": "更新插件",
+            "syncSubscriptions": "同步订阅源",
+            "multiSelect": "批量管理",
+            "subscriptions": "订阅源管理"
+        },
+        "updating": "正在更新插件…",
+        "syncing": "正在同步订阅源…",
+        "opInProgress": "已有插件操作进行中，请稍候",
+        "updateResult": {
+            "updated": {
+                "other": "已更新 {count} 个插件"
+            },
+            "allLatest": "全部插件已是最新",
+            "partial": "{updated} 个已更新，{failed} 个失败",
+            "allFailed": "更新失败",
+            "empty": "没有可更新的插件"
+        },
+        "sorting": {
+            "title": "插件排序",
+            "a11y": {
+                "cancel": "取消调整顺序",
+                "confirm": "完成调整顺序",
+                "moveTop": "置顶",
+                "moveUp": "上移",
+                "moveDown": "下移",
+                "entered": "已进入调整顺序模式"
+            }
+        },
+        "selecting": {
+            "title": {
+                "other": "已选择 {count} 项"
+            },
+            "confirmUninstall": {
+                "other": "卸载选中的 {count} 个插件？"
+            },
+            "uninstalledMany": {
+                "other": "已卸载 {count} 个插件"
+            },
+            "a11y": {
+                "exit": "退出批量管理",
+                "selectAll": "全选",
+                "deselectAll": "取消全选",
+                "uninstall": "卸载所选",
+                "update": "更新所选",
+                "entered": "已进入批量管理"
+            }
+        },
+        "uninstalled": "已卸载「{platform}」",
+        "title": "插件管理",
+        "empty": "还没有安装任何插件",
+        "redirectStatus": "音源重定向至：{name}",
+        "noCapabilities": "未提供可用功能",
+        "a11y": {
+            "enablePlugin": "启用插件「{name}」",
+            "openDetails": "查看插件详情和管理操作",
+            "viewUsage": "查看「{name}」使用说明",
+            "addPlugin": "添加插件"
+        }
+    },
+    "pluginSubscriptions": {
+        "title": "订阅源管理",
+        "a11y": {
+            "add": "添加订阅源"
+        },
+        "empty": {
+            "title": "暂无订阅源",
+            "description": "添加订阅源后可批量安装其中的插件",
+            "action": "添加订阅源"
+        },
+        "copyLink": "复制订阅链接",
+        "deleteConfirm": "删除订阅源「{name}」？"
+    },
+    "pluginSubscriptionPanel": {
+        "add": {
+            "title": "添加订阅源"
+        },
+        "edit": {
+            "title": "编辑订阅源"
+        },
+        "name": "名称",
+        "url": "订阅地址",
+        "invalidUrl": "请输入有效的订阅地址（http 或 https 开头）",
+        "duplicateUrl": "该订阅地址已存在"
+    },
+    "officialAccountPanel": {
+        "title": "一只猫头猫",
+        "scanHint": "在微信里扫一扫关注",
+        "a11y": {
+            "qr": "一只猫头猫 公众号二维码"
+        }
+    },
+    "developerWordsPanel": {
+        "title": "开发者的话",
+        "scanHint": "扫码关注「一只猫头猫」",
+        "a11y": {
+            "qr": "一只猫头猫 公众号二维码",
+            "linkHint": "将在其他应用中打开"
+        }
+    },
+    "redistributionTermsPanel": {
+        "title": "二次开发约定",
+        "a11y": {
+            "linkHint": "将在其他应用中打开"
+        }
+    },
+    "thirdPartyLicensesPanel": {
+        "title": "第三方开源许可",
+        "platform": {
+            "js": "JavaScript",
+            "android": "Android",
+            "native": "原生库"
+        }
+    },
+    "appUpdateDialog": {
+        "title": "发现新版本 {version}",
+        "noDetails": "本次更新暂无详细说明",
+        "skipVersion": "跳过此版本",
+        "otherDownloads": "备用地址",
+        "downloadAddress": "下载地址 {number}"
+    },
+    "about": {
+        "versionCopied": "已复制版本信息",
+        "section": {
+            "author": "作者",
+            "feedback": "反馈",
+            "channels": "官方渠道",
+            "terms": "开源与条款"
+        },
+        "author": {
+            "name": "猫头猫",
+            "developerWords": "开发者的话"
+        },
+        "channel": {
+            "officialAccount": "公众号",
+            "officialAccountName": "一只猫头猫",
+            "bilibili": "B 站",
+            "xiaohongshu": "小红书"
+        },
+        "issue": "提交问题",
+        "issueChannel": "GitHub Issue",
+        "update": {
+            "check": "检查更新",
+            "upToDate": "已是最新版本",
+            "checkFailed": "检查更新失败，稍后再试"
+        },
+        "website": "官方网站",
+        "repository": "代码仓库",
+        "license": "开源许可",
+        "redistributionTerms": "二次开发约定",
+        "thirdPartyLicenses": "第三方开源许可",
+        "a11y": {
+            "version": "版本 {version}",
+            "versionHint": "点按两次复制版本信息",
+            "externalLinkHint": "将在其他应用中打开",
+            "qrCodeHint": "点按两次查看二维码",
+            "detailHint": "点按两次查看详细内容"
+        }
+    },
+    "backupRestore": {
+        "title": "备份与恢复",
+        "failure": {
+            "unauthorized": "认证失败，请检查账号和应用授权密码；部分服务不能使用网页登录密码",
+            "forbidden": "服务器拒绝访问，请检查备份目录的读写权限",
+            "notFound": "未找到远端文件或目录，请检查服务器地址及备份路径",
+            "rateLimited": "服务器请求过于频繁，请稍后重试",
+            "storageFull": "服务器存储空间或配额不足",
+            "unsupported": "服务器不支持本次请求，请查看错误日志中的请求方法和状态码"
+        },
+        "opInProgress": "已有操作正在进行，稍等一下",
+        "export": {
+            "title": "导出",
+            "backup": "导出备份",
+            "destinations": "保存到默认下载路径或 WebDAV",
+            "exporting": "正在导出",
+            "savedToDownloads": "已导出到默认下载路径",
+            "savedToWebdav": "已上传到 WebDAV",
+            "failed": "导出失败，稍后再试",
+            "timedOut": "导出超时：服务器一直没有响应，检查 WebDAV 地址与网络",
+            "needStoragePermission": "需要存储权限才能保存到默认下载路径",
+            "storagePermissionBlocked": {
+                "title": "在设置中开启存储权限",
+                "message": "存储权限已被拒绝，在系统设置中开启后才能保存备份。",
+                "confirm": "打开设置"
+            },
+            "interopWarning": {
+                "title": "备份已完成",
+                "message": "这份备份体积较大或歌曲较多，其他设备或版本可能无法读取。"
+            }
+        },
+        "webdav": {
+            "title": "WebDAV",
+            "connection": "WebDAV 连接",
+            "notConfigured": "备份到自己的服务器"
+        },
+        "restore": {
+            "title": "恢复",
+            "backup": "恢复备份",
+            "sources": "从文件、WebDAV 或链接读取",
+            "source": "从哪里恢复",
+            "fromFile": "从文件恢复",
+            "fromWebdav": "从 WebDAV 恢复",
+            "fromUrl": "从链接恢复",
+            "reading": "正在读取备份",
+            "leftPage": "备份已读取，但你已离开页面，请重新进入再试一次",
+            "urlPrompt": "备份链接",
+            "urlPlaceholder": "https://example.com/backup.json",
+            "urlConfirm": "读取备份",
+            "notBackup": {
+                "title": "备份格式不正确",
+                "message": "请使用由 MusicFree 导出的有效备份"
+            },
+            "corrupt": {
+                "title": "备份内容异常",
+                "message": "备份可能已损坏或内容不完整，请更换备份来源"
+            },
+            "tooLarge": {
+                "title": "备份文件过大",
+                "message": "备份文件不能超过 64 MiB"
+            },
+            "invalidUrl": {
+                "title": "链接格式错误",
+                "message": "请输入以 http:// 或 https:// 开头的完整链接"
+            },
+            "failed": {
+                "title": "读取备份失败",
+                "message": "请检查备份文件、网络连接或 WebDAV 配置后重试"
+            },
+            "timedOut": {
+                "title": "读取超时",
+                "message": "服务器一直没有响应。检查 WebDAV 地址、端口与网络后重试；地址填错时也会是这个结果"
+            },
+            "restoring": "正在恢复备份",
+            "done": "已恢复所选内容",
+            "failedTitle": "恢复失败",
+            "failedMessage": "恢复过程中发生错误，部分内容可能已恢复，请检查已恢复的内容。"
+        },
+        "a11y": {
+            "exportHint": "选择备份导出到哪里",
+            "restoreHint": "选择从哪里读取备份"
+        }
+    },
+    "restoreResult": {
+        "title": "恢复结果",
+        "outcome": {
+            "clean": "恢复完成",
+            "partial": "部分内容未恢复",
+            "allFailed": "恢复失败"
+        },
+        "section": {
+            "playlists": "歌单",
+            "starredPlaylists": "收藏歌单",
+            "plugins": "插件",
+            "mediaMeta": "歌曲配置信息",
+            "settings": "设置"
+        },
+        "status": {
+            "restored": "已恢复",
+            "skipped": "已跳过",
+            "failed": "恢复失败"
+        },
+        "skipped": {
+            "absent": "备份中未包含此项",
+            "notSelected": "未选择此项"
+        },
+        "failure": {
+            "storageDegraded": "设备存储异常，无法写入数据",
+            "persistenceFailed": "写入设备失败",
+            "unknown": "写入失败"
+        },
+        "counts": {
+            "sep": "，",
+            "nothing": "无可恢复内容",
+            "playlistsCreated": { "other": "新建 {count} 个歌单" },
+            "musicAdded": { "other": "加入 {count} 首歌曲" },
+            "musicDuplicates": { "other": "{count} 首已存在" },
+            "musicInvalid": { "other": "{count} 首无效" },
+            "starredAdded": { "other": "新增 {count} 个" },
+            "starredSkipped": { "other": "{count} 个已存在" },
+            "pluginsInstalled": { "other": "安装 {count} 个" },
+            "pluginsSkipped": { "other": "{count} 个已安装" },
+            "pluginsFailed": { "other": "{count} 个安装失败" },
+            "subscriptionsAdded": { "other": "新增 {count} 个订阅" },
+            "subscriptionsSkipped": { "other": "{count} 个订阅已存在" },
+            "alternativesAdded": { "other": "新增 {count} 条音源重定向" },
+            "alternativesSkipped": { "other": "{count} 条音源重定向已存在" },
+            "metaUpserted": { "other": "已恢复 {count} 条" },
+            "metaSkipped": { "other": "已跳过 {count} 条" },
+            "settingsApplied": { "other": "应用 {count} 项" },
+            "settingsSkipped": { "other": "跳过 {count} 项" }
+        },
+        "localMediaIgnored": {
+            "other": "由于这台设备上没有对应文件，已跳过 {count} 条来自其他设备的本地歌曲记录"
+        },
+        "a11y": {
+            "row": "{section}，{status}，{detail}"
+        }
+    },
+    "backupExportPanel": {
+        "title": "导出备份",
+        "toDownloads": "保存到下载",
+        "toWebdav": "上传到 WebDAV",
+        "content": "备份内容",
+        "contentAll": "全部内容",
+        "contentSome": { "other": "已选 {count} 类" }
+    },
+    "backupContentPanel": {
+        "title": "备份内容",
+        "note": "默认会备份全部内容。需要时可以只选其中几项。",
+        "section": {
+            "playlists": "歌单",
+            "playlistsHint": "包括「我喜欢」",
+            "starredPlaylists": "收藏歌单",
+            "plugins": "插件",
+            "mediaMeta": "歌曲配置信息",
+            "settings": "设置"
+        },
+        "a11y": {
+            "sectionRow": "{section}，{hint}",
+            "keepOne": "至少要留一类内容，这一项不能取消"
+        }
+    },
+    "restoreConfirmPanel": {
+        "title": "恢复备份",
+        "pluginSources": {
+            "title": "插件与订阅来源",
+            "warning": "恢复插件会下载并运行这些来源提供的代码，请确认来源可信。",
+            "confirm": "我信任这些来源"
+        },
+        "source": {
+            "from": "来自 {platform} · {version}",
+            "unknownOrigin": "来源未知",
+            "createdAt": "备份于 {date}",
+            "unknownTime": "备份时间未知",
+            "futureVersion": "备份由更高版本创建，部分数据可能无法恢复"
+        },
+        "platform": {
+            "android": "Android",
+            "ios": "iOS",
+            "desktop": "桌面端"
+        },
+        "content": {
+            "sep": " · ",
+            "emptySection": "没有内容",
+            "playlists": { "other": "{count} 个歌单" },
+            "starredPlaylists": { "other": "{count} 个收藏歌单" },
+            "plugins": { "other": "{count} 个插件" },
+            "subscriptions": { "other": "{count} 个订阅" },
+            "alternatives": { "other": "{count} 条音源重定向" },
+            "mediaMeta": { "other": "{count} 首歌的配置信息" },
+            "settings": { "other": "{count} 项设置" }
+        },
+        "section": {
+            "playlists": "歌单",
+            "starredPlaylists": "收藏歌单",
+            "plugins": "插件",
+            "mediaMeta": "歌曲配置信息",
+            "settings": "设置"
+        },
+        "mode": {
+            "title": "歌单处理方式",
+            "append": "追加到现有歌单",
+            "appendHint": "备份中的歌单会以新歌单的形式追加，默认歌单会合并",
+            "overwrite": "替换现有歌单",
+            "overwriteHint": "备份中的歌单会完全替换现有歌单"
+        },
+        "overwriteConfirm": {
+            "title": "替换现有歌单",
+            "message": "此操作将会完全覆盖设备上的现有歌单，且无法恢复。是否继续？",
+            "confirm": "替换"
+        },
+        "start": "开始恢复",
+        "empty": "这份备份里没有可以恢复的内容。",
+        "a11y": {
+            "modeValue": "歌单处理方式，当前为{value}",
+            "modeHint": "点按可更改",
+            "sectionRow": "{section}，{summary}",
+            "keepOne": "至少要留一类内容，这一项不能取消"
+        }
+    },
+    "webdavConnectionPanel": {
+        "passwordHint": "若服务商要求应用授权密码，请使用该密码，而不是网页登录密码",
+        "title": "WebDAV 连接",
+        "pathNote": "备份会保存到 /MusicFree/MusicFreeBackup.json",
+        "serverUrl": "服务器地址",
+        "serverUrlPlaceholder": "https://example.com/dav",
+        "username": "账号",
+        "password": "密码",
+        "insecureWarning": "这个地址不是 HTTPS，账号、密码和备份内容会以明文传输",
+        "test": "测试连接",
+        "testOk": "连接成功",
+        "testFailed": "连接失败：{reason}。仍可保存配置，使用 WebDAV 时将再次尝试连接",
+        "testTimedOut": "连接超时：服务器一直没有响应，检查地址、端口与网络后再试。仍可保存配置"
+    },
+    "settings": {
+        "title": "设置",
+        "a11y": {
+            "choiceValue": "{label}：{value}"
+        },
+        "qualityFallback": "首选音质不可用时",
+        "qualityFallbackOption": {
+            "asc": "优先更高音质",
+            "desc": "优先更低音质"
+        },
+        "playback": {
+            "section": "播放",
+            "autoPlayWhenAppStart": "启动时自动续播",
+            "mixWithOthers": "允许与其他应用同时播放",
+            "clickMusicInSearch": "点击搜索结果中的单曲时",
+            "clickMusicInSearchOption": {
+                "playMusic": "播放该曲",
+                "playMusicAndReplace": "播放并替换播放队列"
+            },
+            "autoStopWhenError": "播放失败时停止播放",
+            "autoStopWhenErrorHint": "关闭时自动跳到下一首",
+            "cellularNetwork": "使用移动网络播放",
+            "cellularNetworkHint": "关闭时，移动数据下不播放需要联网的歌曲；本地音乐与已下载的歌不受影响",
+            "tryChangeSourceWhenPlayFail": "播放失败时尝试更换音源",
+            "tryChangeSourceWhenPlayFailHint": "从其他插件查找相似歌曲",
+            "quality": "播放音质"
+        },
+        "download": {
+            "section": "下载",
+            "dir": "下载目录",
+            "dirReset": "恢复默认下载目录",
+            "dirResetHint": "改回应用私有目录",
+            "addToLibrary": "下载完成后加入本地音乐",
+            "dirResetConfirmTitle": "恢复默认下载目录？",
+            "dirResetConfirmMessage": "已下载的文件不会移动或删除。已开始的下载仍存入原目录。",
+            "dirChanged": "下载目录已更新",
+            "dirChanging": "上一次目录修改还没完成，请稍后重试",
+            "dirInvalid": "该位置不能作为下载目录",
+            "dirPinFailed": "暂时记不下在途任务的位置，没有切换；请稍后重试",
+            "dirNotWritable": "无法写入该目录，请换一个位置或检查文件访问权限",
+            "dirStaleFiles": "无法确认该目录是否干净（可能有清理不掉的下载残留），为避免文件损坏没有切换；请手动清理后重试或换一个位置",
+            "dirUnsupported": "当前平台不支持下载",
+            "dirNeedsPermission": "需要文件访问权限才能下载到自选目录",
+            "useCellularNetwork": "使用移动网络下载",
+            "useCellularNetworkHint": "关闭时下载任务会等待 Wi-Fi",
+            "quality": "下载音质",
+            "maxConcurrent": "最大同时下载数",
+            "interval": "任务间隔",
+            "intervalHint": "控制下载任务的启动间隔，避免短时间内频繁请求音源。设置间隔后，同时下载数可能暂时低于上限。",
+            "intervalNone": "不等待",
+            "intervalSeconds": {
+                "other": "{count} 秒"
+            }
+        },
+        "lyric": {
+            "section": "歌词",
+            "autoSearch": "歌词缺失时自动搜索",
+            "autoSearchHint": "当前音源没有歌词时，按插件顺序从其他已启用插件查找相似歌曲的歌词",
+            "floatingLyric": "显示悬浮歌词",
+            "floatingLyricSettings": "悬浮歌词设置"
+        },
+        "playlist": {
+            "section": "歌单与历史",
+            "defaultOrder": "新建歌单的默认歌曲排序",
+            "maxHistory": "最近播放保留条数"
+        },
+        "interface": {
+            "section": "界面",
+            "defaultView": "播放页默认显示",
+            "defaultViewOption": {
+                "cover": "封面",
+                "lyric": "歌词"
+            },
+            "keepScreenAwake": "正在播放页保持屏幕常亮"
+        },
+        "plugin": {
+            "section": "插件",
+            "autoUpdate": "启动时自动更新插件",
+            "autoUpdateHint": "每天最多检查一次，在后台静默进行，只更新已启用的插件",
+            "allowDowngrade": "允许旧版本插件覆盖新版本插件",
+            "allowDowngradeHint": "打开时，允许较旧版本的同名插件覆盖已安装的较新版本插件",
+            "ignoreAppVersion": "忽略插件的应用版本要求",
+            "ignoreAppVersionHint": "插件声明支持的应用版本与当前应用不符时仍允许启用，可能无法正常使用"
+        },
+        "cache": {
+            "section": "缓存",
+            "musicLimit": "音乐缓存上限",
+            "restartHint": "完全退出并重新打开 App 后生效",
+            "clearing": "正在清除",
+            "music": {
+                "clear": "清除音乐缓存",
+                "confirm": "仅清除播放时产生的音乐缓存，不会删除已下载的歌曲。正在播放的内容可能不会立即清除。",
+                "cleared": "音乐缓存已清除"
+            },
+            "image": {
+                "clear": "清除图片缓存",
+                "confirm": "清除后，封面和头像会在下次显示时重新加载。",
+                "cleared": "图片缓存已清除"
+            }
+        },
+        "permission": {
+            "section": "权限",
+            "granted": "已授予",
+            "notGranted": "未授予",
+            "battery": "忽略电池优化",
+            "batteryHint": "未授予时系统可能在后台停掉播放",
+            "storage": "存储访问",
+            "storageHint": "扫描设备中本地音乐时需要此权限",
+            "overlay": "显示在其他应用上层",
+            "overlayHint": "显示悬浮歌词需要此权限"
+        }
+    }
+}

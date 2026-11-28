@@ -1,15 +1,15 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json",
+  "extends": "@react-native/typescript-config",
   "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig.json to read more about this file */
-
-    /* Completeness */
-    "noImplicitAny": false,
-    "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
-    "baseUrl": ".",
+    "types": ["jest"],
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["node"]
-  }
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods", "tmp"]
 }

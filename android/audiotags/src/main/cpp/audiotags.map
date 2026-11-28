@@ -1,0 +1,7 @@
+# 只导出 JNI 入口，其余（musicfree::tags::* / TagLib / libc++ 内联符号）一律 local
+{
+    global:
+        Java_*;
+    local:
+        *;
+};

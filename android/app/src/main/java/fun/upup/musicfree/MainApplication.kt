@@ -1,54 +1,46 @@
 package `fun`.upup.musicfree
-import android.content.res.Configuration
-import expo.modules.ApplicationLifecycleDispatcher
-import expo.modules.ReactNativeHostWrapper
 
 import android.app.Application
+import android.content.res.Configuration
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
-import com.facebook.react.ReactNativeHost
-import com.facebook.react.ReactPackage
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
-import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
-import com.facebook.react.defaults.DefaultReactNativeHost
-import com.facebook.react.soloader.OpenSourceMergedSoMapping
-import com.facebook.soloader.SoLoader
-import `fun`.upup.musicfree.lyricUtil.LyricUtilPackage
-import `fun`.upup.musicfree.mp3Util.Mp3UtilPackage
-import `fun`.upup.musicfree.utils.UtilsPackage
+import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
+import `fun`.upup.musicfree.audio.NativeAudioPackage
+import `fun`.upup.musicfree.download.NativeDownloadPackage
+import `fun`.upup.musicfree.floatingLyric.NativeFloatingLyricPackage
+import `fun`.upup.musicfree.mediaScanner.NativeMediaScannerPackage
+import `fun`.upup.musicfree.sharedStorage.NativeSharedStoragePackage
+import `fun`.upup.musicfree.system.NativeSystemPackage
+import `fun`.upup.musicfree.tags.NativeAudioTagsPackage
+import `fun`.upup.musicfree.timer.NativeTimerPackage
+import expo.modules.ApplicationLifecycleDispatcher
+import expo.modules.ExpoReactHostFactory
 
 class MainApplication : Application(), ReactApplication {
 
-  override val reactNativeHost: ReactNativeHost =
-      ReactNativeHostWrapper(this, object : DefaultReactNativeHost(this) {
-        override fun getPackages(): List<ReactPackage> =
-            PackageList(this).packages.apply {
-              // Packages that cannot be autolinked yet can be added manually here, for example:
-              // add(MyReactNativePackage())
-              add(UtilsPackage())
-              add(Mp3UtilPackage())
-              add(LyricUtilPackage())
-            }
-
-        override fun getJSMainModuleName(): String = "index"
-
-        override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
-
-        override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-      })
-
-  override val reactHost: ReactHost
-    get() = ReactNativeHostWrapper.createReactHost(applicationContext, reactNativeHost)
+  override val reactHost: ReactHost by lazy {
+    ExpoReactHostFactory.getDefaultReactHost(
+      context = applicationContext,
+      packageList =
+        PackageList(this).packages.apply {
+          // Packages that cannot be autolinked yet can be added manually here, for example:
+          // add(MyReactNativePackage())
+          add(NativeAudioPackage())
+          add(NativeDownloadPackage())
+          add(NativeSystemPackage())
+          add(NativeTimerPackage())
+          add(NativeAudioTagsPackage())
+          add(NativeFloatingLyricPackage())
+          add(NativeMediaScannerPackage())
+          add(NativeSharedStoragePackage())
+        },
+    )
+  }
 
   override fun onCreate() {
     super.onCreate()
-    SoLoader.init(this, OpenSourceMergedSoMapping)
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-      // If you opted-in for the New Architecture, we load the native entry point for this app.
-      load()
-    }
+    loadReactNative(this)
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
   }
 

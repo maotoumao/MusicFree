@@ -1,0 +1,29 @@
+{
+  // ── 关闭原生代码的语言服务噪音 ─────────────────────────────
+  // 原因：fwcd.kotlin / vscjava.vscode-gradle 需要 Gradle 同步出的 classpath
+  // 才能解析符号；RN 仓库在 VSCode 里没有 sync，导致满屏 "Unresolved reference"。
+  // 这些不是编译错误，实际构建走 Gradle + Android SDK（用 Android Studio 打开 android/）。
+
+  // 关闭 Kotlin 语言服务（.kt 的红线来源）
+  "kotlin.languageServer.enabled": false,
+  "kotlin.debugAdapter.enabled": false,
+
+  // 减少 Gradle 扩展的自动构建/诊断行为（.gradle 的红线来源）
+  "gradle.nestedProjects": false,
+
+  // 不把 android/ios 原生构建产物纳入搜索与文件监听，减少干扰
+  "files.watcherExclude": {
+    "**/android/.gradle/**": true,
+    "**/android/build/**": true,
+    "**/android/app/build/**": true,
+    "**/ios/Pods/**": true,
+    "**/ios/build/**": true
+  },
+  "search.exclude": {
+    "**/android/.gradle": true,
+    "**/android/build": true,
+    "**/android/app/build": true,
+    "**/ios/Pods": true,
+    "**/ios/build": true
+  }
+}

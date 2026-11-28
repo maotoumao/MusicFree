@@ -1,0 +1,12 @@
+# 依赖与原生构建产物
+node_modules/
+android/
+ios/
+vendor/
+
+# 测试/构建产物
+coverage/
+*.jsbundle
+
+# 临时脚本目录
+tmp/

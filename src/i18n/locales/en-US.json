@@ -1,0 +1,1744 @@
+{
+    "common": {
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "create": "Create",
+        "close": "Close",
+        "done": "Done",
+        "open": "Open",
+        "loading": "Loading",
+        "search": "Search",
+        "play": "Play",
+        "download": "Download",
+        "share": "Share",
+        "selectAll": "Select All",
+        "unselectAll": "Deselect All",
+        "about": "About",
+        "gotIt": "Got it",
+        "clear": "Clear",
+        "more": "More",
+        "reset": "Reset",
+        "retry": "Retry",
+        "back": "Back",
+        "managePlugins": "Manage Plugins",
+        "countUnit": {
+            "thousand": "{value}K",
+            "tenThousand": "{value}0K",
+            "million": "{value}M",
+            "hundredMillion": "{value}00M"
+        }
+    },
+    "colorPicker": {
+        "hex": "Hex",
+        "hue": "Hue",
+        "alpha": "Alpha",
+        "a11y": {
+            "preview": "Color preview",
+            "hexValue": "Hex color value"
+        }
+    },
+    "colorPickerPanel": {
+        "restoreDefault": "Restore default"
+    },
+    "mediaList": {
+        "a11y": {
+            "locate": "Scroll to the currently playing song"
+        }
+    },
+    "media": {
+        "playbackRate": "Playback speed",
+        "type": {
+            "music": "Music",
+            "album": "Album",
+            "artist": "Artist",
+            "playlist": "Playlist",
+            "lyric": "Lyric"
+        },
+        "quality": {
+            "low": "Low",
+            "standard": "Standard",
+            "high": "High",
+            "super": "Super"
+        },
+        "repeatMode": {
+            "loop": "Repeat One",
+            "queue": "Repeat All",
+            "shuffle": "Shuffle"
+        },
+        "sort": "Sort",
+        "sortOption": {
+            "manual": "Manual order",
+            "title": "Title · A–Z",
+            "titleDesc": "Title · Z–A",
+            "artist": "Artist · A–Z",
+            "artistDesc": "Artist · Z–A",
+            "album": "Album · A–Z",
+            "albumDesc": "Album · Z–A",
+            "addedAt": "Date added · Oldest first",
+            "addedAtDesc": "Date added · Newest first",
+            "duration": "Duration · Shortest first",
+            "durationDesc": "Duration · Longest first"
+        },
+        "unknownTitle": "Untitled",
+        "unknownArtist": "Unknown Artist",
+        "unknownAlbum": "Unknown Album",
+        "favoritePlaylist": "Favorites",
+        "songCount": {
+            "one": "{count} song",
+            "other": "{count} songs"
+        }
+    },
+    "feedback": {
+        "networkError": "Network error",
+        "networkErrorStatus": "Network error · HTTP {status}",
+        "networkErrorTimedOut": "Network error · Timeout",
+        "unknownError": "Unknown error",
+        "loadFailed": "Failed to load",
+        "saved": "Saved",
+        "copied": "Copied to clipboard",
+        "deleted": "Deleted",
+        "openLinkFailed": "Can't open this link",
+        "operationSuccess": "Done",
+        "operationFailed": "Operation failed",
+        "playback": {
+            "invalidItem": "This song can’t be played",
+            "cellularBlocked": "Playback over mobile data is turned off"
+        },
+        "download": {
+            "addedToQueue": "Added to the download queue",
+            "alreadyDownloaded": "Already downloaded",
+            "inQueue": "Already in the download queue"
+        },
+        "a11y": {
+            "info": "Info",
+            "success": "Success",
+            "warning": "Warning",
+            "error": "Error"
+        }
+    },
+    "musicDetail": {
+        "cover": "Cover",
+        "lyric": "Lyrics",
+        "quality": "Quality",
+        "playbackRate": "Speed",
+        "noLyric": "No lyrics",
+        "searchLyric": "Search lyrics",
+        "copyLyric": "Copy lyrics",
+        "editLyric": "Edit lyrics",
+        "restoreDefaultLyric": "Restore default lyrics",
+        "restoreDefaultLyricSuccess": "Default lyrics restored",
+        "tools": {
+            "favorite": "Favorite",
+            "downloaded": "Downloaded",
+            "comment": "Comment"
+        },
+        "lyricTools": {
+            "offset": "Offset",
+            "fontSize": "Font size",
+            "translate": "Translate",
+            "floatingLyric": "Floating Lyrics",
+            "floatingLyricSettings": "Floating Lyrics Settings"
+        },
+        "a11y": {
+            "previous": "Previous",
+            "next": "Next",
+            "queue": "Play queue",
+            "play": "Play",
+            "pause": "Pause",
+            "progress": "Playback progress",
+            "quality": "Quality: {value}",
+            "playbackRate": "Speed: {value}",
+            "seekToLine": "Seek to line"
+        }
+    },
+    "lyricFontSizePanel": {
+        "title": "Font size",
+        "levels": {
+            "small": "Small",
+            "standard": "Standard",
+            "large": "Large",
+            "xlarge": "Extra large"
+        },
+        "a11y": {
+            "group": "Lyric font size"
+        }
+    },
+    "lyricOffsetPanel": {
+        "title": "Offset",
+        "none": "No offset",
+        "advance": "Lyrics earlier by {seconds}s",
+        "delay": "Lyrics later by {seconds}s",
+        "reset": "Reset",
+        "a11y": {
+            "advanceStep": "Lyrics earlier by 0.1 seconds",
+            "delayStep": "Lyrics later by 0.1 seconds",
+            "reset": "Reset lyric offset"
+        }
+    },
+    "lyricSearchPanel": {
+        "title": "Search lyrics",
+        "targetHint": "Find better lyrics for “{title}”",
+        "placeholder": "Enter a song or artist",
+        "idle": "Enter a song or artist to search",
+        "noResults": "No matching lyrics found",
+        "noResultsHint": "Try adjusting keywords or switching source",
+        "sourceError": "This source is temporarily unavailable",
+        "sourceErrorHint": "Please try again later, or switch to another source",
+        "noSource": "No lyric source available",
+        "noSourceHint": "Enable a plugin that supports lyric search, then try again",
+        "associateSuccess": "Lyrics linked",
+        "associateFailed": "Couldn't link lyrics, please try again",
+        "associateSelf": "Can't link a song to itself",
+        "a11y": {
+            "input": "Lyric search query",
+            "result": "Link lyrics: {fields}"
+        }
+    },
+    "editLyric": {
+        "title": "Edit lyrics",
+        "lyricTab": "Lyrics",
+        "translationTab": "Translation",
+        "emptyHint": "Enter or paste lyrics",
+        "emptyHintDetail": "Lyrics with [00:00.00] timestamps scroll along with playback",
+        "importFile": "Import from file",
+        "translationPlaceholder": "One translated line per lyric line",
+        "addTranslation": "Add translation",
+        "removeTranslation": "Remove translation",
+        "restoreDefault": "Restore default lyrics",
+        "statusEmpty": "No lyrics entered",
+        "statusWillRestore": "Saving empty will restore the default lyrics",
+        "statusTimed": {
+            "one": "{count} line · Timestamped",
+            "other": "{count} lines · Timestamped"
+        },
+        "statusPlain": {
+            "one": "{count} line · Plain text, won't scroll with playback",
+            "other": "{count} lines · Plain text, won't scroll with playback"
+        },
+        "statusMaxLength": {
+            "one": "{count} line · Length limit reached",
+            "other": "{count} lines · Length limit reached"
+        },
+        "statusTranslationTimed": {
+            "one": "Translation {count} line · Aligned by timestamp",
+            "other": "Translation {count} lines · Aligned by timestamp"
+        },
+        "statusTranslationByLine": {
+            "one": "Translation {count} line · Aligned by line number",
+            "other": "Translation {count} lines · Aligned by line number"
+        },
+        "statusTranslationMismatch": {
+            "one": "Translation {count} line, lyrics {total} — line counts differ, alignment may be off",
+            "other": "Translation {count} lines, lyrics {total} — line counts differ, alignment may be off"
+        },
+        "overwriteTitle": "Replace the current content?",
+        "overwriteMessage": "What you've typed will be replaced.",
+        "removeTranslationTitle": "Remove the translation?",
+        "removeTranslationMessage": "The translation you entered will be removed.",
+        "restoreDefaultTitle": "Restore default lyrics?",
+        "restoreDefaultMessage": "Your edited lyrics will be discarded and the plugin's original version restored.",
+        "discardTitle": "Discard unsaved changes?",
+        "discardMessage": "All of your unsaved edits will be lost.",
+        "continueEditing": "Keep editing",
+        "discardChanges": "Discard changes",
+        "saved": "Lyrics saved",
+        "saveFailed": "Couldn't save, please try again later",
+        "loadCurrentFailed": "Couldn't load the current lyrics — you can enter new ones",
+        "readFileFailed": "Couldn't read this file — check whether it's damaged",
+        "encodingFailed": "This file's encoding isn't supported — paste the text instead",
+        "a11y": {
+            "editor": "Lyric text",
+            "translationEditor": "Lyric translation",
+            "more": "More lyric actions"
+        }
+    },
+    "floatingLyricSettingsPanel": {
+        "title": "Floating Lyrics",
+        "preview": {
+            "original": "Sample lyrics",
+            "translation": "Sample translation"
+        },
+        "group": {
+            "display": "Display",
+            "mode": "Mode",
+            "position": "Position",
+            "appearance": "Appearance"
+        },
+        "enabled": "Show Floating Lyrics",
+        "mode": {
+            "desktop": "Desktop lyrics",
+            "statusBar": "Status bar lyrics"
+        },
+        "locked": "Locked",
+        "quickPosition": "Quick position",
+        "position": {
+            "top": "Top",
+            "middle": "Middle",
+            "bottom": "Bottom"
+        },
+        "positionFine": "Fine tune",
+        "fontSize": "Font size",
+        "textColor": "Text color",
+        "backgroundOpacity": "Background opacity"
+    },
+    "playbackNotification": {
+        "favorite": "Add to favorites",
+        "unfavorite": "Remove from favorites",
+        "showLyricCard": "Show lyrics card",
+        "hideLyricCard": "Hide lyrics card",
+        "unlockLyricCard": "Unlock lyrics card"
+    },
+    "floatingLyricOverlay": {
+        "textColor": "Color",
+        "fontSize": "Size",
+        "lockedHint": "Locked. Unlock it in floating lyrics settings",
+        "a11y": {
+            "openApp": "Open MusicFree",
+            "close": "Close floating lyrics",
+            "lock": "Lock lyrics card",
+            "settings": "Floating lyrics settings",
+            "play": "Play",
+            "pause": "Pause",
+            "previous": "Previous track",
+            "next": "Next track",
+            "fontSmaller": "Decrease font size",
+            "fontLarger": "Increase font size"
+        }
+    },
+    "floatingLyricPermissionDialog": {
+        "title": "Overlay Permission Required",
+        "message": "Floating lyrics need to display over other apps. Grant the overlay permission in system settings.",
+        "confirm": "Open Settings",
+        "backgroundHint": "Overlay permission required. Open MusicFree and try again.",
+        "openSettingsFailed": "Couldn't open system settings. Please grant \"Display over other apps\" manually."
+    },
+    "equalizerPanel": {
+        "title": "Sound Effects",
+        "scope": "Global audio effect",
+        "presetLabel": "Presets",
+        "custom": "Custom",
+        "off": "Off",
+        "reset": "Reset",
+        "unavailable": "Equalizer isn't available on this device",
+        "presets": {
+            "normal": "Normal",
+            "classical": "Classical",
+            "dance": "Dance",
+            "folk": "Folk",
+            "heavyMetal": "Heavy Metal",
+            "hipHop": "Hip Hop",
+            "jazz": "Jazz",
+            "pop": "Pop",
+            "rock": "Rock"
+        },
+        "a11y": {
+            "toggle": "Equalizer",
+            "curveGroup": "Equalizer curves",
+            "band": "{freq} band",
+            "reset": "Reset all bands to 0 dB"
+        }
+    },
+    "sleepTimerPanel": {
+        "title": "Sleep timer",
+        "subtitle": "Pick a duration; playback stops when it runs out",
+        "off": "Off",
+        "minutes": { "one": "{count} minute", "other": "{count} minutes" },
+        "hours": { "one": "{count} hour", "other": "{count} hours" },
+        "hoursMinutes": "{hours} h {minutes} min",
+        "custom": "Custom…",
+        "lastCustom": "Last: {duration}",
+        "stopsIn": "Stops in <time>{time}</time>",
+        "expiredTitle": "Time's up",
+        "expiredHint": "Waiting for the current song to finish",
+        "extend": "+{count} min",
+        "waitForCurrentEnd": "Finish the current song first",
+        "waitForCurrentEndHint": "When the timer runs out while a song is playing, stop after it finishes",
+        "customTitle": "Custom duration",
+        "customMessage": "{min} – {max} minutes (up to {maxHours} hours)",
+        "customPlaceholder": "Duration in minutes",
+        "customInvalid": "Enter a value between {min} and {max} minutes",
+        "extendCapped": "Already at the {duration} maximum",
+        "a11y": {
+            "durationGroup": "When to stop playback"
+        }
+    },
+    "addToPlaylistPanel": {
+        "title": "Add to playlist",
+        "createNew": "New playlist",
+        "playlistName": "Playlist name",
+        "added": {
+            "one": "Added {count} song",
+            "other": "Added {count} songs"
+        },
+        "addedPartial": {
+            "one": "Added {count} song; songs with incomplete information were skipped",
+            "other": "Added {count} songs; songs with incomplete information were skipped"
+        },
+        "allExist": "All selected songs are already in the playlist",
+        "createdAddFailed": "Playlist created, but adding songs failed"
+    },
+    "recommendTagPanel": {
+        "title": "Select category",
+        "pinned": "Featured",
+        "all": "All",
+        "a11y": { "tag": "Category, {title}" }
+    },
+    "musicCollectionDetail": {
+        "addToPlaylist": "Add to playlist",
+        "batchManage": "Batch manage",
+        "emptyTitle": "No songs yet",
+        "a11y": {
+            "star": "Save"
+        }
+    },
+    "playAllBar": {
+        "playAll": "Play all",
+        "a11y": {
+            "sort": "Sort songs",
+            "batchManage": "Batch manage songs"
+        }
+    },
+    "playlistDetail": {
+        "createdAt": "Created on {date}",
+        "notFound": "Playlist not found",
+        "degraded": "Playlist storage error; editing unavailable",
+        "edit": "Edit info",
+        "delete": "Delete playlist",
+        "deleteConfirm": "Delete the playlist “{name}”?"
+    },
+    "musicSelection": {
+        "selectedCount": {
+            "one": "{count} selected",
+            "other": "{count} selected"
+        },
+        "empty": "No songs here yet",
+        "enqueuedNext": "Selected songs will play next",
+        "downloadEnqueued": {
+            "one": "{count} song added to the download queue",
+            "other": "{count} songs added to the download queue"
+        },
+        "downloadPartlyEnqueued": {
+            "one": "{count} song added to the download queue; the rest were not added",
+            "other": "{count} songs added to the download queue; the rest were not added"
+        },
+        "downloadNoneEnqueued": "Nothing to add to the download queue",
+        "removeFromPlaylist": {
+            "title": "Remove from playlist",
+            "message": {
+                "one": "Remove {count} selected song from this playlist?",
+                "other": "Remove {count} selected songs from this playlist?"
+            }
+        },
+        "removeFromHistory": {
+            "title": "Remove from history",
+            "message": {
+                "one": "Remove {count} selected song from your listening history?",
+                "other": "Remove {count} selected songs from your listening history?"
+            }
+        },
+        "removeFromLibrary": {
+            "title": "Remove from library",
+            "message": {
+                "one": "Remove {count} selected song from the library?",
+                "other": "Remove {count} selected songs from the library?"
+            }
+        },
+        "actions": {
+            "playNext": "Play next",
+            "addToPlaylist": "Add to playlist",
+            "remove": "Remove"
+        }
+    },
+    "playlistEditor": {
+        "title": "Manage playlists",
+        "selectedCount": {
+            "one": "{count} selected",
+            "other": "{count} selected"
+        },
+        "emptyLocal": "No playlists created yet",
+        "emptyStarred": "No starred playlists yet",
+        "deletePlaylist": "Delete",
+        "deletePlaylists": {
+            "title": "Delete playlists",
+            "message": {
+                "one": "Delete {count} selected playlist?",
+                "other": "Delete {count} selected playlists?"
+            }
+        },
+        "unstar": "Unstar",
+        "unstarPlaylists": {
+            "title": "Remove from starred",
+            "message": {
+                "one": "Remove {count} selected playlist from your starred list?",
+                "other": "Remove {count} selected playlists from your starred list?"
+            }
+        }
+    },
+    "editPlaylistInfo": {
+        "title": "Edit info",
+        "saveChanges": "Save changes",
+        "artwork": "Cover",
+        "changeArtwork": "Change cover",
+        "restoreAutoArtwork": "Use auto cover",
+        "customArtwork": "Using a custom cover",
+        "autoArtwork": "Using the auto cover",
+        "pendingArtwork": "New cover applies after saving",
+        "pendingAutoArtwork": "Auto cover applies after saving",
+        "name": "Playlist name",
+        "nameRequired": "Enter a playlist name",
+        "favoriteNameHint": "Default playlist; its name can't be changed",
+        "description": "Description",
+        "descriptionPlaceholder": "Write a little about this playlist",
+        "storageReadOnly": "Storage error; changes can't be saved right now",
+        "discardTitle": "Discard unsaved changes?",
+        "discardMessage": "All of your unsaved edits will be lost.",
+        "continueEditing": "Keep editing",
+        "discardChanges": "Discard",
+        "saveFailed": "Couldn't save. Try again later",
+        "pickArtworkFailed": "Can't use that image. Try another",
+        "a11y": {
+            "artwork": "Current playlist cover",
+            "artworkEmpty": "No playlist cover set",
+            "changeArtwork": "Change playlist cover",
+            "restoreAutoArtwork": "Clear custom cover and use auto cover"
+        }
+    },
+    "musicComments": {
+        "title": "Comments",
+        "empty": "No comments yet",
+        "emptyDesc": "Nobody has commented on this song yet",
+        "unsupported": "Comments unavailable",
+        "unsupportedDesc": "This song's source doesn't support comments",
+        "loadFailed": "Failed to load comments",
+        "end": "No more comments",
+        "expand": "Show more",
+        "collapse": "Show less",
+        "showReplies": {
+            "one": "View {count} reply",
+            "other": "View {count} replies"
+        },
+        "hideReplies": {
+            "one": "Hide reply",
+            "other": "Hide replies"
+        },
+        "moreRepliesOmitted": {
+            "one": "{count} more reply not shown",
+            "other": "{count} more replies not shown"
+        },
+        "a11y": {
+            "likes": {
+                "one": "{count} like",
+                "other": "{count} likes"
+            },
+            "comment": "Comment by {nickName}",
+            "reply": "Reply by {nickName}"
+        }
+    },
+    "musicItemOptionsPanel": {
+        "commentUnsupported": "Comments not supported by this plugin",
+        "actions": {
+            "favorite": "Favorite",
+            "favorited": "Favorited",
+            "addToPlaylist": "Add to playlist",
+            "playNext": "Play next",
+            "addToQueue": "Add to queue",
+            "viewComment": "View comments",
+            "searchLyric": "Search lyrics",
+            "editLyric": "Edit lyrics",
+            "sleepTimer": "Sleep timer",
+            "removeFromHistory": "Remove from history",
+            "removeFromPlaylist": "Remove from playlist",
+            "removeFromLibrary": "Remove from library",
+            "forgetDownload": "Remove download record",
+            "deleteFile": "Delete file"
+        },
+        "info": {
+            "id": "ID: {value}",
+            "artist": "Artist: {value}",
+            "album": "Album: {value}",
+            "source": "Source: {value}"
+        },
+        "download": {
+            "downloaded": "Downloaded"
+        },
+        "removedFromLibrary": "Removed from library",
+        "forgotDownload": "Download record removed",
+        "fileDeleted": "File deleted",
+        "deleteFileConfirm": {
+            "title": "Delete local file",
+            "message": "Delete “{title}”?\nThis permanently removes the file from your device."
+        },
+        "deleteFailed": {
+            "notFound": "File not found; it may already be deleted.",
+            "permission": "No write permission to delete the file.",
+            "io": "Couldn't delete; the file may be in use or read-only.",
+            "unknown": "Couldn't delete the file."
+        },
+        "writePermission": {
+            "title": "Write permission needed",
+            "message": "Deleting files needs write permission. Please grant it in system settings.",
+            "openSettings": "Open settings",
+            "denied": "Write permission is needed to delete files."
+        },
+        "a11y": {
+            "unfavorite": "Unfavorite",
+            "copyHint": "Double tap to copy"
+        }
+    },
+    "sharePosterPanel": {
+        "saveImage": "Save image",
+        "shareImage": "Share",
+        "writePermission": {
+            "title": "Photo library permission needed",
+            "message": "Saving the image needs photo library permission. Please grant it in system settings.",
+            "openSettings": "Open settings",
+            "denied": "Photo library permission is needed to save the image."
+        }
+    },
+    "playQueuePanel": {
+        "title": "Play queue",
+        "clear": "Clear",
+        "empty": {
+            "title": "Queue is empty",
+            "description": "Songs you add will show up here"
+        },
+        "a11y": {
+            "remove": "Remove {title}"
+        }
+    },
+    "musicRow": {
+        "a11y": {
+            "more": "More actions: {title}",
+            "downloaded": "Downloaded"
+        }
+    },
+    "markdown": {
+        "clickToShowImage": "Tap to view image"
+    },
+    "search": {
+        "prompt": "Search songs, albums, artists, or playlists",
+        "history": "Search history",
+        "sources": "Sources",
+        "noResults": "No results found",
+        "noSource": "No search source available",
+        "noSourceHint": "Enable a plugin that supports this type, then try again",
+        "clearHistoryConfirm": {
+            "title": "Clear search history",
+            "message": "Clear your search history?"
+        },
+        "a11y": {
+            "searchField": "Search field",
+            "searchHistory": "Search history {query}",
+            "removeSearchHistory": "Remove “{query}” from search history"
+        }
+    },
+    "searchInList": {
+        "prompt": "Search songs",
+        "promptNamed": "Search in “{name}”",
+        "noResults": "No matching songs",
+        "a11y": {
+            "searchField": "Search songs in this list"
+        }
+    },
+    "errorScreen": {
+        "title": "Something went wrong",
+        "description": "Copy the details and send them to the developer to help track down the cause.",
+        "copy": "Copy details",
+        "privacyHint": "Error details may contain device, screen, plugin, or sensitive information. Review them before sending.",
+        "goHome": "Back to home",
+        "restart": "Exit app",
+        "copied": "Copied. Paste it to the developer"
+    },
+    "errorLog": {
+        "title": "Error log",
+        "entry": "Error log",
+        "empty": "No records",
+        "count": {
+            "one": "{count} record",
+            "other": "{count} records"
+        },
+        "clear": "Clear",
+        "clearTitle": "Clear the error log?",
+        "copyOne": "Copy this one",
+        "repeat": "Occurred {count} times",
+        "sourceRender": "Render error",
+        "sourceUncaught": "Uncaught error",
+        "sourceLocalData": "Local data error",
+        "toastUncaught": "Something went wrong. See About → Error log"
+    },
+    "home": {
+        "searchPrompt": "Search music",
+        "playlists": {
+            "local": "Mine",
+            "starred": "Starred",
+            "empty": "No playlists yet",
+            "createPlaylist": "New playlist",
+            "playlistName": "Playlist name",
+            "batchManage": "Batch manage"
+        },
+        "drawer": {
+            "theme": "Theme",
+            "language": "Language",
+            "settings": "Settings",
+            "backupRestore": "Backup & restore",
+            "exitApp": "Exit app"
+        },
+        "a11y": {
+            "closeDrawer": "Close menu",
+            "openDrawer": "Open menu",
+            "createPlaylist": "New playlist",
+            "openHistory": "Open play history",
+            "openLocalMusic": "Open local music",
+            "openDownloadManager": "Open downloads",
+            "openTopList": "Open charts",
+            "openRecommendPlaylists": "Open recommended playlists"
+        }
+    },
+    "importMedia": {
+        "music": "Import track",
+        "playlist": "Import playlist",
+        "placeholder": "Paste a share link or ID",
+        "failed": "Couldn't parse the link or ID",
+        "empty": "Nothing to import was found",
+        "noPlugin": "No plugin supports importing",
+        "selectPlugin": "Choose a plugin",
+        "pluginUnavailable": "This plugin is unavailable"
+    },
+    "history": {
+        "title": "Recently played",
+        "clear": "Clear",
+        "batchManage": "Batch manage",
+        "clearAll": "Clear listening history",
+        "clearConfirm": {
+            "title": "Clear listening history",
+            "message": "Clear all listening history? This can't be undone."
+        },
+        "empty": "No listening history yet"
+    },
+    "downloadManager": {
+        "title": "Downloads",
+        "filter": {
+            "inProgress": "In progress {count}",
+            "queued": "Queued {count}",
+            "failed": "Failed {count}",
+            "completed": "Completed {count}"
+        },
+        "status": {
+            "queued": "Queued",
+            "resolvingSource": "Preparing download",
+            "waitingInterval": "Starting soon",
+            "waitingWifi": "Waiting for Wi-Fi",
+            "waitingWifiHint": "Resumes automatically once on Wi-Fi",
+            "paused": "Paused"
+        },
+        "failure": {
+            "network": "Network error",
+            "server": "Server returned an error",
+            "sourceUnavailable": "Source unavailable",
+            "diskFull": "Not enough storage",
+            "permission": "No write permission",
+            "unknown": "Download failed"
+        },
+        "progress": {
+            "determinate": "{percent}% · {downloaded} / {total}",
+            "unknownTotal": "{downloaded} downloaded · Getting file size"
+        },
+        "empty": {
+            "inProgress": "No download tasks in progress",
+            "queued": "No download tasks queued",
+            "failed": "No failed download tasks",
+            "completed": "No songs downloaded yet"
+        },
+        "pauseAll": "Pause all",
+        "resumeAll": "Resume all",
+        "cancelAll": "Cancel all",
+        "cancelAllConfirm": {
+            "title": "Cancel all downloads?",
+            "message": "Active and queued download tasks will be canceled. Finished files are not affected."
+        },
+        "a11y": {
+            "pause": "Pause download of {title}",
+            "resume": "Resume download of {title}",
+            "retry": "Retry download of {title}",
+            "cancel": "Cancel download of {title}",
+            "remove": "Remove {title}",
+            "progress": "{title}, {status}"
+        }
+    },
+    "localMusic": {
+        "title": "Local Music",
+        "openFileFailed": "Unable to open this file",
+        "tabs": {
+            "all": "All",
+            "folders": "Folders",
+            "albums": "Albums",
+            "artists": "Artists"
+        },
+        "permission": {
+            "title": "Scan music on this device",
+            "description": "Allow access to all files to scan music across your device, including other apps' download folders and files not indexed by the system media library.",
+            "grant": "Open settings",
+            "dismiss": "Not now",
+            "openSettingsFailed": "Couldn't open system settings. Please grant \"All files access\" manually."
+        },
+        "scanGate": {
+            "title": "Scan this device for music",
+            "description": "This finds playable audio within your current scan range. You can cancel anytime.",
+            "start": "Start scan",
+            "rescanCurrent": {
+                "one": "Currently {count} song",
+                "other": "Currently {count} songs"
+            },
+            "a11y": { "start": "Start scanning this device for music" }
+        },
+        "scan": {
+            "enumerating": "Getting file list…",
+            "scanningTitle": "Scanning music",
+            "found": {
+                "one": "Found {count} song",
+                "other": "Found {count} songs"
+            },
+            "cancel": "Cancel scan",
+            "cancelConfirm": {
+                "title": "Cancel scan?",
+                "message": "Results found so far will be kept."
+            },
+            "cancelled": "Scan canceled",
+            "cancelledDescription": "The scan didn't finish. You can restart it anytime.",
+            "libraryUpdated": "Music library updated",
+            "notUpdated": "Music library not updated",
+            "failedTitle": "Scan didn't finish",
+            "failedDescription": "Couldn't update the local music library. Check your scan range and try again.",
+            "rescan": "Scan again",
+            "retry": "Retry scan"
+        },
+        "empty": {
+            "title": "No local music found",
+            "description": "No playable audio files were found within the current scan range.",
+            "manageScanRange": "Manage scan range"
+        },
+        "panes": {
+            "pickCollection": {
+                "title": "Pick one to see its songs",
+                "description": "Select a folder, album, or artist on the left and its songs appear here."
+            }
+        },
+        "menu": {
+            "clearLibrary": "Clear local library",
+            "clearConfirm": {
+                "title": "Clear local music library?",
+                "message": {
+                    "one": "This removes {count} scanned local music entry. Original files and scan settings are kept.",
+                    "other": "This removes {count} scanned local music entries. Original files and scan settings are kept."
+                }
+            }
+        },
+        "collections": {
+            "albumCount": { "one": "{count} album", "other": "{count} albums" },
+            "a11y": {
+                "folder": "Folder {name}",
+                "album": "Album {name} · {artist}",
+                "artist": "Artist {name}"
+            }
+        },
+        "a11y": {
+            "scanStarted": "Scan started",
+            "scanEnumerating": "Counting files",
+            "scanProgress": "Scan progress"
+        }
+    },
+    "musicBar": {
+        "a11y": {
+            "playing": "Playing: {title}. Open player",
+            "paused": "Paused: {title}. Open player",
+            "buffering": "Buffering: {title}. Open player",
+            "current": "Current: {title}. Open player",
+            "openPlayer": "Open player",
+            "pause": "Pause",
+            "next": "Next",
+            "previous": "Previous",
+            "queue": "Play queue"
+        }
+    },
+    "pluginVariablesPanel": {
+        "title": "Edit Variables · {platform}",
+        "noVariables": "This plugin has no configurable variables"
+    },
+    "pluginAlternativePanel": {
+        "title": "Plugin Redirect · {platform}",
+        "noAlternative": "Don't use redirection",
+        "notInstalled": "{platform} (Not installed)"
+    },
+    "pluginDetailsPanel": {
+        "group": {
+            "features": "Features",
+            "config": "Configuration",
+            "actions": "Actions"
+        },
+        "usage": "Usage guide",
+        "alternative": {
+            "label": "Plugin Redirect",
+            "none": "Not set"
+        },
+        "variables": {
+            "label": "Variables"
+        },
+        "actions": {
+            "checkUpdate": "Check for updates",
+            "shareSource": "Share source URL",
+            "uninstall": "Uninstall plugin"
+        },
+        "uninstallConfirm": {
+            "title": "Uninstall plugin",
+            "message": "Uninstall {platform}? This cannot be undone."
+        }
+    },
+    "pluginDescriptionPanel": {
+        "title": "{platform} · Usage guide",
+        "linkFailed": "Can't open link",
+        "openLinkConfirm": {
+            "title": "Open external link",
+            "message": "About to open in your browser:\n{url}\n\nStay safe and beware of phishing sites."
+        },
+        "a11y": {
+            "close": "Close usage guide"
+        }
+    },
+    "appearance": {
+        "title": "Appearance",
+        "theme": {
+            "section": "Themes",
+            "builtinLight": "Light",
+            "builtinDark": "Dark",
+            "create": "New theme",
+            "createTitle": "New theme",
+            "defaultName": "My theme",
+            "copyName": "{name} copy",
+            "namePlaceholder": "Theme name",
+            "edit": "Edit theme",
+            "duplicate": "Duplicate",
+            "rename": "Rename",
+            "renameTitle": "Rename theme",
+            "delete": "Delete theme",
+            "deleteTitle": "Delete theme",
+            "deleteConfirm": "Delete “{name}”? Its background image will be removed too.",
+            "limitReached": "You can create at most {count} themes",
+            "nameRequired": "Theme name cannot be empty"
+        },
+        "mode": {
+            "section": "Mode",
+            "followSystem": "Follow system",
+            "followSystemHint": "Switch between the themes bound to day and night",
+            "dayTheme": "Day theme",
+            "nightTheme": "Night theme"
+        },
+        "a11y": {
+            "themePack": "Theme {name}{binding}. Long press for more actions",
+            "bindingCurrent": ", in use",
+            "bindingDay": ", used during the day",
+            "bindingNight": ", used at night",
+            "bindingBoth": ", used both day and night",
+            "pickSlotTheme": "Choose the theme for this period"
+        }
+    },
+    "themeEditor": {
+        "title": "Edit theme",
+        "sample": {
+            "card": "Sample card",
+            "title": "Sample song",
+            "artist": "Sample artist",
+            "playing": "Now playing"
+        },
+        "tab": {
+            "background": "Background",
+            "color": "Colors"
+        },
+        "background": {
+            "select": "Choose image",
+            "replace": "Replace image",
+            "remove": "Remove background",
+            "empty": "Pick an image to use as the app background",
+            "blur": "Blur",
+            "visibility": "Background visibility",
+            "surfaceOpacity": "Surface opacity",
+            "scale": "Zoom",
+            "positionHint": "Drag in the preview above to reposition",
+            "pickFailed": "This image can’t be used, please try another",
+            "saveFailed": "Could not save the background"
+        },
+        "color": {
+            "main": "Main",
+            "status": "Status",
+            "derived": "Other colors",
+            "advanced": "Advanced",
+            "reset": "Reset colors",
+            "resetTitle": "Reset colors",
+            "resetConfirm": "All colour changes in this theme will be cleared.",
+            "auto": "Auto",
+            "role": {
+                "background": "Page background",
+                "surface": "Cards & top bars",
+                "surfaceVariant": "Secondary background",
+                "text": "Body text",
+                "textSecondary": "Secondary text",
+                "textDisabled": "Disabled text",
+                "primary": "Accent",
+                "border": "Divider",
+                "danger": "Danger",
+                "success": "Success",
+                "warning": "Warning",
+                "info": "Info",
+                "onPrimary": "On accent",
+                "primarySoft": "Accent tint",
+                "onPrimarySoft": "On accent tint",
+                "coverAccent": "Now playing accent",
+                "coverAccentStrong": "Now playing solid accent",
+                "mask": "Scrim",
+                "shadow": "Shadow",
+                "ripple": "Press highlight",
+                "knob": "Switch knob",
+                "onDanger": "On danger",
+                "onSuccess": "On success",
+                "onWarning": "On warning",
+                "onInfo": "On info",
+                "warningSoft": "Warning tint"
+            }
+        },
+        "contrast": {
+            "title": "Body contrast",
+            "value": "{ratio}:1",
+            "low": "Low"
+        },
+        "autoContrast": "Adapt text to background",
+        "autoContrastHint": "Adds a subtle shadow when contrast is too low",
+        "a11y": {
+            "editColorRole": "Edit {role}, currently {color}",
+            "backgroundStage": "Background preview, drag and pinch to adjust"
+        }
+    },
+    "scanSettings": {
+        "title": "Manage scan range",
+        "filter": {
+            "section": "Music filter",
+            "shortAudio": "Filter audio shorter than 60 seconds",
+            "shortAudioHint": "Skip ringtones and other short audio when scanning",
+            "minSize": "Minimum file size",
+            "minSizeHint": "Skip files that are too small when scanning",
+            "sizeUnlimited": "No limit",
+            "sizeMb": "{size} MB"
+        },
+        "scope": {
+            "section": "Scan range",
+            "all": "Scan everything",
+            "allHint": "Scan all accessible locations on the device",
+            "custom": "Scan specific folders",
+            "customHint": {
+                "one": "{count} folder added",
+                "other": "{count} folders added"
+            },
+            "customEmptyHint": "No folders added yet",
+            "addDir": "Add scan folder"
+        },
+        "excluded": {
+            "section": "Excluded folders",
+            "itemHint": "Skipped when scanning",
+            "addDir": "Add excluded folder",
+            "empty": "No folders excluded"
+        },
+        "conflict": "“{name}” can't be both a scan folder and an excluded folder. Remove one entry.",
+        "discardConfirm": {
+            "title": "Discard changes?",
+            "message": "Your scan setting changes haven't been saved."
+        },
+        "a11y": {
+            "removeDir": "Remove folder {name}",
+            "minSizeValue": "Minimum file size, currently {value}"
+        },
+        "picker": {
+            "title": "Choose folder",
+            "commonLocations": "Common locations",
+            "internalStorage": "Internal storage",
+            "externalStorage": "External storage",
+            "externalStorageNamed": "External storage {id}",
+            "selectThisFolder": "Select this folder",
+            "empty": "No subfolders",
+            "a11y": {
+                "enterFolder": "Open folder {name}",
+                "currentFolder": "Current folder: {name}"
+            }
+        }
+    },
+    "topList": {
+        "title": "Charts",
+        "loadError": "Failed to load charts",
+        "empty": "No charts available"
+    },
+    "recommendPlaylists": {
+        "title": "Recommended",
+        "empty": "No playlists in this category",
+        "allCategories": "All",
+        "currentTag": "Current: {title}",
+        "tagLoadError": "Failed to load categories",
+        "noTags": "No categories available",
+        "loadError": "Failed to load recommendations"
+    },
+    "artistDetail": {
+        "fansCount": {
+            "one": "{count} follower",
+            "other": "{count} followers"
+        },
+        "worksCount": {
+            "one": "{count} work",
+            "other": "{count} works"
+        },
+        "empty": {
+            "music": "No songs from this artist",
+            "album": "No albums from this artist"
+        },
+        "nothingHere": "No content available",
+        "sourceMissing": "Source unavailable",
+        "sourceMissingHint": "The plugin that provides this content was removed or disabled",
+        "unsupported": "This source doesn't support artist works",
+        "emptyWorks": "This artist has no works yet",
+        "a11y": {
+            "expandDescription": "Expand {name}'s bio"
+        }
+    },
+    "pluginSourcePager": {
+        "noSource": "No available source",
+        "noSourceHint": "Enable a plugin that provides this content to see it here"
+    },
+    "pluginManager": {
+        "capability": {
+            "search": "Search",
+            "play": "Play",
+            "lyric": "Lyrics",
+            "topList": "Charts",
+            "recommend": "Recommendations",
+            "album": "Albums",
+            "artist": "Artists",
+            "playlist": "Playlists",
+            "comment": "Comments",
+            "musicInfo": "Track Info",
+            "importMusic": "Import Track",
+            "importPlaylist": "Import Playlist"
+        },
+        "add": {
+            "title": "Add Plugin",
+            "fromUrl": "Install from URL",
+            "fromFile": "Install from File",
+            "enterUrl": "Enter plugin URL",
+            "urlExample": "https://…",
+            "invalidUrl": "Enter a valid URL",
+            "installing": "Installing plugin…"
+        },
+        "installResult": {
+            "updateSuccess": "Updated to the latest version",
+            "alreadyLatest": "Already up to date",
+            "olderVersion": "The available version is older than the current version",
+            "versionMismatch": "Incompatible with the current app version",
+            "parseError": "Failed to parse plugin",
+            "invalid": "Invalid plugin file",
+            "notPluginSource": "Received a web page; use a direct link to the raw file",
+            "installedOne": "Installed “{platform}”",
+            "installedMany": {
+                "one": "Installed {count} plugin",
+                "other": "Installed {count} plugins"
+            },
+            "alreadyInstalledOne": "“{platform}” is already installed",
+            "alreadyInstalledMany": {
+                "one": "{count} plugin already installed",
+                "other": "{count} plugins already installed"
+            },
+            "partial": "{installed} installed, {failed} failed",
+            "allFailed": "Installation failed"
+        },
+        "menu": {
+            "updateAll": "Update plugins",
+            "syncSubscriptions": "Sync subscriptions",
+            "multiSelect": "Batch manage",
+            "subscriptions": "Subscriptions"
+        },
+        "updating": "Updating plugins…",
+        "syncing": "Syncing subscriptions…",
+        "opInProgress": "A plugin operation is already in progress",
+        "updateResult": {
+            "updated": {
+                "one": "Updated {count} plugin",
+                "other": "Updated {count} plugins"
+            },
+            "allLatest": "All plugins are up to date",
+            "partial": "{updated} updated, {failed} failed",
+            "allFailed": "Update failed",
+            "empty": "No plugins to update"
+        },
+        "sorting": {
+            "title": "Sort plugins",
+            "a11y": {
+                "cancel": "Cancel reordering",
+                "confirm": "Done reordering",
+                "moveTop": "Move to top",
+                "moveUp": "Move up",
+                "moveDown": "Move down",
+                "entered": "Reordering mode"
+            }
+        },
+        "selecting": {
+            "title": {
+                "one": "{count} selected",
+                "other": "{count} selected"
+            },
+            "confirmUninstall": {
+                "one": "Uninstall {count} plugin?",
+                "other": "Uninstall {count} plugins?"
+            },
+            "uninstalledMany": {
+                "one": "Uninstalled {count} plugin",
+                "other": "Uninstalled {count} plugins"
+            },
+            "a11y": {
+                "exit": "Exit batch management",
+                "selectAll": "Select all",
+                "deselectAll": "Deselect all",
+                "uninstall": "Uninstall selected",
+                "update": "Update selected",
+                "entered": "Batch management mode"
+            }
+        },
+        "uninstalled": "Uninstalled {platform}",
+        "title": "Plugins",
+        "empty": "No plugins installed yet",
+        "redirectStatus": "Source redirected to {name}",
+        "noCapabilities": "No supported features",
+        "a11y": {
+            "enablePlugin": "Enable {name}",
+            "openDetails": "View plugin details and actions",
+            "viewUsage": "View usage guide for {name}",
+            "addPlugin": "Add plugin"
+        }
+    },
+    "pluginSubscriptions": {
+        "title": "Subscriptions",
+        "a11y": {
+            "add": "Add subscription"
+        },
+        "empty": {
+            "title": "No subscriptions yet",
+            "description": "Add a subscription to batch-install its plugins",
+            "action": "Add subscription"
+        },
+        "copyLink": "Copy subscription link",
+        "deleteConfirm": "Delete subscription “{name}”?"
+    },
+    "pluginSubscriptionPanel": {
+        "add": {
+            "title": "Add subscription"
+        },
+        "edit": {
+            "title": "Edit subscription"
+        },
+        "name": "Name",
+        "url": "Subscription URL",
+        "invalidUrl": "Enter a valid subscription URL (http or https)",
+        "duplicateUrl": "This subscription URL already exists"
+    },
+    "officialAccountPanel": {
+        "title": "一只猫头猫",
+        "scanHint": "Scan in WeChat to follow",
+        "a11y": {
+            "qr": "一只猫头猫 WeChat official account QR code"
+        }
+    },
+    "developerWordsPanel": {
+        "title": "A word from the developer",
+        "scanHint": "Scan to follow “一只猫头猫”",
+        "a11y": {
+            "qr": "一只猫头猫 WeChat official account QR code",
+            "linkHint": "Opens in another app"
+        }
+    },
+    "redistributionTermsPanel": {
+        "title": "Redistribution terms",
+        "a11y": {
+            "linkHint": "Opens in another app"
+        }
+    },
+    "thirdPartyLicensesPanel": {
+        "title": "Third-party licenses",
+        "platform": {
+            "js": "JavaScript",
+            "android": "Android",
+            "native": "Native library"
+        }
+    },
+    "appUpdateDialog": {
+        "title": "Version {version} is available",
+        "noDetails": "No release notes are available for this update",
+        "skipVersion": "Skip this version",
+        "otherDownloads": "Other links",
+        "downloadAddress": "Download link {number}"
+    },
+    "about": {
+        "versionCopied": "Version info copied",
+        "section": {
+            "author": "Author",
+            "feedback": "Feedback",
+            "channels": "Official channels",
+            "terms": "Open source & terms"
+        },
+        "author": {
+            "name": "maotoumao",
+            "developerWords": "A word from the developer"
+        },
+        "channel": {
+            "officialAccount": "WeChat Official Account",
+            "officialAccountName": "一只猫头猫",
+            "bilibili": "Bilibili",
+            "xiaohongshu": "Xiaohongshu"
+        },
+        "issue": "Report an issue",
+        "issueChannel": "GitHub Issue",
+        "update": {
+            "check": "Check for updates",
+            "upToDate": "You're on the latest version",
+            "checkFailed": "Update check failed, try again later"
+        },
+        "website": "Website",
+        "repository": "Source code",
+        "license": "License",
+        "redistributionTerms": "Redistribution terms",
+        "thirdPartyLicenses": "Third-party licenses",
+        "a11y": {
+            "version": "Version {version}",
+            "versionHint": "Double tap to copy version info",
+            "externalLinkHint": "Opens in another app",
+            "qrCodeHint": "Double tap to show the QR code",
+            "detailHint": "Double tap to read the full text"
+        }
+    },
+    "backupRestore": {
+        "failure": {
+            "unauthorized": "Authentication failed. Check your account and app password; some services do not accept the website login password.",
+            "forbidden": "The server denied access. Check the backup directory permissions.",
+            "notFound": "The remote file or directory was not found. Check the server address and backup path.",
+            "rateLimited": "Too many requests. Try again later.",
+            "storageFull": "The server has insufficient storage or quota.",
+            "unsupported": "The server does not support this request. Check the request method and status code in the error log."
+        },
+        "title": "Backup & restore",
+        "opInProgress": "Another backup operation is already in progress",
+        "export": {
+            "title": "Export",
+            "backup": "Export backup",
+            "destinations": "To the default download folder or WebDAV",
+            "exporting": "Exporting",
+            "savedToDownloads": "Saved to the default download folder",
+            "savedToWebdav": "Uploaded to WebDAV",
+            "failed": "Export failed, try again later",
+            "timedOut": "Export timed out: the server never responded. Check the WebDAV address and your network",
+            "needStoragePermission": "Storage permission is needed to save into the default download folder",
+            "storagePermissionBlocked": {
+                "title": "Turn on storage permission in Settings",
+                "message": "Storage permission was denied. Turn it on in system settings to save a backup.",
+                "confirm": "Open settings"
+            },
+            "interopWarning": {
+                "title": "Backup finished",
+                "message": "This backup is large or holds a lot of songs, so other devices or versions may not be able to read it."
+            }
+        },
+        "webdav": {
+            "title": "WebDAV",
+            "connection": "WebDAV connection",
+            "notConfigured": "Back up to your own server"
+        },
+        "restore": {
+            "title": "Restore",
+            "backup": "Restore backup",
+            "sources": "Read from a file, WebDAV, or a link",
+            "source": "Restore from",
+            "fromFile": "From a file",
+            "fromWebdav": "From WebDAV",
+            "fromUrl": "From a link",
+            "reading": "Reading backup",
+            "leftPage": "The backup was read, but you left the page. Come back and try again",
+            "urlPrompt": "Backup link",
+            "urlPlaceholder": "https://example.com/backup.json",
+            "urlConfirm": "Read backup",
+            "notBackup": {
+                "title": "Invalid backup",
+                "message": "Use a valid backup exported by MusicFree."
+            },
+            "corrupt": {
+                "title": "Invalid backup data",
+                "message": "The backup may be corrupted or incomplete. Try another backup source."
+            },
+            "tooLarge": {
+                "title": "Backup file too large",
+                "message": "Backup files cannot exceed 64 MiB."
+            },
+            "invalidUrl": {
+                "title": "Invalid link",
+                "message": "Enter a complete link starting with http:// or https://."
+            },
+            "failed": {
+                "title": "Couldn't read the backup",
+                "message": "Check the file, your network, or the WebDAV connection, then try again."
+            },
+            "timedOut": {
+                "title": "Read timed out",
+                "message": "The server never responded. Check the WebDAV address, port, and network, then try again; a wrong address looks the same"
+            },
+            "restoring": "Restoring backup",
+            "done": "Restored what you picked",
+            "failedTitle": "Restore failed",
+            "failedMessage": "An error occurred during the restore. Some content may have been restored; check the restored content."
+        },
+        "a11y": {
+            "exportHint": "Choose where the backup goes",
+            "restoreHint": "Choose where to read the backup from"
+        }
+    },
+    "restoreResult": {
+        "title": "Restore result",
+        "outcome": {
+            "clean": "Restore finished",
+            "partial": "Some content wasn't restored",
+            "allFailed": "Restore failed"
+        },
+        "section": {
+            "playlists": "Playlists",
+            "starredPlaylists": "Starred playlists",
+            "plugins": "Plugins",
+            "mediaMeta": "Song settings",
+            "settings": "Settings"
+        },
+        "status": {
+            "restored": "Restored",
+            "skipped": "Skipped",
+            "failed": "Failed"
+        },
+        "skipped": {
+            "absent": "Not included in this backup",
+            "notSelected": "Not selected"
+        },
+        "failure": {
+            "storageDegraded": "Device storage error; data can't be written",
+            "persistenceFailed": "Failed to write to this device",
+            "unknown": "Write failed"
+        },
+        "counts": {
+            "sep": ", ",
+            "nothing": "Nothing to restore",
+            "playlistsCreated": {
+                "one": "{count} playlist created",
+                "other": "{count} playlists created"
+            },
+            "musicAdded": {
+                "one": "{count} song added",
+                "other": "{count} songs added"
+            },
+            "musicDuplicates": {
+                "one": "{count} already there",
+                "other": "{count} already there"
+            },
+            "musicInvalid": {
+                "one": "{count} invalid",
+                "other": "{count} invalid"
+            },
+            "starredAdded": {
+                "one": "{count} added",
+                "other": "{count} added"
+            },
+            "starredSkipped": {
+                "one": "{count} already there",
+                "other": "{count} already there"
+            },
+            "pluginsInstalled": {
+                "one": "{count} installed",
+                "other": "{count} installed"
+            },
+            "pluginsSkipped": {
+                "one": "{count} already installed",
+                "other": "{count} already installed"
+            },
+            "pluginsFailed": {
+                "one": "{count} failed to install",
+                "other": "{count} failed to install"
+            },
+            "subscriptionsAdded": {
+                "one": "{count} subscription added",
+                "other": "{count} subscriptions added"
+            },
+            "subscriptionsSkipped": {
+                "one": "{count} subscription already there",
+                "other": "{count} subscriptions already there"
+            },
+            "alternativesAdded": {
+                "one": "{count} source redirect added",
+                "other": "{count} source redirects added"
+            },
+            "alternativesSkipped": {
+                "one": "{count} source redirect already there",
+                "other": "{count} source redirects already there"
+            },
+            "metaUpserted": {
+                "one": "{count} record restored",
+                "other": "{count} records restored"
+            },
+            "metaSkipped": {
+                "one": "{count} record skipped",
+                "other": "{count} records skipped"
+            },
+            "settingsApplied": {
+                "one": "{count} applied",
+                "other": "{count} applied"
+            },
+            "settingsSkipped": {
+                "one": "{count} skipped",
+                "other": "{count} skipped"
+            }
+        },
+        "localMediaIgnored": {
+            "one": "Skipped {count} local song record from another device because its file isn't on this device.",
+            "other": "Skipped {count} local song records from other devices because their files aren't on this device."
+        },
+        "a11y": {
+            "row": "{section}, {status}, {detail}"
+        }
+    },
+    "backupExportPanel": {
+        "title": "Export backup",
+        "toDownloads": "Save to Downloads",
+        "toWebdav": "Upload to WebDAV",
+        "content": "What to back up",
+        "contentAll": "Everything",
+        "contentSome": {
+            "one": "{count} kind picked",
+            "other": "{count} kinds picked"
+        }
+    },
+    "backupContentPanel": {
+        "title": "What to back up",
+        "note": "Everything is backed up by default. Pick just a few if you'd rather.",
+        "section": {
+            "playlists": "Playlists",
+            "playlistsHint": "Includes “Favorites”",
+            "starredPlaylists": "Starred playlists",
+            "plugins": "Plugins",
+            "mediaMeta": "Song settings",
+            "settings": "Settings"
+        },
+        "a11y": {
+            "sectionRow": "{section}, {hint}",
+            "keepOne": "At least one kind has to stay, so this one can't be turned off"
+        }
+    },
+    "restoreConfirmPanel": {
+        "pluginSources": {
+            "title": "Plugin and subscription sources",
+            "warning": "Restoring plugins downloads and runs code from these sources. Only continue if you trust them.",
+            "confirm": "I trust these sources"
+        },
+        "title": "Restore backup",
+        "source": {
+            "from": "From {platform} · {version}",
+            "unknownOrigin": "Source unknown",
+            "createdAt": "Backed up on {date}",
+            "unknownTime": "Backup time unknown",
+            "futureVersion": "This backup was created by a newer version, so some data may not be restorable"
+        },
+        "platform": {
+            "android": "Android",
+            "ios": "iOS",
+            "desktop": "Desktop"
+        },
+        "content": {
+            "sep": " · ",
+            "emptySection": "Nothing in it",
+            "playlists": {
+                "one": "{count} playlist",
+                "other": "{count} playlists"
+            },
+            "starredPlaylists": {
+                "one": "{count} starred playlist",
+                "other": "{count} starred playlists"
+            },
+            "plugins": { "one": "{count} plugin", "other": "{count} plugins" },
+            "subscriptions": {
+                "one": "{count} subscription",
+                "other": "{count} subscriptions"
+            },
+            "alternatives": {
+                "one": "{count} source redirect",
+                "other": "{count} source redirects"
+            },
+            "mediaMeta": {
+                "one": "Saved settings for {count} song",
+                "other": "Saved settings for {count} songs"
+            },
+            "settings": {
+                "one": "{count} setting",
+                "other": "{count} settings"
+            }
+        },
+        "section": {
+            "playlists": "Playlists",
+            "starredPlaylists": "Starred playlists",
+            "plugins": "Plugins",
+            "mediaMeta": "Song settings",
+            "settings": "Settings"
+        },
+        "mode": {
+            "title": "How to handle playlists",
+            "append": "Append to existing playlists",
+            "appendHint": "Playlists from the backup come in as new playlists; the default playlist is merged",
+            "overwrite": "Replace existing playlists",
+            "overwriteHint": "Playlists from the backup completely replace the existing ones"
+        },
+        "overwriteConfirm": {
+            "title": "Replace existing playlists",
+            "message": "This completely overwrites the playlists on this device and can't be undone. Continue?",
+            "confirm": "Replace"
+        },
+        "start": "Start restore",
+        "empty": "There's nothing in this backup to restore.",
+        "a11y": {
+            "modeValue": "How to handle playlists, currently {value}",
+            "modeHint": "Tap to change",
+            "sectionRow": "{section}, {summary}",
+            "keepOne": "At least one kind has to stay, so this one can't be turned off"
+        }
+    },
+    "webdavConnectionPanel": {
+        "passwordHint": "Use an app password if your provider requires one, not your website login password.",
+        "title": "WebDAV connection",
+        "pathNote": "Backups are stored at /MusicFree/MusicFreeBackup.json",
+        "serverUrl": "Server address",
+        "serverUrlPlaceholder": "https://example.com/dav",
+        "username": "Username",
+        "password": "Password",
+        "insecureWarning": "This address isn't HTTPS. Your username, password, and backup contents travel in the clear",
+        "test": "Test connection",
+        "testOk": "Connected",
+        "testFailed": "Connection failed: {reason}. You can still save these settings; MusicFree will try to connect again when WebDAV is used",
+        "testTimedOut": "Connection timed out: the server never responded. Check the address, port, and network, then try again. You can still save these settings"
+    },
+    "settings": {
+        "title": "Settings",
+        "a11y": {
+            "choiceValue": "{label}: {value}"
+        },
+        "qualityFallback": "When the preferred quality is unavailable",
+        "qualityFallbackOption": {
+            "asc": "Prefer higher quality",
+            "desc": "Prefer lower quality"
+        },
+        "playback": {
+            "section": "Playback",
+            "autoPlayWhenAppStart": "Resume playback on launch",
+            "mixWithOthers": "Allow playback with other apps",
+            "clickMusicInSearch": "Tapping a song in search results",
+            "clickMusicInSearchOption": {
+                "playMusic": "Play that song",
+                "playMusicAndReplace": "Play and replace the queue"
+            },
+            "autoStopWhenError": "Stop playback when a song fails",
+            "autoStopWhenErrorHint": "When off, skips to the next song",
+            "cellularNetwork": "Play over mobile data",
+            "cellularNetworkHint": "When off, songs that need a network connection won’t play on mobile data; local and downloaded songs are unaffected",
+            "tryChangeSourceWhenPlayFail": "Try another source when playback fails",
+            "tryChangeSourceWhenPlayFailHint": "Looks for a similar song from other plugins",
+            "quality": "Playback quality"
+        },
+        "download": {
+            "section": "Downloads",
+            "dir": "Download folder",
+            "dirReset": "Reset download folder",
+            "dirResetHint": "Back to the app's private folder",
+            "addToLibrary": "Add downloads to local music",
+            "dirResetConfirmTitle": "Reset download folder?",
+            "dirResetConfirmMessage": "Completed files won't be moved or deleted. Downloads that have already started will finish in the original folder.",
+            "dirChanged": "Download folder updated",
+            "dirChanging": "A folder change is still in progress — try again in a moment",
+            "dirInvalid": "That location can't be used as the download folder",
+            "dirPinFailed": "Couldn't record where the in-progress downloads live, so the folder wasn't changed — try again in a moment",
+            "dirNotWritable": "Can't write to that folder — pick another location or check the file access permission",
+            "dirStaleFiles": "Couldn't confirm that folder is clean (leftover download files may remain), so the switch was cancelled to avoid corrupting files — clear them manually and retry, or pick another location",
+            "dirUnsupported": "Downloads aren't supported on this platform",
+            "dirNeedsPermission": "File access permission is required to download into a folder you pick",
+            "useCellularNetwork": "Download over mobile data",
+            "useCellularNetworkHint": "When off, downloads wait for Wi-Fi",
+            "quality": "Download quality",
+            "maxConcurrent": "Maximum simultaneous downloads",
+            "interval": "Task start interval",
+            "intervalHint": "Controls how often downloads start to avoid sending too many source requests at once. With a delay, the number of simultaneous downloads may temporarily stay below the limit.",
+            "intervalNone": "No delay",
+            "intervalSeconds": {
+                "one": "{count} second",
+                "other": "{count} seconds"
+            }
+        },
+        "lyric": {
+            "section": "Lyrics",
+            "autoSearch": "Search for missing lyrics automatically",
+            "autoSearchHint": "When the current source has no lyrics, searches other enabled plugins in order for a matching song",
+            "floatingLyric": "Show floating lyrics",
+            "floatingLyricSettings": "Floating lyrics settings"
+        },
+        "playlist": {
+            "section": "Playlists & history",
+            "defaultOrder": "Default song order for new playlists",
+            "maxHistory": "Recently played items to keep"
+        },
+        "interface": {
+            "section": "Interface",
+            "defaultView": "Default view on the now playing page",
+            "defaultViewOption": {
+                "cover": "Cover",
+                "lyric": "Lyrics"
+            },
+            "keepScreenAwake": "Keep the screen on while now playing is open"
+        },
+        "plugin": {
+            "section": "Plugins",
+            "autoUpdate": "Update plugins automatically on launch",
+            "autoUpdateHint": "Checks at most once a day, runs quietly in the background, and only updates enabled plugins",
+            "allowDowngrade": "Let older plugins replace newer ones",
+            "allowDowngradeHint": "When on, an older build of a plugin can replace the newer one already installed",
+            "ignoreAppVersion": "Ignore the plugin's app compatibility requirement",
+            "ignoreAppVersionHint": "Enable plugins even when the app version they declare support for does not match this app; they may not work correctly"
+        },
+        "cache": {
+            "section": "Cache",
+            "musicLimit": "Music cache limit",
+            "restartHint": "Takes effect after fully quitting and reopening the app",
+            "clearing": "Clearing",
+            "music": {
+                "clear": "Clear music cache",
+                "confirm": "This only clears music cached while streaming. Downloaded songs are not deleted. Content currently in use may remain temporarily.",
+                "cleared": "Music cache cleared"
+            },
+            "image": {
+                "clear": "Clear image cache",
+                "confirm": "Cover art and avatars will be loaded again the next time they appear.",
+                "cleared": "Image cache cleared"
+            }
+        },
+        "permission": {
+            "section": "Permissions",
+            "granted": "Granted",
+            "notGranted": "Not granted",
+            "battery": "Ignore battery optimization",
+            "batteryHint": "Without it the system may stop playback in the background",
+            "storage": "Storage access",
+            "storageHint": "Needed to scan local music on this device",
+            "overlay": "Display over other apps",
+            "overlayHint": "Needed to show floating lyrics"
+        }
+    }
+}

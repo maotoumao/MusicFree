@@ -1,33 +1,9 @@
-import { atom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect } from "react";
-import { Dimensions } from "react-native";
+import { useWindowDimensions } from 'react-native';
 
-const orientationAtom = atom<"vertical" | "horizontal">("vertical");
+export type Orientation = 'portrait' | 'landscape';
 
-export function useListenOrientationChange() {
-    const setOrientationAtom = useSetAtom(orientationAtom);
-    useEffect(() => {
-        const windowSize = Dimensions.get("window");
-        const { width, height } = windowSize;
-        if (width < height) {
-            setOrientationAtom("vertical");
-        } else {
-            setOrientationAtom("horizontal");
-        }
-        const subscription = Dimensions.addEventListener("change", e => {
-            if (e.window.width < e.window.height) {
-                setOrientationAtom("vertical");
-            } else {
-                setOrientationAtom("horizontal");
-            }
-        });
-
-        return () => {
-            subscription?.remove();
-        };
-    }, []);
-}
-
-export default function useOrientation() {
-    return useAtomValue(orientationAtom);
+/** 当前朝向（反应式：随旋转 / 折叠屏展开 / 分屏的窗口尺寸变化更新） */
+export function useOrientation(): Orientation {
+    const { width, height } = useWindowDimensions();
+    return width >= height ? 'landscape' : 'portrait';
 }

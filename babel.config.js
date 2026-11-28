@@ -1,21 +1,17 @@
 module.exports = {
+    // babel-preset-expo 内含 @react-native/babel-preset（expo 模块 + 虚拟入口需要）
     presets: ['babel-preset-expo'],
     plugins: [
+        // 路径别名 @/* → src/*（与 tsconfig paths 对齐）
         [
             'module-resolver',
             {
-                root: ['./'],
                 alias: {
                     '^@/(.+)': './src/\\1',
-                    'webdav': "webdav/dist/react-native"
                 },
             },
         ],
-        'react-native-reanimated/plugin',
+        // worklets 插件必须放最后
+        'react-native-worklets/plugin',
     ],
-    env: {
-        production: {
-            plugins: ['transform-remove-console'],
-        },
-    },
 };

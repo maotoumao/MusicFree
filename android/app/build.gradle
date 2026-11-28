@@ -2,9 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
-import com.android.build.OutputFile
 import groovy.json.JsonSlurper
-
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -23,9 +21,9 @@ react {
 
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
-    //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
+    //   skip the bundling of the JS bundle and the assets. Default is "debug", "debugOptimized".
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // debuggableVariants = ["liteDebug", "prodDebug"]
+    // debuggableVariants = ["liteDebug", "liteDebugOptimized", "prodDebug", "prodDebugOptimized"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -56,38 +54,26 @@ react {
 
     /* Autolinking */
     autolinkLibrariesWithApp()
-
-    //
-    // Added by install-expo-modules
-    entryFile = file(["node", "-e", "require('expo/scripts/resolveAppEntry')", rootDir.getAbsoluteFile().getParentFile().getAbsolutePath(), "android", "absolute"].execute(null, rootDir).text.trim())
-    cliFile = new File(["node", "--print", "require.resolve('@expo/cli')"].execute(null, rootDir).text.trim())
-    bundleCommand = "export:embed"
-    //
-    // Added by install-expo-modules
-    entryFile = file(["node", "-e", "require('expo/scripts/resolveAppEntry')", rootDir.getAbsoluteFile().getParentFile().getAbsolutePath(), "android", "absolute"].execute(null, rootDir).text.trim())
-    cliFile = new File(["node", "--print", "require.resolve('@expo/cli')"].execute(null, rootDir).text.trim())
-    bundleCommand = "export:embed"
 }
 
 /**
- * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+ * release 是否走 R8 裁剪：同时控制字节码裁剪混淆与资源裁剪，两者必须同开同关
  */
-def enableProguardInReleaseBuilds = false
+def enableReleaseShrinking = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *
  * For example, to use the international variant, you can use:
- * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
  *
  * The international variant includes ICU i18n library and necessary data
  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
  * give correct results when using with locales other than en-US. Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
+def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
-// !! Add lines
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('keystore.properties')
 if (keystorePropertiesFile.exists()) {
@@ -100,30 +86,22 @@ static def getVersion() {
     return packageJson["version"]
 }
 
-// static def versionStringToCode(String version) {
-//     def parts = version.split('\\.')
-//     def versionCode = 0
-//     def multiplier = 1000000
-//
-//     parts.each { part ->
-//         versionCode += part.toInteger() * multiplier
-//         multiplier /= 1000
-//     }
-//
-//     return versionCode.intValue()
-// }
-
 def appVersion = getVersion()
 def appVersionCode = 400011
-
 
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "fun.upup.musicfree"
+    // CMakeLists.txt 的路径由 React Native Gradle 插件注入，这里只固定版本
+    externalNativeBuild {
+        cmake {
+            version rootProject.ext.cmakeVersion
+        }
+    }
 
+    namespace "fun.upup.musicfree"
     defaultConfig {
         applicationId "fun.upup.musicfree"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -138,8 +116,7 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        // !! Add lines
-         release {
+        release {
             storeFile file(keystoreProperties['RELEASE_STORE_FILE'])
             storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
             keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
@@ -147,16 +124,13 @@ android {
         }
     }
     splits {
-            abi {
-                reset()
-                enable true
-                universalApk true
-                include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-            }
+        abi {
+            reset()
+            enable true
+            universalApk true
+            include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
     }
-
-
-
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -165,7 +139,9 @@ android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
-            minifyEnabled enableProguardInReleaseBuilds
+            minifyEnabled enableReleaseShrinking
+            // 资源裁剪依赖 R8 的可达性分析，只在 minify 开启时生效
+            shrinkResources enableReleaseShrinking
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
@@ -175,17 +151,20 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
+    // 音频 tag 读写引擎（TagLib + JNI + AudioTagStore，RN-free 库模块）
+    implementation project(':audiotags')
+
+    // Media3 (ExoPlayer + MediaSession)。
+    def media3Version = "1.10.1"
+    implementation("androidx.media3:media3-exoplayer:$media3Version")
+    implementation("androidx.media3:media3-exoplayer-hls:$media3Version")
+    implementation("androidx.media3:media3-exoplayer-dash:$media3Version")
+    implementation("androidx.media3:media3-session:$media3Version")
+    implementation("androidx.media3:media3-datasource-okhttp:$media3Version")
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
     }
-
-    // !! Add lines
-    implementation project(':react-native-fs')
-    implementation 'com.facebook.fresco:animated-gif:2.5.0'
-    // https://mvnrepository.com/artifact/net.jthink/jaudiotagger
-    implementation 'net.jthink:jaudiotagger:2.2.5'
-    implementation 'androidx.core:core-splashscreen:1.0.0'
 }
-

@@ -1,0 +1,17 @@
+This application includes TagLib (https://taglib.org/), used for reading and
+writing audio metadata.
+
+TagLib is copyright of the TagLib contributors (see the AUTHORS file and the
+per-file copyright notices in the bundled source) and is dual-licensed under the
+GNU Lesser General Public License version 2.1 (LGPL-2.1) or the Mozilla Public
+License version 1.1 (MPL-1.1). MusicFree uses TagLib under the LGPL-2.1.
+
+The complete corresponding source code of TagLib, pinned to the v2.3 release, is
+included in this repository as a git submodule at
+  cpp/taglib-engine/third_party/taglib
+allowing users to relink the application with a modified version of TagLib as
+required by the LGPL-2.1.
+
+TagLib bundles utfcpp (https://github.com/nemtrif/utfcpp), included as a nested
+submodule at cpp/taglib-engine/third_party/taglib/3rdparty/utfcpp and distributed
+under the Boost Software License 1.0.

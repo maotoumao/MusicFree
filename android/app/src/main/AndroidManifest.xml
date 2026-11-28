@@ -1,167 +1,126 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="fun.upup.musicfree">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher_round"
+      android:enableOnBackInvokedCallback="false"
       android:allowBackup="false"
       android:theme="@style/AppTheme"
-      android:supportsRtl="true"
-      android:requestLegacyExternalStorage="true"
       android:usesCleartextTraffic="true"
+      android:requestLegacyExternalStorage="true"
       android:extractNativeLibs="true"
-    >
+      android:supportsRtl="true">
       <activity
         android:name=".MainActivity"
-        android:theme="@style/Theme.App.SplashScreen"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
         android:launchMode="singleTask"
+                android:theme="@style/Theme.App.SplashScreen"
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
+        <!-- 多窗口 / 自由窗口的最小尺寸：低于此系统会加黑边而不是继续压缩窗口。
+             播放详情页的横向账要求内容宽 ≥ 200dp（五个 44 命中壳），加上左右安全区与
+             内距，窗口宽低于 320dp 就装不下；高度取 Android 自己的 220dp 地板。
+             不声明的话自由窗口能被拖到 220 × 220，那时传输控件会横向溢出。
+             判据与降级见 docs/design/music-detail.md -->
+        <layout
+          android:minWidth="320dp"
+          android:minHeight="220dp" />
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="musicfree" android:host="app"/>
-              <data android:scheme="musicfree" android:host="install"/>
-          </intent-filter>          
-          <!-- 处理音频文件 -->
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="file" />
-              <data android:mimeType="audio/*" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="content" />
-              <data android:mimeType="audio/*" />
-          </intent-filter>
-          <!-- 处理特定音频格式 -->
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="file" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.mp3" />
-              <data android:pathPattern=".*\\.MP3" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="file" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.flac" />
-              <data android:pathPattern=".*\\.FLAC" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="file" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.m4a" />
-              <data android:pathPattern=".*\\.M4A" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="file" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.wav" />
-              <data android:pathPattern=".*\\.WAV" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="content" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.mp3" />
-              <data android:pathPattern=".*\\.MP3" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="content" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.flac" />
-              <data android:pathPattern=".*\\.FLAC" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="content" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.m4a" />
-              <data android:pathPattern=".*\\.M4A" />
-          </intent-filter>          
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="content" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.wav" />
-              <data android:pathPattern=".*\\.WAV" />
-          </intent-filter>
-          <!-- 处理JavaScript文件 -->
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="file" />
-              <data android:mimeType="text/javascript" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="content" />
-              <data android:mimeType="text/javascript" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="file" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.js" />
-              <data android:pathPattern=".*\\.JS" />
-          </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="content" />
-              <data android:mimeType="*/*" />
-              <data android:pathPattern=".*\\.js" />
-              <data android:pathPattern=".*\\.JS" />
-          </intent-filter>
+        <!-- 应用内 deep link -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="musicfree" android:host="app" />
+            <data android:scheme="musicfree" android:host="install" />
+        </intent-filter>
+        <!-- 处理音频文件
+             只按 MIME 匹配：filter 未声明 host 时 Android 会忽略全部 path 属性，
+             故 `*/* + pathPattern` 形式的按扩展名过滤实为接收任意文件，不可用 -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="file" />
+            <data android:mimeType="audio/*" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="content" />
+            <data android:mimeType="audio/*" />
+        </intent-filter>
+        <!-- 处理 JavaScript 文件 -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="file" />
+            <data android:mimeType="text/javascript" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="content" />
+            <data android:mimeType="text/javascript" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="file" />
+            <data android:mimeType="*/*" />
+            <data android:pathPattern=".*\\.js" />
+            <data android:pathPattern=".*\\.JS" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="content" />
+            <data android:mimeType="*/*" />
+            <data android:pathPattern=".*\\.js" />
+            <data android:pathPattern=".*\\.JS" />
+        </intent-filter>
       </activity>
+
+      <!-- Media3 前台播放服务。exported=true 供系统媒体中心/媒体恢复/Android Auto 发现绑定；
+           controller 准入由 MediaSession.Callback.onConnect 控制。 -->
+      <service
+        android:name=".audio.MusicFreeAudioService"
+        android:exported="true"
+        android:foregroundServiceType="mediaPlayback">
+        <intent-filter>
+          <action android:name="androidx.media3.session.MediaSessionService" />
+        </intent-filter>
+      </service>
+
+      <!-- 下载前台服务：dataSync 类型，仅活动下载时存在 -->
+      <service
+        android:name=".download.MusicFreeDownloadService"
+        android:enabled="true"
+        android:exported="false"
+        android:foregroundServiceType="dataSync" />
     </application>
 </manifest>

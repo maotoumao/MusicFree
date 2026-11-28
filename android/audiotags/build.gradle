@@ -1,0 +1,44 @@
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+
+// RN-free 原生 tag 能力模块：TagLib 构建 + JNI + 纯 Kotlin 绑定（AudioTagStore 引擎在 M2b 补）
+// 不依赖 React Native，供前台 TurboModule 与未来后台 Service 共用
+android {
+    namespace "fun.upup.musicfree.audiotags"
+    ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // JNI 反向引用的类名 / 方法名不能被 R8 改动，规则随 AAR 传递给接入方
+        consumerProguardFiles "proguard-rules.pro"
+
+        externalNativeBuild {
+            cmake {
+                // 16KB page size 对齐（NDK r27 opt-in；r28+ 默认）
+                // STL 与 RN 一致用 c++_shared（同进程多个 native .so 共用一份 runtime）
+                arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+                          "-DANDROID_STL=c++_shared"
+            }
+        }
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+            version rootProject.ext.cmakeVersion
+        }
+    }
+}
+
+dependencies {
+    androidTestImplementation "androidx.core:core:1.13.1"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test:runner:1.5.2"
+}

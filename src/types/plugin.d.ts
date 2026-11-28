@@ -1,163 +1,179 @@
-declare namespace IPlugin {
-    export interface IMediaSourceResult {
-        headers?: Record<string, string>;
-        /** 兜底播放 */
-        url?: string;
-        /** UA */
-        userAgent?: string;
-        /** 音质 */
-        quality?: IMusic.IQualityKey;
-    }
+import type { AlbumItemBase } from './album';
+import type { ArtistItem, ArtistMediaType } from './artist';
+import type { RawLyric } from './lyric';
+import type { MediaType } from './media';
+import type { LyricItem, MediaSource, MusicItem, QualityKey } from './music';
+import type { PlaylistGroup, PlaylistItem, PlaylistItemBase } from './playlist';
 
-    export interface ISearchResult<T extends ICommon.SupportMediaType> {
-        isEnd?: boolean;
-        data: ICommon.SupportMediaItemBase[T][];
-    }
+/** 分页响应 */
+export interface PaginationResponse<T> {
+    isEnd?: boolean;
+    data?: T[];
+}
 
-    export type ISearchResultType = ICommon.SupportMediaType;
+/** 推荐 tag：只需 id（+可选 title），允许插件携带额外字段原样回传 */
+export interface RecommendTag {
+    id: string;
+    title?: string;
+    [k: string]: unknown;
+}
 
-    type ISearchFunc = <T extends ICommon.SupportMediaType>(
+/** 一组推荐 tag（分类分组） */
+export interface RecommendTagGroup {
+    title?: string;
+    data: RecommendTag[];
+}
+
+/** 评论（getMusicComments） */
+export interface Comment {
+    id?: string;
+    nickName: string;
+    avatar?: string;
+    comment: string;
+    /** 点赞数，只读展示；协议无点赞能力 */
+    like?: number;
+    /** 发表时间（毫秒时间戳），归一后的规范字段，UI 只读这个 */
+    createdAt?: number;
+    /**
+     * 发表时间的插件协议拼写，属对外 wire 契约不可改名
+     * 插件按此名返回，归一时同步到 createdAt
+     *
+     * @deprecated 仅供插件侧填写与归一读取，应用内一律用 createdAt
+     */
+    createAt?: number;
+    location?: string;
+    /** 回复；只保留一层，更深层级在归一时裁掉 */
+    replies?: Comment[];
+}
+
+/** 插件用户自定义变量 */
+export interface UserVariable {
+    key: string;
+    name?: string;
+    hint?: string;
+}
+
+/** 媒体类型 → item 映射（search 泛型用） */
+export interface MediaItemByType {
+    music: MusicItem;
+    album: AlbumItemBase;
+    artist: ArtistItem;
+    playlist: PlaylistItemBase;
+    lyric: LyricItem;
+}
+
+export interface SearchResult<T extends MediaType> {
+    isEnd?: boolean;
+    data: MediaItemByType[T][];
+}
+export interface AlbumInfoResult {
+    isEnd?: boolean;
+    albumItem?: Partial<AlbumItemBase>;
+    musicList?: MusicItem[];
+}
+export interface PlaylistInfoResult {
+    isEnd?: boolean;
+    playlistItem?: Partial<PlaylistItemBase>;
+    musicList?: MusicItem[];
+}
+/** @deprecated 用 PlaylistInfoResult（配 getPlaylistInfo） */
+export interface SheetInfoResult {
+    isEnd?: boolean;
+    /** @deprecated 用 PlaylistInfoResult.playlistItem */
+    sheetItem?: Partial<PlaylistItemBase>;
+    musicList?: MusicItem[];
+}
+export interface TopListInfoResult {
+    isEnd?: boolean;
+    topListItem?: Partial<PlaylistItemBase>;
+    musicList?: MusicItem[];
+}
+export interface RecommendPlaylistTagsResult {
+    pinned?: RecommendTag[];
+    data?: RecommendTagGroup[];
+}
+/** @deprecated 用 RecommendPlaylistTagsResult */
+export interface RecommendSheetTagsResult {
+    pinned?: RecommendTag[];
+    data?: RecommendTagGroup[];
+}
+
+/**
+ * 插件定义：插件模块导出的契约
+ * 方法名 / 签名与桌面版 + 既有插件生态对齐（wire 契约）
+ */
+export interface PluginDefinition {
+    platform: string;
+    version?: string;
+    appVersion?: string;
+    srcUrl?: string;
+    primaryKey?: string[];
+    /** @deprecated 改用 getMediaSource 结果的 maxAge 控制 URL 新鲜度 */
+    cacheControl?: 'cache' | 'no-cache' | 'no-store';
+    defaultSearchType?: MediaType;
+    supportedSearchType?: MediaType[];
+    author?: string;
+    description?: string;
+    userVariables?: UserVariable[];
+    hints?: Record<string, string[]>;
+
+    search?<T extends MediaType>(
         query: string,
         page: number,
         type: T,
-    ) => Promise<ISearchResult<T>>;
-
-    type IGetArtistWorksFunc = <T extends IArtist.ArtistMediaType>(
-        artistItem: IArtist.IArtistItem,
+    ): Promise<SearchResult<T>>;
+    getMediaSource?(
+        musicItem: MusicItem,
+        quality: QualityKey,
+    ): Promise<MediaSource | null>;
+    getMusicInfo?(musicItem: MusicItem): Promise<Partial<MusicItem> | null>;
+    getLyric?(musicItem: MusicItem): Promise<RawLyric | null>;
+    getAlbumInfo?(
+        albumItem: AlbumItemBase,
+        page: number,
+    ): Promise<AlbumInfoResult | null>;
+    getArtistWorks?<T extends ArtistMediaType>(
+        artistItem: ArtistItem,
         page: number,
         type: T,
-    ) => Promise<ISearchResult<T>>;
+    ): Promise<SearchResult<T>>;
+    getTopLists?(): Promise<PlaylistGroup[]>;
+    getTopListDetail?(
+        topListItem: PlaylistItemBase,
+        page: number,
+    ): Promise<TopListInfoResult>;
+    getMusicComments?(
+        musicItem: MusicItem,
+        page?: number,
+    ): Promise<PaginationResponse<Comment>>;
+    importMusicItem?(urlLike: string): Promise<MusicItem | null>;
 
-    interface IUserVariable {
-        /** 键 */
-        key: string;
-        /** 名称 */
-        name?: string;
-        /** 提示文案 */
-        hint?: string;
-    }
-
-    interface IAlbumInfoResult {
-        isEnd?: boolean;
-        albumItem?: IAlbum.IAlbumItemBase;
-        musicList?: IMusic.IMusicItem[];
-    }
-
-    interface ISheetInfoResult {
-        isEnd?: boolean;
-        sheetItem?: IMusic.IMusicSheetItemBase;
-        musicList?: IMusic.IMusicItem[];
-    }
-
-    interface ITopListInfoResult {
-        isEnd?: boolean;
-        topListItem?: IMusic.IMusicSheetItem;
-        musicList?: IMusic.IMusicItem[];
-    }
-
-    interface IGetRecommendSheetTagsResult {
-        // 固定的tag
-        pinned?: IMusic.IMusicSheetItemBase[];
-        data?: IMusic.IMusicSheetGroupItem[];
-    }
-
-    interface IPluginDefine {
-        /** 来源名 */
-        platform: string;
-        /** 匹配的版本号 */
-        appVersion?: string;
-        /** 插件版本 */
-        version?: string;
-        /** 远程更新的url */
-        srcUrl?: string;
-        /** 主键，会被存储到mediameta中 */
-        primaryKey?: string[];
-        /** 默认搜索类型 */
-        defaultSearchType?: ICommon.SupportMediaType;
-        /** 有效搜索类型 */
-        supportedSearchType?: ICommon.SupportMediaType[];
-        /** 插件缓存控制 */
-        cacheControl?: "cache" | "no-cache" | "no-store";
-        /** 插件作者 */
-        author?: string;
-        /** 插件描述，支持markdown */
-        description?: string;
-        /** 用户自定义输入 */
-        userVariables?: IUserVariable[];
-        /** 提示文本 */
-        hints?: Record<string, string[]>;
-        /** 搜索 */
-        search?: ISearchFunc;
-        /** 获取根据音乐信息获取url */
-        getMediaSource?: (
-            musicItem: IMusic.IMusicItemBase,
-            quality: IMusic.IQualityKey,
-        ) => Promise<IMediaSourceResult | null>;
-        /** 根据主键去查询歌曲信息 */
-        getMusicInfo?: (
-            musicBase: ICommon.IMediaBase,
-        ) => Promise<Partial<IMusic.IMusicItem> | null>;
-        /** 获取歌词 */
-        getLyric?: (
-            musicItem: IMusic.IMusicItemBase,
-        ) => Promise<ILyric.ILyricSource | null>;
-        /** 获取专辑信息，里面的歌曲分页 */
-        getAlbumInfo?: (
-            albumItem: IAlbum.IAlbumItemBase,
-            page: number,
-        ) => Promise<IAlbumInfoResult | null>;
-        /** 获取歌单信息，有分页 */
-        getMusicSheetInfo?: (
-            sheetItem: IMusic.IMusicSheetItem,
-            page: number,
-        ) => Promise<ISheetInfoResult | null>;
-        /** 获取作品，有分页 */
-        getArtistWorks?: IGetArtistWorksFunc;
-        /** 导入歌单 */
-        // todo: 数据结构应该是IMusicSheetItem
-        importMusicSheet?: (
-            urlLike: string,
-        ) => Promise<IMusic.IMusicItem[] | null>;
-        /** 导入单曲 */
-        importMusicItem?: (
-            urlLike: string,
-        ) => Promise<IMusic.IMusicItem | null>;
-        /** 获取榜单 */
-        getTopLists?: () => Promise<IMusic.IMusicSheetGroupItem[]>;
-        /** 获取榜单详情 */
-        getTopListDetail?: (
-            topListItem: IMusic.IMusicSheetItemBase,
-            page: number,
-        ) => Promise<ITopListInfoResult>;
-        /** 获取热门歌单tag */
-        getRecommendSheetTags?: () => Promise<IGetRecommendSheetTagsResult>;
-        /** 歌单列表 */
-        getRecommendSheetsByTag?: (
-            tag: ICommon.IUnique,
-            page?: number,
-        ) => Promise<ICommon.PaginationResponse<IMusic.IMusicSheetItemBase>>;
-        /** 获取评论 */
-        getMusicComments?: (
-            musicItem: IMusic.IMusicItem,
-            page?: number
-        ) => Promise<ICommon.PaginationResponse<IMedia.IComment>>;
-    }
-
-    export interface IPluginInstance extends IPluginDefine {
-        /** 内部属性 */
-        /** 插件路径 */
-        _path: string;
-    }
-
-    type R = Required<IPluginInstance>;
-    export type IPluginInstanceMethods = {
-        [K in keyof R as R[K] extends (...args: any) => any ? K : never]: R[K];
-    };
-
-    /** 插件其他属性 */
-    export type IPluginMeta = {
-        order: number;
-        userVariables: Record<string, string>;
-        enabled?: boolean;
-    };
+    /** 歌单详情（拉取曲目列表） */
+    getPlaylistInfo?(
+        playlist: PlaylistItemBase,
+        page: number,
+    ): Promise<PlaylistInfoResult | null>;
+    /** @deprecated 用 getPlaylistInfo */
+    getMusicSheetInfo?(
+        sheetItem: PlaylistItem,
+        page: number,
+    ): Promise<SheetInfoResult | null>;
+    /** 导入歌单（从分享链接） */
+    importPlaylist?(urlLike: string): Promise<MusicItem[] | null>;
+    /** @deprecated 用 importPlaylist */
+    importMusicSheet?(urlLike: string): Promise<MusicItem[] | null>;
+    /** 推荐歌单分类标签 */
+    getRecommendPlaylistTags?(): Promise<RecommendPlaylistTagsResult>;
+    /** @deprecated 用 getRecommendPlaylistTags */
+    getRecommendSheetTags?(): Promise<RecommendSheetTagsResult>;
+    /** 按标签取推荐歌单 */
+    getRecommendPlaylistsByTag?(
+        tag: RecommendTag,
+        page?: number,
+    ): Promise<PaginationResponse<PlaylistItemBase>>;
+    /** @deprecated 用 getRecommendPlaylistsByTag */
+    getRecommendSheetsByTag?(
+        tag: RecommendTag,
+        page?: number,
+    ): Promise<PaginationResponse<PlaylistItemBase>>;
 }

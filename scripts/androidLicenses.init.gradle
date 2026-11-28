@@ -1,0 +1,123 @@
+import groovy.json.JsonOutput
+import groovy.xml.XmlSlurper
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.maven.MavenModule
+import org.gradle.maven.MavenPomArtifact
+
+import java.util.zip.ZipFile
+
+/**
+ * 导出 :app 的 release 运行时依赖闭包与各自的许可信息，供 scripts/licenses.mjs 生成清单
+ *
+ * 几处踩过的坑：
+ * - 依赖图只走 resolutionResult。一旦去解析 artifact 文件，AGP 的多 variant
+ *   会因为没指定 artifactType 而报歧义
+ * - POM 必须走 ArtifactResolutionQuery 取。Gradle 把模块元数据存进了二进制缓存，
+ *   modules-2/files-2.1 下只有 jar/aar，直接翻目录找 .pom 会漏掉一半
+ * - Apache-2.0 要求转发上游的 NOTICE，故顺带读出 artifact 里的 META-INF/NOTICE
+ *
+ * 用法（不改仓库里的构建文件，靠 -I 挂进来）：
+ *   gradlew -I ../scripts/androidLicenses.init.gradle :app:dumpReleaseLicenses -PlicenseOut=<绝对路径>
+ */
+gradle.projectsEvaluated {
+    def app = gradle.rootProject.findProject(':app')
+    if (app == null) {
+        return
+    }
+    app.tasks.register('dumpReleaseLicenses') {
+        doLast {
+            def ids = app.configurations
+                .getByName('releaseRuntimeClasspath')
+                .incoming
+                .resolutionResult
+                .allComponents
+                .findAll { it.id instanceof ModuleComponentIdentifier }
+                .collect { it.id }
+
+            def poms = [:]
+            app.dependencies.createArtifactResolutionQuery()
+                .forComponents(ids)
+                .withArtifacts(MavenModule, MavenPomArtifact)
+                .execute()
+                .resolvedComponents
+                .each { component ->
+                    component.getArtifacts(MavenPomArtifact).each { artifact ->
+                        if (artifact instanceof ResolvedArtifactResult) {
+                            poms[component.id.displayName] = artifact.file
+                        }
+                    }
+                }
+
+            def cacheRoot = new File(
+                gradle.gradleUserHomeDir,
+                'caches/modules-2/files-2.1'
+            )
+
+            def rows = ids.collect { id ->
+                def licenses = []
+                def homepage = ''
+                def scm = ''
+                def pomFile = poms[id.displayName]
+                if (pomFile != null) {
+                    def pom = new XmlSlurper().parse(pomFile)
+                    licenses = pom.licenses.license.collect {
+                        [name: it.name.text().trim(), url: it.url.text().trim()]
+                    }
+                    homepage = pom.url.text().trim()
+                    scm = pom.scm.url.text().trim()
+                }
+
+                // artifact 自带的 NOTICE / LICENSE：Apache-2.0 §4(d) 要求随分发转发
+                def embedded = [:]
+                def embeddedErrors = []
+                def moduleDir = new File(
+                    cacheRoot,
+                    "${id.group}/${id.module}/${id.version}"
+                )
+                if (moduleDir.isDirectory()) {
+                    moduleDir.eachFileRecurse { file ->
+                        if (!(file.name ==~ /(?i).*\.(jar|aar)$/)
+                            || file.name ==~ /(?i).*-(sources|javadoc)\.jar$/) {
+                            return
+                        }
+                        try {
+                            new ZipFile(file).withCloseable { zip ->
+                                zip.entries().toList().each { entry ->
+                                    if (entry.name ==~ /(?i)META-INF\/(NOTICE|LICENSE)(\.txt|\.md)?/) {
+                                        embedded[entry.name] = zip
+                                            .getInputStream(entry)
+                                            .getText('UTF-8')
+                                    }
+                                }
+                            }
+                        } catch (Exception error) {
+                            // 读不动就记下来，让 node 侧 fail-closed 逮住，别让 NOTICE 静默丢失
+                            embeddedErrors << "${file.name}: ${error.message}"
+                        }
+                    }
+                }
+
+                [
+                    group        : id.group,
+                    name         : id.module,
+                    version      : id.version,
+                    licenses     : licenses,
+                    homepage     : homepage,
+                    scm          : scm,
+                    embedded     : embedded,
+                    embeddedErrors: embeddedErrors,
+                ]
+            }.sort { "${it.group}:${it.name}" }
+
+            def target = new File(
+                project.hasProperty('licenseOut')
+                    ? project.licenseOut
+                    : 'android-licenses.json'
+            )
+            target.parentFile?.mkdirs()
+            target.setText(JsonOutput.toJson(rows), 'UTF-8')
+            println "dumpReleaseLicenses: ${rows.size()} artifacts -> ${target}"
+        }
+    }
+}

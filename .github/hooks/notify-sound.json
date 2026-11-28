@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "windows": "powershell -NoProfile -Command \"(New-Object Media.SoundPlayer 'C:\\Windows\\Media\\Alarm02.wav').PlaySync()\"",
+        "osx": "afplay /System/Library/Sounds/Glass.aiff",
+        "linux": "paplay /usr/share/sounds/freedesktop/stereo/complete.oga",
+        "timeout": 30
+      }
+    ]
+  }
+}

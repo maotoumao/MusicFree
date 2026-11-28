@@ -1,0 +1,14 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- 测试用 FileProvider：把 cacheDir 里的文件暴露成 content:// 以覆盖 content 来源 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="fun.upup.musicfree.audiotags.test.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/audiotags_test_file_paths" />
+        </provider>
+    </application>
+</manifest>

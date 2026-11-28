@@ -1,22 +1,33 @@
-import React from "react";
-import TopListBody from "./components/topListBody";
-import MusicBar from "@/components/musicBar";
-import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView";
-import globalStyle from "@/constants/globalStyle";
-import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
-import AppBar from "@/components/base/appBar";
-import { useI18N } from "@/core/i18n";
+import { useCallback } from 'react';
 
-export default function TopList() {
-    const { t } = useI18N();
+import { AppBar } from '@/components/layout/AppBar';
+import { Screen } from '@/components/layout/Screen';
+import { useBackAction } from '@/hooks/useBackAction';
+import { useT } from '@/i18n';
+import { MusicBar } from '@/widgets/MusicBar';
+import { PluginSourcePager } from '@/widgets/PluginSourcePager';
 
+import { TopListSourceView } from './components/TopListSourceView';
+import { TOPLIST_METHODS } from './lib/methods';
+
+import type { Plugin } from '@/core/plugin';
+
+/** 榜单页：源 TabBar 横滑切源 + 每源「分组标题 + 两列封面网格」 */
+export default function TopListScreen() {
+    const t = useT();
+    const back = useBackAction();
+    const renderSource = useCallback(
+        (plugin: Plugin) => <TopListSourceView plugin={plugin} />,
+        [],
+    );
     return (
-        <VerticalSafeAreaView style={globalStyle.fwflex1}>
-            <AppBar withStatusBar>{t("topList.title")}</AppBar>
-            <HorizontalSafeAreaView style={globalStyle.flex1}>
-                <TopListBody />
-            </HorizontalSafeAreaView>
+        <Screen edges={[]}>
+            <AppBar leading={back} title={t('topList.title')} />
+            <PluginSourcePager
+                methods={TOPLIST_METHODS}
+                renderSource={renderSource}
+            />
             <MusicBar />
-        </VerticalSafeAreaView>
+        </Screen>
     );
 }

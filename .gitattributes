@@ -1,0 +1,16 @@
+# 统一文本文件行尾为 LF（覆盖各平台 core.autocrlf，避免 CRLF/LF 抖动与 prettier 反复改写）
+* text=auto eol=lf
+
+# 二进制文件：禁止行尾转换（keystore / 图片 / 字体 / 归档等）
+*.keystore binary
+*.jks binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ttf binary
+*.otf binary
+*.jar binary
+*.aar binary
+*.ico binary

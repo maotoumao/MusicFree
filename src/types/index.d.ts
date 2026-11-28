@@ -1,0 +1,10 @@
+export type * from './album';
+export type * from './artist';
+export type * from './floatingLyric';
+export type * from './lyric';
+export type * from './media';
+export type * from './mediaMeta';
+export type * from './music';
+export type * from './playlist';
+export type * from './plugin';
+export type * from './utility';

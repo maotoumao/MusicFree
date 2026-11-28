@@ -1,4 +1,9 @@
 {
   "name": "MusicFree",
-  "displayName": "MusicFree"
+  "displayName": "MusicFree",
+  "plugins": [
+    "expo-image",
+    "expo-sharing",
+    "expo-splash-screen"
+  ]
 }

@@ -1,15 +1,18 @@
-declare namespace IAlbum {
-    export interface IAlbumItemBase extends ICommon.IMediaBase {
-        artwork?: string;
-        title: string;
-        date?: string;
-        artist?: string;
-        description: string;
-        /** 专辑内有多少作品 */
-        worksNum?: number;
-    }
+import type { MediaBase } from './media';
+import type { MusicItem } from './music';
 
-    export interface IAlbumItem extends IAlbumItemBase {
-        musicList: IMusic.IMusicItem[];
-    }
+/** 专辑（列表/搜索形态，无内嵌 musicList） */
+export interface AlbumItemBase extends MediaBase {
+    title: string;
+    artist?: string;
+    artwork?: string;
+    /** 发行日期 */
+    date?: string;
+    description?: string;
+    worksNum?: number;
+}
+
+/** 专辑（详情形态，含曲目列表） */
+export interface AlbumItem extends AlbumItemBase {
+    musicList: MusicItem[];
 }

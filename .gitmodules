@@ -1,0 +1,3 @@
+[submodule "cpp/taglib-engine/third_party/taglib"]
+	path = cpp/taglib-engine/third_party/taglib
+	url = https://github.com/taglib/taglib.git
